@@ -1,8 +1,8 @@
 /**
- * @file rmsprop_test.cpp
+ * @file ada_delta_test.cpp
  * @author Marcus Edel
  *
- * Tests the RMSProp optimizer on a couple test models.
+ * Tests the AdaDelta optimizer on a couple test models.
  */
 #include <mlpack/core.hpp>
 
@@ -18,7 +18,7 @@
 #include <mlpack/methods/ann/trainer/trainer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
+#include <mlpack/methods/ann/optimizer/ada_delta.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -26,14 +26,14 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(RMSPropTest);
+BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
 
 /**
  * Train and evaluate a vanilla network with the specified structure. Using the
  * iris data, the data set contains 3 classes. One class is linearly separable
  * from the other 2. The other two aren't linearly separable from each other.
  */
-BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
 {
   const size_t hiddenLayerSize = 10;
   const size_t maxEpochs = 300;
@@ -51,15 +51,15 @@ BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
   // Construct a feed forward network using the specified parameters.
   RandomInitialization randInit(0.1, 0.1);
 
-  LinearLayer<RMSPROP, RandomInitialization> inputLayer(dataset.n_rows,
+  LinearLayer<AdaDelta, RandomInitialization> inputLayer(dataset.n_rows,
       hiddenLayerSize, randInit);
-  BiasLayer<RMSPROP, RandomInitialization> inputBiasLayer(hiddenLayerSize,
+  BiasLayer<AdaDelta, RandomInitialization> inputBiasLayer(hiddenLayerSize,
       1, randInit);
   BaseLayer<LogisticFunction> inputBaseLayer;
 
-  LinearLayer<RMSPROP, RandomInitialization> hiddenLayer1(hiddenLayerSize,
+  LinearLayer<AdaDelta, RandomInitialization> hiddenLayer1(hiddenLayerSize,
       labels.n_rows, randInit);
-  BiasLayer<RMSPROP, RandomInitialization> hiddenBiasLayer1(labels.n_rows,
+  BiasLayer<AdaDelta, RandomInitialization> hiddenBiasLayer1(labels.n_rows,
       1, randInit);
   BaseLayer<LogisticFunction> outputLayer;
 

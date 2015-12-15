@@ -1,8 +1,8 @@
 /**
- * @file rmsprop_test.cpp
+ * @file adam_test.cpp
  * @author Marcus Edel
  *
- * Tests the RMSProp optimizer on a couple test models.
+ * Tests the Adam optimizer on a couple test models.
  */
 #include <mlpack/core.hpp>
 
@@ -18,7 +18,7 @@
 #include <mlpack/methods/ann/trainer/trainer.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
+#include <mlpack/methods/ann/optimizer/adam.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -26,17 +26,17 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(RMSPropTest);
+BOOST_AUTO_TEST_SUITE(AdamTest);
 
 /**
  * Train and evaluate a vanilla network with the specified structure. Using the
  * iris data, the data set contains 3 classes. One class is linearly separable
  * from the other 2. The other two aren't linearly separable from each other.
  */
-BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
 {
   const size_t hiddenLayerSize = 10;
-  const size_t maxEpochs = 300;
+  const size_t maxEpochs = 100;
 
   // Load the dataset.
   arma::mat dataset, labels, labelsIdx;
@@ -49,17 +49,17 @@ BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
     labels(labelsIdx(0, i), i) = 1;
 
   // Construct a feed forward network using the specified parameters.
-  RandomInitialization randInit(0.1, 0.1);
+  RandomInitialization randInit(0.5, 0.5);
 
-  LinearLayer<RMSPROP, RandomInitialization> inputLayer(dataset.n_rows,
+  LinearLayer<Adam, RandomInitialization> inputLayer(dataset.n_rows,
       hiddenLayerSize, randInit);
-  BiasLayer<RMSPROP, RandomInitialization> inputBiasLayer(hiddenLayerSize,
+  BiasLayer<Adam, RandomInitialization> inputBiasLayer(hiddenLayerSize,
       1, randInit);
   BaseLayer<LogisticFunction> inputBaseLayer;
 
-  LinearLayer<RMSPROP, RandomInitialization> hiddenLayer1(hiddenLayerSize,
+  LinearLayer<Adam, RandomInitialization> hiddenLayer1(hiddenLayerSize,
       labels.n_rows, randInit);
-  BiasLayer<RMSPROP, RandomInitialization> hiddenBiasLayer1(labels.n_rows,
+  BiasLayer<Adam, RandomInitialization> hiddenBiasLayer1(labels.n_rows,
       1, randInit);
   BaseLayer<LogisticFunction> outputLayer;
 
@@ -87,6 +87,7 @@ BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
 
   // Check if the selected model isn't already optimized.
   double classificationError = 1 - double(error) / dataset.n_cols;
+
   BOOST_REQUIRE_GE(classificationError, 0.09);
 
   // Train the feed forward network.
@@ -107,7 +108,7 @@ BOOST_AUTO_TEST_CASE(SimpleRMSPropTestFunction)
 
   classificationError = 1 - double(error) / dataset.n_cols;
 
-  BOOST_REQUIRE_LE(classificationError, 0.09);
+  BOOST_REQUIRE_LE(classificationError, 0.09); 
 }
 
 BOOST_AUTO_TEST_SUITE_END();
