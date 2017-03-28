@@ -1,10 +1,8 @@
 /**
- * @file ada_delta_test.cpp
- * @author Marcus Edel
- * @author Vasanth Kalingeri
+ * @file ada_grad_test.cpp
  * @author Abhinav Moudgil
  *
- * Tests the AdaDelta optimizer
+ * Test file for AdaGrad (stochastic gradient descent with AdaGrad updates).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,32 +10,30 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
-#include <mlpack/core/optimizers/ada_delta/ada_delta.hpp>
-#include <mlpack/core/optimizers/sgd/test_function.hpp>
+#include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/core/optimizers/sgd/test_function.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
+using namespace std;
 using namespace arma;
+using namespace mlpack;
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
-
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
-using namespace mlpack;
-
-BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
+BOOST_AUTO_TEST_SUITE(AdaGradTest);
 
 /**
- * Tests the Adadelta optimizer using a simple test function.
+ *Tests the Adagrad optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleAdaGradTestFunction)
 {
   SGDTestFunction f;
-  AdaDelta<SGDTestFunction> optimizer(f, 1.0, 0.99, 1e-8, 5000000, 1e-9, true);
+  AdaGrad<SGDTestFunction> optimizer(f, 0.99, 1e-8, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(coordinates);
@@ -48,9 +44,9 @@ BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
 }
 
 /**
- * Run AdaDelta on logistic regression and make sure the results are acceptable.
+ * Run AdaGrad on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+BOOST_AUTO_TEST_CASE(AdaGradLogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -97,8 +93,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   LogisticRegression<> lr(shuffledData.n_rows, 0.5);
 
   LogisticRegressionFunction<> lrf(shuffledData, shuffledResponses, 0.5);
-  AdaDelta<LogisticRegressionFunction<> > AdaDelta(lrf);
-  lr.Train(AdaDelta);
+  AdaGrad<LogisticRegressionFunction<> > adagrad(lrf, 0.99, 1e-8, 5000000, 1e-9, true);
+  lr.Train(adagrad);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -107,5 +103,4 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
-
 BOOST_AUTO_TEST_SUITE_END();
