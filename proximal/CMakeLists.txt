@@ -1,7 +1,6 @@
 set(SOURCES
-  parallel_sgd.hpp
-  parallel_sgd_impl.hpp
-  sparse_test_function.hpp
+  proximal.hpp
+  proximal.cpp
 )
 
 set(DIR_SRCS)
