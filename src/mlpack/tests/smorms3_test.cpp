@@ -1,10 +1,8 @@
 /**
- * @file ada_delta_test.cpp
- * @author Marcus Edel
- * @author Vasanth Kalingeri
- * @author Abhinav Moudgil
+ * @file smorms3_test.cpp
+ * @author Vivek Pal
  *
- * Tests the AdaDelta optimizer
+ * Tests the SMORMS3 optimizer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,7 +11,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/optimizers/ada_delta/ada_delta.hpp>
+#include <mlpack/core/optimizers/smorms3/smorms3.hpp>
 #include <mlpack/core/optimizers/sgd/test_function.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
@@ -29,28 +27,28 @@ using namespace mlpack::regression;
 
 using namespace mlpack;
 
-BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
+BOOST_AUTO_TEST_SUITE(SMORMS3Test);
 
 /**
- * Tests the Adadelta optimizer using a simple test function.
+ * Tests the SMORMS3 optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
+BOOST_AUTO_TEST_CASE(SimpleSMORMS3TestFunction)
 {
   SGDTestFunction f;
-  AdaDelta optimizer(1.0, 0.99, 1e-8, 5000000, 1e-9, true);
+  SMORMS3 s(0.001, 1e-16, 5000000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
+  s.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.003);
+  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
+  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
- * Run AdaDelta on logistic regression and make sure the results are acceptable.
+ * Run SMORMS3 on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+BOOST_AUTO_TEST_CASE(SMORMS3LogisticRegressionTest)
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -94,8 +92,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
     testResponses[i] = 1;
   }
 
-  AdaDelta adaDelta;
-  LogisticRegression<> lr(shuffledData, shuffledResponses, adaDelta, 0.5);
+  SMORMS3 smorms3;
+  LogisticRegression<> lr(shuffledData, shuffledResponses, smorms3, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
