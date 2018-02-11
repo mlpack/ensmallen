@@ -1,0 +1,106 @@
+/**
+ * @file pso_impl.hpp
+ * @author Adeel Ahmad
+ *
+ * Implementation of the Particle Swarm Optimizer as proposed
+ * by J. Kennedy et al. in "Particle swarm optimization".
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#ifndef MLPACK_CORE_OPTIMIZERS_PSO_PSO_IMPL_HPP
+#define MLPACK_CORE_OPTIMIZERS_PSO_PSO_IMPL_HPP
+
+// In case it hasn't been included yet.
+#include "pso.hpp"
+
+namespace mlpack {
+namespace optimization {
+
+template<typename VelocityVectorType>
+PSOType<VelocityVectorType>::PSOType(const size_t lambda,
+                                  const size_t dimension,
+                                  const double interiaWeight,
+                                  const double cognitiveAcceleration,
+                                  const double socialAcceleration,
+                                  const size_t maxIterations,
+                                  const double tolerance,
+                                  const VelocityVectorType& velocityType) :
+    lambda(lambda),
+    dimension(dimension),
+    interiaWeight(interiaWeight),
+    cognitiveAcceleration(cognitiveAcceleration),
+    socialAcceleration(socialAcceleration),
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    velocityType(velocityType)
+{ /* Nothing to do. */ }
+
+//! Optimize the function (minimize).
+template<typename VelocityVectorType>
+template<typename DecomposableFunctionType>
+double PSOType<VelocityVectorType>::Optimize(
+    DecomposableFunctionType& function, arma::mat& iterate)
+{
+  // Randomly initialize the particle position and velocity.
+  // Following a heuristic, the swarm size is set to 2 * dimension.
+  lambda = 2 * dimension;
+  particlePosition.randu(dimension);
+  particleVelocity.randu(dimension);
+  bestParticlePosition = particlePosition;
+  bestSwarmPosition = particlePosition;
+
+  // Convenient variables to check if there's an improvement.
+  double currentObjective;
+  double lastObjectiveIndividual = DBL_MAX;
+  double lastObjectiveGlobal = DBL_MAX;
+
+  // Start iterating.
+  for (size_t i = 0; i < maxIterations; ++i)
+  {
+    for (size_t k = 0; k < dimension; ++k)
+    {
+      // Calculate the objective function.
+      currentObjective = function.Evaluate(particlePosition);
+
+      // Check if the current position is an individual best.
+      if (currentObjective < lastObjectiveIndividual)
+      {
+        bestParticlePosition = particlePosition;
+        lastObjectiveIndividual = currentObjective;
+      }
+    }
+
+    // Check if the current position is a global best.
+    if (lastObjectiveIndividual < lastObjectiveGlobal)
+    {
+      bestSwarmPosition = particlePosition;
+      lastObjectiveGlobal = lastObjectiveIndividual;
+    }
+
+    // Update velocity for each particle.
+    velocityType.Update(particlePosition,
+      particleVelocity, bestParticlePosition,
+      bestSwarmPosition, interiaWeight,
+      cognitiveAcceleration, socialAcceleration, dimension);
+
+    // Update position for each particle.
+    particlePosition = particleVelocity;
+
+    // Compare current objective with tolerance.
+    if (currentObjective < tolerance)
+    {
+      Log::Info << "PSO: minimized within tolerance " << tolerance << "; "
+          << "terminating optimization." << std::endl;
+      return currentObjective;
+    }
+  }
+  return lastObjectiveGlobal;
+}
+
+} // namespace optimization
+} // namespace mlpack
+
+#endif
