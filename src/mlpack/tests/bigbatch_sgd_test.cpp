@@ -1,9 +1,8 @@
 /**
- * @file cmaes_test.cpp
+ * @file bigbatch_sgd_test.cpp
  * @author Marcus Edel
- * @author Kartik Nighania
  *
- * Test file for CMA-ES.
+ * Test file for big-batch SGD.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,39 +10,20 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/cmaes/cmaes.hpp>
-#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace arma;
+using namespace mlpack;
 using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
 
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 
-using namespace mlpack;
-
-BOOST_AUTO_TEST_SUITE(CMAESTest);
-
-/**
- * Tests the CMA-ES optimizer using a simple test function.
- */
-BOOST_AUTO_TEST_CASE(SimpleTestFunction)
-{
-  SGDTestFunction f;
-  CMAES<> optimizer(0, -1, 1, 32, 200, -1);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.003);
-}
+BOOST_AUTO_TEST_SUITE(BigBatchSGDTest);
 
 /**
  * Create the data for the logistic regression test case.
@@ -99,67 +79,61 @@ void CreateLogisticRegressionTestData(arma::mat& data,
 }
 
 /**
- * Run CMA-ES with the full selection policy on logistic regression and
- * make sure the results are acceptable.
+ * Run big-batch SGD using BBS_BB on logistic regression and make sure the
+ * results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(CMAESLogisticRegressionTest)
+BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
 {
-  const size_t trials = 3;
-  bool success = false;
-  for (size_t trial = 0; trial < trials; ++trial)
+  mlpack::math::RandomSeed(time(NULL));
+
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  CreateLogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run big-batch SGD with a couple of batch sizes.
+  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
   {
-    arma::mat data, testData, shuffledData;
-    arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-    CreateLogisticRegressionTestData(data, testData, shuffledData,
-        responses, testResponses, shuffledResponses);
-
-    CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-    LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
+    BBS_BB bbsgd(batchSize, 0.01, 0.1, 6000, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, bbsgd, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    if (acc >= 99.7 && testAcc >= 99.4)
-    {
-      success = true;
-      break;
-    }
-  }
+    BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
 
-  BOOST_REQUIRE_EQUAL(success, true);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  }
 }
 
 /**
- * Run CMA-ES with the random selection policy on logistic regression and
- * make sure the results are acceptable.
+ * Run big-batch SGD using BBS_Armijo on logistic regression and make sure the
+ * results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(ApproxCMAESLogisticRegressionTest)
+BOOST_AUTO_TEST_CASE(BBSArmijoLogisticRegressionTest)
 {
-  const size_t trials = 3;
-  bool success = false;
-  for (size_t trial = 0; trial < trials; ++trial)
+  mlpack::math::RandomSeed(time(NULL));
+
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  CreateLogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run big-batch SGD with a couple of batch sizes.
+  for (size_t batchSize = 30; batchSize < 60; batchSize += 1)
   {
-    arma::mat data, testData, shuffledData;
-    arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-    CreateLogisticRegressionTestData(data, testData, shuffledData,
-        responses, testResponses, shuffledResponses);
-
-    ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-    LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
+    BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 6000, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, bbsgd, 0.5);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    if (acc >= 99.7 && testAcc >= 99.4)
-    {
-      success = true;
-      break;
-    }
-  }
+    BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
 
-  BOOST_REQUIRE_EQUAL(success, true);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
