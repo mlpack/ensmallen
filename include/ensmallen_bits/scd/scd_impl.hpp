@@ -15,7 +15,7 @@
 // In case it hasn't been included yet.
 #include "scd.hpp"
 
-#include <mlpack/core/optimizers/function.hpp>
+#include <ensmallen_bits/function.hpp>
 
 namespace ens {
 

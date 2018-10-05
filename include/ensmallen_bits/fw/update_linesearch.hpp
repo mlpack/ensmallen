@@ -13,8 +13,8 @@
 #ifndef ENSMALLEN_FW_UPDATE_LINESEARCH_HPP
 #define ENSMALLEN_FW_UPDATE_LINESEARCH_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/line_search/line_search.hpp>
+#include <armadillo>
+#include <ensmallen_bits/line_search/line_search.hpp>
 
 namespace ens {
 

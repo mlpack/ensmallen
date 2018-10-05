@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_FW_UPDATE_CLASSIC_HPP
 #define ENSMALLEN_FW_UPDATE_CLASSIC_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

@@ -15,8 +15,8 @@
 #ifndef ENSMALLEN_STATIC_CHECKS_HPP
 #define ENSMALLEN_STATIC_CHECKS_HPP
 
-#include <mlpack/core.hpp>
-#include <mlpack/core/util/sfinae_utility.hpp>
+#include <armadillo>
+#include "sfinae_utility.hpp"
 
 namespace ens {
 namespace traits {

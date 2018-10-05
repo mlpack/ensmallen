@@ -12,8 +12,8 @@
 #ifndef ENSMALLEN_SVRG_SVRG_HPP
 #define ENSMALLEN_SVRG_SVRG_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/decay_policies/no_decay.hpp>
+#include <armadillo>
+#include <ensmallen_bits/sgd/decay_policies/no_decay.hpp>
 
 #include "svrg_update.hpp"
 #include "barzilai_borwein_decay.hpp"

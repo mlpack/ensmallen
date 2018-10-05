@@ -15,9 +15,9 @@
 #ifndef ENSMALLEN_RMSPROP_RMSPROP_HPP
 #define ENSMALLEN_RMSPROP_RMSPROP_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <ensmallen_bits/sgd/sgd.hpp>
 #include "rmsprop_update.hpp"
 
 namespace ens {

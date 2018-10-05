@@ -10,12 +10,11 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 #define ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-#include <mlpack/core/optimizers/function.hpp>
+#include <ensmallen_bits/lbfgs/lbfgs.hpp>
+#include <ensmallen_bits/function.hpp>
 #include "aug_lagrangian_function.hpp"
 
 namespace ens {

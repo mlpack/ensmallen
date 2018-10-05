@@ -14,8 +14,8 @@
 #ifndef ENSMALLEN_SMORMS3_SMORMS3_HPP
 #define ENSMALLEN_SMORMS3_SMORMS3_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <armadillo>
+#include <ensmallen_bits/sgd/sgd.hpp>
 
 #include "smorms3_update.hpp"
 

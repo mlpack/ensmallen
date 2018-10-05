@@ -15,8 +15,8 @@
 #ifndef ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 #define ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <armadillo>
+#include <ensmallen_bits/lbfgs/lbfgs.hpp>
 
 #include "aug_lagrangian_function.hpp"
 

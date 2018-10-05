@@ -13,8 +13,8 @@
 #ifndef ENSMALLEN_LBFGS_LBFGS_HPP
 #define ENSMALLEN_LBFGS_LBFGS_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/function.hpp>
+#include <armadillo>
+#include <ensmallen_bits/function.hpp>
 
 namespace ens {
 

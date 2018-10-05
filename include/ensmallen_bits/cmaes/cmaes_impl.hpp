@@ -18,7 +18,7 @@
 // In case it hasn't been included yet.
 #include "cmaes.hpp"
 
-#include <mlpack/core/optimizers/function.hpp>
+#include <ensmallen_bits/function.hpp>
 
 namespace ens {
 

@@ -13,9 +13,9 @@
 #ifndef ENSMALLEN_SDP_LRSDP_FUNCTION_HPP
 #define ENSMALLEN_SDP_LRSDP_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
-#include <mlpack/core/optimizers/sdp/sdp.hpp>
+#include <armadillo>
+#include <ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp>
+#include "sdp.hpp"
 
 namespace ens {
 

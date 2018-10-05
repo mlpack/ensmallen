@@ -15,7 +15,7 @@
 #ifndef ENSMALLEN_RMSPROP_RMSPROP_UPDATE_HPP
 #define ENSMALLEN_RMSPROP_RMSPROP_UPDATE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_KATYUSHA_KATYUSHA_HPP
 #define ENSMALLEN_KATYUSHA_KATYUSHA_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

@@ -14,7 +14,7 @@
 #ifndef ENSMALLEN_PROXIMAL_PROXIMAL_HPP
 #define ENSMALLEN_PROXIMAL_PROXIMAL_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

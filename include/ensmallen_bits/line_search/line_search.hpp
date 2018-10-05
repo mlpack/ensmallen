@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_LINE_SEARCH_LINE_SEARCH_HPP
 #define ENSMALLEN_LINE_SEARCH_LINE_SEARCH_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

@@ -12,9 +12,9 @@
 #ifndef ENSMALLEN_SPALERA_SGD_SPALERA_SGD_HPP
 #define ENSMALLEN_SPALERA_SGD_SPALERA_SGD_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/spalera_sgd/spalera_stepsize.hpp>
-#include <mlpack/core/optimizers/sgd/decay_policies/no_decay.hpp>
+#include <armadillo>
+#include <ensmallen_bits/spalera_sgd/spalera_stepsize.hpp>
+#include <ensmallen_bits/sgd/decay_policies/no_decay.hpp>
 
 namespace ens {
 

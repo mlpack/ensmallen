@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_GD_TEST_FUNCTION_HPP
 #define ENSMALLEN_GD_TEST_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 namespace test {

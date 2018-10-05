@@ -14,7 +14,7 @@
 #ifndef ENSMALLEN_FW_TEST_FUNC_FW_HPP
 #define ENSMALLEN_FW_TEST_FUNC_FW_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

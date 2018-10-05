@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_FUNCTION_HPP
 #define ENSMALLEN_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

@@ -13,8 +13,8 @@
 #ifndef ENSMALLEN_FUNCTION_TRAITS_HPP
 #define ENSMALLEN_FUNCTION_TRAITS_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/sfinae_utility.hpp>
+#include <armadillo>
+#include "sfinae_utility.hpp"
 
 namespace ens {
 namespace traits {

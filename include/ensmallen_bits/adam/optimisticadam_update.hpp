@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_ADAM_OPTIMISTICADAM_UPDATE_HPP
 #define ENSMALLEN_ADAM_OPTIMISTICADAM_UPDATE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_FUNCTION_ADD_EVALUATE_HPP
 #define ENSMALLEN_FUNCTION_ADD_EVALUATE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 #include "traits.hpp"
 
 namespace ens {

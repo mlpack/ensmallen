@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_SCD_DESCENT_POLICIES_GREEDY_HPP
 #define ENSMALLEN_SCD_DESCENT_POLICIES_GREEDY_HPP
 
-#include <mlpack/core.hpp>
+#include <armadillo>
 
 namespace ens {
 

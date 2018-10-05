@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
 #define ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_PARALLEL_SGD_CONSTANT_STEP_HPP
 #define ENSMALLEN_PARALLEL_SGD_CONSTANT_STEP_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

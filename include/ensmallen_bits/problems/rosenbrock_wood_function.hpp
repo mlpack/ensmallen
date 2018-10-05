@@ -13,10 +13,10 @@
 #ifndef ENSMALLEN_PROBLEMS_ROSENBROCK_WOOD_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_ROSENBROCK_WOOD_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
-#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
-#include <mlpack/core/optimizers/problems/wood_function.hpp>
+#include "generalized_rosenbrock_function.hpp"
+#include "wood_function.hpp"
 
 namespace ens {
 namespace test {

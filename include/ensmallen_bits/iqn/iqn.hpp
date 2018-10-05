@@ -14,7 +14,7 @@
 #ifndef ENSMALLEN_IQN_IQN_HPP
 #define ENSMALLEN_IQN_IQN_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 
