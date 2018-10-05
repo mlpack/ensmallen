@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 #define ENSMALLEN_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 
-#include <mlpack/core.hpp>
+#include <armadillo>
 
 namespace ens {
 

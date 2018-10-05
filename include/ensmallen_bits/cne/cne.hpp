@@ -16,7 +16,7 @@
 #ifndef ENSMALLEN_CNE_CNE_HPP
 #define ENSMALLEN_CNE_CNE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

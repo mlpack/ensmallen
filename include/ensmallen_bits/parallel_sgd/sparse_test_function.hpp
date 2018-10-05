@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_PARALLEL_SGD_SPARSE_TEST_FUNCTION_HPP
 #define ENSMALLEN_PARALLEL_SGD_SPARSE_TEST_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 namespace test {

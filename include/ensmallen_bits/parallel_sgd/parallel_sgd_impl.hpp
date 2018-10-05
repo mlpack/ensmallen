@@ -15,7 +15,7 @@
 // In case it hasn't been included yet.
 #include "parallel_sgd.hpp"
 
-#include <mlpack/core/optimizers/function.hpp>
+#include <ensmallen_bits/function.hpp>
 
 namespace ens {
 
@@ -86,6 +86,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     {
       // Determine order of visitation.
       std::shuffle(visitationOrder.begin(), visitationOrder.end(),
+          // TODO: use a different object here, maybe Armadillo's randgen?
           mlpack::math::randGen);
     }
 

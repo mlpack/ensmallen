@@ -13,8 +13,8 @@
 #ifndef ENSMALLEN_SDP_LRSDP_HPP
 #define ENSMALLEN_SDP_LRSDP_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
+#include <armadillo>
+#include <ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp>
 
 #include "lrsdp_function.hpp"
 

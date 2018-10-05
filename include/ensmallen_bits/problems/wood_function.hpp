@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_PROBLEMS_WOOD_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_WOOD_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 namespace test {

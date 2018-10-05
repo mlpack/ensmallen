@@ -14,8 +14,8 @@
 #ifndef ENSMALLEN_ADA_GRAD_ADA_GRAD_HPP
 #define ENSMALLEN_ADA_GRAD_ADA_GRAD_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <armadillo>
+#include <ensmallen_bits/sgd/sgd.hpp>
 #include "ada_grad_update.hpp"
 
 namespace ens {

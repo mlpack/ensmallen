@@ -17,7 +17,7 @@
 // In case it hasn't been included yet.
 #include "iqn.hpp"
 
-#include <mlpack/core/optimizers/function.hpp>
+#include <ensmallen_bits/function.hpp>
 
 namespace ens {
 

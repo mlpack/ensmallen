@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_SARAH_SARAH_HPP
 #define ENSMALLEN_SARAH_SARAH_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 #include "sarah_update.hpp"
 #include "sarah_plus_update.hpp"

@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_FW_FUNC_SQ_HPP
 #define ENSMALLEN_FW_FUNC_SQ_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

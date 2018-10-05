@@ -17,7 +17,7 @@
 // In case it hasn't been included yet.
 #include "sgd.hpp"
 
-#include <mlpack/core/optimizers/function.hpp>
+#include <ensmallen_bits/function.hpp>
 
 namespace ens {
 
@@ -76,20 +76,20 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
-      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
+//      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
+//          << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
-            << " with failure.  Try a smaller step size?" << std::endl;
+//        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
+//            << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+//        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
+//            << "terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -127,8 +127,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     currentFunction += effectiveBatchSize;
   }
 
-  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+//  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
+//      << "terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

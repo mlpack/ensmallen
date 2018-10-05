@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_PARALLEL_SGD_EXP_BACKOFF_HPP
 #define ENSMALLEN_PARALLEL_SGD_EXP_BACKOFF_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

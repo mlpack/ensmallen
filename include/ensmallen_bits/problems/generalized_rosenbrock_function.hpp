@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_PROBLEMS_GENERALIZED_ROSENBROCK_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_GENERALIZED_ROSENBROCK_FUNCTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 namespace test {

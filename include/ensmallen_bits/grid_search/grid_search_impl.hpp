@@ -13,7 +13,7 @@
 #define ENSMALLEN_GRID_SEARCH_GRID_SEARCH_IMPL_HPP
 
 #include <limits>
-#include <mlpack/core/optimizers/function.hpp>
+#include <ensmallen_bits/function.hpp>
 
 namespace ens {
 

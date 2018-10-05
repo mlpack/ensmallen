@@ -14,7 +14,7 @@
 #ifndef ENSMALLEN_BIGBATCH_SGD_BIGBATCH_SGD_HPP
 #define ENSMALLEN_BIGBATCH_SGD_BIGBATCH_SGD_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 #include "adaptive_stepsize.hpp"
 #include "backtracking_line_search.hpp"

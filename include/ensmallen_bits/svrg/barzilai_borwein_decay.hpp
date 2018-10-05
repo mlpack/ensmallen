@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_SVRG_BARZILIA_BORWEIN_DECAY_HPP
 #define ENSMALLEN_SVRG_BARZILIA_BORWEIN_DECAY_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

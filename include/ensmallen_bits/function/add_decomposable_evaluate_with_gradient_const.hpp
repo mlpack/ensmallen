@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_ADD_DECOMPOSABLE_EVALUATE_WITH_GRADIENT_CONST_HPP
 #define ENSMALLEN_ADD_DECOMPOSABLE_EVALUATE_WITH_GRADIENT_CONST_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 #include "traits.hpp"
 
 namespace ens {

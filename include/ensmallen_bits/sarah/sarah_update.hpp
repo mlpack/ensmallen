@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_SARAH_SARAH_UPDATE_HPP
 #define ENSMALLEN_SARAH_SARAH_UPDATE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

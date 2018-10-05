@@ -14,7 +14,7 @@
 #ifndef ENSMALLEN_FW_CONSTR_STRUCTURE_GROUP_HPP
 #define ENSMALLEN_FW_CONSTR_STRUCTURE_GROUP_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 #include "constr_lpball.hpp"
 
 namespace ens {

@@ -11,8 +11,8 @@
 #ifndef ENSMALLEN_SDP_PRIMAL_DUAL_HPP
 #define ENSMALLEN_SDP_PRIMAL_DUAL_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/sdp/sdp.hpp>
+#include <armadillo>
+#include "sdp.hpp"
 
 namespace ens {
 

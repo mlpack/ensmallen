@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <ensmallen_bits/lbfgs/lbfgs.hpp>
 #include "aug_lagrangian.hpp"
 
 namespace mlpack {

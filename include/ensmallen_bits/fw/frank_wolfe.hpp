@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_FW_FRANK_WOLFE_HPP
 #define ENSMALLEN_FW_FRANK_WOLFE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 #include "update_span.hpp"
 #include "constr_lpball.hpp"
 

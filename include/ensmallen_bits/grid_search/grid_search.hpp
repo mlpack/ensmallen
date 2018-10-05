@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_GRID_SEARCH_GRID_SEARCH_HPP
 #define ENSMALLEN_GRID_SEARCH_GRID_SEARCH_HPP
 
-#include <mlpack/core.hpp>
+#include <armadillo>
 
 namespace ens {
 

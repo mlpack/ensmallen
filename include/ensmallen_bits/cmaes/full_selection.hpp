@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_CMAES_FULL_SELECTION_HPP
 #define ENSMALLEN_CMAES_FULL_SELECTION_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

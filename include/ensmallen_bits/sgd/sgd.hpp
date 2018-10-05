@@ -15,7 +15,7 @@
 #ifndef ENSMALLEN_SGD_SGD_HPP
 #define ENSMALLEN_SGD_SGD_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 #include "update_policies/vanilla_update.hpp"
 #include "update_policies/momentum_update.hpp"
 #include "update_policies/nesterov_momentum_update.hpp"

@@ -12,7 +12,7 @@
 #ifndef ENSMALLEN_ADA_GRAD_ADA_GRAD_UPDATE_HPP
 #define ENSMALLEN_ADA_GRAD_ADA_GRAD_UPDATE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 

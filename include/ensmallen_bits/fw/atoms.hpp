@@ -11,8 +11,8 @@
 #ifndef ENSMALLEN_FW_ATOMS_HPP
 #define ENSMALLEN_FW_ATOMS_HPP
 
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/optimizers/proximal/proximal.hpp>
+#include <armadillo>
+#include <ensmallen_bits/proximal/proximal.hpp>
 #include "func_sq.hpp"
 
 namespace ens {

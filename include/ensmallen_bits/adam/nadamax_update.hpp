@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_ADAM_NADAMAX_UPDATE_HPP
 #define ENSMALLEN_ADAM_NADAMAX_UPDATE_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <armadillo>
 
 namespace ens {
 
