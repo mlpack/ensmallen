@@ -19,6 +19,16 @@
 
 namespace ens {
 
+//! Constructor.
+inline GradientDescent::GradientDescent(
+    const double stepSize,
+    const size_t maxIterations,
+    const double tolerance) :
+    stepSize(stepSize),
+    maxIterations(maxIterations),
+    tolerance(tolerance)
+{ /* Nothing to do. */ }
+
 //! Optimize the function (minimize).
 template<typename FunctionType>
 double GradientDescent::Optimize(
