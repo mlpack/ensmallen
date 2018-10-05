@@ -1,5 +1,5 @@
 /**
- * @file test_function.hpp
+ * @file gradient_descent_test_function.hpp
  * @author Sumedh Ghaisas
  *
  * Very simple test function for SGD.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_GD_TEST_FUNCTION_HPP
-#define ENSMALLEN_GD_TEST_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_GRADIENT_DESCENT_TEST_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_GRADIENT_DESCENT_TEST_FUNCTION_HPP
 
 #include <armadillo>
 
@@ -39,5 +39,7 @@ class GDTestFunction
 
 } // namespace test
 } // namespace ens
+
+#include "gradient_descent_test_function_impl.hpp"
 
 #endif
