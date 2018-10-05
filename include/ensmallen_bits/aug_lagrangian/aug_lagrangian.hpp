@@ -53,14 +53,6 @@ class AugLagrangian
   AugLagrangian();
 
   /**
-   * Initialize the Augmented Lagrangian with a custom L-BFGS optimizer.
-   *
-   * @param lbfgs The custom L-BFGS optimizer to be used.  This should have
-   *    already been initialized with the given AugLagrangianFunction.
-   */
-  AugLagrangian(L_BFGS& lbfgs);
-
-  /**
    * Optimize the function.  The value '1' is used for the initial value of each
    * Lagrange multiplier.  To set the Lagrange multipliers yourself, use the
    * other overload of Optimize().
