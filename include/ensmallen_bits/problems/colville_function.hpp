@@ -101,4 +101,7 @@ class ColvilleFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "colville_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_COLVILLE_FUNCTION_HPP

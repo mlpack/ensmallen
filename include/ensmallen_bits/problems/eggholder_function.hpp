@@ -101,4 +101,7 @@ class EggholderFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "eggholder_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_EGGHOLDER_FUNCTION_HPP

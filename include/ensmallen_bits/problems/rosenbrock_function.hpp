@@ -103,4 +103,7 @@ class RosenbrockFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "rosenbrock_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_ROSENBROCK_FUNCTION_HPP

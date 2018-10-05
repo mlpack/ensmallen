@@ -114,4 +114,7 @@ class StyblinskiTangFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "styblinski_tang_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_STYBLINSKI_TANG_FUNCTION_HPP

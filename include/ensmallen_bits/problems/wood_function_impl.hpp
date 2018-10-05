@@ -10,11 +10,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef ENSMALLEN_PROBLEMS_WOOD_FUNCTION_IMPL_HPP
+#define ENSMALLEN_PROBLEMS_WOOD_FUNCTION_IMPL_HPP
+
+// In case it hasn't been included yet.
 #include "wood_function.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+namespace ens {
+namespace test {
 
 WoodFunction::WoodFunction() { /* Nothing to do here */ }
 
@@ -70,3 +73,8 @@ void WoodFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }
+
+} // namespace test
+} // namespace ens
+
+#endif

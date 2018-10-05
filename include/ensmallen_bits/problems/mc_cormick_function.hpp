@@ -100,4 +100,7 @@ class McCormickFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "mc_cormick_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_MC_CORMICK_FUNCTION_HPP

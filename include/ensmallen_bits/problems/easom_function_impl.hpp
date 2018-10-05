@@ -9,11 +9,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef ENSMALLEN_PROBLEMS_EASOM_FUNCTION_IMPL_HPP
+#define ENSMALLEN_PROBLEMS_EASOM_FUNCTION_IMPL_HPP
+
+// In case it hasn't been included yet.
 #include "easom_function.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+namespace ens {
+namespace test {
 
 EasomFunction::EasomFunction() { /* Nothing to do here */ }
 
@@ -65,3 +68,8 @@ void EasomFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }
+
+} // namespace test
+} // namespace ens
+
+#endif

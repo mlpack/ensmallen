@@ -10,11 +10,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef ENSMALLEN_PROBLEMS_GENERALIZED_ROSENBROC_FUNCTION_IMPL_HPP
+#define ENSMALLEN_PROBLEMS_GENERALIZED_ROSENBROC_FUNCTION_IMPL_HPP
+
+// In case it hasn't been included yet.
 #include "generalized_rosenbrock_function.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+namespace ens {
+namespace test {
 
 GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(const size_t n) :
     n(n),
@@ -117,3 +120,8 @@ void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
     gradient[p + 1] = 200 * (coordinates[p + 1] - std::pow(coordinates[p], 2));
   }
 }
+
+} // namespace test
+} // namespace ens
+
+#endif

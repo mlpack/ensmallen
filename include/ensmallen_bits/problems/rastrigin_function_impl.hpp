@@ -9,11 +9,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef ENSMALLEN_PROBLEMS_RASTRIGIN_FUNCTION_IMPL_HPP
+#define ENSMALLEN_PROBLEMS_RASTRIGIN_FUNCTION_IMPL_HPP
+
+// In case it hasn't been included yet.
 #include "rastrigin_function.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+namespace ens {
+namespace test {
 
 RastriginFunction::RastriginFunction(const size_t n) :
     n(n),
@@ -71,3 +74,8 @@ void RastriginFunction::Gradient(const arma::mat& coordinates,
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }
+
+} // namespace test
+} // namespace ens
+
+#endif

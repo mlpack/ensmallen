@@ -112,4 +112,7 @@ class SchwefelFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "schwefel_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_SCHWEFEL_FUNCTION_HPP

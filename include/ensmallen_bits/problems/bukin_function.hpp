@@ -114,4 +114,7 @@ class BukinFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "bukin_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_BUKIN_FUNCTION_HPP
