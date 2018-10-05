@@ -30,7 +30,8 @@ endif ()
 # We keep the minimum version in sync with mlpack, otherwise we could have
 # irritating compatibility issues.
 find_package(Armadillo 6.500.0 REQUIRED)
-include_directories(BEFORE ${ARMADILLO_INCLUDE_DIR})
+include_directories(BEFORE "${ARMADILLO_INCLUDE_DIR}")
+include_directories(BEFORE "${CMAKE_SOURCE_DIR}/include/")
 
 # Install the headers to the correct location.
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/ensmallen_bits"
