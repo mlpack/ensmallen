@@ -91,7 +91,14 @@ class RMSProp
           const double epsilon = 1e-8,
           const size_t maxIterations = 100000,
           const double tolerance = 1e-5,
-          const bool shuffle = true);
+          const bool shuffle = true) :
+      optimizer(stepSize,
+                batchSize,
+                maxIterations,
+                tolerance,
+                shuffle,
+                RMSPropUpdate(epsilon, alpha))
+  { /* Nothing to do. */ }
 
   /**
    * Optimize the given function using RMSProp. The given starting point will be
