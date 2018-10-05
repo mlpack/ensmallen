@@ -1,36 +1,31 @@
-/**
- * @file sgdr_test.cpp
- * @author Marcus Edel
- *
- * Test file for SGDR.
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/sgdr/cyclical_decay.hpp>
-#include <mlpack/core/optimizers/sgdr/sgdr.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace ens;
 
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
-
-BOOST_AUTO_TEST_SUITE(SGDRTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/sgdr/cyclical_decay.hpp>
+// #include <mlpack/core/optimizers/sgdr/sgdr.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+// using namespace mlpack::distribution;
+// using namespace mlpack::regression;
 
 /*
  * Test that the step size resets after a specified number of epochs.
  */
-BOOST_AUTO_TEST_CASE(CyclicalResetTest)
+TEST_CASE("CyclicalResetTest","[SGDRTest]")
 {
   const double stepSize = 0.5;
   arma::mat iterate;
@@ -57,7 +52,7 @@ BOOST_AUTO_TEST_CASE(CyclicalResetTest)
         cyclicalDecay.Update(iterate, epochStepSize, iterate);
         if (i <= restart || arma::accu(arma::find(nextRestart == i)) > 0)
         {
-          BOOST_CHECK_EQUAL(epochStepSize, stepSize);
+          REQUIRE(epochStepSize == stepSize);
         }
       }
     }
@@ -67,7 +62,7 @@ BOOST_AUTO_TEST_CASE(CyclicalResetTest)
 /**
  * Run SGDR on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+TEST_CASE("LogisticRegressionTest","[SGDRTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -119,11 +114,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

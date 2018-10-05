@@ -1,17 +1,16 @@
-/**
- * @file rmsprop_test.cpp
- * @author Marcus Edel
- *
- * Tests the RMSProp optimizer.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include "test_tools.hpp"
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-TEST_CASE("rmsprop_sgd_function ", "[rmsprop]")
+#include <ensmallen.hpp>
+#include "catch.hpp"
+
+using namespace ens;
+
+TEST_CASE("rmsprop_sgd_function", "[rmsprop]")
 {
   SGDTestFunction f;
   RMSProp optimizer(1e-3, 1, 0.99, 1e-8, 5000000, 1e-9, true);

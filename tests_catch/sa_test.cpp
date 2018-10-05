@@ -1,39 +1,36 @@
-/*
- * @file sa_test.cpp
- * @auther Zhihao Lou
- *
- * Test file for SA (simulated annealing).
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/sa/sa.hpp>
-#include <mlpack/core/optimizers/sa/exponential_schedule.hpp>
-#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
-#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
-#include <mlpack/core/optimizers/problems/rastrigin_function.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <mlpack/core/metrics/ip_metric.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/metrics/mahalanobis_distance.hpp>
-
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
-using namespace mlpack::metric;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(SATest);
+
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/sa/sa.hpp>
+// #include <mlpack/core/optimizers/sa/exponential_schedule.hpp>
+// #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
+// #include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
+// #include <mlpack/core/optimizers/problems/rastrigin_function.hpp>
+// 
+// #include <mlpack/core/metrics/ip_metric.hpp>
+// #include <mlpack/core/metrics/lmetric.hpp>
+// #include <mlpack/core/metrics/mahalanobis_distance.hpp>
+
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
+// using namespace mlpack::metric;
 
 // The Generalized-Rosenbrock function is a simple function to optimize.
-BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
+TEST_CASE("GeneralizedRosenbrockTest","[SATest]")
 {
   size_t dim = 10;
   GeneralizedRosenbrockFunction f(dim);
@@ -51,17 +48,17 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     result = sa.Optimize(f, coordinates);
     ++iteration;
 
-    BOOST_REQUIRE_LT(iteration, 4); // No more than three tries.
+    REQUIRE(iteration < 4); // No more than three tries.
   }
 
   // 0.1% tolerance for each coordinate.
-  BOOST_REQUIRE_SMALL(result, 1e-6);
+  REQUIRE(result == Approx(0.0).margin(1e-6));
   for (size_t j = 0; j < dim; ++j)
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 0.1);
+      REQUIRE(coordinates[j] == Approx(1.0).epsilon(0.001));
 }
 
 // The Rosenbrock function is a simple function to optimize.
-BOOST_AUTO_TEST_CASE(RosenbrockTest)
+TEST_CASE("RosenbrockTest","[SATest]")
 {
   RosenbrockFunction f;
   ExponentialSchedule schedule;
@@ -71,16 +68,16 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
 
   const double result = sa.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(result, 1e-5);
-  BOOST_REQUIRE_CLOSE(coordinates[0], 1.0, 1e-2);
-  BOOST_REQUIRE_CLOSE(coordinates[1], 1.0, 1e-2);
+  REQUIRE(result == Approx(0.0).margin(1e-5));
+  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-4));
+  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-4));
 }
 
 /**
  * The Rastrigrin function, a (not very) simple nonconvex function. It has very
  * many local minima, so finding the true global minimum is difficult.
  */
-BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
+TEST_CASE("RastrigrinFunctionTest","[SATest]")
 {
   // Simulated annealing isn't guaranteed to converge (except in very specific
   // situations).  If this works 1 of 4 times, I'm fine with that.  All I want
@@ -107,7 +104,5 @@ BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
     }
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
