@@ -55,4 +55,6 @@ class Proximal
 
 } // namespace ens
 
+#include "proximal_impl.hpp"
+
 #endif
