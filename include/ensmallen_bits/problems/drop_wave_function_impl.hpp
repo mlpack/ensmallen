@@ -1,5 +1,5 @@
 /**
- * @file drop_wave_function.cpp
+ * @file drop_wave_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Drop-Wave function.

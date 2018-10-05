@@ -1,5 +1,5 @@
 /**
- * @file rosenbrock_function.cpp
+ * @file rosenbrock_function_impl.hpp
  * @author Ryan Curtin
  * @author Marcus Edel
  *

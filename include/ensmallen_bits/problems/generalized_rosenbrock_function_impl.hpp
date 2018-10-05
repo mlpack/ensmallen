@@ -1,5 +1,5 @@
 /**
- * @file generalized_rosenbrock_function.cpp
+ * @file generalized_rosenbrock_function_impl.hpp
  * @author Ryan Curtin
  * @author Marcus Edel
  *

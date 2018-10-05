@@ -1,5 +1,5 @@
 /**
- * @file eggholder_function.cpp
+ * @file eggholder_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Eggholder function.

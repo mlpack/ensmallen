@@ -81,16 +81,16 @@ double SARAHType<UpdatePolicyType>::Optimize(
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "SARAH: converged to " << overallObjective
-          << "; terminating  with failure.  Try a smaller step size?"
-          << std::endl;
+      // Log::Warn << "SARAH: converged to " << overallObjective
+      //     << "; terminating  with failure.  Try a smaller step size?"
+      //     << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "SARAH: minimized within tolerance " << tolerance
-          << "; terminating optimization." << std::endl;
+      // Log::Info << "SARAH: minimized within tolerance " << tolerance
+      //     << "; terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -173,8 +173,8 @@ double SARAHType<UpdatePolicyType>::Optimize(
     }
   }
 
-  Log::Info << "SARAH: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+  // Log::Info << "SARAH: maximum iterations (" << maxIterations << ") reached; "
+  //     << "terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_ADA_DELTA_UPDATE_HPP
-#define ENSMALLEN_ADA_DELTA_UPDATE_HPP
+#ifndef ENSMALLEN_ADA_DELTA_ADA_DELTA_UPDATE_HPP
+#define ENSMALLEN_ADA_DELTA_ADA_DELTA_UPDATE_HPP
 
 #include <armadillo>
 

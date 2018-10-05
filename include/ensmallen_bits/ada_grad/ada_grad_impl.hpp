@@ -1,20 +1,23 @@
 /**
- * @file smorms3_impl.hpp
- * @author Vivek Pal
+ * @file ada_grad_impl.hpp
+ * @author Abhinav Moudgil
  *
- * Implementation of the SMORMS3 constructor.
+ * Implementation of AdaGrad optimizer.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "smorms3.hpp"
+#ifndef ENSMALLEN_ADA_GRAD_ADA_GRAD_IMPL_HPP
+#define ENSMALLEN_ADA_GRAD_ADA_GRAD_IMPL_HPP
 
-namespace mlpack {
-namespace optimization {
+// In case it hasn't been included yet.
+#include "ada_grad.hpp"
 
-SMORMS3::SMORMS3(const double stepSize,
+namespace ens {
+
+AdaGrad::AdaGrad(const double stepSize,
                  const size_t batchSize,
                  const double epsilon,
                  const size_t maxIterations,
@@ -25,8 +28,9 @@ SMORMS3::SMORMS3(const double stepSize,
               maxIterations,
               tolerance,
               shuffle,
-              SMORMS3Update(epsilon))
+              AdaGradUpdate(epsilon))
 { /* Nothing to do. */ }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
+
+#endif

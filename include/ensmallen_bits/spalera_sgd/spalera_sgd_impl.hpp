@@ -87,21 +87,21 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
     if ((currentFunction % numFunctions) == 0)
     {
       // Output current objective function.
-      Log::Info << "SPALeRA SGD: iteration " << i << ", objective "
-          << overallObjective << "." << std::endl;
+      // Log::Info << "SPALeRA SGD: iteration " << i << ", objective "
+      //     << overallObjective << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Log::Warn << "SPALeRA SGD: converged to " << overallObjective
-            << "; terminating with failure.  Try a smaller step size?"
-            << std::endl;
+        // Log::Warn << "SPALeRA SGD: converged to " << overallObjective
+        //     << "; terminating with failure.  Try a smaller step size?"
+        //     << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Log::Info << "SPALeRA SGD: minimized within tolerance " << tolerance
-            << "; terminating optimization." << std::endl;
+        // Log::Info << "SPALeRA SGD: minimized within tolerance " << tolerance
+        //     << "; terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -132,9 +132,9 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
     if (!updatePolicy.Update(stepSize, currentObjective, effectiveBatchSize,
         numFunctions, iterate, gradient))
     {
-      Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
-          << "terminating with failure.  Try a smaller step size?"
-          << std::endl;
+      // Log::Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
+      //     << "terminating with failure.  Try a smaller step size?"
+      //     << std::endl;
       return overallObjective;
     }
 
@@ -147,8 +147,8 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
     currentObjective /= effectiveBatchSize;
   }
 
-  Log::Info << "SPALeRA SGD: maximum iterations (" << maxIterations
-      << ") reached; terminating optimization." << std::endl;
+  // Log::Info << "SPALeRA SGD: maximum iterations (" << maxIterations
+  //     << ") reached; terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

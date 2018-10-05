@@ -1,5 +1,5 @@
 /**
- * @file booth_function.cpp
+ * @file booth_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Booth function.

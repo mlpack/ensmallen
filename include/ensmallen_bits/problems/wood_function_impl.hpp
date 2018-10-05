@@ -1,5 +1,5 @@
 /**
- * @file wood_function.cpp
+ * @file wood_function_impl.hpp
  * @author Ryan Curtin
  * @author Marcus Edel
  *

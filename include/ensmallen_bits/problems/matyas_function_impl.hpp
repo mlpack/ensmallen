@@ -1,5 +1,5 @@
 /**
- * @file matyas_function.cpp
+ * @file matyas_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Matyas function.

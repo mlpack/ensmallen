@@ -11,11 +11,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef ENSMALLEN_ADA_DELTA_ADA_DELTA_IMPL_HPP
+#define ENSMALLEN_ADA_DELTA_ADA_DELTA_IMPL_HPP
 
+// In case it hasn't been included yet.
 #include "ada_delta.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 AdaDelta::AdaDelta(const double stepSize,
                    const size_t batchSize,
@@ -32,5 +34,6 @@ AdaDelta::AdaDelta(const double stepSize,
               AdaDeltaUpdate(rho, epsilon))
 { /* Nothing to do. */ }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
+
+#endif

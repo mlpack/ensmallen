@@ -1,5 +1,5 @@
 /**
- * @file sphere_function.cpp
+ * @file sphere_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Sphere function.

@@ -1,5 +1,5 @@
 /**
- * @file schwefel_function.cpp
+ * @file schwefel_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Schwefel function.
