@@ -71,7 +71,7 @@
 #include "ensmallen_bits/sgdr/snapshot_ensembles.hpp"
 #include "ensmallen_bits/sgdr/snapshot_sgdr.hpp"
 #include "ensmallen_bits/smorms3/smorms3.hpp"
-#include "ensmallen_bits/spalera_sgd/spalera_sgdhpp"
+#include "ensmallen_bits/spalera_sgd/spalera_sgd.hpp"
 #include "ensmallen_bits/svrg/svrg.hpp"
 
 #endif
