@@ -9,20 +9,17 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/gradient_descent/gradient_descent.hpp>
-
-#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
-#include <mlpack/core/optimizers/gradient_descent/test_function.hpp>
+#include <armadillo>
+#include <ensmallen.hpp>
+#include <ensmallen_bits/problems/problems.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
 using namespace std;
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+using namespace ens;
+using namespace ens::test;
 
 BOOST_AUTO_TEST_SUITE(GradientDescentTest);
 

@@ -15,6 +15,7 @@
 #include "easom_function.hpp"
 #include "eggholder_function.hpp"
 #include "generalized_rosenbrock_function.hpp"
+#include "gradient_descent_test_function.hpp"
 #include "matyas_function.hpp"
 #include "mc_cormick_function.hpp"
 #include "rastrigin_function.hpp"
