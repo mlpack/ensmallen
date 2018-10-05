@@ -10,14 +10,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
-#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.hpp>
+#include <armadillo>
+#include <ensmallen.hpp>
+#include <ensmallen_bits/problems/problems.hpp>
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace ens;
+using namespace ens::test;
 
 BOOST_AUTO_TEST_SUITE(AugLagrangianTest);
 
