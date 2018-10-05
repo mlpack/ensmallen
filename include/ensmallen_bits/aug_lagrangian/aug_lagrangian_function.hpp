@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
-#define MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
+#ifndef ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
+#define ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -115,5 +115,5 @@ class AugLagrangianFunction
 // Include basic implementation.
 #include "aug_lagrangian_function_impl.hpp"
 
-#endif // MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
+#endif // ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
 

@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_ADD_DECOMPOSABLE_EVALUATE_WITH_GRADIENT_CONST_HPP
-#define MLPACK_CORE_OPTIMIZERS_ADD_DECOMPOSABLE_EVALUATE_WITH_GRADIENT_CONST_HPP
+#ifndef ENSMALLEN_ADD_DECOMPOSABLE_EVALUATE_WITH_GRADIENT_CONST_HPP
+#define ENSMALLEN_ADD_DECOMPOSABLE_EVALUATE_WITH_GRADIENT_CONST_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "traits.hpp"

@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_FW_TEST_FUNC_FW_HPP
-#define MLPACK_CORE_OPTIMIZERS_FW_TEST_FUNC_FW_HPP
+#ifndef ENSMALLEN_FW_TEST_FUNC_FW_HPP
+#define ENSMALLEN_FW_TEST_FUNC_FW_HPP
 
 #include <mlpack/prereqs.hpp>
 

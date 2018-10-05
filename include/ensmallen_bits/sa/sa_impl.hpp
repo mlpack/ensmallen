@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
+#ifndef ENSMALLEN_SA_SA_IMPL_HPP
+#define ENSMALLEN_SA_SA_IMPL_HPP
 
 #include <mlpack/core/dists/laplace_distribution.hpp>
 #include <mlpack/core/optimizers/function.hpp>

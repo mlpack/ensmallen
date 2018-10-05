@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_RANDOM_HPP
-#define MLPACK_CORE_OPTIMIZERS_SCD_DESCENT_POLICIES_RANDOM_HPP
+#ifndef ENSMALLEN_SCD_DESCENT_POLICIES_RANDOM_HPP
+#define ENSMALLEN_SCD_DESCENT_POLICIES_RANDOM_HPP
 
 #include <mlpack/core.hpp>
 

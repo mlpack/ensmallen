@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_HPP
-#define MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_HPP
+#ifndef ENSMALLEN_SDP_LRSDP_FUNCTION_HPP
+#define ENSMALLEN_SDP_LRSDP_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
@@ -139,4 +139,4 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
 // Include implementation
 #include "lrsdp_function_impl.hpp"
 
-#endif // MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_FUNCTION_HPP
+#endif // ENSMALLEN_SDP_LRSDP_FUNCTION_HPP

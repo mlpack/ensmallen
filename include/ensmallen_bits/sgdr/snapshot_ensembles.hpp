@@ -11,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_OPTIMIZERS_SGDR_SNAPSHOT_ENSEMBLES_HPP
-#define MLPACK_CORE_OPTIMIZERS_SGDR_SNAPSHOT_ENSEMBLES_HPP
+#ifndef ENSMALLEN_SGDR_SNAPSHOT_ENSEMBLES_HPP
+#define ENSMALLEN_SGDR_SNAPSHOT_ENSEMBLES_HPP
 
 namespace mlpack {
 namespace optimization {
@@ -173,4 +173,4 @@ class SnapshotEnsembles
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_SGDR_CYCLICAL_DECAY_HPP
+#endif // ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP

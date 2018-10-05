@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_PROBLEMS_STYBLINSKI_TANG_FUNCTION_HPP
-#define MLPACK_CORE_OPTIMIZERS_PROBLEMS_STYBLINSKI_TANG_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_STYBLINSKI_TANG_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_STYBLINSKI_TANG_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -116,4 +116,4 @@ class StyblinskiTangFunction
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_PROBLEMS_STYBLINSKI_TANG_FUNCTION_HPP
+#endif // ENSMALLEN_PROBLEMS_STYBLINSKI_TANG_FUNCTION_HPP

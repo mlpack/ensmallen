@@ -8,8 +8,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SDP_SDP_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_SDP_SDP_IMPL_HPP
+#ifndef ENSMALLEN_SDP_SDP_IMPL_HPP
+#define ENSMALLEN_SDP_SDP_IMPL_HPP
 
 #include "sdp.hpp"
 

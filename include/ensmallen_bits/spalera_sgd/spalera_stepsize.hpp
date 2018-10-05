@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_OPTIMIZERS_SPALERA_SGD_SPALERA_STEPSIZE_HPP
-#define MLPACK_CORE_OPTIMIZERS_SPALERA_SGD_SPALERA_STEPSIZE_HPP
+#ifndef ENSMALLEN_SPALERA_SGD_SPALERA_STEPSIZE_HPP
+#define ENSMALLEN_SPALERA_SGD_SPALERA_STEPSIZE_HPP
 
 namespace mlpack {
 namespace optimization {
@@ -224,4 +224,4 @@ class SPALeRAStepsize
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_SPALERA_SGD_SPALERA_STEPSIZE_HPP
+#endif // ENSMALLEN_SPALERA_SGD_SPALERA_STEPSIZE_HPP

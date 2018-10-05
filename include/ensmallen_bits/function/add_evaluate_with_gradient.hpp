@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_FUNCTION_ADD_EVALUATE_WITH_GRADIENT_HPP
-#define MLPACK_CORE_OPTIMIZERS_FUNCTION_ADD_EVALUATE_WITH_GRADIENT_HPP
+#ifndef ENSMALLEN_FUNCTION_ADD_EVALUATE_WITH_GRADIENT_HPP
+#define ENSMALLEN_FUNCTION_ADD_EVALUATE_WITH_GRADIENT_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
