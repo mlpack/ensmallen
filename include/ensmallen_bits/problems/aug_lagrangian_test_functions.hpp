@@ -15,6 +15,7 @@
 #include <armadillo>
 
 namespace ens {
+namespace test {
 
 /**
  * This function is taken from "Practical Mathematical Optimization" (Snyman),
@@ -136,6 +137,7 @@ class LovaszThetaSDP
   arma::mat initialPoint;
 };
 
+} // namespace test
 } // namespace ens
 
 #endif // ENSMALLEN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP

@@ -7,6 +7,7 @@
 #ifndef ENSMALLEN_PROBLEMS_PROBLEMS_HPP
 #define ENSMALLEN_PROBLEMS_PROBLEMS_HPP
 
+#include "aug_lagrangian_test_problems.hpp"
 #include "booth_function.hpp"
 #include "bukin_function.hpp"
 #include "colville_function.hpp"
