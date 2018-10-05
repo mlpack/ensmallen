@@ -7,9 +7,9 @@
  * I. Loshchilov et al and the Snapshot ensembles technique described in:
  * "Snapshot ensembles: Train 1, get m for free" by G. Huang et al.
  *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef ENSMALLEN_SGDR_SNAPSHOT_SGDR_HPP
