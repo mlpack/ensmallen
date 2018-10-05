@@ -100,4 +100,7 @@ class BoothFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "booth_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_BOOTH_FUNCTION_HPP

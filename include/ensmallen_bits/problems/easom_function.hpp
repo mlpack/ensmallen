@@ -100,4 +100,7 @@ class EasomFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "easom_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_EASOM_FUNCTION_HPP

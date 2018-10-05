@@ -100,4 +100,7 @@ class DropWaveFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "drop_wave_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_DROP_WAVE_FUNCTION_HPP

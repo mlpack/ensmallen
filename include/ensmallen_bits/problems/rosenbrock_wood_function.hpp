@@ -97,4 +97,7 @@ class RosenbrockWoodFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "rosenbrock_wood_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_ROSENBROCK_WOOD_FUNCTION_HPP

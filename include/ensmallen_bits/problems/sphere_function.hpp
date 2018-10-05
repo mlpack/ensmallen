@@ -113,4 +113,7 @@ class SphereFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "sphere_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_SPHERE_FUNCTION_HPP

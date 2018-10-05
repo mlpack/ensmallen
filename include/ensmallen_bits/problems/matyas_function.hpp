@@ -100,4 +100,7 @@ class MatyasFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "matyas_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_MATYAS_FUNCTION_HPP

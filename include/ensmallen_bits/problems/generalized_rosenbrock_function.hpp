@@ -131,4 +131,7 @@ class GeneralizedRosenbrockFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "generalized_rosenbrock_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_GENERALIZED_ROSENBROCK_FUNCTION_HPP

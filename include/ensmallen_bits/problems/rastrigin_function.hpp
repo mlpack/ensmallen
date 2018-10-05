@@ -112,4 +112,7 @@ class RastriginFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "rastrigin_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_RASTRIGIN_FUNCTION_HPP

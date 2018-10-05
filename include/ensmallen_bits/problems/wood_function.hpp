@@ -107,4 +107,7 @@ class WoodFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "wood_function_impl.hpp"
+
 #endif // ENSMALLEN_PROBLEMS_WOOD_FUNCTION_HPP

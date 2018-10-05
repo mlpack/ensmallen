@@ -64,4 +64,7 @@ class SGDTestFunction
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "sgd_test_function_impl.hpp"
+
 #endif
