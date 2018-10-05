@@ -79,8 +79,8 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   // initializing helper variables.
   fitnessValues.set_size(populationSize);
 
-  Log::Info << "CNE initialized successfully. Optimization started."
-      << std::endl;
+  // Log::Info << "CNE initialized successfully. Optimization started."
+  //     << std::endl;
 
   // Find the fitness before optimization using given iterate parameters.
   size_t lastBestFitness = function.Evaluate(iterate);
@@ -98,8 +98,8 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
        fitnessValues[i] = function.Evaluate(iterate);
     }
 
-    Log::Info << "Generation number: " << gen << " best fitness = "
-        << fitnessValues.min() << std::endl;
+    // Log::Info << "Generation number: " << gen << " best fitness = "
+    //     << fitnessValues.min() << std::endl;
 
     // Create next generation of species.
     Reproduce();
@@ -107,17 +107,17 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     // Check for termination criteria.
     if (tolerance >= fitnessValues.min())
     {
-      Log::Info << "CNE::Optimize(): terminating. Given fitness criteria "
-          << tolerance << " > " << fitnessValues.min() << "." << std::endl;
+      // Log::Info << "CNE::Optimize(): terminating. Given fitness criteria "
+      //     << tolerance << " > " << fitnessValues.min() << "." << std::endl;
       break;
     }
 
     // Check for termination criteria.
     if (lastBestFitness - fitnessValues.min() < objectiveChange)
     {
-      Log::Info << "CNE::Optimize(): terminating. Fitness history change "
-          << (lastBestFitness - fitnessValues.min())
-          << " < " << objectiveChange << "." << std::endl;
+      // Log::Info << "CNE::Optimize(): terminating. Fitness history change "
+      //     << (lastBestFitness - fitnessValues.min())
+      //     << " < " << objectiveChange << "." << std::endl;
       break;
     }
 
@@ -146,8 +146,8 @@ void CNE::Reproduce()
   for (size_t i = numElite; i < populationSize - 1; i++)
   {
     // Select 2 different parents from elite group randomly [0, numElite).
-    mom = mlpack::math::RandInt(0, numElite);
-    dad = mlpack::math::RandInt(0, numElite);
+    mom = arma::randi<size_t>(arma::distr_param(0, numElite));
+    dad = arma::randi<size_t>(arma::distr_param(0, numElite));
 
     // Making sure both parents are not the same.
     if (mom == dad)

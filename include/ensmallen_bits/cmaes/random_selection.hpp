@@ -56,7 +56,8 @@ class RandomSelection
     double objective = 0;
     for (size_t f = 0; f < std::floor(numFunctions * fraction); f += batchSize)
     {
-      const size_t selection = math::RandInt(0, numFunctions);
+      const size_t selection = arma::randi<size_t>(
+          arma::distr_param(0, numFunctions));
       const size_t effectiveBatchSize = std::min(batchSize,
           numFunctions - selection);
 

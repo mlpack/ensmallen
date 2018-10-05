@@ -1,5 +1,5 @@
 /**
- * @file styblinski_tang_function.cpp
+ * @file styblinski_tang_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Styblinski-Tang function.

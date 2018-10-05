@@ -139,4 +139,7 @@ class SMORMS3
 
 } // namespace ens
 
+// Include implementation.
+#include "smorms3_impl.hpp"
+
 #endif

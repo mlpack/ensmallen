@@ -133,26 +133,26 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     overallObjective /= numFunctions;
 
     // Output current objective function.
-    Log::Info << "IQN: iteration " << i << ", objective " << overallObjective
-        << "." << std::endl;
+    // Log::Info << "IQN: iteration " << i << ", objective " << overallObjective
+    //     << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "IQN: converged to " << overallObjective << "; terminating"
-          << " with failure.  Try a smaller step size?" << std::endl;
+      // Log::Warn << "IQN: converged to " << overallObjective << "; terminating"
+      //     << " with failure.  Try a smaller step size?" << std::endl;
       return overallObjective;
     }
 
     if (overallObjective < tolerance)
     {
-      Log::Info << "IQN: minimized within tolerance " << tolerance << "; "
-          << "terminating optimization." << std::endl;
+      // Log::Info << "IQN: minimized within tolerance " << tolerance << "; "
+      //     << "terminating optimization." << std::endl;
       return overallObjective;
     }
   }
 
-  Log::Info << "IQN: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+  // Log::Info << "IQN: maximum iterations (" << maxIterations << ") reached; "
+  //     << "terminating optimization." << std::endl;
 
   return overallObjective;
 }

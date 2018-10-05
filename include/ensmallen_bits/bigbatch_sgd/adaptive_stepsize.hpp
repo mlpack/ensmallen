@@ -11,7 +11,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
 #define ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
 

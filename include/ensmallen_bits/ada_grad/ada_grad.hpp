@@ -140,4 +140,7 @@ class AdaGrad
 
 } // namespace ens
 
+// Include implementation.
+#include "ada_grad_impl.hpp"
+
 #endif

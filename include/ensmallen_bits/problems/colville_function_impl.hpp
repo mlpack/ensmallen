@@ -1,5 +1,5 @@
 /**
- * @file colville_function.cpp
+ * @file colville_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Coville function.

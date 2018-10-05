@@ -1,5 +1,5 @@
 /**
- * @file mc_cormick_function.cpp
+ * @file mc_cormick_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the McCormick function.

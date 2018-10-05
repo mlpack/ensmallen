@@ -1,5 +1,5 @@
 /**
- * @file rastrigin_function.cpp
+ * @file rastrigin_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Rastrigin function.

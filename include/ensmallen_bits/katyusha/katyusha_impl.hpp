@@ -101,16 +101,16 @@ double KatyushaType<Proximal>::Optimize(
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "Katyusha: converged to " << overallObjective
-          << "; terminating  with failure.  Try a smaller step size?"
-          << std::endl;
+      // Log::Warn << "Katyusha: converged to " << overallObjective
+      //     << "; terminating  with failure.  Try a smaller step size?"
+      //     << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "Katyusha: minimized within tolerance " << tolerance
-          << "; terminating optimization." << std::endl;
+      // Log::Info << "Katyusha: minimized within tolerance " << tolerance
+      //     << "; terminating optimization." << std::endl;
       return overallObjective;
     }
 
@@ -194,8 +194,8 @@ double KatyushaType<Proximal>::Optimize(
     iterate0 = normalizer * w;
   }
 
-  Log::Info << "Katyusha: maximum iterations (" << maxIterations << ") reached"
-      << "; terminating optimization." << std::endl;
+  // Log::Info << "Katyusha: maximum iterations (" << maxIterations << ") reached"
+  //     << "; terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;

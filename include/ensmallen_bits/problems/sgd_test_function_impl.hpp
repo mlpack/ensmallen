@@ -1,5 +1,5 @@
 /**
- * @file sgd_test_function.cpp
+ * @file sgd_test_function_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of very simple test function for stochastic gradient descent

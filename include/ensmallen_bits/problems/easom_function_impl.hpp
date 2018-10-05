@@ -1,5 +1,5 @@
 /**
- * @file easom_function.cpp
+ * @file easom_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Easom function.

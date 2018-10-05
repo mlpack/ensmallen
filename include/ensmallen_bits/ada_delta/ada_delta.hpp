@@ -149,4 +149,7 @@ class AdaDelta
 
 } // namespace ens
 
+// Include implementation.
+#include "ada_delta_impl.hpp"
+
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file bukin_function.cpp
+ * @file bukin_function_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Bukin function.
