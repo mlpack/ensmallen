@@ -1,23 +1,13 @@
-/**
- * @file svrg_test.cpp
- * @author Marcus Edel
- *
- * Test file for SVRG.
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/svrg/svrg.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "test_function_tools.hpp"
+#include <ensmallen.hpp>
 
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace ens;
 
 BOOST_AUTO_TEST_SUITE(SVRGTest);
 
