@@ -1,18 +1,18 @@
 /**
- * @file proximal.cpp
+ * @file proximal_impl.hpp
  * @author Chenzhe Diao
- *
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#ifndef ENSMALLEN_PROXIMAL_PROXIMAL_IMPL_HPP
+#define ENSMALLEN_PROXIMAL_PROXIMAL_IMPL_HPP
 
 #include "proximal.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Projection of the vector v onto l1 ball with norm tau.
@@ -32,7 +32,7 @@ namespace optimization {
  *
  * This is just a soft thresholding.
  */
-void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
+inline void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
 {
   arma::vec simplexSol = arma::abs(v);
 
@@ -68,7 +68,7 @@ void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
  * Approximate the vector v with a tau-sparse vector.
  * This is a hard-thresholding.
  */
-void Proximal::ProjectToL0Ball(arma::vec& v, int tau)
+inline void Proximal::ProjectToL0Ball(arma::vec& v, int tau)
 {
   arma::uvec indices = arma::sort_index(arma::abs(v));
   arma::uword numberToKill = v.n_elem - tau;
@@ -77,5 +77,6 @@ void Proximal::ProjectToL0Ball(arma::vec& v, int tau)
     v(indices(i)) = 0.0;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
+
+#endif
