@@ -12,8 +12,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_STATIC_CHECKS_HPP
-#define MLPACK_CORE_OPTIMIZERS_STATIC_CHECKS_HPP
+#ifndef ENSMALLEN_STATIC_CHECKS_HPP
+#define ENSMALLEN_STATIC_CHECKS_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>

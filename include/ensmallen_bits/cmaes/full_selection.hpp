@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_CMAES_FULL_SELECTION_HPP
-#define MLPACK_CORE_OPTIMIZERS_CMAES_FULL_SELECTION_HPP
+#ifndef ENSMALLEN_CMAES_FULL_SELECTION_HPP
+#define ENSMALLEN_CMAES_FULL_SELECTION_HPP
 
 #include <mlpack/prereqs.hpp>
 

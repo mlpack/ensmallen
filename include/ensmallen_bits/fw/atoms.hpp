@@ -8,8 +8,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_FW_ATOMS_HPP
-#define MLPACK_CORE_OPTIMIZERS_FW_ATOMS_HPP
+#ifndef ENSMALLEN_FW_ATOMS_HPP
+#define ENSMALLEN_FW_ATOMS_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/proximal/proximal.hpp>

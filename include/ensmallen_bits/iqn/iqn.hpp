@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_IQN_IQN_HPP
-#define MLPACK_CORE_OPTIMIZERS_IQN_IQN_HPP
+#ifndef ENSMALLEN_IQN_IQN_HPP
+#define ENSMALLEN_IQN_IQN_HPP
 
 #include <mlpack/prereqs.hpp>
 

@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP
-#define MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP
+#ifndef ENSMALLEN_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP
+#define ENSMALLEN_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP
 
 namespace mlpack {
 namespace optimization {
@@ -108,4 +108,4 @@ class BacktrackingLineSearch
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP
+#endif // ENSMALLEN_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP

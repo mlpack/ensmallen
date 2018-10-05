@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_BIGBATCH_SGD_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_BIGBATCH_SGD_IMPL_HPP
+#ifndef ENSMALLEN_BIGBATCH_SGD_BIGBATCH_SGD_IMPL_HPP
+#define ENSMALLEN_BIGBATCH_SGD_BIGBATCH_SGD_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "bigbatch_sgd.hpp"

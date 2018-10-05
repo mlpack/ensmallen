@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
-#define MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
+#ifndef ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
+#define ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
 
 namespace mlpack {
 namespace optimization {
@@ -175,4 +175,4 @@ class AdaptiveStepsize
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
+#endif // ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP

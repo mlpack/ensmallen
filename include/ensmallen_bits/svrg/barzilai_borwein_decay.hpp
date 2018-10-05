@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_DECAY_HPP
-#define MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_DECAY_HPP
+#ifndef ENSMALLEN_SVRG_BARZILIA_BORWEIN_DECAY_HPP
+#define ENSMALLEN_SVRG_BARZILIA_BORWEIN_DECAY_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -107,4 +107,4 @@ class BarzilaiBorweinDecay
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_SVRG_BARZILIA_BORWEIN_DECAY_HPP
+#endif // ENSMALLEN_SVRG_BARZILIA_BORWEIN_DECAY_HPP

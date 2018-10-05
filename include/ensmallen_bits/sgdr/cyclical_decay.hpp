@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_OPTIMIZERS_SGDR_CYCLICAL_DECAY_HPP
-#define MLPACK_CORE_OPTIMIZERS_SGDR_CYCLICAL_DECAY_HPP
+#ifndef ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP
+#define ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP
 
 namespace mlpack {
 namespace optimization {
@@ -137,4 +137,4 @@ class CyclicalDecay
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_SGDR_CYCLICAL_DECAY_HPP
+#endif // ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP

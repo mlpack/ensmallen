@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_CORE_OPTIMIZERS_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
-#define MLPACK_CORE_OPTIMIZERS_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
+#ifndef ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
+#define ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
 
 namespace mlpack {
 namespace optimization {
@@ -66,4 +66,4 @@ class NoDecay
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
+#endif // ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP

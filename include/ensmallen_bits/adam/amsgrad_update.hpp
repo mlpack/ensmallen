@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_AMS_GRAD_AMS_GRAD_UPDATE_HPP
-#define MLPACK_CORE_OPTIMIZERS_AMS_GRAD_AMS_GRAD_UPDATE_HPP
+#ifndef ENSMALLEN_AMS_GRAD_AMS_GRAD_UPDATE_HPP
+#define ENSMALLEN_AMS_GRAD_AMS_GRAD_UPDATE_HPP
 
 #include <mlpack/prereqs.hpp>
 

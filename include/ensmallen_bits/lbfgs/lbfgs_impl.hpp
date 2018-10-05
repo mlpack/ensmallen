@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
+#ifndef ENSMALLEN_LBFGS_LBFGS_IMPL_HPP
+#define ENSMALLEN_LBFGS_LBFGS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "lbfgs.hpp"
@@ -267,5 +267,5 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
 } // namespace optimization
 } // namespace mlpack
 
-#endif // MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
+#endif // ENSMALLEN_LBFGS_LBFGS_IMPL_HPP
 
