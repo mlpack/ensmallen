@@ -18,8 +18,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Conventional Neural Evolution (CNE) is a class of evolutionary algorithms
@@ -212,8 +211,7 @@ class CNE
   size_t elements;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "cne_impl.hpp"

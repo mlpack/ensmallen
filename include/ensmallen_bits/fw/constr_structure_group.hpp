@@ -17,8 +17,7 @@
 #include <mlpack/prereqs.hpp>
 #include "constr_lpball.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Linear Constrained Solver for FrankWolfe. Constrained domain given in the
@@ -236,8 +235,7 @@ class GroupLpBall
 };
 
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 
 

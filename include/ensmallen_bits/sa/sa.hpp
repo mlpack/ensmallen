@@ -16,8 +16,7 @@
 
 #include "exponential_schedule.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Simulated Annealing is an stochastic optimization algorithm which is able to
@@ -204,8 +203,7 @@ class SA
   void MoveControl(const size_t nMoves, arma::mat& accept, arma::mat& moveSize);
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "sa_impl.hpp"
 

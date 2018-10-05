@@ -17,8 +17,7 @@
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 #include <mlpack/core/optimizers/sdp/sdp.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The objective function that LRSDP is trying to optimize.
@@ -133,8 +132,7 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
     const arma::mat& coordinates,
     arma::mat& gradient) const;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation
 #include "lrsdp_function_impl.hpp"

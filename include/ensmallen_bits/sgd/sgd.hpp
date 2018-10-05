@@ -21,8 +21,7 @@
 #include "update_policies/nesterov_momentum_update.hpp"
 #include "decay_policies/no_decay.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Stochastic Gradient Descent is a technique for minimizing a function which
@@ -206,8 +205,7 @@ using MomentumSGD = SGD<MomentumUpdate>;
 
 using NesterovMomentumSGD = SGD<NesterovMomentumUpdate>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "sgd_impl.hpp"

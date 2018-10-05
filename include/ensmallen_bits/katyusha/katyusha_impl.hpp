@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<bool Proximal>
 KatyushaType<Proximal>::KatyushaType(
@@ -208,7 +207,6 @@ double KatyushaType<Proximal>::Optimize(
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

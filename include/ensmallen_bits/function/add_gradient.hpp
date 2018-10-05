@@ -16,8 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include "traits.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The AddGradient mixin class will provide a Gradient() method if the given
@@ -181,7 +180,6 @@ class AddGradientStatic<FunctionType, true, false>
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

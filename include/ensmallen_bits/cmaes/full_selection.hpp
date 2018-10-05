@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /*
  * Select the full dataset for use in the Evaluation step.
@@ -50,7 +49,6 @@ class FullSelection
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

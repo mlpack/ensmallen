@@ -14,8 +14,7 @@
 
 #include <mlpack/core.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Greedy descent policy for Stochastic Co-ordinate Descent(SCD). This
@@ -74,7 +73,6 @@ class GreedyDescent
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

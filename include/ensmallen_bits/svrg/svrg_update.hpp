@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Vanilla update policy for Stochastic variance reduced gradient (SVRG).
@@ -59,7 +58,6 @@ class SVRGUpdate
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

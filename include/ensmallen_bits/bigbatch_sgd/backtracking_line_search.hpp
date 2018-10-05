@@ -15,8 +15,7 @@
 #ifndef ENSMALLEN_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP
 #define ENSMALLEN_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Definition of the backtracking line search algorithm based on the
@@ -105,7 +104,6 @@ class BacktrackingLineSearch
   double searchParameter;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_BIGBATCH_SGD_BACKTRACKING_LINE_SEARCH_HPP

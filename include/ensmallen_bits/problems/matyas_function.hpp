@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 namespace test {
 
 /**
@@ -99,7 +98,6 @@ class MatyasFunction
 };
 
 } // namespace test
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_PROBLEMS_MATYAS_FUNCTION_HPP

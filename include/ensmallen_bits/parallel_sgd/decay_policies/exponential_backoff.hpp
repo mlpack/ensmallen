@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Exponential backoff stepsize reduction policy for parallel SGD.
@@ -86,7 +85,6 @@ class ExponentialBackoff
   double beta;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

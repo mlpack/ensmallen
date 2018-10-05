@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Barzilai-Borwein decay policy for Stochastic variance reduced gradient
@@ -104,7 +103,6 @@ class BarzilaiBorweinDecay
   double maxStepSize;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_SVRG_BARZILIA_BORWEIN_DECAY_HPP

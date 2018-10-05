@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Square loss function \f$ f(x) = 0.5 * ||Ax - b||_2^2 \f$.
@@ -78,7 +77,6 @@ class FuncSq
   arma::vec b;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

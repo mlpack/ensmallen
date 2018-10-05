@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 namespace test {
 
 /**
@@ -102,7 +101,6 @@ class RosenbrockFunction
 };
 
 } // namespace test
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_PROBLEMS_ROSENBROCK_FUNCTION_HPP

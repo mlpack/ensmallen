@@ -19,8 +19,7 @@
 
 #include "smorms3_update.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * SMORMS3 is an optimizer that estimates a safe and optimal distance based on
@@ -138,7 +137,6 @@ class SMORMS3
   SGD<SMORMS3Update> optimizer;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

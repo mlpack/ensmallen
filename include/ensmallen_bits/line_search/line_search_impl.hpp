@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename FunctionType>
 double LineSearch::Optimize(FunctionType& function,
@@ -106,6 +105,5 @@ double LineSearch::Derivative(FunctionType& function,
 }
 
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 #endif

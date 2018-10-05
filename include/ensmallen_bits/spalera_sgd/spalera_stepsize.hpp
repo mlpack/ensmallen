@@ -15,8 +15,7 @@
 #ifndef ENSMALLEN_SPALERA_SGD_SPALERA_STEPSIZE_HPP
 #define ENSMALLEN_SPALERA_SGD_SPALERA_STEPSIZE_HPP
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Definition of the SPALeRA stepize technique, which implementes a change
@@ -221,7 +220,6 @@ class SPALeRAStepsize
   arma::mat previousIterate;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_SPALERA_SGD_SPALERA_STEPSIZE_HPP

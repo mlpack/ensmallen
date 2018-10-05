@@ -16,8 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/line_search/line_search.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Use line search in the update step for FrankWolfe algorithm. That is, take
@@ -98,7 +97,6 @@ class UpdateLineSearch
   size_t maxIterations;
 };  // class UpdateLineSearch
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

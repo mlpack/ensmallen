@@ -19,8 +19,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 IQN::IQN(const double stepSize,
          const size_t batchSize,
@@ -158,7 +157,6 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template <typename DescentPolicyType>
 SCD<DescentPolicyType>::SCD(
@@ -94,7 +93,6 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
   return function.Evaluate(iterate);
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

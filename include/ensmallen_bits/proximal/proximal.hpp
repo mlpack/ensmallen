@@ -16,8 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Approximate a vector with another vector on lp ball. Currently support l0
@@ -54,7 +53,6 @@ class Proximal
   static void ProjectToL0Ball(arma::vec& v, int tau);
 };  // class Proximal
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

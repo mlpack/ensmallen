@@ -19,8 +19,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Adam is an optimizer that computes individual adaptive learning rates for
@@ -142,7 +141,6 @@ class AdamUpdate
   double iteration;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

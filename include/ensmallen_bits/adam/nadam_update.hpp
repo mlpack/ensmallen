@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Nadam is an optimizer that combines the Adam and NAG optimization strategies.
@@ -167,7 +166,6 @@ class NadamUpdate
   double cumBeta1;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

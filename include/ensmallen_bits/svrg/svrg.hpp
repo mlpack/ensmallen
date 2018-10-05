@@ -18,8 +18,7 @@
 #include "svrg_update.hpp"
 #include "barzilai_borwein_decay.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Stochastic Variance Reduced Gradient is a technique for minimizing a function
@@ -238,8 +237,7 @@ using SVRG = SVRGType<SVRGUpdate, NoDecay>;
  */
 using SVRG_BB = SVRGType<SVRGUpdate, BarzilaiBorweinDecay>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "svrg_impl.hpp"

@@ -18,8 +18,7 @@
 #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
 #include <mlpack/core/optimizers/problems/wood_function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 namespace test {
 
 /**
@@ -96,7 +95,6 @@ class RosenbrockWoodFunction
 };
 
 } // namespace test
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_PROBLEMS_ROSENBROCK_WOOD_FUNCTION_HPP

@@ -17,8 +17,7 @@
 #include "sarah_update.hpp"
 #include "sarah_plus_update.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * StochAstic Recusive gRadient algoritHm (SARAH). is a variance reducing
@@ -179,8 +178,7 @@ using SARAH = SARAHType<SARAHUpdate>;
  */
 using SARAH_Plus = SARAHType<SARAHPlusUpdate>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "sarah_impl.hpp"

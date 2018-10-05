@@ -18,8 +18,7 @@
 
 #include "cne.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 CNE::CNE(const size_t populationSize,
          const size_t maxGenerations,
@@ -216,7 +215,6 @@ void CNE::Mutate()
   }
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

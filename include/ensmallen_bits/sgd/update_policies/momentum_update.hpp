@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Momentum update policy for Stochastic Gradient Descent (SGD).
@@ -111,7 +110,6 @@ class MomentumUpdate
   arma::mat velocity;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

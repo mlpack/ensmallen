@@ -16,8 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 namespace traits {
 
 //! Detect an Evaluate() method.
@@ -335,7 +334,6 @@ struct HasConstSignatures
 };
 
 } // namespace traits
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

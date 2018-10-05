@@ -20,8 +20,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include "rmsprop_update.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * RMSProp is an optimizer that utilizes the magnitude of recent gradients to
@@ -150,7 +149,6 @@ class RMSProp
   SGD<RMSPropUpdate> optimizer;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

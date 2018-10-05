@@ -13,8 +13,7 @@
 
 #include "sdp.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template <typename ObjectiveMatrixType>
 SDP<ObjectiveMatrixType>::SDP() :
@@ -68,7 +67,6 @@ bool SDP<ObjectiveMatrixType>::HasLinearlyIndependentConstraints() const
   return s(s.n_elem - 1) > 1e-5;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

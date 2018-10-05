@@ -20,8 +20,7 @@
 #include "full_selection.hpp"
 #include "random_selection.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * CMA-ES - Covariance Matrix Adaptation Evolution Strategy is s a stochastic
@@ -169,8 +168,7 @@ class CMAES
 template<typename SelectionPolicyType = RandomSelection>
 using ApproxCMAES = CMAES<SelectionPolicyType>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "cmaes_impl.hpp"

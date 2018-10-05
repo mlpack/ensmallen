@@ -14,8 +14,7 @@
 
 #include <mlpack/core.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * An optimizer that finds the minimum of a given function by iterating through
@@ -64,8 +63,7 @@ class GridSearch
       size_t i);
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation
 #include "grid_search_impl.hpp"

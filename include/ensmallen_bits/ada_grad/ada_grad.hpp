@@ -18,8 +18,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include "ada_grad_update.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * AdaGrad is a modified version of stochastic gradient descent which performs
@@ -139,7 +138,6 @@ class AdaGrad
   SGD<AdaGradUpdate> optimizer;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

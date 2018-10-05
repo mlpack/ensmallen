@@ -18,8 +18,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 namespace traits {
 
 /**
@@ -400,7 +399,6 @@ inline void CheckNonDifferentiableDecomposableFunctionTypeAPI()
 }
 
 } // namespace traits
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

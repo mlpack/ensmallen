@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Interface for wrapping around update policies (e.g., VanillaUpdate)
@@ -104,7 +103,6 @@ class GradientClipping
   UpdatePolicyType updatePolicy;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

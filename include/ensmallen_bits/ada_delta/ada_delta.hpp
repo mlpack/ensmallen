@@ -20,8 +20,7 @@
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include "ada_delta_update.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * AdaDelta is an optimizer that uses two ideas to improve upon the two main
@@ -148,7 +147,6 @@ class AdaDelta
   SGD<AdaDeltaUpdate> optimizer;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

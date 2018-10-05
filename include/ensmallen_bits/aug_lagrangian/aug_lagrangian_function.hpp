@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * This is a utility class used by AugLagrangian, meant to wrap a
@@ -109,8 +108,7 @@ class AugLagrangianFunction
   double sigma;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include basic implementation.
 #include "aug_lagrangian_function_impl.hpp"

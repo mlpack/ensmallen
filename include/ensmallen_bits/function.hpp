@@ -15,14 +15,12 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename FunctionType>
 class Function;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "function/traits.hpp"
 #include "function/static_checks.hpp"
@@ -33,8 +31,7 @@ class Function;
 #include "function/add_decomposable_gradient.hpp"
 #include "function/add_decomposable_evaluate_with_gradient.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The Function class is a wrapper class for any FunctionType that will add any
@@ -108,7 +105,6 @@ class Function :
   using AddEvaluate<FunctionType>::Evaluate;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

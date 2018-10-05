@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * LinearConstrSolver for FrankWolfe algorithm. Constraint domain given in the
@@ -158,7 +157,6 @@ class ConstrLpBallSolver
   arma::vec lambda;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

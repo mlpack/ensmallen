@@ -16,8 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include "traits.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The AddEvaluate mixin class will provide an Evaluate() method if the given
@@ -182,7 +181,6 @@ class AddEvaluateStatic<FunctionType, true, false>
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

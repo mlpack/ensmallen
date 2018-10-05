@@ -14,8 +14,7 @@
 
 #include <mlpack/core.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Random descent policy for Stochastic Coordinate Descent(SCD). This
@@ -59,7 +58,6 @@ class RandomDescent
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

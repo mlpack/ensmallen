@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Katyusha is a direct, primal-only stochastic gradient method which uses a
@@ -175,8 +174,7 @@ using Katyusha = KatyushaType<false>;
  */
 using KatyushaProximal = KatyushaType<true>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "katyusha_impl.hpp"

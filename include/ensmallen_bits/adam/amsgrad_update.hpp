@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * AMSGrad is an exponential moving average variant which along with having
@@ -139,7 +138,6 @@ class AMSGradUpdate
   double iteration;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

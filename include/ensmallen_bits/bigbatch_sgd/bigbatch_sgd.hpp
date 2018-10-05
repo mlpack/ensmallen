@@ -19,8 +19,7 @@
 #include "adaptive_stepsize.hpp"
 #include "backtracking_line_search.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Big-batch Stochastic Gradient Descent is a technique for minimizing a
@@ -191,8 +190,7 @@ class BigBatchSGD
 using BBS_Armijo = BigBatchSGD<BacktrackingLineSearch>;
 using BBS_BB = BigBatchSGD<AdaptiveStepsize>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "bigbatch_sgd_impl.hpp"

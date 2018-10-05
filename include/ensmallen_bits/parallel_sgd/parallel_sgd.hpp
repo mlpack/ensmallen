@@ -16,8 +16,7 @@
 #include <mlpack/core/math/random.hpp>
 #include "decay_policies/constant_step.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * An implementation of parallel stochastic gradient descent using the lock-free
@@ -142,8 +141,7 @@ class ParallelSGD
   DecayPolicyType decayPolicy;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "parallel_sgd_impl.hpp"

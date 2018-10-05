@@ -16,8 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include "traits.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 namespace aux {
 
@@ -182,7 +181,6 @@ class AddDecomposableEvaluateWithGradient<FunctionType, true, false, true> :
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

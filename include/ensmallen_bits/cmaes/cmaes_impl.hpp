@@ -20,8 +20,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename SelectionPolicyType>
 CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
@@ -280,7 +279,6 @@ double CMAES<SelectionPolicyType>::Optimize(
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

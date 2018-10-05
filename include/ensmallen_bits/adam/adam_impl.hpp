@@ -18,8 +18,7 @@
 // In case it hasn't been included yet.
 #include "adam.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename UpdateRule>
 AdamType<UpdateRule>::AdamType(
@@ -39,7 +38,6 @@ AdamType<UpdateRule>::AdamType(
               UpdateRule(epsilon, beta1, beta2))
 { /* Nothing to do. */ }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

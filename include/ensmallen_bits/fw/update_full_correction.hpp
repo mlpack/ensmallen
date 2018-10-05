@@ -17,8 +17,7 @@
 #include <mlpack/prereqs.hpp>
 #include "atoms.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Full correction approach to update the solution.
@@ -89,7 +88,6 @@ class UpdateFullCorrection
   Atoms atoms;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -15,8 +15,7 @@
 #include <mlpack/prereqs.hpp>
 #include "descent_policies/random_descent.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Stochastic Coordinate descent is a technique for minimizing a function by
@@ -140,8 +139,7 @@ class SCD
   DescentPolicyType descentPolicy;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "scd_impl.hpp"

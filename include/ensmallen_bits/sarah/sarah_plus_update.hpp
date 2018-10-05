@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * SARAH+ provides an automatic and adaptive choice of the inner loop size.
@@ -68,7 +67,6 @@ class SARAHPlusUpdate
   double gamma;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

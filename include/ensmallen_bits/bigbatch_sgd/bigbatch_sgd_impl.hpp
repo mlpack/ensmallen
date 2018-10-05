@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename UpdatePolicyType>
 BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
@@ -198,7 +197,6 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

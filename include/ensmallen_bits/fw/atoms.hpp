@@ -15,8 +15,7 @@
 #include <mlpack/core/optimizers/proximal/proximal.hpp>
 #include "func_sq.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Class to hold the information and operations of current atoms in the

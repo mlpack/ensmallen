@@ -16,8 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The generic L-BFGS optimizer, which uses a back-tracking line search
@@ -219,8 +218,7 @@ class L_BFGS
                       arma::cube& y);
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "lbfgs_impl.hpp"
 
