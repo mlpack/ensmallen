@@ -42,5 +42,4 @@ install(FILES ${CMAKE_SOURCE_DIR}/include/ensmallen.hpp
 
 enable_testing()
 
-#add_subdirectory(include)
-#add_subdirectory(tests)
+add_subdirectory(tests)
