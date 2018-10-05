@@ -15,8 +15,7 @@
 // In case it hasn't been included yet.
 #include "svrg.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename UpdatePolicyType, typename DecayPolicyType>
 SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
@@ -170,7 +169,6 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

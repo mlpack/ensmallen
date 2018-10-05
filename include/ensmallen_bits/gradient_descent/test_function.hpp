@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 namespace test {
 
 //! Very, very simple test function which is the composite of three other
@@ -39,7 +38,6 @@ class GDTestFunction
 };
 
 } // namespace test
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

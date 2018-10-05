@@ -16,8 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * IQN is a technique for minimizing a function which
@@ -131,8 +130,7 @@ class IQN
   double tolerance;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "iqn_impl.hpp"

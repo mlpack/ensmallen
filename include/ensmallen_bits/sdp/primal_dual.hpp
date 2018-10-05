@@ -14,8 +14,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/optimizers/sdp/sdp.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Interface to a primal dual interior point solver.
@@ -129,8 +128,7 @@ class PrimalDualSolver
   size_t maxIterations;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "primal_dual_impl.hpp"

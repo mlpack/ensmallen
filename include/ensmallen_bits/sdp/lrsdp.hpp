@@ -18,8 +18,7 @@
 
 #include "lrsdp_function.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * LRSDP is the implementation of Monteiro and Burer's formulation of low-rank
@@ -99,8 +98,7 @@ class LRSDP
   size_t maxIterations;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation
 #include "lrsdp_impl.hpp"

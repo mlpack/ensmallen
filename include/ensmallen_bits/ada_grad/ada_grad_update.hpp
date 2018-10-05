@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Implementation of the AdaGrad update policy. AdaGrad update policy chooses
@@ -97,7 +96,6 @@ class AdaGradUpdate
   arma::mat squaredGradient;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

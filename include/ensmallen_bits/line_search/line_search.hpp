@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Find the minimum of a function along the line between two points.
@@ -83,8 +82,7 @@ class LineSearch
                     const arma::mat& deltaX,
                     const double gamma);
 };  // class LineSearch
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "line_search_impl.hpp"
 

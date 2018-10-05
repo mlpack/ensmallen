@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename DecayPolicyType>
 SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
@@ -162,7 +161,6 @@ double SPALeRASGD<DecayPolicyType>::Optimize(DecomposableFunctionType& function,
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 namespace test {
 
 // A simple test function. Each dimension has a parabola with a
@@ -102,7 +101,6 @@ class SparseTestFunction
 };
 
 } // namespace test
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

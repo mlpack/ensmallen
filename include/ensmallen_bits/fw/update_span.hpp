@@ -17,8 +17,7 @@
 #include "func_sq.hpp"
 #include "atoms.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Recalculate the optimal solution in the span of all previous solution space,
@@ -82,7 +81,6 @@ class UpdateSpan
   bool isPrune;
 }; // class UpdateSpan
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

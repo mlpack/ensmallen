@@ -20,8 +20,7 @@
 
 #include "aug_lagrangian_function.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The AugLagrangian class implements the Augmented Lagrangian method of
@@ -137,8 +136,7 @@ class AugLagrangian
                 const size_t maxIterations);
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "aug_lagrangian_impl.hpp"
 

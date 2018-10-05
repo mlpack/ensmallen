@@ -15,8 +15,7 @@
 // In case it hasn't been included yet.
 #include "sgdr.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename UpdatePolicyType>
 SGDR<UpdatePolicyType>::SGDR(
@@ -69,7 +68,6 @@ double SGDR<UpdatePolicyType>::Optimize(
   return optimizer.Optimize(function, iterate);
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

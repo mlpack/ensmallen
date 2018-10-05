@@ -16,8 +16,7 @@
 
 #include "lrsdp_function.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template <typename SDPType>
 LRSDPFunction<SDPType>::LRSDPFunction(const SDPType& sdp,
@@ -269,7 +268,6 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
   GradientImpl(function, coordinates, lambda, sigma, gradient);
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -18,8 +18,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Perform a back-tracking line search along the search direction to calculate a
@@ -264,8 +263,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
   return functionValue;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_LBFGS_LBFGS_IMPL_HPP
 

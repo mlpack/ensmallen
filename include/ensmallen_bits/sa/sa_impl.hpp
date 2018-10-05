@@ -15,8 +15,7 @@
 #include <mlpack/core/dists/laplace_distribution.hpp>
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename CoolingScheduleType>
 SA<CoolingScheduleType>::SA(
@@ -198,7 +197,6 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
   accept.zeros();
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

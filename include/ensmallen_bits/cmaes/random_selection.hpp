@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /*
  * Randomly select dataset points for use in the Evaluation step.
@@ -72,7 +71,6 @@ class RandomSelection
   double fraction;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -17,8 +17,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * RMSProp is an optimizer that utilizes the magnitude of recent gradients to
@@ -110,7 +109,6 @@ class RMSPropUpdate
   arma::mat meanSquaredGradient;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

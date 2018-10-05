@@ -15,8 +15,7 @@
 #ifndef ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
 #define ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Definition of the NoDecay class. Use this as a template for your own.
@@ -63,7 +62,6 @@ class NoDecay
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP

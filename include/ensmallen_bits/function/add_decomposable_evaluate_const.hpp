@@ -15,8 +15,7 @@
 
 #include "traits.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The AddDecomposableEvaluate mixin class will add a decomposable Evaluate()
@@ -161,7 +160,6 @@ class AddDecomposableEvaluateStatic<FunctionType, true, false>
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

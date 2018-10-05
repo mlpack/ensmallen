@@ -14,8 +14,7 @@
 
 #include <mlpack/core.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Cyclic descent policy for Stochastic Coordinate Descent(SCD). This
@@ -58,7 +57,6 @@ class CyclicDescent
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

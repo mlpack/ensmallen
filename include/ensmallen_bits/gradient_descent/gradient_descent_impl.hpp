@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 //! Optimize the function (minimize).
 template<typename FunctionType>
@@ -102,7 +101,6 @@ double GradientDescent::Optimize(
   return Optimize(function, iterate);
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

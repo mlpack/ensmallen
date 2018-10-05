@@ -16,8 +16,7 @@
 #include <mlpack/core/optimizers/spalera_sgd/spalera_stepsize.hpp>
 #include <mlpack/core/optimizers/sgd/decay_policies/no_decay.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * SPALeRA Stochastic Gradient Descent is a technique for minimizing a
@@ -219,8 +218,7 @@ class SPALeRASGD
   bool resetPolicy;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "spalera_sgd_impl.hpp"

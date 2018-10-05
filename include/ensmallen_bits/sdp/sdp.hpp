@@ -14,8 +14,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Specify an SDP in primal form
@@ -134,8 +133,7 @@ class SDP
   arma::vec denseB;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "sdp_impl.hpp"

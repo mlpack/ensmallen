@@ -15,8 +15,7 @@
 // In case it hasn't been included yet.
 #include "snapshot_sgdr.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename UpdatePolicyType>
 SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
@@ -91,7 +90,6 @@ double SnapshotSGDR<UpdatePolicyType>::Optimize(
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

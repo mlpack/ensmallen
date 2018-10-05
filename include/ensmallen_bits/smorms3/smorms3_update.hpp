@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * SMORMS3 is an optimizer that estimates a safe and optimal distance based on
@@ -104,7 +103,6 @@ class SMORMS3Update
   arma::mat mem, g, g2;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -15,8 +15,7 @@
 
 #include "traits.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The AddDecomposableEvaluateWithGradient mixin class will add a decomposable
@@ -255,7 +254,6 @@ class AddDecomposableEvaluateWithGradientStatic<FunctionType, true, false>
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

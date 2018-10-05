@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * NadaMax is an optimizer that combines the AdaMax and NAG.
@@ -163,7 +162,6 @@ class NadaMaxUpdate
   double iteration;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

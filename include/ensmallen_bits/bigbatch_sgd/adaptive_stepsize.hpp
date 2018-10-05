@@ -15,8 +15,7 @@
 #ifndef ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
 #define ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Definition of the adaptive stepize technique, a non-monotonic stepsize scheme
@@ -172,7 +171,6 @@ class AdaptiveStepsize
   double searchParameter;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_BIGBATCH_SGD_ADAPTIVE_STEPSIZE_HPP

@@ -14,8 +14,7 @@
 #ifndef ENSMALLEN_SGDR_SNAPSHOT_ENSEMBLES_HPP
 #define ENSMALLEN_SGDR_SNAPSHOT_ENSEMBLES_HPP
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Simulate a new warm-started run/restart once a number of epochs are
@@ -170,7 +169,6 @@ class SnapshotEnsembles
   std::vector<arma::mat> snapshots;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP

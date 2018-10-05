@@ -32,8 +32,7 @@
 #include "nadamax_update.hpp"
 #include "optimisticadam_update.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Adam is an optimizer that computes individual adaptive learning rates for
@@ -189,8 +188,7 @@ using NadaMax = AdamType<NadaMaxUpdate>;
 
 using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "adam_impl.hpp"

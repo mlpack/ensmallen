@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * This function is taken from "Practical Mathematical Optimization" (Snyman),
@@ -137,7 +136,6 @@ class LovaszThetaSDP
   arma::mat initialPoint;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP

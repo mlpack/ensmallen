@@ -14,8 +14,7 @@
 
 #include <mlpack/core.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Gradient Descent is a technique to minimize a function. To find a local
@@ -125,8 +124,7 @@ class GradientDescent
   double tolerance;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #include "gradient_descent_impl.hpp"
 

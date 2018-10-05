@@ -16,8 +16,7 @@
 #include "update_span.hpp"
 #include "constr_lpball.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Frank-Wolfe is a technique to minimize a continuously differentiable convex
@@ -161,8 +160,7 @@ class FrankWolfe
  */
 using OMP = FrankWolfe<ConstrLpBallSolver, UpdateSpan>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "frank_wolfe_impl.hpp"

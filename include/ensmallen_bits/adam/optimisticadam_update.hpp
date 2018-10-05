@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * OptimisticAdam is an optimizer which implements the Optimistic Adam 
@@ -142,7 +141,6 @@ class OptimisticAdamUpdate
   double iteration;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

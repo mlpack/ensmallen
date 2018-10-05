@@ -15,8 +15,7 @@
 #include <limits>
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename FunctionType>
 double GridSearch::Optimize(
@@ -83,7 +82,6 @@ void GridSearch::Optimize(
   }
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

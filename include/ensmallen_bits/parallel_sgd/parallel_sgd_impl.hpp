@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template <typename DecayPolicyType>
 ParallelSGD<DecayPolicyType>::ParallelSGD(
@@ -131,7 +130,6 @@ double ParallelSGD<DecayPolicyType>::Optimize(
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

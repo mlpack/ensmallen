@@ -18,8 +18,7 @@
 #include <mlpack/core/optimizers/function.hpp>
 #include "aug_lagrangian_function.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename LagrangianFunctionType>
 bool AugLagrangian::Optimize(LagrangianFunctionType& function,
@@ -146,8 +145,7 @@ bool AugLagrangian::Optimize(
   return false;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif // ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 

@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Implementation of the ConstantStep stepsize decay policy for parallel SGD.
@@ -49,7 +48,6 @@ class ConstantStep
   double step;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

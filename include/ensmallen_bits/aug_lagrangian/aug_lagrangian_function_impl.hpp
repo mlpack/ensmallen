@@ -17,8 +17,7 @@
 // In case it hasn't been included.
 #include "aug_lagrangian_function.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 // Initialize the AugLagrangianFunction.
 template<typename LagrangianFunction>
@@ -100,8 +99,7 @@ const arma::mat& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
   return function.GetInitialPoint();
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif
 

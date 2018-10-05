@@ -20,8 +20,7 @@
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 #include "cyclical_decay.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * This class is based on Mini-batch Stochastic Gradient Descent class and
@@ -135,8 +134,7 @@ class SGDR
   OptimizerType optimizer;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "sgdr_impl.hpp"

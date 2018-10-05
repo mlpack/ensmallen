@@ -17,8 +17,7 @@
 #include <mlpack/core/util/sfinae_utility.hpp>
 #include "traits.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The AddEvaluateWithGradient mixin class will provide an
@@ -220,7 +219,6 @@ class AddEvaluateWithGradientStatic<FunctionType, true, false>
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

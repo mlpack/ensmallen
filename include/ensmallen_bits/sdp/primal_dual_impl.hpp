@@ -31,8 +31,7 @@
 
 #include "primal_dual.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template <typename SDPType>
 PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp)
@@ -478,7 +477,6 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
   return primalObj;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

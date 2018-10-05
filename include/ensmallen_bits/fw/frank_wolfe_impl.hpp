@@ -17,8 +17,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 //! Constructor of the FrankWolfe class.
 template<
@@ -90,7 +89,6 @@ Optimize(FunctionType& function, arma::mat& iterate)
   return currentObjective;
 } // Optimize()
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

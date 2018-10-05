@@ -14,8 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Nesterov Momentum update policy for Stochastic Gradient Descent (SGD).
@@ -94,7 +93,6 @@ class NesterovMomentumUpdate
   double momentum;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -12,8 +12,7 @@
 #ifndef ENSMALLEN_SA_EXPONENTIAL_SCHEDULE_HPP
 #define ENSMALLEN_SA_EXPONENTIAL_SCHEDULE_HPP
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * The exponential cooling schedule cools the temperature T at every step
@@ -63,7 +62,6 @@ class ExponentialSchedule
   double lambda;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

@@ -19,8 +19,7 @@
 
 #include <mlpack/core/optimizers/function.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template<typename UpdatePolicyType, typename DecayPolicyType>
 SGD<UpdatePolicyType, DecayPolicyType>::SGD(
@@ -141,7 +140,6 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   return overallObjective;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

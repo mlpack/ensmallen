@@ -15,8 +15,7 @@
 
 #include "lrsdp.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 template <typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
@@ -36,7 +35,6 @@ double LRSDP<SDPType>::Optimize(arma::mat& coordinates)
   return function.Evaluate(coordinates);
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

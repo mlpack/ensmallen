@@ -20,8 +20,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * AdaMax is a variant of Adam, an optimizer that computes individual adaptive
@@ -139,7 +138,6 @@ class AdaMaxUpdate
   double iteration;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif

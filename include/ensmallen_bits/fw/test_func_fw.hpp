@@ -16,8 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Simple test function for classic Frank Wolfe Algorithm:

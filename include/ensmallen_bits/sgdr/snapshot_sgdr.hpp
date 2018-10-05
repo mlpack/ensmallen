@@ -21,8 +21,7 @@
 #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
 #include "snapshot_ensembles.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * This class is based on Mini-batch Stochastic Gradient Descent class and
@@ -165,8 +164,7 @@ class SnapshotSGDR
   OptimizerType optimizer;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "snapshot_sgdr_impl.hpp"

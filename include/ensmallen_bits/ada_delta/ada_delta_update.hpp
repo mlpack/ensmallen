@@ -15,8 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * Implementation of the AdaDelta update policy. AdaDelta is an optimizer that
@@ -122,7 +121,6 @@ class AdaDeltaUpdate
   arma::mat meanSquaredGradientDx;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 #endif
