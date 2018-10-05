@@ -1,39 +1,36 @@
-/**
- * @file scd_test.cpp
- * @author Shikhar Bhardwaj
- *
- * Test file for SCD (stochastic coordinate descent).
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/scd/scd.hpp>
-#include <mlpack/core/optimizers/scd/descent_policies/greedy_descent.hpp>
-#include <mlpack/core/optimizers/scd/descent_policies/cyclic_descent.hpp>
-#include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
-#include <mlpack/methods/softmax_regression/softmax_regression_function.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
-using namespace mlpack;
-using namespace mlpack::math;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
-using namespace mlpack::regression;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(SCDTest);
+
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/scd/scd.hpp>
+// #include <mlpack/core/optimizers/scd/descent_policies/greedy_descent.hpp>
+// #include <mlpack/core/optimizers/scd/descent_policies/cyclic_descent.hpp>
+// #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
+// #include <mlpack/methods/softmax_regression/softmax_regression_function.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::math;
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
+// using namespace mlpack::regression;
 
 /**
  * Test the correctness of the SCD implementation by using a dataset with a
  * precalculated minima.
  */
-BOOST_AUTO_TEST_CASE(PreCalcSCDTest)
+TEST_CASE("PreCalcSCDTest","[SCDTest]")
 {
   arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
   arma::Row<size_t> responses("1  1  0;");
@@ -45,14 +42,14 @@ BOOST_AUTO_TEST_CASE(PreCalcSCDTest)
 
   double objective = s.Optimize(f, iterate);
 
-  BOOST_REQUIRE_LE(objective, 0.055);
+  REQUIRE(objective <= 0.055);
 }
 
 /**
  * Test the correctness of the SCD implemenation by using the sparse test
  * function, with dijoint features which optimize to a precalculated minima.
  */
-BOOST_AUTO_TEST_CASE(DisjointFeatureTest)
+TEST_CASE("DisjointFeatureTest","[SCDTest]")
 {
   // The test function for parallel SGD should work with SCD, as the gradients
   // of the individual functions are projections into the ith dimension.
@@ -65,19 +62,19 @@ BOOST_AUTO_TEST_CASE(DisjointFeatureTest)
 
   // The final value of the objective function should be close to the optimal
   // value, that is the sum of values at the vertices of the parabolas.
-  BOOST_REQUIRE_CLOSE(result, 123.75, 0.01);
+  REQUIRE(result == Approx(123.75).epsilon(0.0001));
 
   // The co-ordinates should be the vertices of the parabolas.
-  BOOST_REQUIRE_CLOSE(iterate[0], 2, 0.02);
-  BOOST_REQUIRE_CLOSE(iterate[1], 1, 0.02);
-  BOOST_REQUIRE_CLOSE(iterate[2], 1.5, 0.02);
-  BOOST_REQUIRE_CLOSE(iterate[3], 4, 0.02);
+  REQUIRE(iterate[0] == Approx(2.0).epsilon(0.0002));
+  REQUIRE(iterate[1] == Approx(1.0).epsilon(0.0002));
+  REQUIRE(iterate[2] == Approx(1.5).epsilon(0.0002));
+  REQUIRE(iterate[3] == Approx(4.0).epsilon(0.0002));
 }
 
 /**
  * Test the greedy descent policy.
  */
-BOOST_AUTO_TEST_CASE(GreedyDescentTest)
+TEST_CASE("GreedyDescentTest","[SCDTest]")
 {
   // In the sparse test function, the given point has the maximum gradient at
   // the feature with index 2.
@@ -87,19 +84,19 @@ BOOST_AUTO_TEST_CASE(GreedyDescentTest)
 
   GreedyDescent descentPolicy;
 
-  BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f), 2);
+  REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f) == 2);
 
   // Changing the point under consideration, so that the maximum gradient is at
   // index 1.
   point[1] = 10;
 
-  BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f), 1);
+  REQUIRE(descentPolicy.DescentFeature(0, point, f) == 1);
 }
 
 /**
  * Test the cyclic descent policy.
  */
-BOOST_AUTO_TEST_CASE(CyclicDescentTest)
+TEST_CASE("CyclicDescentTest","[SCDTest]")
 {
   const size_t features = 10;
   struct DummyFunction
@@ -116,15 +113,14 @@ BOOST_AUTO_TEST_CASE(CyclicDescentTest)
 
   for (size_t i = 0; i < 15; ++i)
   {
-    BOOST_REQUIRE_EQUAL(descentPolicy.DescentFeature(i, arma::mat(), dummy), i %
-        features);
+    REQUIRE(descentPolicy.DescentFeature(i, arma::mat(), dummy) == (i % features));
   }
 }
 
 /**
  * Test the random descent policy.
  */
-BOOST_AUTO_TEST_CASE(RandomDescentTest)
+TEST_CASE("RandomDescentTest","[SCDTest]")
 {
   const size_t features = 10;
   struct DummyFunction
@@ -142,15 +138,15 @@ BOOST_AUTO_TEST_CASE(RandomDescentTest)
   for (size_t i = 0; i < 100; ++i)
   {
     size_t j = descentPolicy.DescentFeature(i, arma::mat(), dummy);
-    BOOST_REQUIRE_LT(j, features);
-    BOOST_REQUIRE_GE(j, 0);
+    REQUIRE(j < features);
+    REQUIRE(j >= 0);
   }
 }
 
 /**
  * Test that LogisticRegressionFunction::PartialGradient() works as expected.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionPartialGradientTest)
+TEST_CASE("LogisticRegressionFunctionPartialGradientTest","[SCDTest]")
 {
   // Evaluate the gradient and feature gradient and equate.
   arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
@@ -176,7 +172,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionPartialGradientTest)
 /**
  * Test that SoftmaxRegressionFunction::PartialGradient() works as expected.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionPartialGradientTest)
+TEST_CASE(SoftmaxRegressionFunctionPartialGradientTest,"[SCDTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 10;
@@ -214,5 +210,3 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionPartialGradientTest)
     CheckMatrices(gradient.col(j), arma::mat(fGrad.col(j)));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

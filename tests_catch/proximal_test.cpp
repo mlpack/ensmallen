@@ -1,31 +1,29 @@
-/**
- * @file proximal_test.cpp
- * @author Chenzhe Diao
- *
- * Test file for proximal optimizer.
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/proximal/proximal.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(ProximalTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/proximal/proximal.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+
+BOOST_AUTO_TEST_SUITE();
 
 /**
  * Approximate vector using a vector with l1 norm small than or equal to tau.
  */
-BOOST_AUTO_TEST_CASE(ProjectToL1)
+TEST_CASE("ProjectToL1","[ProximalTest]")
 {
   int D = 100;  // Dimension of the problem.
 
@@ -40,7 +38,7 @@ BOOST_AUTO_TEST_CASE(ProjectToL1)
   // v is inside the l1 ball, so the projection will not change v.
   vec v1 = v;
   Proximal::ProjectToL1Ball(v1, tau1);
-  BOOST_REQUIRE_SMALL(norm(v - v1, 2), 1e-10);
+  REQUIRE(norm(v - v1, 2) == Approx(0.0).margin(1e-10));
 
   // v is outside the l1 ball, so the projection should find the closest.
   vec v2 = v;
@@ -54,14 +52,14 @@ BOOST_AUTO_TEST_CASE(ProjectToL1)
 
     double distanceNew = norm(vSurface - v, 2);
 
-    BOOST_REQUIRE_GE(distanceNew, distance);
+    REQUIRE(distanceNew >= distance);
   }
 }
 
 /**
  * Approximate a vector with a tau-sparse vector.
  */
-BOOST_AUTO_TEST_CASE(ProjectToL0)
+TEST_CASE("ProjectToL0","[ProximalTest]")
 {
   int D = 100;  // Dimension of the problem.
   int tau = 25; // Sparsity requirement.
@@ -84,8 +82,6 @@ BOOST_AUTO_TEST_CASE(ProjectToL0)
     vNew.elem(indices) = v.elem(indices);
 
     double distanceNew = norm(v - vNew, 2);
-    BOOST_REQUIRE_GE(distanceNew, distance);
+    REQUIRE(distanceNew >= distance);
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

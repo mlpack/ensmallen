@@ -1,25 +1,24 @@
-/**
- * @file sdp_primal_dual_test.cpp
- * @author Stephen Tu
- *
- *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/sdp/sdp.hpp>
-#include <mlpack/core/optimizers/sdp/primal_dual.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::distribution;
-using namespace mlpack::neighbor;
+using namespace ens;
+
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/sdp/sdp.hpp>
+// #include <mlpack/core/optimizers/sdp/primal_dual.hpp>
+// #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+//   
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+// using namespace mlpack::distribution;
+// using namespace mlpack::neighbor;
 
 class UndirectedGraph
 {
@@ -218,8 +217,6 @@ static bool CheckKKT(const SDPType& sdp,
   return success;
 }
 
-BOOST_AUTO_TEST_SUITE(SdpPrimalDualTest);
-
 static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
 {
   arma::mat X0, Z0;
@@ -258,7 +255,7 @@ static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
-BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
+TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
 {
   auto sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
   SolveMaxCutFeasibleSDP(sdp);
@@ -275,7 +272,7 @@ BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
   SolveMaxCutPositiveSDP(sdp);
 }
 
-BOOST_AUTO_TEST_CASE(SmallLovaszThetaSdp)
+TEST_CASE("SmallLovaszThetaSdp","[SdpPrimalDualTest]")
 {
   UndirectedGraph g;
   UndirectedGraph::LoadFromEdges(g, "johnson8-4-4.csv", true);
@@ -404,7 +401,7 @@ RandomFullRowRankMatrix(size_t rows, size_t cols)
  *          [       0                  1             t ]
  *
  */
-BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
+TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
 {
   // Sometimes, the optimization can fail randomly, so we will run the test
   // three times and make sure it succeeds at least once.
@@ -425,7 +422,7 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 
   success = false;
   for (size_t i = 0; i < 3; ++i)
@@ -444,7 +441,7 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
@@ -458,7 +455,7 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
  *          X >= 0
  *
  */
-BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
+TEST_CASE("CorrelationCoeffToySdp","[SdpPrimalDualTest]")
 {
   // The semi-definite constraint looks like:
   //
@@ -553,96 +550,6 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
   arma::vec ysparse, ydense;
   const double obj = solver.Optimize(X, ysparse, ydense, Z);
   bool success = CheckKKT(sdp, X, ysparse, ydense, Z);
-  BOOST_REQUIRE_EQUAL(success, true);
-  BOOST_REQUIRE_CLOSE(obj, 2 * (-0.978), 1e-3);
+  REQUIRE(success == true);
+  REQUIRE(obj == Approx(2 * (-0.978)).epsilon(1e-5));
 }
-
-// /**
-// * Maximum variance unfolding (MVU) SDP to learn the unrolled gram matrix. For
-// * the SDP formulation, see:
-// *
-// *   Unsupervised learning of image manifolds by semidefinite programming.
-// *   Kilian Weinberger and Lawrence Saul. CVPR 04.
-// *   http://repository.upenn.edu/cgi/viewcontent.cgi?article=1000&context=cis_papers
-// *
-// * @param origData origDim x numPoints
-// * @param numNeighbors
-// */
-// static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
-//                                                size_t numNeighbors)
-// {
-//  const size_t numPoints = origData.n_cols;
-
-//  assert(numNeighbors <= numPoints);
-
-//  arma::Mat<size_t> neighbors;
-//  arma::mat distances;
-//  KNN knn(origData);
-//  knn.Search(numNeighbors, neighbors, distances);
-
-//  SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
-//  sdp.C().eye(numPoints, numPoints);
-//  sdp.C() *= -1;
-//  sdp.DenseA()[0].ones(numPoints, numPoints);
-//  sdp.DenseB()[0] = 0;
-
-//  for (size_t i = 0; i < neighbors.n_cols; ++i)
-//  {
-//    for (size_t j = 0; j < numNeighbors; ++j)
-//    {
-//      // This is the index of the constraint.
-//      const size_t index = (i * numNeighbors) + j;
-
-//      arma::sp_mat& aRef = sdp.SparseA()[index];
-//      aRef.zeros(numPoints, numPoints);
-
-//      // A_ij(i, i) = 1.
-//      aRef(i, i) = 1;
-
-//      // A_ij(i, j) = -1.
-//      aRef(i, neighbors(j, i)) = -1;
-
-//      // A_ij(j, i) = -1.
-//      aRef(neighbors(j, i), i) = -1;
-
-//      // A_ij(j, j) = 1.
-//      aRef(neighbors(j, i), neighbors(j, i)) = 1;
-
-//      // The constraint b_ij is the distance between these two points.
-//      sdp.SparseB()[index] = distances(j, i);
-//    }
-//  }
-
-//  return sdp;
-// }
-
-// /**
-// * Maximum variance unfolding
-// *
-// * Test doesn't work, because the constraint matrices are not linearly
-// * independent.
-// */
-// BOOST_AUTO_TEST_CASE(SmallMvuSdp)
-// {
-//  const size_t n = 20;
-
-//  arma::mat origData(3, n);
-
-//  // sample n random points on 3-dim unit sphere
-//  GaussianDistribution gauss(3);
-//  for (size_t i = 0; i < n; i++)
-//  {
-//    // how european of them
-//    origData.col(i) = arma::normalise(gauss.Random());
-//  }
-
-//  auto sdp = ConstructMvuSDP(origData, 5);
-
-//  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
-//  arma::mat X, Z;
-//  arma::vec ysparse, ydense;
-//  const auto p = solver.Optimize(X, ysparse, ydense, Z);
-//  BOOST_REQUIRE(p.first);
-// }
-
-BOOST_AUTO_TEST_SUITE_END();

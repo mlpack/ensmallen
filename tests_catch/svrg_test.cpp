@@ -6,15 +6,20 @@
 // http://www.opensource.org/licenses/BSD-3-Clause
 
 #include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(SVRGTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/svrg/svrg.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
 
 /**
  * Run SVRG on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(SVRGLogisticRegressionTest)
+TEST_CASE("SVRGLogisticRegressionTest", "[SVRGTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -30,17 +35,19 @@ BOOST_AUTO_TEST_CASE(SVRGLogisticRegressionTest)
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(acc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
+    // REQUIRE(acc == Approx(100.0).scale(0.015)); // 1.5% error tolerance.
+    // TODO: not sure whether .epsilon() or .scale() is more appropriate
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
   }
 }
 
 /**
  * Run SVRG_BB on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(SVRGBBLogisticRegressionTest)
+TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRGTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -57,11 +64,9 @@ BOOST_AUTO_TEST_CASE(SVRGBBLogisticRegressionTest)
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(acc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();
