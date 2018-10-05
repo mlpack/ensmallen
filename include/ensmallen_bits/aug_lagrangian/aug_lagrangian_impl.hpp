@@ -19,6 +19,13 @@
 
 namespace ens {
 
+inline AugLagrangian::AugLagrangian() :
+    lbfgsInternal(),
+    lbfgs(lbfgsInternal)
+{
+  lbfgs.MaxIterations() = 1000;
+}
+
 template<typename LagrangianFunctionType>
 bool AugLagrangian::Optimize(LagrangianFunctionType& function,
                              arma::mat& coordinates,
