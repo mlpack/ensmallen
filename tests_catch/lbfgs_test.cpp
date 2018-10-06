@@ -1,34 +1,29 @@
-/**
- * @file lbfgs_test.cpp
- *
- * Tests the L-BFGS optimizer on a couple test functions.
- *
- * @author Ryan Curtin (gth671b@mail.gatech.edu)
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
-#include <mlpack/core/optimizers/problems/rosenbrock_wood_function.hpp>
-#include <mlpack/core/optimizers/problems/colville_function.hpp>
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+using namespace ens;
 
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
-
-BOOST_AUTO_TEST_SUITE(LBFGSTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+// 
+// #include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
+// #include <mlpack/core/optimizers/problems/rosenbrock_wood_function.hpp>
+// #include <mlpack/core/optimizers/problems/colville_function.hpp>
+// 
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
 
 /**
  * Tests the L-BFGS optimizer using the Rosenbrock Function.
  */
-BOOST_AUTO_TEST_CASE(RosenbrockFunctionTest)
+TEST_CASE("RosenbrockFunctionTest", "[LBFGSTest]")
 {
   RosenbrockFunction f;
   L_BFGS lbfgs;
@@ -40,15 +35,15 @@ BOOST_AUTO_TEST_CASE(RosenbrockFunctionTest)
 
   double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_SMALL(finalValue, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[1], 1.0, 1e-5);
+  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
+  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Tests the L-BFGS optimizer using the Colville Function.
  */
-BOOST_AUTO_TEST_CASE(ColvilleFunctionTest)
+TEST_CASE("ColvilleFunctionTest", "[LBFGSTest]")
 {
   ColvilleFunction f;
   L_BFGS lbfgs;
@@ -56,16 +51,16 @@ BOOST_AUTO_TEST_CASE(ColvilleFunctionTest)
 
   arma::vec coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(f, coords))
-    BOOST_FAIL("L-BFGS optimization reported failure.");
+    BOOST_FAIL("L-BFGS optimization reported failure.");  // TODO
 
-  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[1], 1.0, 1e-5);
+  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Tests the L-BFGS optimizer using the Wood Function.
  */
-BOOST_AUTO_TEST_CASE(WoodFunctionTest)
+TEST_CASE("WoodFunctionTest", "[LBFGSTest]")
 {
   WoodFunction f;
   L_BFGS lbfgs;
@@ -77,11 +72,11 @@ BOOST_AUTO_TEST_CASE(WoodFunctionTest)
 
   double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_SMALL(finalValue, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[1], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[2], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[3], 1.0, 1e-5);
+  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
+  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords[2] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords[3] == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -89,7 +84,7 @@ BOOST_AUTO_TEST_CASE(WoodFunctionTest)
  * is actually multiple tests, increasing the dimension by powers of 2, from 4
  * dimensions to 1024 dimensions.
  */
-BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunctionTest)
+TEST_CASE("GeneralizedRosenbrockFunctionTest", "[LBFGSTest]")
 {
   for (int i = 2; i < 10; i++)
   {
@@ -102,14 +97,14 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunctionTest)
 
     arma::vec coords = f.GetInitialPoint();
     if (!lbfgs.Optimize(f, coords))
-      BOOST_FAIL("L-BFGS optimization reported failure.");
+      BOOST_FAIL("L-BFGS optimization reported failure.");  // TODO
 
     double finalValue = f.Evaluate(coords);
 
     // Test the output to make sure it is correct.
-    BOOST_REQUIRE_SMALL(finalValue, 1e-5);
+    REQUIRE(finalValue == Approx(0.0).margin(1e-5));
     for (int j = 0; j < dim; j++)
-      BOOST_REQUIRE_CLOSE(coords[j], 1.0, 1e-5);
+      REQUIRE(coords[j] == Approx(1.0).epsilon(1e-7));
   }
 }
 
@@ -117,7 +112,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunctionTest)
  * Tests the L-BFGS optimizer using the Rosenbrock-Wood combined function.  This
  * is a test on optimizing a matrix of coordinates.
  */
-BOOST_AUTO_TEST_CASE(RosenbrockWoodFunctionTest)
+TEST_CASE("RosenbrockWoodFunctionTest", "[LBFGSTest]")
 {
   RosenbrockWoodFunction f;
   L_BFGS lbfgs;
@@ -129,12 +124,10 @@ BOOST_AUTO_TEST_CASE(RosenbrockWoodFunctionTest)
 
   double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_SMALL(finalValue, 1e-5);
+  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
   for (int row = 0; row < 4; row++)
   {
-    BOOST_REQUIRE_CLOSE((coords(row, 0)), 1.0, 1e-5);
-    BOOST_REQUIRE_CLOSE((coords(row, 1)), 1.0, 1e-5);
+    REQUIRE((coords(row, 0)) == Approx(1.0).epsilon(1e-7));
+    REQUIRE((coords(row, 1)) == Approx(1.0).epsilon(1e-7));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();
