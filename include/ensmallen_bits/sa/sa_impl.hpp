@@ -90,14 +90,14 @@ double SA<CoolingScheduleType>::Optimize(FunctionType& function,
     // Terminate, if possible.
     if (frozenCount >= maxToleranceSweep * moveCtrlSweep * iterate.n_elem)
     {
-      Log::Debug << "SA: minimized within tolerance " << tolerance << " for "
+      Info << "SA: minimized within tolerance " << tolerance << " for "
           << maxToleranceSweep << " sweeps after " << i << " iterations; "
           << "terminating optimization." << std::endl;
       return energy;
     }
   }
 
-  Log::Debug << "SA: maximum iterations (" << maxIterations << ") reached; "
+  Warn << "SA: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
   return energy;
 }
@@ -129,7 +129,7 @@ void SA<CoolingScheduleType>::GenerateMove(
   // MoveControl() is derived for the Laplace distribution.
 
   // Sample from a Laplace distribution with scale parameter moveSize(idx).
-  const double unif = 2.0 * math::Random() - 1.0;
+  const double unif = 2.0 * arma::randu() - 1.0;
   const double move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
       (-moveSize(idx) * std::log(1 - unif));
 
@@ -137,7 +137,7 @@ void SA<CoolingScheduleType>::GenerateMove(
   energy = function.Evaluate(iterate);
   // According to the Metropolis criterion, accept the move with probability
   // min{1, exp(-(E_new - E_old) / T)}.
-  const double xi = math::Random();
+  const double xi = arma::randu();
   const double delta = energy - prevEnergy;
   const double criterion = std::exp(-delta / temperature);
   if (delta <= 0. || criterion > xi)

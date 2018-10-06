@@ -125,7 +125,7 @@ class ConstrLpBallSolver
     }
     else
     {
-      Log::Fatal << "Wrong norm p!" << std::endl;
+      Warn << "Wrong norm p!" << std::endl;
     }
 
     return;

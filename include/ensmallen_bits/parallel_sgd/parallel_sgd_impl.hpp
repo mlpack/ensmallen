@@ -60,12 +60,12 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     overallObjective = function.Evaluate(iterate);
 
     // Output current objective function.
-    Log::Info << "Parallel SGD: iteration " << i << ", objective "
+    Info << "Parallel SGD: iteration " << i << ", objective "
       << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "Parallel SGD: converged to " << overallObjective
+      Warn << "Parallel SGD: converged to " << overallObjective
         << "; terminating with failure. Try a smaller step size?"
         << std::endl;
       return overallObjective;
@@ -73,7 +73,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
+      Info << "SGD: minimized within tolerance " << tolerance << "; "
         << "terminating optimization." << std::endl;
       return overallObjective;
     }
@@ -126,7 +126,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     }
   }
 
-  Log::Info << "\n Parallel SGD terminated with objective : "
+  Info << "\n Parallel SGD terminated with objective : "
     << overallObjective << std::endl;
   return overallObjective;
 }

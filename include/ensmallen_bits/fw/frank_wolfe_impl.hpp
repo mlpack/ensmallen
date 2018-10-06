@@ -62,7 +62,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
     currentObjective = f.EvaluateWithGradient(iterate, gradient);
 
     // Output current objective function.
-    Log::Info << "FrankWolfe::Optimize(): iteration " << i << ", objective "
+    Info << "FrankWolfe::Optimize(): iteration " << i << ", objective "
         << currentObjective << "." << std::endl;
 
     // Solve linear constrained problem, solution saved in s.
@@ -72,7 +72,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
     gap = std::fabs(dot(iterate - s, gradient));
     if (gap < tolerance)
     {
-      Log::Info << "FrankWolfe::Optimize(): minimized within tolerance "
+      Info << "FrankWolfe::Optimize(): minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
       return currentObjective;
     }
@@ -84,7 +84,7 @@ Optimize(FunctionType& function, arma::mat& iterate)
     iterate = std::move(iterateNew);
   }
 
-  Log::Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
+  Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
   return currentObjective;
 } // Optimize()

@@ -79,8 +79,8 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   // initializing helper variables.
   fitnessValues.set_size(populationSize);
 
-  // Log::Info << "CNE initialized successfully. Optimization started."
-  //     << std::endl;
+  Info << "CNE initialized successfully. Optimization started."
+      << std::endl;
 
   // Find the fitness before optimization using given iterate parameters.
   size_t lastBestFitness = function.Evaluate(iterate);
@@ -98,8 +98,8 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
        fitnessValues[i] = function.Evaluate(iterate);
     }
 
-    // Log::Info << "Generation number: " << gen << " best fitness = "
-    //     << fitnessValues.min() << std::endl;
+    Info << "Generation number: " << gen << " best fitness = "
+        << fitnessValues.min() << std::endl;
 
     // Create next generation of species.
     Reproduce();
@@ -107,17 +107,17 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     // Check for termination criteria.
     if (tolerance >= fitnessValues.min())
     {
-      // Log::Info << "CNE::Optimize(): terminating. Given fitness criteria "
-      //     << tolerance << " > " << fitnessValues.min() << "." << std::endl;
+      Info << "CNE::Optimize(): terminating. Given fitness criteria "
+          << tolerance << " > " << fitnessValues.min() << "." << std::endl;
       break;
     }
 
     // Check for termination criteria.
     if (lastBestFitness - fitnessValues.min() < objectiveChange)
     {
-      // Log::Info << "CNE::Optimize(): terminating. Fitness history change "
-      //     << (lastBestFitness - fitnessValues.min())
-      //     << " < " << objectiveChange << "." << std::endl;
+      Info << "CNE::Optimize(): terminating. Fitness history change "
+          << (lastBestFitness - fitnessValues.min())
+          << " < " << objectiveChange << "." << std::endl;
       break;
     }
 

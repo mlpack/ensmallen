@@ -52,12 +52,12 @@ double GradientDescent::Optimize(
     overallObjective = f.EvaluateWithGradient(iterate, gradient);
 
     // Output current objective function.
-    Log::Info << "Gradient Descent: iteration " << i << ", objective "
+    Info << "Gradient Descent: iteration " << i << ", objective "
         << overallObjective << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Log::Warn << "Gradient Descent: converged to " << overallObjective
+      Warn << "Gradient Descent: converged to " << overallObjective
           << "; terminating" << " with failure.  Try a smaller step size?"
           << std::endl;
       return overallObjective;
@@ -65,7 +65,7 @@ double GradientDescent::Optimize(
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Log::Info << "Gradient Descent: minimized within tolerance "
+      Info << "Gradient Descent: minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
       return overallObjective;
     }
@@ -77,7 +77,7 @@ double GradientDescent::Optimize(
     iterate -= stepSize * gradient;
   }
 
-  Log::Info << "Gradient Descent: maximum iterations (" << maxIterations
+  Info << "Gradient Descent: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
   return overallObjective;
 }

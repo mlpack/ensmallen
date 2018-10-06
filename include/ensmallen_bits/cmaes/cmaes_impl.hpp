@@ -256,20 +256,20 @@ double CMAES<SelectionPolicyType>::Optimize(
     }
 
     // Output current objective function.
-    // Log::Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
-    //     << "." << std::endl;
+    Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
+        << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      // Log::Warn << "CMA-ES: converged to " << overallObjective << "; "
-      //     << "terminating with failure.  Try a smaller step size?" << std::endl;
+      Warn << "CMA-ES: converged to " << overallObjective << "; "
+          << "terminating with failure.  Try a smaller step size?" << std::endl;
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      // Log::Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
-      //     << "terminating optimization." << std::endl;
+      Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
+          << "terminating optimization." << std::endl;
       return overallObjective;
     }
 

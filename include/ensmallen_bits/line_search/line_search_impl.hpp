@@ -59,7 +59,7 @@ double LineSearch::Optimize(FunctionType& function,
     // secant should always >=0 for convex function.
     if (secant < 0.0)
     {
-      Log::Fatal << "LineSearchSecant: Function is not convex!" << std::endl;
+      Warn << "LineSearchSecant: Function is not convex!" << std::endl;
       x2 = x1;
       return function.Evaluate(x1);
     }
@@ -77,14 +77,14 @@ double LineSearch::Optimize(FunctionType& function,
 
     if (std::fabs(derivative) < tolerance)
     {
-      Log::Info << "LineSearchSecant: minimized within tolerance "
+      Info << "LineSearchSecant: minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
       x2 = (1 - gamma) * x1 + gamma * x2;
       return f.Evaluate(x2);
     }
   }
 
-  Log::Info << "LineSearchSecant: maximum iterations (" << maxIterations
+  Info << "LineSearchSecant: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
 
   x2 = (1 - gamma) * x1 + gamma * x2;

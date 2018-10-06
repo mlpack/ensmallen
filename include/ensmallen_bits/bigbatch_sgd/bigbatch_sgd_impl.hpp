@@ -69,21 +69,21 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
-      // Log::Info << "Big-batch SGD: iteration " << i << ", objective "
-      //     << overallObjective << "." << std::endl;
+      Info << "Big-batch SGD: iteration " << i << ", objective "
+          << overallObjective << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        // Log::Warn << "Big-batch SGD: converged to " << overallObjective
-        //     << "; terminating with failure.  Try a smaller step size?"
-        //     << std::endl;
+        Warn << "Big-batch SGD: converged to " << overallObjective
+            << "; terminating with failure.  Try a smaller step size?"
+            << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        // Log::Info << "Big-batch SGD: minimized within tolerance " << tolerance
-        //     << "; terminating optimization." << std::endl;
+        Info << "Big-batch SGD: minimized within tolerance " << tolerance
+            << "; terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -183,8 +183,8 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
     currentFunction += effectiveBatchSize;
   }
 
-  // Log::Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
-  //     << "reached; terminating optimization." << std::endl;
+  Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
+      << "reached; terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;
