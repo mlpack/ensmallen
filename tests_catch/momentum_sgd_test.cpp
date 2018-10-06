@@ -1,33 +1,29 @@
-/**
- * @file momentum_sgd_test.cpp
- * @author Ryan Curtin
- *
- * Test file for MomentumSGD (stochastic gradient descent with momentum updates).
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/sgd/sgd.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/gradient_clipping.hpp>
-#include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
-#include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
-#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(MomentumSGDTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/sgd/sgd.hpp>
+// #include <mlpack/core/optimizers/sgd/update_policies/gradient_clipping.hpp>
+// #include <mlpack/core/optimizers/sgd/update_policies/momentum_update.hpp>
+// #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
+// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
 
-BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
+TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
 {
   SGDTestFunction f;
   MomentumUpdate momentumUpdate(0.7);
@@ -36,10 +32,10 @@ BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_CLOSE(result, -1.0, 0.15);
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.015);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-6);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-6);
+  REQUIRE(result == Approx(-1.0).epsilon(0.0015));
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.015));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-6));
 
   // Compare with SGD with vanilla update.
   SGDTestFunction f1;
@@ -49,15 +45,15 @@ BOOST_AUTO_TEST_CASE(MomentumSGDSpeedUpTestFunction)
   double result1 = s1.Optimize(f1, coordinates1);
 
   // Result doesn't converge in 2500000 iterations.
-  BOOST_REQUIRE_GT(result1 + 1.0, 0.05);
-  BOOST_REQUIRE_GE(coordinates1[0], 0.015);
-  BOOST_REQUIRE_SMALL(coordinates1[1], 1e-6);
-  BOOST_REQUIRE_SMALL(coordinates1[2], 1e-6);
+  REQUIRE((result1 + 1.0) > 0.05);
+  REQUIRE(coordinates1[0] >= 0.015);
+  REQUIRE(coordinates1[1] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates1[2] == Approx(0.0).margin(1e-6));
 
-  BOOST_REQUIRE_LE(result, result1);
+  REQUIRE(result < result1);
 }
 
-BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
+TEST_CASE("GeneralizedRosenbrockTest", "[MomentumSGDTest]")
 {
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
@@ -70,10 +66,8 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
 
-    BOOST_REQUIRE_SMALL(result, 1e-4);
+    REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
+      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

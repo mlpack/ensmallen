@@ -1,24 +1,21 @@
-/**
- * @file lrsdp_test.cpp
- * @author Ryan Curtin
- *
- * Tests for LR-SDP (core/optimizers/sdp/).
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/sdp/lrsdp.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace arma;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(LRSDPTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/sdp/lrsdp.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
 
 /**
  * Create a Lovasz-Theta initial point.
@@ -91,11 +88,11 @@ void SetupLovaszTheta(const arma::mat& edges,
  * johnson8-4-4.co test case for Lovasz-Theta LRSDP.
  * See Monteiro and Burer 2004.
  */
-BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
+TEST_CASE("Johnson844LovaszThetaSDP", "[LRSDPTest]")
 {
   // Load the edges.
   arma::mat edges;
-  data::Load("johnson8-4-4.csv", edges, true);
+  data::Load("johnson8-4-4.csv", edges, true);  // TODO: replace with armadillo .load() ?
 
   // The LRSDP itself and the initial point.
   arma::mat coordinates;
@@ -109,17 +106,17 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
   double finalValue = lovasz.Optimize(coordinates);
 
   // Final value taken from Monteiro + Burer 2004.
-  BOOST_REQUIRE_CLOSE(finalValue, -14.0, 1e-5);
+  REQUIRE(finalValue == Approx(-14.0).epsilon(1e-7));
 
   // Now ensure that all the constraints are satisfied.
   arma::mat rrt = coordinates * trans(coordinates);
-  BOOST_REQUIRE_CLOSE(trace(rrt), 1.0, 1e-5);
+  REQUIRE(trace(rrt) == Approx(1.0).epsilon(1e-7));
 
   // All those edge constraints...
   for (size_t i = 0; i < edges.n_cols; ++i)
   {
-    BOOST_REQUIRE_SMALL(rrt(edges(0, i), edges(1, i)), 1e-5);
-    BOOST_REQUIRE_SMALL(rrt(edges(1, i), edges(0, i)), 1e-5);
+    REQUIRE(rrt(edges(0, i), edges(1, i)) == Approx(0.0).margin(1e-5));
+    REQUIRE(rrt(edges(1, i), edges(0, i)) == Approx(0.0).margin(1e-5));
   }
 }
 
@@ -146,7 +143,7 @@ void CreateSparseGraphLaplacian(const arma::mat& edges,
   }
 }
 
-BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
+TEST_CASE("ErdosRenyiRandomGraphMaxCutSDP", "[LRSDPTest]")
 {
   // Load the edges.
   arma::mat edges;
@@ -182,11 +179,11 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
 
   for (size_t i = 0; i < laplacian.n_rows; ++i)
   {
-    BOOST_REQUIRE_CLOSE(rrt(i, i), 1., 1e-5);
+    REQUIRE(rrt(i, i) == Approx(1.0).epsilon(1e-7));
   }
 
   // Final value taken by solving with Mosek
-  BOOST_REQUIRE_CLOSE(finalValue, -3672.7, 1e-1);
+  REQUIRE(finalValue == Approx(-3672.7).epsilon(1e-3));
 }
 
 /*
@@ -216,12 +213,12 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
  *    SIAM Review 2010.
  *
  */
-BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
+TEST_CASE("GaussianMatrixSensingSDP", "[LRSDPTest]")
 {
   arma::mat Xorig, A;
 
   // read the unknown matrix X and the measurement matrices A_i in
-  data::Load("sensing_X.csv", Xorig, true, false);
+  data::Load("sensing_X.csv", Xorig, true, false);  // TODO: replace with armadillo .load() ?
   data::Load("sensing_A.csv", A, true, false);
 
   const size_t m = Xorig.n_rows;
@@ -259,7 +256,7 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   }
 
   double finalValue = sensing.Optimize(coordinates);
-  BOOST_REQUIRE_CLOSE(finalValue, 44.7550132629, 1e-1);
+  REQUIRE(finalValue == Approx(44.7550132629).epsilon(1e-3));
 
   const arma::mat rrt = coordinates * trans(coordinates);
   for (size_t i = 0; i < p; ++i)
@@ -267,51 +264,11 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
     const arma::mat Ai = arma::reshape(A.row(i), n, m);
     const double measurement =
         arma::dot(trans(Ai), rrt(blockRows, blockCols));
-    BOOST_REQUIRE_CLOSE(measurement, b(i), 0.05);
+    REQUIRE(measurement == Approx(b(i)).epsilon(0.0005));
   }
 
   // check matrix recovery
   const double err = arma::norm(Xorig - rrt(blockRows, blockCols), "fro") /
       arma::norm(Xorig, "fro");
-  BOOST_REQUIRE_SMALL(err, 0.05);
+  REQUIRE(err == Approx(0.0).margin(0.05));
 }
-
-/**
- * keller4.co test case for Lovasz-Theta LRSDP.
- * This is commented out because it takes a long time to run.
- * See Monteiro and Burer 2004.
- *
-BOOST_AUTO_TEST_CASE(Keller4LovaszThetaSDP)
-{
-  // Load the edges.
-  arma::mat edges;
-  data::Load("keller4.csv", edges, true);
-
-  // The LRSDP itself and the initial point.
-  arma::mat coordinates;
-
-  CreateLovaszThetaInitialPoint(edges, coordinates);
-
-  LRSDP<SDP<arma::mat>> lovasz(edges.n_cols, coordinates);
-
-  SetupLovaszTheta(edges, lovasz);
-
-  double finalValue = lovasz.Optimize(coordinates);
-
-  // Final value taken from Monteiro + Burer 2004.
-  BOOST_REQUIRE_CLOSE(finalValue, -14.013, 1e-2); // Not as much precision...
-  // The SB method came to -14.013, but M&B's method only came to -14.005.
-
-  // Now ensure that all the constraints are satisfied.
-  arma::mat rrt = coordinates * trans(coordinates);
-  BOOST_REQUIRE_CLOSE(trace(rrt), 1.0, 1e-5);
-
-  // All those edge constraints...
-  for (size_t i = 0; i < edges.n_cols; ++i)
-  {
-    BOOST_REQUIRE_SMALL(rrt(edges(0, i), edges(1, i)), 1e-3);
-    BOOST_REQUIRE_SMALL(rrt(edges(1, i), edges(0, i)), 1e-3);
-  }
-}*/
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,34 +1,28 @@
-/**
- * @file line_search_test.cpp
- * @author Chenzhe Diao
- *
- * Test file for line search optimizer.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/line_search/line_search.hpp>
-#include <mlpack/core/optimizers/fw/test_func_fw.hpp>
-
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(LineSearchTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/line_search/line_search.hpp>
+// #include <mlpack/core/optimizers/fw/test_func_fw.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
 
 /**
  * Simple test of Line Search with TestFuncFW function.
  */
-BOOST_AUTO_TEST_CASE(FuncFWTest)
+TEST_CASE("FuncFWTest", "[LineSearchTest]")
 {
   vec x1 = zeros<vec>(3);
   vec x2;
@@ -39,11 +33,8 @@ BOOST_AUTO_TEST_CASE(FuncFWTest)
 
   double result = s.Optimize(f, x1, x2);
 
-  BOOST_REQUIRE_SMALL(result, 1e-10);
-  BOOST_REQUIRE_SMALL(x2[0] - 0.1, 1e-10);
-  BOOST_REQUIRE_SMALL(x2[1] - 0.2, 1e-10);
-  BOOST_REQUIRE_SMALL(x2[2] - 0.3, 1e-10);
+  REQUIRE(result == Approx(0.0).margin(1e-10));
+  REQUIRE((x2[0] - 0.1) == Approx(0.0).margin(1e-10));
+  REQUIRE((x2[1] - 0.2) == Approx(0.0).margin(1e-10));
+  REQUIRE((x2[2] - 0.3) == Approx(0.0).margin(1e-10));
 }
-
-
-BOOST_AUTO_TEST_SUITE_END();
