@@ -65,19 +65,19 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
       overallObjective = function.Evaluate(iterate);
 
       // Output current objective function.
-      Log::Info << "SCD: iteration " << i << ", objective " << overallObjective
+      Info << "SCD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Log::Warn << "SCD: converged to " << overallObjective << "; terminating"
+        Warn << "SCD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Log::Info << "SCD: minimized within tolerance " << tolerance << "; "
+        Info << "SCD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
         return overallObjective;
       }
@@ -86,7 +86,7 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
     }
   }
 
-  Log::Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
+  Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
   // Calculate and return final objective.

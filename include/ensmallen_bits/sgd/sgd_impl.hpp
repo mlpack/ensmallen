@@ -76,8 +76,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
-//      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
-//          << "." << std::endl;
+      Info << "SGD: iteration " << i << ", objective " << overallObjective
+         << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {

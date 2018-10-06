@@ -54,7 +54,7 @@ class RandomDescent
                         const arma::mat& /* iterate */,
                         const ResolvableFunctionType& function)
   {
-    return mlpack::math::RandInt(function.NumFeatures());
+    return arma::randi<size_t>(arma::distr_param(0, function.NumFeatures()));
   }
 };
 
