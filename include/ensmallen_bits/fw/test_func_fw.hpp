@@ -57,7 +57,6 @@ class TestFuncFW
   }
 };
 
-}  // namespace optimization
-}  // namespace mlpack
+} // namespace ens
 
 #endif

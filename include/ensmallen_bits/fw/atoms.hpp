@@ -214,7 +214,7 @@ class Atoms
   //! when an atom is added.
   arma::vec atomSqTerm;
 }; // class Atoms
-}  // namespace optimization
-}  // namespace mlpack
+
+}  // namespace ens
 
 #endif
