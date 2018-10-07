@@ -25,9 +25,11 @@ LRSDPFunction<SDPType>::LRSDPFunction(const SDPType& sdp,
     initialPoint(initialPoint)
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
-    Log::Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
+  {
+    Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
+  }
 
   // Initialize R*R^T matrix.
   rrt = initialPoint * trans(initialPoint);
@@ -41,9 +43,11 @@ LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
     initialPoint(initialPoint)
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
-    Log::Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
+  {
+    Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
+  }
 
   // Initialize R*R^T matrix.
   rrt = initialPoint * trans(initialPoint);
@@ -63,8 +67,8 @@ template <typename SDPType>
 void LRSDPFunction<SDPType>::Gradient(const arma::mat& /* coordinates */,
                                       arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::Gradient() not implemented for arbitrary "
-      << "optimizers!" << std::endl;
+  throw std::logic_error("LRSDPFunction::Gradient() not implemented for "
+         "arbitrary optimizers!");
 }
 
 template <typename SDPType>
@@ -92,8 +96,8 @@ void LRSDPFunction<SDPType>::GradientConstraint(
     const arma::mat& /* coordinates */,
     arma::mat& /* gradient */) const
 {
-  Log::Fatal << "LRSDPFunction::GradientConstraint() not implemented "
-      << "for arbitrary optimizers!" << std::endl;
+  throw std::logic_error("LRSDPFunction::GradientConstraint() not implemented "
+         "for arbitrary optimizers!");
 }
 
 //! Utility function for updating R*R^T matrix.
