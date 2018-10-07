@@ -83,7 +83,7 @@ bool AugLagrangian::Optimize(
   for (size_t i = 0; i < function.NumConstraints(); i++)
     penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
 
-  Log::Debug << "Penalty is " << penalty << " (threshold " << penaltyThreshold
+  Info << "Penalty is " << penalty << " (threshold " << penaltyThreshold
       << ")." << std::endl;
 
   // The odd comparison allows user to pass maxIterations = 0 (i.e. no limit on
@@ -91,11 +91,11 @@ bool AugLagrangian::Optimize(
   size_t it;
   for (it = 0; it != (maxIterations - 1); it++)
   {
-    Log::Info << "AugLagrangian on iteration " << it
+    Info << "AugLagrangian on iteration " << it
         << ", starting with objective "  << lastObjective << "." << std::endl;
 
     if (!lbfgs.Optimize(augfunc, coordinates))
-      Log::Info << "L-BFGS reported an error during optimization."
+      Info << "L-BFGS reported an error during optimization."
           << std::endl;
 
     // Check if we are done with the entire optimization (the threshold we are
@@ -121,7 +121,7 @@ bool AugLagrangian::Optimize(
       penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
     }
 
-    Log::Info << "Penalty is " << penalty << " (threshold "
+    Info << "Penalty is " << penalty << " (threshold "
         << penaltyThreshold << ")." << std::endl;
 
     if (penalty < penaltyThreshold) // We update lambda.
@@ -136,7 +136,7 @@ bool AugLagrangian::Optimize(
       // penalty.  TODO: this factor should be a parameter (from CLI).  The
       // value of 0.25 is taken from Burer and Monteiro (2002).
       penaltyThreshold = 0.25 * penalty;
-      Log::Info << "Lagrange multiplier estimates updated." << std::endl;
+      Info << "Lagrange multiplier estimates updated." << std::endl;
     }
     else
     {
@@ -144,7 +144,7 @@ bool AugLagrangian::Optimize(
       // parameter (from CLI).  The value of 10 is taken from Burer and Monteiro
       // (2002).
       augfunc.Sigma() *= 10;
-      Log::Info << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
+      Info << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
     }
   }
 

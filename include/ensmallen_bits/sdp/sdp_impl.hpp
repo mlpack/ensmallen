@@ -12,6 +12,7 @@
 #define ENSMALLEN_SDP_SDP_IMPL_HPP
 
 #include "sdp.hpp"
+#include "lin_alg.hpp"
 
 namespace ens {
 

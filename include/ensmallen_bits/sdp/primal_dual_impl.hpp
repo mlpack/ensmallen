@@ -30,6 +30,7 @@
 #define ENSMALLEN_SDP_PRIMAL_DUAL_IMPL_HPP
 
 #include "primal_dual.hpp"
+#include "lin_alg.hpp"
 
 namespace ens {
 
@@ -70,30 +71,42 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
   // dual multiplier Z to be positive definite (but not feasible).
 
   if (initialX.n_rows != sdp.N() || initialX.n_cols != sdp.N())
-    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialX needs to be square n x n matrix." << std::endl;
+  {
+    throw std::logic_error("PrimalDualSolver::PrimalDualSolver(): "
+        "initialX needs to be square n x n matrix.");
+  }
 
   if (!arma::chol(tmp, initialX))
-    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialX needs to be symmetric positive definite." << std::endl;
+  {
+    throw std::logic_error("PrimalDualSolver::PrimalDualSolver(): "
+        "initialX needs to be symmetric positive definite.");
+  }
 
   if (initialYsparse.n_elem != sdp.NumSparseConstraints())
-    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialYsparse needs to have the same length as the number of sparse "
-      << "constraints." << std::endl;
+  {
+    throw std::logic_error("PrimalDualSolver::PrimalDualSolver(): "
+        "initialYsparse needs to have the same length as the number of sparse "
+        "constraints.");
+  }
 
   if (initialYdense.n_elem != sdp.NumDenseConstraints())
-    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialYdense needs to have the same length as the number of dense "
-      << "constraints." << std::endl;
+  {
+    throw std::logic_error("PrimalDualSolver::PrimalDualSolver(): "
+        "initialYdense needs to have the same length as the number of dense "
+        "constraints.");
+  }
 
   if (initialZ.n_rows != sdp.N() || initialZ.n_cols != sdp.N())
-    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialZ needs to be square n x n matrix."  << std::endl;
+  {
+    throw std::logic_error("PrimalDualSolver::PrimalDualSolver(): "
+        "initialZ needs to be square n x n matrix.");
+  }
 
   if (!arma::chol(tmp, initialZ))
-    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialZ needs to be symmetric positive definite." << std::endl;
+  {
+    throw std::logic_error("PrimalDualSolver::PrimalDualSolver(): "
+        "initialZ needs to be symmetric positive definite.");
+  }
 }
 
 /**
@@ -199,8 +212,10 @@ SolveKKTSystem(const arma::sp_mat& Asparse,
 
   // TODO(stephentu): use a more efficient method (e.g. LU decomposition)
   if (!arma::solve(dy, M, rhs))
-    Log::Fatal << "PrimalDualSolver::SolveKKTSystem(): Could not solve KKT "
-        << "system." << std::endl;
+  {
+    throw std::logic_error("PrimalDualSolver::SolveKKTSystem(): Could not "
+        "solve KKT system.");
+  }
 
   if (Asparse.n_rows)
     dysparse = dy(arma::span(0, Asparse.n_rows - 1));
@@ -377,7 +392,7 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     bool success = Alpha(X, dX, tau, alpha);
     if (!success)
     {
-      Log::Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of X "
+      Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of X "
           << "failed!  Terminating optimization.";
       return primalObj;
     }
@@ -385,7 +400,7 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     success = Alpha(Z, dZ, tau, beta);
     if (!success)
     {
-      Log::Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
+      Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
           << "failed!  Terminating optimization.";
       return primalObj;
     }
@@ -404,13 +419,13 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     math::Smat(dsz, dZ);
     if (!Alpha(X, dX, tau, alpha))
     {
-      Log::Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
+      Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
           << "failed!  Terminating optimization.";
       return primalObj;
     }
     if (!Alpha(Z, dZ, tau, beta))
     {
-      Log::Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
+      Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
           << "failed!  Terminating optimization.";
       return primalObj;
     }
@@ -456,23 +471,12 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
       DualCheck += ydense(i) * sdp.DenseA()[i];
     const double dualInfeas = arma::norm(DualCheck, "fro");
 
-    Log::Debug
-        << "iter=" << iteration << ", "
-        << "primal=" << primalObj << ", "
-        << "dual=" << dualObj << ", "
-        << "gap=" << dualityGap << ", "
-        << "||XZ||=" << normXZ << ", "
-        << "primalInfeas=" << primalInfeas << ", "
-        << "dualInfeas=" << dualInfeas << ", "
-        << "mu=" << mu
-        << std::endl;
-
     if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol &&
         dualInfeas <= dualInfeasTol)
       return primalObj;
   }
 
-  Log::Warn << "PrimalDualSolver::Optimizer(): Did not converge after "
+  Warn << "PrimalDualSolver::Optimizer(): Did not converge after "
       << maxIterations << " iterations!" << std::endl;
   return primalObj;
 }
