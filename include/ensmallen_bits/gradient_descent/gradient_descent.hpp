@@ -92,11 +92,12 @@ class GradientDescent
    * @param datasetInfo Type information for each dimension of the dataset.
    * @return Objective value of the final point.
    */
-  template<typename FunctionType>
-  double Optimize(
-      FunctionType& function,
-      arma::mat& iterate,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
+  // TODO: Should this be a specialized method that is part of mlpack?
+  // template<typename FunctionType>
+  // double Optimize(
+  //     FunctionType& function,
+  //     arma::mat& iterate,
+  //     data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
