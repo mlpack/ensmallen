@@ -41,7 +41,7 @@
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
-// #include "ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp"
+#include "ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp"
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
@@ -49,22 +49,22 @@
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
-// #include "ensmallen_bits/gradient_descent/gradient_descent.hpp"
+#include "ensmallen_bits/gradient_descent/gradient_descent.hpp"
 // #include "ensmallen_bits/grid_search/grid_search.hpp"
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
 #include "ensmallen_bits/line_search/line_search.hpp"
 // #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
-// #include "ensmallen_bits/proximal/proximal.hpp"
+#include "ensmallen_bits/proximal/proximal.hpp"
 #include "ensmallen_bits/rmsprop/rmsprop.hpp"
 
 #include "ensmallen_bits/sa/sa.hpp"
 #include "ensmallen_bits/sarah/sarah.hpp"
 #include "ensmallen_bits/scd/scd.hpp"
-// #include "ensmallen_bits/sdp/sdp.hpp"
-// #include "ensmallen_bits/sdp/lrsdp.hpp"
-// #include "ensmallen_bits/sdp/primal_dual.hpp"
+#include "ensmallen_bits/sdp/sdp.hpp"
+#include "ensmallen_bits/sdp/lrsdp.hpp"
+#include "ensmallen_bits/sdp/primal_dual.hpp"
 
 #include "ensmallen_bits/sgd/sgd.hpp"
 // TODO: this should probably be included in sgd.hpp

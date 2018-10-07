@@ -82,6 +82,7 @@ double GradientDescent::Optimize(
   return overallObjective;
 }
 
+/* TODO: Should this be a specialized method that is part of mlpack?
 template<typename FunctionType>
 double GradientDescent::Optimize(
     FunctionType& function,
@@ -110,6 +111,7 @@ double GradientDescent::Optimize(
 
   return Optimize(function, iterate);
 }
+*/
 
 } // namespace ens
 
