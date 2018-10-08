@@ -183,9 +183,8 @@ TEST_CASE(SoftmaxRegressionFunctionPartialGradientTest,"[SCDTest]")
   data.randu(inputSize, points);
 
   // Create random class labels.
-  arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
-    labels(i) = RandInt(0, numClasses);
+  arma::Row<size_t> labels = arma::randi<arma::Row<size_t> >(
+      points, arma::distr_param(0, numClasses));
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.

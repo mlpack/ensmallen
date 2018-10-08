@@ -85,9 +85,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
     if (shuffle)
     {
       // Determine order of visitation.
-      std::shuffle(visitationOrder.begin(), visitationOrder.end(),
-          // TODO: use a different object here, maybe Armadillo's randgen?
-          mlpack::math::randGen);
+      visitationOrder = arma::shuffle(visitationOrder);
     }
 
     #pragma omp parallel
