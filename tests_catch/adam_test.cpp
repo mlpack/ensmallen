@@ -1,51 +1,41 @@
-/**
- * @file adam_test.cpp
- * @author Vasanth Kalingeri
- * @author Vivek Pal
- * @author Sourabh Varshney
- * @author Haritha Nair
- *
- * Tests the Adam, AdaMax, AMSGrad, Nadam and NadaMax optimizer.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <mlpack/core.hpp>
-
-#include <mlpack/core/optimizers/adam/adam.hpp>
-
-#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-#include <mlpack/core/optimizers/problems/colville_function.hpp>
-#include <mlpack/core/optimizers/problems/booth_function.hpp>
-#include <mlpack/core/optimizers/problems/sphere_function.hpp>
-#include <mlpack/core/optimizers/problems/styblinski_tang_function.hpp>
-#include <mlpack/core/optimizers/problems/mc_cormick_function.hpp>
-#include <mlpack/core/optimizers/problems/matyas_function.hpp>
-#include <mlpack/core/optimizers/problems/easom_function.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace arma;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+using namespace ens;
 
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/adam/adam.hpp>
+// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+// #include <mlpack/core/optimizers/problems/colville_function.hpp>
+// #include <mlpack/core/optimizers/problems/booth_function.hpp>
+// #include <mlpack/core/optimizers/problems/sphere_function.hpp>
+// #include <mlpack/core/optimizers/problems/styblinski_tang_function.hpp>
+// #include <mlpack/core/optimizers/problems/mc_cormick_function.hpp>
+// #include <mlpack/core/optimizers/problems/matyas_function.hpp>
+// #include <mlpack/core/optimizers/problems/easom_function.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// 
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
+// using namespace mlpack::distribution;
+// using namespace mlpack::regression;
+// using namespace mlpack;
 
-using namespace mlpack;
-
-BOOST_AUTO_TEST_SUITE(AdamTest);
+BOOST_AUTO_TEST_SUITE();
 
 
 /**
  * Test the Adam optimizer on the Sphere function.
  */
-BOOST_AUTO_TEST_CASE(AdamSphereFunctionTest)
+TEST_CASE("AdamSphereFunctionTest", "[AdamTest]")
 {
   SphereFunction f(2);
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
@@ -53,14 +43,14 @@ BOOST_AUTO_TEST_CASE(AdamSphereFunctionTest)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
 }
 
 /**
  * Test the Adam optimizer on the Wood function.
  */
-BOOST_AUTO_TEST_CASE(AdamStyblinskiTangFunctionTest)
+TEST_CASE("AdamStyblinskiTangFunctionTest", "[AdamTest]")
 {
   StyblinskiTangFunction f(2);
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
@@ -68,14 +58,14 @@ BOOST_AUTO_TEST_CASE(AdamStyblinskiTangFunctionTest)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_CLOSE(coordinates[0], -2.9, 1.0); // 1% error tolerance.
-  BOOST_REQUIRE_CLOSE(coordinates[1], -2.9, 1.0); // 1% error tolerance.
+  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
 }
 
 /**
  * Test the Adam optimizer on the McCormick function.
  */
-BOOST_AUTO_TEST_CASE(AdamMcCormickFunctionTest)
+TEST_CASE("AdamMcCormickFunctionTest", "[AdamTest]")
 {
   McCormickFunction f;
   Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
@@ -83,14 +73,14 @@ BOOST_AUTO_TEST_CASE(AdamMcCormickFunctionTest)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_CLOSE(coordinates[0], -0.547, 3.0); // 3% error tolerance.
-  BOOST_REQUIRE_CLOSE(coordinates[1], -1.547, 3.0); // 3% error tolerance.
+  REQUIRE(coordinates[0] == Approx(-0.547).epsilon(0.03)); // 3% error tolerance.
+  REQUIRE(coordinates[0] == Approx(-1.547).epsilon(0.03)); // 3% error tolerance.
 }
 
 /**
  * Test the Adam optimizer on the Matyas function.
  */
-BOOST_AUTO_TEST_CASE(AdamMatyasFunctionTest)
+TEST_CASE("AdamMatyasFunctionTest", "[AdamTest]")
 {
   MatyasFunction f;
   Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
@@ -106,7 +96,7 @@ BOOST_AUTO_TEST_CASE(AdamMatyasFunctionTest)
 /**
  * Test the Adam optimizer on the Easom function.
  */
-BOOST_AUTO_TEST_CASE(AdamEasomFunctionTest)
+TEST_CASE("AdamEasomFunctionTest", "[AdamTest]")
 {
   EasomFunction f;
   Adam optimizer(0.2, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
@@ -122,7 +112,7 @@ BOOST_AUTO_TEST_CASE(AdamEasomFunctionTest)
 /**
  * Test the Adam optimizer on the Booth function.
  */
-BOOST_AUTO_TEST_CASE(AdamBoothFunctionTest)
+TEST_CASE("AdamBoothFunctionTest", "[AdamTest]")
 {
   BoothFunction f;
   Adam optimizer(1e-1, 1, 0.7, 0.999, 1e-8, 500000, 1e-9, true);
@@ -137,7 +127,7 @@ BOOST_AUTO_TEST_CASE(AdamBoothFunctionTest)
 /**
  * Tests the Adam optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
+TEST_CASE("SimpleAdamTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
   Adam optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
@@ -145,15 +135,15 @@ BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
   BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
  * Tests the AdaMax optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAdaMaxTestFunction)
+TEST_CASE("SimpleAdaMaxTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
   AdaMax optimizer(2e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
@@ -161,15 +151,15 @@ BOOST_AUTO_TEST_CASE(SimpleAdaMaxTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
   BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
  * Tests the AMSGrad optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAMSGradTestFunction)
+TEST_CASE("SimpleAMSGradTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
   AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
@@ -177,15 +167,15 @@ BOOST_AUTO_TEST_CASE(SimpleAMSGradTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
   BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
  * Run Adam on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(AdamLogisticRegressionTest)
+TEST_CASE("AdamLogisticRegressionTest", "[AdamTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -243,7 +233,7 @@ BOOST_AUTO_TEST_CASE(AdamLogisticRegressionTest)
 /**
  * Run AdaMax on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(AdaMaxLogisticRegressionTest)
+TEST_CASE("AdaMaxLogisticRegressionTest", "[AdamTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -301,7 +291,7 @@ BOOST_AUTO_TEST_CASE(AdaMaxLogisticRegressionTest)
 /**
  * Run AMSGrad on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(AMSGradLogisticRegressionTest)
+TEST_CASE("AMSGradLogisticRegressionTest", "[AdamTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -359,7 +349,7 @@ BOOST_AUTO_TEST_CASE(AMSGradLogisticRegressionTest)
 /**
  * Tests the Nadam optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleNadamTestFunction)
+TEST_CASE("SimpleNadamTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
   Nadam optimizer(1e-3, 1, 0.9, 0.99, 1e-8, 500000, 1e-9, true);
@@ -367,15 +357,15 @@ BOOST_AUTO_TEST_CASE(SimpleNadamTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
   BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
  * Run Nadam on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(NadamLogisticRegressionTest)
+TEST_CASE("NadamLogisticRegressionTest", "[AdamTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"),
@@ -435,7 +425,7 @@ BOOST_AUTO_TEST_CASE(NadamLogisticRegressionTest)
 /**
  * Tests the NadaMax optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleNadaMaxTestFunction)
+TEST_CASE("SimpleNadaMaxTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
   NadaMax optimizer(1e-3, 1, 0.9, 0.99, 1e-8, 500000, 1e-9, true);
@@ -443,15 +433,15 @@ BOOST_AUTO_TEST_CASE(SimpleNadaMaxTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
   BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
  * Run NadaMax on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(NadaMaxLogisticRegressionTest)
+TEST_CASE("NadaMaxLogisticRegressionTest", "[AdamTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"),
@@ -511,7 +501,7 @@ BOOST_AUTO_TEST_CASE(NadaMaxLogisticRegressionTest)
 /**
  * Tests the OptimisticAdam optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleOptimisticAdamTestFunction)
+TEST_CASE("SimpleOptimisticAdamTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
   OptimisticAdam optimizer(1e-2, 1, 0.9, 0.99, 1e-8);
@@ -519,15 +509,15 @@ BOOST_AUTO_TEST_CASE(SimpleOptimisticAdamTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
   BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
 }
 
 /**
  * Run OptimisticAdam on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(OptimisticAdamLogisticRegressionTest)
+TEST_CASE("OptimisticAdamLogisticRegressionTest", "[AdamTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"),
@@ -583,5 +573,3 @@ BOOST_AUTO_TEST_CASE(OptimisticAdamLogisticRegressionTest)
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
-
-BOOST_AUTO_TEST_SUITE_END();

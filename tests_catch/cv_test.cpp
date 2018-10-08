@@ -61,14 +61,14 @@ TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
 
   LogisticRegression<> lr(data, predictedLabels);
 
-  BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(lr, data, labels), 0.7, 1e-5);
+  REQUIRE(Accuracy::Evaluate(lr, data, labels) == Approx(0.7).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(Precision<Binary>::Evaluate(lr, data, labels), 0.6, 1e-5);
+  REQUIRE(Precision<Binary>::Evaluate(lr, data, labels) == Approx(0.6).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(Recall<Binary>::Evaluate(lr, data, labels), 0.75, 1e-5);
+  REQUIRE(Recall<Binary>::Evaluate(lr, data, labels) == Approx(0.75).epsilon(1e-7));
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
-  BOOST_REQUIRE_CLOSE(F1<Binary>::Evaluate(lr, data, labels), f1, 1e-5);
+  REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
 }
 
 /**
@@ -91,34 +91,28 @@ TEST_CASE("MulticlassClassificationMetricsTest", "[CVTest]")
 
   // Assert that the Naive Bayes model really predicts the labels above in
   // response to the data.
-  BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(nb, data, predictedLabels), 1.0, 1e-5);
+  REQUIRE(Accuracy::Evaluate(nb, data, predictedLabels) == Approx(1.0).epsilon(1e-7));
 
   double microaveragedPrecision = double(1 + 1 + 3 + 4) / 12;
-  BOOST_REQUIRE_CLOSE(Precision<Micro>::Evaluate(nb, data, labels),
-      microaveragedPrecision, 1e-5);
+  REQUIRE(Precision<Micro>::Evaluate(nb, data, labels) == Approx(microaveragedPrecision).epsilon(1e-7));
 
   double microaveragedRecall = double(1 + 1 + 3 + 4) / 12;
-  BOOST_REQUIRE_CLOSE(Recall<Micro>::Evaluate(nb, data, labels),
-      microaveragedRecall, 1e-5);
+  REQUIRE(Recall<Micro>::Evaluate(nb, data, labels) == Approx(microaveragedRecall).epsilon(1e-7));
 
   double microaveragedF1 = 2 * microaveragedPrecision * microaveragedRecall /
     (microaveragedPrecision + microaveragedRecall);
-  BOOST_REQUIRE_CLOSE(F1<Micro>::Evaluate(nb, data, labels),
-      microaveragedF1, 1e-5);
+  REQUIRE(F1<Micro>::Evaluate(nb, data, labels) == Approx(microaveragedF1).epsilon(1e-7));
 
   double macroaveragedPrecision = (0.5 + 0.5 + 0.75 + 1.0) / 4;
-  BOOST_REQUIRE_CLOSE(Precision<Macro>::Evaluate(nb, data, labels),
-      macroaveragedPrecision, 1e-5);
+  REQUIRE(Precision<Macro>::Evaluate(nb, data, labels) == Approx(macroaveragedPrecision).epsilon(1e-7));
 
   double macroaveragedRecall = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
-  BOOST_REQUIRE_CLOSE(Recall<Macro>::Evaluate(nb, data, labels),
-      macroaveragedRecall, 1e-5);
+  REQUIRE(Recall<Macro>::Evaluate(nb, data, labels) == Approx(macroaveragedRecall).epsilon(1e-7));
 
   double macroaveragedF1 = (2 * 0.5 * 0.5 / (0.5 + 0.5) +
       2 * 0.5 * (1.0 / 3) / (0.5 + (1.0 / 3)) + 2 * 0.75 * 1.0 / (0.75 + 1.0) +
       2 * 1.0 * 1.0 / (1.0 + 1.0)) / 4;
-  BOOST_REQUIRE_CLOSE(F1<Macro>::Evaluate(nb, data, labels),
-      macroaveragedF1, 1e-5);
+  REQUIRE(F1<Macro>::Evaluate(nb, data, labels) == Approx(macroaveragedF1).epsilon(1e-7));
 }
 
 /**
@@ -139,7 +133,7 @@ TEST_CASE("MSETest", "[CVTest]")
 
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
 
-  BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
+  REQUIRE(MSE::Evaluate(lr, data, responses) == Approx(expectedMSE).epsilon(1e-7));
 }
 
 /**
@@ -166,7 +160,7 @@ TEST_CASE("MSEMatResponsesTest", "[CVTest]")
 
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2 + 3 * 3) / 4.0;
 
-  BOOST_REQUIRE_CLOSE(MSE::Evaluate(ffn, data, responses), expectedMSE, 1e-1);
+  REQUIRE(MSE::Evaluate(ffn, data, responses) == Approx(expectedMSE).epsilon(1e-3));
 }
 
 template<typename Class,
@@ -288,7 +282,7 @@ TEST_CASE("SimpleCVAccuracyTest", "[CVTest]")
 
   SimpleCV<LogisticRegression<>, Accuracy> cv(0.5, data, labels);
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), 0.75, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(0.75).epsilon(1e-7));
 }
 
 /**
@@ -305,7 +299,7 @@ TEST_CASE("SimpleCVMSETest", "[CVTest]")
 
   SimpleCV<LinearRegression, MSE> cv(0.6, data, responses);
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
   arma::mat noiseData("-1 -2 -3 -4 -5");
   arma::rowvec noiseResponses("10 20 30 40 50");
@@ -319,7 +313,7 @@ TEST_CASE("SimpleCVMSETest", "[CVTest]")
   SimpleCV<LinearRegression, MSE> weightedCV(0.3, allData, allResponces,
       weights);
 
-  BOOST_REQUIRE_CLOSE(weightedCV.Evaluate(), expectedMSE, 1e-5);
+  REQUIRE(weightedCV.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
   arma::rowvec weights2 = arma::join_rows(arma::zeros(noiseData.n_cols - 1).t(),
       arma::ones(data.n_cols + 1).t());
@@ -327,7 +321,7 @@ TEST_CASE("SimpleCVMSETest", "[CVTest]")
   SimpleCV<LinearRegression, MSE> weightedCV2(0.3, allData, allResponces,
       weights2);
 
-  BOOST_REQUIRE_GT(std::abs(weightedCV2.Evaluate() - expectedMSE), 1e-5);
+  REQUIRE(std::abs(weightedCV2.Evaluate() - expectedMSE) > 1e-5);
 }
 
 template<typename... DTArgs>
@@ -365,21 +359,21 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
         trainingData, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
         arma::join_rows(trainingLabels, predictedLabels), numClasses);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, datasetInfo, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
         arma::join_rows(trainingLabels, predictedLabels), numClasses);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, trainingLabels, numClasses, weights, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
         arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
@@ -387,7 +381,7 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
         minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
         arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
 }
 
@@ -407,7 +401,7 @@ TEST_CASE("KFoldCVMSETest", "[CVTest]")
   double expectedMSE =
       double((1 - 0) * (1 - 0) + (3 - 1) * (3 - 1)) / 2 * 2 / 2;
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
   // Assert we can access a trained model without the exception of
   // uninitialization.
@@ -433,7 +427,7 @@ TEST_CASE("KFoldCVAccuracyTest", "[CVTest]")
   // fail with the remaining one.
   double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedAccuracy, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(expectedAccuracy).epsilon(1e-7));
 
   // Assert we can access a trained model without the exception of
   // uninitialization.
@@ -460,7 +454,7 @@ TEST_CASE("KFoldCVWithWeightedLRTest", "[CVTest]")
 
   double mse = MSE::Evaluate(cv.Model(), testData, testResponses);
 
-  BOOST_REQUIRE_CLOSE(1.0 - mse, 1.0, 1e-5);
+  REQUIRE((1.0 - mse) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -493,7 +487,7 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
         numClasses, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
   {
     KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
@@ -502,7 +496,7 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
         datasetInfo, labels, numClasses, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
   {
     KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
@@ -511,7 +505,7 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
         numClasses, weights, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
   {
     KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
@@ -520,7 +514,7 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
         datasetInfo, labels, numClasses, weights, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
 }
 
@@ -545,7 +539,7 @@ TEST_CASE("KFoldCVWithDTTestLargeKNoShuffle", "[CVTest]")
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -571,7 +565,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBinsNoShuffle", "[CVTest]")
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -595,7 +589,7 @@ TEST_CASE("KFoldCVWithDTTestLargeK", "[CVTest]")
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -620,7 +614,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBins", "[CVTest]")
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -645,7 +639,7 @@ TEST_CASE("KFoldCVWithDTTestLargeKWeighted", "[CVTest]")
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -671,5 +665,5 @@ TEST_CASE("KFoldCVWithDTTestUnevenBinsWeighted", "[CVTest]")
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }

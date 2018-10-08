@@ -1,38 +1,32 @@
-/**
- * @file cmaes_test.cpp
- * @author Marcus Edel
- * @author Kartik Nighania
- *
- * Test file for CMA-ES.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/cmaes/cmaes.hpp>
-#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace arma;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+using namespace ens;
 
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
 
-using namespace mlpack;
-
-BOOST_AUTO_TEST_SUITE(CMAESTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/cmaes/cmaes.hpp>
+// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// 
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
+// using namespace mlpack::distribution;
+// using namespace mlpack::regression;
+// using namespace mlpack;
 
 /**
  * Tests the CMA-ES optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleTestFunction)
+TEST_CASE("SimpleTestFunction", "[CMAESTest]")
 {
   SGDTestFunction f;
   CMAES<> optimizer(0, -1, 1, 32, 200, -1);
@@ -40,9 +34,9 @@ BOOST_AUTO_TEST_CASE(SimpleTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.003);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.003));
 }
 
 /**
@@ -102,7 +96,7 @@ void CreateLogisticRegressionTestData(arma::mat& data,
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(CMAESLogisticRegressionTest)
+TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
 {
   const size_t trials = 3;
   bool success = false;
@@ -127,14 +121,14 @@ BOOST_AUTO_TEST_CASE(CMAESLogisticRegressionTest)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success, true);
 }
 
 /**
  * Run CMA-ES with the random selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(ApproxCMAESLogisticRegressionTest)
+TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 {
   const size_t trials = 3;
   bool success = false;
@@ -159,7 +153,5 @@ BOOST_AUTO_TEST_CASE(ApproxCMAESLogisticRegressionTest)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

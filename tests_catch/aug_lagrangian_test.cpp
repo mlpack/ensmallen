@@ -10,22 +10,19 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #include <armadillo>
 #include <ensmallen.hpp>
 #include <ensmallen_bits/problems/problems.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 
 using namespace ens;
 using namespace ens::test;
-
-BOOST_AUTO_TEST_SUITE(AugLagrangianTest);
 
 /**
  * Tests the Augmented Lagrangian optimizer using the
  * AugmentedLagrangianTestFunction class.
  */
-BOOST_AUTO_TEST_CASE(AugLagrangianTestFunctionTest)
+TEST_CASE("AugLagrangianTestFunctionTest", "[AugLagrangianTest]")
 {
   // The choice of 10 memory slots is arbitrary.
   AugLagrangianTestFunction f;
@@ -34,19 +31,19 @@ BOOST_AUTO_TEST_CASE(AugLagrangianTestFunctionTest)
   arma::vec coords = f.GetInitialPoint();
 
   if (!aug.Optimize(f, coords, 0))
-    BOOST_FAIL("Optimization reported failure.");
+    BOOST_FAIL("Optimization reported failure.");  // TODO
 
   double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_CLOSE(finalValue, 70.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[1], 4.0, 1e-5);
+  REQUIRE(finalValue == Approx(70.0).epsilon(1e-7));
+  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords[1] == Approx(4.0).epsilon(1e-7));
 }
 
 /**
  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
  */
-BOOST_AUTO_TEST_CASE(GockenbachFunctionTest)
+TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
 {
   GockenbachFunction f;
   AugLagrangian aug;
@@ -54,16 +51,13 @@ BOOST_AUTO_TEST_CASE(GockenbachFunctionTest)
   arma::vec coords = f.GetInitialPoint();
 
   if (!aug.Optimize(f, coords, 0))
-    BOOST_FAIL("Optimization reported failure.");
+    BOOST_FAIL("Optimization reported failure.");  // TODO
 
   double finalValue = f.Evaluate(coords);
 
   // Higher tolerance for smaller values.
-  BOOST_REQUIRE_CLOSE(finalValue, 29.633926, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[0], 0.12288178, 1e-3);
-  BOOST_REQUIRE_CLOSE(coords[1], -1.10778185, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[2], 0.015099932, 1e-3);
+  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
+  REQUIRE(coords[0] == Approx(0.12288178).epsilon(1e-5));
+  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-7));
+  REQUIRE(coords[2] == Approx(0.015099932).epsilon(1e-5));
 }
-
-BOOST_AUTO_TEST_SUITE_END();
-
