@@ -1,30 +1,25 @@
-/**
- * @file katyusha_test.cpp
- * @author Marcus Edel
- *
- * Test file for Katyusha.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/katyusha/katyusha.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "test_function_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(KatyushaTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/katyusha/katyusha.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
 
 /**
  * Run Katyusha on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(KatyushaLogisticRegressionTest)
+TEST_CASE("KatyushaLogisticRegressionTest", "[KatyushaTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -40,10 +35,10 @@ BOOST_AUTO_TEST_CASE(KatyushaLogisticRegressionTest)
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(acc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
   }
 }
 
@@ -51,7 +46,7 @@ BOOST_AUTO_TEST_CASE(KatyushaLogisticRegressionTest)
  * Run Proximal Katyusha on logistic regression and make sure the results are
  * acceptable.
  */
-BOOST_AUTO_TEST_CASE(KatyushaProximalLogisticRegressionTest)
+TEST_CASE("KatyushaProximalLogisticRegressionTest", "[KatyushaTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -67,11 +62,9 @@ BOOST_AUTO_TEST_CASE(KatyushaProximalLogisticRegressionTest)
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(acc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 1.5); // 1.5% error tolerance.
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,29 +1,24 @@
-/**
- * @file gradient_descent_test.cpp
- * @author Sumedh Ghaisas
- *
- * Test file for Gradient Descent optimizer.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <armadillo>
-#include <ensmallen.hpp>
-#include <ensmallen/problems/problems.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
 using namespace ens;
-using namespace ens::test;
 
-BOOST_AUTO_TEST_SUITE(GradientDescentTest);
+// #include <ensmallen.hpp>
+// #include <ensmallen/problems/problems.hpp>
+// 
+// using namespace ens;
+// using namespace ens::test;
 
-BOOST_AUTO_TEST_CASE(SimpleGDTestFunction)
+TEST_CASE("SimpleGDTestFunction", "[GradientDescentTest]")
 {
   GDTestFunction f;
   GradientDescent s(0.01, 5000000, 1e-9);
@@ -31,13 +26,13 @@ BOOST_AUTO_TEST_CASE(SimpleGDTestFunction)
   arma::vec coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(result, 1e-4);
-  BOOST_REQUIRE_SMALL(coordinates[0], 1e-2);
-  BOOST_REQUIRE_SMALL(coordinates[1], 1e-2);
-  BOOST_REQUIRE_SMALL(coordinates[2], 1e-2);
+  REQUIRE(result == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates[0] == Approx(0.0).margin(1e-2));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-2));
+  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-2));
 }
 
-BOOST_AUTO_TEST_CASE(RosenbrockTest)
+TEST_CASE("RosenbrockTest", "[GradientDescentTest]")
 {
   // Create the Rosenbrock function.
   RosenbrockFunction f;
@@ -47,9 +42,7 @@ BOOST_AUTO_TEST_CASE(RosenbrockTest)
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(result, 1e-10);
+  REQUIRE(result == Approx(0.0).margin(1e-10));
   for (size_t j = 0; j < 2; ++j)
-    BOOST_REQUIRE_CLOSE(coordinates[j], (double) 1.0, 1e-3);
+    REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,5 +1,3 @@
-// #include <ensmallen>
-// OR
 // #include <ensmallen.hpp>
 
 #include "catch.hpp"
