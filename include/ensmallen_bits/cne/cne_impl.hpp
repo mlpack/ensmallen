@@ -146,8 +146,11 @@ void CNE::Reproduce()
   for (size_t i = numElite; i < populationSize - 1; i++)
   {
     // Select 2 different parents from elite group randomly [0, numElite).
-    mom = arma::randi<size_t>(arma::distr_param(0, numElite));
-    dad = arma::randi<size_t>(arma::distr_param(0, numElite));
+    mom = arma::as_scalar(arma::randi<arma::uvec>(
+          1, arma::distr_param(0, numElite)));
+
+    dad = arma::as_scalar(arma::randi<arma::uvec>(
+          1, arma::distr_param(0, numElite)));
 
     // Making sure both parents are not the same.
     if (mom == dad)
