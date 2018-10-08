@@ -35,7 +35,12 @@
   #define ARMA_USE_CXX11
 #endif
 
+#define ENS_DONT_PRINT_INFO
+#define ENS_DONT_PRINT_WARN
+
 #include "ensmallen_bits/log.hpp" // TODO: should move to another place
+
+#include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
 // TODO: remove mlpack bits from each of these files
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
@@ -55,7 +60,7 @@
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
 #include "ensmallen_bits/line_search/line_search.hpp"
-// #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
+#include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
 #include "ensmallen_bits/proximal/proximal.hpp"
 #include "ensmallen_bits/rmsprop/rmsprop.hpp"
 
