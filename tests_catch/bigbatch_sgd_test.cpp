@@ -1,29 +1,24 @@
-/**
- * @file bigbatch_sgd_test.cpp
- * @author Marcus Edel
- *
- * Test file for big-batch SGD.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
+using namespace ens;
 
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
-
-BOOST_AUTO_TEST_SUITE(BigBatchSGDTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/bigbatch_sgd/bigbatch_sgd.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+// using namespace mlpack::distribution;
+// using namespace mlpack::regression;
 
 /**
  * Create the data for the logistic regression test case.
@@ -82,7 +77,7 @@ void CreateLogisticRegressionTestData(arma::mat& data,
  * Run big-batch SGD using BBS_BB on logistic regression and make sure the
  * results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
+TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGDTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -98,10 +93,10 @@ BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
 
@@ -109,7 +104,7 @@ BOOST_AUTO_TEST_CASE(BBSBBLogisticRegressionTest)
  * Run big-batch SGD using BBS_Armijo on logistic regression and make sure the
  * results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(BBSArmijoLogisticRegressionTest)
+TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGDTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -125,11 +120,9 @@ BOOST_AUTO_TEST_CASE(BBSArmijoLogisticRegressionTest)
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses);
-    BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
     const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-    BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();
