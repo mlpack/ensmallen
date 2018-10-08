@@ -1,29 +1,26 @@
-/**
- * @file function_test.cpp
- * @author Ryan Curtin
- * @author Shikhar Bhardwaj
- *
- * Test the Function<> class to see that it properly adds functionality.
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/function.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
-#include <mlpack/core/optimizers/sdp/sdp.hpp>
-#include <mlpack/core/optimizers/sdp/lrsdp.hpp>
-#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::traits; // For some SFINAE checks.
-using namespace mlpack::regression;
+using namespace ens;
+
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/function.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
+// #include <mlpack/core/optimizers/sdp/sdp.hpp>
+// #include <mlpack/core/optimizers/sdp/lrsdp.hpp>
+// #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
+
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::traits; // For some SFINAE checks.
+// using namespace mlpack::regression;
 
 /**
  * Utility class with no functions.
@@ -204,12 +201,10 @@ class EvaluateAndStaticGradientTestFunction
   }
 };
 
-BOOST_AUTO_TEST_SUITE(FunctionTest);
-
 /**
  * Make sure that an empty class doesn't have any methods added to it.
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientEmptyTest)
+TEST_CASE("AddEvaluateWithGradientEmptyTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<Function<EmptyTestFunction>,
                                        EvaluateForm>::value;
@@ -219,15 +214,15 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientEmptyTest)
       HasEvaluateWithGradient<Function<EmptyTestFunction>,
                               EvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, false);
-  BOOST_REQUIRE_EQUAL(hasGradient, false);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+  REQUIRE(hasEvaluate == false);
+  REQUIRE(hasGradient == false);
+  REQUIRE(hasEvaluateWithGradient == false);
 }
 
 /**
  * Make sure we don't add any functions if we only have Evaluate().
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientEvaluateOnlyTest)
+TEST_CASE("AddEvaluateWithGradientEvaluateOnlyTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<Function<EvaluateTestFunction>,
                                        EvaluateForm>::value;
@@ -237,15 +232,15 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientEvaluateOnlyTest)
       HasEvaluateWithGradient<Function<EvaluateTestFunction>,
                               EvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, false);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == false);
+  REQUIRE(hasEvaluateWithGradient == false);
 }
 
 /**
  * Make sure we don't add any functions if we only have Gradient().
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientGradientOnlyTest)
+TEST_CASE("AddEvaluateWithGradientGradientOnlyTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<Function<GradientTestFunction>,
                                        EvaluateForm>::value;
@@ -255,16 +250,16 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientGradientOnlyTest)
       HasEvaluateWithGradient<Function<GradientTestFunction>,
                               EvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, false);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+  REQUIRE(hasEvaluate == false);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == false);
 }
 
 /**
  * Make sure we add EvaluateWithGradient() when we have both Evaluate() and
  * Gradient().
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientBothTest)
+TEST_CASE("AddEvaluateWithGradientBothTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateGradientTestFunction>,
@@ -276,16 +271,16 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientBothTest)
       HasEvaluateWithGradient<Function<EvaluateGradientTestFunction>,
                               EvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 /**
  * Make sure we add Evaluate() and Gradient() when we have only
  * EvaluateWithGradient().
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientEvaluateWithGradientTest)
+TEST_CASE("AddEvaluateWithGradientEvaluateWithGradientTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateWithGradientTestFunction>,
@@ -297,15 +292,15 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientEvaluateWithGradientTest)
       HasEvaluateWithGradient<Function<EvaluateWithGradientTestFunction>,
                               EvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 /**
  * Make sure we add no methods when we already have all three.
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientAllThreeTest)
+TEST_CASE("AddEvaluateWithGradientAllThreeTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateAndWithGradientTestFunction>,
@@ -317,12 +312,12 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientAllThreeTest)
       HasEvaluateWithGradient<Function<EvaluateAndWithGradientTestFunction>,
                               EvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
-BOOST_AUTO_TEST_CASE(LogisticRegressionEvaluateWithGradientTest)
+TEST_CASE("LogisticRegressionEvaluateWithGradientTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<LogisticRegressionFunction<>>,
@@ -334,12 +329,12 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionEvaluateWithGradientTest)
       HasEvaluateWithGradient<Function<LogisticRegressionFunction<>>,
                               EvaluateWithGradientConstForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
-BOOST_AUTO_TEST_CASE(SDPTest)
+TEST_CASE("SDPTest", "[FunctionTest]")
 {
   typedef AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>> FunctionType;
 
@@ -351,15 +346,15 @@ BOOST_AUTO_TEST_CASE(SDPTest)
       HasEvaluateWithGradient<Function<FunctionType>,
                               EvaluateWithGradientConstForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 /**
  * Make sure that an empty class doesn't have any methods added to it.
  */
-BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientEmptyTest)
+TEST_CASE("AddDecomposableEvaluateWithGradientEmptyTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<Function<EmptyTestFunction>,
                                        DecomposableEvaluateForm>::value;
@@ -369,15 +364,15 @@ BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientEmptyTest)
       HasEvaluateWithGradient<Function<EmptyTestFunction>,
                               DecomposableEvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, false);
-  BOOST_REQUIRE_EQUAL(hasGradient, false);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+  REQUIRE(hasEvaluate == false);
+  REQUIRE(hasGradient == false);
+  REQUIRE(hasEvaluateWithGradient == false);
 }
 
 /**
  * Make sure we don't add any functions if we only have Evaluate().
  */
-BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientEvaluateOnlyTest)
+TEST_CASE("AddDecomposableEvaluateWithGradientEvaluateOnlyTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<Function<EvaluateTestFunction>,
                                        DecomposableEvaluateForm>::value;
@@ -387,15 +382,15 @@ BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientEvaluateOnlyTest)
       HasEvaluateWithGradient<Function<EvaluateTestFunction>,
                               DecomposableEvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, false);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == false);
+  REQUIRE(hasEvaluateWithGradient == false);
 }
 
 /**
  * Make sure we don't add any functions if we only have Gradient().
  */
-BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientGradientOnlyTest)
+TEST_CASE("AddDecomposableEvaluateWithGradientGradientOnlyTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<Function<GradientTestFunction>,
                                        DecomposableEvaluateForm>::value;
@@ -405,16 +400,16 @@ BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientGradientOnlyTest)
       HasEvaluateWithGradient<Function<GradientTestFunction>,
                               DecomposableEvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, false);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, false);
+  REQUIRE(hasEvaluate == false);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == false);
 }
 
 /**
  * Make sure we add EvaluateWithGradient() when we have both Evaluate() and
  * Gradient().
  */
-BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientBothTest)
+TEST_CASE("AddDecomposableEvaluateWithGradientBothTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateGradientTestFunction>,
@@ -426,16 +421,16 @@ BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientBothTest)
       HasEvaluateWithGradient<Function<EvaluateGradientTestFunction>,
                               DecomposableEvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 /**
  * Make sure we add Evaluate() and Gradient() when we have only
  * EvaluateWithGradient().
  */
-BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWGradientEvaluateWithGradientTest)
+TEST_CASE("AddDecomposableEvaluateWGradientEvaluateWithGradientTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateWithGradientTestFunction>,
@@ -452,15 +447,15 @@ BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWGradientEvaluateWithGradientTest)
   arma::mat gradient;
   f.Gradient(coordinates, 0, gradient, 5);
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 /**
  * Make sure we add no methods when we already have all three.
  */
-BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientAllThreeTest)
+TEST_CASE("AddDecomposableEvaluateWithGradientAllThreeTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateAndWithGradientTestFunction>,
@@ -472,16 +467,16 @@ BOOST_AUTO_TEST_CASE(AddDecomposableEvaluateWithGradientAllThreeTest)
       HasEvaluateWithGradient<Function<EvaluateAndWithGradientTestFunction>,
                               DecomposableEvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 /**
  * Make sure we can properly create EvaluateWithGradient() even when one of the
  * functions is non-const.
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientMixedTypesTest)
+TEST_CASE("AddEvaluateWithGradientMixedTypesTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateAndNonConstGradientTestFunction>,
@@ -493,16 +488,16 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientMixedTypesTest)
       HasEvaluateWithGradient<Function<EvaluateAndNonConstGradientTestFunction>,
                               EvaluateWithGradientForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 /**
  * Make sure we can properly create EvaluateWithGradient() even when one of the
  * functions is static.
  */
-BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientMixedTypesStaticTest)
+TEST_CASE("AddEvaluateWithGradientMixedTypesStaticTest", "[FunctionTest]")
 {
   const bool hasEvaluate =
       HasEvaluate<Function<EvaluateAndStaticGradientTestFunction>,
@@ -514,9 +509,9 @@ BOOST_AUTO_TEST_CASE(AddEvaluateWithGradientMixedTypesStaticTest)
       HasEvaluateWithGradient<Function<EvaluateAndStaticGradientTestFunction>,
                               EvaluateWithGradientConstForm>::value;
 
-  BOOST_REQUIRE_EQUAL(hasEvaluate, true);
-  BOOST_REQUIRE_EQUAL(hasGradient, true);
-  BOOST_REQUIRE_EQUAL(hasEvaluateWithGradient, true);
+  REQUIRE(hasEvaluate == true);
+  REQUIRE(hasGradient == true);
+  REQUIRE(hasEvaluateWithGradient == true);
 }
 
 class A
@@ -566,7 +561,7 @@ class D
 /**
  * Test the correctness of the static check for DecomposableFunctionType API.
  */
-BOOST_AUTO_TEST_CASE(DecomposableFunctionTypeCheckTest)
+TEST_CASE("DecomposableFunctionTypeCheckTest", "[FunctionTest]")
 {
   static_assert(CheckNumFunctions<A>::value,
       "CheckNumFunctions static check failed.");
@@ -599,7 +594,7 @@ BOOST_AUTO_TEST_CASE(DecomposableFunctionTypeCheckTest)
 /**
  * Test the correctness of the static check for LagrangianFunctionType API.
  */
-BOOST_AUTO_TEST_CASE(LagrangianFunctionTypeCheckTest)
+TEST_CASE("LagrangianFunctionTypeCheckTest", "[FunctionTest]")
 {
   static_assert(!CheckEvaluate<A>::value, "CheckEvaluate static check failed.");
   static_assert(!CheckEvaluate<B>::value, "CheckEvaluate static check failed.");
@@ -642,7 +637,7 @@ BOOST_AUTO_TEST_CASE(LagrangianFunctionTypeCheckTest)
 /**
  * Test the correctness of the static check for SparseFunctionType API.
  */
-BOOST_AUTO_TEST_CASE(SparseFunctionTypeCheckTest)
+TEST_CASE("SparseFunctionTypeCheckTest", "[FunctionTest]")
 {
   static_assert(CheckSparseGradient<A>::value,
       "CheckSparseGradient static check failed.");
@@ -657,7 +652,7 @@ BOOST_AUTO_TEST_CASE(SparseFunctionTypeCheckTest)
 /**
  * Test the correctness of the static check for SparseFunctionType API.
  */
-BOOST_AUTO_TEST_CASE(ResolvableFunctionTypeCheckTest)
+TEST_CASE("ResolvableFunctionTypeCheckTest", "[FunctionTest]")
 {
   static_assert(CheckNumFeatures<A>::value,
       "CheckNumFeatures static check failed.");
@@ -677,5 +672,3 @@ BOOST_AUTO_TEST_CASE(ResolvableFunctionTypeCheckTest)
   static_assert(!CheckPartialGradient<D>::value,
       "CheckPartialGradient static check failed.");
 }
-
-BOOST_AUTO_TEST_SUITE_END();
