@@ -35,9 +35,7 @@
   #define ARMA_USE_CXX11
 #endif
 
-#define ENS_DONT_PRINT_INFO
-#define ENS_DONT_PRINT_WARN
-
+#include "ensmallen_bits/config.hpp"
 #include "ensmallen_bits/ens_version.hpp"
 #include "ensmallen_bits/log.hpp" // TODO: should move to another place
 
