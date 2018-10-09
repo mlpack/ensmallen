@@ -1,40 +1,31 @@
-/**
- * @file ada_delta_test.cpp
- * @author Marcus Edel
- * @author Vasanth Kalingeri
- * @author Abhinav Moudgil
- *
- * Tests the AdaDelta optimizer
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <mlpack/core/optimizers/ada_delta/ada_delta.hpp>
-#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace arma;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
+using namespace ens;
 
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
-
-using namespace mlpack;
-
-BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/ada_delta/ada_delta.hpp>
+// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// 
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
+// using namespace mlpack::distribution;
+// using namespace mlpack::regression;
+// using namespace mlpack;
 
 /**
  * Tests the Adadelta optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
+TEST_CASE("SimpleAdaDeltaTestFunction", "[AdaDeltaTest]")
 {
   SGDTestFunction f;
   AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 5000000, 1e-9, true);
@@ -42,15 +33,15 @@ BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.003);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.003));
 }
 
 /**
  * Run AdaDelta on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+TEST_CASE("LogisticRegressionTest", "[AdaDeltaTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -99,10 +90,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
-
-BOOST_AUTO_TEST_SUITE_END();

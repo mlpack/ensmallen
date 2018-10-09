@@ -1,36 +1,32 @@
-/**
- * @file ada_grad_test.cpp
- * @author Abhinav Moudgil
- *
- * Test file for AdaGrad (stochastic gradient descent with AdaGrad updates).
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- */
-#include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
-#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-#include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+// Copyright (c) 2018 ensmallen developers.
+// 
+// Licensed under the 3-clause BSD license (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.opensource.org/licenses/BSD-3-Clause
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
-using namespace mlpack;
-using namespace mlpack::optimization;
-using namespace mlpack::optimization::test;
-using namespace mlpack::distribution;
-using namespace mlpack::regression;
+using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(AdaGradTest);
+// #include <mlpack/core.hpp>
+// #include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
+// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
+// 
+// using namespace mlpack;
+// using namespace mlpack::optimization;
+// using namespace mlpack::optimization::test;
+// using namespace mlpack::distribution;
+// using namespace mlpack::regression;
 
 /**
  * Tests the Adagrad optimizer using a simple test function.
  */
-BOOST_AUTO_TEST_CASE(SimpleAdaGradTestFunction)
+TEST_CASE("SimpleAdaGradTestFunction", "[AdaGradTest]")
 {
   SGDTestFunction f;
   AdaGrad optimizer(0.99, 1, 1e-8, 5000000, 1e-9, true);
@@ -38,15 +34,15 @@ BOOST_AUTO_TEST_CASE(SimpleAdaGradTestFunction)
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_SMALL(coordinates[0], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[1], 0.003);
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.003);
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.003));
 }
 
 /**
  * Run AdaGrad on logistic regression and make sure the results are acceptable.
  */
-BOOST_AUTO_TEST_CASE(AdaGradLogisticRegressionTest)
+TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGradTest]")
 {
   // Generate a two-Gaussian dataset.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
@@ -95,9 +91,8 @@ BOOST_AUTO_TEST_CASE(AdaGradLogisticRegressionTest)
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
-BOOST_AUTO_TEST_SUITE_END();

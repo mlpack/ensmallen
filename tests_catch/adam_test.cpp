@@ -29,9 +29,6 @@ using namespace ens;
 // using namespace mlpack::regression;
 // using namespace mlpack;
 
-BOOST_AUTO_TEST_SUITE();
-
-
 /**
  * Test the Adam optimizer on the Sphere function.
  */
@@ -89,8 +86,8 @@ TEST_CASE("AdamMatyasFunctionTest", "[AdamTest]")
   optimizer.Optimize(f, coordinates);
 
   // 3% error tolerance.
-  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[0]) / 100.0, 0.0, 3.0);
-  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[1]) / 100.0, 0.0, 3.0);
+  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) == Approx(0.0).epsilon(0.003));
+  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) == Approx(0.0).epsilon(0.003));
 }
 
 /**
@@ -105,8 +102,8 @@ TEST_CASE("AdamEasomFunctionTest", "[AdamTest]")
   optimizer.Optimize(f, coordinates);
 
   // 5% error tolerance.
-  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[0]) / 100.0, 3.14, 3.0);
-  BOOST_REQUIRE_CLOSE(std::trunc(100.0 * coordinates[1]) / 100.0, 3.14, 3.0);
+  REQUIRE(*std::trunc(100.0 * coordinates[0]) / 100.0) == Approx(3.14).epsilon(0.003));
+  REQUIRE(*std::trunc(100.0 * coordinates[1]) / 100.0) == Approx(3.14).epsilon(0.003));
 }
 
 /**
@@ -120,8 +117,8 @@ TEST_CASE("AdamBoothFunctionTest", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  BOOST_REQUIRE_CLOSE(coordinates[0], 1.0, 0.2);
-  BOOST_REQUIRE_CLOSE(coordinates[1], 3.0, 0.2);
+  REQUIRE(coordinates[0] == Approx(1.0).epsilon(0.002));
+  REQUIRE(coordinates[1] == Approx(3.0).epsilon(0.002));
 }
 
 /**
@@ -137,7 +134,7 @@ TEST_CASE("SimpleAdamTestFunction", "[AdamTest]")
 
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -153,7 +150,7 @@ TEST_CASE("SimpleAdaMaxTestFunction", "[AdamTest]")
 
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -169,7 +166,7 @@ TEST_CASE("SimpleAMSGradTestFunction", "[AdamTest]")
 
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -224,10 +221,10 @@ TEST_CASE("AdamLogisticRegressionTest", "[AdamTest]")
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
 
 /**
@@ -282,10 +279,10 @@ TEST_CASE("AdaMaxLogisticRegressionTest", "[AdamTest]")
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
 
 /**
@@ -340,10 +337,10 @@ TEST_CASE("AMSGradLogisticRegressionTest", "[AdamTest]")
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
 
 /**
@@ -359,7 +356,7 @@ TEST_CASE("SimpleNadamTestFunction", "[AdamTest]")
 
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -416,10 +413,10 @@ TEST_CASE("NadamLogisticRegressionTest", "[AdamTest]")
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
 
 /**
@@ -435,7 +432,7 @@ TEST_CASE("SimpleNadaMaxTestFunction", "[AdamTest]")
 
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -492,10 +489,10 @@ TEST_CASE("NadaMaxLogisticRegressionTest", "[AdamTest]")
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
 
 /**
@@ -511,7 +508,7 @@ TEST_CASE("SimpleOptimisticAdamTestFunction", "[AdamTest]")
 
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
+  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -568,8 +565,8 @@ TEST_CASE("OptimisticAdamLogisticRegressionTest", "[AdamTest]")
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
