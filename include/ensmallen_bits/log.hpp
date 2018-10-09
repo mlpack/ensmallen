@@ -72,16 +72,16 @@ class NullOutStream
   NullOutStream& operator<<(const T&) { return *this; }
 };
 
-#ifdef ENS_DONT_PRINT_INFO
-  static NullOutStream Info;
-#else
+#ifdef ENS_PRINT_INFO
   static std::ostream& Info = arma::get_cout_stream();
+#else
+  static NullOutStream Info;
 #endif
 
-#ifdef ENS_DONT_PRINT_WARN
-  static NullOutStream Warn;
-#else
+#ifdef ENS_PRINT_WARN
   static std::ostream& Warn = arma::get_cerr_stream();
+#else
+  static NullOutStream Warn;
 #endif
 
 } // namespace ens
