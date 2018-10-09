@@ -19,13 +19,13 @@
 
 namespace ens {
 
-AdaDelta::AdaDelta(const double stepSize,
-                   const size_t batchSize,
-                   const double rho,
-                   const double epsilon,
-                   const size_t maxIterations,
-                   const double tolerance,
-                   const bool shuffle) :
+inline AdaDelta::AdaDelta(const double stepSize,
+                          const size_t batchSize,
+                          const double rho,
+                          const double epsilon,
+                          const size_t maxIterations,
+                          const double tolerance,
+                          const bool shuffle) :
     optimizer(stepSize,
               batchSize,
               maxIterations,

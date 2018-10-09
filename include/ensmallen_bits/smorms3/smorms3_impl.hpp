@@ -17,12 +17,12 @@
 
 namespace ens {
 
-SMORMS3::SMORMS3(const double stepSize,
-                 const size_t batchSize,
-                 const double epsilon,
-                 const size_t maxIterations,
-                 const double tolerance,
-                 const bool shuffle) :
+inline SMORMS3::SMORMS3(const double stepSize,
+                        const size_t batchSize,
+                        const double epsilon,
+                        const size_t maxIterations,
+                        const double tolerance,
+                        const bool shuffle) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
