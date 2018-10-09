@@ -18,7 +18,7 @@
 namespace ens {
 namespace test {
 
-SchwefelFunction::SchwefelFunction(const size_t n) :
+inline SchwefelFunction::SchwefelFunction(const size_t n) :
     n(n),
     visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
 
@@ -27,15 +27,15 @@ SchwefelFunction::SchwefelFunction(const size_t n) :
   initialPoint.fill(-300);
 }
 
-void SchwefelFunction::Shuffle()
+inline void SchwefelFunction::Shuffle()
 {
   visitationOrder = arma::shuffle(
       arma::linspace<arma::Row<size_t> >(0, n - 1, n));
 }
 
-double SchwefelFunction::Evaluate(const arma::mat& coordinates,
-                                  const size_t begin,
-                                  const size_t batchSize) const
+inline double SchwefelFunction::Evaluate(const arma::mat& coordinates,
+                                         const size_t begin,
+                                         const size_t batchSize) const
 {
   double objective = 0.0;
   for (size_t j = begin; j < begin + batchSize; ++j)
@@ -48,15 +48,15 @@ double SchwefelFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double SchwefelFunction::Evaluate(const arma::mat& coordinates) const
+inline double SchwefelFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void SchwefelFunction::Gradient(const arma::mat& coordinates,
-                                const size_t begin,
-                                arma::mat& gradient,
-                                const size_t batchSize) const
+inline void SchwefelFunction::Gradient(const arma::mat& coordinates,
+                                       const size_t begin,
+                                       arma::mat& gradient,
+                                       const size_t batchSize) const
 {
   gradient.zeros(n, 1);
 
@@ -70,8 +70,8 @@ void SchwefelFunction::Gradient(const arma::mat& coordinates,
   }
 }
 
-void SchwefelFunction::Gradient(const arma::mat& coordinates,
-                                arma::mat& gradient)
+inline void SchwefelFunction::Gradient(const arma::mat& coordinates,
+                                       arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

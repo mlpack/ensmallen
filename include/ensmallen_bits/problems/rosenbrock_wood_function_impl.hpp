@@ -20,18 +20,19 @@
 namespace ens {
 namespace test {
 
-RosenbrockWoodFunction::RosenbrockWoodFunction() : rf(4), wf()
+inline RosenbrockWoodFunction::RosenbrockWoodFunction() : rf(4), wf()
 {
   initialPoint.set_size(4, 2);
   initialPoint.col(0) = rf.GetInitialPoint();
   initialPoint.col(1) = wf.GetInitialPoint();
 }
 
-void RosenbrockWoodFunction::Shuffle() { /* Nothing to do here */ }
+inline void RosenbrockWoodFunction::Shuffle() { /* Nothing to do here */ }
 
-double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates,
-                                        const size_t /* begin */,
-                                        const size_t /* batchSize */) const
+inline double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates,
+                                               const size_t /* begin */,
+                                               const size_t /* batchSize */)
+    const
 {
   const double objective = rf.Evaluate(coordinates.col(0)) +
       wf.Evaluate(coordinates.col(1));
@@ -39,15 +40,16 @@ double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates) const
+inline double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates)
+    const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
-                                      const size_t /* begin */,
-                                      arma::mat& gradient,
-                                      const size_t /* batchSize */) const
+inline void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
+                                             const size_t /* begin */,
+                                             arma::mat& gradient,
+                                             const size_t /* batchSize */) const
 {
   gradient.set_size(4, 2);
 
@@ -61,8 +63,8 @@ void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
   gradient.col(1) = gwf;
 }
 
-void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
-                                      arma::mat& gradient) const
+inline void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
+                                             arma::mat& gradient) const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

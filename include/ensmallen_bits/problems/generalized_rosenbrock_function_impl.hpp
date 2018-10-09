@@ -19,7 +19,8 @@
 namespace ens {
 namespace test {
 
-GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(const size_t n) :
+inline GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(
+    const size_t n) :
     n(n),
     visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
 
@@ -38,15 +39,16 @@ GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(const size_t n) :
   }
 }
 
-void GeneralizedRosenbrockFunction::Shuffle()
+inline void GeneralizedRosenbrockFunction::Shuffle()
 {
   visitationOrder = arma::shuffle(arma::linspace<arma::Row<size_t>>(0, n - 2,
       n - 1));
 }
 
-double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates,
-                                               const size_t begin,
-                                               const size_t batchSize) const
+inline double GeneralizedRosenbrockFunction::Evaluate(
+    const arma::mat& coordinates,
+    const size_t begin,
+    const size_t batchSize) const
 {
   double objective = 0.0;
   for (size_t j = begin; j < begin + batchSize; ++j)
@@ -59,8 +61,8 @@ double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates)
-    const
+inline double GeneralizedRosenbrockFunction::Evaluate(
+    const arma::mat& coordinates) const
 {
   double fval = 0;
   for (size_t i = 0; i < (n - 1); i++)
@@ -72,10 +74,11 @@ double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates)
   return fval;
 }
 
-void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
-                                             const size_t begin,
-                                             arma::mat& gradient,
-                                             const size_t batchSize) const
+inline void GeneralizedRosenbrockFunction::Gradient(
+    const arma::mat& coordinates,
+    const size_t begin,
+    arma::mat& gradient,
+    const size_t batchSize) const
 {
   gradient.zeros(n);
   for (size_t j = begin; j < begin + batchSize; ++j)
@@ -87,8 +90,9 @@ void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
   }
 }
 
-void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
-                                             arma::mat& gradient) const
+inline void GeneralizedRosenbrockFunction::Gradient(
+    const arma::mat& coordinates,
+    arma::mat& gradient) const
 {
   gradient.set_size(n);
   for (size_t i = 0; i < (n - 1); i++)
@@ -104,10 +108,11 @@ void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
       std::pow(coordinates[n - 2], 2));
 }
 
-void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
-                                             const size_t begin,
-                                             arma::sp_mat& gradient,
-                                             const size_t batchSize) const
+inline void GeneralizedRosenbrockFunction::Gradient(
+    const arma::mat& coordinates,
+    const size_t begin,
+    arma::sp_mat& gradient,
+    const size_t batchSize) const
 {
   gradient.set_size(n);
 

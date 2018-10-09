@@ -18,13 +18,13 @@
 namespace ens {
 namespace test {
 
-DropWaveFunction::DropWaveFunction() { /* Nothing to do here */ }
+inline DropWaveFunction::DropWaveFunction() { /* Nothing to do here */ }
 
-void DropWaveFunction::Shuffle() { /* Nothing to do here */ }
+inline void DropWaveFunction::Shuffle() { /* Nothing to do here */ }
 
-double DropWaveFunction::Evaluate(const arma::mat& coordinates,
-                                  const size_t /* begin */,
-                                  const size_t /* batchSize */) const
+inline double DropWaveFunction::Evaluate(const arma::mat& coordinates,
+                                         const size_t /* begin */,
+                                         const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -37,15 +37,15 @@ double DropWaveFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double DropWaveFunction::Evaluate(const arma::mat& coordinates) const
+inline double DropWaveFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, 1);
 }
 
-void DropWaveFunction::Gradient(const arma::mat& coordinates,
-                                const size_t /* begin */,
-                                arma::mat& gradient,
-                                const size_t /* batchSize */) const
+inline void DropWaveFunction::Gradient(const arma::mat& coordinates,
+                                       const size_t /* begin */,
+                                       arma::mat& gradient,
+                                       const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -67,8 +67,8 @@ void DropWaveFunction::Gradient(const arma::mat& coordinates,
       (std::pow(x1, 2) + std::pow(x2, 2)) + 2, 2);
 }
 
-void DropWaveFunction::Gradient(const arma::mat& coordinates,
-                                arma::mat& gradient)
+inline void DropWaveFunction::Gradient(const arma::mat& coordinates,
+                                       arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }

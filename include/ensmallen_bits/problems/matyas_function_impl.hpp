@@ -18,13 +18,13 @@
 namespace ens {
 namespace test {
 
-MatyasFunction::MatyasFunction() { /* Nothing to do here */ }
+inline MatyasFunction::MatyasFunction() { /* Nothing to do here */ }
 
-void MatyasFunction::Shuffle() { /* Nothing to do here */ }
+inline void MatyasFunction::Shuffle() { /* Nothing to do here */ }
 
-double MatyasFunction::Evaluate(const arma::mat& coordinates,
-                                const size_t /* begin */,
-                                const size_t /* batchSize */) const
+inline double MatyasFunction::Evaluate(const arma::mat& coordinates,
+                                       const size_t /* begin */,
+                                       const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -36,15 +36,15 @@ double MatyasFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double MatyasFunction::Evaluate(const arma::mat& coordinates) const
+inline double MatyasFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void MatyasFunction::Gradient(const arma::mat& coordinates,
-                              const size_t /* begin */,
-                              arma::mat& gradient,
-                              const size_t /* batchSize */) const
+inline void MatyasFunction::Gradient(const arma::mat& coordinates,
+                                     const size_t /* begin */,
+                                     arma::mat& gradient,
+                                     const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -55,7 +55,8 @@ void MatyasFunction::Gradient(const arma::mat& coordinates,
   gradient(1) = 0.52 * x2 - 0.48 * x1;
 }
 
-void MatyasFunction::Gradient(const arma::mat& coordinates, arma::mat& gradient)
+inline void MatyasFunction::Gradient(const arma::mat& coordinates,
+                                     arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

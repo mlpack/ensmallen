@@ -19,13 +19,13 @@
 namespace ens {
 namespace test {
 
-RosenbrockFunction::RosenbrockFunction() { /* Nothing to do here */ }
+inline RosenbrockFunction::RosenbrockFunction() { /* Nothing to do here */ }
 
-void RosenbrockFunction::Shuffle() { /* Nothing to do here */ }
+inline void RosenbrockFunction::Shuffle() { /* Nothing to do here */ }
 
-double RosenbrockFunction::Evaluate(const arma::mat& coordinates,
-                                    const size_t /* begin */,
-                                    const size_t /* batchSize */) const
+inline double RosenbrockFunction::Evaluate(const arma::mat& coordinates,
+                                           const size_t /* begin */,
+                                           const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -37,15 +37,15 @@ double RosenbrockFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double RosenbrockFunction::Evaluate(const arma::mat& coordinates) const
+inline double RosenbrockFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void RosenbrockFunction::Gradient(const arma::mat& coordinates,
-                                  const size_t /* begin */,
-                                  arma::mat& gradient,
-                                  const size_t /* batchSize */) const
+inline void RosenbrockFunction::Gradient(const arma::mat& coordinates,
+                                         const size_t /* begin */,
+                                         arma::mat& gradient,
+                                         const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -56,8 +56,8 @@ void RosenbrockFunction::Gradient(const arma::mat& coordinates,
   gradient(1) = 200 * (x2 - std::pow(x1, 2));
 }
 
-void RosenbrockFunction::Gradient(const arma::mat& coordinates,
-                                  arma::mat& gradient) const
+inline void RosenbrockFunction::Gradient(const arma::mat& coordinates,
+                                         arma::mat& gradient) const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

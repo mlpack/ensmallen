@@ -18,13 +18,13 @@
 namespace ens {
 namespace test {
 
-EggholderFunction::EggholderFunction() { /* Nothing to do here */ }
+inline EggholderFunction::EggholderFunction() { /* Nothing to do here */ }
 
-void EggholderFunction::Shuffle() { /* Nothing to do here */ }
+inline void EggholderFunction::Shuffle() { /* Nothing to do here */ }
 
-double EggholderFunction::Evaluate(const arma::mat& coordinates,
-                                   const size_t /* begin */,
-                                   const size_t /* batchSize */) const
+inline double EggholderFunction::Evaluate(const arma::mat& coordinates,
+                                          const size_t /* begin */,
+                                          const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -37,15 +37,15 @@ double EggholderFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double EggholderFunction::Evaluate(const arma::mat& coordinates) const
+inline double EggholderFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void EggholderFunction::Gradient(const arma::mat& coordinates,
-                                 const size_t /* begin */,
-                                 arma::mat& gradient,
-                                 const size_t /* batchSize */) const
+inline void EggholderFunction::Gradient(const arma::mat& coordinates,
+                                        const size_t /* begin */,
+                                        arma::mat& gradient,
+                                        const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -67,8 +67,8 @@ void EggholderFunction::Gradient(const arma::mat& coordinates,
       (4 * std::pow(std::abs(x1 / 2 + x2  + 47), 1.5));
 }
 
-void EggholderFunction::Gradient(const arma::mat& coordinates,
-                                 arma::mat& gradient)
+inline void EggholderFunction::Gradient(const arma::mat& coordinates,
+                                        arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }
