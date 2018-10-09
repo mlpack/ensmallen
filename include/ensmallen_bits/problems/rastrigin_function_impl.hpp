@@ -18,7 +18,7 @@
 namespace ens {
 namespace test {
 
-RastriginFunction::RastriginFunction(const size_t n) :
+inline RastriginFunction::RastriginFunction(const size_t n) :
     n(n),
     visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
 
@@ -27,15 +27,15 @@ RastriginFunction::RastriginFunction(const size_t n) :
   initialPoint.fill(-3);
 }
 
-void RastriginFunction::Shuffle()
+inline void RastriginFunction::Shuffle()
 {
   visitationOrder = arma::shuffle(
       arma::linspace<arma::Row<size_t> >(0, n - 1, n));
 }
 
-double RastriginFunction::Evaluate(const arma::mat& coordinates,
-                                   const size_t begin,
-                                   const size_t batchSize) const
+inline double RastriginFunction::Evaluate(const arma::mat& coordinates,
+                                          const size_t begin,
+                                          const size_t batchSize) const
 {
   double objective = 0.0;
   for (size_t j = begin; j < begin + batchSize; ++j)
@@ -49,15 +49,15 @@ double RastriginFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double RastriginFunction::Evaluate(const arma::mat& coordinates) const
+inline double RastriginFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void RastriginFunction::Gradient(const arma::mat& coordinates,
-                                 const size_t begin,
-                                 arma::mat& gradient,
-                                 const size_t batchSize) const
+inline void RastriginFunction::Gradient(const arma::mat& coordinates,
+                                        const size_t begin,
+                                        arma::mat& gradient,
+                                        const size_t batchSize) const
 {
   gradient.zeros(n, 1);
 
@@ -69,8 +69,8 @@ void RastriginFunction::Gradient(const arma::mat& coordinates,
   }
 }
 
-void RastriginFunction::Gradient(const arma::mat& coordinates,
-                                 arma::mat& gradient)
+inline void RastriginFunction::Gradient(const arma::mat& coordinates,
+                                        arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

@@ -18,13 +18,13 @@
 namespace ens {
 namespace test {
 
-ColvilleFunction::ColvilleFunction() { /* Nothing to do here */ }
+inline ColvilleFunction::ColvilleFunction() { /* Nothing to do here */ }
 
-void ColvilleFunction::Shuffle() { /* Nothing to do here */ }
+inline void ColvilleFunction::Shuffle() { /* Nothing to do here */ }
 
-double ColvilleFunction::Evaluate(const arma::mat& coordinates,
-                                  const size_t /* begin */,
-                                  const size_t /* batchSize */) const
+inline double ColvilleFunction::Evaluate(const arma::mat& coordinates,
+                                         const size_t /* begin */,
+                                         const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -40,15 +40,15 @@ double ColvilleFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double ColvilleFunction::Evaluate(const arma::mat& coordinates) const
+inline double ColvilleFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void ColvilleFunction::Gradient(const arma::mat& coordinates,
-                                const size_t /* begin */,
-                                arma::mat& gradient,
-                                const size_t /* batchSize */) const
+inline void ColvilleFunction::Gradient(const arma::mat& coordinates,
+                                       const size_t /* begin */,
+                                       arma::mat& gradient,
+                                       const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -63,8 +63,8 @@ void ColvilleFunction::Gradient(const arma::mat& coordinates,
   gradient(3) = 200.2 * x4 + 19.8 * x2 - 180 * std::pow(x3, 2) - 40;
 }
 
-void ColvilleFunction::Gradient(const arma::mat& coordinates,
-                                arma::mat& gradient) const
+inline void ColvilleFunction::Gradient(const arma::mat& coordinates,
+                                       arma::mat& gradient) const
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

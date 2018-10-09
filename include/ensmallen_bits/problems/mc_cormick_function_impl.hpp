@@ -18,13 +18,13 @@
 namespace ens {
 namespace test {
 
-McCormickFunction::McCormickFunction() { /* Nothing to do here */ }
+inline McCormickFunction::McCormickFunction() { /* Nothing to do here */ }
 
-void McCormickFunction::Shuffle() { /* Nothing to do here */ }
+inline void McCormickFunction::Shuffle() { /* Nothing to do here */ }
 
-double McCormickFunction::Evaluate(const arma::mat& coordinates,
-                                const size_t /* begin */,
-                                const size_t /* batchSize */) const
+inline double McCormickFunction::Evaluate(const arma::mat& coordinates,
+                                          const size_t /* begin */,
+                                          const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -36,15 +36,15 @@ double McCormickFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double McCormickFunction::Evaluate(const arma::mat& coordinates) const
+inline double McCormickFunction::Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void McCormickFunction::Gradient(const arma::mat& coordinates,
-                                 const size_t /* begin */,
-                                 arma::mat& gradient,
-                                 const size_t /* batchSize */) const
+inline void McCormickFunction::Gradient(const arma::mat& coordinates,
+                                        const size_t /* begin */,
+                                        arma::mat& gradient,
+                                        const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -55,8 +55,8 @@ void McCormickFunction::Gradient(const arma::mat& coordinates,
   gradient(1) = std::cos(x1 + x2) - 2 * x1 + 2 * x2 + 2.5;
 }
 
-void McCormickFunction::Gradient(const arma::mat& coordinates,
-                                 arma::mat& gradient)
+inline void McCormickFunction::Gradient(const arma::mat& coordinates,
+                                        arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

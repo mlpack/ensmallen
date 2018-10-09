@@ -18,7 +18,7 @@
 namespace ens {
 namespace test {
 
-StyblinskiTangFunction::StyblinskiTangFunction(const size_t n) :
+inline StyblinskiTangFunction::StyblinskiTangFunction(const size_t n) :
     n(n),
     visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
 
@@ -27,15 +27,15 @@ StyblinskiTangFunction::StyblinskiTangFunction(const size_t n) :
   initialPoint.fill(-5);
 }
 
-void StyblinskiTangFunction::Shuffle()
+inline void StyblinskiTangFunction::Shuffle()
 {
   visitationOrder = arma::shuffle(
       arma::linspace<arma::Row<size_t> >(0, n - 1, n));
 }
 
-double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates,
-                                        const size_t begin,
-                                        const size_t batchSize) const
+inline double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates,
+                                               const size_t begin,
+                                               const size_t batchSize) const
 {
   double objective = 0.0;
   for (size_t j = begin; j < begin + batchSize; ++j)
@@ -49,15 +49,16 @@ double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates) const
+inline double StyblinskiTangFunction::Evaluate(const arma::mat& coordinates)
+    const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
-                                      const size_t begin,
-                                      arma::mat& gradient,
-                                      const size_t batchSize) const
+inline void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
+                                             const size_t begin,
+                                             arma::mat& gradient,
+                                             const size_t batchSize) const
 {
   gradient.zeros(n, 1);
 
@@ -69,8 +70,8 @@ void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
   }
 }
 
-void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
-                                      arma::mat& gradient)
+inline void StyblinskiTangFunction::Gradient(const arma::mat& coordinates,
+                                             arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }
