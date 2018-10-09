@@ -21,10 +21,10 @@
 
 namespace ens {
 
-IQN::IQN(const double stepSize,
-         const size_t batchSize,
-         const size_t maxIterations,
-         const double tolerance) :
+inline IQN::IQN(const double stepSize,
+                const size_t batchSize,
+                const size_t maxIterations,
+                const double tolerance) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),

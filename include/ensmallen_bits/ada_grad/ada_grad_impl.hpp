@@ -17,12 +17,12 @@
 
 namespace ens {
 
-AdaGrad::AdaGrad(const double stepSize,
-                 const size_t batchSize,
-                 const double epsilon,
-                 const size_t maxIterations,
-                 const double tolerance,
-                 const bool shuffle) :
+inline AdaGrad::AdaGrad(const double stepSize,
+                        const size_t batchSize,
+                        const double epsilon,
+                        const size_t maxIterations,
+                        const double tolerance,
+                        const bool shuffle) :
     optimizer(stepSize,
               batchSize,
               maxIterations,

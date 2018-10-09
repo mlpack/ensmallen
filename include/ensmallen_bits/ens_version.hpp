@@ -6,12 +6,15 @@
 // http://www.opensource.org/licenses/BSD-3-Clause
 
 
+#include <sstream>
+
 // following the Semantic Versioning pattern defined in https://semver.org/
 
 #define ENS_VERSION_MAJOR 0
 #define ENS_VERSION_MINOR 100
 #define ENS_VERSION_PATCH 0
 #define ENS_VERSION_NAME  "development"
+
 //#define ENS_VERSION_NAME "2018-10-31"
 //#define ENS_VERSION_NAME "stable"
 //#define ENS_VERSION_NAME "1.199-RC3"

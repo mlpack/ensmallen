@@ -20,13 +20,13 @@
 
 namespace ens {
 
-CNE::CNE(const size_t populationSize,
-         const size_t maxGenerations,
-         const double mutationProb,
-         const double mutationSize,
-         const double selectPercent,
-         const double tolerance,
-         const double objectiveChange) :
+inline CNE::CNE(const size_t populationSize,
+                const size_t maxGenerations,
+                const double mutationProb,
+                const double mutationSize,
+                const double selectPercent,
+                const double tolerance,
+                const double objectiveChange) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     mutationProb(mutationProb),
@@ -132,7 +132,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
 }
 
 //! Reproduce candidates to create the next generation.
-void CNE::Reproduce()
+inline void CNE::Reproduce()
 {
   // Sort fitness values. Smaller fitness value means better performance.
   index = arma::sort_index(fitnessValues);
@@ -176,10 +176,10 @@ void CNE::Reproduce()
 }
 
 //! Crossover parents to create new children.
-void CNE::Crossover(const size_t mom,
-                    const size_t dad,
-                    const size_t child1,
-                    const size_t child2)
+inline void CNE::Crossover(const size_t mom,
+                           const size_t dad,
+                           const size_t child1,
+                           const size_t child2)
 {
   // Replace the candidates with parents at their place.
   population.slice(child1) = population.slice(mom);
@@ -206,7 +206,7 @@ void CNE::Crossover(const size_t mom,
 }
 
 //! Modify weights with some noise for the evolution of next generation.
-void CNE::Mutate()
+inline void CNE::Mutate()
 {
   // Mutate the whole matrix with the given rate and probability.
   // The best candidate is not altered.
