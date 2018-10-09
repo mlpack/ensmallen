@@ -11,6 +11,7 @@
 using namespace std;
 using namespace arma;
 using namespace ens;
+using namespace ens::test;
 
 // #include <ensmallen.hpp>
 // #include <ensmallen/problems/problems.hpp>

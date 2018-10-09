@@ -9,6 +9,7 @@
 #include "catch.hpp"
 
 using namespace ens;
+using namespace ens::test;
 
 // #include <mlpack/core.hpp>
 // #include <mlpack/core/optimizers/sdp/sdp.hpp>

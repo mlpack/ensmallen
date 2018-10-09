@@ -10,6 +10,7 @@
 #include "catch.hpp"
 
 using namespace ens;
+using namespace ens::test;
 
 
 // #include <mlpack/core/cv/meta_info_extractor.hpp>

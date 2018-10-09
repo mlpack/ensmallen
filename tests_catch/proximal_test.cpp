@@ -11,14 +11,13 @@
 using namespace std;
 using namespace arma;
 using namespace ens;
+using namespace ens::test;
 
 // #include <mlpack/core.hpp>
 // #include <mlpack/core/optimizers/proximal/proximal.hpp>
 // 
 // using namespace mlpack;
 // using namespace mlpack::optimization;
-
-BOOST_AUTO_TEST_SUITE();
 
 /**
  * Approximate vector using a vector with l1 norm small than or equal to tau.

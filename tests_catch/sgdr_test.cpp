@@ -11,6 +11,7 @@
 using namespace std;
 using namespace arma;
 using namespace ens;
+using namespace ens::test;
 
 // #include <mlpack/core.hpp>
 // #include <mlpack/core/optimizers/sgdr/cyclical_decay.hpp>

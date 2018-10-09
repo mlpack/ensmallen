@@ -10,6 +10,7 @@
 
 using namespace std;
 using namespace ens;
+using namespace ens::test;
 
 
 // #include <mlpack/core.hpp>
