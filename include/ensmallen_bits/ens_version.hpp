@@ -33,6 +33,8 @@
 // CS note: i suggest using a minor version number that starts at 100
 // CS note: and is not allowed go past 999.
 
+namespace ens {
+
 struct ens_version
   {
   static const unsigned int major = ENS_VERSION_MAJOR;
@@ -59,3 +61,5 @@ struct ens_version
     return ss.str();
     }
   };
+
+} // namespace ens
