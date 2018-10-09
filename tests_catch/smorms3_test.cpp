@@ -15,6 +15,7 @@
 
 using namespace arma;
 using namespace ens;
+using namespace ens::test;
 
 // using namespace mlpack::optimization;
 // using namespace mlpack::optimization::test;
@@ -33,11 +34,6 @@ TEST_CASE("SimpleSMORMS3TestFunction","[SMORMS3Test]")
   arma::mat coordinates = f.GetInitialPoint();
   s.Optimize(f, coordinates);
 
-  // BOOST_REQUIRE_SMALL(coordinates[0], 0.1);
-  // BOOST_REQUIRE_SMALL(coordinates[1], 0.1);
-  // BOOST_REQUIRE_SMALL(coordinates[2], 0.1);
-  
-  // TODO: not sure if this is equivalent to BOOST_REQUIRE_SMALL
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
   REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));

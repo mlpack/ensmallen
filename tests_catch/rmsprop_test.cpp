@@ -9,6 +9,7 @@
 #include "catch.hpp"
 
 using namespace ens;
+using namespace ens::test;
 
 TEST_CASE("rmsprop_sgd_function", "[rmsprop]")
 {

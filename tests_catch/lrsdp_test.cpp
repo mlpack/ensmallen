@@ -10,6 +10,7 @@
 
 using namespace arma;
 using namespace ens;
+using namespace ens::test;
 
 // #include <mlpack/core.hpp>
 // #include <mlpack/core/optimizers/sdp/lrsdp.hpp>
