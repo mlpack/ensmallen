@@ -1,3 +1,4 @@
+#include <iostream>
 #include <ensmallen.hpp>
 
 //#define CATCH_CONFIG_MAIN  // catch.hpp will define main()
