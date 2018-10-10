@@ -9,3 +9,10 @@ gradient-free optimizers, and constrained optimization.
 **Note**: this library is still in development, so documentation is not yet
 available and the structure of the code is subject to change.  You have been
 warned!
+
+
+### License
+
+Unless stated otherwise, **ensmallen** is licensed under the 3-clause BSD license (the "License").
+A copy of the License is included in the "LICENSE.txt" file.
+You may also obtain a copy of the License at http://www.opensource.org/licenses/BSD-3-Clause
