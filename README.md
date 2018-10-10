@@ -13,6 +13,8 @@ warned!
 
 ### License
 
-Unless stated otherwise, **ensmallen** is licensed under the 3-clause BSD license (the "License").
+Unless stated otherwise, the source code for **ensmallen**
+is licensed under the 3-clause BSD license (the "License").
 A copy of the License is included in the "LICENSE.txt" file.
-You may also obtain a copy of the License at http://www.opensource.org/licenses/BSD-3-Clause
+You may also obtain a copy of the License at
+http://opensource.org/licenses/BSD-3-Clause

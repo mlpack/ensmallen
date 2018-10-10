@@ -16,7 +16,7 @@
 #define ENSMALLEN_HPP
 
 // Defining _USE_MATH_DEFINES should set M_PI.
-// TODO: instead of M_PI, perhaps use arma::datum::pi instead?
+// TODO: instead of M_PI, perhaps use arma::datum::pi
 #undef  _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -35,7 +35,7 @@
 #include <string>
 #include <sstream>
 
-// cetain compilers are way behind the curve
+// certain compilers are way behind the curve
 #if (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))
   #undef  ARMA_USE_CXX11
   #define ARMA_USE_CXX11
