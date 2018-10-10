@@ -45,7 +45,7 @@ TEST_CASE("SimpleAdaDeltaTestFunction", "[AdaDeltaTest]")
 TEST_CASE("LogisticRegressionTest", "[AdaDeltaTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));  // TODO: GaussianDistribution not in ensmallen
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
@@ -90,7 +90,7 @@ TEST_CASE("LogisticRegressionTest", "[AdaDeltaTest]")
   LogisticRegression<> lr(shuffledData, shuffledResponses, adaDelta, 0.5);
 
   // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses);
+  const double acc = lr.ComputeAccuracy(data, responses);  // TODO: ensmallen version of LogisticRegression doesn't seem to have ComputeAccuracy()
   REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses);
