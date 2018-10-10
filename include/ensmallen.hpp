@@ -8,6 +8,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
+// NOTE: When using the ensmallen library in your code, only include the ensmallen.hpp header.
+// NOTE: Do not include any of the files in the ensmallen_bits folder.
+ 
 #ifndef ENSMALLEN_HPP
 #define ENSMALLEN_HPP
 
