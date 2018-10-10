@@ -6,8 +6,8 @@
 
 int main(int argc, char** argv)
 {
-  // std::cout << "ensmallen version: " << ens::version::as_string() << std::endl;
-  std::cout << "ensmallen version: " << "TODO" << std::endl;
+  std::cout << "ensmallen version: " << ens::ens_version::as_string() << std::endl;
+  
   std::cout << "armadillo version: " << arma::arma_version::as_string() << std::endl;
   
   return Catch::Session().run(argc, argv);
