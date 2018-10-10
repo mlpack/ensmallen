@@ -12,6 +12,8 @@
 #define ENSMALLEN_HPP
 
 // Defining _USE_MATH_DEFINES should set M_PI.
+// TODO: instead of M_PI, perhaps use arma::datum::pi instead?
+#undef  _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -26,14 +28,31 @@
 #include <tuple>
 #include <utility>
 #include <iostream>
+#include <string>
+#include <sstream>
+
+// cetain compilers are way behind the curve
+#if (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))
+  #undef  ARMA_USE_CXX11
+  #define ARMA_USE_CXX11
+#endif
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
 // it's part of the C++11 standard.
 #ifdef _MSC_VER
   #pragma warning(disable : 4519)
-  #define ARMA_USE_CXX11
 #endif
+
+// #include <armadillo>  // TODO: ensure that this is the only place armadillo is included
+
+#if !defined(ARMA_USE_CXX11)
+  // armadillo automatically enables ARMA_USE_CXX11
+  // when a C++11/C++14/C++17/etc compiler is detected
+  #error "please enable C++11/C++14 mode in your compiler"
+#endif
+
+
 
 #include "ensmallen_bits/config.hpp"
 #include "ensmallen_bits/ens_version.hpp"
