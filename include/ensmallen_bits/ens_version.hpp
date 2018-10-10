@@ -6,8 +6,6 @@
 // http://www.opensource.org/licenses/BSD-3-Clause
 
 
-#include <sstream>
-
 // following the Semantic Versioning pattern defined in https://semver.org/
 
 #define ENS_VERSION_MAJOR 0
