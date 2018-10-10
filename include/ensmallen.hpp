@@ -44,15 +44,13 @@
   #pragma warning(disable : 4519)
 #endif
 
-// #include <armadillo>  // TODO: ensure that this is the only place armadillo is included
+#include <armadillo>  // TODO: ensure that this is the only place armadillo is included
 
 #if !defined(ARMA_USE_CXX11)
   // armadillo automatically enables ARMA_USE_CXX11
   // when a C++11/C++14/C++17/etc compiler is detected
   #error "please enable C++11/C++14 mode in your compiler"
 #endif
-
-
 
 #include "ensmallen_bits/config.hpp"
 #include "ensmallen_bits/ens_version.hpp"
