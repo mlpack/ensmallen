@@ -23,7 +23,7 @@ set(ENSMALLEN_TESTS_SOURCES
     sa_test.cpp
     sarah_test.cpp
     # scd_test.cpp
-    # sdp_primal_dual_test.cpp
+    sdp_primal_dual_test.cpp
     sgdr_test.cpp
     sgd_test.cpp
     smorms3_test.cpp
