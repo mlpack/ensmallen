@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -10,18 +10,7 @@
 
 using namespace ens;
 using namespace ens::test;
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/function.hpp>
-// #include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
-// #include <mlpack/core/optimizers/sdp/sdp.hpp>
-// #include <mlpack/core/optimizers/sdp/lrsdp.hpp>
-// #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
-
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::traits; // For some SFINAE checks.
-// using namespace mlpack::regression;
+using namespace ens::traits;
 
 /**
  * Utility class with no functions.

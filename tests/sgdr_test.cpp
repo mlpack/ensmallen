@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -7,26 +7,15 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
-using namespace std;
-using namespace arma;
 using namespace ens;
 using namespace ens::test;
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/sgdr/cyclical_decay.hpp>
-// #include <mlpack/core/optimizers/sgdr/sgdr.hpp>
-// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-// 
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::distribution;
-// using namespace mlpack::regression;
 
 /*
  * Test that the step size resets after a specified number of epochs.
  */
-TEST_CASE("CyclicalResetTest","[SGDRTest]")
+TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
 {
   const double stepSize = 0.5;
   arma::mat iterate;
@@ -63,61 +52,29 @@ TEST_CASE("CyclicalResetTest","[SGDRTest]")
 /**
  * Run SGDR on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("LogisticRegressionTest","[SGDRTest]")
+TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
 {
-  // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  arma::mat data(3, 1000);
-  arma::Row<size_t> responses(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    data.col(i) = g1.Random();
-    responses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    data.col(i) = g2.Random();
-    responses[i] = 1;
-  }
-
-  // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
-  arma::mat shuffledData(3, 1000);
-  arma::Row<size_t> shuffledResponses(1000);
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    shuffledData.col(i) = data.col(indices[i]);
-    shuffledResponses[i] = responses[indices[i]];
-  }
-
-  // Create a test set.
-  arma::mat testData(3, 1000);
-  arma::Row<size_t> testResponses(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    testData.col(i) = g1.Random();
-    testResponses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    testData.col(i) = g2.Random();
-    testResponses[i] = 1;
-  }
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
 
   // Now run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegression<> lr(shuffledData, shuffledResponses, sgdr, 0.5);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
+
+    arma::mat coordinates = lr.GetInitialPoint();
+    sgdr.Optimize(lr, coordinates);
 
     // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses);
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
     REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
     REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }

@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -8,22 +8,8 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
-using namespace std;
-using namespace arma;
 using namespace ens;
 using namespace ens::test;
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/sgd/sgd.hpp>
-// #include <mlpack/core/optimizers/sgd/update_policies/gradient_clipping.hpp>
-// #include <mlpack/core/optimizers/sgd/update_policies/nesterov_momentum_update.hpp>
-// #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
-// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
-
 /*
 * Tests the Nesterov Momentum SGD update policy.
 */
@@ -46,7 +32,7 @@ TEST_CASE("NesterovMomentumSGDSpeedUpTestFunction", "[NesterovMomentumSGDTest]")
 /*
 * Tests the Nesterov Momentum SGD with Generalized Rosenbrock Test.
 */
-TEST_CASE("GeneralizedRosenbrockTest", "[NesterovMomentumSGDTest]")
+TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockTest", "[NesterovMomentumSGDTest]")
 {
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)

@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -7,22 +7,10 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
-using namespace std;
-using namespace arma;
 using namespace ens;
 using namespace ens::test;
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/ada_grad/ada_grad.hpp>
-// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-// 
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
-// using namespace mlpack::distribution;
-// using namespace mlpack::regression;
 
 /**
  * Tests the Adagrad optimizer using a simple test function.
@@ -45,55 +33,22 @@ TEST_CASE("SimpleAdaGradTestFunction", "[AdaGradTest]")
  */
 TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGradTest]")
 {
-  // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  arma::mat data(3, 1000);
-  arma::Row<size_t> responses(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    data.col(i) = g1.Random();
-    responses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    data.col(i) = g2.Random();
-    responses[i] = 1;
-  }
-
-  // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
-  arma::mat shuffledData(3, 1000);
-  arma::Row<size_t> shuffledResponses(1000);
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    shuffledData.col(i) = data.col(indices[i]);
-    shuffledResponses[i] = responses[indices[i]];
-  }
-
-  // Create a test set.
-  arma::mat testData(3, 1000);
-  arma::Row<size_t> testResponses(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    testData.col(i) = g1.Random();
-    testResponses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    testData.col(i) = g2.Random();
-    testResponses[i] = 1;
-  }
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
   AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, adagrad, 0.5);
+  arma::mat coordinates = lr.GetInitialPoint();
+  adagrad.Optimize(lr, coordinates);
 
   // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses);
+  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
   REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
 
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+      coordinates);
   REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
