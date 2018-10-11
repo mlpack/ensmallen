@@ -15,7 +15,6 @@
 #ifndef ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 #define ENSMALLEN_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 
-#include <armadillo>
 #include <ensmallen_bits/lbfgs/lbfgs.hpp>
 
 #include "aug_lagrangian_function.hpp"

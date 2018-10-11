@@ -13,7 +13,6 @@
 #ifndef ENSMALLEN_SDP_LRSDP_FUNCTION_HPP
 #define ENSMALLEN_SDP_LRSDP_FUNCTION_HPP
 
-#include <armadillo>
 #include <ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp>
 #include "sdp.hpp"
 

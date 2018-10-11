@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_SARAH_SARAH_PLUS_UPDATE_HPP
 #define ENSMALLEN_SARAH_SARAH_PLUS_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

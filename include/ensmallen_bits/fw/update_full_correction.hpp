@@ -14,7 +14,6 @@
 #ifndef ENSMALLEN_FW_UPDATE_FULL_CORRECTION_HPP
 #define ENSMALLEN_FW_UPDATE_FULL_CORRECTION_HPP
 
-#include <armadillo>
 #include "atoms.hpp"
 
 namespace ens {

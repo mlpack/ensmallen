@@ -13,7 +13,6 @@
 #ifndef ENSMALLEN_FUNCTION_TRAITS_HPP
 #define ENSMALLEN_FUNCTION_TRAITS_HPP
 
-#include <armadillo>
 #include "sfinae_utility.hpp"
 
 namespace ens {

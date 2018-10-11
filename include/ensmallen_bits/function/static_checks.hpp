@@ -15,7 +15,6 @@
 #ifndef ENSMALLEN_STATIC_CHECKS_HPP
 #define ENSMALLEN_STATIC_CHECKS_HPP
 
-#include <armadillo>
 #include "sfinae_utility.hpp"
 
 namespace ens {

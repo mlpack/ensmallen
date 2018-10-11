@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_ADA_DELTA_ADA_DELTA_UPDATE_HPP
 #define ENSMALLEN_ADA_DELTA_ADA_DELTA_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

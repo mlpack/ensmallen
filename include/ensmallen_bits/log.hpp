@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_LOG_HPP
 #define ENSMALLEN_LOG_HPP
 
-#include <armadillo>
-
 namespace ens {
 /**
  * This class does nothing and should be optimized out entirely by the compiler.

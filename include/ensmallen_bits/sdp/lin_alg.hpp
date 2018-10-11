@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SDP_LIN_ALG_HPP
 #define ENSMALLEN_SDP_LIN_ALG_HPP
 
-#include <armadillo>
-
 namespace ens {
 namespace math {
 

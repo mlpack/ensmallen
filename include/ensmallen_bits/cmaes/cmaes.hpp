@@ -15,8 +15,6 @@
 #ifndef ENSMALLEN_CMAES_CMAES_HPP
 #define ENSMALLEN_CMAES_CMAES_HPP
 
-#include <armadillo>
-
 #include "full_selection.hpp"
 #include "random_selection.hpp"
 

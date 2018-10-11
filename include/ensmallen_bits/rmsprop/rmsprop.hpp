@@ -15,8 +15,6 @@
 #ifndef ENSMALLEN_RMSPROP_RMSPROP_HPP
 #define ENSMALLEN_RMSPROP_RMSPROP_HPP
 
-#include <armadillo>
-
 #include <ensmallen_bits/sgd/sgd.hpp>
 #include "rmsprop_update.hpp"
 

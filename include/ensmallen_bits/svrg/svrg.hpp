@@ -12,7 +12,6 @@
 #ifndef ENSMALLEN_SVRG_SVRG_HPP
 #define ENSMALLEN_SVRG_SVRG_HPP
 
-#include <armadillo>
 #include <ensmallen_bits/sgd/decay_policies/no_decay.hpp>
 
 #include "svrg_update.hpp"

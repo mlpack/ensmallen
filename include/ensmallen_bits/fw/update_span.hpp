@@ -13,7 +13,6 @@
 #ifndef ENSMALLEN_FW_UPDATE_SPAN_HPP
 #define ENSMALLEN_FW_UPDATE_SPAN_HPP
 
-#include <armadillo>
 #include "func_sq.hpp"
 #include "atoms.hpp"
 

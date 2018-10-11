@@ -15,8 +15,6 @@
 #ifndef ENSMALLEN_RMSPROP_RMSPROP_UPDATE_HPP
 #define ENSMALLEN_RMSPROP_RMSPROP_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

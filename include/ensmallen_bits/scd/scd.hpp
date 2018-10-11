@@ -12,7 +12,6 @@
 #ifndef ENSMALLEN_SCD_SCD_HPP
 #define ENSMALLEN_SCD_SCD_HPP
 
-#include <armadillo>
 #include "descent_policies/random_descent.hpp"
 
 namespace ens {

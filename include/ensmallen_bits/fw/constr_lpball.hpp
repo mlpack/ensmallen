@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_FW_CONSTR_LPBALL_HPP
 #define ENSMALLEN_FW_CONSTR_LPBALL_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**
