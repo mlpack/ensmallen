@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -7,22 +7,10 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
-using namespace arma;
 using namespace ens;
 using namespace ens::test;
-
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/cmaes/cmaes.hpp>
-// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-// #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
-// 
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
-// using namespace mlpack::distribution;
-// using namespace mlpack::regression;
-// using namespace mlpack;
 
 /**
  * Tests the CMA-ES optimizer using a simple test function.
@@ -41,59 +29,6 @@ TEST_CASE("SimpleTestFunction", "[CMAESTest]")
 }
 
 /**
- * Create the data for the logistic regression test case.
- */
-void CreateLogisticRegressionTestData(arma::mat& data,
-                                      arma::mat& testData,
-                                      arma::mat& shuffledData,
-                                      arma::Row<size_t>& responses,
-                                      arma::Row<size_t>& testResponses,
-                                      arma::Row<size_t>& shuffledResponses)
-{
-  // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
-
-  data = arma::mat(3, 1000);
-  responses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    data.col(i) = g1.Random();
-    responses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    data.col(i) = g2.Random();
-    responses[i] = 1;
-  }
-
-  // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      data.n_cols - 1, data.n_cols));
-  shuffledData = arma::mat(3, 1000);
-  shuffledResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    shuffledData.col(i) = data.col(indices[i]);
-    shuffledResponses[i] = responses[indices[i]];
-  }
-
-  // Create a test set.
-  testData = arma::mat(3, 1000);
-  testResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    testData.col(i) = g1.Random();
-    testResponses[i] = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    testData.col(i) = g2.Random();
-    testResponses[i] = 1;
-  }
-}
-
-/**
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
  */
@@ -106,15 +41,18 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
     arma::mat data, testData, shuffledData;
     arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-    CreateLogisticRegressionTestData(data, testData, shuffledData,
+    LogisticRegressionTestData(data, testData, shuffledData,
         responses, testResponses, shuffledResponses);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-    LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
+    arma::mat coordinates = lr.GetInitialPoint();
+    cmaes.Optimize(lr, coordinates);
 
     // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses);
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
     if (acc >= 99.7 && testAcc >= 99.4)
     {
       success = true;
@@ -122,7 +60,7 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
     }
   }
 
-  REQUIRE(success, true);
+  REQUIRE(success == true);
 }
 
 /**
@@ -138,15 +76,18 @@ TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
     arma::mat data, testData, shuffledData;
     arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-    CreateLogisticRegressionTestData(data, testData, shuffledData,
+    LogisticRegressionTestData(data, testData, shuffledData,
         responses, testResponses, shuffledResponses);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-    LogisticRegression<> lr(shuffledData, shuffledResponses, cmaes, 0.5);
+    arma::mat coordinates = lr.GetInitialPoint();
+    cmaes.Optimize(lr, coordinates);
 
     // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses);
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses);
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
     if (acc >= 99.7 && testAcc >= 99.4)
     {
       success = true;

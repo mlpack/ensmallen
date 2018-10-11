@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -8,16 +8,8 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
-using namespace std;
-using namespace arma;
 using namespace ens;
 using namespace ens::test;
-
-// #include <ensmallen.hpp>
-// #include <ensmallen/problems/problems.hpp>
-// 
-// using namespace ens;
-// using namespace ens::test;
 
 TEST_CASE("SimpleGDTestFunction", "[GradientDescentTest]")
 {
@@ -33,7 +25,7 @@ TEST_CASE("SimpleGDTestFunction", "[GradientDescentTest]")
   REQUIRE(coordinates[2] == Approx(0.0).margin(1e-2));
 }
 
-TEST_CASE("RosenbrockTest", "[GradientDescentTest]")
+TEST_CASE("GDRosenbrockTest", "[GradientDescentTest]")
 {
   // Create the Rosenbrock function.
   RosenbrockFunction f;

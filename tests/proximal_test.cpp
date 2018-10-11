@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -8,16 +8,9 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
-using namespace std;
 using namespace arma;
 using namespace ens;
 using namespace ens::test;
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/proximal/proximal.hpp>
-// 
-// using namespace mlpack;
-// using namespace mlpack::optimization;
 
 /**
  * Approximate vector using a vector with l1 norm small than or equal to tau.

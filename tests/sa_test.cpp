@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -8,30 +8,11 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
-using namespace std;
-using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/sa/sa.hpp>
-// #include <mlpack/core/optimizers/sa/exponential_schedule.hpp>
-// #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
-// #include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
-// #include <mlpack/core/optimizers/problems/rastrigin_function.hpp>
-// 
-// #include <mlpack/core/metrics/ip_metric.hpp>
-// #include <mlpack/core/metrics/lmetric.hpp>
-// #include <mlpack/core/metrics/mahalanobis_distance.hpp>
-
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
-// using namespace mlpack::metric;
-
 // The Generalized-Rosenbrock function is a simple function to optimize.
-TEST_CASE("GeneralizedRosenbrockTest","[SATest]")
+TEST_CASE("SAGeneralizedRosenbrockTest","[SATest]")
 {
   size_t dim = 10;
   GeneralizedRosenbrockFunction f(dim);
@@ -59,7 +40,7 @@ TEST_CASE("GeneralizedRosenbrockTest","[SATest]")
 }
 
 // The Rosenbrock function is a simple function to optimize.
-TEST_CASE("RosenbrockTest","[SATest]")
+TEST_CASE("SARosenbrockTest","[SATest]")
 {
   RosenbrockFunction f;
   ExponentialSchedule schedule;

@@ -11,9 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <armadillo>
 #include <ensmallen.hpp>
-#include <ensmallen_bits/problems/problems.hpp>
+#include "catch.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -31,7 +30,7 @@ TEST_CASE("AugLagrangianTestFunctionTest", "[AugLagrangianTest]")
   arma::vec coords = f.GetInitialPoint();
 
   if (!aug.Optimize(f, coords, 0))
-    CATCH_FAIL("Optimization reported failure.");
+    FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
 
@@ -51,7 +50,7 @@ TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
   arma::vec coords = f.GetInitialPoint();
 
   if (!aug.Optimize(f, coords, 0))
-    CATCH_FAIL("Optimization reported failure.");
+    FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
 

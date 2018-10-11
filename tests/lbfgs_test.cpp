@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -10,16 +10,6 @@
 
 using namespace ens;
 using namespace ens::test;
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-// 
-// #include <mlpack/core/optimizers/problems/rosenbrock_function.hpp>
-// #include <mlpack/core/optimizers/problems/rosenbrock_wood_function.hpp>
-// #include <mlpack/core/optimizers/problems/colville_function.hpp>
-// 
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
 
 /**
  * Tests the L-BFGS optimizer using the Rosenbrock Function.
@@ -32,7 +22,7 @@ TEST_CASE("RosenbrockFunctionTest", "[LBFGSTest]")
 
   arma::vec coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(f, coords))
-    CATCH_FAIL("L-BFGS optimization reported failure.");
+    FAIL("L-BFGS optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
 
@@ -52,7 +42,7 @@ TEST_CASE("ColvilleFunctionTest", "[LBFGSTest]")
 
   arma::vec coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(f, coords))
-    CATCH_FAIL("L-BFGS optimization reported failure.");
+    FAIL("L-BFGS optimization reported failure.");
 
   REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
   REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
@@ -69,7 +59,7 @@ TEST_CASE("WoodFunctionTest", "[LBFGSTest]")
 
   arma::vec coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(f, coords))
-    CATCH_FAIL("L-BFGS optimization reported failure.");
+    FAIL("L-BFGS optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
 
@@ -98,7 +88,7 @@ TEST_CASE("GeneralizedRosenbrockFunctionTest", "[LBFGSTest]")
 
     arma::vec coords = f.GetInitialPoint();
     if (!lbfgs.Optimize(f, coords))
-      CATCH_FAIL("L-BFGS optimization reported failure.");
+      FAIL("L-BFGS optimization reported failure.");
 
     double finalValue = f.Evaluate(coords);
 
@@ -121,7 +111,7 @@ TEST_CASE("RosenbrockWoodFunctionTest", "[LBFGSTest]")
 
   arma::mat coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(f, coords))
-    CATCH_FAIL("L-BFGS optimization reported failure.");
+    FAIL("L-BFGS optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
 
