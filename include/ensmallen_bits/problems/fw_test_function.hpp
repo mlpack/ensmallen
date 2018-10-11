@@ -1,5 +1,5 @@
 /**
- * @file test_func_sq.hpp
+ * @file fw_test_function.hpp
  * @author Chenzhe Diao
  *
  * Simple test function for classic Frank Wolfe Algorithm:
@@ -11,8 +11,8 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_FW_TEST_FUNC_FW_HPP
-#define ENSMALLEN_FW_TEST_FUNC_FW_HPP
+#ifndef ENSMALLEN_PROBLEMS_FW_TEST_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_FW_TEST_FUNCTION_HPP
 
 #include <armadillo>
 
