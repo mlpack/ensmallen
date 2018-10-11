@@ -157,6 +157,43 @@ class LogisticRegressionFunction
   //! Return the number of features(add 1 for the intercept term).
   size_t NumFeatures() const { return predictors.n_rows + 1; }
 
+  /**
+   * Compute the accuracy of the model on the given predictors and responses,
+   * optionally using the given decision boundary.  The responses should be
+   * either 0 or 1.  Logistic regression returns a value between 0 and 1.  If
+   * the value is greater than the decision boundary, the response is taken to
+   * be 1; otherwise, it is 0.  By default, the decision boundary is 0.5.
+   *
+   * The accuracy is returned as a percentage, between 0 and 100.
+   *
+   * @param predictors Input predictors.
+   * @param responses Vector of responses.
+  * @param parameters Vector of logistic regression parameters.
+   * @param decisionBoundary Decision boundary (default 0.5).
+   * @return Percentage of responses that are predicted correctly.
+   */
+  double ComputeAccuracy(const MatType& predictors,
+                         const arma::Row<size_t>& responses,
+                         const arma::mat& parameters,
+                         const double decisionBoundary = 0.5) const;
+
+  /**
+   * Classify the given points, returning the predicted labels for each point.
+   * Optionally, specify the decision boundary; logistic regression returns a
+   * value between 0 and 1.  If the value is greater than the decision boundary,
+   * the response is taken to be 1; otherwise, it is 0.  By default the decision
+   * boundary is 0.5.
+   *
+   * @param dataset Set of points to classify.
+   * @param labels Predicted labels for each point.
+   * @param parameters Vector of logistic regression parameters.
+   * @param decisionBoundary Decision boundary (default 0.5).
+   */
+  void Classify(const MatType& dataset,
+                arma::Row<size_t>& labels,
+                const arma::mat& parameters,
+                const double decisionBoundary = 0.5) const;
+
  private:
   //! The initial point, from which to start the optimization.
   arma::mat initialPoint;
