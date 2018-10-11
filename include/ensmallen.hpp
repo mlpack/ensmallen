@@ -15,12 +15,7 @@
 #ifndef ENSMALLEN_HPP
 #define ENSMALLEN_HPP
 
-// Defining _USE_MATH_DEFINES should set M_PI.
-// TODO: instead of M_PI, perhaps use arma::datum::pi
-#undef  _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES
 #include <cmath>
-
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>

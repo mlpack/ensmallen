@@ -42,7 +42,7 @@ inline double RastriginFunction::Evaluate(const arma::mat& coordinates,
   {
     const size_t p = visitationOrder[j];
     objective += std::pow(coordinates(p), 2) - 10.0 *
-        std::cos(2.0 * M_PI * coordinates(p));
+        std::cos(2.0 * ENS_M_PI * coordinates(p));
   }
   objective += 10.0 * n;
 
@@ -64,8 +64,8 @@ inline void RastriginFunction::Gradient(const arma::mat& coordinates,
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient(p) += (10.0 * n) * (2 * (coordinates(p) + 10.0 * M_PI *
-        std::sin(2.0 * M_PI * coordinates(p))));
+    gradient(p) += (10.0 * n) * (2 * (coordinates(p) + 10.0 * ENS_M_PI *
+        std::sin(2.0 * ENS_M_PI * coordinates(p))));
   }
 }
 
