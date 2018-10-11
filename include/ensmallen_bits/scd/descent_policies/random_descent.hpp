@@ -55,7 +55,7 @@ class RandomDescent
                         const ResolvableFunctionType& function)
   {
     return arma::as_scalar(arma::randi<arma::uvec>(
-          1, arma::distr_param(0, function.NumFeatures())));
+          1, arma::distr_param(0, function.NumFeatures() - 1)));
   }
 };
 
