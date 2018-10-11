@@ -140,4 +140,7 @@ class LovaszThetaSDP
 } // namespace test
 } // namespace ens
 
+// Include implementation.
+#include "aug_lagrangian_test_functions_impl.hpp"
+
 #endif // ENSMALLEN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
