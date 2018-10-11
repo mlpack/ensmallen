@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_FW_UPDATE_CLASSIC_HPP
 #define ENSMALLEN_FW_UPDATE_CLASSIC_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

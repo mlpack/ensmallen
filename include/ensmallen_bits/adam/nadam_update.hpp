@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_ADAM_NADAM_UPDATE_HPP
 #define ENSMALLEN_ADAM_NADAM_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

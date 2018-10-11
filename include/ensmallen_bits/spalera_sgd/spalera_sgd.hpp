@@ -12,7 +12,6 @@
 #ifndef ENSMALLEN_SPALERA_SGD_SPALERA_SGD_HPP
 #define ENSMALLEN_SPALERA_SGD_SPALERA_SGD_HPP
 
-#include <armadillo>
 #include <ensmallen_bits/spalera_sgd/spalera_stepsize.hpp>
 #include <ensmallen_bits/sgd/decay_policies/no_decay.hpp>
 

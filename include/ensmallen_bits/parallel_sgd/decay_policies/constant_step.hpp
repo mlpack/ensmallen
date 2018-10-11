@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_PARALLEL_SGD_CONSTANT_STEP_HPP
 #define ENSMALLEN_PARALLEL_SGD_CONSTANT_STEP_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

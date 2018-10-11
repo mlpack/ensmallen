@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_GRID_SEARCH_GRID_SEARCH_HPP
 #define ENSMALLEN_GRID_SEARCH_GRID_SEARCH_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SCD_DESCENT_POLICIES_RANDOM_HPP
 #define ENSMALLEN_SCD_DESCENT_POLICIES_RANDOM_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

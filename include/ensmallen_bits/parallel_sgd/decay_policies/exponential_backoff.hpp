@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_PARALLEL_SGD_EXP_BACKOFF_HPP
 #define ENSMALLEN_PARALLEL_SGD_EXP_BACKOFF_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

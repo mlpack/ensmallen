@@ -14,8 +14,6 @@
 #ifndef ENSMALLEN_PROBLEMS_LOGISTIC_REGRESSION_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_LOGISTIC_REGRESSION_FUNCTION_HPP
 
-#include <armadillo>
-
 namespace ens {
 namespace test {
 

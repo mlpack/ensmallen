@@ -14,8 +14,6 @@
 #ifndef ENSMALLEN_IQN_IQN_HPP
 #define ENSMALLEN_IQN_IQN_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

@@ -48,7 +48,7 @@
   #pragma warning(disable : 4519)
 #endif
 
-#include <armadillo>  // TODO: ensure that this is the only place armadillo is included
+#include <armadillo>
 
 #if !defined(ARMA_USE_CXX11)
   // armadillo automatically enables ARMA_USE_CXX11

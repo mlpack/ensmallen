@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SGD_NESTEROV_MOMENTUM_UPDATE_HPP
 #define ENSMALLEN_SGD_NESTEROV_MOMENTUM_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

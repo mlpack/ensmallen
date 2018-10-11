@@ -13,7 +13,6 @@
 #ifndef ENSMALLEN_FUNCTION_ADD_EVALUATE_WITH_GRADIENT_HPP
 #define ENSMALLEN_FUNCTION_ADD_EVALUATE_WITH_GRADIENT_HPP
 
-#include <armadillo>
 #include "sfinae_utility.hpp"
 #include "traits.hpp"
 

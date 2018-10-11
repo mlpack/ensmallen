@@ -12,7 +12,6 @@
 #ifndef ENSMALLEN_PARALLEL_SGD_HPP
 #define ENSMALLEN_PARALLEL_SGD_HPP
 
-#include <armadillo>
 #include "decay_policies/constant_step.hpp"
 
 namespace ens {

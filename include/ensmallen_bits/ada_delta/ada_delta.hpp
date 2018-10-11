@@ -16,7 +16,6 @@
 #ifndef ENSMALLEN_ADA_DELTA_ADA_DELTA_HPP
 #define ENSMALLEN_ADA_DELTA_ADA_DELTA_HPP
 
-#include <armadillo>
 #include <ensmallen_bits/sgd/sgd.hpp>
 #include "ada_delta_update.hpp"
 

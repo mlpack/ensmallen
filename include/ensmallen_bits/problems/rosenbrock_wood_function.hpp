@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_PROBLEMS_ROSENBROCK_WOOD_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_ROSENBROCK_WOOD_FUNCTION_HPP
 
-#include <armadillo>
-
 #include "generalized_rosenbrock_function.hpp"
 #include "wood_function.hpp"
 

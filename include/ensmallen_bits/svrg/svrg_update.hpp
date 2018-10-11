@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SVRG_SVRG_UPDATE_HPP
 #define ENSMALLEN_SVRG_SVRG_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

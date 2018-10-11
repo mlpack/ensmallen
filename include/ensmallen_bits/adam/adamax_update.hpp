@@ -18,8 +18,6 @@
 #ifndef ENSMALLEN_ADAM_ADAMAX_UPDATE_HPP
 #define ENSMALLEN_ADAM_ADAMAX_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_FW_FUNC_SQ_HPP
 #define ENSMALLEN_FW_FUNC_SQ_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

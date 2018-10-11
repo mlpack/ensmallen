@@ -13,7 +13,6 @@
 #ifndef ENSMALLEN_LBFGS_LBFGS_HPP
 #define ENSMALLEN_LBFGS_LBFGS_HPP
 
-#include <armadillo>
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {

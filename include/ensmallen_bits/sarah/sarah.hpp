@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SARAH_SARAH_HPP
 #define ENSMALLEN_SARAH_SARAH_HPP
 
-#include <armadillo>
-
 #include "sarah_update.hpp"
 #include "sarah_plus_update.hpp"
 

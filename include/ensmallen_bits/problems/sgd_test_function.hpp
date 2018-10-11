@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_PROBLEMS_SGD_TEST_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_SGD_TEST_FUNCTION_HPP
 
-#include <armadillo>
-
 namespace ens {
 namespace test {
 

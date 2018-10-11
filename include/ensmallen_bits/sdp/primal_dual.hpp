@@ -11,7 +11,6 @@
 #ifndef ENSMALLEN_SDP_PRIMAL_DUAL_HPP
 #define ENSMALLEN_SDP_PRIMAL_DUAL_HPP
 
-#include <armadillo>
 #include "sdp.hpp"
 
 namespace ens {

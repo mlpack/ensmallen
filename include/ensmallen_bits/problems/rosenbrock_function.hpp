@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_PROBLEMS_ROSENBROCK_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_ROSENBROCK_FUNCTION_HPP
 
-#include <armadillo>
-
 namespace ens {
 namespace test {
 

@@ -13,7 +13,6 @@
 #ifndef ENSMALLEN_FW_UPDATE_LINESEARCH_HPP
 #define ENSMALLEN_FW_UPDATE_LINESEARCH_HPP
 
-#include <armadillo>
 #include <ensmallen_bits/line_search/line_search.hpp>
 
 namespace ens {

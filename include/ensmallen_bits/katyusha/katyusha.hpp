@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_KATYUSHA_KATYUSHA_HPP
 #define ENSMALLEN_KATYUSHA_KATYUSHA_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

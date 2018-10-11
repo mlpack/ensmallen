@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SGD_GRADIENT_CLIPPING_HPP
 #define ENSMALLEN_SGD_GRADIENT_CLIPPING_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

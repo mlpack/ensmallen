@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_CMAES_FULL_SELECTION_HPP
 #define ENSMALLEN_CMAES_FULL_SELECTION_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /*

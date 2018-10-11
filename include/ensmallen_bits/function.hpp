@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_FUNCTION_HPP
 #define ENSMALLEN_FUNCTION_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 template<typename FunctionType>

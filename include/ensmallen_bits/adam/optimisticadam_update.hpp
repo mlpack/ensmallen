@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_ADAM_OPTIMISTICADAM_UPDATE_HPP
 #define ENSMALLEN_ADAM_OPTIMISTICADAM_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

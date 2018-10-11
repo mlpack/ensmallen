@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SA_SA_HPP
 #define ENSMALLEN_SA_SA_HPP
 
-#include <armadillo>
-
 #include "exponential_schedule.hpp"
 
 namespace ens {

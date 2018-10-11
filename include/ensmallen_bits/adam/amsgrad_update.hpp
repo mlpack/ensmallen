@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_AMS_GRAD_AMS_GRAD_UPDATE_HPP
 #define ENSMALLEN_AMS_GRAD_AMS_GRAD_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SMORMS3_SMORMS3_UPDATE_HPP
 #define ENSMALLEN_SMORMS3_SMORMS3_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**

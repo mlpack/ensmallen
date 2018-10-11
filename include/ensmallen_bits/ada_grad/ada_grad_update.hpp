@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_ADA_GRAD_ADA_GRAD_UPDATE_HPP
 #define ENSMALLEN_ADA_GRAD_ADA_GRAD_UPDATE_HPP
 
-#include <armadillo>
-
 namespace ens {
 
 /**
