@@ -19,25 +19,25 @@ namespace ens {
 namespace traits {
 
 //! Detect an Evaluate() method.
-HAS_EXACT_METHOD_FORM(Evaluate, HasEvaluate);
+HAS_EXACT_METHOD_FORM(Evaluate, HasEvaluate)
 //! Detect a Gradient() method.
-HAS_EXACT_METHOD_FORM(Gradient, HasGradient);
+HAS_EXACT_METHOD_FORM(Gradient, HasGradient)
 //! Detect an EvaluateWithGradient() method.
-HAS_EXACT_METHOD_FORM(EvaluateWithGradient, HasEvaluateWithGradient);
+HAS_EXACT_METHOD_FORM(EvaluateWithGradient, HasEvaluateWithGradient)
 //! Detect a NumFunctions() method.
-HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions);
+HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions)
 //! Detect a Shuffle() method.
-HAS_EXACT_METHOD_FORM(Shuffle, HasShuffle);
+HAS_EXACT_METHOD_FORM(Shuffle, HasShuffle)
 //! Detect a NumConstraints() method.
-HAS_EXACT_METHOD_FORM(NumConstraints, HasNumConstraints);
+HAS_EXACT_METHOD_FORM(NumConstraints, HasNumConstraints)
 //! Detect an EvaluateConstraint() method.
-HAS_EXACT_METHOD_FORM(EvaluateConstraint, HasEvaluateConstraint);
+HAS_EXACT_METHOD_FORM(EvaluateConstraint, HasEvaluateConstraint)
 //! Detect a GradientConstraint() method.
-HAS_EXACT_METHOD_FORM(GradientConstraint, HasGradientConstraint);
+HAS_EXACT_METHOD_FORM(GradientConstraint, HasGradientConstraint)
 //! Detect a NumFeatures() method.
-HAS_EXACT_METHOD_FORM(NumFeatures, HasNumFeatures);
+HAS_EXACT_METHOD_FORM(NumFeatures, HasNumFeatures)
 //! Detect a PartialGradient() method.
-HAS_EXACT_METHOD_FORM(PartialGradient, HasPartialGradient);
+HAS_EXACT_METHOD_FORM(PartialGradient, HasPartialGradient)
 
 //! This is the form of a non-const Evaluate() method.
 template<typename FunctionType>
