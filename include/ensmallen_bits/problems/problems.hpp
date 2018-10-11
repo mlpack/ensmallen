@@ -14,6 +14,7 @@
 #include "drop_wave_function.hpp"
 #include "easom_function.hpp"
 #include "eggholder_function.hpp"
+#include "fw_test_function.hpp"
 #include "generalized_rosenbrock_function.hpp"
 #include "gradient_descent_test_function.hpp"
 #include "logistic_regression_function.hpp"
