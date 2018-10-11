@@ -52,9 +52,13 @@ class UndirectedGraph
                             const std::string& edgesFilename,
                             bool transposeEdges)
   {
-    data::Load(edgesFilename, g.edges, true, transposeEdges);
+    
+    // data::Load(edgesFilename, g.edges, true, transposeEdges);
+    if (g.edges.load(edgesFilename) == false)  { FAIL("couldn't load data"); }
+    if (transposeEdges)  { g.edges = g.edges.t(); }
+    
     if (g.edges.n_rows != 2)
-      Log::Fatal << "Invalid datafile" << std::endl;
+      FAIL("Invalid datafile");
     g.weights.ones(g.edges.n_cols);
     g.ComputeVertices();
   }
@@ -65,12 +69,19 @@ class UndirectedGraph
                                       const std::string& weightsFilename,
                                       bool transposeWeights)
   {
-    data::Load(edgesFilename, g.edges, true, transposeEdges);
+    // data::Load(edgesFilename, g.edges, true, transposeEdges);
+    if (g.edges.load(edgesFilename) == false)  { FAIL("couldn't load data"); }
+    if (transposeEdges)  { g.edges = g.edges.t(); }
+    
     if (g.edges.n_rows != 2)
-      Log::Fatal << "Invalid datafile" << std::endl;
-    data::Load(weightsFilename, g.weights, true, transposeWeights);
+      FAIL("Invalid datafile");
+    
+    // data::Load(weightsFilename, g.weights, true, transposeWeights);
+    if (g.weights.load(weightsFilename) == false)  { FAIL("couldn't load data"); }
+    if (transposeWeights)  { g.weights = g.weights.t(); }
+    
     if (g.weights.n_elem != g.edges.n_cols)
-      Log::Fatal << "Size mismatch" << std::endl;
+      FAIL("Size mismatch");
     g.ComputeVertices();
   }
 
@@ -81,7 +92,7 @@ class UndirectedGraph
                                     bool selfLoops = false)
   {
     if (edgeProbability < 0. || edgeProbability > 1.)
-      Log::Fatal << "edgeProbability not in [0, 1]" << std::endl;
+      FAIL("edgeProbability not in [0, 1]");
 
     std::vector<std::pair<size_t, size_t>> edges;
     std::vector<double> weights;
@@ -90,10 +101,10 @@ class UndirectedGraph
     {
       for (size_t j = (selfLoops ? i : i + 1); j < numVertices; j++)
       {
-        if (math::Random() > edgeProbability)
+        if (arma::as_scalar(arma::randu(1)) > edgeProbability)
           continue;
         edges.emplace_back(i, j);
-        weights.push_back(weighted ? math::Random() : 1.);
+        weights.push_back(weighted ? double(arma::as_scalar(arma::randu(1))) : double(1));
       }
     }
 
@@ -156,9 +167,12 @@ static inline SDP<arma::sp_mat>
 ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 {
   arma::mat laplacian;
-  data::Load(laplacianFilename, laplacian, true, false);
+  
+  // data::Load(laplacianFilename, laplacian, true, false);
+  if (laplacian.load(laplacianFilename) == false)  { FAIL("couldn't load data"); }
+  
   if (laplacian.n_rows != laplacian.n_cols)
-    Log::Fatal << "laplacian not square" << std::endl;
+    FAIL("laplacian not square");
   SDP<arma::sp_mat> sdp(laplacian.n_rows, laplacian.n_rows, 0);
   sdp.C() = -arma::sp_mat(laplacian);
   for (size_t i = 0; i < laplacian.n_rows; i++)
@@ -258,7 +272,7 @@ static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
 
 TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
 {
-  auto sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
+  auto sdp = ConstructMaxCutSDPFromLaplacian("data/r10.txt");
   SolveMaxCutFeasibleSDP(sdp);
   SolveMaxCutPositiveSDP(sdp);
 
@@ -276,7 +290,7 @@ TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
 TEST_CASE("SmallLovaszThetaSdp","[SdpPrimalDualTest]")
 {
   UndirectedGraph g;
-  UndirectedGraph::LoadFromEdges(g, "johnson8-4-4.csv", true);
+  UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
   auto sdp = ConstructLovaszThetaSDPFromGraph(g);
 
   PrimalDualSolver<SDP<arma::mat>> solver(sdp);
@@ -317,7 +331,7 @@ static inline SDP<arma::sp_mat>
 ConstructLogChebychevApproxSdp(const arma::mat& A, const arma::vec& b)
 {
   if (A.n_rows != b.n_elem)
-    Log::Fatal << "A.n_rows != len(b)" << std::endl;
+    FAIL("A.n_rows != len(b)");
   const size_t p = A.n_rows;
   const size_t k = A.n_cols;
 
@@ -367,7 +381,7 @@ RandomOrthogonalMatrix(size_t rows, size_t cols)
 {
   arma::mat Q, R;
   if (!arma::qr(Q, R, arma::randu<arma::mat>(rows, cols)))
-    Log::Fatal << "could not compute QR decomposition" << std::endl;
+    FAIL("could not compute QR decomposition");
   return Q;
 }
 
@@ -380,7 +394,7 @@ RandomFullRowRankMatrix(size_t rows, size_t cols)
   S.zeros(rows, cols);
   for (size_t i = 0; i < std::min(rows, cols); i++)
   {
-    S(i, i) = math::Random() + 1e-3;
+    S(i, i) = arma::as_scalar(arma::randu(1)) + 1e-3;
   }
   return U * S * V;
 }
