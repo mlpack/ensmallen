@@ -8,6 +8,8 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
+#include "test_function_tools.hpp"
+
 using namespace std;
 using namespace ens;
 using namespace ens::test;
@@ -85,7 +87,7 @@ TEST_CASE("GreedyDescentTest","[SCDTest]")
 
   GreedyDescent descentPolicy;
 
-  REQUIRE_EQUAL(descentPolicy.DescentFeature(0, point, f) == 2);
+  REQUIRE(descentPolicy.DescentFeature(0, point, f) == 2);
 
   // Changing the point under consideration, so that the maximum gradient is at
   // index 1.
@@ -173,7 +175,7 @@ TEST_CASE("LogisticRegressionFunctionPartialGradientTest","[SCDTest]")
 /**
  * Test that SoftmaxRegressionFunction::PartialGradient() works as expected.
  */
-TEST_CASE(SoftmaxRegressionFunctionPartialGradientTest,"[SCDTest]")
+TEST_CASE("SoftmaxRegressionFunctionPartialGradientTest","[SCDTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 10;

@@ -8,6 +8,8 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
+#include "test_function_tools.hpp"
+
 using namespace std;
 using namespace arma;
 using namespace ens;
@@ -34,8 +36,7 @@ using namespace ens::test;
 
 // These tests are only compiled if the user has specified OpenMP to be
 // used.
-#ifdef HAS_OPENMP
-// TODO: HAS_OPENMP should be renamed to ENSMALLEN_HAS_OPENMP
+#ifdef ENS_USE_OPENMP
 
 
 /**
