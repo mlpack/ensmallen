@@ -88,12 +88,12 @@ double ParallelSGD<DecayPolicyType>::Optimize(
       visitationOrder = arma::shuffle(visitationOrder);
     }
 
-    #pragma omp parallel
+    ENS_PRAGMA_OMP_PARALLEL
     {
       // Each processor gets a subset of the instances.
       // Each subset is of size threadShareSize
       size_t threadId = 0;
-      #ifdef HAS_OPENMP
+      #ifdef ENS_USE_OPENMP
         threadId = omp_get_thread_num();
       #endif
 
@@ -116,7 +116,7 @@ double ParallelSGD<DecayPolicyType>::Optimize(
           for (arma::sp_mat::iterator cur = gradient.begin_col(i);
               cur != gradient.end_col(i); ++cur)
           {
-            #pragma omp atomic
+            ENS_PRAGMA_OMP_ATOMIC
             iterate(cur.row(), i) -= stepSize * (*cur);
           }
         }
