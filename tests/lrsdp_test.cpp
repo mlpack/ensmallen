@@ -93,8 +93,15 @@ TEST_CASE("Johnson844LovaszThetaSDP", "[LRSDPTest]")
 {
   // Load the edges.
   arma::mat edges;
-  data::Load("johnson8-4-4.csv", edges, true);  // TODO: replace with armadillo .load() ?
-
+  
+  if (edges.load("data/johnson8-4-4.csv", arma::csv_ascii) == false)
+  {
+    FAIL("couldn't load data");
+    return;
+  }
+  
+  edges = edges.t();
+  
   // The LRSDP itself and the initial point.
   arma::mat coordinates;
 
@@ -148,7 +155,14 @@ TEST_CASE("ErdosRenyiRandomGraphMaxCutSDP", "[LRSDPTest]")
 {
   // Load the edges.
   arma::mat edges;
-  data::Load("erdosrenyi-n100.csv", edges, true);
+  
+  if (edges.load("data/erdosrenyi-n100.csv", arma::csv_ascii) == false)
+  {
+    FAIL("couldn't load data");
+    return;
+  }
+  
+  edges = edges.t();
 
   arma::sp_mat laplacian;
   CreateSparseGraphLaplacian(edges, laplacian);
@@ -219,8 +233,16 @@ TEST_CASE("GaussianMatrixSensingSDP", "[LRSDPTest]")
   arma::mat Xorig, A;
 
   // read the unknown matrix X and the measurement matrices A_i in
-  data::Load("sensing_X.csv", Xorig, true, false);  // TODO: replace with armadillo .load() ?
-  data::Load("sensing_A.csv", A, true, false);
+  
+  if (Xorig.load("data/sensing_X.csv", arma::csv_ascii) == false)
+  {
+    FAIL("couldn't load data");
+  }
+  
+  if( A.load("data/sensing_A.csv", arma::csv_ascii) == false)
+  {
+    FAIL("couldn't load data");
+  }
 
   const size_t m = Xorig.n_rows;
   const size_t n = Xorig.n_cols;
