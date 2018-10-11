@@ -458,9 +458,11 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
 
     primalObj = arma::dot(sdp.C(), X);
 
-    const double dualObj = arma::dot(sdp.SparseB(), ysparse) +
-        arma::dot(sdp.DenseB(), ydense);
-    const double dualityGap = primalObj - dualObj;
+    // const double dualObj = arma::dot(sdp.SparseB(), ysparse) + arma::dot(sdp.DenseB(), ydense);
+    // TODO: dualObj seems to be unused
+
+    // const double dualityGap = primalObj - dualObj;
+    // TODO: dualityGap seems to be unused
 
     // TODO(stephentu): this dual check is quite expensive,
     // maybe make it optional?
