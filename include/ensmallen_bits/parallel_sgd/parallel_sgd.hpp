@@ -13,6 +13,7 @@
 #define ENSMALLEN_PARALLEL_SGD_HPP
 
 #include "decay_policies/constant_step.hpp"
+#include "decay_policies/exponential_backoff.hpp"
 
 namespace ens {
 
@@ -24,9 +25,9 @@ namespace ens {
  * @misc{1106.5730,
  *   Author = {Feng Niu and Benjamin Recht and Christopher Re and Stephen J.
  *             Wright},
- *   Title = {HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic
- *            Gradient Descent},
- *   Year = {2011},
+ *   Title  = {HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic
+ *             Gradient Descent},
+ *   Year   = {2011},
  *   Eprint = {arXiv:1106.5730},
  * }
  *
