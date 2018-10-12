@@ -1,5 +1,5 @@
 // Copyright (c) 2018 ensmallen developers.
-// 
+//
 // Licensed under the 3-clause BSD license (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,21 +13,6 @@
 using namespace std;
 using namespace ens;
 using namespace ens::test;
-
-
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/scd/scd.hpp>
-// #include <mlpack/core/optimizers/scd/descent_policies/greedy_descent.hpp>
-// #include <mlpack/core/optimizers/scd/descent_policies/cyclic_descent.hpp>
-// #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
-// #include <mlpack/methods/logistic_regression/logistic_regression_function.hpp>
-// #include <mlpack/methods/softmax_regression/softmax_regression_function.hpp>
-// 
-// using namespace mlpack;
-// using namespace mlpack::math;
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
-// using namespace mlpack::regression;
 
 /**
  * Test the correctness of the SCD implementation by using a dataset with a

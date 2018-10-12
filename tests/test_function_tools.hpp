@@ -8,6 +8,8 @@
 #ifndef ENSMALLEN_TESTS_TEST_FUNCTION_TOOLS_HPP
 #define ENSMALLEN_TESTS_TEST_FUNCTION_TOOLS_HPP
 
+#include "catch.hpp"
+
 /**
  * Create the data for the a logistic regression test.
  *
@@ -155,6 +157,23 @@ class SparseTestFunction
   //! The vector having coefficients of the first order term
   arma::vec bi;
 };
+
+// Check the values of two matrices.
+inline void CheckMatrices(const arma::mat& a,
+                          const arma::mat& b,
+                          double tolerance = 1e-5)
+{
+  REQUIRE(a.n_rows == b.n_rows);
+  REQUIRE(a.n_cols == b.n_cols);
+
+  for (size_t i = 0; i < a.n_elem; ++i)
+  {
+    if (std::abs(a[i]) < tolerance / 2)
+      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2.0));
+    else
+      REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance));
+  }
+}
 
 
 #endif
