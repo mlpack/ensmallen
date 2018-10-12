@@ -26,7 +26,7 @@ TEST_CASE("SVRGLogisticRegressionTest", "[SVRGTest]")
   // Now run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
-    SVRG optimizer(0.001, batchSize, 250, 0, 1e-3, true);
+    SVRG optimizer(0.005, batchSize, 300, 0, 1e-5, true);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
@@ -58,7 +58,7 @@ TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRGTest]")
   // Now run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
-    SVRG_BB optimizer(0.001, batchSize, 250, 0, 1e-5, true,
+    SVRG_BB optimizer(0.005, batchSize, 300, 0, 1e-5, true,
         SVRGUpdate(), BarzilaiBorweinDecay(0.1));
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
