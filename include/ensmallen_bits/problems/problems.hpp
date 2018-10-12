@@ -25,6 +25,7 @@
 #include "rosenbrock_wood_function.hpp"
 #include "schwefel_function.hpp"
 #include "sgd_test_function.hpp"
+#include "softmax_regression_function.hpp"
 #include "sphere_function.hpp"
 #include "styblinski_tang_function.hpp"
 #include "wood_function.hpp"
