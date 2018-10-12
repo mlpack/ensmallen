@@ -12,7 +12,9 @@
 #ifndef ENSMALLEN_SCD_SCD_HPP
 #define ENSMALLEN_SCD_SCD_HPP
 
+#include "descent_policies/cyclic_descent.hpp"
 #include "descent_policies/random_descent.hpp"
+#include "descent_policies/greedy_descent.hpp"
 
 namespace ens {
 
