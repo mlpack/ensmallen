@@ -1,0 +1,494 @@
+\documentclass{article}
+\usepackage{nips_2018}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{wasysym}
+\usepackage{tabularx}
+\usepackage{threeparttable}
+\usepackage[newfloat]{minted}
+\usepackage{caption}
+\usepackage{parcolumns}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+\usepackage{adjustbox}
+
+\newcommand*\OK{\ding{51}}
+
+\newcolumntype{R}[2]{%
+  >{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+  l%
+  <{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{30}{2em}}}
+
+\begin{document}
+
+% TODO: title could possibly be improved
+\title{\texttt{ensmallen}: a generic C++ library for fast optimization}
+
+% Alphabetical ordering?
+\author{Shikhar Bhardwaj \And Ryan R. Curtin \And Marcus Edel \And Yannis
+Mentekidis \And Conrad Sanderson}
+
+\maketitle
+
+\begin{abstract}
+% TODO: not sure this is a great abstract
+ensmallen is cool software and you should use it.
+\end{abstract}
+
+\section{Introduction}
+
+Mathematical optimization is the workhorse of virtually all machine learning
+algorithms.  Almost all machine learning problems can be boiled down to the
+simple optimization
+
+\begin{equation}
+\operatorname{argmin} f(x)
+\end{equation}
+
+\noindent for some objective function $f(\cdot)$; in some cases, these objective
+functions may have some special structure or some constraints.
+
+Often, these optimizations can be computationally intensive and may correspond
+to most of the time taken to train a machine learning model.  For instance, the
+training of deep neural networks is dominated by the optimization of the model
+parameters on the data. %TODO: cite
+Even popular machine learning models such as logistic regression % TODO: cite
+have training times mostly dominated by an optimization.
+% TODO: might be nice to have something kind of anecdotal like 'even new
+% students to the field of machine learning quickly encounter optimization' and
+% cite, e.g., Andrew Ng's coursera course or some ML textbook or similar
+%
+% or maybe just a note about how many optimization techniques get published at
+% NIPS every year?
+
+The ubiquity of optimization in machine learning algorithms highlights the need
+for robust and flexible implementations of optimization algorithms, which is
+what drives us to introduce {\tt ensmallen}, a generic C++ optimization toolkit
+that contains a wide variety of optimization techniques for different types of
+objective functions.  Through the use of template metaprogramming, {\tt
+ensmallen} is able to generate efficient code that can help with the
+computational intensity encountered with many machine learning algorithms.
+
+Although there are many existing machine learning optimization toolkits, few
+are able to take advantage of the types of compiler optimizations that {\tt
+ensmallen} can, and few offer the kind of robust support for different types of
+objective functions that {\tt ensmallen} does.  For instance, deep learning
+libraries like Caffe, % TODO: cite
+PyTorch, % TODO: cite
+and TensorFlow % TODO: cite
+each contain a variety of optimization techniques; but these techniques are
+limited to stochastic gradient descent (SGD) and SGD-like optimizers that
+operate on small batches of data points at a time.  Some other machine learning
+libraries, such as {\tt scikit-learn} % TODO: cite
+% TODO: can we find another library to put here too?  Shark maybe?
+contain optimization algorithms but not in any coherent or reusable framework.
+On the other hand, many programming languages have higher-level packages for
+mathematical optimization; {\tt scipy.optimize} % TODO: check and cite
+is widely used in the Python community, and MATLAB's {\tt TODO()}
+% TODO: what's the name of that MATLAB function? or one of them?
+% TODO: cite
+has been available and used for many decades.  However, these implementations
+don't tend to be suitable for modern machine learning tasks---for instance,
+computing the full gradient of the objective function may not be feasible
+because there are too many data points.
+
+In this paper, we describe the functionality of {\tt ensmallen} and the types of
+problems that it solves.  We discuss the mechanisms by which {\tt ensmallen} is
+able to provide both computational efficiency and ease-of-use, and then show a
+few examples that use the library.  Then, we show performance comparisons with
+other optimization libraries.
+
+{\tt ensmallen} is available for download from the website at
+\url{https://www.ensmallen.org}, and is currently maintained on Github at
+\url{https://github.com/mlpack/ensmallen}.  Originally, {\tt ensmallen} was
+developed as the optimization infrastructure of {\tt mlpack}; % TODO: cite
+it is now available in standalone header-only form.
+% TODO: seems awkward to put the lineage here; also, we should talk up the use
+% of Armadillo as its only dependency, which is nice, and maybe emphasize the
+% utility of a header-only library
+
+\section{Types of objective functions}
+
+In short, {\tt ensmallen} provides a {\bf set of optimizers} that can be used to
+{\bf optimize user-defined objective functions}.  It's also easy to implement a
+new optimizer in the {\tt ensmallen} framework.  Overall, our goal is to provide
+an easy-to-use library that can solve the problem
+
+\begin{equation}
+\operatorname{argmin}_{x} f(x)
+\end{equation}
+
+\noindent for any function $f(x)$ that takes some vector input $x$.  Ideally,
+the user should simply need to specify what $f(x)$ is (or provide an
+implementation of a function that can compute $f(x)$).  But it is impossible to
+implement something both so generic and fast---for instance, gradient-based
+approaches converge far more quickly than gradient-free approaches (in general),
+so we must design an abstraction that is able to simultaneously generalize to
+many problem types, as well as take advantage of accelerations and
+optimizations.
+
+Therefore, users may implement objective functions with specific properties that
+the library can use to accelerate the computation.  These non-exclusive
+properties are shown below:
+
+\begin{itemize}
+  \item {\bf arbitrary}: no assumptions can be made on $f(x)$
+  \item {\bf differentiable}: $f(x)$ has a computable gradient $f'(x)$
+  \item {\bf separable}: $f(x)$ is a sum of individual components: $f(x) =
+\sum_{i} f_i(x)$
+  \item {\bf categorical}: $x$ contains elements that can only take discrete
+values
+  %\item {\bf numeric}: all elements of $x$ take values in $\mathcal{R}$
+  \item {\bf sparse}: the gradient $f'(x)$ or $f_i(x)$ (for a separable
+function) is sparse
+  \item {\bf partially differentiable}: the gradient $f'_j(x)$ is computable for
+individual elements $x_j$ of $x$
+  \item {\bf bounded}: $x$ is limited in the values that it can take
+\end{itemize}
+
+In this framework, if a user wants to optimize a differentiable objective
+function, they simply need to provide implementations of $f(x)$ and $f'(x)$, and
+then they can use any of the gradient-based optimizers that {\tt ensmallen}
+provides to perform the optimization.  Table~\ref{tab:functionality} compares
+the classes of objective functions that {\tt ensmallen} can handle with other
+popular frameworks and libraries.
+
+% Just to get a feeling of the look; Also, we could also just use \OK instead of
+% \CIRCLE or \LEFTcircle
+\begin{table}
+\centering
+    \begin{tabular}{@{} cl*{7}c @{}}
+%  \begin{tabular}{ccccccc}
+        & & \multicolumn{7}{c}{} \\[2ex]
+            % If there is any coherent framework at all, this is true.
+        & & \rot{has framework}
+            % If there is any support for constrained optimization, this is
+            % true.
+          & \rot{constraints}
+            % If the optimization framework can do mini-batch, this is true.
+          & \rot{batches}
+            % If I can implement any arbitrary function to be optimized, this is
+            % true.
+          & \rot{arbitrary functions}
+            % If I can implement any new optimization technique to use, this is
+            % true.
+          & \rot{arbitrary optimizers}
+            % If the framework could take advantage of when the gradient is
+            % sparse, this is true.
+          & \rot{sparse gradients}
+            % If the framework can handle categorical/discrete variables for
+            % optimization, this is true.
+          & \rot{categorical} \\
+        \cmidrule{2-9}
+  \hline
+        % It might be reasonable to say mlpack categorical support is only
+        % partial, but I am not sure exactly where we draw the line.
+        & {\tt ensmallen}            & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE \\
+        % The Shogun toolbox has a fairly nice framework, but it doesn't support
+        % sparse gradients or categorical features.  It also does not appear to
+        % support constraints.
+        & Shogun \cite{sonnenburg2010shogun}             & \CIRCLE & - & \CIRCLE & \CIRCLE & \CIRCLE & - & -
+\\
+        % VW doesn't appear to have any framework whatsoever and the code is
+        % awful, but it does support batches and categorical features.
+        & Vowpal Wabbit \cite{Langford2007VW}      & - & - & \CIRCLE  & - & - & - &
+\CIRCLE \\
+        % TensorFlow has a few optimizers, but they are all SGD-related.  You
+        % can write most objectives easily (but some very hard), and categorical
+        % support might be possible but would not be easy.
+        & TensorFlow \cite{abadi2016tensorflow}        & \CIRCLE & -  & \CIRCLE  & \LEFTcircle & - &
+\LEFTcircle & -  \\
+        % Caffe has a nice framework, but it's only for SGD-related optimizers.
+        % I think I could write a new one, but it is not the easiest thing in
+        % the world.
+        & Caffe \cite{jia2014caffe}           & \CIRCLE & -  & \CIRCLE & \LEFTcircle & \LEFTcircle
+& - & - \\
+        % Keras is restricted to neural networks and SGD-like optimizers.  I
+        % don't know that it is possible to easily write a new optimizer.
+        & Keras \cite{chollet2015}            & \CIRCLE & -  & \CIRCLE & \LEFTcircle & \LEFTcircle
+& - & - \\
+        % sklearn has a few optimizer frameworks, but they are all in different
+        % places and have somewhat different support.
+        & scikit-learn \cite{pedregosa2011scikit}       & \LEFTcircle & - & \LEFTcircle  & \LEFTcircle & -
+& - & - \\
+        % scipy has some nice optimizer framework but it does not support
+        % batches or some of the more complex functionality.  And you can't
+        % write your own.
+        & SciPy \cite{jones2014scipy}             & \CIRCLE & \CIRCLE  & -  & \CIRCLE & - & - & - \\
+        % MATLAB is very similar to scipy.
+        & MATLAB \cite{mathworks2017OTB}            & \CIRCLE & \CIRCLE & - & \CIRCLE & - & - & - \\
+        \cmidrule[1pt]{2-9}
+    \end{tabular}
+%   \begin{tablenotes}\footnotesize
+\caption{
+Feature comparison: \CIRCLE = provides feature,
+\LEFTcircle = partially provides feature, - = does not provide feature.
+{\it has framework} the library has some kind of generic
+optimization framework; {\it constraints} and {\it batches} indicate support for
+constrained problems and batches; {\it arbitrary functions} means arbitrary
+objective functions are easily implemented; {\it arbitrary optimizers} means
+arbitrary optimizers are easily implemented; {\it sparse gradient} indicates
+that the framework can natively take advantage of sparse gradients; and
+{\it categorical} refers to whether support for categorical features exists.
+}
+\label{tab:functionality}
+\end{table}
+
+Of course, not every optimization algorithm provided by {\tt ensmallen} can be
+used by every class of objective function; for instance, a gradient-based
+optimizer such as L-BFGS cannot operate on a non-differentiable objective
+function.
+
+Therefore, the best we can hope to achieve is to maximize the flexibility
+available, so that a user can easily implement a function $f(x)$ and have it
+work with as many optimizers as possible.  For this, {\tt ensmallen} depends on
+C++ policy-based design.  When implementing an objective function to be
+optimized, a user can implement only a few methods and we can use C++ template
+metaprogramming to check that the given functions match the requirements of the
+optimizer that is being used.  When implementing an optimizer, a user can assume
+that the given function to be optimized meets the required assumptions of the
+optimizers, and encode those requirements.
+
+\section{Example}
+
+As an example of usage, let us consider the linear regression objective
+function\footnote{Just for simplicity, we ignore the bias term.  It can be
+rederived by taking $x^*_i = (x_i 1)$.}.  Given some dataset $X \in
+\mathcal{R}^{n \times d}$ and associated responses $y \in \mathcal{R}^n$, the
+model of linear regression is to assume that $y_i = \theta x_i$ for each data
+point and response $(x_i, y_i)$.  To fit this model $\theta \mathcal{R}^d$ best
+to the data, we wish to minimize
+
+\begin{equation}
+\operatorname{argmin}_\theta \sum_{i = 1}^n (y_i - \theta x_i)^2 =
+\operatorname{argmin}_\theta \| y - \theta X \|^2.
+\end{equation}
+
+This objective function $f(\theta)$ has the associated gradient
+
+\begin{equation}
+f'(\theta) = \sum_{i = 1}^n 2 x_i (y_i - \theta x_i) = 2 X (y - \theta X).
+\end{equation}
+
+We can implement these two functions in a class {\tt LinearRegressionFunction}.
+Here {\tt arma::mat} and {\tt arma::vec} represent Armadillo matrix and vector
+types, respectively. % TODO: cite Armadillo
+
+% TODO: syntax highlighting
+\begin{verbatim}
+class LinearRegressionFunction
+{
+ public:
+  // Construct the LinearRegressionFunction with the given data.
+  LinearRegressionFunction(arma::mat& X, arma::vec& y) : X(X), y(y) {}
+
+  // Compute the objective function.
+  double Evaluate(const arma::mat& theta)
+  {
+    return arma::accu((y - theta * X) % (y - theta * X));
+  }
+
+  // Compute the gradient and store in 'gradient'.
+  void Gradient(const arma::mat& theta, arma::mat& gradient)
+  {
+    gradient = 2 * X * (y - theta * X);
+  }
+
+ private:
+  arma::mat& X;
+  arma::vec& y;
+};
+\end{verbatim}
+
+This is all the implementation that is required to optimize this function with
+any of {\tt ensmallen}'s gradient-based optimizers.  The code snippet below
+shows how L-BFGS could be used to find the best parameters $\theta$:
+
+\begin{verbatim}
+LinearRegressionFunction lrf(X, y); // we assume X and y are loaded elsewhere
+ens::L_BFGS lbfgs; // create L-BFGS optimizer with default parameters
+
+arma::vec theta(X.n_rows, arma::fill::randu); // random uniform initialization
+lbfgs.Optimize(lrf, theta); // after this call, theta holds the solution
+\end{verbatim}
+
+% TODO if space: elaborate on the example to add SGD-like optimizers.  The code
+% is a little more complex but not much.
+
+\section{Available optimizers}
+
+Thanks to the easy abstraction, we have been able to provide support for a large
+set of diverse optimizers and objective functions.  Below is a list of what is
+currently available.
+
+\vspace*{-0.4em}
+% I guess to save some space we should group them.
+\begin{itemize} \itemsep -1pt
+  \item {\bf SGD variants:} Stochastic Gradient Descent (SGD), Stochastic
+      Coordinate Descent (SCD), Parallel Stochastic Gradient Descent (Hogwild!),
+      Stochastic Gradient Descent with Restarts (SGDR), SMORMS3, AdaGrad,
+      AdaDelta, RMSProp, Adam, AdaMax
+
+  \item {\bf Quasi-Newton variants:} Limited-memory BFGS (L-BFGS), incremental
+        Quasi-Newton method (IQN), Augmented Lagrangian Method
+
+  \item {\bf Genetic variants:} Conventional Neuro-evolution (CNE), Covariance
+        Matrix Adaptation Evolution Strategy (CMA-ES)
+
+  \item {\bf Other:} Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing
+
+  \item {\bf Objective functions:} Neural Networks, Logistic regression,
+      Matrix completion, Neighborhood Components Analysis, Regularized SVD,
+      Reinforcement learning, Softmax regression, Sparse autoencoders,
+      Sparse SVM
+\end{itemize}
+\vspace*{-0.4em}
+
+In addition, many methods are currently in development and will be released in
+the future.  % TODO: maybe some more clarity here
+
+% not even sure this is the right term
+\section{Static polymorphism for speed}
+
+% TODO: better transition from the previous section
+
+Many optimization toolkits depend on the user passing in a function pointer to a
+function that needs to be optimized.  For instance, the {\tt scipy.optimize}
+package in Python can be used like this:
+
+%% TODO: code snippet
+
+During the optimization, the {\tt rosen()} function will be called repeatedly.
+However, since what was given to the {\tt minimize()} function is a function
+pointer, this pointer must be dereferenced at each call.  In addition, some
+optimizations such as inlining (and many optimizations enabled by inlining) are
+not possible when using function pointers.  Because it is possible that an
+individual optimization routine may need to compute the objective function,
+gradient, and related quantities many times, the overhead of this lookup may be
+non-negligible.  As one example, when training neural networks with SGD-like
+optimizers on a dataset with $N$ points, the gradient must be repeatedly
+computed on mini-batches of points of size $b$, and the training will pass over
+the whole dataset $e$ times.  For typical values of $N \sim 100M$, $b = 64$, and
+$e = 100$, this means the gradient computation function is being called almost
+200 million times!
+
+Since {\tt ensmallen} is written in C++ with templates, the function pointer
+dereferencing overhead can be avoided and the compiler can choose to inline the
+function call and perform additional optimizations when possible, such as
+temporary variable elimination and dead code pruning.
+% TODO: check that these make sense
+% TODO: needs a reference
+
+\section{Automatic Creation of Functions}
+
+It is often the case that when optimizing a function $f(x)$, the computation of
+the value $f(x)$ and its derivative $f'(x)$ involve the computation of identical
+intermediate results.  Consider the following objective function:
+
+% TODO: need to double check this, and it might be nicer if it was a matrix.
+\begin{equation}
+f(x) = \| Ax - b \|_F^2.
+\end{equation}
+
+For this objective function, the derivative $f'(x)$ is the similar $2A(Ax - b)$,
+and both depend on the computation of the matrix term $(Ax - b)$.  If $A$ is a
+large matrix, then this may be computationally expensive to compute.  Existing
+optimization frameworks do not have an easy way to avoid this duplicate
+computation; however, in many cases, an optimization algorithm may need the
+values of both $f(x)$ and $f'(x)$ for a given $x$.
+
+Using template metaprogramming in {\tt ensmallen}, we provide an easy (and
+optional) way for users to avoid this extra computational overhead.  Instead of
+specifying individual {\tt Evaluate()} and {\tt Gradient()} functions, a user
+may simply write an {\tt EvaluateWithGradient()} function that returns both the
+objective value and the gradient value for an input $x$.
+
+In essence, given a {\tt FunctionType} class that implements either an {\tt
+Evaluate()} and {\tt Gradient()} method or an {\tt EvaluateWithGradient()}
+method, template metaprogramming techniques are used to detect which of these
+methods exist.  Then, a wrapper class will use suitable mix-ins % TODO: cite
+in order to provide the `missing' functionality.  If {\tt
+EvaluateWithGradient()} does not exist, the following code is generated:
+
+% TODO: code block
+\begin{verbatim}
+double EvaluateWithGradient(const arma::mat& coordinates, arma::mat& gradient)
+{
+  Gradient(coordinates, gradient);
+  return Evaluate(coordinates);
+}
+\end{verbatim}
+
+Similarly, if {\tt Evaluate()} or {\tt Gradient()} does not exist, then {\tt
+EvaluateWithGradient()} is called, and the unnecessary part of the result will
+be discarded.  Since all of this code generation is done at compile-time and not
+at runtime, the compiler is able to perform dead code elimination % TODO: check
+on the unused result, and may be able to avoid calculations entirely.  In some
+cases, then, the generated {\tt Evaluate()} or {\tt Gradient()} functions may be
+equivalently fast to what would be hand-written!
+
+Overall, this code generation functionality reduces the requirements for users
+when they are implementing their own objective functions to be optimized.  At
+the time of this writing, this is implemented the most commonly-used cases:
+full-batch and small-batch {\tt Evaluate()}, {\tt Gradient()}, and {\tt
+EvaluateWithGradient()}.  In the future, this support may be expanded to other
+sets of methods for other types of objective functions.
+
+% TODO if space: expand LinearRegressionFunction example to have just an
+% EvaluateWithGradient() example.
+
+% TODO: anything to write about the visualization page that we had set up?
+
+\section{Experiments}
+
+Let's do some experiments.  I think that maybe we can focus on the following:
+
+\begin{itemize}
+  \item An example where the overhead of virtual function calls is
+non-negligible---so a function with a very simple Evaluate() and Gradient() but
+a very slow convergence with some optimizers (probably SGD... or simulated
+annealing?? that could work since SA uses so many iterations).
+
+  \item An example where inlining or compiler optimization can produce
+significant benefits.  It's hard for me to think of what this might be.
+
+  \item A machine learning example like logistic regression where
+EvaluateWithGradient() avoids a lot of unnecessary computation.  We should avoid
+deep neural networks because we're not talking about GPUs here at all.
+\end{itemize}
+
+\section{Conclusion}
+
+Here we can just summarize everything we've been talking about and possibly
+point towards things that can happen in the future:
+
+\begin{itemize}
+  \item GPU support via Bandicoot eventually (although NVBLAS can already be
+used)
+  \item Additional optimizers added
+  \item Anything else?
+\end{itemize}
+
+\subsubsection*{Acknowledgements}
+
+The development of {\tt ensmallen} does not include just the authors named
+here but also a long list of other contributors.  See \url{%TODO about page
+} for more information.
+
+\bibliographystyle{plain}
+\bibliography{paper}
+
+\end{document}
