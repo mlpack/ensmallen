@@ -11,6 +11,7 @@
 \usepackage[newfloat]{minted}
 \usepackage{caption}
 \usepackage{parcolumns}
+\usepackage{booktabs}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -80,7 +81,7 @@ what drives us to introduce {\tt ensmallen}, a generic C++ optimization toolkit
 that contains a wide variety of optimization techniques for different types of
 objective functions.  Through the use of template metaprogramming, {\tt
 ensmallen} is able to generate efficient code that can help with the
-computational intensity encountered with many machine learning algorithms.
+demanding computational needs of many machine learning algorithms.
 
 Although there are many existing machine learning optimization toolkits, few
 are able to take advantage of the types of compiler optimizations that {\tt
@@ -131,8 +132,8 @@ an easy-to-use library that can solve the problem
 \operatorname{argmin}_{x} f(x)
 \end{equation}
 
-\noindent for any function $f(x)$ that takes some vector input $x$.  Ideally,
-the user should simply need to specify what $f(x)$ is (or provide an
+\noindent for any function $f(x)$ that takes some vector or matrix input $x$.  Ideally,
+the user should only need to specify what $f(x)$ is (or provide an
 implementation of a function that can compute $f(x)$).  But it is impossible to
 implement something both so generic and fast---for instance, gradient-based
 approaches converge far more quickly than gradient-free approaches (in general),
@@ -174,7 +175,7 @@ popular frameworks and libraries.
 %  \begin{tabular}{ccccccc}
         & & \multicolumn{7}{c}{} \\[2ex]
             % If there is any coherent framework at all, this is true.
-        & & \rot{has framework}
+        & & \rot{unified framework}
             % If there is any support for constrained optimization, this is
             % true.
           & \rot{constraints}
@@ -230,13 +231,15 @@ popular frameworks and libraries.
         & SciPy \cite{jones2014scipy}             & \CIRCLE & \CIRCLE  & -  & \CIRCLE & - & - & - \\
         % MATLAB is very similar to scipy.
         & MATLAB \cite{mathworks2017OTB}            & \CIRCLE & \CIRCLE & - & \CIRCLE & - & - & - \\
+        % TODO: Julia
+        % TODO: MATLAB paper from MLOSS 2018?
         \cmidrule[1pt]{2-9}
     \end{tabular}
 %   \begin{tablenotes}\footnotesize
 \caption{
 Feature comparison: \CIRCLE = provides feature,
 \LEFTcircle = partially provides feature, - = does not provide feature.
-{\it has framework} the library has some kind of generic
+{\it unified framework} the library/language has some kind of generic and unified
 optimization framework; {\it constraints} and {\it batches} indicate support for
 constrained problems and batches; {\it arbitrary functions} means arbitrary
 objective functions are easily implemented; {\it arbitrary optimizers} means
@@ -260,27 +263,48 @@ optimized, a user can implement only a few methods and we can use C++ template
 metaprogramming to check that the given functions match the requirements of the
 optimizer that is being used.  When implementing an optimizer, a user can assume
 that the given function to be optimized meets the required assumptions of the
-optimizers, and encode those requirements.
+optimizers, and encode those requirements as \texttt{static\_assert} checks.
+
+For the most common case of a differentiable objective function, the user must
+implement only two methods:
+
+\begin{itemize}
+  \item \texttt{double Evaluate($x$)}: given coordinates $x$, this function
+should return the value of $f(x)$.
+  \item \texttt{void Gradient($x$, $g$)}: given coordinates $x$ and a reference
+to $g$, set $g = f'(x)$.
+\end{itemize}
+
+Or, alternately, they can simply implement a \texttt{EvaluateWithGradient()}
+function that computes both $f(x)$ and $f'(x)$ simultaneously, which is useful
+in cases where both the objective and gradient depend on similar computations.
+
+The required API for separable differentiable objective functions (i.e. those
+that would use an optimizer like SGD) is very similar, except that
+\texttt{Evaluate()} and \texttt{Gradient()} (or \texttt{EvaluateWithGradient()})
+should operate only on small mini-batches.  The same pattern applies for other
+types of objective functions: only a few methods specific to class of objective
+function itself must be implemented and then any optimizer may be used.
 
 \section{Example}
 
 As an example of usage, let us consider the linear regression objective
 function\footnote{Just for simplicity, we ignore the bias term.  It can be
-rederived by taking $x^*_i = (x_i 1)$.}.  Given some dataset $X \in
+rederived by taking $x^*_i = (x_i, 1)$.}.  Given some dataset $X \in
 \mathcal{R}^{n \times d}$ and associated responses $y \in \mathcal{R}^n$, the
-model of linear regression is to assume that $y_i = \theta x_i$ for each data
-point and response $(x_i, y_i)$.  To fit this model $\theta \mathcal{R}^d$ best
+model of linear regression is to assume that $y_i = x_i \theta$ for each data
+point and response $(x_i, y_i)$.  To fit this model $\theta \in \mathcal{R}^d$ best
 to the data, we wish to minimize
 
 \begin{equation}
-\operatorname{argmin}_\theta \sum_{i = 1}^n (y_i - \theta x_i)^2 =
-\operatorname{argmin}_\theta \| y - \theta X \|^2.
+\operatorname{argmin}_\theta \sum_{i = 1}^n (y_i - x_i \theta)^2 =
+\operatorname{argmin}_\theta \| y - X \theta \|^2.
 \end{equation}
 
 This objective function $f(\theta)$ has the associated gradient
 
 \begin{equation}
-f'(\theta) = \sum_{i = 1}^n 2 x_i (y_i - \theta x_i) = 2 X (y - \theta X).
+f'(\theta) = \sum_{i = 1}^n -2 x_i (y_i - x_i \theta) = -2 X^T (y - X \theta).
 \end{equation}
 
 We can implement these two functions in a class {\tt LinearRegressionFunction}.
@@ -298,13 +322,13 @@ class LinearRegressionFunction
   // Compute the objective function.
   double Evaluate(const arma::mat& theta)
   {
-    return arma::accu((y - theta * X) % (y - theta * X));
+    return arma::accu((y - X * theta) % (y - X * theta));
   }
 
   // Compute the gradient and store in 'gradient'.
   void Gradient(const arma::mat& theta, arma::mat& gradient)
   {
-    gradient = 2 * X * (y - theta * X);
+    gradient = -2 * X.t() * (y - X * theta);
   }
 
  private:
@@ -334,9 +358,8 @@ Thanks to the easy abstraction, we have been able to provide support for a large
 set of diverse optimizers and objective functions.  Below is a list of what is
 currently available.
 
-\vspace*{-0.4em}
 % I guess to save some space we should group them.
-\begin{itemize} \itemsep -1pt
+\begin{itemize}
   \item {\bf SGD variants:} Stochastic Gradient Descent (SGD), Stochastic
       Coordinate Descent (SCD), Parallel Stochastic Gradient Descent (Hogwild!),
       Stochastic Gradient Descent with Restarts (SGDR), SMORMS3, AdaGrad,
@@ -355,7 +378,6 @@ currently available.
       Reinforcement learning, Softmax regression, Sparse autoencoders,
       Sparse SVM
 \end{itemize}
-\vspace*{-0.4em}
 
 In addition, many methods are currently in development and will be released in
 the future.  % TODO: maybe some more clarity here
@@ -370,6 +392,7 @@ function that needs to be optimized.  For instance, the {\tt scipy.optimize}
 package in Python can be used like this:
 
 %% TODO: code snippet
+
 
 During the optimization, the {\tt rosen()} function will be called repeatedly.
 However, since what was given to the {\tt minimize()} function is a function
@@ -396,25 +419,39 @@ temporary variable elimination and dead code pruning.
 
 It is often the case that when optimizing a function $f(x)$, the computation of
 the value $f(x)$ and its derivative $f'(x)$ involve the computation of identical
-intermediate results.  Consider the following objective function:
+intermediate results.  Consider the linear regression objective function from
+earlier:
 
-% TODO: need to double check this, and it might be nicer if it was a matrix.
 \begin{equation}
-f(x) = \| Ax - b \|_F^2.
+f(\theta) = \| y - X\theta \|_F^2.
 \end{equation}
 
-For this objective function, the derivative $f'(x)$ is the similar $2A(Ax - b)$,
-and both depend on the computation of the matrix term $(Ax - b)$.  If $A$ is a
-large matrix, then this may be computationally expensive to compute.  Existing
-optimization frameworks do not have an easy way to avoid this duplicate
-computation; however, in many cases, an optimization algorithm may need the
-values of both $f(x)$ and $f'(x)$ for a given $x$.
+For this objective function, the derivative $f'(x)$ is the similar $-2 X^T (y -
+X \theta)$, and both depend on the computation of the vector term $(y - X
+\theta)$.  If $X$ is a large matrix, then this may be computationally expensive
+to compute.  Existing optimization frameworks do not have an easy way to avoid
+this duplicate computation; however, in many cases, an optimization algorithm
+may need the values of both $f(\theta)$ and $f'(\theta)$ for a given $\theta$.
 
 Using template metaprogramming in {\tt ensmallen}, we provide an easy (and
 optional) way for users to avoid this extra computational overhead.  Instead of
 specifying individual {\tt Evaluate()} and {\tt Gradient()} functions, a user
 may simply write an {\tt EvaluateWithGradient()} function that returns both the
-objective value and the gradient value for an input $x$.
+objective value and the gradient value for an input $\theta$.  For our earlier
+\texttt{LinearRegressionFunction}, we could use an implementation that only
+computes $(y - X \theta)$ once:
+
+\begin{verbatim}
+double EvaluateWithGradient(const arma::mat& theta, arma::mat& gradient)
+{
+  const arma::rowvec v = (y - X * theta); // Cache result.
+  gradient = -2 * X.t() * v;
+  return arma::accu(v % v); // Take squared norm of v.
+}
+\end{verbatim}
+
+This method could be provided {\it instead} of {\tt Evaluate()} and {\tt
+Gradient()}.
 
 In essence, given a {\tt FunctionType} class that implements either an {\tt
 Evaluate()} and {\tt Gradient()} method or an {\tt EvaluateWithGradient()}
@@ -447,28 +484,124 @@ full-batch and small-batch {\tt Evaluate()}, {\tt Gradient()}, and {\tt
 EvaluateWithGradient()}.  In the future, this support may be expanded to other
 sets of methods for other types of objective functions.
 
-% TODO if space: expand LinearRegressionFunction example to have just an
-% EvaluateWithGradient() example.
-
 % TODO: anything to write about the visualization page that we had set up?
 
 \section{Experiments}
 
-Let's do some experiments.  I think that maybe we can focus on the following:
+To demonstrate the benefits of these optimizations that {\tt ensmallen} can take
+advantage of, we compare {\tt ensmallen}'s performance to a number of other
+optimization frameworks, including some that use automatic differentiation.
+
+First, we consider the simple and popular Rosenbrock function: % TODO: cite
+
+\begin{equation}
+f([x_1 x_2]) = 100 (x_2 - x_1^2)^2 + (1 - x_1^2).
+\end{equation}
+
+To demonstrate the added overhead of other frameworks, we choose to use
+simulated annealing, % TODO: cite
+a gradient-free optimizer that only uses the objective function itself.
+Simulated annealing will call the objective function very many times; for each
+simulation we limit the optimizer to $100,000$ objective evaluations.  We
+compare four frameworks for this task:
 
 \begin{itemize}
-  \item An example where the overhead of virtual function calls is
-non-negligible---so a function with a very simple Evaluate() and Gradient() but
-a very slow convergence with some optimizers (probably SGD... or simulated
-annealing?? that could work since SA uses so many iterations).
-
-  \item An example where inlining or compiler optimization can produce
-significant benefits.  It's hard for me to think of what this might be.
-
-  \item A machine learning example like logistic regression where
-EvaluateWithGradient() avoids a lot of unnecessary computation.  We should avoid
-deep neural networks because we're not talking about GPUs here at all.
+  \item {\tt ensmallen}
+  \item {\tt scipy.optimize.anneal}, from scipy 0.14.1 % TODO: cite
+  \item {\tt Optim.jl}'s simulated annealing implementation with Julia 1.0.1
+% TODO: cite
+  \item {\tt samin} from GNU Octave's {\tt optim} package % TODO: cite
+\footnote{Another option here might be {\tt simulannealbnd()} from MATLAB's
+Global Optimization Toolkit.  However, no license was available for these
+simulations.}
 \end{itemize}
+
+Table~\ref{tab:rosenbrock_results} shows the average runtime
+across 10 trials for $100000$ iterations of simulated annealing with each
+implementation.  Of these frameworks, only Julia and {\tt ensmallen} are able to
+avoid the function pointer dereference and take advantage of inlining and
+related optimizations---and this difference is strongly reflected in the
+results.
+
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+{\tt ensmallen} & {\tt scipy} & {\tt Optim.jl} & {\tt samin} \\
+\midrule
+% TODO: these are just single-run results from Marcus' laptop!  We need to do
+% 10 and average.
+{\bf 0.004s} & 1.044s & 0.021s & 2.920s \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Runtimes for $100000$ iterations of simulated annealing with different
+frameworks on the simple Rosenbrock function.  Julia code runs do not count
+compilation time.}
+\label{tab:rosenbrock_results}
+\end{table}
+
+Next, we consider the same machine learning example we have been working with
+through the paper: linear regression.  For this task we will use the first-order
+L-BFGS optimizer, % TODO: cite
+so for {\tt ensmallen} we will implement two versions: one with {\tt Evaluate()}
+and {\tt Gradient()}, and one with only {\tt EvaluateWithGradient()}.  The code
+for each of these is the same as shown earlier.  In addition, we have more
+options for Julia: we can implement only the objective function and allow either
+% TODO: cite these two
+Julia's {\tt Calculus.jl} or {\tt ForwardDiff.jl} package to automatically
+compute the gradient.  Therefore, we compare against the following:
+
+\begin{itemize}
+  \item {\tt ensmallen}: only {\tt EvaluateWithGradient()} implemented
+  \item {\tt ensmallen}-2: both {\tt Evaluate()} and {\tt Gradient()} separately
+implemented
+  \item {\tt Optim.jl+Calculus.jl}: uses the default {\tt Calculus.jl} for
+computing the gradient
+  \item {\tt Optim.jl+ForwardDiff.jl}: uses {\tt ForwardDiff.jl} for computing
+the gradient
+  \item {\tt Optim.jl}: implements the gradient manually
+  \item {\tt scipy.optimize.fmin\_l\_bfgs\_b}: implements both objective and
+gradient
+  \item {\tt bfgsmin} from GNU Octave's {\tt optim} package
+\end{itemize}
+
+Results for different data sizes are shown in Table~\ref{tab:lbfgs}.  For each
+implementation, L-BFGS was allowed to run for only $10$ iterations and never
+converged in fewer iterations.  The datasets trained on were highly noisy random
+data with a slight linear pattern---but note that the exact data is not relevant
+for our experiments here, only its size.  Runtimes are again reported as the
+average across 10 runs.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+{\em algorithm} & $d = 100$, $n = 1k$ & $d = 100$, $n = 10k$ & $d = 100$, $n =
+100k$ & $d = 1k$, $n = 100k$ \\
+\midrule
+% TODO: this was only one trial on Ryan's desktop!
+{\tt ensmallen} & {\bf 0.001s} & {\bf 0.006s} & {\bf 0.139s} & {\bf 1.698s} \\
+{\tt ensmallen}-2 & 0.002s & 0.008s & 0.204s & 2.497s \\
+{\tt Optim.jl+Calculus.jl} & 0.172s & 0.960s & 27.428s & 2535.507s \\
+{\tt Optim.jl+ForwardDiff.jl} & 0.553s & 1.162s & 6.665s & 778.250s \\
+{\tt Optim.jl} & 0.007s & 0.025s & 0.390s & 4.107s \\
+{\tt scipy.optimize.fmin\_l\_bfgs\_b} & 0.002s & 0.010s & 0.198s & 2.022s \\
+{\tt bfgsmin} & 0.215s & 1.705s & 15.998s & ??? \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Runtimes for linear regression function with several different dataset
+sizes.  All Julia runs do not count compilation time.}
+\label{tab:lbfgs}
+\end{table}
+
+We can see that the use of {\tt EvaluateWithGradient()} yields considerable
+speedup of almost 1.5x over the {\tt ensmallen} implementation with both the
+objective and gradient implemented separately.  In addition, although the
+automatic differentiation support makes it easier for the user to write their
+code, it is very clear that the code generated by the automatic differentiator
+is far from optimal, with runs that take up to three orders of magnitude longer!
 
 \section{Conclusion}
 
