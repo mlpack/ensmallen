@@ -45,8 +45,27 @@ Mentekidis \And Conrad Sanderson}
 \maketitle
 
 \begin{abstract}
-% TODO: not sure this is a great abstract
-ensmallen is cool software and you should use it.
+
+%% the abstract below still needs more meat and sharpening
+
+We present a fast and flexible C++ library for mathematical optimization of 
+arbitrary user-supplied functions,
+which can be applied to many machine learning problems.
+The library provides many pre-built optimizers
+(including numerous variants of SGD and Quasi-Newton optimizers)
+as well as a flexible framework for implementing new optimizers and objective functions.
+Implementation of a new optimizer requires only one method
+and implementation of a new objective function requires at most four C++ functions. 
+This can aid in the  quick implementation and prototyping of new machine learning algorithms.
+In contrast to optimization approaches in existing frameworks
+(such as Julia, Shogun, Vowpal Wabbit, SciPy),
+the proposed Ensmallen library supports more optimizations,
+more types of objective functions,
+as well as seamlessly supporting user-defined objective functions and optimizers.
+Empirical comparisons show that ...
+TODO: briefly describe the speedups obtained in the experiments
+
+
 \end{abstract}
 
 \section{Introduction}
