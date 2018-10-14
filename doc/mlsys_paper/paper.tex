@@ -83,9 +83,9 @@ to the following optimization form:
 Optimization is often computationally intensive and may correspond
 to most of the time taken to train a machine learning model.  For instance, the
 training of deep neural networks is dominated by the optimization of the model
-parameters on the data. %TODO: cite
-Even popular machine learning models such as logistic regression % TODO: cite
-have training times mostly dominated by an optimization.
+parameters on the data~\cite{schmidhuber2015deep}.
+Even popular machine learning models such as logistic regression
+have training times mostly dominated by an optimization~\cite{kingma2015adam}.
 % TODO: might be nice to have something kind of anecdotal like 'even new
 % students to the field of machine learning quickly encounter optimization' and
 % cite, e.g., Andrew Ng's coursera course or some ML textbook or similar
@@ -108,24 +108,22 @@ Although there are many existing machine learning optimization toolkits, few
 are able to take explicit advantage of metaprogramming based code optimizations,
 and few offer robust support for various types of objective functions.
 For instance, deep learning
-libraries like Caffe, % TODO: cite
-PyTorch, % TODO: cite
-and TensorFlow % TODO: cite
+libraries like Caffe~\cite{jia2014caffe},
+PyTorch~\cite{paszke2017automatic},
+and TensorFlow~\cite{abadi2016tensorflow}
 each contain a variety of optimization techniques.  However, these techniques are
 limited to stochastic gradient descent (SGD) and SGD-like optimizers that
 operate on small batches of data points at a time.  Other machine learning
-libraries, such as {\tt scikit-learn} % TODO: cite
+libraries, such as {\tt scikit-learn}~\cite{pedregosa2011scikit}
 % TODO: can we find another library to put here too?  Shark maybe?
 contain optimization algorithms but not in a coherent or reusable framework.
 Many programming languages have higher-level packages for
 mathematical optimization.  For example, {\tt scipy.optimize} % TODO: check and cite
-is widely used in the Python community, and MATLAB's {\tt TODO()}
-% TODO: what's the name of that MATLAB function? or one of them?
-% TODO: cite
-has been available and used for many decades.  However, these implementations
-are often not suitable for modern machine learning tasks---for instance,
-computing the full gradient of the objective function may not be feasible
-because there are too many data points.
+is widely used in the Python community, and MATLAB's function optimization
+support has been available and used for many decades.  However, these
+implementations are often unsuitable for modern machine learning tasks---for
+instance, computing the full gradient of the objective function may not be
+feasible because there are too many data points.
 
 In this paper, we describe the functionality of {\tt ensmallen} and the types of
 problems that it can be applied to.  We discuss the mechanisms by which {\tt ensmallen} is
@@ -133,10 +131,11 @@ able to provide both computational efficiency and ease-of-use.
 We show a few examples that use the library, as well as empirical performance comparisons
 with other optimization libraries.
 
-{\tt ensmallen} is open-source software licensed under the 3-claused BSD license~\cite{TODO},
+{\tt ensmallen} is open-source software licensed under the 3-clause BSD
+license\footnote{\url{https://opensource.org/licenses/BSD-3-Clause}},
 allowing unencumbered use in both open-source and proprietary projects.
 It is available for download from \url{https://www.ensmallen.org}.
-Armadillo~\cite{TODO} is used for efficient linear algebra operations.
+Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra operations.
 
 % Originally, {\tt ensmallen} was developed as part of {\tt mlpack}; % TODO: cite
 % it is now available in standalone header-only form.
@@ -144,9 +143,6 @@ Armadillo~\cite{TODO} is used for efficient linear algebra operations.
 %% CS: agreed; i don't see a need to explicitly mention mlpack -- it distracts
 %% CS: from the central message
 % TODO: also, we should talk up the use
-% of Armadillo as its only dependency, which is nice, and maybe emphasize the
-% utility of a header-only library
-
 
 \section{Types of objective functions}
 
@@ -336,7 +332,7 @@ f'(\theta) = \sum_{i = 1}^n -2 x_i (y_i - x_i \theta) = -2 X^T (y - X \theta).
 
 We can implement these two functions in a class {\tt LinearRegressionFunction}.
 Here {\tt arma::mat} and {\tt arma::vec} represent Armadillo matrix and vector
-types, respectively. % TODO: cite Armadillo
+types, respectively~\cite{sanderson2016armadillo}.
 
 % TODO: syntax highlighting
 \begin{verbatim}
@@ -483,9 +479,9 @@ Gradient()}.
 In essence, given a {\tt FunctionType} class that implements either an {\tt
 Evaluate()} and {\tt Gradient()} method or an {\tt EvaluateWithGradient()}
 method, template metaprogramming techniques are used to detect which of these
-methods exist.  Then, a wrapper class will use suitable mix-ins % TODO: cite
-in order to provide the `missing' functionality.  If {\tt
-EvaluateWithGradient()} does not exist, the following code is generated:
+methods exist.  Then, a wrapper class will use suitable mix-ins
+in order to provide the `missing' functionality~\cite{smaragdakis2000mixin}.  If
+{\tt EvaluateWithGradient()} does not exist, the following code is generated:
 
 % TODO: code block
 \begin{verbatim}
@@ -519,14 +515,15 @@ To demonstrate the benefits of these optimizations that {\tt ensmallen} can take
 advantage of, we compare {\tt ensmallen}'s performance to a number of other
 optimization frameworks, including some that use automatic differentiation.
 
-First, we consider the simple and popular Rosenbrock function: % TODO: cite
+First, we consider the simple and popular Rosenbrock
+function~\cite{Rosenbrock1960}:
 
 \begin{equation}
 f([x_1 x_2]) = 100 (x_2 - x_1^2)^2 + (1 - x_1^2).
 \end{equation}
 
 To demonstrate the added overhead of other frameworks, we choose to use
-simulated annealing, % TODO: cite
+simulated annealing~\cite{kirkpatrick1983optimization},
 a gradient-free optimizer that only uses the objective function itself.
 Simulated annealing will call the objective function very many times; for each
 simulation we limit the optimizer to $100,000$ objective evaluations.  We
@@ -534,10 +531,10 @@ compare four frameworks for this task:
 
 \begin{itemize}
   \item {\tt ensmallen}
-  \item {\tt scipy.optimize.anneal}, from scipy 0.14.1 % TODO: cite
-  \item {\tt Optim.jl}'s simulated annealing implementation with Julia 1.0.1
-% TODO: cite
-  \item {\tt samin} from GNU Octave's {\tt optim} package % TODO: cite
+  \item {\tt scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
+  \item {\tt Optim.jl}'s simulated annealing implementation with Julia
+1.0.1~\cite{mogensen2018optim}
+  \item {\tt samin} from GNU Octave's {\tt optim} package~\cite{octave}
 \footnote{Another option here might be {\tt simulannealbnd()} from MATLAB's
 Global Optimization Toolkit.  However, no license was available for these
 simulations.}
@@ -570,13 +567,14 @@ compilation time.}
 
 Next, we consider the same machine learning example we have been working with
 through the paper: linear regression.  For this task we will use the first-order
-L-BFGS optimizer, % TODO: cite
+L-BFGS optimizer~\cite{zhu1997algorithm},
 so for {\tt ensmallen} we will implement two versions: one with {\tt Evaluate()}
 and {\tt Gradient()}, and one with only {\tt EvaluateWithGradient()}.  The code
 for each of these is the same as shown earlier.  In addition, we have more
 options for Julia: we can implement only the objective function and allow either
-% TODO: cite these two
-Julia's {\tt Calculus.jl} or {\tt ForwardDiff.jl} package to automatically
+Julia's {\tt
+Calculus.jl}\footnote{\url{https://github.com/JuliaMath/Calculus.jl}} or {\tt
+ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} package to automatically
 compute the gradient.  Therefore, we compare against the following:
 
 \begin{itemize}
