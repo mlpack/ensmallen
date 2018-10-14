@@ -71,17 +71,16 @@ TODO: briefly describe the speedups obtained in the experiments
 \section{Introduction}
 
 Mathematical optimization is the workhorse of virtually all machine learning
-algorithms.  Almost all machine learning problems can be boiled down to the
-simple optimization
-
+algorithms.  For a given objective function $f(\cdot)$
+(which may have a special structure or constraints),
+almost all machine learning problems can be boiled down
+to the following optimization form:
+%
 \begin{equation}
 \operatorname{argmin} f(x)
 \end{equation}
 
-\noindent for some objective function $f(\cdot)$; in some cases, these objective
-functions may have some special structure or some constraints.
-
-Often, these optimizations can be computationally intensive and may correspond
+Optimization is often computationally intensive and may correspond
 to most of the time taken to train a machine learning model.  For instance, the
 training of deep neural networks is dominated by the optimization of the model
 parameters on the data. %TODO: cite
@@ -90,55 +89,64 @@ have training times mostly dominated by an optimization.
 % TODO: might be nice to have something kind of anecdotal like 'even new
 % students to the field of machine learning quickly encounter optimization' and
 % cite, e.g., Andrew Ng's coursera course or some ML textbook or similar
+%% CS: i think we don't need to explore this too much; better to cut out all the
+%% CS: fat and stick with concrete examples, instead of veering off on tangents
 %
 % or maybe just a note about how many optimization techniques get published at
 % NIPS every year?
+%% CS: NIPS is too self-referential here
 
 The ubiquity of optimization in machine learning algorithms highlights the need
-for robust and flexible implementations of optimization algorithms, which is
-what drives us to introduce {\tt ensmallen}, a generic C++ optimization toolkit
-that contains a wide variety of optimization techniques for different types of
-objective functions.  Through the use of template metaprogramming, {\tt
-ensmallen} is able to generate efficient code that can help with the
+for robust and flexible implementations of optimization algorithms.
+We present {\tt ensmallen}, a C++ optimization toolkit
+that contains a wide variety of optimization techniques for many types of
+objective functions.  Through the use of C++ template metaprogramming~\cite{TODO},
+{\tt ensmallen} is able to generate efficient code that can help with the
 demanding computational needs of many machine learning algorithms.
 
 Although there are many existing machine learning optimization toolkits, few
-are able to take advantage of the types of compiler optimizations that {\tt
-ensmallen} can, and few offer the kind of robust support for different types of
-objective functions that {\tt ensmallen} does.  For instance, deep learning
+are able to take explicit advantage of metaprogramming based code optimizations,
+and few offer robust support for various types of objective functions.
+For instance, deep learning
 libraries like Caffe, % TODO: cite
 PyTorch, % TODO: cite
 and TensorFlow % TODO: cite
-each contain a variety of optimization techniques; but these techniques are
+each contain a variety of optimization techniques.  However, these techniques are
 limited to stochastic gradient descent (SGD) and SGD-like optimizers that
-operate on small batches of data points at a time.  Some other machine learning
+operate on small batches of data points at a time.  Other machine learning
 libraries, such as {\tt scikit-learn} % TODO: cite
 % TODO: can we find another library to put here too?  Shark maybe?
-contain optimization algorithms but not in any coherent or reusable framework.
-On the other hand, many programming languages have higher-level packages for
-mathematical optimization; {\tt scipy.optimize} % TODO: check and cite
+contain optimization algorithms but not in a coherent or reusable framework.
+Many programming languages have higher-level packages for
+mathematical optimization.  For example, {\tt scipy.optimize} % TODO: check and cite
 is widely used in the Python community, and MATLAB's {\tt TODO()}
 % TODO: what's the name of that MATLAB function? or one of them?
 % TODO: cite
 has been available and used for many decades.  However, these implementations
-don't tend to be suitable for modern machine learning tasks---for instance,
+are often not suitable for modern machine learning tasks---for instance,
 computing the full gradient of the objective function may not be feasible
 because there are too many data points.
 
 In this paper, we describe the functionality of {\tt ensmallen} and the types of
-problems that it solves.  We discuss the mechanisms by which {\tt ensmallen} is
-able to provide both computational efficiency and ease-of-use, and then show a
-few examples that use the library.  Then, we show performance comparisons with
-other optimization libraries.
+problems that it can be applied to.  We discuss the mechanisms by which {\tt ensmallen} is
+able to provide both computational efficiency and ease-of-use.
+We show a few examples that use the library, as well as empirical performance comparisons
+with other optimization libraries.
 
-{\tt ensmallen} is available for download from the website at
-\url{https://www.ensmallen.org}, and is currently maintained on Github at
-\url{https://github.com/mlpack/ensmallen}.  Originally, {\tt ensmallen} was
-developed as the optimization infrastructure of {\tt mlpack}; % TODO: cite
-it is now available in standalone header-only form.
-% TODO: seems awkward to put the lineage here; also, we should talk up the use
+{\tt ensmallen} is open-source software licensed under the 3-claused BSD license~\cite{TODO},
+allowing unencumbered use in both open-source and proprietary projects.
+It is available for download from \url{https://www.ensmallen.org}.
+Armadillo~\cite{TODO} is used for efficient linear algebra operations.
+
+% Originally, {\tt ensmallen} was developed as part of {\tt mlpack}; % TODO: cite
+% it is now available in standalone header-only form.
+% TODO: seems awkward to put the lineage here;
+%% CS: agreed; i don't see a need to explicitly mention mlpack -- it distracts
+%% CS: from the central message
+% TODO: also, we should talk up the use
 % of Armadillo as its only dependency, which is nice, and maybe emphasize the
 % utility of a header-only library
+
 
 \section{Types of objective functions}
 
