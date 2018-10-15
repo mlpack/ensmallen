@@ -566,51 +566,69 @@ sets of methods for other types of objective functions.
 \section{Experiments}
 \vspace*{-0.5em}
 
-To demonstrate the benefits of these optimizations that {\tt ensmallen} can take
-advantage of, we compare {\tt ensmallen}'s performance to a number of other
+To demonstrate the benefits of the metaprogramming based code optimizations
+that {\tt ensmallen} can exploit,
+we compare the performance of {\tt ensmallen} with several other
 optimization frameworks, including some that use automatic differentiation.
 
 First, we consider the added overhead of other frameworks.  For our experiment,
-we choose the simple and popular Rosenbrock function~\cite{Rosenbrock1960}:
+we use the simple and popular Rosenbrock function~\cite{Rosenbrock1960}:
 $f([x_1, x_2]) = 100 (x_2 - x_1^2)^2 + (1 - x_1^2)$.  For the optimizer, we use
 simulated annealing~\cite{kirkpatrick1983optimization},
 a gradient-free optimizer.  Simulated annealing will call the objective function
-very many times; for each simulation we limit the optimizer to 100k
-objective evaluations.  We compare four frameworks for this task:
+numerous times; for each simulation we limit the optimizer to 100K
+objective evaluations.  We compare four frameworks%
+%
+\footnote{Another option here might be {\tt simulannealbnd()} 
+in the Global Optimization Toolkit for MATLAB.
+However, no license was available for these simulations.}
+%
+for this task:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
   \item {\tt ensmallen}
   \item {\tt scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
-  \item {\tt Optim.jl}'s simulated annealing implementation with Julia
+  \item simulated annealing implementation in {\tt Optim.jl} with Julia
 1.0.1~\cite{mogensen2018optim}
-  \item {\tt samin} from GNU Octave's {\tt optim} package~\cite{octave}
-\footnote{Another option here might be {\tt simulannealbnd()} from MATLAB's
-Global Optimization Toolkit.  However, no license was available for these
-simulations.}
+  \item {\tt samin} in the {\tt optim} package for GNU Octave~\cite{octave}
 \end{itemize}
 \vspace*{-0.3em}
 
 Table~\ref{tab:rosenbrock_results} shows the average runtime
-across 10 trials for $100000$ iterations of simulated annealing with each
+across 10 trials for 100K iterations of simulated annealing with each
 implementation.  The simulations were run on a % TODO: what are Marcus's
 % system specs?
 {\tt \$COMPUTER}.
-Of these frameworks, only Julia and {\tt ensmallen} are able to avoid the
+Only Julia and {\tt ensmallen} are able to avoid the
 function pointer dereference and take advantage of inlining and related
 optimizations---and this difference is strongly reflected in the results.
 
-Next, we consider the same machine learning example we have been working with
-through the paper: linear regression.  For this task we will use the first-order
-L-BFGS optimizer~\cite{zhu1997algorithm},
+%% CS: i'm not convinced that this conjecture is barking up the right tree;
+%% CS: SciPy is in Python, which is by default an interpreted language.
+%% CS: the slowdown many have nothing to do with inlining and simply due to
+%% CS: Python being slow in general.
+%% CS: it's possible to use PyPy or Numba to speed things up,
+%% CS: in order to provide a "fairer" comparison against compiled languages.
+%% CS: Octave also has an optional JIT compiler, which last time I checked
+%% CS: needs to be explicitly enabled.
+%% 
+%% CS: i would suggest to stay away from the "we do inlining" argument,
+%% CS: as it can be blown up too easily.
+%% CS: furthermore, I would suggest to mention PyPy and/or Numba and Octave JIT
+%% CS: (in order to show that we've done our homework),
+%% CS: and then state something along the lines of
+%% CS: "these approaches are not being used as we're comparing out-of-the-box performance"
+
+Next, we consider the linear regression example first described in Section~\ref{sec:linreg_example}.
+For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm},
 so for {\tt ensmallen} we will implement two versions: one with {\tt Evaluate()}
 and {\tt Gradient()}, and one with only {\tt EvaluateWithGradient()}.  The code
 for each of these is the same as shown earlier.  In addition, we have more
 options for Julia: we can implement only the objective function and allow either
-Julia's {\tt
-Calculus.jl}\footnote{\url{https://github.com/JuliaMath/Calculus.jl}} or {\tt
-ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} package to automatically
-compute the gradient.  Therefore, we compare against the following:
+{\tt Calculus.jl}\footnote{\url{https://github.com/JuliaMath/Calculus.jl}} or {\tt
+ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} packages to automatically
+compute the gradient.  Overall, we compare against the following:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
@@ -624,15 +642,15 @@ the gradient with {\tt Optim.jl}
   \item {\tt Optim.jl}: implements the gradient manually
   \item {\tt scipy}: implements both objective and
 gradient
-  \item {\tt bfgsmin}: uses GNU Octave's {\tt optim} package
+  \item {\tt bfgsmin}: uses {\tt optim} package for GNU Octave
 \end{itemize}
 \vspace*{-0.3em}
 
-Results for different data sizes are shown in Table~\ref{tab:lbfgs}.  For each
+Results for various data sizes are shown in Table~\ref{tab:lbfgs}.  For each
 implementation, L-BFGS was allowed to run for only $10$ iterations and never
-converged in fewer iterations.  The datasets trained on were highly noisy random
-data with a slight linear pattern---but note that the exact data is not relevant
-for our experiments here, only its size.  Runtimes are again reported as the
+converged in fewer iterations.  The datasets used for training are highly noisy random
+data with a slight linear pattern. Note that the exact data is not relevant
+for the experiments here, only its size.  Runtimes are again reported as the
 average across 10 runs.
 
 \begin{table}
@@ -653,17 +671,22 @@ average across 10 runs.
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Runtimes for linear regression function with several different dataset
-sizes.  All Julia runs do not count compilation time.}
+\caption{Runtimes for linear regression function with various dataset sizes,
+with $n$ indicating the number of samples,
+and $d$ indicating the dimensionality of each sample.
+All Julia runs do not count compilation time.}
 \label{tab:lbfgs}
 \end{table}
 
-We can see that the use of {\tt EvaluateWithGradient()} yields considerable
+The results indicate that {\tt ensmallen} with {\tt EvaluateWithGradient()}
+is the fastest approach.
+Furthremore, the use of {\tt EvaluateWithGradient()} yields considerable
 speedup of almost 1.5x over the {\tt ensmallen} implementation with both the
 objective and gradient implemented separately.  In addition, although the
 automatic differentiation support makes it easier for the user to write their
-code, it is very clear that the code generated by the automatic differentiator
-is far from optimal, with runs that take up to three orders of magnitude longer!
+code, it is clear that the code generated by the automatic differentiators
+({\tt Calculus.jl} and {\tt ForwardDiff.jl})
+is far from optimal, with runs that are slower by up to three orders of magnitude.
 
 \vspace*{-0.3em}
 \section{Conclusion}
