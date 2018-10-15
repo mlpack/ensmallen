@@ -421,14 +421,17 @@ Gradient()} would be needed to use the small-batch SGD-like optimizers that {\tt
 ensmallen} provides.
 
 \vspace*{-0.3em}
-\section{Available optimizers}
+\section{Available Optimizers}
 \vspace*{-0.5em}
 
-Due to the easy abstraction, {\tt ensmallen} is able to provide a large set of
-diverse optimization algorithms.  Below is a list of what is currently
-available.
+Due to the straightforward abstraction framework, {\tt ensmallen} is able to
+provide a large set of diverse optimization algorithms.  Below is a list of
+currently available optimizers:
 
 % I guess to save some space we should group them.
+%% CS: should we add citations to some (or all) of the listed optimisers?
+%% CS: the MLSYS CFP states that "papers can be up to 6 pages (not including references)",
+%% CS: so technically we can have 10000+ references.
 \vspace*{-0.4em}
 \begin{itemize}
   \item {\bf SGD variants:} Stochastic Gradient Descent (SGD), Stochastic
@@ -452,8 +455,17 @@ available.
 \end{itemize}
 \vspace*{-0.4em}
 
-In addition, many optimization algorithms are currently in development and will
-be released in the future.
+%% CS: "in development" is ambiguous here;
+%% CS: is it in development by AI/ML researchers in general,
+%% CS: or by ensmallen developers/contributors?
+% In addition, many optimization algorithms are currently in development and will
+% be released in the future.
+
+%% CS: less ambiguous proclamation that has similar effect:
+We aim to expand {\tt ensmallen} with further optimization techniques
+as the need arises.  Since {\tt ensmallen} is open source,
+external contributions to the codebase are welcome.
+
 
 \vspace*{-0.3em}
 \section{Templates for speed}
