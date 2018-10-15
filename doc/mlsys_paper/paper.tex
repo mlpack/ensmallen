@@ -469,10 +469,27 @@ external contributions to the codebase are welcome.
 
 
 \vspace*{-0.3em}
-\section{Templates for speed}
+\section{Templates for Speed}
+%\section{Automatic Metaprogramming for Efficiency Gains}
 \vspace*{-0.5em}
 
-Many optimization toolkits depend on the user passing in a function pointer to a
+%% CS: this sections is very weak and not convincing; it basically states
+%% CS: "look, we can do inlines", but provides no real evidence
+%% CS: and/or citations where the supposed efficiency gains are demonstrated.
+%% CS: i suggest removing this section entirely,
+%% CS: as it causes more harm than good (from a reviewer's point of view).
+%% 
+%% CS: in practice, effect of C++ function inlining is only notably
+%% CS: pronounced when dealing with data comprised of lots of small vectors.
+%% 
+%% CS: for this section to be fleshed out, it would require reasoning based
+%% CS: on citations covering compiler optimisation, effect of data size,
+%% CS: experiments showing the effect of various vector sizes
+%% CS: (eg. with and without inlining).
+%% CS: there is no room in this paper to do this properly,
+%% CS: and doing a poor job will reduce likelihood of acceptance.
+
+Many optimization toolkits depend on the user providing a pointer to the
 function that needs to be optimized.  For instance, the {\tt scipy.optimize}
 package in Python can be used like this:
 
@@ -487,11 +504,12 @@ During the call to {\tt minimize()}, the {\tt rosen()} function will be called
 repeatedly---but it will be called as a function pointer, which must be
 dereferenced each time {\tt rosen()} is called.  In addition, some
 optimizations such as inlining (and many optimizations enabled by inlining) are
-not possible when using function pointers.  Since some optimization algorithms
-need to compute the objective very many times, the overhead of the lookup and
+not possible when using function pointers.  Since many optimization algorithms
+need to compute the objective numerous times, the overhead of the lookup and
 missed optimization opportunities may be non-negligible.  This applies even for
-SGD-like optimizers that train machine learning models on very large datasets!
+SGD-like optimizers that train machine learning models on very large datasets.
 
+%% CS: this is uninteresting and basically looks like filler
 Since {\tt ensmallen} is written in C++ with templates, the function pointer
 dereferencing overhead can be avoided and the compiler can choose to inline the
 function call and perform additional optimizations when possible, such as
