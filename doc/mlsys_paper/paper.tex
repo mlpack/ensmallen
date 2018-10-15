@@ -51,6 +51,7 @@
 \title{\texttt{ensmallen}: a flexible C++ library for efficient function optimization}
 
 % Alphabetical ordering?
+% TODO: check affiliations
 \author{Shikhar Bhardwaj \\
 Delhi Technological University \\
 Delhi, India 110042 \\
@@ -79,22 +80,23 @@ Australia
 \begin{abstract}
 \vspace*{-0.3em}
 %% the abstract below still needs more meat and sharpening
-We present a fast and flexible C++ library for mathematical optimization of 
+We present {\tt ensmallen}, a fast and flexible C++ library for mathematical optimization of 
 arbitrary user-supplied functions,
 which can be applied to many machine learning problems.
+Several types of optimizations are supported, including differentiable,
+separable, constrained, and categorical objective functions.
 The library provides many pre-built optimizers
 (including numerous variants of SGD and Quasi-Newton optimizers)
 as well as a flexible framework for implementing new optimizers and objective functions.
 Implementation of a new optimizer requires only one method
-and implementation of a new objective function requires at most four C++ functions. 
-This can aid in the  quick implementation and prototyping of new machine learning algorithms.
-In contrast to optimization approaches in existing frameworks
-(such as Julia, Shogun, Vowpal Wabbit, SciPy),
-the proposed Ensmallen library supports more optimizations,
-more types of objective functions,
-as well as seamlessly supporting user-defined objective functions and optimizers.
-Empirical comparisons show that ...
-TODO: briefly describe the speedups obtained in the experiments
+and a new objective function requires at most four C++ functions. 
+This can aid in the quick implementation and prototyping of new machine learning algorithms.
+Due to the use of C++ template metaprogramming, {\tt ensmallen} is able to
+support compiler optimizations that provide fast runtimes.
+Empirical comparisons show that {\tt ensmallen} is able to outperform other
+optimization frameworks (such as Julia and SciPy), sometimes by large margins.
+The library is distributed under the 3-clause BSD license and is ready for use
+in production environments.
 \end{abstract}
 
 \section{Introduction}
@@ -152,7 +154,8 @@ Many programming languages have higher-level packages for
 mathematical optimization.  For example, {\tt
 scipy.optimize}~\cite{jones2014scipy},
 is widely used in the Python community, and MATLAB's function optimization
-support has been available and used for many decades.  However, these
+support has been available and used for many decades.
+However, these
 implementations are often unsuitable for modern machine learning tasks---for
 instance, computing the full gradient of the objective function may not be
 feasible because there are too many data points.
@@ -168,8 +171,6 @@ license\footnote{\url{https://opensource.org/licenses/BSD-3-Clause}},
 allowing unencumbered use in both open-source and proprietary projects.
 It is available for download from \url{https://www.ensmallen.org}.
 Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra operations.
-
-% TODO: also, we should talk up the use
 
 \vspace*{-0.2em}
 \section{Types of objective functions}
@@ -238,8 +239,9 @@ Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra ope
         & SciPy \cite{jones2014scipy}             & \CIRCLE & \CIRCLE  & -  & \CIRCLE & - & - & - \\
         % MATLAB is very similar to scipy.
         & MATLAB \cite{mathworks2017OTB}            & \CIRCLE & \CIRCLE & - & \CIRCLE & - & - & - \\
-        % TODO: Julia
-        % TODO: MATLAB paper from MLOSS 2018?
+        % Optim.jl isn't the only Julia package for optimization, but it's the
+        % one we compare against.
+        & Julia ({\tt Optim.jl}) \cite{julia}         & \CIRCLE & - & - & \CIRCLE & - & - & - \\
         \cmidrule[1pt]{2-9}
     \end{tabular}
 %   \begin{tablenotes}\footnotesize
@@ -299,9 +301,9 @@ individual elements $x_j$ of $x$
 \vspace*{-0.3em}
 
 In this framework, if a user wants to optimize a differentiable objective
-function, they simply need to provide implementations of $f(x)$ and $f'(x)$, and
+function, they need only provide implementations of $f(x)$ and $f'(x)$, and
 then they can use any of the gradient-based optimizers that {\tt ensmallen}
-provides to perform the optimization.  Table~\ref{tab:functionality} compares
+provides.  Table~\ref{tab:functionality} compares
 the classes of objective functions that {\tt ensmallen} can handle with other
 popular frameworks and libraries.
 
@@ -310,18 +312,19 @@ used by every class of objective function; for instance, a gradient-based
 optimizer such as L-BFGS cannot operate on a non-differentiable objective
 function.
 
-Therefore, the best we can hope to achieve is to maximize the flexibility
+Therefore, the best the library can attain is to maximize the flexibility
 available, so that a user can easily implement a function $f(x)$ and have it
-work with as many optimizers as possible.  For this, {\tt ensmallen} depends on
-C++ policy-based design.  When implementing an objective function to be
-optimized, a user can implement only a few methods and we can use C++ template
+work with as many optimizers as possible.
+To do this, {\tt ensmallen} makes heavy use of C++ template metaprogramming.
+When implementing an objective function to be
+optimized, a user can implement only a few methods and we can use
 metaprogramming to check that the given functions match the requirements of the
-optimizer that is being used.  When implementing an optimizer, a user can assume
+optimizer that is being used.  When implementing an optimizer, we can assume
 that the given function to be optimized meets the required assumptions of the
 optimizers, and encode those requirements as \texttt{static\_assert} checks.
 
-For the most common case of a differentiable $f(x)$, the user must
-implement only two methods:
+For the most common case of a differentiable $f(x)$, the user need only
+implement two methods:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
@@ -358,7 +361,7 @@ to the data, we must find
 \vspace*{-1.1em}
 \begin{equation}
 \operatorname{argmin}_\theta \sum_{i = 1}^n (y_i - x_i \theta)^2 =
-\operatorname{argmin}_\theta \| y - X \theta \|^2.
+\operatorname{argmin}_\theta \| y - X \theta \|_F^2.
 \end{equation}
 \vspace*{-1.1em}
 
@@ -418,9 +421,9 @@ ensmallen} provides.
 \section{Available optimizers}
 \vspace*{-0.5em}
 
-Thanks to the easy abstraction, we have been able to provide support for a large
-set of diverse optimizers and objective functions.  Below is a list of what is
-currently available.
+Due to the easy abstraction, {\tt ensmallen} is able to provide a large set of
+diverse optimization algorithms.  Below is a list of what is currently
+available.
 
 % I guess to save some space we should group them.
 \vspace*{-0.4em}
@@ -446,15 +449,12 @@ currently available.
 \end{itemize}
 \vspace*{-0.4em}
 
-In addition, many methods are currently in development and will be released in
-the future.  % TODO: maybe some more clarity here
+In addition, many optimization algorithms are currently in development and will
+be released in the future.
 
-% not even sure this is the right term
 \vspace*{-0.3em}
-\section{Static polymorphism for speed}
+\section{Templates for speed}
 \vspace*{-0.5em}
-
-% TODO: better transition from the previous section
 
 Many optimization toolkits depend on the user passing in a function pointer to a
 function that needs to be optimized.  For instance, the {\tt scipy.optimize}
@@ -462,7 +462,7 @@ package in Python can be used like this:
 
 \vspace*{-0.3em}
 \begin{minted}[fontsize=\footnotesize]{python}
-    def rosen(x): return 100.0 * (x[1] - x[2]**2.0)**2.0 + (1 - x[2])**2.0)
+    def rosen(x): return 100.0 * (x[2] - x[1]**2.0)**2.0 + (1 - x[1])**2.0)
     res = scipy.optimize.minimize(rosen, [-1.2, 1], method='nelder-mead')
 \end{minted}
 \vspace*{-0.3em}
@@ -480,8 +480,6 @@ Since {\tt ensmallen} is written in C++ with templates, the function pointer
 dereferencing overhead can be avoided and the compiler can choose to inline the
 function call and perform additional optimizations when possible, such as
 temporary variable elimination and dead code pruning.
-% TODO: check that these make sense
-% TODO: needs a reference
 
 \vspace*{-0.3em}
 \section{Automatic generation of methods}
@@ -550,7 +548,7 @@ EvaluateWithGradient()} is called, and the unnecessary part of the result will
 be discarded.
 
 Since all of this code generation is done at compile-time and not
-at runtime, the compiler is able to perform dead code elimination % TODO: check
+at runtime, the compiler is able to perform dead code elimination
 on the unused result, and may be able to avoid calculations entirely.  In some
 cases, then, the generated {\tt Evaluate()} or {\tt Gradient()} functions may be
 equivalently fast to what would be hand-written!
@@ -577,7 +575,7 @@ we choose the simple and popular Rosenbrock function~\cite{Rosenbrock1960}:
 $f([x_1, x_2]) = 100 (x_2 - x_1^2)^2 + (1 - x_1^2)$.  For the optimizer, we use
 simulated annealing~\cite{kirkpatrick1983optimization},
 a gradient-free optimizer.  Simulated annealing will call the objective function
-very many times; for each simulation we limit the optimizer to $100,000$
+very many times; for each simulation we limit the optimizer to 100k
 objective evaluations.  We compare four frameworks for this task:
 
 \vspace*{-0.3em}
@@ -626,7 +624,7 @@ the gradient with {\tt Optim.jl}
   \item {\tt Optim.jl}: implements the gradient manually
   \item {\tt scipy}: implements both objective and
 gradient
-  \item {\tt bfgsmin} from GNU Octave's {\tt optim} package
+  \item {\tt bfgsmin}: uses GNU Octave's {\tt optim} package
 \end{itemize}
 \vspace*{-0.3em}
 
@@ -671,21 +669,29 @@ is far from optimal, with runs that take up to three orders of magnitude longer!
 \section{Conclusion}
 \vspace*{-0.5em}
 
-Here we can just summarize everything we've been talking about and possibly
-point towards things that can happen in the future:
+We have described {\tt ensmallen}, a flexible C++ library for function
+optimization that provides an easy interface for users to implement and optimize
+their desired objective functions.  Many types of functions can be optimized,
+including separable and constrained functions.  The library is fast due to its
+use of template metaprogramming and the Armadillo matrix library for linear
+algebra.  In addition, template metaprogramming is used to make user
+implementation easier by automatically generating missing methods.
 
-\begin{itemize}
-  \item GPU support via Bandicoot eventually (although NVBLAS can already be
-used)
-  \item Additional optimizers added
-  \item Anything else?
-\end{itemize}
+GPU support for optimization is available either through the use of the NVBLAS
+library~\cite{nvidia2015} or the forthcoming Bandicoot C++ GPU matrix library.
+% Conrad: is it ok if we mention that here?  It's a really nice selling point
+% and I am sure at least one reviewer will be thinking about GPUs.
+
+{\tt ensmallen} is already in use as the optimization toolkit of the {\tt
+mlpack} machine learning library~\cite{mlpack2018}.  For more information on the
+toolkit, see the website and documentation at \url{https://www.ensmallen.org/}.
 
 \subsubsection*{Acknowledgements}
 
 The development team of {\tt ensmallen} does not include just the authors named
-here but also a long list of other contributors.  See \url{%TODO about page
-} for more information.
+here but also a long list of other contributors.  See
+\url{https://www.ensmallen.org/about.html} for more information.
+% TODO: that URL may change
 
 \bibliographystyle{plain}
 \bibliography{paper}
