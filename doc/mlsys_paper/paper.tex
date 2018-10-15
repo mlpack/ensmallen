@@ -348,6 +348,7 @@ function itself must be implemented and then any optimizer may be used.
 
 \vspace*{-0.3em}
 \section{Example: Learning Linear Regression Models}
+\label{sec:linreg_example}
 \vspace*{-0.5em}
 
 As an example of usage, consider the linear regression objective
@@ -482,38 +483,35 @@ function call and perform additional optimizations when possible, such as
 temporary variable elimination and dead code pruning.
 
 \vspace*{-0.3em}
-\section{Automatic generation of methods}
+\section{Automatic Generation of Methods}
 \vspace*{-0.5em}
 
-It is often the case that when optimizing a function $f(x)$, the computation of
-the value $f(x)$ and its derivative $f'(x)$ involve the computation of identical
-intermediate results.  Consider the linear regression objective function from
-earlier:
-%\begin{equation}
-$f(\theta) = \| y - X\theta \|_F^2.$
-%\end{equation}
-
-For this objective function, the derivative $f'(x)$ is the similar $-2 X^T (y -
-X \theta)$, and both depend on the computation of the vector term $(y - X
-\theta)$.  If $X$ is a large matrix, then this may be computationally expensive
-to compute.  Existing optimization frameworks do not have an easy way to avoid
-this duplicate computation; however, in many cases, an optimization algorithm
+When optimizing a given function $f(x)$, the computation of
+the objective function $f(x)$ and its derivative $f'(x)$ often involve the computation of identical
+intermediate results.  Consider the linear regression objective function described
+in Section~\ref{sec:linreg_example}, $f(\theta) = \| y - X\theta \|_F^2$.
+For this objective function, the derivative $f'(x)$ has a related form of
+$-2 X^T (y -X \theta)$.  Both the objective function and the derivative 
+depend on the computation of the vector term $(y - X \theta)$,
+which can be computationally expensive to compute if $X$ is a large matrix.
+Existing optimization frameworks do not have an easy way to avoid
+this duplicate computation. In many cases, an optimization algorithm
 may need the values of both $f(\theta)$ and $f'(\theta)$ for a given $\theta$.
 
 Using template metaprogramming, {\tt ensmallen} provides an easy (and
 optional) way for users to avoid this extra computational overhead.  Instead of
 specifying individual {\tt Evaluate()} and {\tt Gradient()} functions, a user
 may simply write an {\tt EvaluateWithGradient()} function that returns both the
-objective value and the gradient value for an input $\theta$.  For our earlier
-\texttt{LinearRegressionFunction}, we could use an implementation that only
-computes $(y - X \theta)$ once:
+objective value and the gradient value for an input $\theta$.  For the 
+\texttt{LinearRegressionFunction} in Section~\ref{sec:linreg_example},
+we can use an implementation that only computes $(y - X \theta)$ once:
 
 \vspace*{-0.5em}
 \begin{minted}[fontsize=\small]{c++}
     double EvaluateWithGradient(const arma::mat& theta, arma::mat& gradient) {
-      const arma::rowvec v = (y - X * theta); // Cache result.
+      const arma::rowvec v = (y - X * theta); // Cache result
       gradient = -2 * X.t() * v;
-      return arma::accu(v % v); // Take squared norm of v.
+      return arma::accu(v % v); // Take squared norm of v
     }
 \end{minted}
 \vspace*{-0.5em}
@@ -537,27 +535,34 @@ compilation time.}
 \label{tab:rosenbrock_results}
 \end{table}
 
-This method could be provided {\it instead} of {\tt Evaluate()} and {\tt
+This method can be provided {\it instead} of {\tt Evaluate()} and {\tt
 Gradient()}.  In either case, template metaprogramming techniques are used to
 detect which methods exist, and a wrapper class will use suitable mix-ins in
 order to provide any `missing` functionality~\cite{smaragdakis2000mixin}.  For
 instance, if {\tt EvaluateWithGradient()} is not provided, a version will be
-generated that calls both {\tt Gradient()} and {\tt Evaluate()} in turn.
+automatically generated that calls both {\tt Gradient()} and {\tt Evaluate()} in turn.
 Similarly, if {\tt Evaluate()} or {\tt Gradient()} does not exist, then {\tt
 EvaluateWithGradient()} is called, and the unnecessary part of the result will
 be discarded.
 
-Since all of this code generation is done at compile-time and not
+Since all of this code generation is automatically done at compile-time and not
 at runtime, the compiler is able to perform dead code elimination
-on the unused result, and may be able to avoid calculations entirely.  In some
-cases, then, the generated {\tt Evaluate()} or {\tt Gradient()} functions may be
-equivalently fast to what would be hand-written!
+on the unused result, and may be able to avoid unnecessary calculations.  In some
+cases, the generated {\tt Evaluate()} or {\tt Gradient()} functions can be
+as fast as their corresponding hand-written versions.
 
-Overall, this code generation functionality reduces the requirements for users
-when they are implementing their own objective functions to be optimized.  At
-the time of this writing, this is implemented the most commonly-used cases:
+%% CS: a subset of the text from the problematic "Templates for speed" section above
+%% CS: can be placed here
+
+Overall, the automatic code generation functionality in {\tt ensmallen}
+reduces the requirements for users
+when they are implementing their own objective functions to be optimized.
+This leads to both quicker development and reduces the likelihood of bugs.
+
+At the time of writing, the automatic code generation
+is implemented for the most commonly-used cases:
 full-batch and small-batch {\tt Evaluate()}, {\tt Gradient()}, and {\tt
-EvaluateWithGradient()}.  In the future, this support may be expanded to other
+EvaluateWithGradient()}.  We aim to expand this support to other
 sets of methods for other types of objective functions.
 
 % TODO: anything to write about the visualization page that we had set up?
