@@ -177,7 +177,7 @@ It is available for download from \url{https://www.ensmallen.org}.
 Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra operations.
 
 \vspace*{-0.2em}
-\section{Types of objective functions}
+\section{Types of Objective Functions}
 \vspace*{-0.6em}
 
 \begin{table}[b!]
@@ -265,7 +265,7 @@ that the framework can natively take advantage of sparse gradients; and
 \end{table}
 
 {\tt ensmallen} provides a {\bf set of optimizers} for
-{\bf optimizing user-defined objective functions}.  It's also easy to implement a
+optimizing {\bf user-defined objective functions}.  It is also easy to implement a
 new optimizer in the {\tt ensmallen} framework.  Overall, our goal is to provide
 an easy-to-use library that can solve the problem
 %\vspace*{-0.4em}
@@ -274,18 +274,22 @@ $\operatorname{argmin}_{x} f(x)$
 %\end{equation}
 %\vspace*{-0.4em}
 %\noindent
-for any function $f(x)$ that takes some vector or matrix input $x$.  Ideally,
-the user should only need to specify what $f(x)$ is (or provide an
-implementation of a function that can compute $f(x)$).  But it is impossible to
-implement something both so generic and fast---for instance, gradient-based
-approaches converge far more quickly than gradient-free approaches (in general),
-so we must design an abstraction that is able to simultaneously generalize to
+for any function $f(x)$ that takes a vector or matrix input $x$.  Ideally,
+the user should only need to specify what $f(x)$ is, or provide an
+implementation of a function that can compute $f(x)$.  However, it is very difficult to
+implement something that is both generic and fast---for instance, gradient-based
+approaches typically converge far quicker than gradient-free approaches.
+As such, we must design an abstraction that is able to simultaneously generalize to
 many problem types, as well as take advantage of accelerations and
-optimizations.
+code optimizations.
+%% CS: in the above sentence, it's not clear what is meant by "we must design ..."
+%% CS: should it be "we provide ..." or "ensmallen provides ..." ?
+%% CS: The overall intent of the sentence is not clear -- to my eyes
+%% CS: it doesn't seem to gel well with its surrounding context.
 
 Therefore, users may implement objective functions with specific properties that
 the library can use to accelerate the computation.  These non-exclusive
-properties are shown below:
+properties are listed below:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
@@ -305,48 +309,50 @@ individual elements $x_j$ of $x$
 \vspace*{-0.3em}
 
 In this framework, if a user wants to optimize a differentiable objective
-function, they need only provide implementations of $f(x)$ and $f'(x)$, and
+function, they only need to provide implementations of $f(x)$ and $f'(x)$, and
 then they can use any of the gradient-based optimizers that {\tt ensmallen}
-provides.  Table~\ref{tab:functionality} compares
-the classes of objective functions that {\tt ensmallen} can handle with other
-popular frameworks and libraries.
+provides.  Table~\ref{tab:functionality} contrasts 
+the classes of objective functions that can be handled by {\tt ensmallen}
+and other popular frameworks and libraries.
 
-Of course, not every optimization algorithm provided by {\tt ensmallen} can be
+Not every optimization algorithm provided by {\tt ensmallen} can be
 used by every class of objective function; for instance, a gradient-based
 optimizer such as L-BFGS cannot operate on a non-differentiable objective
 function.
-
-Therefore, the best the library can attain is to maximize the flexibility
+As such, the best the library can attain is to maximize the flexibility
 available, so that a user can easily implement a function $f(x)$ and have it
 work with as many optimizers as possible.
-To do this, {\tt ensmallen} makes heavy use of C++ template metaprogramming.
-When implementing an objective function to be
-optimized, a user can implement only a few methods and we can use
-metaprogramming to check that the given functions match the requirements of the
+
+To accomplish the flexibility, {\tt ensmallen} makes heavy use of
+C++ template metaprogramming.
+When implementing an objective function to be optimized,
+a user can implement only a few methods; metaprogramming is then automatically
+used to check that the given functions match the requirements of the
 optimizer that is being used.  When implementing an optimizer, we can assume
 that the given function to be optimized meets the required assumptions of the
-optimizers, and encode those requirements as \texttt{static\_assert} checks.
+optimizers, and encode those requirements as compile-time checks
+(via \texttt{static\_assert}).
 
-For the most common case of a differentiable $f(x)$, the user need only
+For the most common case of a differentiable $f(x)$, the user only needs to
 implement two methods:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
   \item \texttt{double Evaluate($x$)}: given coordinates $x$, this function
-should return the value of $f(x)$.
+returns the value of $f(x)$.
   \item \texttt{void Gradient($x$, $g$)}: given coordinates $x$ and a reference
 to $g$, set $g = f'(x)$.
 \end{itemize}
 \vspace*{-0.3em}
 
-Or, alternately, they can simply implement a \texttt{EvaluateWithGradient()}
+Alternatively, the user can simply implement a \texttt{EvaluateWithGradient()}
 function that computes both $f(x)$ and $f'(x)$ simultaneously, which is useful
 in cases where both the objective and gradient depend on similar computations.
 
-The required API for separable differentiable objective functions (i.e. those
+The required API for separable differentiable objective functions (ie., those
 that would use an optimizer like SGD) is very similar, except that
-\texttt{Evaluate()} and \texttt{Gradient()} (or \texttt{EvaluateWithGradient()})
-should operate only on small mini-batches.  The same pattern applies for other
+\texttt{Evaluate()}, \texttt{Gradient()} and \texttt{EvaluateWithGradient()}
+should operate only on mini-batches.  The same pattern applies for other
 types of objective functions: only a few methods specific to class of objective
 function itself must be implemented and then any optimizer may be used.
 
