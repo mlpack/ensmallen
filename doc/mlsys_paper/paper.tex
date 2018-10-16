@@ -533,7 +533,7 @@ that only computes $(y - X \theta)$ once:
 \vspace*{-0.5em}
 \begin{minted}[fontsize=\small]{c++}
     double EvaluateWithGradient(const arma::mat& theta, arma::mat& gradient) {
-      const arma::rowvec v = (y - X * theta); // Cache result
+      const arma::vec v = (y - X * theta); // Cache result
       gradient = -2 * X.t() * v;  // Store gradient in the provided matrix
       return arma::accu(v % v); // Take squared norm of v
     }
