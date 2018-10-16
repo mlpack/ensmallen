@@ -605,15 +605,14 @@ that {\tt ensmallen} can exploit,
 we compare the performance of {\tt ensmallen} with several other
 optimization frameworks, including some that use automatic differentiation.
 
-<<<<<<< HEAD
 For our first experiment, we consider the simple and popular Rosenbrock
 function~\cite{Rosenbrock1960}: $f([x_1, x_2]) = 100 (x_2 - x_1^2)^2 + (1 -
 x_1^2)$.  For the optimizer, we use simulated
 annealing~\cite{kirkpatrick1983optimization}, a gradient-free optimizer.
 Simulated annealing will call the objective function numerous times; for each
 simulation we limit the optimizer to 100k objective evaluations.  Since the
-objective function is so simple and is called so many times, this can help us
-understand the overheads of different frameworks.  We compare four frameworks%
+objective function is straightforward and is called many times, this can help us
+understand the overheads of various frameworks.  We compare four frameworks%
 %
 \footnote{Another option here might be {\tt simulannealbnd()} 
 in the Global Optimization Toolkit for MATLAB.
@@ -670,19 +669,23 @@ JIT.  For the numba implementation, the underlying {\tt anneal.anneal()}
 function had to be significantly modified.  These did produce some acceleration,
 as can be seen in the second row of Table~\ref{tab:rosenbrock_results}.
 
-Next, we consider the linear regression example first described in Section~\ref{sec:linreg_example}.
-For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm},
-so for {\tt ensmallen} we will implement two versions: one with {\tt Evaluate()}
-and {\tt Gradient()}, and one with only {\tt EvaluateWithGradient()}.  The code
-for each of these is the same as shown earlier.  In addition, we have more
-options for Julia: we can implement only the objective function and allow either
-{\tt Calculus.jl}\footnote{\url{https://github.com/JuliaMath/Calculus.jl}} or {\tt
-ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} packages to automatically
-compute the gradient.  Overall, we compare against the following:
+Next, we consider the linear regression example described in Sec.~\ref{sec:linreg_example}.
+For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm}.
+For {\tt ensmallen} we have 2 versions:
+(i)~with only {\tt EvaluateWithGradient()},
+and
+(ii)~with {\tt Evaluate()} and {\tt Gradient()}.
+The code for these functions is as shown earlier.
+For Julia we have the options of using manually defined objective and gradient functions,
+or the gradient function can be automatically computed by 
+{\tt Calculus.jl}
+({\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl})
+or {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016}.
+Overall we compare across the following:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
-  \item {\tt ensmallen}: only {\tt EvaluateWithGradient()} implemented
+  \item {\tt ensmallen}-1: only {\tt EvaluateWithGradient()} implemented
   \item {\tt ensmallen}-2: both {\tt Evaluate()} and {\tt Gradient()} separately
 implemented
   \item {\tt Calculus.jl}: uses the default {\tt Calculus.jl} for
@@ -700,7 +703,7 @@ Results for various data sizes are shown in Table~\ref{tab:lbfgs}.  For each
 implementation, L-BFGS was allowed to run for only $10$ iterations and never
 converged in fewer iterations.  The datasets used for training are highly noisy random
 data with a slight linear pattern. Note that the exact data is not relevant
-for the experiments here, only its size.  Runtimes are again reported as the
+for the experiments here, only its size.  Runtimes are reported as the
 average across 10 runs.
 
 \begin{table}
@@ -711,7 +714,7 @@ average across 10 runs.
 100k & $d$: 1k, $n$: 100k \\
 \midrule
 % TODO: this was only one trial on Ryan's desktop!
-{\tt ensmallen} & {\bf 0.001s} & {\bf 0.006s} & {\bf 0.139s} & {\bf 1.698s} \\
+{\tt ensmallen}-1 & {\bf 0.001s} & {\bf 0.006s} & {\bf 0.139s} & {\bf 1.698s} \\
 {\tt ensmallen}-2 & 0.002s & 0.008s & 0.204s & 2.497s \\
 {\tt Calculus.jl} & 0.172s & 0.960s & 27.428s & 2535.507s \\
 {\tt ForwardDiff.jl} & 0.553s & 1.162s & 6.665s & 778.250s \\
