@@ -405,7 +405,9 @@ This is the entire required implementation to optimize the linear regression mod
 any of the gradient-based optimizers in {\tt ensmallen}.
 
 \begin{figure}[!tb]
-\hrule\vspace*{0.3ex}
+\hrule\vspace*{0.5ex}
+\begin{adjustbox}{scale={0.95}{0.90}}
+\begin{minipage}{\textwidth}
 \begin{minted}[fontsize=\small]{c++}
 class LinearRegressionFunction {
  public:
@@ -424,13 +426,16 @@ class LinearRegressionFunction {
   arma::mat& X; arma::vec& y;
 };
 \end{minted}
-\hrule\vspace*{0.3ex}
+\end{minipage}
+\end{adjustbox}
+\vspace*{0.5ex}\hrule\vspace*{0.5ex}
 \caption
   {
   Implementation of objective and gradient functions for linear regression,
-  to be used by optimizers in \texttt{ensmallen}.
-  The types {\tt arma::mat} and {\tt arma::vec} are 
-  matrix and vector types from Armadillo~\cite{sanderson2016armadillo}.
+  used by optimizers in \texttt{ensmallen}.
+  The types {\footnotesize\tt arma::mat} and {\footnotesize\tt arma::vec}
+  are matrix and vector types
+  from Armadillo~\cite{sanderson2016armadillo}.
   }
 \label{fig:LinearRegressionFunction}
 \end{figure}
