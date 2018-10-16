@@ -200,6 +200,7 @@ with optional interface to GPUs via NVBLAS~\cite{nvidia2015}.
 \begin{table}[b!]
 \vspace*{-1.0em}
 \centering
+\begin{adjustbox}{scale={0.95}{0.95}}
     \begin{tabular}{@{} cl*{7}c @{}}
 %  \begin{tabular}{ccccccc}
         & & \multicolumn{7}{c}{} \\[0.6ex]
@@ -222,8 +223,7 @@ with optional interface to GPUs via NVBLAS~\cite{nvidia2015}.
             % If the framework can handle categorical/discrete variables for
             % optimization, this is true.
           & \rot{categorical} \\
-        \cmidrule{2-9}
-  \hline
+        \cmidrule[1pt]{2-9}
         % It might be reasonable to say mlpack categorical support is only
         % partial, but I am not sure exactly where we draw the line.
         & {\tt ensmallen}            & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE \\
@@ -265,6 +265,7 @@ with optional interface to GPUs via NVBLAS~\cite{nvidia2015}.
         & Julia ({\tt Optim.jl}) \cite{julia}         & \CIRCLE & - & - & \CIRCLE & - & - & - \\
         \cmidrule[1pt]{2-9}
     \end{tabular}
+\end{adjustbox}
 %   \begin{tablenotes}\footnotesize
 \caption{\footnotesize{
 Feature comparison: \CIRCLE = provides feature,
