@@ -399,44 +399,43 @@ f'(\theta) = \sum\nolimits_{i = 1}^n -2 x_i (y_i - x_i \theta) = -2 X^T (y - X \
 \end{equation}
 \vspace*{-1.1em}
 
-We can implement these two functions in a class {\tt LinearRegressionFunction}.
-Here {\tt arma::mat} and {\tt arma::vec} represent Armadillo matrix and vector
-types, respectively~\cite{sanderson2016armadillo}.
-
-% Indented a little to make it clear it's different from the text...
-
-%% CS: "accu((y - X * theta) % (y - X * theta))" is redoing computations
-%% CS: ie. efficiency problem
-%% CS: how about:
-%% CS:   arma::mat tmp = y - X * theta;
-%% CS:   return arma::accu(tmp % tmp);  // accumulate element-wise product
-%% CS: in the above code, the comment hints at what the % operator does,
-%% CS: as otherwise it's potentially confusing to someone not familiar with Armadillo
-\vspace*{-0.4em}
-\begin{minted}[fontsize=\small]{c++}
-    class LinearRegressionFunction {
-     public:
-      // Construct the LinearRegressionFunction with the given data
-      LinearRegressionFunction(arma::mat& X, arma::vec& y) : X(X), y(y) {}
-
-      // Compute the objective function
-      double Evaluate(const arma::mat& theta) {
-        return std::pow(arma::norm(y - X * theta), 2.0);
-      }
-      // Compute the gradient and store in 'gradient'
-      void Gradient(const arma::mat& theta, arma::mat& gradient) {
-        gradient = -2 * X.t() * (y - X * theta);
-      }
-     private:
-      arma::mat& X; arma::vec& y;
-    };
-\end{minted}
-\vspace*{-0.4em}
-%% CS: the above code is currently shown across two pages - not a clean look.
-%% CS: how about we place it in a figure ?
-
+We can implement these two functions in a class named {\tt LinearRegressionFunction},
+as shown in Fig.~\ref{fig:LinearRegressionFunction}.
 This is the entire required implementation to optimize the linear regression model with
-any of {\tt ensmallen}'s gradient-based optimizers.  The code snippet below
+any of the gradient-based optimizers in {\tt ensmallen}.
+
+\begin{figure}[!tb]
+\hrule\vspace*{0.3ex}
+\begin{minted}[fontsize=\small]{c++}
+class LinearRegressionFunction {
+ public:
+  // Construct the LinearRegressionFunction with the given data
+  LinearRegressionFunction(arma::mat& X, arma::vec& y) : X(X), y(y) {}
+
+  // Compute the objective function
+  double Evaluate(const arma::mat& theta) {
+    return std::pow(arma::norm(y - X * theta), 2.0);
+  }
+  // Compute the gradient and store in 'gradient'
+  void Gradient(const arma::mat& theta, arma::mat& gradient) {
+    gradient = -2 * X.t() * (y - X * theta);
+  }
+ private:
+  arma::mat& X; arma::vec& y;
+};
+\end{minted}
+\hrule\vspace*{0.3ex}
+\caption
+  {
+  Implementation of objective and gradient functions for linear regression,
+  to be used by optimizers in \texttt{ensmallen}.
+  The types {\tt arma::mat} and {\tt arma::vec} are 
+  matrix and vector types from Armadillo~\cite{sanderson2016armadillo}.
+  }
+\label{fig:LinearRegressionFunction}
+\end{figure}
+
+The code snippet below
 shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 
 \vspace*{-0.4em}
