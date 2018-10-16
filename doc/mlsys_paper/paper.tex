@@ -13,6 +13,7 @@
 \usepackage{subcaption}
 \usepackage{parcolumns}
 \usepackage{booktabs}
+\usepackage{enumerate}
 
 % fix the default super-ugly coloured link boxes (citations, urls, figure numbers, footnote numbers, etc)
 \usepackage[pagebackref=false,breaklinks=true,colorlinks,bookmarks=false,urlcolor=blue,linkcolor=blue,citecolor=blue]{hyperref}
@@ -471,17 +472,21 @@ currently available optimizers:
 %% CS: the MLSYS CFP states that "papers can be up to 6 pages (not including references)",
 %% CS: so technically we can have 10000+ references.
 \vspace*{-0.4em}
-\begin{itemize}
-  \item {\bf SGD variants:} Stochastic Gradient Descent (SGD), Stochastic
-      Coordinate Descent (SCD), Parallel Stochastic Gradient Descent (Hogwild!),
-      Stochastic Gradient Descent with Restarts (SGDR), SMORMS3, AdaGrad,
+\begin{enumerate}[{~~~$\bullet$}]
+\small
+  \item {\bf SGD variants:}
+      Stochastic Gradient Descent (SGD),
+      SGD with Restarts,
+      Parallel SGD (Hogwild!),
+      Stochastic Coordinate Descent, 
+      SMORMS3, AdaGrad,
       AdaDelta, RMSProp, Adam, AdaMax
 
   \item {\bf Quasi-Newton variants:} Limited-memory BFGS (L-BFGS), incremental
-        Quasi-Newton method (IQN), Augmented Lagrangian Method
+        Quasi-Newton method, Augmented Lagrangian Method
 
-  \item {\bf Genetic variants:} Conventional Neuro-evolution (CNE), Covariance
-        Matrix Adaptation Evolution Strategy (CMA-ES)
+  \item {\bf Genetic variants:} Conventional Neuro-evolution, Covariance
+        Matrix Adaptation Evolution Strategy
 
   \item {\bf Other:} Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing
 
@@ -490,7 +495,7 @@ currently available optimizers:
   %    Matrix completion, Neighborhood Components Analysis, Regularized SVD,
   %    Reinforcement learning, Softmax regression, Sparse autoencoders,
   %    Sparse SVM
-\end{itemize}
+\end{enumerate}
 \vspace*{-0.4em}
 
 %% CS: "in development" is ambiguous here;
