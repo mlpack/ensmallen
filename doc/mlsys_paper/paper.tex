@@ -13,6 +13,7 @@
 \usepackage{subcaption}
 \usepackage{parcolumns}
 \usepackage{booktabs}
+\usepackage{enumerate}
 
 % fix the default super-ugly coloured link boxes (citations, urls, figure numbers, footnote numbers, etc)
 \usepackage[pagebackref=false,breaklinks=true,colorlinks,bookmarks=false,urlcolor=blue,linkcolor=blue,citecolor=blue]{hyperref}
@@ -38,6 +39,12 @@
 \newcommand*\rot{\multicolumn{1}{R{30}{2.0em}}}
 
 \setlength{\textfloatsep}{0.1cm}
+
+% \DeclareMathOperator requires \usepackage{amsmath}
+\DeclareMathOperator*{\argmindown}{argmin}   % limit is placed underneath
+\DeclareMathOperator{\argminright}{argmin}   % limit is placed on the right side
+% more details:
+% https://tex.stackexchange.com/questions/5223/command-for-argmin-or-argmax
 
 \begin{document}
 
@@ -121,7 +128,7 @@ to the following optimization form:
 %
 %\vspace*{-0.2em}
 \begin{equation}
-\operatorname{argmin} f(x)
+\argmindown_x f(x)
 \end{equation}
 \vspace*{-1.5em}
 
@@ -146,7 +153,7 @@ for robust and flexible implementations of optimization algorithms.
 We present {\tt ensmallen}, a C++ optimization toolkit
 that contains a wide variety of optimization techniques for many types of
 objective functions.  Through the use of C++ template
-metaprogramming~\cite{Alexandrescu2001},
+metaprogramming~\cite{Abrahams_2004},
 {\tt ensmallen} is able to generate efficient code that can help with the
 demanding computational needs of many machine learning algorithms.
 
@@ -179,10 +186,12 @@ We show a few examples that use the library, as well as empirical performance co
 with other optimization libraries.
 
 {\tt ensmallen} is open-source software licensed under the 3-clause BSD
-license\footnote{\url{https://opensource.org/licenses/BSD-3-Clause}},
+license~\cite{Rosen_2004_full}, 
 allowing unencumbered use in both open-source and proprietary projects.
 It is available for download from \url{https://www.ensmallen.org}.
-Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra operations.
+Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra operations,
+with optional interface to GPUs via NVBLAS~\cite{nvidia2015}.
+
 
 \vspace*{-0.2em}
 \section{Types of Objective Functions}
@@ -191,6 +200,7 @@ Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra ope
 \begin{table}[b!]
 \vspace*{-1.0em}
 \centering
+\begin{adjustbox}{scale={0.95}{0.95}}
     \begin{tabular}{@{} cl*{7}c @{}}
 %  \begin{tabular}{ccccccc}
         & & \multicolumn{7}{c}{} \\[0.6ex]
@@ -213,8 +223,7 @@ Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra ope
             % If the framework can handle categorical/discrete variables for
             % optimization, this is true.
           & \rot{categorical} \\
-        \cmidrule{2-9}
-  \hline
+        \cmidrule[1pt]{2-9}
         % It might be reasonable to say mlpack categorical support is only
         % partial, but I am not sure exactly where we draw the line.
         & {\tt ensmallen}            & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE & \CIRCLE \\
@@ -256,6 +265,7 @@ Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra ope
         & Julia ({\tt Optim.jl}) \cite{julia}         & \CIRCLE & - & - & \CIRCLE & - & - & - \\
         \cmidrule[1pt]{2-9}
     \end{tabular}
+\end{adjustbox}
 %   \begin{tablenotes}\footnotesize
 \caption{\footnotesize{
 Feature comparison: \CIRCLE = provides feature,
@@ -278,7 +288,7 @@ new optimizer in the {\tt ensmallen} framework.  Overall, our goal is to provide
 an easy-to-use library that can solve the problem
 %\vspace*{-0.4em}
 %\begin{equation}
-$\operatorname{argmin}_{x} f(x)$
+$\argminright_{x} f(x)$
 %\end{equation}
 %\vspace*{-0.4em}
 %\noindent
@@ -289,10 +299,11 @@ ensmallen} can optionally take advantage of this structure.  For example, in
 addition to $f(x)$, a user can provide an implementation of $f'(x)$, which in
 turn allows first-order gradient-based optimizers to be used.  This generally
 leads to significant speedups.
-%% CS: in the above sentence, it's not clear what is meant by "we must design ..."
-%% CS: should it be "we provide ..." or "ensmallen provides ..." ?
-%% CS: The overall intent of the sentence is not clear -- to my eyes
-%% CS: it doesn't seem to gel well with its surrounding context.
+
+
+%% TODO: moving the list of optimizers here would improve the flow 
+%% TODO: and free up a bit of space
+
 
 Therefore, users may implement objective functions with specific properties that
 the library can use to accelerate the computation.  These non-exclusive
@@ -379,13 +390,13 @@ to the data, we must find
 %% CS: i've added \nolimits to save a bit of space
 \vspace*{-1.1em}
 \begin{equation}
-% f(\theta) =   %% CS: for clarity, perhaps we should have f(\theta) = ...
-\operatorname{argmin}_\theta \sum\nolimits_{i = 1}^n (y_i - x_i \theta)^2 =
-\operatorname{argmin}_\theta \| y - X \theta \|_F^2.
+\argmindown_\theta f(\theta) =   %% CS: for clarity
+\argmindown_\theta \sum\nolimits_{i = 1}^n (y_i - x_i \theta)^2 =
+\argmindown_\theta \| y - X \theta \|_F^2.
 \end{equation}
 \vspace*{-1.1em}
 
-The above objective function $f(\theta)$ has the associated gradient
+The objective function $f(\theta)$ has the associated gradient
 
 \vspace*{-1.1em}
 \begin{equation}
@@ -393,44 +404,49 @@ f'(\theta) = \sum\nolimits_{i = 1}^n -2 x_i (y_i - x_i \theta) = -2 X^T (y - X \
 \end{equation}
 \vspace*{-1.1em}
 
-We can implement these two functions in a class {\tt LinearRegressionFunction}.
-Here {\tt arma::mat} and {\tt arma::vec} represent Armadillo matrix and vector
-types, respectively~\cite{sanderson2016armadillo}.
-
-% Indented a little to make it clear it's different from the text...
-
-%% CS: "accu((y - X * theta) % (y - X * theta))" is redoing computations
-%% CS: ie. efficiency problem
-%% CS: how about:
-%% CS:   arma::mat tmp = y - X * theta;
-%% CS:   return arma::accu(tmp % tmp);  // accumulate element-wise product
-%% CS: in the above code, the comment hints at what the % operator does,
-%% CS: as otherwise it's potentially confusing to someone not familiar with Armadillo
-\vspace*{-0.4em}
-\begin{minted}[fontsize=\small]{c++}
-    class LinearRegressionFunction {
-     public:
-      // Construct the LinearRegressionFunction with the given data
-      LinearRegressionFunction(arma::mat& X, arma::vec& y) : X(X), y(y) {}
-
-      // Compute the objective function
-      double Evaluate(const arma::mat& theta) {
-        return std::pow(arma::norm(y - X * theta), 2.0);
-      }
-      // Compute the gradient and store in 'gradient'
-      void Gradient(const arma::mat& theta, arma::mat& gradient) {
-        gradient = -2 * X.t() * (y - X * theta);
-      }
-     private:
-      arma::mat& X; arma::vec& y;
-    };
-\end{minted}
-\vspace*{-0.4em}
-%% CS: the above code is currently shown across two pages - not a clean look.
-%% CS: how about we place it in a figure ?
-
+We can implement these two functions in a class named {\tt LinearRegressionFunction},
+as shown in Fig.~\ref{fig:LinearRegressionFunction}.
 This is the entire required implementation to optimize the linear regression model with
-any of {\tt ensmallen}'s gradient-based optimizers.  The code snippet below
+any of the gradient-based optimizers in {\tt ensmallen}.
+
+\begin{figure}[!tb]
+\hrule\vspace*{0.5ex}
+\begin{adjustbox}{scale={0.95}{0.90}}
+\begin{minipage}{\textwidth}
+\begin{minted}[fontsize=\small]{c++}
+class LinearRegressionFunction {
+ public:
+  // Construct the LinearRegressionFunction with the given data
+  LinearRegressionFunction(arma::mat& X_in, arma::vec& y_in) : X(X_in), y(y_in) {}
+
+  // Compute the objective function
+  double Evaluate(const arma::mat& theta) {
+    return std::pow(arma::norm(y - X * theta), 2.0);
+  }
+  // Compute the gradient and store in 'gradient'
+  void Gradient(const arma::mat& theta, arma::mat& gradient) {
+    gradient = -2 * X.t() * (y - X * theta);
+  }
+ private:
+  arma::mat& X; arma::vec& y;
+};
+\end{minted}
+\end{minipage}
+\end{adjustbox}
+\vspace*{0.5ex}\hrule\vspace*{0.5ex}
+\caption
+  {
+  Implementation of objective and gradient functions for linear regression,
+  used by optimizers in \texttt{ensmallen}.
+  The types {\footnotesize\tt arma::mat} and {\footnotesize\tt arma::vec}
+  are matrix and vector types
+  from Armadillo~\cite{sanderson2016armadillo}.
+  }
+\label{fig:LinearRegressionFunction}
+\end{figure}
+
+Given the user-defined {\tt LinearRegressionFunction} class,
+the code snippet below
 shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 
 \vspace*{-0.4em}
@@ -460,17 +476,21 @@ currently available optimizers:
 %% CS: the MLSYS CFP states that "papers can be up to 6 pages (not including references)",
 %% CS: so technically we can have 10000+ references.
 \vspace*{-0.4em}
-\begin{itemize}
-  \item {\bf SGD variants:} Stochastic Gradient Descent (SGD), Stochastic
-      Coordinate Descent (SCD), Parallel Stochastic Gradient Descent (Hogwild!),
-      Stochastic Gradient Descent with Restarts (SGDR), SMORMS3, AdaGrad,
+\begin{enumerate}[{~~~$\bullet$}]
+\small
+  \item {\bf SGD variants:}
+      Stochastic Gradient Descent (SGD),
+      SGD with Restarts,
+      Parallel SGD (Hogwild!),
+      Stochastic Coordinate Descent, 
+      SMORMS3, AdaGrad,
       AdaDelta, RMSProp, Adam, AdaMax
 
   \item {\bf Quasi-Newton variants:} Limited-memory BFGS (L-BFGS), incremental
-        Quasi-Newton method (IQN), Augmented Lagrangian Method
+        Quasi-Newton method, Augmented Lagrangian Method
 
-  \item {\bf Genetic variants:} Conventional Neuro-evolution (CNE), Covariance
-        Matrix Adaptation Evolution Strategy (CMA-ES)
+  \item {\bf Genetic variants:} Conventional Neuro-evolution, Covariance
+        Matrix Adaptation Evolution Strategy
 
   \item {\bf Other:} Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing
 
@@ -479,22 +499,11 @@ currently available optimizers:
   %    Matrix completion, Neighborhood Components Analysis, Regularized SVD,
   %    Reinforcement learning, Softmax regression, Sparse autoencoders,
   %    Sparse SVM
-\end{itemize}
-\vspace*{-0.4em}
+\end{enumerate}
 
-%% CS: "in development" is ambiguous here;
-%% CS: is it in development by AI/ML researchers in general,
-%% CS: or by ensmallen developers/contributors?
-% In addition, many optimization algorithms are currently in development and will
-% be released in the future.
-
-%% CS: less ambiguous proclamation that has similar effect:
-We aim to expand {\tt ensmallen} with further optimization techniques
-as the need arises.  Since {\tt ensmallen} is open source,
-external contributions to the codebase are welcome.
 
 \vspace*{-0.3em}
-\section{Template Metaprogramming for Ease of Use and Efficiency}
+\section{Automatic Metaprogramming for Ease of Use and Efficiency}
 \vspace*{-0.5em}
 
 When optimizing a given function $f(x)$, the computation of
@@ -502,7 +511,7 @@ the objective function $f(x)$ and its derivative $f'(x)$ often involve the
 computation of identical intermediate results.  Consider the linear regression
 objective function described
 in Section~\ref{sec:linreg_example}, $f(\theta) = \| y - X\theta \|_F^2$.
-For this objective function, the derivative $f'(x)$ has a related form of
+For this objective function, the derivative $f'(\theta)$ has a related form of
 $-2 X^T (y -X \theta)$.  Both the objective function and the derivative 
 depend on the computation of the vector term $(y - X \theta)$,
 which can be computationally expensive to compute if $X$ is a large matrix.
@@ -514,15 +523,18 @@ Using template metaprogramming, {\tt ensmallen} provides an easy (and
 optional) way for users to avoid this extra computational overhead.  Instead of
 specifying individual {\tt Evaluate()} and {\tt Gradient()} functions, a user
 may simply write an {\tt EvaluateWithGradient()} function that returns both the
-objective value and the gradient value for an input $\theta$.  For the 
-\texttt{LinearRegressionFunction} in Section~\ref{sec:linreg_example},
-we can use an implementation that only computes $(y - X \theta)$ once:
+objective value and the gradient value for an input $\theta$.  As an example,
+for the 
+\texttt{LinearRegressionFunction} class in Fig.~\ref{fig:LinearRegressionFunction},
+we can replace {\tt Evaluate()} and {\tt Gradient()}
+with an implementation of {\tt EvaluateWithGradient()}
+that only computes $(y - X \theta)$ once:
 
 \vspace*{-0.5em}
 \begin{minted}[fontsize=\small]{c++}
     double EvaluateWithGradient(const arma::mat& theta, arma::mat& gradient) {
-      const arma::rowvec v = (y - X * theta); // Cache result
-      gradient = -2 * X.t() * v;
+      const arma::vec v = (y - X * theta); // Cache result
+      gradient = -2 * X.t() * v;  // Store gradient in the provided matrix
       return arma::accu(v % v); // Take squared norm of v
     }
 \end{minted}
@@ -549,8 +561,7 @@ modified for speed.}
 \label{tab:rosenbrock_results}
 \end{table}
 
-This method can be provided {\it instead} of {\tt Evaluate()} and {\tt
-Gradient()}.  In either case, template metaprogramming techniques are used to
+Template metaprogramming techniques are automatically used to
 detect which methods exist, and a wrapper class will use suitable mix-ins in
 order to provide any `missing` functionality~\cite{smaragdakis2000mixin}.  For
 instance, if {\tt EvaluateWithGradient()} is not provided, a version will be
@@ -559,13 +570,13 @@ Similarly, if {\tt Evaluate()} or {\tt Gradient()} does not exist, then {\tt
 EvaluateWithGradient()} is called, and the unnecessary part of the result will
 be discarded.
 
-The use of templates in this manner also allows for compiler optimizations that
+The use of template metaprogramming in this manner also allows for compiler optimizations that
 would not otherwise be possible (and that are often not possible in other
 frameworks).  Firstly, because the objective function class itself is a template
 parameter, the compiler is able to avoid the overhead of a function pointer
 dereference, which would not be easily possible when using a language with
 virtual inheritance.  The compiler is also able to use inlining and any
-optimizations that may imply, including removing temporary value and dead code
+optimizations that may imply, including removing temporary values and dead code
 elimination.  Further, if {\tt ensmallen} automatically generates an {\tt
 Evaluate()} or {\tt Gradient()} method from a user-supplied {\tt
 EvaluateWithGradient()} method, the compiler can in some cases recognize and
@@ -597,15 +608,14 @@ that {\tt ensmallen} can exploit,
 we compare the performance of {\tt ensmallen} with several other
 optimization frameworks, including some that use automatic differentiation.
 
-<<<<<<< HEAD
 For our first experiment, we consider the simple and popular Rosenbrock
 function~\cite{Rosenbrock1960}: $f([x_1, x_2]) = 100 (x_2 - x_1^2)^2 + (1 -
 x_1^2)$.  For the optimizer, we use simulated
 annealing~\cite{kirkpatrick1983optimization}, a gradient-free optimizer.
 Simulated annealing will call the objective function numerous times; for each
 simulation we limit the optimizer to 100k objective evaluations.  Since the
-objective function is so simple and is called so many times, this can help us
-understand the overheads of different frameworks.  We compare four frameworks%
+objective function is straightforward and is called many times, this can help us
+understand the overheads of various frameworks.  We compare four frameworks%
 %
 \footnote{Another option here might be {\tt simulannealbnd()} 
 in the Global Optimization Toolkit for MATLAB.
@@ -614,7 +624,8 @@ However, no license was available for these simulations.}
 for this task:
 
 \vspace*{-0.3em}
-\begin{itemize} \itemsep -1pt
+\begin{itemize}
+\renewcommand{\itemsep}{-0.5ex}
   \item {\tt ensmallen}
   \item {\tt scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
   \item simulated annealing implementation in {\tt Optim.jl} with Julia
@@ -662,19 +673,24 @@ JIT.  For the numba implementation, the underlying {\tt anneal.anneal()}
 function had to be significantly modified.  These did produce some acceleration,
 as can be seen in the second row of Table~\ref{tab:rosenbrock_results}.
 
-Next, we consider the linear regression example first described in Section~\ref{sec:linreg_example}.
-For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm},
-so for {\tt ensmallen} we will implement two versions: one with {\tt Evaluate()}
-and {\tt Gradient()}, and one with only {\tt EvaluateWithGradient()}.  The code
-for each of these is the same as shown earlier.  In addition, we have more
-options for Julia: we can implement only the objective function and allow either
-{\tt Calculus.jl}\footnote{\url{https://github.com/JuliaMath/Calculus.jl}} or {\tt
-ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} packages to automatically
-compute the gradient.  Overall, we compare against the following:
+Next, we consider the linear regression example described in Sec.~\ref{sec:linreg_example}.
+For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm}.
+For {\tt ensmallen} we have 2 versions:
+(i)~with only {\tt EvaluateWithGradient()},
+and
+(ii)~with {\tt Evaluate()} and {\tt Gradient()}.
+The code for these functions is as shown earlier.
+For Julia we have the options of using manually defined objective and gradient functions,
+or the gradient function can be automatically computed by 
+{\tt Calculus.jl}
+({\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl})
+or {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016}.
+Overall we compare across the following:
 
 \vspace*{-0.3em}
-\begin{itemize} \itemsep -1pt
-  \item {\tt ensmallen}: only {\tt EvaluateWithGradient()} implemented
+\begin{itemize}
+\renewcommand{\itemsep}{-0.5ex}
+  \item {\tt ensmallen}-1: only {\tt EvaluateWithGradient()} implemented
   \item {\tt ensmallen}-2: both {\tt Evaluate()} and {\tt Gradient()} separately
 implemented
   \item {\tt Calculus.jl}: uses the default {\tt Calculus.jl} for
@@ -692,7 +708,7 @@ Results for various data sizes are shown in Table~\ref{tab:lbfgs}.  For each
 implementation, L-BFGS was allowed to run for only $10$ iterations and never
 converged in fewer iterations.  The datasets used for training are highly noisy random
 data with a slight linear pattern. Note that the exact data is not relevant
-for the experiments here, only its size.  Runtimes are again reported as the
+for the experiments here, only its size.  Runtimes are reported as the
 average across 10 runs.
 
 \begin{table}
@@ -703,7 +719,7 @@ average across 10 runs.
 100k & $d$: 1k, $n$: 100k \\
 \midrule
 % TODO: this was only one trial on Ryan's desktop!
-{\tt ensmallen} & {\bf 0.001s} & {\bf 0.006s} & {\bf 0.139s} & {\bf 1.698s} \\
+{\tt ensmallen}-1 & {\bf 0.001s} & {\bf 0.006s} & {\bf 0.139s} & {\bf 1.698s} \\
 {\tt ensmallen}-2 & 0.002s & 0.008s & 0.204s & 2.497s \\
 {\tt Calculus.jl} & 0.172s & 0.960s & 27.428s & 2535.507s \\
 {\tt ForwardDiff.jl} & 0.553s & 1.162s & 6.665s & 778.250s \\
@@ -753,21 +769,42 @@ use of template metaprogramming and the Armadillo matrix library for linear
 algebra.  In addition, template metaprogramming is used to make user
 implementation easier by automatically generating missing methods.
 
-GPU support for optimization is available either through the use of the NVBLAS
-library~\cite{nvidia2015} or the forthcoming Bandicoot C++ GPU matrix library.
-% Conrad: is it ok if we mention that here?  It's a really nice selling point
-% and I am sure at least one reviewer will be thinking about GPUs.
+The library provides many pre-built optimizers (including numerous variants
+of SGD and Quasi-Newton optimizers).
+We aim to expand the library with further optimization techniques
+as the need arises.  Since {\tt ensmallen} is open source,
+external contributions to the codebase are welcome.
+
+% GPU support for optimization is available either through the use of the NVBLAS
+% library~\cite{nvidia2015} or the forthcoming Bandicoot C++ GPU matrix library.
+%% Conrad: is it ok if we mention that here?  It's a really nice selling point
+%% and I am sure at least one reviewer will be thinking about GPUs.
+
+%% CS: we don't have much room, so I moved the mention of NVBLAS to the intro.
+%% CS: i think it flows better there.
+%% CS: mentioning it here in the conclusion seems a bit left-field.
+%% CS: we also don't have a good reference for Bandicoot yet
+
 
 {\tt ensmallen} is already in use as the optimization toolkit of the {\tt
 mlpack} machine learning library~\cite{mlpack2018}.  For more information on the
 toolkit, see the website and documentation at \url{https://www.ensmallen.org/}.
 
-\subsubsection*{Acknowledgements}
+%\begin{small}
+{\bf Acknowledgements.}
+We would like to thank the many contributors to {\tt ensmallen},
+who are listed on the associated website.
+%\end{small}
 
-The development team of {\tt ensmallen} does not include just the authors named
-here but also a long list of other contributors.  See
-\url{https://www.ensmallen.org/about.html} for more information.
-% TODO: that URL may change
+% \subsubsection*{Acknowledgements}
+% \vspace*{-0.5em}
+% 
+% The development team of {\tt ensmallen} does not include just the authors named
+% here but also a long list of other contributors.  See
+% \url{https://www.ensmallen.org/about.html} for more information.
+% % TODO: that URL may change
+
+
 
 \bibliographystyle{plain}
 \bibliography{paper}
