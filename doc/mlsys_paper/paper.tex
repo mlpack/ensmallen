@@ -435,7 +435,8 @@ class LinearRegressionFunction {
 \label{fig:LinearRegressionFunction}
 \end{figure}
 
-The code snippet below
+Given the user-defined {\tt LinearRegressionFunction} class,
+the code snippet below
 shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 
 \vspace*{-0.4em}
@@ -566,13 +567,13 @@ Similarly, if {\tt Evaluate()} or {\tt Gradient()} does not exist, then {\tt
 EvaluateWithGradient()} is called, and the unnecessary part of the result will
 be discarded.
 
-The use of templates in this manner also allows for compiler optimizations that
+The use of template metaprogramming in this manner also allows for compiler optimizations that
 would not otherwise be possible (and that are often not possible in other
 frameworks).  Firstly, because the objective function class itself is a template
 parameter, the compiler is able to avoid the overhead of a function pointer
 dereference, which would not be easily possible when using a language with
 virtual inheritance.  The compiler is also able to use inlining and any
-optimizations that may imply, including removing temporary value and dead code
+optimizations that may imply, including removing temporary values and dead code
 elimination.  Further, if {\tt ensmallen} automatically generates an {\tt
 Evaluate()} or {\tt Gradient()} method from a user-supplied {\tt
 EvaluateWithGradient()} method, the compiler can in some cases recognize and
