@@ -10,6 +10,7 @@
 \usepackage{threeparttable}
 \usepackage[newfloat]{minted}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{parcolumns}
 \usepackage{booktabs}
 
@@ -467,43 +468,14 @@ We aim to expand {\tt ensmallen} with further optimization techniques
 as the need arises.  Since {\tt ensmallen} is open source,
 external contributions to the codebase are welcome.
 
-
 \vspace*{-0.3em}
-\section{Templates for speed}
-\vspace*{-0.5em}
-
-Many optimization toolkits depend on the user passing in a function pointer to a
-function that needs to be optimized.  For instance, the {\tt scipy.optimize}
-package in Python can be used like this:
-
-\vspace*{-0.3em}
-\begin{minted}[fontsize=\footnotesize]{python}
-    def rosen(x): return 100.0 * (x[2] - x[1]**2.0)**2.0 + (1 - x[1])**2.0)
-    res = scipy.optimize.minimize(rosen, [-1.2, 1], method='nelder-mead')
-\end{minted}
-\vspace*{-0.3em}
-
-During the call to {\tt minimize()}, the {\tt rosen()} function will be called
-repeatedly---but it will be called as a function pointer, which must be
-dereferenced each time {\tt rosen()} is called.  In addition, some
-optimizations such as inlining (and many optimizations enabled by inlining) are
-not possible when using function pointers.  Since some optimization algorithms
-need to compute the objective very many times, the overhead of the lookup and
-missed optimization opportunities may be non-negligible.  This applies even for
-SGD-like optimizers that train machine learning models on very large datasets!
-
-Since {\tt ensmallen} is written in C++ with templates, the function pointer
-dereferencing overhead can be avoided and the compiler can choose to inline the
-function call and perform additional optimizations when possible, such as
-temporary variable elimination and dead code pruning.
-
-\vspace*{-0.3em}
-\section{Automatic Generation of Methods}
+\section{Template Metaprogramming for Ease of Use and Efficiency}
 \vspace*{-0.5em}
 
 When optimizing a given function $f(x)$, the computation of
-the objective function $f(x)$ and its derivative $f'(x)$ often involve the computation of identical
-intermediate results.  Consider the linear regression objective function described
+the objective function $f(x)$ and its derivative $f'(x)$ often involve the
+computation of identical intermediate results.  Consider the linear regression
+objective function described
 in Section~\ref{sec:linreg_example}, $f(\theta) = \| y - X\theta \|_F^2$.
 For this objective function, the derivative $f'(x)$ has a related form of
 $-2 X^T (y -X \theta)$.  Both the objective function and the derivative 
@@ -534,19 +506,21 @@ we can use an implementation that only computes $(y - X \theta)$ once:
 % This is up here so that it's on the right page...
 \begin{table}[t]
 \begin{center}
-\begin{tabular}{cccc}
+\begin{tabular}{lcccc}
 \toprule
-{\tt ensmallen} & {\tt scipy} & {\tt Optim.jl} & {\tt samin} \\
+ & {\tt ensmallen} & {\tt scipy} & {\tt Optim.jl} & {\tt samin} \\
 \midrule
 % TODO: these are just single-run results from Marcus' laptop!  We need to do
 % 10 and average.
-{\bf 0.004s} & 1.044s & 0.021s & 2.920s \\
+default & {\bf 0.004s} & 1.044s & 0.021s & 2.920s \\
+tuned & & 0.5s-ish? & & ?? \\ % TODO
 \bottomrule
 \end{tabular}
 \end{center}
 \caption{Runtimes for $100000$ iterations of simulated annealing with different
 frameworks on the simple Rosenbrock function.  Julia code runs do not count
-compilation time.}
+compilation time.  The {\it tuned} row indicates that the code was manually
+modified for speed.}
 \label{tab:rosenbrock_results}
 \end{table}
 
@@ -560,19 +534,26 @@ Similarly, if {\tt Evaluate()} or {\tt Gradient()} does not exist, then {\tt
 EvaluateWithGradient()} is called, and the unnecessary part of the result will
 be discarded.
 
-Since all of this code generation is automatically done at compile-time and not
-at runtime, the compiler is able to perform dead code elimination
-on the unused result, and may be able to avoid unnecessary calculations.  In some
-cases, the generated {\tt Evaluate()} or {\tt Gradient()} functions can be
-as fast as their corresponding hand-written versions.
-
-%% CS: a subset of the text from the problematic "Templates for speed" section above
-%% CS: can be placed here
+The use of templates in this manner also allows for compiler optimizations that
+would not otherwise be possible (and that are often not possible in other
+frameworks).  Firstly, because the objective function class itself is a template
+parameter, the compiler is able to avoid the overhead of a function pointer
+dereference, which would not be easily possible when using a language with
+virtual inheritance.  The compiler is also able to use inlining and any
+optimizations that may imply, including removing temporary value and dead code
+elimination.  Further, if {\tt ensmallen} automatically generates an {\tt
+Evaluate()} or {\tt Gradient()} method from a user-supplied {\tt
+EvaluateWithGradient()} method, the compiler can in some cases recognize and
+remove the computation of unnecessary results.  For instance, in an
+automatically generated {\tt Evaluate()} method, the computation of the gradient
+from {\tt EvaluateWithGradient()} can be avoided entirely.
 
 Overall, the automatic code generation functionality in {\tt ensmallen}
 reduces the requirements for users
-when they are implementing their own objective functions to be optimized.
-This leads to both quicker development and reduces the likelihood of bugs.
+when they are implementing their own objective functions to be optimized,
+and allows users a way to provide more efficient implementations of their
+objective functions.
+This leads to quicker development, quicker results, and reduces the likelihood of bugs.
 
 At the time of writing, the automatic code generation
 is implemented for the most commonly-used cases:
@@ -590,13 +571,16 @@ To demonstrate the benefits of these optimizations that {\tt ensmallen} can take
 advantage of, we compare {\tt ensmallen}'s performance to a number of other
 optimization frameworks, including some that use automatic differentiation.
 
-First, we consider the added overhead of other frameworks.  For our experiment,
-we choose the simple and popular Rosenbrock function~\cite{Rosenbrock1960}:
-$f([x_1, x_2]) = 100 (x_2 - x_1^2)^2 + (1 - x_1^2)$.  For the optimizer, we use
-simulated annealing~\cite{kirkpatrick1983optimization},
-a gradient-free optimizer.  Simulated annealing will call the objective function
-very many times; for each simulation we limit the optimizer to 100k
-objective evaluations.  We compare four frameworks for this task:
+For our first experiment, we consider the simple and popular Rosenbrock
+function~\cite{Rosenbrock1960}: $f([x_1, x_2]) = 100 (x_2 - x_1^2)^2 + (1 -
+x_1^2)$.  For the optimizer, we use simulated
+annealing~\cite{kirkpatrick1983optimization}, a gradient-free optimizer.
+Simulated annealing will call the objective function very many times; for each
+simulation we limit the optimizer to 100k objective evaluations.  Since the
+objective function is so simple and is called so many times, this can help us
+understand the overheads of different frameworks.
+
+In our comparisons we use four different frameworks:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
@@ -611,14 +595,25 @@ simulations.}
 \end{itemize}
 \vspace*{-0.3em}
 
-Table~\ref{tab:rosenbrock_results} shows the average runtime
-across 10 trials for $100000$ iterations of simulated annealing with each
-implementation.  The simulations were run on a % TODO: what are Marcus's
-% system specs?
-{\tt \$COMPUTER}.
-Of these frameworks, only Julia and {\tt ensmallen} are able to avoid the
-function pointer dereference and take advantage of inlining and related
-optimizations---and this difference is strongly reflected in the results.
+% TODO: get Marcus' system specs.
+We implemented and ran our code on a {\tt \$COMPUTER} running an {\tt
+\$OPERATING\_SYSTEM} with gcc version {\tt \$GCC\_VERSION}, Julia version {\tt
+\$JULIA\_VERSION}, Python {\tt \$PYTHON\_VERSION}, and Octave {\tt
+\$OCTAVE\_VERSION}.
+
+Initially, we implemented these functions as simply as possible and ran them
+without any tuning, which reflects how a normal user might interact with the
+software.  These results are seen in the first row of
+Table~\ref{tab:rosenbrock_results}.  Of the four frameworks, only Julia and {\tt
+ensmallen} are compiled, and thus are able to avoid the function pointer
+dereference and take advantage of inlining and related optimizations.
+
+However, both Python and GNU Octave have routes for acceleration, such as
+numba~\cite{TODO} and Octave's built-in JIT.  Therefore, we hand-optimized the
+Rosenbrock implementation using numba and ran the Octave implementation with the
+JIT.  For the numba implementation, the underlying {\tt anneal.anneal()}
+function had to be significantly modified.  These did produce some acceleration,
+as can be seen in the second row of Table~\ref{tab:rosenbrock_results}.
 
 Next, we consider the same machine learning example we have been working with
 through the paper: linear regression.  For this task we will use the first-order
