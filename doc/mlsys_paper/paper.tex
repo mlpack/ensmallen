@@ -39,6 +39,12 @@
 
 \setlength{\textfloatsep}{0.1cm}
 
+% \DeclareMathOperator requires \usepackage{amsmath}
+\DeclareMathOperator*{\argmindown}{argmin}   % limit is placed underneath
+\DeclareMathOperator{\argminright}{argmin}   % limit is placed on the right side
+% more details:
+% https://tex.stackexchange.com/questions/5223/command-for-argmin-or-argmax
+
 \begin{document}
 
 % TODO: title could possibly be improved
@@ -121,7 +127,7 @@ to the following optimization form:
 %
 %\vspace*{-0.2em}
 \begin{equation}
-\operatorname{argmin} f(x)
+\argmindown_x f(x)
 \end{equation}
 \vspace*{-1.5em}
 
@@ -278,7 +284,7 @@ new optimizer in the {\tt ensmallen} framework.  Overall, our goal is to provide
 an easy-to-use library that can solve the problem
 %\vspace*{-0.4em}
 %\begin{equation}
-$\operatorname{argmin}_{x} f(x)$
+$\argminright_{x} f(x)$
 %\end{equation}
 %\vspace*{-0.4em}
 %\noindent
@@ -380,8 +386,8 @@ to the data, we must find
 \vspace*{-1.1em}
 \begin{equation}
 % f(\theta) =   %% CS: for clarity, perhaps we should have f(\theta) = ...
-\operatorname{argmin}_\theta \sum\nolimits_{i = 1}^n (y_i - x_i \theta)^2 =
-\operatorname{argmin}_\theta \| y - X \theta \|_F^2.
+\argmindown_\theta \sum\nolimits_{i = 1}^n (y_i - x_i \theta)^2 =
+\argmindown_\theta \| y - X \theta \|_F^2.
 \end{equation}
 \vspace*{-1.1em}
 
