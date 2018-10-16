@@ -417,7 +417,7 @@ any of the gradient-based optimizers in {\tt ensmallen}.
 class LinearRegressionFunction {
  public:
   // Construct the LinearRegressionFunction with the given data
-  LinearRegressionFunction(arma::mat& X, arma::vec& y) : X(X), y(y) {}
+  LinearRegressionFunction(arma::mat& X_in, arma::vec& y_in) : X(X_in), y(y_in) {}
 
   // Compute the objective function
   double Evaluate(const arma::mat& theta) {
