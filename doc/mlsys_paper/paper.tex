@@ -189,7 +189,9 @@ with other optimization libraries.
 license~\cite{Rosen_2004_full}, 
 allowing unencumbered use in both open-source and proprietary projects.
 It is available for download from \url{https://www.ensmallen.org}.
-Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra operations.
+Armadillo~\cite{sanderson2016armadillo} is used for efficient linear algebra operations,
+with optional interface to GPUs via NVBLAS~\cite{nvidia2015}.
+
 
 \vspace*{-0.2em}
 \section{Types of Objective Functions}
@@ -772,10 +774,16 @@ We aim to expand the library with further optimization techniques
 as the need arises.  Since {\tt ensmallen} is open source,
 external contributions to the codebase are welcome.
 
-GPU support for optimization is available either through the use of the NVBLAS
-library~\cite{nvidia2015} or the forthcoming Bandicoot C++ GPU matrix library.
-% Conrad: is it ok if we mention that here?  It's a really nice selling point
-% and I am sure at least one reviewer will be thinking about GPUs.
+% GPU support for optimization is available either through the use of the NVBLAS
+% library~\cite{nvidia2015} or the forthcoming Bandicoot C++ GPU matrix library.
+%% Conrad: is it ok if we mention that here?  It's a really nice selling point
+%% and I am sure at least one reviewer will be thinking about GPUs.
+
+%% CS: we don't have much room, so I moved the mention of NVBLAS to the intro.
+%% CS: i think it flows better there.
+%% CS: mentioning it here in the conclusion seems a bit left-field.
+%% CS: we also don't have a good reference for Bandicoot yet
+
 
 {\tt ensmallen} is already in use as the optimization toolkit of the {\tt
 mlpack} machine learning library~\cite{mlpack2018}.  For more information on the
