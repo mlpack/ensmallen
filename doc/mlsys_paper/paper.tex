@@ -519,15 +519,18 @@ Using template metaprogramming, {\tt ensmallen} provides an easy (and
 optional) way for users to avoid this extra computational overhead.  Instead of
 specifying individual {\tt Evaluate()} and {\tt Gradient()} functions, a user
 may simply write an {\tt EvaluateWithGradient()} function that returns both the
-objective value and the gradient value for an input $\theta$.  For the 
-\texttt{LinearRegressionFunction} in Section~\ref{sec:linreg_example},
-we can use an implementation that only computes $(y - X \theta)$ once:
+objective value and the gradient value for an input $\theta$.  As an example,
+for the 
+\texttt{LinearRegressionFunction} class in Fig.~\ref{fig:LinearRegressionFunction},
+we can replace {\tt Evaluate()} and {\tt Gradient()}
+with an implementation of {\tt EvaluateWithGradient()}
+that only computes $(y - X \theta)$ once:
 
 \vspace*{-0.5em}
 \begin{minted}[fontsize=\small]{c++}
     double EvaluateWithGradient(const arma::mat& theta, arma::mat& gradient) {
       const arma::rowvec v = (y - X * theta); // Cache result
-      gradient = -2 * X.t() * v;
+      gradient = -2 * X.t() * v;  // Store gradient in the provided matrix
       return arma::accu(v % v); // Take squared norm of v
     }
 \end{minted}
@@ -554,8 +557,7 @@ modified for speed.}
 \label{tab:rosenbrock_results}
 \end{table}
 
-This method can be provided {\it instead} of {\tt Evaluate()} and {\tt
-Gradient()}.  In either case, template metaprogramming techniques are used to
+Template metaprogramming techniques are automatically used to
 detect which methods exist, and a wrapper class will use suitable mix-ins in
 order to provide any `missing` functionality~\cite{smaragdakis2000mixin}.  For
 instance, if {\tt EvaluateWithGradient()} is not provided, a version will be
