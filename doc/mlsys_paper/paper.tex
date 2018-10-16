@@ -385,13 +385,13 @@ to the data, we must find
 %% CS: i've added \nolimits to save a bit of space
 \vspace*{-1.1em}
 \begin{equation}
-% f(\theta) =   %% CS: for clarity, perhaps we should have f(\theta) = ...
+\argmindown_\theta f(\theta) =   %% CS: for clarity
 \argmindown_\theta \sum\nolimits_{i = 1}^n (y_i - x_i \theta)^2 =
 \argmindown_\theta \| y - X \theta \|_F^2.
 \end{equation}
 \vspace*{-1.1em}
 
-The above objective function $f(\theta)$ has the associated gradient
+The objective function $f(\theta)$ has the associated gradient
 
 \vspace*{-1.1em}
 \begin{equation}
@@ -499,7 +499,7 @@ as the need arises.  Since {\tt ensmallen} is open source,
 external contributions to the codebase are welcome.
 
 \vspace*{-0.3em}
-\section{Template Metaprogramming for Ease of Use and Efficiency}
+\section{Automatic Metaprogramming for Ease of Use and Efficiency}
 \vspace*{-0.5em}
 
 When optimizing a given function $f(x)$, the computation of
