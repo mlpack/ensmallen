@@ -407,7 +407,7 @@ types, respectively~\cite{sanderson2016armadillo}.
 
       // Compute the objective function
       double Evaluate(const arma::mat& theta) {
-        return arma::accu((y - X * theta) % (y - X * theta));
+        return std::pow(arma::norm(y - X * theta), 2.0);
       }
       // Compute the gradient and store in 'gradient'
       void Gradient(const arma::mat& theta, arma::mat& gradient) {
