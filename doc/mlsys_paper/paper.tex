@@ -361,25 +361,27 @@ function itself must be implemented and then any optimizer may be used.
 \vspace*{-0.5em}
 
 As an example of usage, consider the linear regression objective
-function\footnote{Just for simplicity, we ignore the bias term.  It can be
-rederived by taking $x^*_i = (x_i, 1)$.}.  Given some dataset $X \in
+function\footnote{For simplicity, we ignore the bias term.  It can be
+rederived by taking $x^*_i = (x_i, 1)$.}.  Given a dataset $X \in
 \mathcal{R}^{n \times d}$ and associated responses $y \in \mathcal{R}^n$, the
 model of linear regression is to assume that $y_i = x_i \theta$ for each
-point and response $(x_i, y_i)$.  To fit this model $\theta \in \mathcal{R}^d$ best
+point and response $(x_i, y_i)$.  To fit this model $\theta \in \mathcal{R}^d$
 to the data, we must find
 
+%% CS: i've added \nolimits to save a bit of space
 \vspace*{-1.1em}
 \begin{equation}
-\operatorname{argmin}_\theta \sum_{i = 1}^n (y_i - x_i \theta)^2 =
+% f(\theta) =   %% CS: for clarity, perhaps we should have f(\theta) = ...
+\operatorname{argmin}_\theta \sum\nolimits_{i = 1}^n (y_i - x_i \theta)^2 =
 \operatorname{argmin}_\theta \| y - X \theta \|_F^2.
 \end{equation}
 \vspace*{-1.1em}
 
-This objective function $f(\theta)$ has the associated gradient
+The above objective function $f(\theta)$ has the associated gradient
 
 \vspace*{-1.1em}
 \begin{equation}
-f'(\theta) = \sum_{i = 1}^n -2 x_i (y_i - x_i \theta) = -2 X^T (y - X \theta).
+f'(\theta) = \sum\nolimits_{i = 1}^n -2 x_i (y_i - x_i \theta) = -2 X^T (y - X \theta).
 \end{equation}
 \vspace*{-1.1em}
 
@@ -388,18 +390,26 @@ Here {\tt arma::mat} and {\tt arma::vec} represent Armadillo matrix and vector
 types, respectively~\cite{sanderson2016armadillo}.
 
 % Indented a little to make it clear it's different from the text...
+
+%% CS: "accu((y - X * theta) % (y - X * theta))" is redoing computations
+%% CS: ie. efficiency problem
+%% CS: how about:
+%% CS:   arma::mat tmp = y - X * theta;
+%% CS:   return arma::accu(tmp % tmp);  // accumulate element-wise product
+%% CS: in the above code, the comment hints at what the % operator does,
+%% CS: as otherwise it's potentially confusing to someone not familiar with Armadillo
 \vspace*{-0.4em}
 \begin{minted}[fontsize=\small]{c++}
     class LinearRegressionFunction {
      public:
-      // Construct the LinearRegressionFunction with the given data.
+      // Construct the LinearRegressionFunction with the given data
       LinearRegressionFunction(arma::mat& X, arma::vec& y) : X(X), y(y) {}
 
-      // Compute the objective function.
+      // Compute the objective function
       double Evaluate(const arma::mat& theta) {
         return arma::accu((y - X * theta) % (y - X * theta));
       }
-      // Compute the gradient and store in 'gradient'.
+      // Compute the gradient and store in 'gradient'
       void Gradient(const arma::mat& theta, arma::mat& gradient) {
         gradient = -2 * X.t() * (y - X * theta);
       }
@@ -408,14 +418,16 @@ types, respectively~\cite{sanderson2016armadillo}.
     };
 \end{minted}
 \vspace*{-0.4em}
+%% CS: the above code is currently shown across two pages - not a clean look.
+%% CS: how about we place it in a figure ?
 
-This is all the implementation that is required to optimize this function with
+This is the entire required implementation to optimize the linear regression model with
 any of {\tt ensmallen}'s gradient-based optimizers.  The code snippet below
-shows how L-BFGS could be used to find the best parameters $\theta$:
+shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 
 \vspace*{-0.4em}
 \begin{minted}[fontsize=\small]{c++}
-    LinearRegressionFunction lrf(X, y); // we assume X and y are loaded elsewhere
+    LinearRegressionFunction lrf(X, y); // we assume X and y already hold data
     ens::L_BFGS lbfgs; // create L-BFGS optimizer with default parameters
 
     arma::vec theta(X.n_rows, arma::fill::randu); // random uniform initialization
@@ -423,9 +435,9 @@ shows how L-BFGS could be used to find the best parameters $\theta$:
 \end{minted}
 \vspace*{-0.4em}
 
-Only a slight variation on the signature of {\tt Evaluate()} and {\tt
-Gradient()} would be needed to use the small-batch SGD-like optimizers that {\tt
-ensmallen} provides.
+To use the small-batch SGD-like optimizers provided by {\tt ensmallen},
+only a slight variation on the signature of {\tt Evaluate()} and {\tt
+Gradient()} would be needed.
 
 \vspace*{-0.3em}
 \section{Available Optimizers}
