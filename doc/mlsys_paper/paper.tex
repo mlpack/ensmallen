@@ -274,14 +274,13 @@ $\operatorname{argmin}_{x} f(x)$
 %\end{equation}
 %\vspace*{-0.4em}
 %\noindent
-for any function $f(x)$ that takes a vector or matrix input $x$.  Ideally,
-the user should only need to specify what $f(x)$ is, or provide an
-implementation of a function that can compute $f(x)$.  However, it is very difficult to
-implement something that is both generic and fast---for instance, gradient-based
-approaches typically converge far quicker than gradient-free approaches.
-As such, we must design an abstraction that is able to simultaneously generalize to
-many problem types, as well as take advantage of accelerations and
-code optimizations.
+for any function $f(x)$ that takes a vector or matrix input $x$.
+In most cases, $f(x)$ will have special structure; one example might be that
+$f(x)$ is differentiable.  Therefore, the abstraction we have designed for {\tt
+ensmallen} can optionally take advantage of this structure.  For example, in
+addition to $f(x)$, a user can provide an implementation of $f'(x)$, which in
+turn allows first-order gradient-based optimizers to be used.  This generally
+leads to significant speedups.
 %% CS: in the above sentence, it's not clear what is meant by "we must design ..."
 %% CS: should it be "we provide ..." or "ensmallen provides ..." ?
 %% CS: The overall intent of the sentence is not clear -- to my eyes
@@ -326,7 +325,7 @@ work with as many optimizers as possible.
 To accomplish the flexibility, {\tt ensmallen} makes heavy use of
 C++ template metaprogramming.
 When implementing an objective function to be optimized,
-a user can implement only a few methods; metaprogramming is then automatically
+a user may only need to implement a few methods; metaprogramming is then automatically
 used to check that the given functions match the requirements of the
 optimizer that is being used.  When implementing an optimizer, we can assume
 that the given function to be optimized meets the required assumptions of the
@@ -349,7 +348,7 @@ Alternatively, the user can simply implement a \texttt{EvaluateWithGradient()}
 function that computes both $f(x)$ and $f'(x)$ simultaneously, which is useful
 in cases where both the objective and gradient depend on similar computations.
 
-The required API for separable differentiable objective functions (ie., those
+The required API for separable differentiable objective functions (i.e.~those
 that would use an optimizer like SGD) is very similar, except that
 \texttt{Evaluate()}, \texttt{Gradient()} and \texttt{EvaluateWithGradient()}
 should operate only on mini-batches.  The same pattern applies for other
