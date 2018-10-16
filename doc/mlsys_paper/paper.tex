@@ -496,18 +496,7 @@ currently available optimizers:
   %    Reinforcement learning, Softmax regression, Sparse autoencoders,
   %    Sparse SVM
 \end{enumerate}
-\vspace*{-0.4em}
 
-%% CS: "in development" is ambiguous here;
-%% CS: is it in development by AI/ML researchers in general,
-%% CS: or by ensmallen developers/contributors?
-% In addition, many optimization algorithms are currently in development and will
-% be released in the future.
-
-%% CS: less ambiguous proclamation that has similar effect:
-We aim to expand {\tt ensmallen} with further optimization techniques
-as the need arises.  Since {\tt ensmallen} is open source,
-external contributions to the codebase are welcome.
 
 \vspace*{-0.3em}
 \section{Automatic Metaprogramming for Ease of Use and Efficiency}
@@ -773,6 +762,12 @@ including separable and constrained functions.  The library is fast due to its
 use of template metaprogramming and the Armadillo matrix library for linear
 algebra.  In addition, template metaprogramming is used to make user
 implementation easier by automatically generating missing methods.
+
+The library provides many pre-built optimizers (including numerous variants
+of SGD and Quasi-Newton optimizers).
+We aim to expand the library with further optimization techniques
+as the need arises.  Since {\tt ensmallen} is open source,
+external contributions to the codebase are welcome.
 
 GPU support for optimization is available either through the use of the NVBLAS
 library~\cite{nvidia2015} or the forthcoming Bandicoot C++ GPU matrix library.
