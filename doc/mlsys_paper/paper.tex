@@ -296,10 +296,11 @@ ensmallen} can optionally take advantage of this structure.  For example, in
 addition to $f(x)$, a user can provide an implementation of $f'(x)$, which in
 turn allows first-order gradient-based optimizers to be used.  This generally
 leads to significant speedups.
-%% CS: in the above sentence, it's not clear what is meant by "we must design ..."
-%% CS: should it be "we provide ..." or "ensmallen provides ..." ?
-%% CS: The overall intent of the sentence is not clear -- to my eyes
-%% CS: it doesn't seem to gel well with its surrounding context.
+
+
+%% TODO: moving the list of optimizers here would improve the flow 
+%% TODO: and free up a bit of space
+
 
 Therefore, users may implement objective functions with specific properties that
 the library can use to accelerate the computation.  These non-exclusive
