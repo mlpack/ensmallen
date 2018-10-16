@@ -507,7 +507,7 @@ the objective function $f(x)$ and its derivative $f'(x)$ often involve the
 computation of identical intermediate results.  Consider the linear regression
 objective function described
 in Section~\ref{sec:linreg_example}, $f(\theta) = \| y - X\theta \|_F^2$.
-For this objective function, the derivative $f'(x)$ has a related form of
+For this objective function, the derivative $f'(\theta)$ has a related form of
 $-2 X^T (y -X \theta)$.  Both the objective function and the derivative 
 depend on the computation of the vector term $(y - X \theta)$,
 which can be computationally expensive to compute if $X$ is a large matrix.
