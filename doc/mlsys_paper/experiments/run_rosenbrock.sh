@@ -10,3 +10,7 @@ echo -n "scipy: "
 python rosenbrock.py | head -1
 echo -n "octave: "
 octave-cli rosenbrock.m | tail -1 | sed 's/Elapsed time is //'
+echo -n "scipy-numba: "
+numba rosenbrock_numba.py | head -1
+echo -n "octave-mex: "
+octave-cli rosenbrock_mex.m | tail -1 | sed 's/Elapsed time is //'
