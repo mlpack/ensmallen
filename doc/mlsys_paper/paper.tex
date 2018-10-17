@@ -326,7 +326,41 @@ individual elements $x_j$ of $x$
 \end{itemize}
 \vspace*{-0.3em}
 
-In this framework, if a user wants to optimize a differentiable objective
+Due to its straightforward abstraction framework, {\tt ensmallen} is able to
+provide a large set of diverse optimization algorithms for objective functions
+with these properties.  Below is a list of currently available optimizers:
+
+% I guess to save some space we should group them.
+%% CS: should we add citations to some (or all) of the listed optimisers?
+%% CS: the MLSYS CFP states that "papers can be up to 6 pages (not including references)",
+%% CS: so technically we can have 10000+ references.
+\vspace*{-0.4em}
+\begin{enumerate}[{~~~$\bullet$}]
+\small
+  \item {\bf SGD variants:}
+      Stochastic Gradient Descent (SGD),
+      SGD with Restarts,
+      Parallel SGD (Hogwild!),
+      Stochastic Coordinate Descent, 
+      SMORMS3, AdaGrad,
+      AdaDelta, RMSProp, Adam, AdaMax
+
+  \item {\bf Quasi-Newton variants:} Limited-memory BFGS (L-BFGS), incremental
+        Quasi-Newton method, Augmented Lagrangian Method
+
+  \item {\bf Genetic variants:} Conventional Neuro-evolution, Covariance
+        Matrix Adaptation Evolution Strategy
+
+  \item {\bf Other:} Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing
+
+% These were a part of mlpack but not ensmallen.
+  %\item {\bf Objective functions:} Neural Networks, Logistic regression,
+  %    Matrix completion, Neighborhood Components Analysis, Regularized SVD,
+  %    Reinforcement learning, Softmax regression, Sparse autoencoders,
+  %    Sparse SVM
+\end{enumerate}
+
+In {\tt ensmallen}'s framework, if a user wants to optimize a differentiable objective
 function, they only need to provide implementations of $f(x)$ and $f'(x)$, and
 then they can use any of the gradient-based optimizers that {\tt ensmallen}
 provides.  Table~\ref{tab:functionality} contrasts 
@@ -370,7 +404,8 @@ in cases where both the objective and gradient depend on similar computations.
 The required API for separable differentiable objective functions (i.e.~those
 that would use an optimizer like SGD) is very similar, except that
 \texttt{Evaluate()}, \texttt{Gradient()} and \texttt{EvaluateWithGradient()}
-should operate only on mini-batches.  The same pattern applies for other
+should operate only on mini-batches, and utility methods {\tt Shuffle()} and
+{\tt NumFunctions()} must be added.  The same pattern applies for other
 types of objective functions: only a few methods specific to class of objective
 function itself must be implemented and then any optimizer may be used.
 
@@ -462,45 +497,6 @@ shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 To use the small-batch SGD-like optimizers provided by {\tt ensmallen},
 only a slight variation on the signature of {\tt Evaluate()} and {\tt
 Gradient()} would be needed.
-
-\vspace*{-0.3em}
-\section{Available Optimizers}
-\vspace*{-0.5em}
-
-Due to the straightforward abstraction framework, {\tt ensmallen} is able to
-provide a large set of diverse optimization algorithms.  Below is a list of
-currently available optimizers:
-
-% I guess to save some space we should group them.
-%% CS: should we add citations to some (or all) of the listed optimisers?
-%% CS: the MLSYS CFP states that "papers can be up to 6 pages (not including references)",
-%% CS: so technically we can have 10000+ references.
-\vspace*{-0.4em}
-\begin{enumerate}[{~~~$\bullet$}]
-\small
-  \item {\bf SGD variants:}
-      Stochastic Gradient Descent (SGD),
-      SGD with Restarts,
-      Parallel SGD (Hogwild!),
-      Stochastic Coordinate Descent, 
-      SMORMS3, AdaGrad,
-      AdaDelta, RMSProp, Adam, AdaMax
-
-  \item {\bf Quasi-Newton variants:} Limited-memory BFGS (L-BFGS), incremental
-        Quasi-Newton method, Augmented Lagrangian Method
-
-  \item {\bf Genetic variants:} Conventional Neuro-evolution, Covariance
-        Matrix Adaptation Evolution Strategy
-
-  \item {\bf Other:} Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing
-
-% These were a part of mlpack but not ensmallen.
-  %\item {\bf Objective functions:} Neural Networks, Logistic regression,
-  %    Matrix completion, Neighborhood Components Analysis, Regularized SVD,
-  %    Reinforcement learning, Softmax regression, Sparse autoencoders,
-  %    Sparse SVM
-\end{enumerate}
-
 
 \vspace*{-0.3em}
 \section{Automatic Metaprogramming for Ease of Use and Efficiency}
@@ -667,11 +663,12 @@ dereference and take advantage of inlining and related optimizations.
 % direction.
 
 However, both Python and GNU Octave have routes for acceleration, such as
-numba~\cite{TODO} and Octave's built-in JIT.  Therefore, we hand-optimized the
+numba~\cite{TODO} and MEX bindings for Octave/MATLAB.  Therefore, we hand-optimized the
 Rosenbrock implementation using numba and ran the Octave implementation with the
 JIT.  For the numba implementation, the underlying {\tt anneal.anneal()}
 function had to be significantly modified.  These did produce some acceleration,
-as can be seen in the second row of Table~\ref{tab:rosenbrock_results}.
+as can be seen in the second row of Table~\ref{tab:rosenbrock_results}.  For
+Octave, a MEX binding did not produce a noticeable difference.
 
 Next, we consider the linear regression example described in Sec.~\ref{sec:linreg_example}.
 For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm}.
@@ -756,6 +753,41 @@ is far from optimal, with runs that are slower by up to three orders of magnitud
 %
 % Probably a snippet showing the actual code to run with a bunch of different
 % optimizers is good too.  Other things can be cut to make space.
+
+Lastly, we show the simplicity of using different optimizers for the same task.
+Using a version of {\tt LinearRegressionFunction} adapted for separable
+differentiable optimizers, we run six optimizers with default parameters in
+eight lines of code:
+
+% RC: I know this is inline code... but does it work here?  If not we can put it
+% in a figure.
+\begin{minted}[fontsize=\footnotesize]{c++}
+  LinearRegressionFunction lrf(X, y); // X and y are data
+
+  ens::StandardSGD<>().Optimize(lrf, sgdModel);
+  ens::Adam().Optimize(lrf, adamModel);
+  ens::AdaGrad().Optimize(lrf, adagradModel);
+  ens::SMORMS3().Optimize(lrf, smorms3Model);
+  ens::SPALeRASGD().Optimize(lrf, spaleraModel);
+  ens::RMSProp().Optimize(lrf, rmspropModel);
+\end{minted}
+
+This pluggability makes it easy to use {\tt ensmallen} to generate comparisons
+between optimizers, and in Figure \ref{fig:learning_curve} we use these six
+lines of code to generate learning curves for each of these six optimizers on
+the {\tt YearPredictionMSD} dataset from the UCI dataset
+repository~\cite{ucimlrepository}. % TODO: add to bibtex
+In addition, any other optimizers for separable differentiable objective
+functions could be dropped into place.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{experiments/learning_curves.png}
+\label{fig:learning_curve}
+\caption{Learning curves for six {\tt ensmallen} optimizers on {\tt
+YearPredictionMSD} dataset over 5 epochs of training.  Optimizers can be
+tuned for better performance.}
+\end{figure}
 
 \vspace*{-0.3em}
 \section{Conclusion}
