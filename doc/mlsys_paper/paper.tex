@@ -637,69 +637,55 @@ We implemented and ran our code on a {\tt \$COMPUTER} running an {\tt
 \$OCTAVE\_VERSION}.
 
 Initially, we implemented these functions as simply as possible and ran them
-without any tuning, which reflects how a normal user might interact with the
-software.  These results are seen in the first row of
+without any tuning. This reflects how a typical user might interact with a
+given framework.
+The results are shown in the first row of
 Table~\ref{tab:rosenbrock_results}.  Only Julia and {\tt
 ensmallen} are compiled, and thus are able to avoid the function pointer
 dereference and take advantage of inlining and related optimizations.
 
-%% CS: i'm not convinced that this conjecture is barking up the right tree;
-%% CS: SciPy is in Python, which is by default an interpreted language.
-%% CS: the slowdown many have nothing to do with inlining and simply due to
-%% CS: Python being slow in general.
-%% CS: it's possible to use PyPy or Numba to speed things up,
-%% CS: in order to provide a "fairer" comparison against compiled languages.
-%% CS: Octave also has an optional JIT compiler, which last time I checked
-%% CS: needs to be explicitly enabled.
-%% 
-%% CS: i would suggest to stay away from the "we do inlining" argument,
-%% CS: as it can be blown up too easily.
-%% CS: furthermore, I would suggest to mention PyPy and/or Numba and Octave JIT
-%% CS: (in order to show that we've done our homework),
-%% CS: and then state something along the lines of
-%% CS: "these approaches are not being used as we're comparing out-of-the-box performance"
-
-% RC: agree, hopefully the paragraph below pushes this in more of a right
-% direction.
-
-However, both Python and GNU Octave have routes for acceleration, such as
-numba~\cite{TODO} and MEX bindings for Octave/MATLAB.  Therefore, we hand-optimized the
-Rosenbrock implementation using numba and ran the Octave implementation with the
-JIT.  For the numba implementation, the underlying {\tt anneal.anneal()}
-function had to be significantly modified.  These did produce some acceleration,
-as can be seen in the second row of Table~\ref{tab:rosenbrock_results}.  For
-Octave, a MEX binding did not produce a noticeable difference.
+However, both Python and Octave have routes for acceleration,
+such as Numba~\cite{TODO}, MEX bindings and JIT compilation.
+We hand-optimized the Rosenbrock implementation using Numba,
+which required significant modification of the 
+underlying \texttt{\small anneal.anneal()} function.
+We ran the Octave implementation with JIT enabled.
+These techniques did produce some speedup,
+as shown in the second row of Table~\ref{tab:rosenbrock_results}.
+For Octave, a MEX binding did not produce a noticeable difference.
 
 Next, we consider the linear regression example described in Sec.~\ref{sec:linreg_example}.
 For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm}.
-For {\tt ensmallen} we have 2 versions:
-(i)~with only \texttt{\small EvaluateWithGradient()},
-and
-(ii)~with \texttt{\small Evaluate()} and \texttt{\small Gradient()}.
-The code for these functions is as shown earlier.
-For Julia we have the options of using manually defined objective and gradient functions,
-or the gradient function can be automatically computed by 
-{\tt Calculus.jl}
-({\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl})
-or {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016}.
-Overall we compare across the following:
+We compare across the following:
 
 \vspace*{-0.3em}
-\begin{itemize}
+\begin{enumerate}[{~~~$\bullet$}]
 \renewcommand{\itemsep}{-0.5ex}
   \item {\tt ensmallen}-1: only \texttt{\small EvaluateWithGradient()} implemented
   \item {\tt ensmallen}-2: both \texttt{\small Evaluate()} and \texttt{\small Gradient()} separately
 implemented
-  \item {\tt Calculus.jl}: uses the default {\tt Calculus.jl} for
+  \item {\tt Calculus.jl}: uses the default {\tt Calculus.jl} (\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl}) for
 computing the gradient with {\tt Optim.jl}
-  \item {\tt ForwardDiff.jl}: uses {\tt ForwardDiff.jl} for computing
+  \item {\tt ForwardDiff.jl}: uses {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} for computing
 the gradient with {\tt Optim.jl}
   \item {\tt Optim.jl}: implements the gradient manually
   \item {\tt scipy}: implements both objective and
 gradient
   \item {\tt bfgsmin}: uses {\tt optim} package for GNU Octave
-\end{itemize}
+\end{enumerate}
 \vspace*{-0.3em}
+
+% For {\tt ensmallen} we have 2 versions:
+% (i)~with only \texttt{\small EvaluateWithGradient()},
+% and
+% (ii)~with \texttt{\small Evaluate()} and \texttt{\small Gradient()}.
+% The code for these functions is as shown earlier.
+% For Julia we have the options of using manually defined objective and gradient functions,
+% or the gradient function can be automatically computed by 
+% {\tt Calculus.jl}
+% (\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl})
+% or {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016}.
+
 
 Results for various data sizes are shown in Table~\ref{tab:lbfgs}.  For each
 implementation, L-BFGS was allowed to run for only $10$ iterations and never
