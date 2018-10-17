@@ -337,7 +337,7 @@ with these properties.  Below is a list of currently available optimizers:
 \vspace*{-0.4em}
 \begin{enumerate}[{~~~$\bullet$}]
 \small
-  \item {\bf SGD variants:}
+  \item {\bf SGD variants}~\cite{Robbins_1951,kingma2015adam}:
       Stochastic Gradient Descent (SGD),
       SGD with Restarts,
       Parallel SGD (Hogwild!),
@@ -345,13 +345,16 @@ with these properties.  Below is a list of currently available optimizers:
       SMORMS3, AdaGrad,
       AdaDelta, RMSProp, Adam, AdaMax
 
-  \item {\bf Quasi-Newton variants:} Limited-memory BFGS (L-BFGS), incremental
-        Quasi-Newton method, Augmented Lagrangian Method
+  \item {\bf Quasi-Newton variants}:
+      Limited-memory BFGS (L-BFGS)~\cite{zhu1997algorithm},
+      incremental Quasi-Newton method~\cite{Mokhtari_2018},
+      Augmented Lagrangian Method~\cite{Hestenes_1969}
 
-  \item {\bf Genetic variants:} Conventional Neuro-evolution, Covariance
-        Matrix Adaptation Evolution Strategy
+  \item {\bf Genetic variants}:
+        Conventional Neuro-evolution,
+        Covariance Matrix Adaptation Evolution Strategy
 
-  \item {\bf Other:} Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing
+  \item {\bf Other}: Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing~\cite{kirkpatrick1983optimization}
 
 % These were a part of mlpack but not ensmallen.
   %\item {\bf Objective functions:} Neural Networks, Logistic regression,
