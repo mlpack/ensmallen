@@ -524,9 +524,11 @@ for the
 \texttt{LinearRegressionFunction} class in Fig.~\ref{fig:LinearRegressionFunction},
 we can replace \texttt{\small Evaluate()} and \texttt{\small Gradient()}
 with an implementation of \texttt{\small EvaluateWithGradient()}
-that only computes $(y - X \theta)$ once:
+that computes {\small $(y - X \theta)$} only once:
 
 \vspace*{-0.5em}
+\begin{adjustbox}{scale={0.95}{0.95}}
+\begin{minipage}{1\textwidth}
 \begin{minted}[fontsize=\small]{c++}
     double EvaluateWithGradient(const arma::mat& theta, arma::mat& gradient) {
       const arma::vec v = (y - X * theta); // Cache result
@@ -534,6 +536,8 @@ that only computes $(y - X \theta)$ once:
       return arma::accu(v % v); // Take squared norm of v
     }
 \end{minted}
+\end{minipage}
+\end{adjustbox}
 \vspace*{-0.5em}
 
 % This is up here so that it's on the right page...
@@ -550,7 +554,7 @@ tuned & & 0.5s-ish? & & ?? \\ % TODO
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Runtimes for $100000$ iterations of simulated annealing with different
+\caption{Runtimes for $100000$ iterations of simulated annealing with various
 frameworks on the simple Rosenbrock function.  Julia code runs do not count
 compilation time.  The {\it tuned} row indicates that the code was manually
 modified for speed.}
@@ -621,6 +625,11 @@ We compare four frameworks for this task:
 While another option here might be \texttt{\small simulannealbnd()} 
 in the Global Optimization Toolkit for MATLAB,
 no license was available.
+% TODO: get Marcus' system specs.
+We ran our code on a {\tt \$COMPUTER} running an {\tt
+\$OPERATING\_SYSTEM} with gcc version {\tt \$GCC\_VERSION}, Julia version {\tt
+\$JULIA\_VERSION}, Python {\tt \$PYTHON\_VERSION}, and Octave {\tt
+\$OCTAVE\_VERSION}.
 
 % We compare four frameworks%
 % %
@@ -641,11 +650,6 @@ no license was available.
 % \end{itemize}
 % \vspace*{-0.3em}
 
-% TODO: get Marcus' system specs.
-We implemented and ran our code on a {\tt \$COMPUTER} running an {\tt
-\$OPERATING\_SYSTEM} with gcc version {\tt \$GCC\_VERSION}, Julia version {\tt
-\$JULIA\_VERSION}, Python {\tt \$PYTHON\_VERSION}, and Octave {\tt
-\$OCTAVE\_VERSION}.
 
 Initially, we implemented these functions as simply as possible and ran them
 without any tuning. This reflects how a typical user might interact with a
@@ -731,11 +735,12 @@ with $n$ indicating the number of samples,
 and $d$ indicating the dimensionality of each sample.
 All Julia runs do not count compilation time.}
 \label{tab:lbfgs}
+\vspace*{-1ex}
 \end{table}
 
 The results indicate that {\tt ensmallen} with \texttt{\small EvaluateWithGradient()}
 is the fastest approach.
-Furthremore, the use of \texttt{\small EvaluateWithGradient()} yields considerable
+Furthermore, the use of \texttt{\small EvaluateWithGradient()} yields considerable
 speedup of almost 1.5x over the {\tt ensmallen} implementation with both the
 objective and gradient implemented separately.  In addition, although the
 automatic differentiation support makes it easier for users to write their
@@ -772,7 +777,7 @@ functions can be dropped into place in the same manner.
 \begin{figure}[h!]
 \begin{minipage}[t]{1\textwidth}
 \begin{adjustbox}{scale={0.90}{0.90}}
-\begin{minipage}{0.50\textwidth}
+\begin{minipage}{0.48\textwidth}
 \centering
 \begin{minted}[fontsize=\footnotesize]{c++}
 // X and y are data
@@ -788,18 +793,18 @@ ens::RMSProp().Optimize(lrf, rmspropModel);
 \end{minipage}
 \end{adjustbox}
 \hfill
-\begin{minipage}{0.49\textwidth}
+\begin{minipage}{0.51\textwidth}
   \centering
   \includegraphics[width=\textwidth,height=0.45\textwidth]{experiments/learning_curves_crop.png}
 \end{minipage}
 \end{minipage}
 \begin{minipage}[t]{1\textwidth}
-\begin{minipage}{0.50\textwidth}
+\begin{minipage}{0.48\textwidth}
 \centering
 (a)
 \end{minipage}
 \hfill
-\begin{minipage}{0.49\textwidth}
+\begin{minipage}{0.51\textwidth}
 \centering
 (b)
 \end{minipage}
@@ -816,6 +821,7 @@ ens::RMSProp().Optimize(lrf, rmspropModel);
   The optimizers can be tuned for better performance.
   }
 \label{fig:learning_curve}
+\vspace*{-1ex}
 \end{figure}
 
 \vspace*{-0.3em}
@@ -841,7 +847,8 @@ We aim to expand the library with further optimization techniques
 as the need arises.  Since {\tt ensmallen} is open source,
 external contributions to the codebase are welcome.
 For more information on the
-toolkit, see the website and documentation at \url{https://www.ensmallen.org/}.
+toolkit, see the website and documentation at
+\href{https://www.ensmallen.org}{\tt\small https://www.ensmallen.org}.
 
 
 %\begin{small}
