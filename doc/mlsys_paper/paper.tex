@@ -773,20 +773,33 @@ eight lines of code:
 \end{minted}
 
 This pluggability makes it easy to use {\tt ensmallen} to generate comparisons
-between optimizers, and in Figure \ref{fig:learning_curve} we use these six
+between optimizers. In Fig.~\ref{fig:learning_curve} we use these six
 lines of code to generate learning curves for each of these six optimizers on
 the {\tt YearPredictionMSD} dataset from the UCI dataset
 repository~\cite{ucimlrepository}. % TODO: add to bibtex
 In addition, any other optimizers for separable differentiable objective
-functions could be dropped into place.
+functions can be dropped into place.
 
 \begin{figure}[h!]
-\centering
-\includegraphics[width=\textwidth]{experiments/learning_curves.png}
-\label{fig:learning_curve}
-\caption{Learning curves for six {\tt ensmallen} optimizers on {\tt
-YearPredictionMSD} dataset over 5 epochs of training.  Optimizers can be
-tuned for better performance.}
+\begin{minipage}[t]{1\textwidth}
+\begin{minipage}{0.60\textwidth}
+  \centering
+  \includegraphics[width=\textwidth,height=0.45\textwidth]{experiments/learning_curves_crop.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.38\textwidth}
+  \centering
+  \caption
+    {
+    Learning curves for six {\tt ensmallen} optimizers 
+    for optimizing a linear regression function 
+    on the {\tt YearPredictionMSD} dataset~\cite{ucimlrepository}
+    over 5 epochs of training.
+    Optimizers can be tuned for better performance.
+    }
+  \label{fig:learning_curve}
+\end{minipage}
+\end{minipage}
 \end{figure}
 
 \vspace*{-0.3em}
