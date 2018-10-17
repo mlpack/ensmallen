@@ -383,29 +383,29 @@ used to check that the given functions match the requirements of the
 optimizer that is being used.  When implementing an optimizer, we can assume
 that the given function to be optimized meets the required assumptions of the
 optimizers, and encode those requirements as compile-time checks
-(via \texttt{static\_assert}).
+(via \texttt{\small static\_assert}).
 
 For the most common case of a differentiable $f(x)$, the user only needs to
 implement two methods:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
-  \item \texttt{double Evaluate($x$)}: given coordinates $x$, this function
+  \item \texttt{\small double Evaluate($x$)}: given coordinates $x$, this function
 returns the value of $f(x)$.
-  \item \texttt{void Gradient($x$, $g$)}: given coordinates $x$ and a reference
+  \item \texttt{\small void Gradient($x$, $g$)}: given coordinates $x$ and a reference
 to $g$, set $g = f'(x)$.
 \end{itemize}
 \vspace*{-0.3em}
 
-Alternatively, the user can simply implement a \texttt{EvaluateWithGradient()}
+Alternatively, the user can simply implement a \texttt{\small EvaluateWithGradient()}
 function that computes both $f(x)$ and $f'(x)$ simultaneously, which is useful
 in cases where both the objective and gradient depend on similar computations.
 
 The required API for separable differentiable objective functions (i.e.~those
 that would use an optimizer like SGD) is very similar, except that
-\texttt{Evaluate()}, \texttt{Gradient()} and \texttt{EvaluateWithGradient()}
-should operate only on mini-batches, and utility methods {\tt Shuffle()} and
-{\tt NumFunctions()} must be added.  The same pattern applies for other
+\texttt{\small Evaluate()}, \texttt{\small Gradient()} and \texttt{\small EvaluateWithGradient()}
+should operate only on mini-batches, and utility methods \texttt{\small Shuffle()} and
+\texttt{\small NumFunctions()} must be added.  The same pattern applies for other
 types of objective functions: only a few methods specific to class of objective
 function itself must be implemented and then any optimizer may be used.
 
@@ -495,8 +495,8 @@ shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 \vspace*{-0.4em}
 
 To use the small-batch SGD-like optimizers provided by {\tt ensmallen},
-only a slight variation on the signature of {\tt Evaluate()} and {\tt
-Gradient()} would be needed.
+only a slight variation on the signature of \texttt{\small Evaluate()} and
+\texttt{\small Gradient()} would be needed.
 
 \vspace*{-0.3em}
 \section{Automatic Metaprogramming for Ease of Use and Efficiency}
@@ -506,10 +506,10 @@ When optimizing a given function $f(x)$, the computation of
 the objective function $f(x)$ and its derivative $f'(x)$ often involve the
 computation of identical intermediate results.  Consider the linear regression
 objective function described
-in Section~\ref{sec:linreg_example}, $f(\theta) = \| y - X\theta \|_F^2$.
+in Section~\ref{sec:linreg_example}, {\small $f(\theta) = \| y - X\theta \|_F^2$}.
 For this objective function, the derivative $f'(\theta)$ has a related form of
-$-2 X^T (y -X \theta)$.  Both the objective function and the derivative 
-depend on the computation of the vector term $(y - X \theta)$,
+{\small $-2 X^T (y -X \theta)$}.  Both the objective function and the derivative 
+depend on the computation of the vector term {\small $(y - X \theta)$},
 which can be computationally expensive to compute if $X$ is a large matrix.
 Existing optimization frameworks do not have an easy way to avoid
 this duplicate computation. In many cases, an optimization algorithm
@@ -517,13 +517,13 @@ may need the values of both $f(\theta)$ and $f'(\theta)$ for a given $\theta$.
 
 Using template metaprogramming, {\tt ensmallen} provides an easy (and
 optional) way for users to avoid this extra computational overhead.  Instead of
-specifying individual {\tt Evaluate()} and {\tt Gradient()} functions, a user
-may simply write an {\tt EvaluateWithGradient()} function that returns both the
+specifying individual \texttt{\small Evaluate()} and \texttt{\small Gradient()} functions, a user
+may simply write an \texttt{\small EvaluateWithGradient()} function that returns both the
 objective value and the gradient value for an input $\theta$.  As an example,
 for the 
 \texttt{LinearRegressionFunction} class in Fig.~\ref{fig:LinearRegressionFunction},
-we can replace {\tt Evaluate()} and {\tt Gradient()}
-with an implementation of {\tt EvaluateWithGradient()}
+we can replace \texttt{\small Evaluate()} and \texttt{\small Gradient()}
+with an implementation of \texttt{\small EvaluateWithGradient()}
 that only computes $(y - X \theta)$ once:
 
 \vspace*{-0.5em}
@@ -560,9 +560,9 @@ modified for speed.}
 Template metaprogramming techniques are automatically used to
 detect which methods exist, and a wrapper class will use suitable mix-ins in
 order to provide any `missing` functionality~\cite{smaragdakis2000mixin}.  For
-instance, if {\tt EvaluateWithGradient()} is not provided, a version will be
-automatically generated that calls both {\tt Gradient()} and {\tt Evaluate()} in turn.
-Similarly, if {\tt Evaluate()} or {\tt Gradient()} does not exist, then {\tt
+instance, if \texttt{\small EvaluateWithGradient()} is not provided, a version will be
+automatically generated that calls both \texttt{\small Gradient()} and \texttt{\small Evaluate()} in turn.
+Similarly, if \texttt{\small Evaluate()} or \texttt{\small Gradient()} does not exist, then {\tt
 EvaluateWithGradient()} is called, and the unnecessary part of the result will
 be discarded.
 
@@ -573,12 +573,12 @@ parameter, the compiler is able to avoid the overhead of a function pointer
 dereference, which would not be easily possible when using a language with
 virtual inheritance.  The compiler is also able to use inlining and any
 optimizations that may imply, including removing temporary values and dead code
-elimination.  Further, if {\tt ensmallen} automatically generates an {\tt
-Evaluate()} or {\tt Gradient()} method from a user-supplied {\tt
-EvaluateWithGradient()} method, the compiler can in some cases recognize and
+elimination.  Further, if {\tt ensmallen} automatically generates an
+\texttt{\small Evaluate()} or \texttt{\small Gradient()} method from a user-supplied
+\texttt{\small EvaluateWithGradient()} method, the compiler can in some cases recognize and
 remove the computation of unnecessary results.  For instance, in an
-automatically generated {\tt Evaluate()} method, the computation of the gradient
-from {\tt EvaluateWithGradient()} can be avoided entirely.
+automatically generated \texttt{\small Evaluate()} method, the computation of the gradient
+from \texttt{\small EvaluateWithGradient()} can be avoided entirely.
 
 Overall, the automatic code generation functionality in {\tt ensmallen}
 reduces the requirements for users
@@ -589,8 +589,8 @@ This leads to quicker development, quicker results, and reduces the likelihood o
 
 At the time of writing, the automatic code generation
 is implemented for the most commonly-used cases:
-full-batch and small-batch {\tt Evaluate()}, {\tt Gradient()}, and {\tt
-EvaluateWithGradient()}.  We aim to expand this support to other
+full-batch and small-batch \texttt{\small Evaluate()}, \texttt{\small Gradient()},
+and \texttt{\small EvaluateWithGradient()}.  We aim to expand this support to other
 sets of methods for other types of objective functions.
 
 % TODO: anything to write about the visualization page that we had set up?
@@ -673,9 +673,9 @@ Octave, a MEX binding did not produce a noticeable difference.
 Next, we consider the linear regression example described in Sec.~\ref{sec:linreg_example}.
 For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm}.
 For {\tt ensmallen} we have 2 versions:
-(i)~with only {\tt EvaluateWithGradient()},
+(i)~with only \texttt{\small EvaluateWithGradient()},
 and
-(ii)~with {\tt Evaluate()} and {\tt Gradient()}.
+(ii)~with \texttt{\small Evaluate()} and \texttt{\small Gradient()}.
 The code for these functions is as shown earlier.
 For Julia we have the options of using manually defined objective and gradient functions,
 or the gradient function can be automatically computed by 
@@ -687,8 +687,8 @@ Overall we compare across the following:
 \vspace*{-0.3em}
 \begin{itemize}
 \renewcommand{\itemsep}{-0.5ex}
-  \item {\tt ensmallen}-1: only {\tt EvaluateWithGradient()} implemented
-  \item {\tt ensmallen}-2: both {\tt Evaluate()} and {\tt Gradient()} separately
+  \item {\tt ensmallen}-1: only \texttt{\small EvaluateWithGradient()} implemented
+  \item {\tt ensmallen}-2: both \texttt{\small Evaluate()} and \texttt{\small Gradient()} separately
 implemented
   \item {\tt Calculus.jl}: uses the default {\tt Calculus.jl} for
 computing the gradient with {\tt Optim.jl}
@@ -733,9 +733,9 @@ All Julia runs do not count compilation time.}
 \label{tab:lbfgs}
 \end{table}
 
-The results indicate that {\tt ensmallen} with {\tt EvaluateWithGradient()}
+The results indicate that {\tt ensmallen} with \texttt{\small EvaluateWithGradient()}
 is the fastest approach.
-Furthremore, the use of {\tt EvaluateWithGradient()} yields considerable
+Furthremore, the use of \texttt{\small EvaluateWithGradient()} yields considerable
 speedup of almost 1.5x over the {\tt ensmallen} implementation with both the
 objective and gradient implemented separately.  In addition, although the
 automatic differentiation support makes it easier for the user to write their
