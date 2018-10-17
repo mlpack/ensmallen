@@ -611,24 +611,35 @@ annealing~\cite{kirkpatrick1983optimization}, a gradient-free optimizer.
 Simulated annealing will call the objective function numerous times; for each
 simulation we limit the optimizer to 100k objective evaluations.  Since the
 objective function is straightforward and is called many times, this can help us
-understand the overheads of various frameworks.  We compare four frameworks%
-%
-\footnote{Another option here might be {\tt simulannealbnd()} 
-in the Global Optimization Toolkit for MATLAB.
-However, no license was available for these simulations.}
-%
-for this task:
+understand the overheads of various frameworks.
 
-\vspace*{-0.3em}
-\begin{itemize}
-\renewcommand{\itemsep}{-0.5ex}
-  \item {\tt ensmallen}
-  \item {\tt scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
-  \item simulated annealing implementation in {\tt Optim.jl} with Julia
-1.0.1~\cite{mogensen2018optim}
-  \item {\tt samin} in the {\tt optim} package for GNU Octave~\cite{octave}
-\end{itemize}
-\vspace*{-0.3em}
+We compare four frameworks for this task:
+{\bf (i)}~{\tt ensmallen},
+{\bf (ii)}~\texttt{\small scipy.optimize.anneal} from SciPy 0.14.1~\cite{jones2014scipy},
+{\bf (iii)}~simulated annealing implementation in \texttt{\small Optim.jl} with Julia 1.0.1~\cite{mogensen2018optim},
+{\bf (iv)}~\texttt{\small samin} in the \texttt{\small optim} package for Octave~\cite{octave}.
+While another option here might be \texttt{\small simulannealbnd()} 
+in the Global Optimization Toolkit for MATLAB,
+no license was available.
+
+% We compare four frameworks%
+% %
+% \footnote{Another option here might be {\tt simulannealbnd()} 
+% in the Global Optimization Toolkit for MATLAB.
+% However, no license was available for these simulations.}
+% %
+% for this task:
+% 
+% \vspace*{-0.3em}
+% \begin{itemize}
+% \renewcommand{\itemsep}{-0.5ex}
+%   \item {\tt ensmallen}
+%   \item {\tt scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
+%   \item simulated annealing implementation in {\tt Optim.jl} with Julia
+% 1.0.1~\cite{mogensen2018optim}
+%   \item {\tt samin} in the {\tt optim} package for GNU Octave~\cite{octave}
+% \end{itemize}
+% \vspace*{-0.3em}
 
 % TODO: get Marcus' system specs.
 We implemented and ran our code on a {\tt \$COMPUTER} running an {\tt
