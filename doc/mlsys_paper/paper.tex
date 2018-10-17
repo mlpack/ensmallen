@@ -709,7 +709,8 @@ for the experiments here, only its size.  Runtimes are reported as the
 average across 10 runs.
 
 \begin{table}
-\begin{center}
+\centering
+\begin{adjustbox}{scale={0.90}{0.90}}
 \begin{tabular}{lccccc}
 \toprule
 {\em algorithm} & $d$: 100, $n$: 1k & $d$: 100, $n$: 10k & $d$: 100, $n$:
@@ -725,8 +726,10 @@ average across 10 runs.
 {\tt bfgsmin} & 0.215s & 1.705s & 15.998s & ??? \\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Runtimes for linear regression function with various dataset sizes,
+\end{adjustbox}
+\vspace*{0.25ex}
+\caption{\footnotesize
+Runtimes for the linear regression function on various dataset sizes,
 with $n$ indicating the number of samples,
 and $d$ indicating the dimensionality of each sample.
 All Julia runs do not count compilation time.}
