@@ -337,7 +337,7 @@ with these properties.  Below is a list of currently available optimizers:
 \vspace*{-0.4em}
 \begin{enumerate}[{~~~$\bullet$}]
 \small
-  \item {\bf SGD variants:}
+  \item {\bf SGD variants}~\cite{Robbins_1951,kingma2015adam}:
       Stochastic Gradient Descent (SGD),
       SGD with Restarts,
       Parallel SGD (Hogwild!),
@@ -345,13 +345,16 @@ with these properties.  Below is a list of currently available optimizers:
       SMORMS3, AdaGrad,
       AdaDelta, RMSProp, Adam, AdaMax
 
-  \item {\bf Quasi-Newton variants:} Limited-memory BFGS (L-BFGS), incremental
-        Quasi-Newton method, Augmented Lagrangian Method
+  \item {\bf Quasi-Newton variants}:
+      Limited-memory BFGS (L-BFGS)~\cite{zhu1997algorithm},
+      incremental Quasi-Newton method~\cite{Mokhtari_2018},
+      Augmented Lagrangian Method~\cite{Hestenes_1969}
 
-  \item {\bf Genetic variants:} Conventional Neuro-evolution, Covariance
-        Matrix Adaptation Evolution Strategy
+  \item {\bf Genetic variants}:
+        Conventional Neuro-evolution,
+        Covariance Matrix Adaptation Evolution Strategy
 
-  \item {\bf Other:} Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing
+  \item {\bf Other}: Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing~\cite{kirkpatrick1983optimization}
 
 % These were a part of mlpack but not ensmallen.
   %\item {\bf Objective functions:} Neural Networks, Logistic regression,
@@ -383,29 +386,29 @@ used to check that the given functions match the requirements of the
 optimizer that is being used.  When implementing an optimizer, we can assume
 that the given function to be optimized meets the required assumptions of the
 optimizers, and encode those requirements as compile-time checks
-(via \texttt{static\_assert}).
+(via \texttt{\small static\_assert}).
 
 For the most common case of a differentiable $f(x)$, the user only needs to
 implement two methods:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
-  \item \texttt{double Evaluate($x$)}: given coordinates $x$, this function
+  \item \texttt{\small double Evaluate($x$)}: given coordinates $x$, this function
 returns the value of $f(x)$.
-  \item \texttt{void Gradient($x$, $g$)}: given coordinates $x$ and a reference
+  \item \texttt{\small void Gradient($x$, $g$)}: given coordinates $x$ and a reference
 to $g$, set $g = f'(x)$.
 \end{itemize}
 \vspace*{-0.3em}
 
-Alternatively, the user can simply implement a \texttt{EvaluateWithGradient()}
+Alternatively, the user can simply implement a \texttt{\small EvaluateWithGradient()}
 function that computes both $f(x)$ and $f'(x)$ simultaneously, which is useful
 in cases where both the objective and gradient depend on similar computations.
 
 The required API for separable differentiable objective functions (i.e.~those
 that would use an optimizer like SGD) is very similar, except that
-\texttt{Evaluate()}, \texttt{Gradient()} and \texttt{EvaluateWithGradient()}
-should operate only on mini-batches, and utility methods {\tt Shuffle()} and
-{\tt NumFunctions()} must be added.  The same pattern applies for other
+\texttt{\small Evaluate()}, \texttt{\small Gradient()} and \texttt{\small EvaluateWithGradient()}
+should operate only on mini-batches, and utility methods \texttt{\small Shuffle()} and
+\texttt{\small NumFunctions()} must be added.  The same pattern applies for other
 types of objective functions: only a few methods specific to class of objective
 function itself must be implemented and then any optimizer may be used.
 
@@ -495,8 +498,8 @@ shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 \vspace*{-0.4em}
 
 To use the small-batch SGD-like optimizers provided by {\tt ensmallen},
-only a slight variation on the signature of {\tt Evaluate()} and {\tt
-Gradient()} would be needed.
+only a slight variation on the signature of \texttt{\small Evaluate()} and
+\texttt{\small Gradient()} would be needed.
 
 \vspace*{-0.3em}
 \section{Automatic Metaprogramming for Ease of Use and Efficiency}
@@ -506,10 +509,10 @@ When optimizing a given function $f(x)$, the computation of
 the objective function $f(x)$ and its derivative $f'(x)$ often involve the
 computation of identical intermediate results.  Consider the linear regression
 objective function described
-in Section~\ref{sec:linreg_example}, $f(\theta) = \| y - X\theta \|_F^2$.
+in Section~\ref{sec:linreg_example}, {\small $f(\theta) = \| y - X\theta \|_F^2$}.
 For this objective function, the derivative $f'(\theta)$ has a related form of
-$-2 X^T (y -X \theta)$.  Both the objective function and the derivative 
-depend on the computation of the vector term $(y - X \theta)$,
+{\small $-2 X^T (y -X \theta)$}.  Both the objective function and the derivative 
+depend on the computation of the vector term {\small $(y - X \theta)$},
 which can be computationally expensive to compute if $X$ is a large matrix.
 Existing optimization frameworks do not have an easy way to avoid
 this duplicate computation. In many cases, an optimization algorithm
@@ -517,16 +520,18 @@ may need the values of both $f(\theta)$ and $f'(\theta)$ for a given $\theta$.
 
 Using template metaprogramming, {\tt ensmallen} provides an easy (and
 optional) way for users to avoid this extra computational overhead.  Instead of
-specifying individual {\tt Evaluate()} and {\tt Gradient()} functions, a user
-may simply write an {\tt EvaluateWithGradient()} function that returns both the
+specifying individual \texttt{\small Evaluate()} and \texttt{\small Gradient()} functions, a user
+may simply write an \texttt{\small EvaluateWithGradient()} function that returns both the
 objective value and the gradient value for an input $\theta$.  As an example,
 for the 
 \texttt{LinearRegressionFunction} class in Fig.~\ref{fig:LinearRegressionFunction},
-we can replace {\tt Evaluate()} and {\tt Gradient()}
-with an implementation of {\tt EvaluateWithGradient()}
-that only computes $(y - X \theta)$ once:
+we can replace \texttt{\small Evaluate()} and \texttt{\small Gradient()}
+with an implementation of \texttt{\small EvaluateWithGradient()}
+that computes {\small $(y - X \theta)$} only once:
 
 \vspace*{-0.5em}
+\begin{adjustbox}{scale={0.95}{0.95}}
+\begin{minipage}{1\textwidth}
 \begin{minted}[fontsize=\small]{c++}
     double EvaluateWithGradient(const arma::mat& theta, arma::mat& gradient) {
       const arma::vec v = (y - X * theta); // Cache result
@@ -534,6 +539,8 @@ that only computes $(y - X \theta)$ once:
       return arma::accu(v % v); // Take squared norm of v
     }
 \end{minted}
+\end{minipage}
+\end{adjustbox}
 \vspace*{-0.5em}
 
 % This is up here so that it's on the right page...
@@ -550,7 +557,7 @@ tuned & & 0.5s-ish? & & ?? \\ % TODO
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Runtimes for $100000$ iterations of simulated annealing with different
+\caption{Runtimes for $100000$ iterations of simulated annealing with various
 frameworks on the simple Rosenbrock function.  Julia code runs do not count
 compilation time.  The {\it tuned} row indicates that the code was manually
 modified for speed.}
@@ -560,9 +567,9 @@ modified for speed.}
 Template metaprogramming techniques are automatically used to
 detect which methods exist, and a wrapper class will use suitable mix-ins in
 order to provide any `missing` functionality~\cite{smaragdakis2000mixin}.  For
-instance, if {\tt EvaluateWithGradient()} is not provided, a version will be
-automatically generated that calls both {\tt Gradient()} and {\tt Evaluate()} in turn.
-Similarly, if {\tt Evaluate()} or {\tt Gradient()} does not exist, then {\tt
+instance, if \texttt{\small EvaluateWithGradient()} is not provided, a version will be
+automatically generated that calls both \texttt{\small Gradient()} and \texttt{\small Evaluate()} in turn.
+Similarly, if \texttt{\small Evaluate()} or \texttt{\small Gradient()} does not exist, then {\tt
 EvaluateWithGradient()} is called, and the unnecessary part of the result will
 be discarded.
 
@@ -573,12 +580,12 @@ parameter, the compiler is able to avoid the overhead of a function pointer
 dereference, which would not be easily possible when using a language with
 virtual inheritance.  The compiler is also able to use inlining and any
 optimizations that may imply, including removing temporary values and dead code
-elimination.  Further, if {\tt ensmallen} automatically generates an {\tt
-Evaluate()} or {\tt Gradient()} method from a user-supplied {\tt
-EvaluateWithGradient()} method, the compiler can in some cases recognize and
+elimination.  Further, if {\tt ensmallen} automatically generates an
+\texttt{\small Evaluate()} or \texttt{\small Gradient()} method from a user-supplied
+\texttt{\small EvaluateWithGradient()} method, the compiler can in some cases recognize and
 remove the computation of unnecessary results.  For instance, in an
-automatically generated {\tt Evaluate()} method, the computation of the gradient
-from {\tt EvaluateWithGradient()} can be avoided entirely.
+automatically generated \texttt{\small Evaluate()} method, the computation of the gradient
+from \texttt{\small EvaluateWithGradient()} can be avoided entirely.
 
 Overall, the automatic code generation functionality in {\tt ensmallen}
 reduces the requirements for users
@@ -589,8 +596,8 @@ This leads to quicker development, quicker results, and reduces the likelihood o
 
 At the time of writing, the automatic code generation
 is implemented for the most commonly-used cases:
-full-batch and small-batch {\tt Evaluate()}, {\tt Gradient()}, and {\tt
-EvaluateWithGradient()}.  We aim to expand this support to other
+full-batch and small-batch \texttt{\small Evaluate()}, \texttt{\small Gradient()},
+and \texttt{\small EvaluateWithGradient()}.  We aim to expand this support to other
 sets of methods for other types of objective functions.
 
 % TODO: anything to write about the visualization page that we had set up?
@@ -611,95 +618,92 @@ annealing~\cite{kirkpatrick1983optimization}, a gradient-free optimizer.
 Simulated annealing will call the objective function numerous times; for each
 simulation we limit the optimizer to 100k objective evaluations.  Since the
 objective function is straightforward and is called many times, this can help us
-understand the overheads of various frameworks.  We compare four frameworks%
-%
-\footnote{Another option here might be {\tt simulannealbnd()} 
-in the Global Optimization Toolkit for MATLAB.
-However, no license was available for these simulations.}
-%
-for this task:
+understand the overheads of various frameworks.
 
-\vspace*{-0.3em}
-\begin{itemize}
-\renewcommand{\itemsep}{-0.5ex}
-  \item {\tt ensmallen}
-  \item {\tt scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
-  \item simulated annealing implementation in {\tt Optim.jl} with Julia
-1.0.1~\cite{mogensen2018optim}
-  \item {\tt samin} in the {\tt optim} package for GNU Octave~\cite{octave}
-\end{itemize}
-\vspace*{-0.3em}
-
+We compare four frameworks for this task:
+{\bf (i)}~{\tt ensmallen},
+{\bf (ii)}~\texttt{\small scipy.optimize.anneal} from SciPy 0.14.1~\cite{jones2014scipy},
+{\bf (iii)}~simulated annealing implementation in \texttt{\small Optim.jl} with Julia 1.0.1~\cite{mogensen2018optim},
+{\bf (iv)}~\texttt{\small samin} in the \texttt{\small optim} package for Octave~\cite{octave}.
+While another option here might be \texttt{\small simulannealbnd()} 
+in the Global Optimization Toolkit for MATLAB,
+no license was available.
 % TODO: get Marcus' system specs.
-We implemented and ran our code on a {\tt \$COMPUTER} running an {\tt
+We ran our code on a {\tt \$COMPUTER} running an {\tt
 \$OPERATING\_SYSTEM} with gcc version {\tt \$GCC\_VERSION}, Julia version {\tt
 \$JULIA\_VERSION}, Python {\tt \$PYTHON\_VERSION}, and Octave {\tt
 \$OCTAVE\_VERSION}.
 
+% We compare four frameworks%
+% %
+% \footnote{Another option here might be {\tt simulannealbnd()} 
+% in the Global Optimization Toolkit for MATLAB.
+% However, no license was available for these simulations.}
+% %
+% for this task:
+% 
+% \vspace*{-0.3em}
+% \begin{itemize}
+% \renewcommand{\itemsep}{-0.5ex}
+%   \item {\tt ensmallen}
+%   \item {\tt scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
+%   \item simulated annealing implementation in {\tt Optim.jl} with Julia
+% 1.0.1~\cite{mogensen2018optim}
+%   \item {\tt samin} in the {\tt optim} package for GNU Octave~\cite{octave}
+% \end{itemize}
+% \vspace*{-0.3em}
+
+
 Initially, we implemented these functions as simply as possible and ran them
-without any tuning, which reflects how a normal user might interact with the
-software.  These results are seen in the first row of
+without any tuning. This reflects how a typical user might interact with a
+given framework.
+The results are shown in the first row of
 Table~\ref{tab:rosenbrock_results}.  Only Julia and {\tt
 ensmallen} are compiled, and thus are able to avoid the function pointer
 dereference and take advantage of inlining and related optimizations.
 
-%% CS: i'm not convinced that this conjecture is barking up the right tree;
-%% CS: SciPy is in Python, which is by default an interpreted language.
-%% CS: the slowdown many have nothing to do with inlining and simply due to
-%% CS: Python being slow in general.
-%% CS: it's possible to use PyPy or Numba to speed things up,
-%% CS: in order to provide a "fairer" comparison against compiled languages.
-%% CS: Octave also has an optional JIT compiler, which last time I checked
-%% CS: needs to be explicitly enabled.
-%% 
-%% CS: i would suggest to stay away from the "we do inlining" argument,
-%% CS: as it can be blown up too easily.
-%% CS: furthermore, I would suggest to mention PyPy and/or Numba and Octave JIT
-%% CS: (in order to show that we've done our homework),
-%% CS: and then state something along the lines of
-%% CS: "these approaches are not being used as we're comparing out-of-the-box performance"
-
-% RC: agree, hopefully the paragraph below pushes this in more of a right
-% direction.
-
-However, both Python and GNU Octave have routes for acceleration, such as
-numba~\cite{TODO} and MEX bindings for Octave/MATLAB.  Therefore, we hand-optimized the
-Rosenbrock implementation using numba and ran the Octave implementation with the
-JIT.  For the numba implementation, the underlying {\tt anneal.anneal()}
-function had to be significantly modified.  These did produce some acceleration,
-as can be seen in the second row of Table~\ref{tab:rosenbrock_results}.  For
-Octave, a MEX binding did not produce a noticeable difference.
+However, both Python and Octave have routes for acceleration,
+such as Numba~\cite{TODO}, MEX bindings and JIT compilation.
+We hand-optimized the Rosenbrock implementation using Numba,
+which required significant modification of the 
+underlying \texttt{\small anneal.anneal()} function.
+We ran the Octave implementation with JIT enabled.
+These techniques did produce some speedup,
+as shown in the second row of Table~\ref{tab:rosenbrock_results}.
+For Octave, a MEX binding did not produce a noticeable difference.
 
 Next, we consider the linear regression example described in Sec.~\ref{sec:linreg_example}.
 For this task we use the first-order L-BFGS optimizer~\cite{zhu1997algorithm}.
-For {\tt ensmallen} we have 2 versions:
-(i)~with only {\tt EvaluateWithGradient()},
-and
-(ii)~with {\tt Evaluate()} and {\tt Gradient()}.
-The code for these functions is as shown earlier.
-For Julia we have the options of using manually defined objective and gradient functions,
-or the gradient function can be automatically computed by 
-{\tt Calculus.jl}
-({\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl})
-or {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016}.
-Overall we compare across the following:
+We compare across the following:
 
 \vspace*{-0.3em}
-\begin{itemize}
+\begin{enumerate}[{~~~$\bullet$}]
 \renewcommand{\itemsep}{-0.5ex}
-  \item {\tt ensmallen}-1: only {\tt EvaluateWithGradient()} implemented
-  \item {\tt ensmallen}-2: both {\tt Evaluate()} and {\tt Gradient()} separately
+  \item {\tt ensmallen}-1: only \texttt{\small EvaluateWithGradient()} implemented
+  \item {\tt ensmallen}-2: both \texttt{\small Evaluate()} and \texttt{\small Gradient()} separately
 implemented
-  \item {\tt Calculus.jl}: uses the default {\tt Calculus.jl} for
+  \item {\tt Calculus.jl}: uses the default {\tt Calculus.jl} (\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl}) for
 computing the gradient with {\tt Optim.jl}
-  \item {\tt ForwardDiff.jl}: uses {\tt ForwardDiff.jl} for computing
+  \item {\tt ForwardDiff.jl}: uses {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} for computing
 the gradient with {\tt Optim.jl}
   \item {\tt Optim.jl}: implements the gradient manually
   \item {\tt scipy}: implements both objective and
 gradient
   \item {\tt bfgsmin}: uses {\tt optim} package for GNU Octave
-\end{itemize}
+\end{enumerate}
 \vspace*{-0.3em}
+
+% For {\tt ensmallen} we have 2 versions:
+% (i)~with only \texttt{\small EvaluateWithGradient()},
+% and
+% (ii)~with \texttt{\small Evaluate()} and \texttt{\small Gradient()}.
+% The code for these functions is as shown earlier.
+% For Julia we have the options of using manually defined objective and gradient functions,
+% or the gradient function can be automatically computed by 
+% {\tt Calculus.jl}
+% (\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl})
+% or {\tt ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016}.
+
 
 Results for various data sizes are shown in Table~\ref{tab:lbfgs}.  For each
 implementation, L-BFGS was allowed to run for only $10$ iterations and never
@@ -709,7 +713,8 @@ for the experiments here, only its size.  Runtimes are reported as the
 average across 10 runs.
 
 \begin{table}
-\begin{center}
+\centering
+\begin{adjustbox}{scale={0.90}{0.90}}
 \begin{tabular}{lccccc}
 \toprule
 {\em algorithm} & $d$: 100, $n$: 1k & $d$: 100, $n$: 10k & $d$: 100, $n$:
@@ -725,20 +730,23 @@ average across 10 runs.
 {\tt bfgsmin} & 0.215s & 1.705s & 15.998s & ??? \\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Runtimes for linear regression function with various dataset sizes,
+\end{adjustbox}
+\vspace*{0.25ex}
+\caption{\footnotesize
+Runtimes for the linear regression function on various dataset sizes,
 with $n$ indicating the number of samples,
 and $d$ indicating the dimensionality of each sample.
 All Julia runs do not count compilation time.}
 \label{tab:lbfgs}
+\vspace*{-1ex}
 \end{table}
 
-The results indicate that {\tt ensmallen} with {\tt EvaluateWithGradient()}
+The results indicate that {\tt ensmallen} with \texttt{\small EvaluateWithGradient()}
 is the fastest approach.
-Furthremore, the use of {\tt EvaluateWithGradient()} yields considerable
+Furthermore, the use of \texttt{\small EvaluateWithGradient()} yields considerable
 speedup of almost 1.5x over the {\tt ensmallen} implementation with both the
 objective and gradient implemented separately.  In addition, although the
-automatic differentiation support makes it easier for the user to write their
+automatic differentiation support makes it easier for users to write their
 code, it is clear that the code generated by the automatic differentiators
 ({\tt Calculus.jl} and {\tt ForwardDiff.jl})
 is far from optimal, with runs that are slower by up to three orders of magnitude.
@@ -754,73 +762,97 @@ is far from optimal, with runs that are slower by up to three orders of magnitud
 % Probably a snippet showing the actual code to run with a bunch of different
 % optimizers is good too.  Other things can be cut to make space.
 
-Lastly, we show the simplicity of using different optimizers for the same task.
-Using a version of {\tt LinearRegressionFunction} adapted for separable
-differentiable optimizers, we run six optimizers with default parameters in
-eight lines of code:
+Lastly, we demonstrate the easy pluggability in {\tt ensmallen}
+for using various optimizers on the same task.
+Using a version of \texttt{\small LinearRegressionFunction} from Sec.~\ref{sec:linreg_example}
+adapted for separable differentiable optimizers,
+we run six optimizers with default parameters in just 7 lines of code,
+as shown in Fig.~\ref{fig:learning_curve}(a).
+Applying these optimizers to the \texttt{\small YearPredictionMSD}
+dataset from the UCI repository~\cite{ucimlrepository}
+yields the learning curves shown in Fig.~\ref{fig:learning_curve}(b).
+Any other optimizers for separable differentiable objective
+functions can be dropped into place in the same manner.
 
-% RC: I know this is inline code... but does it work here?  If not we can put it
-% in a figure.
-\begin{minted}[fontsize=\footnotesize]{c++}
-  LinearRegressionFunction lrf(X, y); // X and y are data
-
-  ens::StandardSGD<>().Optimize(lrf, sgdModel);
-  ens::Adam().Optimize(lrf, adamModel);
-  ens::AdaGrad().Optimize(lrf, adagradModel);
-  ens::SMORMS3().Optimize(lrf, smorms3Model);
-  ens::SPALeRASGD().Optimize(lrf, spaleraModel);
-  ens::RMSProp().Optimize(lrf, rmspropModel);
-\end{minted}
-
-This pluggability makes it easy to use {\tt ensmallen} to generate comparisons
-between optimizers, and in Figure \ref{fig:learning_curve} we use these six
-lines of code to generate learning curves for each of these six optimizers on
-the {\tt YearPredictionMSD} dataset from the UCI dataset
-repository~\cite{ucimlrepository}. % TODO: add to bibtex
-In addition, any other optimizers for separable differentiable objective
-functions could be dropped into place.
+% This facilitates the evaluation of various optimizers
+% for user-defined objective functions.
 
 \begin{figure}[h!]
+\begin{minipage}[t]{1\textwidth}
+\begin{adjustbox}{scale={0.90}{0.90}}
+\begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{experiments/learning_curves.png}
+\begin{minted}[fontsize=\footnotesize]{c++}
+// X and y are data
+LinearRegressionFunction lrf(X, y);
+
+ens::StandardSGD<>().Optimize(lrf, sgdModel);
+ens::Adam().Optimize(lrf, adamModel);
+ens::AdaGrad().Optimize(lrf, adagradModel);
+ens::SMORMS3().Optimize(lrf, smorms3Model);
+ens::SPALeRASGD().Optimize(lrf, spaleraModel);
+ens::RMSProp().Optimize(lrf, rmspropModel);
+\end{minted}
+\end{minipage}
+\end{adjustbox}
+\hfill
+\begin{minipage}{0.51\textwidth}
+  \centering
+  \includegraphics[width=\textwidth,height=0.45\textwidth]{experiments/learning_curves_crop.png}
+\end{minipage}
+\end{minipage}
+\begin{minipage}[t]{1\textwidth}
+\begin{minipage}{0.48\textwidth}
+\centering
+(a)
+\end{minipage}
+\hfill
+\begin{minipage}{0.51\textwidth}
+\centering
+(b)
+\end{minipage}
+\end{minipage}
+\caption
+  {
+  \footnotesize
+  (a): example code for using 
+  six {\tt ensmallen} optimizers with default parameters
+  to optimize a linear regression function;
+  (b): corresponding learning curves
+  on the \texttt{\small YearPredictionMSD} dataset~\cite{ucimlrepository}
+  over 5 epochs of training.
+  The optimizers can be tuned for better performance.
+  }
 \label{fig:learning_curve}
-\caption{Learning curves for six {\tt ensmallen} optimizers on {\tt
-YearPredictionMSD} dataset over 5 epochs of training.  Optimizers can be
-tuned for better performance.}
+\vspace*{-1ex}
 \end{figure}
 
 \vspace*{-0.3em}
 \section{Conclusion}
 \vspace*{-0.5em}
 
-We have described {\tt ensmallen}, a flexible C++ library for function
-optimization that provides an easy interface for users to implement and optimize
-their desired objective functions.  Many types of functions can be optimized,
-including separable and constrained functions.  The library is fast due to its
-use of template metaprogramming and the Armadillo matrix library for linear
-algebra.  In addition, template metaprogramming is used to make user
-implementation easier by automatically generating missing methods.
-
+We overviewed {\tt ensmallen}, a flexible C++ library for function
+optimization that provides an easy interface for the implementation and optimization
+of user-defined objective functions.  Many types of functions can be optimized,
+including separable and constrained functions.
 The library provides many pre-built optimizers (including numerous variants
 of SGD and Quasi-Newton optimizers).
+The library internally exploits template metaprogramming
+to maximise opportunities for efficiency gains,
+as well as 
+to make the implementation of objective functions easier
+by automatically generating missing methods.
+
+% {\tt ensmallen} is already in use as the optimization toolkit of the {\tt
+% mlpack} machine learning library~\cite{mlpack2018}.  
+
 We aim to expand the library with further optimization techniques
 as the need arises.  Since {\tt ensmallen} is open source,
 external contributions to the codebase are welcome.
+For more information on the
+toolkit, see the website and documentation at
+\href{https://www.ensmallen.org}{\tt\small https://www.ensmallen.org}.
 
-% GPU support for optimization is available either through the use of the NVBLAS
-% library~\cite{nvidia2015} or the forthcoming Bandicoot C++ GPU matrix library.
-%% Conrad: is it ok if we mention that here?  It's a really nice selling point
-%% and I am sure at least one reviewer will be thinking about GPUs.
-
-%% CS: we don't have much room, so I moved the mention of NVBLAS to the intro.
-%% CS: i think it flows better there.
-%% CS: mentioning it here in the conclusion seems a bit left-field.
-%% CS: we also don't have a good reference for Bandicoot yet
-
-
-{\tt ensmallen} is already in use as the optimization toolkit of the {\tt
-mlpack} machine learning library~\cite{mlpack2018}.  For more information on the
-toolkit, see the website and documentation at \url{https://www.ensmallen.org/}.
 
 %\begin{small}
 {\bf Acknowledgements.}
