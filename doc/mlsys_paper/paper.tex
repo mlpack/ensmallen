@@ -740,7 +740,7 @@ Furthermore, the use of \texttt{\small EvaluateWithGradient()} yields considerab
 speedup of almost 1.5x over the \texttt{\small ensmallen} implementation with both the
 objective and gradient implemented separately.  In addition, although the
 automatic differentiation support makes it easier for users to write their
-code, it is often true that the output of automatic differentiators is not as
+code, we observe that the output of automatic differentiators is not as
 efficient, especially with \texttt{\small ForwardDiff.jl}.  We expect this
 effect to be more pronounced with increasingly complex objective functions.
 
@@ -759,7 +759,7 @@ Lastly, we demonstrate the easy pluggability in {\tt ensmallen}
 for using various optimizers on the same task.
 Using a version of \texttt{\small LinearRegressionFunction} from Sec.~\ref{sec:linreg_example}
 adapted for separable differentiable optimizers,
-we run six optimizers with default parameters in just 7 lines of code,
+we run six optimizers with default parameters in just 8 lines of code,
 as shown in Fig.~\ref{fig:learning_curve}(a).
 Applying these optimizers to the \texttt{\small YearPredictionMSD}
 dataset from the UCI repository~\cite{ucimlrepository}
