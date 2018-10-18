@@ -49,7 +49,7 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGDTest]")
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
     MomentumUpdate momentumUpdate(0.4);
-    MomentumSGD s(0.0008, 1, 0, 1e-15, true, momentumUpdate);
+    MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
