@@ -819,19 +819,32 @@ as well as
 to make the implementation of objective functions easier
 by automatically generating missing methods.
 
-% RC: I think it's really important to highlight ensmallen's usage (and
-% genesis), although I can't find the right words to concisely and non-awkwardly
-% say that we wrote ensmallen as part of mlpack originally.
-\texttt{\small ensmallen} is already in use as the optimization toolkit of the
-\texttt{\small mlpack} machine learning library~\cite{mlpack2018}.
-
 We aim to expand the library with further optimization techniques
 as the need arises.  Since {\tt ensmallen} is open source,
 external contributions to the codebase are welcome.
 For more information on the
-toolkit, see the website and documentation at
+library, see the website and documentation at
 \href{https://www.ensmallen.org}{\tt\small https://www.ensmallen.org}.
+The library is already in use for function optimization in the
+\texttt{\small mlpack} machine learning toolkit~\cite{mlpack2018}.
 
+% RC: I think it's really important to highlight ensmallen's usage (and
+% genesis), although I can't find the right words to concisely and non-awkwardly
+% say that we wrote ensmallen as part of mlpack originally.
+% 
+%% CS: good point, though for our purposes i think it's sufficient
+%% CS: to simply state that mlpack uses ensmallen.
+%% CS: getting into a tangent on the genesis can negatively distract
+%% CS: from the central message. besides, there is no room for a proper
+%% CS: explanation.
+%% CS:
+%% CS: I recommend to avoid interchangeably mixing around the words
+%% CS: "library", "toolkit", "package" when referring to ensmallen.
+%% CS: it's better to consistently stick to "library", and use
+%% CS: the other words to refer to other software, such as mlpack.
+%% CS: the point is to avoid potential concept clashes
+%% CS: (ie. too much overloading on a word), which can lead
+%% CS: to confusion as to what exact software we're referring to.
 
 %\begin{small}
 {\bf Acknowledgements.}
