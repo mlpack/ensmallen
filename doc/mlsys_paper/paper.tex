@@ -325,20 +325,29 @@ Due to its straightforward abstraction framework, {\tt ensmallen} is able to
 provide a large set of diverse optimization algorithms for objective functions
 with these properties.  Below is a list of currently available optimizers:
 
-% I guess to save some space we should group them.
-%% CS: should we add citations to some (or all) of the listed optimisers?
-%% CS: the MLSYS CFP states that "papers can be up to 6 pages (not including references)",
-%% CS: so technically we can have 10000+ references.
+%% CS: WARNING !!!!
+%% CS: can't add more citations without causing the item with SGD variants
+%% CS: to overflow into 3 lines.
+%% CS: this causes a cascade effect of mucking up the entire layout of
+%% CS: the paper, causing the main text to spill over to 7 pages.
+%% 
+%% CS: the citations below should be sufficient; 
+%% CS: this is a workshop paper, not a journal article
+
 \vspace*{-0.4em}
 \begin{enumerate}[{~~~$\bullet$}]
 \small
-  \item {\bf SGD variants}~\cite{Robbins_1951,kingma2015adam}:
+  \item {\bf SGD variants}~\cite{Ruder_2016}:  % Robbins_1951 is semi-related
       Stochastic Gradient Descent (SGD),
       SGD with Restarts,
-      Parallel SGD (Hogwild!),
+      Parallel SGD (Hogwild!)~\cite{hogwild_nips_2011},
       Stochastic Coordinate Descent, 
-      SMORMS3, AdaGrad,
-      AdaDelta, RMSProp, Adam, AdaMax
+      AdaGrad~\cite{Duchi_2011},
+      AdaDelta~\cite{Zeiler_2012},
+      RMSProp,
+      SMORMS3,
+      Adam~\cite{kingma2015adam},
+      AdaMax
 
   \item {\bf Quasi-Newton variants}:
       Limited-memory BFGS (L-BFGS)~\cite{zhu1997algorithm},
@@ -346,10 +355,13 @@ with these properties.  Below is a list of currently available optimizers:
       Augmented Lagrangian Method~\cite{Hestenes_1969}
 
   \item {\bf Genetic variants}:
-        Conventional Neuro-evolution,
-        Covariance Matrix Adaptation Evolution Strategy
+      Conventional Neuro-evolution~\cite{Belew_1990},
+      Covariance Matrix Adaptation Evolution Strategy~\cite{Hansen_2001}
 
-  \item {\bf Other}: Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing~\cite{kirkpatrick1983optimization}
+  \item {\bf Other}:
+    Conditional Gradient Descent,
+    Frank-Wolfe algorithm~\cite{Frank_1956},
+    Simulated Annealing~\cite{kirkpatrick1983optimization}
 
 % These were a part of mlpack but not ensmallen.
   %\item {\bf Objective functions:} Neural Networks, Logistic regression,
