@@ -731,7 +731,7 @@ with $n$ indicating the number of samples,
 and $d$ indicating the dimensionality of each sample.
 All Julia runs do not count compilation time.}
 \label{tab:lbfgs}
-\vspace*{-1ex}
+%\vspace*{-1ex}
 \end{table}
 
 The results indicate that \texttt{\small ensmallen} with \texttt{\small
@@ -764,11 +764,12 @@ as shown in Fig.~\ref{fig:learning_curve}(a).
 Applying these optimizers to the \texttt{\small YearPredictionMSD}
 dataset from the UCI repository~\cite{ucimlrepository}
 yields the learning curves shown in Fig.~\ref{fig:learning_curve}(b).
-Any other optimizers for separable differentiable objective
+Any other optimizer for separable differentiable objective
 functions can be dropped into place in the same manner.
-% Just because we have some extra space...
-This facilitates the seamless evaluation of various optimizers
-for user-defined objective functions.
+%% Just because we have some extra space...
+%% CS: we need space for the acknowledgement section
+% This facilitates the seamless evaluation of various optimizers
+% for user-defined objective functions.
 
 \begin{figure}[b!]
 \centering
@@ -793,7 +794,8 @@ RMSProp().Optimize(lrf, rmspropModel);
   \includegraphics[width=\textwidth,height=0.6\textwidth]{experiments/learning_curves_crop.eps}
 \caption{Learning curves.}
 \end{subfigure}
-\caption{Example usage of six \texttt{\small ensmallen} optimizers to optimize a
+\caption{\footnotesize
+Example usage of six \texttt{\small ensmallen} optimizers to optimize a
 linear regression function on the \texttt{\small YearPredictionMSD}
 dataset~\cite{ucimlrepository} for 5 epochs of training.  The optimizers can be
 tuned for better performance.}
