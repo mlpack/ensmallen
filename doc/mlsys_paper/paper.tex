@@ -153,7 +153,7 @@ for robust and flexible implementations of optimization algorithms.
 We present {\tt ensmallen}, a C++ optimization toolkit
 that contains a wide variety of optimization techniques for many types of
 objective functions.  Through the use of C++ template
-metaprogramming~\cite{Abrahams_2004},
+metaprogramming~\cite{Abrahams_2004,Vandevoorde_2018},
 {\tt ensmallen} is able to generate efficient code that can help with the
 demanding computational needs of many machine learning algorithms.
 
@@ -325,20 +325,29 @@ Due to its straightforward abstraction framework, {\tt ensmallen} is able to
 provide a large set of diverse optimization algorithms for objective functions
 with these properties.  Below is a list of currently available optimizers:
 
-% I guess to save some space we should group them.
-%% CS: should we add citations to some (or all) of the listed optimisers?
-%% CS: the MLSYS CFP states that "papers can be up to 6 pages (not including references)",
-%% CS: so technically we can have 10000+ references.
+%% CS: WARNING !!!!
+%% CS: can't add more citations without causing the item with SGD variants
+%% CS: to overflow into 3 lines.
+%% CS: this causes a cascade effect of mucking up the entire layout of
+%% CS: the paper, causing the main text to spill over to 7 pages.
+%% 
+%% CS: the citations below should be sufficient; 
+%% CS: this is a workshop paper, not a journal article
+
 \vspace*{-0.4em}
 \begin{enumerate}[{~~~$\bullet$}]
 \small
-  \item {\bf SGD variants}~\cite{Robbins_1951,kingma2015adam}:
+  \item {\bf SGD variants}~\cite{Ruder_2016}:  % Robbins_1951 is semi-related
       Stochastic Gradient Descent (SGD),
       SGD with Restarts,
-      Parallel SGD (Hogwild!),
+      Parallel SGD (Hogwild!)~\cite{hogwild_nips_2011},
       Stochastic Coordinate Descent, 
-      SMORMS3, AdaGrad,
-      AdaDelta, RMSProp, Adam, AdaMax
+      AdaGrad~\cite{Duchi_2011},
+      AdaDelta~\cite{Zeiler_2012},
+      RMSProp,
+      SMORMS3,
+      Adam~\cite{kingma2015adam},
+      AdaMax
 
   \item {\bf Quasi-Newton variants}:
       Limited-memory BFGS (L-BFGS)~\cite{zhu1997algorithm},
@@ -346,10 +355,13 @@ with these properties.  Below is a list of currently available optimizers:
       Augmented Lagrangian Method~\cite{Hestenes_1969}
 
   \item {\bf Genetic variants}:
-        Conventional Neuro-evolution,
-        Covariance Matrix Adaptation Evolution Strategy
+      Conventional Neuro-evolution~\cite{Belew_1990},
+      Covariance Matrix Adaptation Evolution Strategy~\cite{Hansen_2001}
 
-  \item {\bf Other}: Conditional Gradient Descent, Frank-Wolfe algorithm, Simulated Annealing~\cite{kirkpatrick1983optimization}
+  \item {\bf Other}:
+    Conditional Gradient Descent,
+    Frank-Wolfe algorithm~\cite{Frank_1956},
+    Simulated Annealing~\cite{kirkpatrick1983optimization}
 
 % These were a part of mlpack but not ensmallen.
   %\item {\bf Objective functions:} Neural Networks, Logistic regression,
@@ -674,10 +686,10 @@ Next, we consider the linear regression example described in
 Sec.~\ref{sec:linreg_example}.  For this task we use the first-order L-BFGS
 optimizer~\cite{zhu1997algorithm}.  Using the same four packages, we implement
 the linear regression objective and gradient.  For \texttt{\small ensmallen} we
-implement a version with only \texttt{\small EvaluateWithGradient()}:
-\texttt{\small ensmallen}.  We also implement a version with both \texttt{\small
-Evaluate()} and \texttt{\small Gradient()}: \texttt{\small ensmallen}-2.  We
-also use automatic differentiation for Julia via the \texttt{\small
+implement a version with only \texttt{\small EvaluateWithGradient()},
+denoted as \texttt{\small ensmallen-1}.  We also implement a version with both
+\texttt{\small Evaluate()} and \texttt{\small Gradient()}: \texttt{\small ensmallen-2}.
+We also use automatic differentiation for Julia via the \texttt{\small
 ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} package and for Python via the
 \texttt{\small Autograd}~\cite{maclaurin2015autograd}
 package.  For GNU Octave we use the \texttt{\small bfgsmin()} function.
@@ -731,7 +743,7 @@ with $n$ indicating the number of samples,
 and $d$ indicating the dimensionality of each sample.
 All Julia runs do not count compilation time.}
 \label{tab:lbfgs}
-\vspace*{-1ex}
+%\vspace*{-1ex}
 \end{table}
 
 The results indicate that \texttt{\small ensmallen} with \texttt{\small
@@ -740,7 +752,7 @@ Furthermore, the use of \texttt{\small EvaluateWithGradient()} yields considerab
 speedup of almost 1.5x over the \texttt{\small ensmallen} implementation with both the
 objective and gradient implemented separately.  In addition, although the
 automatic differentiation support makes it easier for users to write their
-code, it is often true that the output of automatic differentiators is not as
+code, we observe that the output of automatic differentiators is not as
 efficient, especially with \texttt{\small ForwardDiff.jl}.  We expect this
 effect to be more pronounced with increasingly complex objective functions.
 
@@ -759,16 +771,17 @@ Lastly, we demonstrate the easy pluggability in {\tt ensmallen}
 for using various optimizers on the same task.
 Using a version of \texttt{\small LinearRegressionFunction} from Sec.~\ref{sec:linreg_example}
 adapted for separable differentiable optimizers,
-we run six optimizers with default parameters in just 7 lines of code,
+we run six optimizers with default parameters in just 8 lines of code,
 as shown in Fig.~\ref{fig:learning_curve}(a).
 Applying these optimizers to the \texttt{\small YearPredictionMSD}
 dataset from the UCI repository~\cite{ucimlrepository}
 yields the learning curves shown in Fig.~\ref{fig:learning_curve}(b).
-Any other optimizers for separable differentiable objective
+Any other optimizer for separable differentiable objective
 functions can be dropped into place in the same manner.
-% Just because we have some extra space...
-This facilitates the seamless evaluation of various optimizers
-for user-defined objective functions.
+%% Just because we have some extra space...
+%% CS: we need space for the acknowledgement section
+% This facilitates the seamless evaluation of various optimizers
+% for user-defined objective functions.
 
 \begin{figure}[b!]
 \centering
@@ -791,9 +804,12 @@ RMSProp().Optimize(lrf, rmspropModel);
   \centering
   % \includegraphics[width=\textwidth,height=0.45\textwidth]{experiments/learning_curves_crop.png}
   \includegraphics[width=\textwidth,height=0.6\textwidth]{experiments/learning_curves_crop.eps}
+  %% CS: to remove the blank space around the plot:
+  %% CS: epstool --copy --bbox input.eps output.eps
 \caption{Learning curves.}
 \end{subfigure}
-\caption{Example usage of six \texttt{\small ensmallen} optimizers to optimize a
+\caption{\footnotesize
+Example usage of six \texttt{\small ensmallen} optimizers to optimize a
 linear regression function on the \texttt{\small YearPredictionMSD}
 dataset~\cite{ucimlrepository} for 5 epochs of training.  The optimizers can be
 tuned for better performance.}
@@ -817,19 +833,32 @@ as well as
 to make the implementation of objective functions easier
 by automatically generating missing methods.
 
-% RC: I think it's really important to highlight ensmallen's usage (and
-% genesis), although I can't find the right words to concisely and non-awkwardly
-% say that we wrote ensmallen as part of mlpack originally.
-\texttt{\small ensmallen} is already in use as the optimization toolkit of the
-\texttt{\small mlpack} machine learning library~\cite{mlpack2018}.
-
 We aim to expand the library with further optimization techniques
 as the need arises.  Since {\tt ensmallen} is open source,
 external contributions to the codebase are welcome.
 For more information on the
-toolkit, see the website and documentation at
+library, see the website and documentation at
 \href{https://www.ensmallen.org}{\tt\small https://www.ensmallen.org}.
+The library is already in use for function optimization in the
+\texttt{\small mlpack} machine learning toolkit~\cite{mlpack2018}.
 
+% RC: I think it's really important to highlight ensmallen's usage (and
+% genesis), although I can't find the right words to concisely and non-awkwardly
+% say that we wrote ensmallen as part of mlpack originally.
+% 
+%% CS: good point, though for our purposes i think it's sufficient
+%% CS: to simply state that mlpack uses ensmallen.
+%% CS: getting into a tangent on the genesis can negatively distract
+%% CS: from the central message. besides, there is no room for a proper
+%% CS: explanation.
+%% CS:
+%% CS: I recommend to avoid interchangeably mixing around the words
+%% CS: "library", "toolkit", "package" when referring to ensmallen.
+%% CS: it's better to consistently stick to "library", and use
+%% CS: the other words to refer to other software, such as mlpack.
+%% CS: the point is to avoid potential concept clashes
+%% CS: (ie. too much overloading on a word), which can lead
+%% CS: to confusion as to what exact software we're referring to.
 
 %\begin{small}
 {\bf Acknowledgements.}
