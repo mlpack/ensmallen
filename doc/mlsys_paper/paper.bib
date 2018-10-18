@@ -43,7 +43,7 @@ bound-constrained optimization},
 @article{RevelsLubinPapamarkou2016,
     title = {Forward-Mode Automatic Differentiation in {Julia}},
    author = {{Revels}, J. and {Lubin}, M. and {Papamarkou}, T.},
-  journal = {arXiv:1607.07892 [cs.MS]},
+  journal = {arXiv:1607.07892},
      year = {2016},
      url = {https://arxiv.org/abs/1607.07892}
 }
@@ -64,6 +64,7 @@ bound-constrained optimization},
   author={Paszke, Adam and Gross, Sam and Chintala, Soumith and Chanan, Gregory
 and Yang, Edward and DeVito, Zachary and Lin, Zeming and Desmaison, Alban and
 Antiga, Luca and Lerer, Adam},
+  journal={Autodiff Workshop at NIPS},
   year={2017}
 }
 
@@ -106,9 +107,9 @@ Antiga, Luca and Lerer, Adam},
 @article{Rosenbrock1960,
     title  = {An Automatic Method for Finding the Greatest or Least Value of a
               Function},
-   author  = {Rosenbrock, H. H.},
+   author  = {Rosenbrock, Howard H.},
    journal = {The Computer Journal},
-   number  = {3},
+   volume  = {3},
    pages   = {175--184},
    year    = {1960}
 }
@@ -124,14 +125,14 @@ Antiga, Luca and Lerer, Adam},
 @article{abadi2016tensorflow,
   title={Tensorflow: Large-scale machine learning on heterogeneous distributed systems},
   author={Abadi, Mart{\'\i}n and Agarwal, Ashish and Barham, Paul and Brevdo, Eugene and Chen, Zhifeng and Citro, Craig and Corrado, Greg S and Davis, Andy and Dean, Jeffrey and others},
-  journal={arXiv preprint arXiv:1603.04467},
+  journal={arXiv:1603.04467},
   year={2016}
 }
 
 @article{abadi2016tensorflow_full,
   title={Tensorflow: Large-scale machine learning on heterogeneous distributed systems},
   author={Abadi, Mart{\'\i}n and Agarwal, Ashish and Barham, Paul and Brevdo, Eugene and Chen, Zhifeng and Citro, Craig and Corrado, Greg S and Davis, Andy and Dean, Jeffrey and Devin, Matthieu and others},
-  journal={arXiv preprint arXiv:1603.04467},
+  journal={arXiv:1603.04467},
   year={2016}
 }
 
@@ -195,10 +196,11 @@ commit = {f2501c4}
   doi     = {10.21105/joss.00615}
 }
 
-@article{jones2014scipy,
+@misc{jones2014scipy,
   title={{SciPy}: open source scientific tools for {Python}},
   author={Jones, Eric and Oliphant, Travis and Peterson, Pearu},
-  year={2014}
+  year={2014},
+  note="\url{http://www.scipy.org/}",
 }
 
 @article{mlpack2013,
@@ -251,11 +253,16 @@ of linear algebra},
   author={Sonnenburg, S. and R{\"a}tsch, G. and Henschel, S. and Widmer, C. and
 Behr, J. and Zien, A. and de Bona, F. and
 Binder, A. and Gehl, C. and Franc, V.},
-  journal={The Journal of Machine Learning Research},
-  volume={99},
+  journal={Journal of Machine Learning Research},
+  volume={11},
   pages={1799--1802},
   year={2010}
 }
+
+ The SHOGUN Machine Learning Toolbox
+
+; 11(Jun):1799−1802, 2010.
+
 
 @techreport{Langford2007VW,
   title={Vowpal wabbit open source project},
@@ -401,16 +408,24 @@ Infrastructure in HPC},
   year    = {2011}
 }
 
-@misc{Zeiler_2012,
-  author = {Matthew D. Zeiler},
-  title  = {{ADADELTA}: An Adaptive Learning Rate Method},
-  year   = {2012},
-  note   = "arXiv:1212.5701",
+@article{Zeiler_2012,
+  author  = {Matthew D. Zeiler},
+  title   = {{ADADELTA}: An Adaptive Learning Rate Method},
+  journal = {arXiv:1212.5701},
+  year    = {2012},
   }
 
-@misc{Ruder_2016,
-  author = {Sebastian Ruder},
-  title  = {An overview of gradient descent optimization algorithms},
-  year   = {2016},
-  note   = "arXiv:1609.04747",
+@article{Ruder_2016,
+  author  = {Sebastian Ruder},
+  title   = {An overview of gradient descent optimization algorithms},
+  journal = {arXiv:1609.04747},
+  year    = {2016},
   }
+
+@book{Vandevoorde_2018,
+  title={C++ Templates: The Complete Guide},
+  author={Vandevoorde, David and Josuttis, Nicolai M},
+  edition={2nd},
+  year={2017},
+  publisher={Addison-Wesley}
+}
