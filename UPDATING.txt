@@ -1,0 +1,20 @@
+ensmallen uses semantic versioning for its versioning conventions
+(http://semver.org).
+
+The current version of ensmallen can be found with the ens::version::as_string()
+function, or the ENS_VERSION_MAJOR, ENS_VERSION_MINOR, and ENS_VERSION_PATCH
+macros.
+
+In practice, this generally means:
+
+ * A MAJOR version bump implies a backwards-incompatible change to the
+   user-facing optimizers.  Code using one major version of ensmallen may not
+   work with a newer major version of ensmallen.
+
+ * A MINOR version bump happens for feature additions to ensmallen.  Typically
+   this might be the addition of a new optimizer.  Code using one version of
+   ensmallen will work with all subsequent minor releases of the same major
+   release line.
+
+ * A PATCH version bump indicates some small bug fixes or optimizations.  No new
+   functionality is added and no compatibility is broken.
