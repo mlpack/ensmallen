@@ -32,16 +32,14 @@ inline void LogisticRegressionTestData(arma::mat& data,
   responses = arma::Row<size_t>(1000);
   for (size_t i = 0; i < 500; ++i)
   {
-    // The first Gaussian is centered at (1, 1, 1) and has covariance 3*I.
-    data.col(i) = std::sqrt(3) * arma::randn<arma::vec>(3) +
-        arma::vec("1.0 1.0 1.0");
+    // The first Gaussian is centered at (1, 1, 1) and has covariance I.
+    data.col(i) = arma::randn<arma::vec>(3) + arma::vec("1.0 1.0 1.0");
     responses[i] = 0;
   }
   for (size_t i = 500; i < 1000; ++i)
   {
-    // The second Gaussian is centered at (9, 9, 9) and has covariance 3*I.
-    data.col(i) = std::sqrt(3) * arma::randn<arma::vec>(3) +
-        arma::vec("9.0 9.0 9.0");
+    // The second Gaussian is centered at (9, 9, 9) and has covariance I.
+    data.col(i) = arma::randn<arma::vec>(3) + arma::vec("9.0 9.0 9.0");
     responses[i] = 1;
   }
 
@@ -61,14 +59,12 @@ inline void LogisticRegressionTestData(arma::mat& data,
   testResponses = arma::Row<size_t>(1000);
   for (size_t i = 0; i < 500; ++i)
   {
-    testData.col(i) = std::sqrt(3) * arma::randn<arma::vec>(3) +
-        arma::vec("1.0 1.0 1.0");
+    testData.col(i) = arma::randn<arma::vec>(3) + arma::vec("1.0 1.0 1.0");
     testResponses[i] = 0;
   }
   for (size_t i = 500; i < 1000; ++i)
   {
-    testData.col(i) = std::sqrt(3) * arma::randn<arma::vec>(3) +
-        arma::vec("9.0 9.0 9.0");
+    testData.col(i) = arma::randn<arma::vec>(3) + arma::vec("9.0 9.0 9.0");
     testResponses[i] = 1;
   }
 }
