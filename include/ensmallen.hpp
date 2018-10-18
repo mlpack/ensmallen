@@ -29,7 +29,7 @@
   #error "please enable C++11/C++14 mode in your compiler"
 #endif
 
-#if ((ARMA_VERSION_MAJOR <= 6) && (ARMA_VERSION_MINOR < 500))
+#if ((ARMA_VERSION_MAJOR < 6) || ((ARMA_VERSION_MAJOR == 6) && (ARMA_VERSION_MINOR < 500)))
   #error "need Armadillo version 6.500 or later"
 #endif
 
