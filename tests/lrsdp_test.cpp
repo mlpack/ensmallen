@@ -287,7 +287,7 @@ TEST_CASE("GaussianMatrixSensingSDP", "[LRSDPTest]")
     const arma::mat Ai = arma::reshape(A.row(i), n, m);
     const double measurement =
         arma::dot(trans(Ai), rrt(blockRows, blockCols));
-    REQUIRE(measurement == Approx(b(i)).epsilon(0.0005));
+    REQUIRE(measurement == Approx(b(i)).epsilon(0.0006));
   }
 
   // check matrix recovery
