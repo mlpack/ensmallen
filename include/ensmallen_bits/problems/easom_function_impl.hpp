@@ -31,7 +31,8 @@ inline double EasomFunction::Evaluate(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   const double objective = -std::cos(x1) * std::cos(x2) *
-      std::exp(-1.0 * std::pow(x1 - ENS_M_PI, 2) - std::pow(x2 - ENS_M_PI, 2));
+      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
+                      std::pow(x2 - arma::datum::pi, 2));
 
   return objective;
 }
@@ -51,16 +52,20 @@ inline void EasomFunction::Gradient(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   gradient.set_size(2, 1);
-  gradient(0) = 2 * (x1 - ENS_M_PI) *
-      std::exp(-1.0 * std::pow(x1 -  ENS_M_PI, 2) - std::pow(x2 -  ENS_M_PI, 2)) *
+  gradient(0) = 2 * (x1 - arma::datum::pi) *
+      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
+                      std::pow(x2 - arma::datum::pi, 2)) *
       std::cos(x1) * std::cos(x2) +
-      std::exp(-1.0 * std::pow(x1 -  ENS_M_PI, 2) - std::pow(x2 -  ENS_M_PI, 2)) *
+      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
+                      std::pow(x2 -  arma::datum::pi, 2)) *
       std::sin(x1) * std::cos(x2);
 
-  gradient(1) = 2 * (x2 -  ENS_M_PI) *
-      std::exp(-1.0 * std::pow(x1 -  ENS_M_PI, 2) - std::pow(x2 -  ENS_M_PI, 2)) *
+  gradient(1) = 2 * (x2 - arma::datum::pi) *
+      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
+                      std::pow(x2 - arma::datum::pi, 2)) *
       std::cos(x1) * std::cos(x2) +
-      std::exp(-1.0 * std::pow(x1 -  ENS_M_PI, 2) - std::pow(x2 -  ENS_M_PI, 2)) *
+      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
+                      std::pow(x2 - arma::datum::pi, 2)) *
       std::cos(x1) * std::sin(x2);
 }
 
