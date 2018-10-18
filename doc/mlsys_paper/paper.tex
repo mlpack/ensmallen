@@ -674,10 +674,10 @@ Next, we consider the linear regression example described in
 Sec.~\ref{sec:linreg_example}.  For this task we use the first-order L-BFGS
 optimizer~\cite{zhu1997algorithm}.  Using the same four packages, we implement
 the linear regression objective and gradient.  For \texttt{\small ensmallen} we
-implement a version with only \texttt{\small EvaluateWithGradient()}:
-\texttt{\small ensmallen}.  We also implement a version with both \texttt{\small
-Evaluate()} and \texttt{\small Gradient()}: \texttt{\small ensmallen}-2.  We
-also use automatic differentiation for Julia via the \texttt{\small
+implement a version with only \texttt{\small EvaluateWithGradient()},
+denoted as \texttt{\small ensmallen-1}.  We also implement a version with both
+\texttt{\small Evaluate()} and \texttt{\small Gradient()}: \texttt{\small ensmallen-2}.
+We also use automatic differentiation for Julia via the \texttt{\small
 ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} package and for Python via the
 \texttt{\small Autograd}~\cite{maclaurin2015autograd}
 package.  For GNU Octave we use the \texttt{\small bfgsmin()} function.
