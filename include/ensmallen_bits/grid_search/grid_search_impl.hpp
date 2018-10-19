@@ -21,11 +21,30 @@ template<typename FunctionType>
 double GridSearch::Optimize(
     FunctionType& function,
     arma::mat& bestParameters,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo)
+    const std::vector<bool>& categoricalDimensions,
+    const arma::Row<size_t>& numCategories)
 {
-  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
+  if (categoricalDimensions.size() != iterate.n_rows)
   {
-    if (datasetInfo.Type(i) != data::Datatype::categorical)
+    std::ostringstream oss;
+    oss << "GridSearch::Optimize(): expected information about "
+        << iterate.n_rows << " dimensions in categoricalDimensions, "
+        << "but got " << categoricalDimensions.size();
+    throw std::invalid_argument(oss.str());
+  }
+
+  if (numCategories.n_elem != iterate.n_rows)
+  {
+    std::ostringstream oss;
+    oss << "GridSearch::Optimize(): expected numCategories to have length "
+        << "equal to number of dimensions (" << iterate.n_rows << ") but it has"
+        << " length " << numCategories.n_elem;
+    throw std::invalid_argument(oss.str());
+  }
+
+  for (size_t i = 0; i < categoricalDimensions.size(); ++i)
+  {
+    if (categoricalDimensions[i])
     {
       std::ostringstream oss;
       oss << "GridSearch::Optimize(): the dimension " << i
@@ -35,17 +54,17 @@ double GridSearch::Optimize(
   }
 
   double bestObjective = std::numeric_limits<double>::max();
-  bestParameters = arma::mat(datasetInfo.Dimensionality(), 1);
-  arma::vec currentParameters = arma::vec(datasetInfo.Dimensionality());
+  bestParameters = arma::mat(categoricalDimensions.size(), 1);
+  arma::vec currentParameters = arma::vec(categoricalDimensions.size());
 
   /* Initialize best parameters for the case (very unlikely though) when no set
    * of parameters gives an objective value better than
    * std::numeric_limits<double>::max() */
-  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
-    bestParameters(i, 0) = datasetInfo.UnmapString(0, i);
+  for (size_t i = 0; i < categoricalDimensions.size(); ++i)
+    bestParameters(i, 0) = 0;
 
   Optimize(function, bestObjective, bestParameters, currentParameters,
-      datasetInfo, 0);
+      categoricalDimensions, numCategories, 0);
 
   return bestObjective;
 }
@@ -56,19 +75,20 @@ void GridSearch::Optimize(
     double& bestObjective,
     arma::mat& bestParameters,
     arma::vec& currentParameters,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    const std::vector<bool>& categoricalDimensions,
+    const arma::Row<size_t>& numCategories,
     size_t i)
 {
   // Make sure we have the methods that we need.
   traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
 
-  if (i < datasetInfo.Dimensionality())
+  if (i < categoricalDimensions.size())
   {
-    for (size_t j = 0; j < datasetInfo.NumMappings(i); ++j)
+    for (size_t j = 0; j < numCategories(i); ++j)
     {
-      currentParameters(i) = datasetInfo.UnmapString(j, i);
+      currentParameters(i) = j;
       Optimize(function, bestObjective, bestParameters, currentParameters,
-          datasetInfo, i + 1);
+          categoricalDimensions, numCategories, i + 1);
     }
   }
   else

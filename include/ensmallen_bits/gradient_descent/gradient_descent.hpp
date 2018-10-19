@@ -87,15 +87,17 @@ class GradientDescent
    * @tparam FunctionType Type of the function to optimize.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
-   * @param datasetInfo Type information for each dimension of the dataset.
+   * @param categoricalDimensions A vector of dimension information.  If a value
+   *     is true, then that dimension is a categorical dimension.
+   * @param numCategories Number of categories in each categorical dimension.
    * @return Objective value of the final point.
    */
-  // TODO: Should this be a specialized method that is part of mlpack?
-  // template<typename FunctionType>
-  // double Optimize(
-  //     FunctionType& function,
-  //     arma::mat& iterate,
-  //     data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
+  template<typename FunctionType>
+  double Optimize(
+       FunctionType& function,
+       arma::mat& iterate,
+       const std::vector<bool>& categoricalDimensions,
+       const arma::Row<size_t>& numCategories);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
