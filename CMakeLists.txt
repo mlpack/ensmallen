@@ -4,6 +4,8 @@
 cmake_minimum_required(VERSION 2.8.10)
 project(ensmallen C CXX)
 
+option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 # Ensure we have C++11 features.  Since we support CMake < 3.1, this needs a
@@ -23,6 +25,20 @@ else()
   # set required standard to c++11
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif ()
+
+# Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
+# to compile with OpenMP are returned and added for compilation.
+if (USE_OPENMP)
+  find_package(OpenMP)
+endif ()
+
+if (OPENMP_FOUND)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+else ()
+  # Disable warnings for all the unknown OpenMP pragmas.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif ()
 
 # The only dependency we need is Armadillo.

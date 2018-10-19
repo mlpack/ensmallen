@@ -88,7 +88,7 @@ TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
  * When run with a single thread, parallel SGD should be identical to normal
  * SGD.
  */
-TEST_CASE("GeneralizedRosenbrockTest", "[ParallelSGDTest]")
+TEST_CASE("ParallelSGDGeneralizedRosenbrockTest", "[ParallelSGDTest]")
 {
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
