@@ -11,9 +11,6 @@
 #ifndef ENSMALLEN_SDP_SDP_HPP
 #define ENSMALLEN_SDP_SDP_HPP
 
-// TODO: figure out what was used from here
-//#include <mlpack/core/math/lin_alg.hpp>
-
 namespace ens {
 
 /**

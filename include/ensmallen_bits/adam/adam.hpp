@@ -73,10 +73,10 @@ namespace ens {
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
  * gradient) is being evaluated.  So, for the case of a data-dependent function,
- * such as NCA (see mlpack::nca::NCA), NumFunctions() should return the number
- * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
- * objective function on the first point in the dataset (presumably, the dataset
- * is held internally in the DecomposableFunctionType).
+ * such as NCA, NumFunctions() should return the number of points in the
+ * dataset, and Evaluate(coordinates, 0) will evaluate the objective function on
+ * the first point in the dataset (presumably, the dataset is held internally in
+ * the DecomposableFunctionType).
  *
  * @tparam UpdateRule Adam optimizer update rule to be used.
  */

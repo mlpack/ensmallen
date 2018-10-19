@@ -77,11 +77,11 @@ namespace ens {
  *
  * NumFunctions() should return the number of functions, and in the other two
  * functions, the parameter i refers to which individual function (or gradient)
- * is being evaluated.  So, for the case of a data-dependent function, such as
- * NCA (see mlpack::nca::NCA), NumFunctions() should return the number of points
- * in the dataset, and Evaluate(coordinates, 0) will evaluate the objective
- * function on the first point in the dataset (presumably, the dataset is held
- * internally in the DecomposableFunctionType).
+ * is being evaluated.  So, for the case of a data-dependent function,
+ * NumFunctions() should return the number of points in the dataset, and
+ * Evaluate(coordinates, 0) will evaluate the objective function on the first
+ * point in the dataset (presumably, the dataset is held internally in the
+ * DecomposableFunctionType).
  *
  * @tparam UpdatePolicyType Update policy used during the iterative update
  *     process. By default the AdaptiveStepsize update policy is used.

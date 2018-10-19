@@ -64,10 +64,10 @@ namespace ens {
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
  * gradient) is being evaluated.  So, for the case of a data-dependent function,
- * such as NCA (see mlpack::nca::NCA), NumFunctions() should return the number
- * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
- * objective function on the first point in the dataset (presumably, the dataset
- * is held internally in the DecomposableFunctionType).
+ * such as NCA, NumFunctions() should return the number of points in the
+ * dataset, and Evaluate(coordinates, 0) will evaluate the objective function on
+ * the first point in the dataset (presumably, the dataset is held internally in
+ * the DecomposableFunctionType).
  *
  * For more information, please refer to:
  *
@@ -88,8 +88,8 @@ namespace ens {
  * @endcode
  *
  * @tparam UpdatePolicyType update policy used by SVRG during the iterative
- *     update process. By default vanilla update policy
- *     (see mlpack::optimization::VanillaUpdate) is used.
+ *     update process. By default vanilla update policy (see ens::VanillaUpdate)
+ *     is used.
  * @tparam DecayPolicyType Decay policy used during the iterative update
  *     process to adjust the step size. By default the step size isn't going to
  *     be adjusted (i.e. NoDecay is used).

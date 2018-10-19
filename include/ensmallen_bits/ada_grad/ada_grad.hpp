@@ -8,7 +8,7 @@
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * terms of the 3-clause BSD license. You should have received a copy of the
- * 3-clause BSD license along with mlpack. If not, see
+ * 3-clause BSD license along with ensmallen. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef ENSMALLEN_ADA_GRAD_ADA_GRAD_HPP
@@ -54,10 +54,10 @@ namespace ens {
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
  * gradient) is being evaluated.  So, for the case of a data-dependent function,
- * such as NCA (see mlpack::nca::NCA), NumFunctions() should return the number
- * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
- * objective function on the first point in the dataset (presumably, the dataset
- * is held internally in the DecomposableFunctionType).
+ * such as NCA, NumFunctions() should return the number of points in the
+ * dataset, and Evaluate(coordinates, 0) will evaluate the objective function on
+ * the first point in the dataset (presumably, the dataset is held internally in
+ * the DecomposableFunctionType).
  */
 class AdaGrad
 {

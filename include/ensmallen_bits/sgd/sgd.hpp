@@ -32,13 +32,12 @@ namespace ens {
  *
  * and our task is to minimize \f$ A \f$.  Stochastic gradient descent iterates
  * over each function \f$ f_i(A) \f$, based on the specified update policy. By
- * default vanilla update policy (see mlpack::optimization::VanillaUpdate) is
- * used. The SGD class supports either scanning through each of the \f$ n \f$
- * functions \f$ f_i(A)\f$ linearly, or in a random sequence.  The algorithm
- * continues until \f$ j\f$ reaches the maximum number of iterations---or when a
- * full sequence of updates through each of the \f$ n \f$ functions \f$ f_i(A)
- * \f$ produces an improvement within a certain tolerance \f$ \epsilon \f$.
- * That is,
+ * default vanilla update policy (see ens::VanillaUpdate) is used. The SGD class
+ * supports either scanning through each of the \f$ n \f$ functions \f$
+ * f_i(A)\f$ linearly, or in a random sequence.  The algorithm continues until
+ * \f$ j\f$ reaches the maximum number of iterations---or when a full sequence
+ * of updates through each of the \f$ n \f$ functions \f$ f_i(A) \f$ produces an
+ * improvement within a certain tolerance \f$ \epsilon \f$.  That is,
  *
  * \f[
  * | f(A_{j + n}) - f(A_j) | < \epsilon.
@@ -67,14 +66,14 @@ namespace ens {
  * NumFunctions() should return the number of functions (\f$n\f$), and in the
  * other two functions, the parameter i refers to which individual function (or
  * gradient) is being evaluated.  So, for the case of a data-dependent function,
- * such as NCA (see mlpack::nca::NCA), NumFunctions() should return the number
- * of points in the dataset, and Evaluate(coordinates, 0) will evaluate the
- * objective function on the first point in the dataset (presumably, the dataset
- * is held internally in the DecomposableFunctionType).
+ * such as NCA, NumFunctions() should return the number of points in the
+ * dataset, and Evaluate(coordinates, 0) will evaluate the objective function on
+ * the first point in the dataset (presumably, the dataset is held internally in
+ * the DecomposableFunctionType).
  *
  * @tparam UpdatePolicyType update policy used by SGD during the iterative update
- *     process. By default vanilla update policy (see
- *     mlpack::optimization::VanillaUpdate) is used.
+ *     process. By default vanilla update policy (see ens::VanillaUpdate) is
+ *     used.
  * @tparam DecayPolicyType Decay policy used during the iterative update
  *     process to adjust the step size. By default the step size isn't going to
  *     be adjusted (i.e. NoDecay is used).

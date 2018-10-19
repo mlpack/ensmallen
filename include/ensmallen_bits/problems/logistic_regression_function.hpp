@@ -19,7 +19,7 @@ namespace test {
 
 /**
  * The log-likelihood function for the logistic regression objective function.
- * This is used by various mlpack optimizers to train a logistic regression
+ * This is used by various ensmallen optimizers to train a logistic regression
  * model.
  */
 template<typename MatType = arma::mat>
