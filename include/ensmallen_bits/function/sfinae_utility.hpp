@@ -1,6 +1,7 @@
 /**
  * @file sfinae_utility.hpp
- * @author Trironk Kiatkungwanglai, Kirill Mishchenko
+ * @author Trironk Kiatkungwanglai
+ * @author Kirill Mishchenko
  *
  * This file contains macro utilities for the SFINAE Paradigm. These utilities
  * determine if classes passed in as template parameters contain members at

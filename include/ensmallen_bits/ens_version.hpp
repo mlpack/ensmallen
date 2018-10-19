@@ -1,9 +1,13 @@
-// Copyright (c) 2018 ensmallen developers.
-// 
-// Licensed under the 3-clause BSD license (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// http://www.opensource.org/licenses/BSD-3-Clause
+/**
+ * @file ens_version.hpp
+ * @author Conrad Sanderson
+ * @author Ryan Curtin
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 
 
 // This follows the Semantic Versioning pattern defined in https://semver.org/.
