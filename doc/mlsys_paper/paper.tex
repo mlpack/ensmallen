@@ -108,13 +108,16 @@ The library provides many pre-built optimizers
 (including numerous variants of SGD and Quasi-Newton optimizers)
 as well as a flexible framework for implementing new optimizers and objective functions.
 Implementation of a new optimizer requires only one method
-and a new objective function requires at most four C++ functions. 
+and a new objective function requires typicalle one or two C++ functions. 
 This can aid in the quick implementation and prototyping of new machine learning algorithms.
 Due to the use of C++ template metaprogramming, {\tt ensmallen} is able to
 support compiler optimizations that provide fast runtimes.
 Empirical comparisons show that {\tt ensmallen} is able to outperform other
-optimization frameworks (such as Julia and SciPy), sometimes by large margins.
-The library is distributed under the 3-clause BSD license and is ready for use
+optimization frameworks (like Julia and SciPy), sometimes by large margins.
+The library is distributed under the
+% save words
+% 3-clause
+BSD license and is ready for use
 in production environments.
 \end{abstract}
 
@@ -128,7 +131,7 @@ to the following optimization form:
 %
 %\vspace*{-0.2em}
 \begin{equation}
-\argmindown_x f(x)
+\argmindown_x f(x).
 \end{equation}
 \vspace*{-1.5em}
 
@@ -300,9 +303,8 @@ addition to $f(x)$, a user can provide an implementation of $f'(x)$, which in
 turn allows first-order gradient-based optimizers to be used.  This generally
 leads to significant speedups.
 
-Therefore, users may implement objective functions with specific properties that
-the library can use to accelerate the computation.  These non-exclusive
-properties are listed below:
+There are a number of other properties that \texttt{\small ensmallen} can use to
+accelerate computation.  These are listed below:
 
 \vspace*{-0.3em}
 \begin{itemize} \itemsep -1pt
@@ -313,7 +315,7 @@ properties are listed below:
   \item {\bf categorical}: $x$ contains elements that can only take discrete
 values
   %\item {\bf numeric}: all elements of $x$ take values in $\mathcal{R}$
-  \item {\bf sparse}: the gradient $f'(x)$ or $f_i(x)$ (for a separable
+  \item {\bf sparse}: the gradient $f'(x)$ or $f'_i(x)$ (for a separable
 function) is sparse
   \item {\bf partially differentiable}: the gradient $f'_j(x)$ is computable for
 individual elements $x_j$ of $x$
@@ -506,7 +508,8 @@ shows how the L-BFGS optimizer can be used to find the best parameters $\theta$:
 
 To use the small-batch SGD-like optimizers provided by {\tt ensmallen},
 only a slight variation on the signature of \texttt{\small Evaluate()} and
-\texttt{\small Gradient()} would be needed.
+\texttt{\small Gradient()} would be needed, plus the \texttt{\small Shuffle()}
+and \texttt{\small NumFunctions()} utility methods.
 
 \vspace*{-0.3em}
 \section{Automatic Metaprogramming for Ease of Use and Efficiency}
@@ -635,7 +638,7 @@ While another option here might be \texttt{\small simulannealbnd()}
 in the Global Optimization Toolkit for MATLAB,
 no license was available.
 % TODO: get Marcus' system specs.
-We ran our code on a {\tt MacBook Pro i7 2018, 16GB RAM} running {\tt macOS 10.14} with clang {\tt 1000.10.44.2}, Julia version {\tt 1.0.1}, Python {\tt 2.7.15}, and Octave {\tt 4.4.1}.
+We ran our code on a MacBook Pro i7 2018 with 16GB RAM running macOS 10.14 with clang 1000.10.44.2, Julia version 1.0.1, Python 2.7.15, and Octave 4.4.1.
 
 % We compare four frameworks%
 % %
@@ -746,7 +749,7 @@ All Julia runs do not count compilation time.}
 The results indicate that \texttt{\small ensmallen} with \texttt{\small
 EvaluateWithGradient()} is the fastest approach.
 Furthermore, the use of \texttt{\small EvaluateWithGradient()} yields considerable
-speedup of almost 1.5x over the \texttt{\small ensmallen} implementation with both the
+speedup over the \texttt{\small ensmallen-2} implementation with both the
 objective and gradient implemented separately.  In addition, although the
 automatic differentiation support makes it easier for users to write their
 code, we observe that the output of automatic differentiators is not as
