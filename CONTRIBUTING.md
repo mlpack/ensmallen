@@ -21,4 +21,25 @@ merge, to ensure that:
  * any new functionality is tested and working
 
 Please do make sure that if you contribute a new optimizer or other new
-functionality, that you've added some tests in the `tests/` directory.
+functionality, that you've added some tests in the `tests/` directory.  And if
+you are fixing a bug, it's always nice to include a test case if possible to so
+that the bug won't happen again.
+
+## Build/test process
+
+All of the code for ensmallen is located in `include/ensmallen_bits/` and all of
+the tests are in `tests/`.  ensmallen is header-only, so anything in
+`include/ensmallen_bits/` must be either template methods or marked `inline`.
+
+Adding a new test can be done either by adding a new `TEST_CASE()` block to an
+existing file in `tests/` or by creating a new file and adding it to the list of
+test sources in `tests/CMakeLists.txt`.  The tests are written with the
+[Catch2](https://github.com/catchorg/Catch2) unit test framework.
+
+Sometimes, tests have random behavior and may not pass every time.  (For
+instance, consider a test where the initial point is randomly generated.)  If
+you have written a test like this, make sure it does not fail often by
+uncommenting the code that sets a random seed in `tests/main.cpp` and running
+your test many times.
+
+Information on how to build and run the tests is in the main README.md file.
