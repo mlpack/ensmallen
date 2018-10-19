@@ -418,6 +418,15 @@ RandomFullRowRankMatrix(size_t rows, size_t cols)
  */
 TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
 {
+  // Armadillo will often output solve() failure warnings on this test, but we
+  // want to hide the output so users don't get confused.  (If there is an
+  // actual failure, users will still see that.)
+  std::ostringstream coutTmp, cerrTmp;
+  std::ostream& oldCoutStream = arma::get_cout_stream();
+  std::ostream& oldCerrStream = arma::get_cerr_stream();
+  arma::set_cout_stream(coutTmp);
+  arma::set_cerr_stream(cerrTmp);
+
   // Sometimes, the optimization can fail randomly, so we will run the test
   // three times and make sure it succeeds at least once.
   bool success = false;
@@ -457,6 +466,10 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
   }
 
   REQUIRE(success == true);
+
+  // Restore old Armadillo stream settings.
+  arma::set_cout_stream(oldCoutStream);
+  arma::set_cerr_stream(oldCerrStream);
 }
 
 /**
