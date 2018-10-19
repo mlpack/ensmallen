@@ -600,8 +600,8 @@ sets of methods for other types of objective functions.
 \midrule
 % TODO: these are just single-run results from Marcus' laptop!  We need to do
 % 10 and average.
-default & {\bf 0.004s} & 1.044s & 0.021s & 2.920s \\
-tuned & & 0.5s-ish? & & ?? \\ % TODO
+default & {\bf 0.004s} & 1.069s & 0.021s & 3.173s \\
+tuned & & 0.574s & & 3.122s \\ % TODO
 \bottomrule
 \end{tabular}
 \end{center}
@@ -719,17 +719,17 @@ average across 10 runs.
 100k & $d$: 1k, $n$: 100k \\
 \midrule
 % TODO: this was only one trial on Ryan's desktop!
-{\tt ensmallen}-1 & {\bf 0.001s} & {\bf 0.006s} & {\bf 0.139s} & {\bf 1.698s} \\
-{\tt ensmallen}-2 & 0.002s & 0.008s & 0.204s & 2.497s \\
+{\tt ensmallen}-1 & {\bf 0.001s} & {\bf 0.009s} & {\bf 0.154s} & {\bf 2.215s} \\
+{\tt ensmallen}-2 & 0.002s & 0.016s & 0.182s & 2.522s \\
 % Dropped for space and awful performance
 %{\tt Calculus.jl} & 0.172s & 0.960s & 27.428s & 2535.507s \\
-{\tt Optim.jl} & 0.007s & 0.025s & 0.390s & 4.107s \\
-{\tt scipy} & 0.002s & 0.010s & 0.198s & 2.022s \\
-{\tt bfgsmin} & 0.215s & 1.705s & 15.998s & ??? \\
+{\tt Optim.jl} & 0.006s & 0.030s & 0.337s & 4.271s \\
+{\tt scipy} & 0.003s & 0.017s & 0.202s & 2.729s \\
+{\tt bfgsmin} & 0.071s & 0.859s & 23.220s & 2859.81s\\
 % It's possible to tune ForwardDiff.jl a bit, but it doesn't give significant
 % speedups to make it competitive and it really makes the code ugly.
-{\tt ForwardDiff.jl} & 0.553s & 1.162s & 6.665s & 778.250s \\
-{\tt autograd} & ??? & ??? & ??? & ??? \\
+{\tt ForwardDiff.jl} & 0.497s & 1.159s & 4.996s & 603.106s \\
+{\tt autograd} & 0.007s & 0.026s & 0.210s & 2.673s \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
