@@ -2,7 +2,7 @@
  * @file softmax_regression_function.hpp
  * @author Siddharth Agrawal
  *
- * The function to be optimized for softmax regression. Any mlpack optimizer
+ * The function to be optimized for softmax regression. Any ensmallen optimizer
  * can be used.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -197,8 +197,8 @@ class SoftmaxRegressionFunction
   bool fitIntercept;
 };
 
-} // namespace regression
-} // namespace mlpack
+} // namespace test
+} // namespace ens
 
 // Include implementation.
 #include "softmax_regression_function_impl.hpp"

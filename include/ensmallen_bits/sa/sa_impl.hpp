@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_SA_SA_IMPL_HPP
 #define ENSMALLEN_SA_SA_IMPL_HPP
 
-// TODO: actually strip the laplace distribution from here, or import it.
-//#include <mlpack/core/dists/laplace_distribution.hpp>
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {

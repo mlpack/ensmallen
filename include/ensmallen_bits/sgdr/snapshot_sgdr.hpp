@@ -51,8 +51,8 @@ namespace ens {
  * @endcode
  *
  * @tparam UpdatePolicyType Update policy used during the iterative update
- *         process. By default the momentum update policy
- *         (see mlpack::optimization::MomentumUpdate) is used.
+ *         process. By default the momentum update policy (see
+ *         ens::MomentumUpdate) is used.
  */
 template<typename UpdatePolicyType = MomentumUpdate>
 class SnapshotSGDR

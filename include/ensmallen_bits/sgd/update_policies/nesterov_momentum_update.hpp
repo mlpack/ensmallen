@@ -49,7 +49,7 @@ class NesterovMomentumUpdate
    * The Initialize method is called by SGD Optimizer method before the start of
    * the iteration update process.  In the momentum update policy the velocity
    * matrix is initialized to the zeros matrix with the same size as the
-   * gradient matrix (see mlpack::optimization::SGD::Optimizer )
+   * gradient matrix (see ens::SGD<>).
    *
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.

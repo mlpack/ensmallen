@@ -120,9 +120,6 @@ template<typename U, U> struct SigCheck : std::true_type {};
  * For general references, see:
  * http://stackoverflow.com/a/264088/391618
  *
- * For an mlpack specific use case, see /mlpack/core/util/prefixedoutstream.hpp
- * and /mlpack/core/util/prefixedoutstream_impl.hpp
- *
  * @param NAME the name of the struct to construct. For example: HasToString
  * @param FUNC the name of the function to check for. For example: ToString
  */
