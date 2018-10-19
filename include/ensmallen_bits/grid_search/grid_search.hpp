@@ -33,15 +33,17 @@ class GridSearch
    *
    * @param function Function to optimize.
    * @param bestParameters Variable for storing results.
-   * @param datasetInfo Type information for each dimension of the dataset. It
-   *     should store possible values for each parameter.
+   * @param categoricalDimensions Set of dimension types.  If a value is true,
+   *     then that dimension is a categorical dimension.
+   * @param numCategories Number of categories in each categorical dimension.
    * @return Objective value of the final point.
    */
   template<typename FunctionType>
   double Optimize(
       FunctionType& function,
       arma::mat& bestParameters,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo);
+      const std::vector<bool>& categoricalDimensions,
+      const arma::Row<size_t>& numCategories);
 
  private:
   /**
@@ -57,7 +59,8 @@ class GridSearch
       double& bestObjective,
       arma::mat& bestParameters,
       arma::vec& currentParameters,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      const std::vector<bool>& categoricalDimensions,
+      const arma::Row<size_t>& numCategories,
       size_t i);
 };
 
