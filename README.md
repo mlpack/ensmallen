@@ -23,3 +23,30 @@ is licensed under the 3-clause BSD license (the "License").
 A copy of the License is included in the "LICENSE.txt" file.
 You may also obtain a copy of the License at
 http://opensource.org/licenses/BSD-3-Clause
+
+
+### Developers and Contributors
+
+* Ryan Curtin
+* Dongryeol Lee
+* Marcus Edel
+* Sumedh Ghaisas
+* Siddharth Agrawal
+* Stephen Tu
+* Shikhar Bhardwaj
+* Vivek Pal
+* Sourabh Varshney
+* Chenzhe Diao
+* Abhinav Moudgil
+* Konstantin Sidorov
+* Kirill Mishchenko
+* Kartik Nighania
+* Haritha Nair
+* Moksh Jain
+* Abhishek Laddha
+* Arun Reddy
+* Nishant Mehta
+* Trironk Kiatkungwanglai
+* Vasanth Kalingeri
+* Zhihao Lou
+* Conrad Sanderson
