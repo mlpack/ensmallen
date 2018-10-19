@@ -20,29 +20,8 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/parallel_sgd/decay_policies/constant_step.hpp>
-// #include <mlpack/core/optimizers/parallel_sgd/decay_policies/exponential_backoff.hpp>
-// #include <mlpack/core/optimizers/parallel_sgd/sparse_test_function.hpp>
-// #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
-// 
-// // We need some thorough testing.
-// #define private public
-// #include <mlpack/core/optimizers/parallel_sgd/parallel_sgd.hpp>
-// #undef private
-//
-// // TODO: the above #define is an abomination; my eyes hurt
-// // TODO: it's not going to work for ensmallen, where everything is included in one hit at the start
-// 
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
-
-
-// These tests are only compiled if the user has specified OpenMP to be
-// used.
+// These tests are only compiled if OpenMP is used.
 #ifdef ENS_USE_OPENMP
-
 
 /**
  * Test the correctness of the Parallel SGD implementation using a specified
