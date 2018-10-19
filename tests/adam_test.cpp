@@ -1,9 +1,17 @@
-// Copyright (c) 2018 ensmallen developers.
-//
-// Licensed under the 3-clause BSD license (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// http://www.opensource.org/licenses/BSD-3-Clause
+/**
+ * @file adam_test.cpp
+ * @author Vasanth Kalingeri
+ * @author Vivek Pal
+ * @author Sourabh Varshney
+ * @author Haritha Nair
+ * @author Marcus Edel
+ * @author Conrad Sanderson
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
