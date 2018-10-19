@@ -16,16 +16,6 @@
 using namespace ens;
 using namespace ens::test;
 
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/sdp/sdp.hpp>
-// #include <mlpack/core/optimizers/sdp/primal_dual.hpp>
-// #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-//   
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::distribution;
-// using namespace mlpack::neighbor;
-
 class UndirectedGraph
 {
  public:
