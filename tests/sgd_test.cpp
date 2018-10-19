@@ -18,15 +18,6 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-// #include <mlpack/core.hpp>
-// #include <mlpack/core/optimizers/sgd/sgd.hpp>
-// #include <mlpack/core/optimizers/problems/generalized_rosenbrock_function.hpp>
-// #include <mlpack/core/optimizers/problems/sgd_test_function.hpp>
-// 
-// using namespace mlpack;
-// using namespace mlpack::optimization;
-// using namespace mlpack::optimization::test;
-
 TEST_CASE("SimpleSGDTestFunction","[SGDTest]")
 {
   SGDTestFunction f;
