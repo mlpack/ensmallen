@@ -289,6 +289,15 @@ TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
 
 TEST_CASE("SmallLovaszThetaSdp","[SdpPrimalDualTest]")
 {
+  // Armadillo will often output solve() failure warnings on this test, but we
+  // want to hide the output so users don't get confused.  (If there is an
+  // actual failure, users will still see that.)
+  std::ostringstream coutTmp, cerrTmp;
+  std::ostream& oldCoutStream = arma::get_cout_stream();
+  std::ostream& oldCerrStream = arma::get_cerr_stream();
+  arma::set_cout_stream(coutTmp);
+  arma::set_cerr_stream(cerrTmp);
+
   UndirectedGraph g;
   UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
   auto sdp = ConstructLovaszThetaSDPFromGraph(g);
@@ -299,6 +308,9 @@ TEST_CASE("SmallLovaszThetaSdp","[SdpPrimalDualTest]")
   arma::vec ysparse, ydense;
   solver.Optimize(X, ysparse, ydense, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
+
+  arma::set_cout_stream(oldCoutStream);
+  arma::set_cerr_stream(oldCerrStream);
 }
 
 static inline arma::sp_mat
