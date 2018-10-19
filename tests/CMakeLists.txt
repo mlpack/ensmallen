@@ -17,7 +17,7 @@ set(ENSMALLEN_TESTS_SOURCES
     lrsdp_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp
-    # parallel_sgd_test.cpp
+    parallel_sgd_test.cpp
     proximal_test.cpp
     rmsprop_test.cpp
     sa_test.cpp
