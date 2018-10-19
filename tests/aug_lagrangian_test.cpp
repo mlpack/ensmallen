@@ -1,6 +1,8 @@
 /**
  * @file aug_lagrangian_test.cpp
  * @author Ryan Curtin
+ * @author Marcus Edel
+ * @author Conrad Sanderson
  *
  * Test of the AugmentedLagrangian class using the test functions defined in
  * aug_lagrangian_test_functions.hpp.
