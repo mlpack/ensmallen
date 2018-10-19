@@ -19,25 +19,25 @@ namespace ens {
 namespace traits {
 
 //! Detect an Evaluate() method.
-HAS_EXACT_METHOD_FORM(Evaluate, HasEvaluate)
+ENS_HAS_EXACT_METHOD_FORM(Evaluate, HasEvaluate)
 //! Detect a Gradient() method.
-HAS_EXACT_METHOD_FORM(Gradient, HasGradient)
+ENS_HAS_EXACT_METHOD_FORM(Gradient, HasGradient)
 //! Detect an EvaluateWithGradient() method.
-HAS_EXACT_METHOD_FORM(EvaluateWithGradient, HasEvaluateWithGradient)
+ENS_HAS_EXACT_METHOD_FORM(EvaluateWithGradient, HasEvaluateWithGradient)
 //! Detect a NumFunctions() method.
-HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions)
+ENS_HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions)
 //! Detect a Shuffle() method.
-HAS_EXACT_METHOD_FORM(Shuffle, HasShuffle)
+ENS_HAS_EXACT_METHOD_FORM(Shuffle, HasShuffle)
 //! Detect a NumConstraints() method.
-HAS_EXACT_METHOD_FORM(NumConstraints, HasNumConstraints)
+ENS_HAS_EXACT_METHOD_FORM(NumConstraints, HasNumConstraints)
 //! Detect an EvaluateConstraint() method.
-HAS_EXACT_METHOD_FORM(EvaluateConstraint, HasEvaluateConstraint)
+ENS_HAS_EXACT_METHOD_FORM(EvaluateConstraint, HasEvaluateConstraint)
 //! Detect a GradientConstraint() method.
-HAS_EXACT_METHOD_FORM(GradientConstraint, HasGradientConstraint)
+ENS_HAS_EXACT_METHOD_FORM(GradientConstraint, HasGradientConstraint)
 //! Detect a NumFeatures() method.
-HAS_EXACT_METHOD_FORM(NumFeatures, HasNumFeatures)
+ENS_HAS_EXACT_METHOD_FORM(NumFeatures, HasNumFeatures)
 //! Detect a PartialGradient() method.
-HAS_EXACT_METHOD_FORM(PartialGradient, HasPartialGradient)
+ENS_HAS_EXACT_METHOD_FORM(PartialGradient, HasPartialGradient)
 
 //! This is the form of a non-const Evaluate() method.
 template<typename FunctionType>
@@ -259,7 +259,7 @@ struct UnconstructableType
 /**
  * Utility struct: sometimes we want to know if we have two functions available,
  * and that at least one of them is non-const and non-static.  If the
- * corresponding checkers (from HAS_METHOD_FORM()) are given as CheckerA and
+ * corresponding checkers (from ENS_HAS_METHOD_FORM()) are given as CheckerA and
  * CheckerB, and the corresponding non-const, const, and static function
  * signatures are given as SignatureA, ConstSignatureA, StaticSignatureA,
  * SignatureB, ConstSignatureB, and StaticSignatureB, then 'value' will be true
@@ -299,7 +299,7 @@ struct HasNonConstSignatures
 /**
  * Utility struct: sometimes we want to know if we have two functions available,
  * and that at least one of them is const and both of them are not non-const and
- * non-static.  If the corresponding checkers (from HAS_METHOD_FORM()) are given
+ * non-static.  If the corresponding checkers (from ENS_HAS_METHOD_FORM()) are given
  * as CheckerA and CheckerB, and the corresponding const and static function
  * signatures are given as ConstSignatureA, StaticSignatureA, ConstSignatureB,
  * and StaticSignatureB, then 'value' will be true if methods with the correct
