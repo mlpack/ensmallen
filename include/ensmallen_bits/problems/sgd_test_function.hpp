@@ -39,18 +39,10 @@ class SGDTestFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("6; -45.6; 6.2"); }
 
-  //! Evaluate a function.
-  double Evaluate(const arma::mat& coordinates, const size_t i) const;
-
   //! Evaluate a function for a particular batch-size.
   double Evaluate(const arma::mat& coordinates,
                   const size_t begin,
                   const size_t batchSize) const;
-
-  //! Evaluate the gradient of a function.
-  void Gradient(const arma::mat& coordinates,
-                const size_t i,
-                arma::mat& gradient) const;
 
   //! Evaluate the gradient of a function for a particular batch-size
   void Gradient(const arma::mat& coordinates,
