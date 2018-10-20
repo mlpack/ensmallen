@@ -48,21 +48,8 @@
 
 \begin{document}
 
-% TODO: title could possibly be improved
-%\title{\texttt{ensmallen}: a generic C++ library for fast optimization}  %% it's not clear what "optimization" refers to here
-%% other possibilities:
-%\title{\texttt{ensmallen}: a flexible C++ library for function optimization in machine learning}
-%\title{\texttt{ensmallen}: a fast C++ library for function optimization in machine learning}
-%\title{\texttt{ensmallen}: a C++ library for fast function optimization in machine learning}
-%\title{\texttt{ensmallen}: a C++ library for fast and flexible function optimization}
-%\title{\texttt{ensmallen}: a C++ library of fast and flexible function optimizers}
-%\title{\texttt{ensmallen}: a library of flexible function optimizers in C++}
-%\title{\texttt{ensmallen}: a library of fast and flexible function optimizers in C++}
-%\title{\texttt{ensmallen}: a flexible C++ library for function optimization}
 \title{\texttt{ensmallen}: a flexible C++ library for efficient function optimization}
 
-% Alphabetical ordering?
-% TODO: check affiliations
 \author{Shikhar Bhardwaj \\
 Delhi Technological University \\
 Delhi, India 110042 \\
@@ -78,16 +65,10 @@ Free University of Berlin \\
 Arnimallee 7, 14195 Berlin \\
 \texttt{marcus.edel@fu-berlin.de}
 \And
-%% CS: I've added "Independent Researcher" below for now,
-%% CS: as a blank affiliation looks weird and incomplete
 Yannis Mentekidis \\
 Independent Researcher \\
 \texttt{mentekid@gmail.com}
-% any affiliation/email?
-%% CS: googling suggests that Yannis is/was affiliated with Aristotle University of Thessaloniki 
-%% CS: and is perhaps now with Amazon
 \And
-%% CS: I have two affiliations, so I've listed them on two lines
 Conrad Sanderson \\
 Data61, CSIRO, Australia \\
 University of Queensland, Australia\\
@@ -98,7 +79,6 @@ University of Queensland, Australia\\
 
 \begin{abstract}
 \vspace*{-0.3em}
-%% the abstract below still needs more meat and sharpening
 We present \texttt{\small ensmallen}, a fast and flexible C++ library for mathematical optimization of 
 arbitrary user-supplied functions,
 which can be applied to many machine learning problems.
@@ -115,8 +95,6 @@ support compiler optimizations that provide fast runtimes.
 Empirical comparisons show that \texttt{\small ensmallen} is able to outperform other
 optimization frameworks (like Julia and SciPy), sometimes by large margins.
 The library is distributed under the
-% save words
-% 3-clause
 BSD license and is ready for use
 in production environments.
 \end{abstract}
@@ -128,8 +106,7 @@ algorithms.  For a given objective function $f(\cdot)$
 (which may have a special structure or constraints),
 almost all machine learning problems can be boiled down
 to the following optimization form:
-%
-%\vspace*{-0.2em}
+
 \begin{equation}
 \argmindown_x f(x).
 \end{equation}
@@ -141,15 +118,6 @@ training of deep neural networks is dominated by the optimization of the model
 parameters on the data~\cite{schmidhuber2015deep}.
 Even popular machine learning models such as logistic regression
 have training times mostly dominated by an optimization procedure~\cite{kingma2015adam}.
-% TODO: might be nice to have something kind of anecdotal like 'even new
-% students to the field of machine learning quickly encounter optimization' and
-% cite, e.g., Andrew Ng's coursera course or some ML textbook or similar
-%% CS: i think we don't need to explore this too much; better to cut out all the
-%% CS: fat and stick with concrete examples, instead of veering off on tangents
-%
-% or maybe just a note about how many optimization techniques get published at
-% NIPS every year?
-%% CS: NIPS is too self-referential here
 
 The ubiquity of optimization in machine learning algorithms highlights the need
 for robust and flexible implementations of optimization algorithms.
@@ -269,7 +237,6 @@ with optional interface to GPUs via NVBLAS~\cite{nvidia2015}.
         \cmidrule[1pt]{2-9}
     \end{tabular}
 \end{adjustbox}
-%   \begin{tablenotes}\footnotesize
 \caption{\footnotesize{
 Feature comparison: \CIRCLE = provides feature,
 \LEFTcircle = partially provides feature, - = does not provide feature.
@@ -289,12 +256,7 @@ that the framework can natively take advantage of sparse gradients; and
 optimizing {\bf user-defined objective functions}.  It is also easy to implement a
 new optimizer in the \texttt{\small ensmallen} framework.  Overall, our goal is to provide
 an easy-to-use library that can solve the problem
-%\vspace*{-0.4em}
-%\begin{equation}
 $\argminright_{x} f(x)$
-%\end{equation}
-%\vspace*{-0.4em}
-%\noindent
 for any function $f(x)$ that takes a vector or matrix input $x$.
 In most cases, $f(x)$ will have special structure; one example might be that
 $f(x)$ is differentiable.  Therefore, the abstraction we have designed for \texttt{\small
@@ -314,7 +276,6 @@ accelerate computation.  These are listed below:
 \sum_{i} f_i(x)$
   \item {\bf categorical}: $x$ contains elements that can only take discrete
 values
-  %\item {\bf numeric}: all elements of $x$ take values in $\mathcal{R}$
   \item {\bf sparse}: the gradient $f'(x)$ or $f'_i(x)$ (for a separable
 function) is sparse
   \item {\bf partially differentiable}: the separable gradient $f_i'(x)$ is also
@@ -326,15 +287,6 @@ separable for a different axis $j$
 Due to its straightforward abstraction framework, \texttt{\small ensmallen} is able to
 provide a large set of diverse optimization algorithms for objective functions
 with these properties.  Below is a list of currently available optimizers:
-
-%% CS: WARNING !!!!
-%% CS: can't add more citations without causing the item with SGD variants
-%% CS: to overflow into 3 lines.
-%% CS: this causes a cascade effect of mucking up the entire layout of
-%% CS: the paper, causing the main text to spill over to 7 pages.
-%% 
-%% CS: the citations below should be sufficient; 
-%% CS: this is a workshop paper, not a journal article
 
 \vspace*{-0.4em}
 \begin{enumerate}[{~~~$\bullet$}]
@@ -364,12 +316,6 @@ with these properties.  Below is a list of currently available optimizers:
     Conditional Gradient Descent,
     Frank-Wolfe algorithm~\cite{Frank_1956},
     Simulated Annealing~\cite{kirkpatrick1983optimization}
-
-% These were a part of mlpack but not ensmallen.
-  %\item {\bf Objective functions:} Neural Networks, Logistic regression,
-  %    Matrix completion, Neighborhood Components Analysis, Regularized SVD,
-  %    Reinforcement learning, Softmax regression, Sparse autoencoders,
-  %    Sparse SVM
 \end{enumerate}
 
 In \texttt{\small ensmallen}'s framework, if a user wants to optimize a differentiable objective
@@ -434,10 +380,9 @@ model of linear regression is to assume that $y_i = x_i \theta$ for each
 point and response $(x_i, y_i)$.  To fit this model $\theta \in \mathcal{R}^d$
 to the data, we must find
 
-%% CS: i've added \nolimits to save a bit of space
 \vspace*{-0.5em}
 \begin{equation}
-\argmindown_\theta f(\theta) =   %% CS: for clarity
+\argmindown_\theta f(\theta) =
 \argmindown_\theta \sum\nolimits_{i = 1}^n (y_i - x_i \theta)^2 =
 \argmindown_\theta \| y - X \theta \|_F^2.
 \end{equation}
@@ -539,7 +484,6 @@ we can replace \texttt{\small Evaluate()} and \texttt{\small Gradient()}
 with an implementation of \texttt{\small EvaluateWithGradient()}
 that computes {\small $(y - X \theta)$} only once:
 
-%\vspace*{-0.5em}
 \begin{adjustbox}{scale={0.95}{0.95}}
 \begin{minipage}{1\textwidth}
 \begin{minted}[fontsize=\small]{c++}
@@ -551,7 +495,6 @@ that computes {\small $(y - X \theta)$} only once:
 \end{minted}
 \end{minipage}
 \end{adjustbox}
-%\vspace*{-0.5em}
 
 Template metaprogramming techniques are automatically used to
 detect which methods exist, and a wrapper class will use suitable mix-ins in
@@ -589,8 +532,6 @@ full-batch and small-batch \texttt{\small Evaluate()}, \texttt{\small Gradient()
 and \texttt{\small EvaluateWithGradient()}.  We aim to expand this support to other
 sets of methods for other types of objective functions.
 
-% TODO: anything to write about the visualization page that we had set up?
-
 \vspace*{-0.3em}
 \section{Experiments}
 \vspace*{-0.5em}
@@ -601,10 +542,8 @@ sets of methods for other types of objective functions.
 \toprule
  & \texttt{\small ensmallen} & \texttt{\small scipy} & \texttt{\small Optim.jl} & \texttt{\small samin} \\
 \midrule
-% TODO: these are just single-run results from Marcus' laptop!  We need to do
-% 10 and average.
 default & {\bf 0.004s} & 1.069s & 0.021s & 3.173s \\
-tuned & & 0.574s & & 3.122s \\ % TODO
+tuned & & 0.574s & & 3.122s \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -637,28 +576,7 @@ We compare four frameworks for this task:
 While another option here might be \texttt{\small simulannealbnd()} 
 in the Global Optimization Toolkit for MATLAB,
 no license was available.
-% TODO: get Marcus' system specs.
 We ran our code on a MacBook Pro i7 2018 with 16GB RAM running macOS 10.14 with clang 1000.10.44.2, Julia version 1.0.1, Python 2.7.15, and Octave 4.4.1.
-
-% We compare four frameworks%
-% %
-% \footnote{Another option here might be \texttt{\small simulannealbnd()} 
-% in the Global Optimization Toolkit for MATLAB.
-% However, no license was available for these simulations.}
-% %
-% for this task:
-% 
-% \vspace*{-0.3em}
-% \begin{itemize}
-% \renewcommand{\itemsep}{-0.5ex}
-%   \item \texttt{\small ensmallen}
-%   \item \texttt{\small scipy.optimize.anneal}, from scipy 0.14.1~\cite{jones2014scipy}
-%   \item simulated annealing implementation in \texttt{\small Optim.jl} with Julia
-% 1.0.1~\cite{mogensen2018optim}
-%   \item \texttt{\small samin} in the \texttt{\small optim} package for GNU Octave~\cite{octave}
-% \end{itemize}
-% \vspace*{-0.3em}
-
 
 Initially, we implemented these functions as simply as possible and ran them
 without any tuning. This reflects how a typical user might interact with a
@@ -694,18 +612,6 @@ ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016} package and for Python via the
 \texttt{\small Autograd}~\cite{maclaurin2015autograd}
 package.  For GNU Octave we use the \texttt{\small bfgsmin()} function.
 
-% For \texttt{\small ensmallen} we have 2 versions:
-% (i)~with only \texttt{\small EvaluateWithGradient()},
-% and
-% (ii)~with \texttt{\small Evaluate()} and \texttt{\small Gradient()}.
-% The code for these functions is as shown earlier.
-% For Julia we have the options of using manually defined objective and gradient functions,
-% or the gradient function can be automatically computed by 
-% \texttt{\small Calculus.jl}
-% (\href{https://github.com/JuliaMath/Calculus.jl}{\footnotesize github.com/JuliaMath/Calculus.jl})
-% or \texttt{\small ForwardDiff.jl}~\cite{RevelsLubinPapamarkou2016}.
-
-
 Results for various data sizes are shown in Table~\ref{tab:lbfgs}.  For each
 implementation, L-BFGS was allowed to run for only $10$ iterations and never
 converged in fewer iterations.  The datasets used for training are highly noisy random
@@ -721,7 +627,6 @@ average across 10 runs.
 {\em algorithm} & $d$: 100, $n$: 1k & $d$: 100, $n$: 10k & $d$: 100, $n$:
 100k & $d$: 1k, $n$: 100k \\
 \midrule
-% TODO: this was only one trial on Ryan's desktop!
 \texttt{\small ensmallen}-1 & {\bf 0.001s} & {\bf 0.009s} & {\bf 0.154s} & {\bf 2.215s} \\
 \texttt{\small ensmallen}-2 & 0.002s & 0.016s & 0.182s & 2.522s \\
 % Dropped for space and awful performance
@@ -743,7 +648,6 @@ with $n$ indicating the number of samples,
 and $d$ indicating the dimensionality of each sample.
 All Julia runs do not count compilation time.}
 \label{tab:lbfgs}
-%\vspace*{-1ex}
 \end{table}
 
 The results indicate that \texttt{\small ensmallen} with \texttt{\small
@@ -756,17 +660,6 @@ code, we observe that the output of automatic differentiators is not as
 efficient, especially with \texttt{\small ForwardDiff.jl}.  We expect this
 effect to be more pronounced with increasingly complex objective functions.
 
-% TODO: show flexibility of optimization with learning curves:
-%  - use LinearRegressionFunction modified for small batches
-%  - make sure Info or Debug output is on
-%  - run with a whole boatload of SGD variants
-%  - parse the output with awk/sed into a csv of objectives per epoch
-%  - plot it
-%  - profit!
-%
-% Probably a snippet showing the actual code to run with a bunch of different
-% optimizers is good too.  Other things can be cut to make space.
-
 Lastly, we demonstrate the easy pluggability in \texttt{\small ensmallen}
 for using various optimizers on the same task.
 Using a version of \texttt{\small LinearRegressionFunction} from Sec.~\ref{sec:linreg_example}
@@ -778,10 +671,6 @@ dataset from the UCI repository~\cite{ucimlrepository}
 yields the learning curves shown in Fig.~\ref{fig:learning_curve}(b).
 Any other optimizer for separable differentiable objective
 functions can be dropped into place in the same manner.
-%% Just because we have some extra space...
-%% CS: we need space for the acknowledgement section
-% This facilitates the seamless evaluation of various optimizers
-% for user-defined objective functions.
 
 \begin{figure}[b!]
 \centering
@@ -842,39 +731,9 @@ library, see the website and documentation at
 The library is already in use for function optimization in the
 \texttt{\small mlpack} machine learning toolkit~\cite{mlpack2018}.
 
-% RC: I think it's really important to highlight ensmallen's usage (and
-% genesis), although I can't find the right words to concisely and non-awkwardly
-% say that we wrote ensmallen as part of mlpack originally.
-% 
-%% CS: good point, though for our purposes i think it's sufficient
-%% CS: to simply state that mlpack uses ensmallen.
-%% CS: getting into a tangent on the genesis can negatively distract
-%% CS: from the central message. besides, there is no room for a proper
-%% CS: explanation.
-%% CS:
-%% CS: I recommend to avoid interchangeably mixing around the words
-%% CS: "library", "toolkit", "package" when referring to ensmallen.
-%% CS: it's better to consistently stick to "library", and use
-%% CS: the other words to refer to other software, such as mlpack.
-%% CS: the point is to avoid potential concept clashes
-%% CS: (ie. too much overloading on a word), which can lead
-%% CS: to confusion as to what exact software we're referring to.
-
-%\begin{small}
 {\bf Acknowledgements.}
 We would like to thank the many contributors to \texttt{\small ensmallen},
 who are listed on the associated website.
-%\end{small}
-
-% \subsubsection*{Acknowledgements}
-% \vspace*{-0.5em}
-% 
-% The development team of \texttt{\small ensmallen} does not include just the authors named
-% here but also a long list of other contributors.  See
-% \url{https://www.ensmallen.org/about.html} for more information.
-% % TODO: that URL may change
-
-
 
 \bibliographystyle{plain}
 \bibliography{paper}
