@@ -45,6 +45,8 @@ class L_BFGS
    * @param wolfe Parameter for detecting the Wolfe condition.
    * @param minGradientNorm Minimum gradient norm required to continue the
    *     optimization.
+   * @param factr Minimum relative function value decrease to continue
+   *     the optimization.
    * @param maxLineSearchTrials The maximum number of trials for the line search
    *     (before giving up).
    * @param minStep The minimum step of the line search.
@@ -155,6 +157,9 @@ class L_BFGS
    * (1989).
    *
    * @return The calculated scaling factor.
+   * @param gradient The gradient at the initial point.
+   * @param s Differences between the iterate and old iterate matrix.
+   * @param y Differences between the gradient and the old gradient matrix.
    */
   double ChooseScalingFactor(const size_t iterationNum,
                              const arma::mat& gradient,
@@ -166,11 +171,12 @@ class L_BFGS
    * calculate a step size satisfying the Wolfe conditions.  The parameter
    * iterate will be modified if the method is successful.
    *
-   * @param functionValue Value of the function at the initial point
-   * @param iterate The initial point to begin the line search from
-   * @param gradient The gradient at the initial point
-   * @param searchDirection A vector specifying the search direction
-   * @param stepSize Variable the calculated step size will be stored in
+   * @param function Function to optimize.
+   * @param functionValue Value of the function at the initial point.
+   * @param iterate The initial point to begin the line search from.
+   * @param gradient The gradient at the initial point.
+   * @param searchDirection A vector specifying the search direction.
+   * @param stepSize Variable the calculated step size will be stored in.
    *
    * @return false if no step size is suitable, true otherwise.
    */
@@ -185,10 +191,12 @@ class L_BFGS
   /**
    * Find the L-BFGS search direction.
    *
-   * @param gradient The gradient at the current point
-   * @param iteration_num The iteration number
-   * @param scaling_factor Scaling factor to use (see ChooseScalingFactor_())
-   * @param search_direction Vector to store search direction in
+   * @param gradient The gradient at the current point.
+   * @param iterationNum The iteration number.
+   * @param scalingFactor Scaling factor to use (see ChooseScalingFactor_()).
+   * @param s Differences between the iterate and old iterate matrix.
+   * @param y Differences between the gradient and the old gradient matrix.
+   * @param searchDirection Vector to store search direction in.
    */
   void SearchDirection(const arma::mat& gradient,
                        const size_t iterationNum,
@@ -202,11 +210,13 @@ class L_BFGS
    * between the iterate and old iterate and the differences between the
    * gradient and the old gradient, respectively.
    *
-   * @param iterationNum Iteration number
-   * @param iterate Current point
-   * @param oldIterate Point at last iteration
-   * @param gradient Gradient at current point (iterate)
-   * @param oldGradient Gradient at last iteration point (oldIterate)
+   * @param iterationNum Iteration number.
+   * @param iterate Current point.
+   * @param oldIterate Point at last iteration.
+   * @param gradient Gradient at current point (iterate).
+   * @param oldGradient Gradient at last iteration point (oldIterate).
+   * @param s Differences between the iterate and old iterate matrix.
+   * @param y Differences between the gradient and the old gradient matrix.
    */
   void UpdateBasisSet(const size_t iterationNum,
                       const arma::mat& iterate,

@@ -23,12 +23,16 @@ namespace ens {
 /**
  * Initialize the L_BFGS object.
  *
- * @param numBasis Number of memory points to be stored
+ * @param numBasis Number of memory points to be stored (default 5).
+ * @param maxIterations Maximum number of iterations for the optimization
+ *     (0 means no limit and may run indefinitely).
  * @param armijoConstant Controls the accuracy of the line search routine for
  *     determining the Armijo condition.
  * @param wolfe Parameter for detecting the Wolfe condition.
  * @param minGradientNorm Minimum gradient norm required to continue the
  *     optimization.
+ * @param factr Minimum relative function value decrease to continue
+ *     the optimization.
  * @param maxLineSearchTrials The maximum number of trials for the line search
  *     (before giving up).
  * @param minStep The minimum step of the line search.
@@ -57,10 +61,14 @@ inline L_BFGS::L_BFGS(const size_t numBasis,
 }
 
 /**
- * Calculate the scaling factor gamma which is used to scale the Hessian
- * approximation matrix.  See method M3 in Section 4 of Liu and Nocedal (1989).
+ * Calculate the scaling factor, gamma, which is used to scale the Hessian
+ * approximation matrix.  See method M3 in Section 4 of Liu and Nocedal
+ * (1989).
  *
- * @return The calculated scaling factor
+ * @return The calculated scaling factor.
+ * @param gradient The gradient at the initial point.
+ * @param s Differences between the iterate and old iterate matrix.
+ * @param y Differences between the gradient and the old gradient matrix.
  */
 inline double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
                                           const arma::mat& gradient,
@@ -87,10 +95,12 @@ inline double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
 /**
  * Find the L_BFGS search direction.
  *
- * @param gradient The gradient at the current point
- * @param iterationNum The iteration number
- * @param scalingFactor Scaling factor to use (see ChooseScalingFactor_())
- * @param searchDirection Vector to store search direction in
+ * @param gradient The gradient at the current point.
+ * @param iterationNum The iteration number.
+ * @param scalingFactor Scaling factor to use (see ChooseScalingFactor_()).
+ * @param s Differences between the iterate and old iterate matrix.
+ * @param y Differences between the gradient and the old gradient matrix.
+ * @param searchDirection Vector to store search direction in.
  */
 inline void L_BFGS::SearchDirection(const arma::mat& gradient,
                                     const size_t iterationNum,
@@ -140,11 +150,13 @@ inline void L_BFGS::SearchDirection(const arma::mat& gradient,
  * the iterate and old iterate and the differences between the gradient and the
  * old gradient, respectively.
  *
- * @param iterationNum Iteration number
- * @param iterate Current point
- * @param oldIterate Point at last iteration
- * @param gradient Gradient at current point (iterate)
- * @param oldGradient Gradient at last iteration point (oldIterate)
+ * @param iterationNum Iteration number.
+ * @param iterate Current point.
+ * @param oldIterate Point at last iteration.
+ * @param gradient Gradient at current point (iterate).
+ * @param oldGradient Gradient at last iteration point (oldIterate).
+ * @param s Differences between the iterate and old iterate matrix.
+ * @param y Differences between the gradient and the old gradient matrix.
  */
 inline void L_BFGS::UpdateBasisSet(const size_t iterationNum,
                                    const arma::mat& iterate,
@@ -165,11 +177,12 @@ inline void L_BFGS::UpdateBasisSet(const size_t iterationNum,
  * Perform a back-tracking line search along the search direction to calculate a
  * step size satisfying the Wolfe conditions.
  *
- * @param functionValue Value of the function at the initial point
- * @param iterate The initial point to begin the line search from
- * @param gradient The gradient at the initial point
- * @param searchDirection A vector specifying the search direction
- * @param stepSize Variable the calculated step size will be stored in
+ * @param function Function to optimize.
+ * @param functionValue Value of the function at the initial point.
+ * @param iterate The initial point to begin the line search from.
+ * @param gradient The gradient at the initial point.
+ * @param searchDirection A vector specifying the search direction.
+ * @param stepSize Variable the calculated step size will be stored in.
  *
  * @return false if no step size is suitable, true otherwise.
  */
