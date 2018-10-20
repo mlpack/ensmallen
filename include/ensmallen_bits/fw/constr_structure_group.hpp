@@ -50,7 +50,7 @@ namespace ens {
  *  Year = {2013}}
  * @endcode
  *
- *  For ConstrStrctGroupSolver to work, we need to use template class GroupType, 
+ *  For ConstrStrctGroupSolver to work, we need to use template class GroupType,
  *  which gives functions:
  *
  *    size_t NumGroups();

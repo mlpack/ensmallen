@@ -16,7 +16,7 @@ namespace ens {
 
 /**
  * Use classic rule in the update step for FrankWolfe algorithm. That is,
- * take \f$ \gamma = \frac{2}{k+2} \f$, where \f$ k \f$ is the iteration 
+ * take \f$ \gamma = \frac{2}{k+2} \f$, where \f$ k \f$ is the iteration
  * number. The update rule would be:
  * \f[
  * x_{k+1} = (1-\gamma) x_k + \gamma s
