@@ -1,0 +1,24 @@
+sudo: required
+dist: trusty
+language: cpp
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++
+  - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+  - cmake . && make && sudo make install && cd ..
+
+install:
+  - mkdir build && cd build && cmake .. && make -j2
+
+script:
+  - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
+
+notifications:
+  email:
+    - mlpack-git@lists.mlpack.org
+  irc:
+    channels:
+      - "chat.freenode.net#mlpack"
+    on_success: change
+    on_failure: always
