@@ -99,5 +99,6 @@
 #include "ensmallen_bits/smorms3/smorms3.hpp"
 #include "ensmallen_bits/spalera_sgd/spalera_sgd.hpp"
 #include "ensmallen_bits/svrg/svrg.hpp"
+#include "ensmallen_bits/wn_grad/wn_grad.hpp"
 
 #endif
