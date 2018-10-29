@@ -31,6 +31,7 @@ set(ENSMALLEN_TESTS_SOURCES
     smorms3_test.cpp
     snapshot_ensembles.cpp
     spalera_sgd_test.cpp
+    spsa_test.cpp
     svrg_test.cpp
 )
 
