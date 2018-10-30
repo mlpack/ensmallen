@@ -2,10 +2,19 @@ sudo: required
 dist: trusty
 language: cpp
 
+env:
+  - ARMADILLO=latest
+  - ARMADILLO=minimum
+
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++
-  - curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+  - if [ $ARMADILLO == "latest" ]; then
+    curl https://ftp.fau.de/macports/distfiles/armadillo/ -- | grep '.tar.xz' | sed 's/^.*<a href="\(armadillo-[0-9]*.[0-9]*.[0-9]*.tar.xz\)".*$/\1/' | tail -1 | tar xvz && cd armadillo*
+    fi
+   - if [ $ARMADILLO == "minimum" ]; then
+    curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*
+    fi
   - cmake . && make && sudo make install && cd ..
 
 install:
