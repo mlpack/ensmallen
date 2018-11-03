@@ -29,6 +29,7 @@
 #include "nadam_update.hpp"
 #include "nadamax_update.hpp"
 #include "optimisticadam_update.hpp"
+#include "padam_update.hpp"
 
 namespace ens {
 
@@ -185,6 +186,8 @@ using Nadam = AdamType<NadamUpdate>;
 using NadaMax = AdamType<NadaMaxUpdate>;
 
 using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
+
+using Padam = AdamType<PadamUpdate>;
 
 } // namespace ens
 
