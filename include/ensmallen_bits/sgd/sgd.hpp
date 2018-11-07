@@ -71,9 +71,9 @@ namespace ens {
  * the first point in the dataset (presumably, the dataset is held internally in
  * the DecomposableFunctionType).
  *
- * @tparam UpdatePolicyType update policy used by SGD during the iterative update
- *     process. By default vanilla update policy (see ens::VanillaUpdate) is
- *     used.
+ * @tparam UpdatePolicyType update policy used by SGD during the iterative
+ *     update process. By default vanilla update policy (see ens::VanillaUpdate)
+ *     is used.
  * @tparam DecayPolicyType Decay policy used during the iterative update
  *     process to adjust the step size. By default the step size isn't going to
  *     be adjusted (i.e. NoDecay is used).
@@ -84,7 +84,7 @@ class SGD
 {
  public:
   /**
-   * Construct the SGD optimizer with the given function and parameters.  The
+   * Construct the SGD optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
