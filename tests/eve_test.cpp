@@ -36,7 +36,7 @@ TEST_CASE("EVESGDFunction","[EVETest]")
 /**
  * Run EVE on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("SWATSLogisticRegressionTest","[EVETest]")
+TEST_CASE("EVELogisticRegressionTest","[EVETest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -74,9 +74,9 @@ TEST_CASE("EVESphereFunctionTest","[EVETest]")
 }
 
 /**
- * Test the SWATS optimizer on the Wood function.
+ * Test the EVE optimizer on the Styblinski-Tang function.
  */
-TEST_CASE("SWATSStyblinskiTangFunctionTest","[EVETest]")
+TEST_CASE("EVEStyblinskiTangFunctionTest","[EVETest]")
 {
   StyblinskiTangFunction f(2);
   EVE optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
