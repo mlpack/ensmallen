@@ -20,10 +20,10 @@ namespace ens {
  * Learning with SGD can be slow. Applying Standard momentum can accelerate
  * the rate of convergence. Nesterov Momentum application can accelerate the
  * rate of convergence to O(1/k^2).
- * 
+ *
  * @code
  * @techreport{Nesterov1983,
- *   title       = {A Method Of Solving A Convex Programming Problem With 
+ *   title       = {A Method Of Solving A Convex Programming Problem With
  *                  Convergence Rate O(1/K^2)},
  *   author      = {Yuri Nesterov},
  *   institution = {Soviet Math. Dokl.},
@@ -39,8 +39,7 @@ class NesterovMomentumUpdate
    * Construct the Nesterov Momentum update policy with the given parameters.
    *
    */
-  NesterovMomentumUpdate(const double momentum = 0.5) :
-      momentum(momentum)
+  NesterovMomentumUpdate(const double momentum = 0.5) : momentum(momentum)
   {
     // Nothing to do.
   }
