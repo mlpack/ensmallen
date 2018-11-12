@@ -16,6 +16,20 @@
 using namespace ens;
 using namespace ens::test;
 
+class PrintLoss
+{
+ public:
+  template<typename... Targs>
+  bool Evaluate(double loss, Targs... t)
+  {
+    std::cout << loss << std::endl;
+    if (loss < 50)
+      return true;
+
+    return false;
+  }
+};
+
 /**
  * Run SARAH on logistic regression and make sure the results are
  * acceptable.
@@ -35,7 +49,8 @@ TEST_CASE("SAHRALogisticRegressionTest","[SARAHTest]")
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
-    optimizer.Optimize(lr, coordinates);
+    optimizer.Optimize(lr, coordinates, PrintLoss());
+    // optimizer.Optimize(lr, coordinates);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses, coordinates);

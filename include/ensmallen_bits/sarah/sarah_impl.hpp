@@ -39,9 +39,11 @@ SARAHType<UpdatePolicyType>::SARAHType(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
+template<typename DecomposableFunctionType, class... CallbackFunctionTypes>
 double SARAHType<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+    DecomposableFunctionType& function,
+    arma::mat& iterate,
+    CallbackFunctionTypes... callbackFunctions)
 {
   traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
 
@@ -166,6 +168,12 @@ double SARAHType<UpdatePolicyType>::Optimize(
         {
           break;
         }
+      }
+
+      if (Callback::Callbacks<CallbackFunctionTypes...>(
+        callbackFunctions..., overallObjective, iterate, gradient))
+      {
+        break;
       }
 
       currentFunction += effectiveBatchSize;

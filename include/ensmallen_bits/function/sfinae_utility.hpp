@@ -291,6 +291,22 @@ struct NAME                                                                  \
 #define ENS_HAS_EXACT_METHOD_FORM(METHOD, NAME) \
     ENS_HAS_METHOD_FORM_BASE(ENS_SINGLE_ARG(METHOD), ENS_SINGLE_ARG(NAME), 0)
 
+
+#undef  ENS_HAS_MEM_FUNC_ANY
+#define ENS_HAS_MEM_FUNC_ANY(FUNC, NAME)                                       \
+template<typename T, typename R, typename... A> struct NAME                    \
+{                                                                              \
+    template<typename PTRTOMENFUN, PTRTOMENFUN> struct testIt;                 \
+                                                                               \
+    template <typename C>                                                      \
+    static char dummy(testIt<R (C::*)(A...), &C::FUNC >*);                     \
+                                                                               \
+    typedef char twoChars[2];                                                  \
+    template <typename C> static twoChars& dummy(...);                         \
+                                                                               \
+    constexpr static bool value = ( sizeof(dummy<T>(nullptr)) == sizeof(char));\
+};
+
 /**
  * A version of ENS_HAS_METHOD_FORM() where the maximum number of extra arguments is
  * set to the default of 7.

@@ -75,6 +75,8 @@
 
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
+#include "ensmallen_bits/callbacks/callbacks.hpp"
+
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
 #include "ensmallen_bits/gradient_descent/gradient_descent.hpp"
 #include "ensmallen_bits/grid_search/grid_search.hpp"

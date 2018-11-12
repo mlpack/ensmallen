@@ -86,8 +86,20 @@ class SARAHType
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename DecomposableFunctionType, class... CallbackFunctionTypes>
+  double Optimize(DecomposableFunctionType& function,
+                  arma::mat& iterate,
+                  CallbackFunctionTypes... callbackFunctions);
+
+  template<class... CallbackFunctionTypes>
+  double Test(CallbackFunctionTypes... callbackFunctions)
+  {
+     bool result = false;
+     (void)std::initializer_list<int>{(result = result || static_cast<bool>(Callback::Evaluate(callbackFunctions, 1)), 0)... };
+  }
+
+
+
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
