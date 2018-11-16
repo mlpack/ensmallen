@@ -59,9 +59,9 @@ TEST_CASE("GridSearchTest", "[GridSearchTest]")
 
   // Now create the GridSearch optimizer with default parameters, and run the
   // optimization.
-  // The ens::GridSearch type can be replaced with any ensmallen optimizer that
+  // The GridSearch type can be replaced with any ensmallen optimizer that
   // is able to handle categorical functions.
-  ens::GridSearch gs;
+  GridSearch gs;
   gs.Optimize(c, params, categoricalDimensions, numCategories);
 
   REQUIRE(params[0] == 0);
