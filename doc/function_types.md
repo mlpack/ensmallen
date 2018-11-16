@@ -724,7 +724,7 @@ int main()
   // optimizer.  We must also create a std::vector<bool> that holds the types
   // of each dimension, and an arma::Row<size_t> that holds the number of
   // categories in each dimension.
-  CategoricalFunction c;
+  SimpleCategoricalFunction c;
 
   // We have three categorical dimensions only.
   std::vector<bool> categoricalDimensions;
