@@ -61,7 +61,6 @@
 
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
-// TODO: remove mlpack bits from each of these files
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
