@@ -74,7 +74,7 @@
 
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
 #include "ensmallen_bits/gradient_descent/gradient_descent.hpp"
-// #include "ensmallen_bits/grid_search/grid_search.hpp"
+#include "ensmallen_bits/grid_search/grid_search.hpp"
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
