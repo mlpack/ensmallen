@@ -1790,3 +1790,46 @@ optimizer.Optimize(f, coordinates);
  * [SGD](#standard-sgd)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
+
+## WNGrad
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+WNGrad is a general nonlinear update rule for the learning rate. WNGrad has
+near-optimal convergence rates in both the batch and stochastic settings.
+
+#### Constructors
+
+ * `WNGrad()`
+ * `WNGrad(`_`stepSize, batchSize`_`)`
+ * `WNGrad(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.562` |
+| `size_t` | **`batchSize`** | Initial batch size. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the batch order is shuffled; otherwise, each batch is visited in linear order. | `true` |
+
+Attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()` and `Shuffle()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+WNGrad<> optimizer(0.562, 1, 10000, 1e-4);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [WNGrad: Learn the Learning Rate in Gradient Descent](https://arxiv.org/abs/1803.02865)
+ * [SGD](#standard-sgd)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [Differentiable separable functions](#differentiable-separable-functions)
