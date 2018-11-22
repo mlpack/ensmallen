@@ -73,7 +73,7 @@ class WNGrad
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  WNGrad(const double stepSize = 0.56,
+  WNGrad(const double stepSize = 0.562,
          const size_t batchSize = 32,
          const size_t maxIterations = 100000,
          const double tolerance = 1e-5,
