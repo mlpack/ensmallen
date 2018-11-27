@@ -36,7 +36,7 @@ An example program that implements the objective function f(x) = 2 |x|^2 is
 shown below, using the simulated annealing optimizer.
 
 ```c++
-#include <ensmallen>
+#include <ensmallen.hpp>
 
 class SquaredFunction
 {
@@ -135,7 +135,7 @@ runtime of an implementation that uses `Evaluate()` and `Gradient()`, and the
 runtime of an implementation that uses `EvaluateWithGradient()`.
 
 ```c++
-#include <ensmallen>
+#include <ensmallen.hpp>
 
 // Define a differentiable objective function by implementing both Evaluate()
 // and Gradient() separately.
@@ -348,7 +348,7 @@ where $\operatorname{data}(i)$ represents the data point indexed by $i$ and
 $\operatorname{responses}(i)$ represents the observed response indexed by $i$.
 
 ```c++
-#include <ensmallen>
+#include <ensmallen.hpp>
 
 // This class implements the linear regression objective function as an
 // arbitrary separable function type.
@@ -541,7 +541,7 @@ only implements `EvaluateWithGradient()` in order to avoid redundant
 calculations.
 
 ```c++
-#include <ensmallen>
+#include <ensmallen.hpp>
 
 // This class implements the linear regression objective function as an
 // arbitrary separable function type.
@@ -697,7 +697,7 @@ The following optimizers can be used in this way to optimize a categorical funct
 An example program showing usage of categorical optimization is shown below.
 
 ```c++
-#include <ensmallen>
+#include <ensmallen.hpp>
 
 // An implementation of a simple categorical function.  The parameters can be
 // understood as x = [c1 c2 c3].  When c1 = 0, c2 = 2, and c3 = 1, the value of
