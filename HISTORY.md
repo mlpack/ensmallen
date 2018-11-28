@@ -1,5 +1,5 @@
 ### ensmallen 1.11.0
-###### ????-??-??
+###### 2018-11-28
  * Add WNGrad optimizer.
 
  * Fix header name in documentation samples.
