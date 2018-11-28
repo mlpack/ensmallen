@@ -78,7 +78,7 @@ class DifferentiableFunctionType
 {
  public:
   // Given parameters x, return the value of f(x).
-  void Evaluate(const arma::mat& x);
+  double Evaluate(const arma::mat& x);
 
   // Given parameters x and a matrix g, store f'(x) in the provided matrix g.
   // g should have the same size (rows, columns) as x.
@@ -558,10 +558,10 @@ class LinearRegressionFunction
   // functions starting with f_i(x) and ending with
   // f_{i + batchSize - 1}(x), and also compute the gradient of those functions
   // and store them in g.
-  void EvaluateWithGradient(const arma::mat& x,
-                            const size_t i,
-                            arma::mat& g,
-                            const size_t batchSize)
+  double EvaluateWithGradient(const arma::mat& x,
+                              const size_t i,
+                              arma::mat& g,
+                              const size_t batchSize)
   {
     // This slightly complex implementation uses Armadillo submatrices to
     // compute the objective functions and gradients simultaneously for
