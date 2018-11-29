@@ -78,7 +78,7 @@ class DifferentiableFunctionType
 {
  public:
   // Given parameters x, return the value of f(x).
-  void Evaluate(const arma::mat& x);
+  double Evaluate(const arma::mat& x);
 
   // Given parameters x and a matrix g, store f'(x) in the provided matrix g.
   // g should have the same size (rows, columns) as x.
