@@ -797,7 +797,7 @@ class ConstrainedFunctionType
   // the gradient to 0.  If the constraint is not satisfied, it could be
   // helpful to set the gradient in such a way that the gradient points in the
   // direction where the constraint would be satisfied.
-  double GradientConstraint(const size_t i, const arma::mat& x, arma::mat& g);
+  void GradientConstraint(const size_t i, const arma::mat& x, arma::mat& g);
 };
 ```
 
