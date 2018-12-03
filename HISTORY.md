@@ -2,6 +2,8 @@
 ###### ????-??-??
  * Add link to ensmallen PDF to README.md.
 
+ * Minor documentation fixes.
+
 ### ensmallen 1.11.1
 ###### 2018-11-29
  * Minor documentation fixes.
