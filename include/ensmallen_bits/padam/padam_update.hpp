@@ -9,8 +9,8 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_ADAM_PADAM_UPDATE_HPP
-#define ENSMALLEN_ADAM_PADAM_UPDATE_HPP
+#ifndef ENSMALLEN_PADAM_PADAM_UPDATE_HPP
+#define ENSMALLEN_PADAM_PADAM_UPDATE_HPP
 
 namespace ens {
 
@@ -38,8 +38,7 @@ class PadamUpdate
   /**
    * Construct the Padam update policy with the given parameters.
    *
-   * @param epsilon The epsilon value used to initialise the squared gradient
-   *        parameter.
+   * @param epsilon Epsilon is the minimum allowed gradient.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
    * @param partial Partially adaptive parameter.
@@ -99,7 +98,7 @@ class PadamUpdate
     vImproved = arma::max(vImproved, v);
 
     iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-        m / arma::pow(arma::sqrt(vImproved) + epsilon, partial * 2);
+        m / arma::pow(vImproved + epsilon, partial);
   }
 
   //! Get the value used to initialise the squared gradient parameter.
@@ -118,9 +117,9 @@ class PadamUpdate
   double& Beta2() { return beta2; }
 
   //! Get the partial adaptive parameter.
-  double Partial() const { return beta2; }
+  double Partial() const { return partial; }
   //! Modify the partial adaptive parameter.
-  double& Partial() { return beta2; }
+  double& Partial() { return partial; }
 
  private:
   //! The epsilon value used to initialise the squared gradient parameter.

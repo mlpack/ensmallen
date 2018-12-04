@@ -379,7 +379,7 @@ TEST_CASE("SimplePadamTestFunction", "[AdamTest]")
   for (size_t trial = 0; trial < 3; ++trial)
   {
     SGDTestFunction f;
-    Padam optimizer(1e-2, 1, 0.9, 0.99, 1e-8);
+    Padam optimizer(1e-2, 1, 0.9, 0.99, 0.25, 1e-8);
 
     arma::mat coordinates = f.GetInitialPoint();
     optimizer.Optimize(f, coordinates);
