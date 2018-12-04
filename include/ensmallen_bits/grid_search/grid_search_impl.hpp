@@ -24,31 +24,13 @@ double GridSearch::Optimize(
     const std::vector<bool>& categoricalDimensions,
     const arma::Row<size_t>& numCategories)
 {
-  if (categoricalDimensions.size() != iterate.n_rows)
-  {
-    std::ostringstream oss;
-    oss << "GridSearch::Optimize(): expected information about "
-        << iterate.n_rows << " dimensions in categoricalDimensions, "
-        << "but got " << categoricalDimensions.size();
-    throw std::invalid_argument(oss.str());
-  }
-
-  if (numCategories.n_elem != iterate.n_rows)
-  {
-    std::ostringstream oss;
-    oss << "GridSearch::Optimize(): expected numCategories to have length "
-        << "equal to number of dimensions (" << iterate.n_rows << ") but it has"
-        << " length " << numCategories.n_elem;
-    throw std::invalid_argument(oss.str());
-  }
-
   for (size_t i = 0; i < categoricalDimensions.size(); ++i)
   {
-    if (categoricalDimensions[i])
+    if (!categoricalDimensions[i])
     {
       std::ostringstream oss;
       oss << "GridSearch::Optimize(): the dimension " << i
-          << "is not categorical" << std::endl;
+          << " is not categorical" << std::endl;
       throw std::invalid_argument(oss.str());
     }
   }
