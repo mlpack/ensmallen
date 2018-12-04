@@ -41,8 +41,10 @@ class FTMLUpdate
   /**
    * Construct the FTML update policy with given epsilon parameter.
    *
-   * @param epsilon Value used to initialise the mean squared gradient
-   *        parameter.
+   * @param epsilon Epsilon is the minimum allowed gradient.
+   * @param beta1 Exponential decay rate for the first moment estimates.
+   * @param beta2 Exponential decay rate for the weighted infinity norm
+            estimates.
    */
   FTMLUpdate(const double epsilon = 1e-8,
              const double beta1 = 0.9,
