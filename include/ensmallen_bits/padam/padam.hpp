@@ -72,7 +72,7 @@ class Padam
    * @param beta2 Exponential decay rate for the weighted infinity norm
    *        estimates.
    * @param partial Partially adaptive parameter.
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Epsilon is the minimum allowed gradient.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -158,7 +158,7 @@ class Padam
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The Stochastic Gradient Descent object with PAdam policy.
+  //! The Stochastic Gradient Descent object with Padam policy.
   SGD<PadamUpdate> optimizer;
 };
 
