@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
-#define ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
+#ifndef ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
+#define ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
 
 namespace ens {
 
@@ -64,4 +64,4 @@ class NoDecay
 
 } // namespace ens
 
-#endif // ENSMALLEN_MINIBATCH_SGD_DECAY_POLICIES_NO_DECAY_HPP
+#endif // ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
