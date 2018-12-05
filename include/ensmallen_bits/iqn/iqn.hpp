@@ -43,21 +43,9 @@ namespace ens {
  * point.  Then, IQN considers the gradient of the objective function operating
  * on an individual point in its update of \f$ A \f$.
  *
- * For IQN to work, the class must implement the following function:
- *
- *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
- *   void Gradient(const arma::mat& coordinates,
- *                 const size_t i,
- *                 arma::mat& gradient);
- *
- * NumFunctions() should return the number of functions (\f$n\f$), and in the
- * other two functions, the parameter i refers to which individual function (or
- * gradient) is being evaluated.  So, for the case of a data-dependent function,
- * such as NCA, NumFunctions() should return the number of points in the
- * dataset, and Evaluate(coordinates, 0) will evaluate the objective function on
- * the first point in the dataset (presumably, the dataset is held internally in
- * the DecomposableFunctionType).
+ * IQN can optimize differentiable separable functions.  For more details, see
+ * the documentation on function types included with this distribution or on the
+ * ensmallen website.
  */
 class IQN
 {

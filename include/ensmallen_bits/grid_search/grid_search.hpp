@@ -18,10 +18,9 @@ namespace ens {
  * An optimizer that finds the minimum of a given function by iterating through
  * points on a multidimensional grid.
  *
- * For GridSearch to work, a FunctionType template parameter is required. This
- * class must implement the following function:
- *
- *   double Evaluate(const arma::mat& coordinates);
+ * GridSearch can optimize categorical functions.  For more details, see the
+ * documentation on function types included with this distribution or on the
+ * ensmallen website.
  */
 class GridSearch
 {
