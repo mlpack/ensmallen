@@ -12,6 +12,7 @@ set(ENSMALLEN_TESTS_SOURCES
     frankwolfe_test.cpp
     function_test.cpp
     gradient_descent_test.cpp
+    grid_search_test.cpp
     iqn_test.cpp
     katyusha_test.cpp
     lbfgs_test.cpp
@@ -33,6 +34,7 @@ set(ENSMALLEN_TESTS_SOURCES
     spalera_sgd_test.cpp
     svrg_test.cpp
     swats_test.cpp
+    wn_grad_test.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

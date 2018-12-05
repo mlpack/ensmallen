@@ -102,11 +102,11 @@ struct MethodFormDetector<Class, MethodForm, 7>
   void operator()(MethodForm<Class, T1, T2, T3, T4, T5, T6, T7>);
 };
 
-} // namespace sfinae
-} // namespace ens
-
 //! Utility struct for checking signatures.
 template<typename U, U> struct SigCheck : std::true_type {};
+
+} // namespace sfinae
+} // namespace ens
 
 /*
  * Constructs a template supporting the SFINAE pattern.
