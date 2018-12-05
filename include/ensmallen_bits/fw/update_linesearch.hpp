@@ -13,7 +13,7 @@
 #ifndef ENSMALLEN_FW_UPDATE_LINESEARCH_HPP
 #define ENSMALLEN_FW_UPDATE_LINESEARCH_HPP
 
-#include <ensmallen_bits/line_search/line_search.hpp>
+#include "line_search/line_search.hpp"
 
 namespace ens {
 
