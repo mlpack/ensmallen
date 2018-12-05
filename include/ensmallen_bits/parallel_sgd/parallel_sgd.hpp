@@ -31,25 +31,9 @@ namespace ens {
  *   Eprint = {arXiv:1106.5730},
  * }
  *
- * For Parallel SGD to work, a SparseFunctionType template parameter is
- * required. This class must implement the following functions:
- *
- *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
- *   void Gradient(const arma::mat& coordinates,
- *                 const size_t i,
- *                 arma::sp_mat& gradient);
- *
- * In these functions the parameter id refers to which individual function (or
- * gradient) is being evaluated. In case of a data-dependent function, the id
- * would refer to the index of the datapoint(or training example).
- * The data is distributed uniformly among the threads made available to the
- * program by the OpenMP runtime.
- *
- * The Gradient function interface is slightly changed from the
- * DecomposableFunctionType interface, it takes in a sparse matrix as the
- * out-param for the gradient, as ParallelSGD is only expected to be relevant in
- * situations where the computed gradient is sparse.
+ * ParallelSGD can optimize sparse differentiable separable functions.  For more
+ * details, see the documentation on function types included with this
+ * distribution or on the ensmallen website.
  *
  * @tparam DecayPolicyType Step size update policy used by parallel SGD
  *     to update the stepsize after each iteration.

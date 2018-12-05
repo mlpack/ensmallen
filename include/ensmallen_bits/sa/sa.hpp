@@ -38,13 +38,12 @@ namespace ens {
  * The system is considered "frozen" when its score fails to change more then
  * tolerance for maxToleranceSweep consecutive sweeps.
  *
- * For SA to work, the FunctionType template class, used by the Optimize()
- * method, must implement the following two methods:
+ * SA can optimize arbitrary functions.  For more details, see the documentation
+ * on function types included with this distribution or on the ensmallen
+ * website.
  *
- *   double Evaluate(const arma::mat& coordinates);
- *   arma::mat& GetInitialPoint();
- *
- * and the CoolingScheduleType parameter must implement the following method:
+ * The CoolingScheduleType template parameter must implement the following
+ * method:
  *
  *   double NextTemperature(const double currentTemperature,
  *                          const double currentValue);

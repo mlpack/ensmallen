@@ -26,20 +26,9 @@ namespace ens {
  * optimization.  In this scheme, a penalty term is added to the Lagrangian.
  * This method is also called the "method of multipliers".
  *
- * The template class LagrangianFunctionType, used by the Optimize() method,
- * must implement the following five methods:
- *
- * - double Evaluate(const arma::mat& coordinates);
- * - void Gradient(const arma::mat& coordinates, arma::mat& gradient);
- * - size_t NumConstraints();
- * - double EvaluateConstraint(size_t index, const arma::mat& coordinates);
- * - double GradientConstraint(size_t index, const arma::mat& coordinates,
- *        arma::mat& gradient);
- *
- * The number of constraints must be greater than or equal to 0, and
- * EvaluateConstraint() should evaluate the constraint at the given index for
- * the given coordinates.  Evaluate() should provide the objective function
- * value for the given coordinates.
+ * AugLagrangian can optimize constrained functions.  For more details, see the
+ * documentation on function types included with this distribution or on the
+ * ensmallen website.
  */
 class AugLagrangian
 {
