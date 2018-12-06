@@ -18,22 +18,6 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Test the SWATS optimizer on the simple SGD function.
- */
-TEST_CASE("SWATSSGDFunction","[SWATSTest]")
-{
-  SGDTestFunction f;
-  SWATS optimizer(1e-3, 1, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
-}
-
-/**
  * Run SWATS on logistic regression and make sure the results are acceptable.
  */
 TEST_CASE("SWATSLogisticRegressionTestFunction","[SWATSTest]")

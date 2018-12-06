@@ -89,10 +89,12 @@ class SWATSUpdate
 
     if (phaseSGD)
     {
-      sgdV *= beta1;
-      sgdV += gradient;
+      // Note we reuse the exponential moving average parameter here instead of
+      // introducing a new parameter (sgdV) as done in the paper.
+      v *= beta1;
+      v += gradient;
 
-      iterate -= (1 - beta1) * sgdRate * sgdV;
+      iterate -= (1 - beta1) * sgdRate * v;
       return;
     }
 
@@ -119,7 +121,7 @@ class SWATSUpdate
       if (std::abs(sgdRate - rate) < epsilon && iteration > 1)
       {
         phaseSGD = true;
-        sgdV.zeros();
+        v.zeros();
       }
     }
   }
