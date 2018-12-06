@@ -53,7 +53,7 @@ class SWATSUpdate
     iteration(0),
     phaseSGD(false),
     sgdRate(0),
-    sgdLamda(0)
+    sgdLambda(0)
   {
     // Nothing to do.
   }
@@ -113,8 +113,8 @@ class SWATSUpdate
     if (deltaGradient != 0)
     {
       const double rate = arma::dot(delta, delta) / deltaGradient;
-      sgdLamda = beta2 * sgdLamda + (1 - beta2) * rate;
-      sgdRate = sgdLamda / biasCorrection2;
+      sgdLambda = beta2 * sgdLambda + (1 - beta2) * rate;
+      sgdRate = sgdLambda / biasCorrection2;
 
       if (std::abs(sgdRate - rate) < epsilon && iteration > 1)
       {
@@ -168,7 +168,7 @@ class SWATSUpdate
   double sgdRate;
 
   //! SGD learning rate.
-  double sgdLamda;
+  double sgdLambda;
 };
 
 } // namespace ens

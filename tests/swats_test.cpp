@@ -23,7 +23,7 @@ using namespace ens::test;
 TEST_CASE("SWATSSGDFunction","[SWATSTest]")
 {
   SGDTestFunction f;
-  SWATS optimizer(1e-3, 1, 0.9, 0.999, 1e-6, 400000, 1e-9, true);
+  SWATS optimizer(1e-3, 1, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -36,7 +36,7 @@ TEST_CASE("SWATSSGDFunction","[SWATSTest]")
 /**
  * Run SWATS on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("SWATSSGDFuSWATSLogisticRegressionTestnction","[SWATSTest]")
+TEST_CASE("SWATSLogisticRegressionTestFunction","[SWATSTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -74,7 +74,7 @@ TEST_CASE("SWATSSphereFunctionTest","[SWATSTest]")
 }
 
 /**
- * Test the SWATS optimizer on the Wood function.
+ * Test the SWATS optimizer on the Styblinski-Tang function.
  */
 TEST_CASE("SWATSStyblinskiTangFunctionTest","[SWATSTest]")
 {
