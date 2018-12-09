@@ -11,7 +11,7 @@
 
 // NOTE: When using the ensmallen library in your code, only include the ensmallen.hpp header.
 // NOTE: Do not include any of the files in the ensmallen_bits folder.
- 
+
 #ifndef ENSMALLEN_HPP
 #define ENSMALLEN_HPP
 
@@ -68,6 +68,7 @@
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
+#include "ensmallen_bits/ftml/ftml.hpp"
 
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
@@ -77,6 +78,7 @@
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
+#include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
 #include "ensmallen_bits/rmsprop/rmsprop.hpp"
 
