@@ -65,23 +65,9 @@ namespace ens {
  * }
  * @endcode
  *
- * For big-batch SGD to work, a DecomposableFunctionType template parameter is
- * required.
- * This class must implement the following function:
- *
- *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
- *   void Gradient(const arma::mat& coordinates,
- *                 const size_t i,
- *                 arma::mat& gradient);
- *
- * NumFunctions() should return the number of functions, and in the other two
- * functions, the parameter i refers to which individual function (or gradient)
- * is being evaluated.  So, for the case of a data-dependent function,
- * NumFunctions() should return the number of points in the dataset, and
- * Evaluate(coordinates, 0) will evaluate the objective function on the first
- * point in the dataset (presumably, the dataset is held internally in the
- * DecomposableFunctionType).
+ * Big-batch SGD can optimize differentiable separable functions.  For more
+ * details, see the documentation on function types included with this
+ * distribution or on the ensmallen website.
  *
  * @tparam UpdatePolicyType Update policy used during the iterative update
  *     process. By default the AdaptiveStepsize update policy is used.

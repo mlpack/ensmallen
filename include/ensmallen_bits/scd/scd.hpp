@@ -42,21 +42,12 @@ namespace ens {
  * }
  * @endcode
  *
- * For SCD to work, the class must implement the following functions:
+ * SCD can optimize partially differentiable functions.  For more details, see
+ * the documentation on function types included with this distribution or on the
+ * ensmallen website.
  *
- *  size_t NumFeatures();
- *  double Evaluate(const arma::mat& coordinates);
- *  void PartialGradient(const arma::mat& coordinates,
- *                       const size_t j,
- *                       arma::sp_mat& gradient);
- *
- *  NumFeatures() should return the number of features in the decision variable.
- *  Evaluate gives the value of the loss function at the current decision
- *  variable and PartialGradient is used to evaluate the partial gradient with
- *  respect to the jth feature.
- *
- *  @tparam DescentPolicy Descent policy to decide the order in which the
- *      coordinate for descent is selected.
+ * @tparam DescentPolicy Descent policy to decide the order in which the
+ *     coordinate for descent is selected.
  */
 template <typename DescentPolicyType = RandomDescent>
 class SCD
