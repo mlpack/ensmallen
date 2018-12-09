@@ -78,10 +78,8 @@
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
-#include "ensmallen_bits/line_search/line_search.hpp"
 #include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
-#include "ensmallen_bits/proximal/proximal.hpp"
 #include "ensmallen_bits/rmsprop/rmsprop.hpp"
 
 #include "ensmallen_bits/sa/sa.hpp"

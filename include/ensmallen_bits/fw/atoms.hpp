@@ -11,7 +11,7 @@
 #ifndef ENSMALLEN_FW_ATOMS_HPP
 #define ENSMALLEN_FW_ATOMS_HPP
 
-#include <ensmallen_bits/proximal/proximal.hpp>
+#include "proximal/proximal.hpp"
 #include "func_sq.hpp"
 
 namespace ens {

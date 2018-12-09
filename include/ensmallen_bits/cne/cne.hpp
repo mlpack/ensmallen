@@ -63,10 +63,9 @@ namespace ens {
  *
  * The final value and the parameters are returned by the Optimize() method.
  *
- * For CNE to work, a FunctionType template parameter is required.
- * This class must implement the following function:
- *
- *   double Evaluate(const arma::mat& iterate);
+ * CNE can optimize arbitrary functions.  For more details, see the
+ * documentation on function types included with this distribution or on the
+ * ensmallen website.
  */
 class CNE
 {

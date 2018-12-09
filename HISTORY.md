@@ -2,7 +2,8 @@
 ###### ????-??-??
  * Add link to ensmallen PDF to README.md.
 
- * Minor documentation fixes.
+ * Minor documentation fixes.  Remove too-verbose documentation from source for
+   each optimizer (#61).
 
 ### ensmallen 1.11.1
 ###### 2018-11-29

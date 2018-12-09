@@ -56,6 +56,10 @@ namespace ens {
  * The parameter \f$ \epsilon \f$ is specified by the tolerance parameter to the
  * constructor.
  *
+ * FrankWolfe can optimize differentiable functions.  For more details, see the
+ * documentation on function types included with this distribution or on the
+ * ensmallen website.
+ *
  * For FrankWolfe to work, LinearConstrSolverType and UpdateRuleType
  * template parameters are required.
  * These classes must implement the following functions:
