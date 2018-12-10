@@ -52,11 +52,11 @@ namespace ens {
  * the first point in the dataset (presumably, the dataset is held internally in
  * the DecomposableFunctionType).
  */
-class EVE
+class Eve
 {
  public:
   /**
-   * Construct the EVE optimizer with the given function and parameters. The
+   * Construct the Eve optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -67,7 +67,8 @@ class EVE
    * @param batchSize Number of points to process in a single step.
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
-            estimates.
+   *        estimates.
+   * @param beta3 Exponential decay rate for relative change.
    * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param clip Clipping range to avoid extreme valus.
    * @param maxIterations Maximum number of iterations allowed (0 means no
@@ -76,7 +77,7 @@ class EVE
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  EVE(const double stepSize = 0.001,
+  Eve(const double stepSize = 0.001,
       const size_t batchSize = 32,
       const double beta1 = 0.9,
       const double beta2 = 0.999,
@@ -109,6 +110,31 @@ class EVE
   size_t BatchSize() const { return batchSize; }
   //! Modify the batch size.
   size_t& BatchSize() { return batchSize; }
+
+  //! Get the smoothing parameter.
+  double Beta1() const { return beta1; }
+  //! Modify the smoothing parameter.
+  double& Beta1() { return beta1; }
+
+  //! Get the second moment coefficient.
+  double Beta2() const { return beta2; }
+  //! Modify the second moment coefficient.
+  double& Beta2() { return beta2; }
+
+  //! Get the exponential decay rate for relative change.
+  double Beta3() const { return beta3; }
+  //! Modify the exponential decay rate for relative change.
+  double& Beta3() { return beta3; }
+
+  //! Get the value used to initialise the mean squared gradient parameter.
+  double Epsilon() const { return epsilon; }
+  //! Modify the value used to initialise the mean squared gradient parameter.
+  double& Epsilon() { return epsilon; }
+
+  //! Get the clipping range to avoid extreme valus.
+  double Clip() const { return clip; }
+  //! Modify the clipping range to avoid extreme valus.
+  double& Clip() { return clip; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
