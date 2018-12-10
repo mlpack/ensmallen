@@ -141,10 +141,8 @@ double EVE::Optimize(
       dt *= beta3;
       dt += (1 - beta3) * std::min(std::max(d, 1.0 / clip), clip);
     }
-    else
-    {
-      lastObjective = objective;
-    }
+
+    lastObjective = objective;
 
     iterate -= stepSize / dt * (m / biasCorrection1) /
         (arma::sqrt(v / biasCorrection2) + epsilon);
