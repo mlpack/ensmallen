@@ -18,17 +18,14 @@
 namespace ens {
 
 /**
- * The generic L-BFGS optimizer, which uses a back-tracking line search
- * algorithm to minimize a function.  The parameters for the algorithm (number
- * of memory points, maximum step size, and so forth) are all configurable via
- * either the constructor or standalone modifier functions.  A function which
- * can be optimized by this class's Optimize() method must implement the
- * following methods:
+ * The L-BFGS optimizer, which uses a back-tracking line search algorithm to
+ * minimize a function.  The parameters for the algorithm (number of memory
+ * points, maximum step size, and so forth) are all configurable via either the
+ * constructor or standalone modifier functions.
  *
- *  - a default constructor
- *  - double Evaluate(const arma::mat& coordinates);
- *  - void Gradient(const arma::mat& coordinates, arma::mat& gradient);
- *  - arma::mat& GetInitialPoint();
+ * L_BFGS can optimize differentiable functions.  For more details, see the
+ * documentation on function types included with this distribution or on the
+ * ensmallen website.
  */
 class L_BFGS
 {

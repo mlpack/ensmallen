@@ -1,85 +1,85 @@
 /**
- * @file ada_delta.hpp
- * @author Ryan Curtin
- * @author Vasanth Kalingeri
- * @author Abhinav Moudgil
+ * @file ftml.hpp
+ * @author Marcus Edel
  *
- * Implementation of the AdaDelta optimizer. AdaDelta is an optimizer that
- * dynamically adapts over time using only first order information.
- * Additionally, AdaDelta requires no manual tuning of a learning rate.
+ * Definition of Follow the Moving Leader (FTML).
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_ADA_DELTA_ADA_DELTA_HPP
-#define ENSMALLEN_ADA_DELTA_ADA_DELTA_HPP
+#ifndef ENSMALLEN_FTML_FTML_HPP
+#define ENSMALLEN_FTML_FTML_HPP
 
 #include <ensmallen_bits/sgd/sgd.hpp>
-#include "ada_delta_update.hpp"
+
+#include "ftml_update.hpp"
 
 namespace ens {
 
 /**
- * AdaDelta is an optimizer that uses two ideas to improve upon the two main
- * drawbacks of the Adagrad method:
- *
- *  - Accumulate Over Window
- *  - Correct Units with Hessian Approximation
+ * Follow the Moving Leader (FTML) is an optimizer where recent samples are
+ * weighted more heavily in each iteration, so FTML can adapt more quickly to
+ * changes.
  *
  * For more information, see the following.
  *
  * @code
- * @article{Zeiler2012,
- *   author  = {Matthew D. Zeiler},
- *   title   = {{ADADELTA:} An Adaptive Learning Rate Method},
- *   journal = {CoRR},
- *   year    = {2012}
+ * @inproceedings{Zheng2017,
+ *   author    = {Shuai Zheng and James T. Kwok},
+ *   title     = {Follow the Moving Leader in Deep Learning},
+ *   year      = {2017}
+ *   booktitle = {Proceedings of the 34th International Conference on Machine
+ *                Learning},
+ *   pages     = {4110--4119},
+ *   series    = {Proceedings of Machine Learning Research},
+ *   publisher = {PMLR},
  * }
  * @endcode
  *
- * AdaDelta can optimize differentiable separable functions.  For more details,
- * see the documentation on function types included with this distribution or on
- * the ensmallen website.
+ * FTML can optimize differentiable separable functions.  For more details, see
+ * the documentation on function types include with this distribution or on the
+ * ensmallen website.
  */
-class AdaDelta
+class FTML
 {
  public:
   /**
-   * Construct the AdaDelta optimizer with the given function and parameters.
-   * The defaults here are not necessarily good for the given problem, so it is
-   * suggested that the values used be tailored to the task at hand. The
+   * Construct the FTML optimizer with the given function and parameters. The
+   * defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
    * @param stepSize Step size for each iteration.
-   * @param batchSize Number of points to process in one step.
-   * @param rho Smoothing constant.
-   * @param epsilon Value used to initialise the mean squared gradient
-   *        parameter.
+   * @param batchSize Number of points to process in a single step.
+   * @param beta1 Exponential decay rate for the first moment estimates.
+   * @param beta2 Exponential decay rate for the weighted infinity norm
+            estimates.
+   * @param epsilon Epsilon is the minimum allowed gradient.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  AdaDelta(const double stepSize = 1.0,
-           const size_t batchSize = 32,
-           const double rho = 0.95,
-           const double epsilon = 1e-6,
-           const size_t maxIterations = 100000,
-           const double tolerance = 1e-5,
-           const bool shuffle = true);
+  FTML(const double stepSize = 0.001,
+       const size_t batchSize = 32,
+       const double beta1 = 0.9,
+       const double beta2 = 0.999,
+       const double epsilon = 1e-8,
+       const size_t maxIterations = 100000,
+       const double tolerance = 1e-5,
+       const bool shuffle = true);
 
   /**
-   * Optimize the given function using AdaDelta. The given starting point will
+   * Optimize the given function using FTML. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final
-   * objective value is returned. The DecomposableFunctionType is checked for
-   * API consistency at compile time.
+   * objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to optimize.
+   * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
@@ -101,9 +101,14 @@ class AdaDelta
   size_t& BatchSize() { return optimizer.BatchSize(); }
 
   //! Get the smoothing parameter.
-  double Rho() const { return optimizer.UpdatePolicy().Rho(); }
+  double Beta1() const { return optimizer.UpdatePolicy().Beta1(); }
   //! Modify the smoothing parameter.
-  double& Rho() { return optimizer.UpdatePolicy().Rho(); }
+  double& Beta1() { return optimizer.UpdatePolicy().Beta1(); }
+
+  //! Get the second moment coefficient.
+  double Beta2() const { return optimizer.UpdatePolicy().Beta2(); }
+  //! Modify the second moment coefficient.
+  double& Beta2() { return optimizer.UpdatePolicy().Beta2(); }
 
   //! Get the value used to initialise the mean squared gradient parameter.
   double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }
@@ -126,13 +131,13 @@ class AdaDelta
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The Stochastic Gradient Descent object with AdaDelta policy.
-  SGD<AdaDeltaUpdate> optimizer;
+  //! The Stochastic Gradient Descent object with the FTMLUpdate update policy.
+  SGD<FTMLUpdate> optimizer;
 };
 
 } // namespace ens
 
 // Include implementation.
-#include "ada_delta_impl.hpp"
+#include "ftml_impl.hpp"
 
 #endif

@@ -16,9 +16,14 @@
 namespace ens {
 
 /**
- * Interface to a primal dual interior point solver.
+ * PrimalDualSolver is a primal dual interior point solver for semidefinite
+ * programs.
  *
- * @tparam SDPType
+ * PrimalDualSolver can optimize semidefinite programs.  For more details, see the
+ * documentation on function types included with this distribution or on the
+ * ensmallen website.
+ *
+ * @tparam SDPType Type of SDP to solve.
  */
 template<typename SDPType>
 class PrimalDualSolver

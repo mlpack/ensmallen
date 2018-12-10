@@ -25,6 +25,17 @@ You may also obtain a copy of the License at
 http://opensource.org/licenses/BSD-3-Clause
 
 
+### Citation
+
+Please cite the following paper if you use ensmallen in your research and/or
+software. Citations are useful for the continued development and maintenance of
+the library.
+
+* S. Bhardwaj, R. Curtin, M. Edel, Y. Mentekidis, C. Sanderson.  
+  [ensmallen: a flexible C++ library for efficient function optimization](http://www.ensmallen.org/files/ensmallen_2018.pdf).  
+  Workshop on Systems for ML and Open Source Software at NIPS 2018.
+
+
 ### Developers and Contributors
 
 * Ryan Curtin

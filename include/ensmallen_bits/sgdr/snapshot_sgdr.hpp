@@ -50,6 +50,10 @@ namespace ens {
  * }
  * @endcode
  *
+ * SnapshotSGDR can optimize differentiable separable functions.  For more
+ * details, see the documentation on function types included with this
+ * distribution or on the ensmallen website.
+ *
  * @tparam UpdatePolicyType Update policy used during the iterative update
  *         process. By default the momentum update policy (see
  *         ens::MomentumUpdate) is used.

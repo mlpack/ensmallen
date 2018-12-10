@@ -23,6 +23,10 @@ namespace ens {
  * LRSDP is the implementation of Monteiro and Burer's formulation of low-rank
  * semidefinite programs (LR-SDP).  This solver uses the augmented Lagrangian
  * optimizer to solve low-rank semidefinite programs.
+ *
+ * LRSDP can optimize semidefinite programs.  For more details, see the
+ * documentation on function types included with this distribution or on the
+ * ensmallen website.
  */
 template <typename SDPType>
 class LRSDP
