@@ -81,15 +81,15 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-//        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
-//            << " with failure.  Try a smaller step size?" << std::endl;
+        Warn << "SGD: converged to " << overallObjective << "; terminating"
+            << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-//        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
-//            << "terminating optimization." << std::endl;
+        Info << "SGD: minimized within tolerance " << tolerance << "; "
+            << "terminating optimization." << std::endl;
         return overallObjective;
       }
 
@@ -127,8 +127,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     currentFunction += effectiveBatchSize;
   }
 
-//  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
-//      << "terminating optimization." << std::endl;
+  Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
+      << "terminating optimization." << std::endl;
 
   // Calculate final objective.
   overallObjective = 0;
