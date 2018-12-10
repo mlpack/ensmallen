@@ -2,7 +2,7 @@
  * @file eve_test.cpp
  * @author Marcus Edel
  *
- * Test file for the EVE optimizer.
+ * Test file for the Eve optimizer.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -18,12 +18,12 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Test the EVE optimizer on the simple SGD function.
+ * Test the Eve optimizer on the simple SGD function.
  */
-TEST_CASE("EVESGDFunction","[EVETest]")
+TEST_CASE("EveSGDFunction","[EveTest]")
 {
   SGDTestFunction f;
-  EVE optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10, 400000, 1e-9, true);
+  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10, 400000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -34,9 +34,9 @@ TEST_CASE("EVESGDFunction","[EVETest]")
 }
 
 /**
- * Run EVE on logistic regression and make sure the results are acceptable.
+ * Run Eve on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("EVELogisticRegressionTest","[EVETest]")
+TEST_CASE("EveLogisticRegressionTest","[EveTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -45,7 +45,7 @@ TEST_CASE("EVELogisticRegressionTest","[EVETest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  EVE optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);
 
@@ -59,12 +59,12 @@ TEST_CASE("EVELogisticRegressionTest","[EVETest]")
 }
 
 /**
- * Test the EVE optimizer on the Sphere function.
+ * Test the Eve optimizer on the Sphere function.
  */
-TEST_CASE("EVESphereFunctionTest","[EVETest]")
+TEST_CASE("EveSphereFunctionTest","[EveTest]")
 {
   SphereFunction f(2);
-  EVE optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -74,12 +74,12 @@ TEST_CASE("EVESphereFunctionTest","[EVETest]")
 }
 
 /**
- * Test the EVE optimizer on the Styblinski-Tang function.
+ * Test the Eve optimizer on the Styblinski-Tang function.
  */
-TEST_CASE("EVEStyblinskiTangFunctionTest","[EVETest]")
+TEST_CASE("EveStyblinskiTangFunctionTest","[EveTest]")
 {
   StyblinskiTangFunction f(2);
-  EVE optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);

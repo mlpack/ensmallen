@@ -20,7 +20,7 @@
 
 namespace ens {
 
-inline EVE::EVE(const double stepSize,
+inline Eve::Eve(const double stepSize,
                 const size_t batchSize,
                 const double beta1,
                 const double beta2,
@@ -44,7 +44,7 @@ inline EVE::EVE(const double stepSize,
 
 //! Optimize the function (minimize).
 template<typename DecomposableFunctionType>
-double EVE::Optimize(
+double Eve::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {
@@ -82,19 +82,19 @@ double EVE::Optimize(
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
-      Info << "EVE: iteration " << i << ", objective " << overallObjective
+      Info << "Eve: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Warn << "EVE: converged to " << overallObjective << "; terminating"
+        Warn << "Eve: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastOverallObjective - overallObjective) < tolerance)
       {
-        Info << "EVE: minimized within tolerance " << tolerance << "; "
+        Info << "Eve: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
         return overallObjective;
       }
@@ -151,7 +151,7 @@ double EVE::Optimize(
     currentFunction += effectiveBatchSize;
   }
 
-  Info << "EVE: maximum iterations (" << maxIterations << ") reached; "
+  Info << "Eve: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
   // Calculate final objective.
