@@ -136,7 +136,7 @@ double Eve::Optimize(
     if (i > 0)
     {
       const double d = std::abs(objective - lastObjective) /
-          std::min(objective, lastObjective);
+          (std::min(objective, lastObjective) + epsilon);
 
       dt *= beta3;
       dt += (1 - beta3) * std::min(std::max(d, 1.0 / clip), clip);
