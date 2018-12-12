@@ -495,6 +495,54 @@ optimizer.Optimize(f, coordinates);
  * [Neuroevolution in Wikipedia](https://en.wikipedia.org/wiki/Neuroevolution)
  * [Arbitrary functions](#arbitrary-functions)
 
+## Eve
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Eve is a stochastic gradient based optimization method with locally and globally adaptive learning rates.
+
+#### Constructors
+
+ * `Eve()`
+ * `Eve(`_`stepSize, batchSize`_`)`
+ * `Eve(`_`stepSize, batchSize, beta1, beta2, beta3, epsilon, clip, maxIterations, tolerance, shuffle`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`beta3`** | Exponential decay rate for relative change. | `0.999` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `double` | **`clip`** | Clipping range to avoid extreme valus. | `10` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Beta3()`, `Epsilon()`, `Clip()`, `MaxIterations()`,
+`Tolerance()`, and `Shuffle()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+Eve optimizer(0.001, 32, 0.9, 0.999, 0.999, 10, 1e-8, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## Frank-Wolfe
 
 *An optimizer for [differentiable functions](#differentiable-functions) that may also be constrained.*
