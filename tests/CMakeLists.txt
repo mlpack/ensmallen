@@ -9,6 +9,7 @@ set(ENSMALLEN_TESTS_SOURCES
     bigbatch_sgd_test.cpp
     cmaes_test.cpp
     cne_test.cpp
+    eve_test.cpp
     frankwolfe_test.cpp
     function_test.cpp
     gradient_descent_test.cpp
