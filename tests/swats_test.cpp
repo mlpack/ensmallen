@@ -29,7 +29,7 @@ TEST_CASE("SWATSLogisticRegressionTestFunction","[SWATSTest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  SWATS optimizer(1e-3, 1, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  SWATS optimizer(0.01, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);
 
