@@ -34,6 +34,7 @@ set(ENSMALLEN_TESTS_SOURCES
     snapshot_ensembles.cpp
     spalera_sgd_test.cpp
     svrg_test.cpp
+    swats_test.cpp
     wn_grad_test.cpp
 )
 
