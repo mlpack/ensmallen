@@ -11,7 +11,7 @@
 
 // NOTE: When using the ensmallen library in your code, only include the ensmallen.hpp header.
 // NOTE: Do not include any of the files in the ensmallen_bits folder.
- 
+
 #ifndef ENSMALLEN_HPP
 #define ENSMALLEN_HPP
 
@@ -68,6 +68,8 @@
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
+#include "ensmallen_bits/eve/eve.hpp"
+#include "ensmallen_bits/ftml/ftml.hpp"
 
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
@@ -77,9 +79,8 @@
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
-#include "ensmallen_bits/line_search/line_search.hpp"
+#include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
-#include "ensmallen_bits/proximal/proximal.hpp"
 #include "ensmallen_bits/rmsprop/rmsprop.hpp"
 
 #include "ensmallen_bits/sa/sa.hpp"
@@ -98,6 +99,7 @@
 #include "ensmallen_bits/smorms3/smorms3.hpp"
 #include "ensmallen_bits/spalera_sgd/spalera_sgd.hpp"
 #include "ensmallen_bits/svrg/svrg.hpp"
+#include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
 
 #endif

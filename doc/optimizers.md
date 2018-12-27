@@ -495,6 +495,54 @@ optimizer.Optimize(f, coordinates);
  * [Neuroevolution in Wikipedia](https://en.wikipedia.org/wiki/Neuroevolution)
  * [Arbitrary functions](#arbitrary-functions)
 
+## Eve
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Eve is a stochastic gradient based optimization method with locally and globally adaptive learning rates.
+
+#### Constructors
+
+ * `Eve()`
+ * `Eve(`_`stepSize, batchSize`_`)`
+ * `Eve(`_`stepSize, batchSize, beta1, beta2, beta3, epsilon, clip, maxIterations, tolerance, shuffle`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`beta3`** | Exponential decay rate for relative change. | `0.999` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `double` | **`clip`** | Clipping range to avoid extreme valus. | `10` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Beta3()`, `Epsilon()`, `Clip()`, `MaxIterations()`,
+`Tolerance()`, and `Shuffle()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+Eve optimizer(0.001, 32, 0.9, 0.999, 0.999, 10, 1e-8, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## Frank-Wolfe
 
 *An optimizer for [differentiable functions](#differentiable-functions) that may also be constrained.*
@@ -546,6 +594,53 @@ TODO
  * [An algorithm for quadratic programming](https://pdfs.semanticscholar.org/3a24/54478a94f1e66a3fc5d209e69217087acbc0.pdf)
  * [Frank-Wolfe in Wikipedia](https://en.wikipedia.org/wiki/Frank%E2%80%93Wolfe_algorithm)
  * [Differentiable functions](#differentiable-functions)
+
+## FTML (Follow the Moving Leader)
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Follow the Moving Leader (FTML) is an optimizer where recent samples are
+weighted more heavily in each iteration, so FTML can adapt more quickly to
+changes.
+
+#### Constructors
+
+ * `FTML()`
+ * `FTML(`_`stepSize, batchSize`_`)`
+ * `FTML(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
+`Tolerance()`, and `Shuffle()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+FTML optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+ * [Follow the Moving Leader in Deep Learning](http://proceedings.mlr.press/v70/zheng17a/zheng17a.pdf)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Gradient Descent
 
@@ -1130,6 +1225,53 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
  * [Incorporating Nesterov Momentum into Adam](http://cs229.stanford.edu/proj2015/054_report.pdf)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## Padam
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Padam is a variant of Adam with a partially adaptive momentum estimation method.
+
+#### Constructors
+
+ * `Padam()`
+ * `Padam(`_`stepSize, batchSize`_`)`
+ * `Padam(`_`stepSize, batchSize, beta1, beta2, partial, epsilon, maxIterations, tolerance, shuffle`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`partial`** | Partially adaptive parameter. | `0.25` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Partial()`, `Epsilon()`,
+`MaxIterations()`, `Tolerance()`, and `Shuffle()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+Padam optimizer(0.001, 32, 0.9, 0.999, 0.25, 1e-8, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+ * [Closing the Generalization Gap of Adaptive Gradient Methods in Training Deep Neural Networks](https://arxiv.org/abs/1806.06763)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Primal-dual SDP Solver
