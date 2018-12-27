@@ -133,6 +133,13 @@ class RMSProp
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
 
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return optimizer.ResetPolicy(); }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return optimizer.ResetPolicy(); }
+
  private:
   //! The Stochastic Gradient Descent object with RMSPropUpdate policy.
   SGD<RMSPropUpdate> optimizer;
