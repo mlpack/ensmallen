@@ -36,12 +36,9 @@ namespace ens {
  * The parameter \f$\epsilon\f$ is specified by the tolerance parameter to the
  * constructor.
  *
- * For Gradient Descent to work, a FunctionType template parameter is required.
- * This class must implement the following function:
- *
- *   double Evaluate(const arma::mat& coordinates);
- *   void Gradient(const arma::mat& coordinates,
- *                 arma::mat& gradient);
+ * GradientDescent can optimize differentiable functions.  For more details, see
+ * the documentation on function types included with this distribution or on the
+ * ensmallen website.
  */
 class GradientDescent
 {

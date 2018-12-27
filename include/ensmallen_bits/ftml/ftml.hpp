@@ -1,48 +1,52 @@
 /**
- * @file wn_grad.hpp
+ * @file ftml.hpp
  * @author Marcus Edel
  *
- * WNGrad is a general nonlinear update rule for the learning rate.
+ * Definition of Follow the Moving Leader (FTML).
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_WN_GRAD_WN_GRAD_HPP
-#define ENSMALLEN_WN_GRAD_WN_GRAD_HPP
+#ifndef ENSMALLEN_FTML_FTML_HPP
+#define ENSMALLEN_FTML_FTML_HPP
 
 #include <ensmallen_bits/sgd/sgd.hpp>
-#include "wn_grad_update.hpp"
+
+#include "ftml_update.hpp"
 
 namespace ens {
 
 /**
- * WNGrad is a general nonlinear update rule for the learning rate, so that
- * the learning rate can be initialized at a high value, and is subsequently
- * decreased according to gradient observations.
+ * Follow the Moving Leader (FTML) is an optimizer where recent samples are
+ * weighted more heavily in each iteration, so FTML can adapt more quickly to
+ * changes.
  *
  * For more information, see the following.
  *
  * @code
- * @article{Wu2018,
- *   author  = {{Wu}, X. and {Ward}, R. and {Bottou}, L.},
- *   title   = {WNGrad: Learn the Learning Rate in Gradient Descent},
- *   journal = {ArXiv e-prints},
- *   year    = {2018},
- *   url     = {https://arxiv.org/abs/1803.02865},
+ * @inproceedings{Zheng2017,
+ *   author    = {Shuai Zheng and James T. Kwok},
+ *   title     = {Follow the Moving Leader in Deep Learning},
+ *   year      = {2017}
+ *   booktitle = {Proceedings of the 34th International Conference on Machine
+ *                Learning},
+ *   pages     = {4110--4119},
+ *   series    = {Proceedings of Machine Learning Research},
+ *   publisher = {PMLR},
  * }
  * @endcode
  *
- * WNGrad can optimize differentiable separable functions.  For more
- * details, see the documentation on function types included with this
- * distribution or on the ensmallen website.
+ * FTML can optimize differentiable separable functions.  For more details, see
+ * the documentation on function types include with this distribution or on the
+ * ensmallen website.
  */
-class WNGrad
+class FTML
 {
  public:
   /**
-   * Construct the WNGrad optimizer with the given function and parameters. The
+   * Construct the FTML optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -51,20 +55,27 @@ class WNGrad
    *
    * @param stepSize Step size for each iteration.
    * @param batchSize Number of points to process in a single step.
+   * @param beta1 Exponential decay rate for the first moment estimates.
+   * @param beta2 Exponential decay rate for the weighted infinity norm
+            estimates.
+   * @param epsilon Epsilon is the minimum allowed gradient.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
    */
-  WNGrad(const double stepSize = 0.562,
-         const size_t batchSize = 32,
-         const size_t maxIterations = 100000,
-         const double tolerance = 1e-5,
-         const bool shuffle = true);
+  FTML(const double stepSize = 0.001,
+       const size_t batchSize = 32,
+       const double beta1 = 0.9,
+       const double beta2 = 0.999,
+       const double epsilon = 1e-8,
+       const size_t maxIterations = 100000,
+       const double tolerance = 1e-5,
+       const bool shuffle = true);
 
   /**
-   * Optimize the given function using WNGrad. The given starting point will
+   * Optimize the given function using FTML. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
@@ -89,6 +100,21 @@ class WNGrad
   //! Modify the batch size.
   size_t& BatchSize() { return optimizer.BatchSize(); }
 
+  //! Get the smoothing parameter.
+  double Beta1() const { return optimizer.UpdatePolicy().Beta1(); }
+  //! Modify the smoothing parameter.
+  double& Beta1() { return optimizer.UpdatePolicy().Beta1(); }
+
+  //! Get the second moment coefficient.
+  double Beta2() const { return optimizer.UpdatePolicy().Beta2(); }
+  //! Modify the second moment coefficient.
+  double& Beta2() { return optimizer.UpdatePolicy().Beta2(); }
+
+  //! Get the value used to initialise the mean squared gradient parameter.
+  double Epsilon() const { return optimizer.UpdatePolicy().Epsilon(); }
+  //! Modify the value used to initialise the mean squared gradient parameter.
+  double& Epsilon() { return optimizer.UpdatePolicy().Epsilon(); }
+
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
@@ -105,13 +131,13 @@ class WNGrad
   bool& Shuffle() { return optimizer.Shuffle(); }
 
  private:
-  //! The WNGrad update policy.
-  SGD<WNGradUpdate> optimizer;
+  //! The Stochastic Gradient Descent object with the FTMLUpdate update policy.
+  SGD<FTMLUpdate> optimizer;
 };
 
 } // namespace ens
 
 // Include implementation.
-#include "wn_grad_impl.hpp"
+#include "ftml_impl.hpp"
 
 #endif

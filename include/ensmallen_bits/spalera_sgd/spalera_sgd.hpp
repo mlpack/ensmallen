@@ -62,21 +62,9 @@ namespace ens {
  * }
  * @endcode
  *
- * For SPALeRA SGD to work, the lass must implement the following function:
- *
- *   size_t NumFunctions();
- *   double Evaluate(const arma::mat& coordinates, const size_t i);
- *   void Gradient(const arma::mat& coordinates,
- *                 const size_t i,
- *                 arma::mat& gradient);
- *
- * NumFunctions() should return the number of functions, and in the other two
- * functions, the parameter i refers to which individual function (or gradient)
- * is being evaluated.  So, for the case of a data-dependent function, such as
- * NCA, NumFunctions() should return the number of points in the dataset, and
- * Evaluate(coordinates, 0) will evaluate the objective function on the first
- * point in the dataset (presumably, the dataset is held internally in the
- * DecomposableFunctionType).
+ * SPALeRASGD can optimize differentiable separable functions.  For more
+ * details, see the documentation on function types included with this
+ * distribution or on the ensmallen website.
  *
  * @tparam DecayPolicyType Decay policy used during the iterative update
  *     process to adjust the step size. By default the step size isn't going to
