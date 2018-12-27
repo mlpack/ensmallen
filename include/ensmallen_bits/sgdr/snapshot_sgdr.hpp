@@ -144,6 +144,11 @@ class SnapshotSGDR
     return optimizer.DecayPolicy().Snapshots();
   }
 
+  //! Get whether or not to accumulate the snapshots.
+  bool Accumulate() const { return accumulate; }
+  //! Modify whether or not to accumulate the snapshots.
+  bool& Accumulate() { return accumulate; }
+
   //! Get the update policy.
   const UpdatePolicyType& UpdatePolicy() const
   {
@@ -154,6 +159,13 @@ class SnapshotSGDR
   {
     return optimizer.UpdatePolicy();
   }
+
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return optimizer.ResetPolicy(); }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return optimizer.ResetPolicy(); }
 
  private:
   //! The size of each mini-batch.

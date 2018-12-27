@@ -128,6 +128,13 @@ class SGDR
     return optimizer.UpdatePolicy();
   }
 
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return optimizer.ResetPolicy(); }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return optimizer.ResetPolicy(); }
+
  private:
   //! The size of each mini-batch.
   size_t batchSize;
