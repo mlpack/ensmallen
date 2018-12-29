@@ -71,13 +71,16 @@ class Padam
         const double epsilon = 1e-8,
         const size_t maxIterations = 100000,
         const double tolerance = 1e-5,
-        const bool shuffle = true) :
+        const bool shuffle = true,
+        const bool resetPolicy = true) :
       optimizer(stepSize,
                 batchSize,
                 maxIterations,
                 tolerance,
                 shuffle,
-                PadamUpdate(epsilon, beta1, beta2, partial))
+                PadamUpdate(epsilon, beta1, beta2, partial),
+                NoDecay(),
+                resetPolicy)
   { /* Nothing to do here. */ }
 
   /**

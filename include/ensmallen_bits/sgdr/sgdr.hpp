@@ -77,7 +77,8 @@ class SGDR
        const size_t maxIterations = 100000,
        const double tolerance = 1e-5,
        const bool shuffle = true,
-       const UpdatePolicyType& updatePolicy = UpdatePolicyType());
+       const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+       const bool resetPolicy = true);
 
   /**
    * Optimize the given function using SGDR.  The given starting point

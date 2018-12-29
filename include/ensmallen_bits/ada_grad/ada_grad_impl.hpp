@@ -22,13 +22,16 @@ inline AdaGrad::AdaGrad(const double stepSize,
                         const double epsilon,
                         const size_t maxIterations,
                         const double tolerance,
-                        const bool shuffle) :
+                        const bool shuffle,
+                        const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              AdaGradUpdate(epsilon))
+              AdaGradUpdate(epsilon),
+              NoDecay(),
+              resetPolicy)
 { /* Nothing to do. */ }
 
 } // namespace ens

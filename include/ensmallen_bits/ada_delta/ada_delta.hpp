@@ -71,7 +71,8 @@ class AdaDelta
            const double epsilon = 1e-6,
            const size_t maxIterations = 100000,
            const double tolerance = 1e-5,
-           const bool shuffle = true);
+           const bool shuffle = true,
+           const bool resetPolicy = true);
 
   /**
    * Optimize the given function using AdaDelta. The given starting point will

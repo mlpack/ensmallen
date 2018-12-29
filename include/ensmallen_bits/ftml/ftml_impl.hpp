@@ -24,13 +24,16 @@ inline FTML::FTML(const double stepSize,
                   const double epsilon,
                   const size_t maxIterations,
                   const double tolerance,
-                  const bool shuffle) :
+                  const bool shuffle,
+                  const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              FTMLUpdate(epsilon, beta1, beta2))
+              FTMLUpdate(epsilon, beta1, beta2),
+              NoDecay(),
+              resetPolicy)
 { /* Nothing to do. */ }
 
 } // namespace ens
