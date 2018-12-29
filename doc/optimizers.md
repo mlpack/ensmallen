@@ -14,6 +14,7 @@ gradients.
  * `AdaDelta(`_`stepSize`_`)`
  * `AdaDelta(`_`stepSize, batchSize`_`)`
  * `AdaDelta(`_`stepSize, batchSize, rho, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AdaDelta(`_`stepSize, batchSize, rho, epsilon, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -26,10 +27,11 @@ gradients.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer may also be changed via the member methods
-`StepSize()`, `BatchSize()`, `Rho()`, `Epsilon()`, `MaxIterations()`, and
-`Shuffle()`.
+`StepSize()`, `BatchSize()`, `Rho()`, `Epsilon()`, `MaxIterations()`,
+`Shuffle()`, and `ResetPolicy()`.
 
 #### Examples:
 
@@ -62,7 +64,8 @@ parameters.
  - `AdaGrad(`_`stepSize`_`)`
  - `AdaGrad(`_`stepSize, batchSize`_`)`
  - `AdaGrad(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle`_`)`
-
+ - `AdaGrad(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
@@ -73,10 +76,11 @@ parameters.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer may also be changed via the member methods
-`StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`, and
-`Shuffle()`.
+`StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
+`Shuffle()`, and `ResetPolicy()`.
 
 #### Examples:
 
@@ -108,6 +112,7 @@ moments.
  * `Adam()`
  * `Adam(`_`stepSize, batchSize`_`)`
  * `Adam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `Adam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `Adam` class is based on the `AdamType<`_`UpdateRule`_`>` class
 with _`UpdateRule`_` = AdamUpdate`.
@@ -124,10 +129,11 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -157,6 +163,7 @@ AdaMax is simply a variant of Adam based on the infinity norm.
  * `AdaMax()`
  * `AdaMax(`_`stepSize, batchSize`_`)`
  * `AdaMax(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `AdaMax(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `AdaMax` class is based on the `AdamType<`_`UpdateRule`_`>` class
 with _`UpdateRule`_` = AdaMaxUpdate`.
@@ -173,10 +180,11 @@ with _`UpdateRule`_` = AdaMaxUpdate`.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -206,6 +214,7 @@ AMSGrad is a variant of Adam with guaranteed convergence.
  * `AMSGrad()`
  * `AMSGrad(`_`stepSize, batchSize`_`)`
  * `AMSGrad(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `AMSGrad(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `AMSGrad` class is based on the `AdamType<`_`UpdateRule`_`>` class
 with _`UpdateRule`_` = AMSGradUpdate`.
@@ -222,10 +231,11 @@ with _`UpdateRule`_` = AMSGradUpdate`.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -608,6 +618,7 @@ changes.
  * `FTML()`
  * `FTML(`_`stepSize, batchSize`_`)`
  * `FTML(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `FTML(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -621,10 +632,11 @@ changes.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -1028,6 +1040,7 @@ uses Nesterov momentum for faster convergence.
  * `Nadam()`
  * `Nadam(`_`stepSize, batchSize`_`)`
  * `Nadam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `Nadam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `Nadam` class is based on the `AdamType<`_`UpdateRule`_`>` class
 with _`UpdateRule`_` = NadamUpdate`.
@@ -1044,10 +1057,11 @@ with _`UpdateRule`_` = NadamUpdate`.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -1078,6 +1092,7 @@ uses Nesterov momentum for faster convergence.
  * `NadaMax()`
  * `NadaMax(`_`stepSize, batchSize`_`)`
  * `NadaMax(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `NadaMax(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `NadaMax` class is based on the `AdamType<`_`UpdateRule`_`>` class
 with _`UpdateRule`_` = NadaMaxUpdate`.
@@ -1094,10 +1109,11 @@ with _`UpdateRule`_` = NadaMaxUpdate`.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -1189,6 +1205,7 @@ any differentiable separable function, not just GAN training.
  * `OptimisticAdam()`
  * `OptimisticAdam(`_`stepSize, batchSize`_`)`
  * `OptimisticAdam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `OptimisticAdam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `OptimisticAdam` class is based on the
 `AdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = OptimisticAdamUpdate`.
@@ -1205,10 +1222,11 @@ Note that the `OptimisticAdam` class is based on the
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -1237,7 +1255,7 @@ Padam is a variant of Adam with a partially adaptive momentum estimation method.
 
  * `Padam()`
  * `Padam(`_`stepSize, batchSize`_`)`
- * `Padam(`_`stepSize, batchSize, beta1, beta2, partial, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `Padam(`_`stepSize, batchSize, beta1, beta2, partial, epsilon, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -1252,10 +1270,11 @@ Padam is a variant of Adam with a partially adaptive momentum estimation method.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Partial()`, `Epsilon()`,
-`MaxIterations()`, `Tolerance()`, and `Shuffle()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
@@ -1343,6 +1362,7 @@ RMSProp utilizes the magnitude of recent gradients to normalize the gradients.
  * `RMSProp()`
  * `RMSProp(`_`stepSize, batchSize`_`)`
  * `RMSProp(`_`stepSize, batchSize, alpha, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `RMSProp(`_`stepSize, batchSize, alpha, epsilon, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -1355,10 +1375,11 @@ RMSProp utilizes the magnitude of recent gradients to normalize the gradients.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer can also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Alpha()`, `Epsilon()`, `MaxIterations()`,
-`Tolerance()`, and `Shuffle()`.
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples:
 
@@ -1638,6 +1659,7 @@ SGDR is based on Mini-batch Stochastic Gradient Descent class and simulates a ne
  * `SGDR<`_`UpdatePolicyType`_`>()`
  * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize`_`)`
  * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, updatePolicy`_`)`
+ * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, updatePolicy`_`, resetPolicy)`
 
 The _`UpdatePolicyType`_ template parameter controls the update policy used
 during the iterative update process.  The `MomentumUpdate` class is available
@@ -1660,10 +1682,12 @@ so the shorter type `SGDR<>` can be used instead of the equivalent
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer can also be modified via the member methods
 `EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, and `UpdatePolicy()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, and
+`ResetPolicy()`.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.
@@ -1696,6 +1720,7 @@ are performed using the Snapshot Ensembles technique.
  * `SnapshotSGDR<`_`UpdatePolicyType`_`>()`
  * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize`_`)`
  * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, snapshots, accumulate, updatePolicy`_`)`
+ * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, snapshots, accumulate, updatePolicy, resetPolicy`_`)`
 
 The _`UpdatePolicyType`_ template parameter controls the update policy used
 during the iterative update process.  The `MomentumUpdate` class is available
@@ -1720,11 +1745,12 @@ so the shorter type `SnapshotSGDR<>` can be used instead of the equivalent
 | `size_t` | **`snapshots`** | Maximum number of snapshots. | `5` |
 | `bool` | **`accumulate`** | Accumulate the snapshot parameter. | `true` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer can also be modified via the member methods
 `EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
 `MaxIterations()`, `Tolerance()`, `Shuffle()`, `Snapshots()`, `Accumulate()`,
-and `UpdatePolicy()`.
+`UpdatePolicy()`, and `ResetPolicy()`.
 
 The `Snapshots()` function returns a `std::vector<arma::mat>&` (a vector of
 snapshots of the parameters), not a `size_t` representing the maximum number of
@@ -1763,6 +1789,7 @@ parameter space.
  * `SMORMS3()`
  * `SMORMS3(`_`stepSize, batchSize`_`)`
  * `SMORMS3(`_`stepSize, batchSize, epsilon, maxIterations, tolerance`_`)`
+ * `SMORMS3(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -1774,10 +1801,11 @@ parameter space.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer can also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`, and
-`Shuffle()`.
+`StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
+`Shuffle()`, and `ResetPolicy()`.
 
 #### Examples:
 
@@ -1945,6 +1973,7 @@ near-optimal convergence rates in both the batch and stochastic settings.
  * `WNGrad()`
  * `WNGrad(`_`stepSize, batchSize`_`)`
  * `WNGrad(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
+ * `WNGrad(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -1955,9 +1984,11 @@ near-optimal convergence rates in both the batch and stochastic settings.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the batch order is shuffled; otherwise, each batch is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()` and `Shuffle()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
+`ResetPolicy()`.
 
 #### Examples
 

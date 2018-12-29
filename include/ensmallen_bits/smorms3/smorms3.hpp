@@ -66,7 +66,8 @@ class SMORMS3
           const double epsilon = 1e-16,
           const size_t maxIterations = 100000,
           const double tolerance = 1e-5,
-          const bool shuffle = true);
+          const bool shuffle = true,
+          const bool resetPolicy = true);
 
   /**
    * Optimize the given function using SMORMS3. The given starting point will

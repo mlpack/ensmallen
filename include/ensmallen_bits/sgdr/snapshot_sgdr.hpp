@@ -94,7 +94,8 @@ class SnapshotSGDR
                const bool shuffle = true,
                const size_t snapshots = 5,
                const bool accumulate = true,
-               const UpdatePolicyType& updatePolicy = UpdatePolicyType());
+               const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+               const bool resetPolicy = true);
 
   /**
    * Optimize the given function using SGDR.  The given starting point

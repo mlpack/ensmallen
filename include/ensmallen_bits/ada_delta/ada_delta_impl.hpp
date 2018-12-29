@@ -25,13 +25,16 @@ inline AdaDelta::AdaDelta(const double stepSize,
                           const double epsilon,
                           const size_t maxIterations,
                           const double tolerance,
-                          const bool shuffle) :
+                          const bool shuffle,
+                          const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              AdaDeltaUpdate(rho, epsilon))
+              AdaDeltaUpdate(rho, epsilon),
+              NoDecay(),
+              resetPolicy)
 { /* Nothing to do. */ }
 
 } // namespace ens
