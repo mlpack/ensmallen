@@ -66,6 +66,8 @@ class RMSProp
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
+   * @param resetPolicy If true, parameters are reset before every Optimize
+   *        call; otherwise, their values are retained.
    */
   RMSProp(const double stepSize = 0.01,
           const size_t batchSize = 32,

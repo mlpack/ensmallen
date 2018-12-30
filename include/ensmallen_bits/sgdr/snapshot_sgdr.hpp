@@ -84,6 +84,8 @@ class SnapshotSGDR
    * @param accumulate Accumulate the snapshot parameter (default true).
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
+   * @param resetPolicy If true, parameters are reset before every Optimize
+   *        call; otherwise, their values are retained.
    */
   SnapshotSGDR(const size_t epochRestart = 50,
                const double multFactor = 2.0,
