@@ -26,7 +26,8 @@ SGDR<UpdatePolicyType>::SGDR(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicyType& updatePolicy) :
+    const UpdatePolicyType& updatePolicy,
+    const bool resetPolicy) :
     batchSize(batchSize),
     optimizer(OptimizerType(stepSize,
                             batchSize,
@@ -37,7 +38,8 @@ SGDR<UpdatePolicyType>::SGDR(
                             CyclicalDecay(
                                 epochRestart,
                                 multFactor,
-                                stepSize)))
+                                stepSize),
+                            resetPolicy))
 {
   /* Nothing to do here */
 }

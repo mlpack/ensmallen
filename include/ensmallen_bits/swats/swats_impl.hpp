@@ -25,13 +25,16 @@ inline SWATS::SWATS(
     const double epsilon,
     const size_t maxIterations,
     const double tolerance,
-    const bool shuffle) :
+    const bool shuffle,
+    const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              SWATSUpdate(epsilon, beta1, beta2))
+              SWATSUpdate(epsilon, beta1, beta2),
+              NoDecay(),
+              resetPolicy)
 { /* Nothing to do. */ }
 
 } // namespace ens

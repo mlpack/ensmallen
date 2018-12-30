@@ -179,6 +179,10 @@ class SGD
   //! Flag indicating whether update policy
   //! should be reset before running optimization.
   bool resetPolicy;
+
+  //! Flag indicating whether the update policy
+  //! parameters have been initialized.
+  bool isInitialized;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;

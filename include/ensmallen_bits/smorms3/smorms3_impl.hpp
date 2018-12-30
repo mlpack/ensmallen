@@ -22,13 +22,16 @@ inline SMORMS3::SMORMS3(const double stepSize,
                         const double epsilon,
                         const size_t maxIterations,
                         const double tolerance,
-                        const bool shuffle) :
+                        const bool shuffle,
+                        const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              SMORMS3Update(epsilon))
+              SMORMS3Update(epsilon),
+              NoDecay(),
+              resetPolicy)
 { /* Nothing to do. */ }
 
 } // namespace ens

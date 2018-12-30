@@ -38,7 +38,8 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     shuffle(shuffle),
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
-    resetPolicy(resetPolicy)
+    resetPolicy(resetPolicy),
+    isInitialized(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -63,8 +64,11 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   double lastObjective = DBL_MAX;
 
   // Initialize the update policy.
-  if (resetPolicy)
+  if (resetPolicy || !isInitialized)
+  {
     updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
+    isInitialized = true;
+  }
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);

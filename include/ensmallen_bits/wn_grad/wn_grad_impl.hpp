@@ -22,13 +22,16 @@ inline WNGrad::WNGrad(
     const size_t batchSize,
     const size_t maxIterations,
     const double tolerance,
-    const bool shuffle) :
+    const bool shuffle,
+    const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              WNGradUpdate())
+              WNGradUpdate(),
+              NoDecay(),
+              resetPolicy)
 { /* Nothing to do. */ }
 
 } // namespace ens

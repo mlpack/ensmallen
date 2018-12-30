@@ -28,7 +28,8 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const bool shuffle,
     const size_t snapshots,
     const bool accumulate,
-    const UpdatePolicyType& updatePolicy) :
+    const UpdatePolicyType& updatePolicy,
+    const bool resetPolicy) :
     batchSize(batchSize),
     accumulate(accumulate),
     optimizer(OptimizerType(stepSize,
@@ -42,7 +43,8 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
                                 multFactor,
                                 stepSize,
                                 maxIterations,
-                                snapshots)))
+                                snapshots),
+                            resetPolicy))
 {
   /* Nothing to do here */
 }
