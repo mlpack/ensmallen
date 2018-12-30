@@ -69,6 +69,8 @@ class SGDR
    *        mini-batch is visited in linear order.
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
+   * @param resetPolicy If true, parameters are reset before every Optimize
+   *        call; otherwise, their values are retained.
    */
   SGDR(const size_t epochRestart = 50,
        const double multFactor = 2.0,
@@ -77,7 +79,8 @@ class SGDR
        const size_t maxIterations = 100000,
        const double tolerance = 1e-5,
        const bool shuffle = true,
-       const UpdatePolicyType& updatePolicy = UpdatePolicyType());
+       const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+       const bool resetPolicy = true);
 
   /**
    * Optimize the given function using SGDR.  The given starting point
@@ -127,6 +130,13 @@ class SGDR
   {
     return optimizer.UpdatePolicy();
   }
+
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return optimizer.ResetPolicy(); }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return optimizer.ResetPolicy(); }
 
  private:
   //! The size of each mini-batch.

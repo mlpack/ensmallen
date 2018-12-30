@@ -86,6 +86,8 @@ class AdamType
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
+   * @param resetPolicy If true, parameters are reset before every Optimize
+   *        call; otherwise, their values are retained.
    */
   AdamType(const double stepSize = 0.001,
            const size_t batchSize = 32,
@@ -94,7 +96,8 @@ class AdamType
            const double eps = 1e-8,
            const size_t maxIterations = 100000,
            const double tolerance = 1e-5,
-           const bool shuffle = true);
+           const bool shuffle = true,
+           const bool resetPolicy = true);
 
   /**
    * Optimize the given function using Adam. The given starting point will be
@@ -151,6 +154,13 @@ class AdamType
   bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
+
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return optimizer.ResetPolicy(); }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return optimizer.ResetPolicy(); }
 
  private:
   //! The Stochastic Gradient Descent object with Adam policy.
