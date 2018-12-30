@@ -1,17 +1,19 @@
-### ensmallen 1.11.2
-###### ????-??-??
+### ensmallen 1.12.0
+###### 2018-12-30
  * Add link to ensmallen PDF to README.md.
 
  * Minor documentation fixes.  Remove too-verbose documentation from source for
    each optimizer (#61).
 
- * Add FTML optimizer.
+ * Add FTML optimizer (#48).
 
- * Add SWATS optimizer.
+ * Add SWATS optimizer (#42).
 
- * Add Padam optimizer.
+ * Add Padam optimizer (#46).
 
- * Add Eve optimizer.
+ * Add Eve optimizer (#45).
+
+ * Add ResetPolicy() to SGD-like optimizers (#60).
 
 ### ensmallen 1.11.1
 ###### 2018-11-29
