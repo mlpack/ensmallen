@@ -69,6 +69,8 @@ class SGDR
    *        mini-batch is visited in linear order.
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
+   * @param resetPolicy If true, parameters are reset before every Optimize
+   *        call; otherwise, their values are retained.
    */
   SGDR(const size_t epochRestart = 50,
        const double multFactor = 2.0,

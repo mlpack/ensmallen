@@ -60,6 +60,8 @@ class SMORMS3
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
+   * @param resetPolicy If true, parameters are reset before every Optimize
+   *        call; otherwise, their values are retained.
    */
   SMORMS3(const double stepSize = 0.001,
           const size_t batchSize = 32,
