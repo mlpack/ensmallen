@@ -5,6 +5,14 @@
  * Minor documentation fixes.  Remove too-verbose documentation from source for
    each optimizer (#61).
 
+ * Add FTML optimizer.
+
+ * Add SWATS optimizer.
+
+ * Add Padam optimizer.
+
+ * Add Eve optimizer.
+
 ### ensmallen 1.11.1
 ###### 2018-11-29
  * Minor documentation fixes.
