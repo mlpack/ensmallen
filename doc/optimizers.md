@@ -1933,6 +1933,55 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## SWATS
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+SWATS is an optimizer that uses a simple strategy to switch from Adam to
+standard SGD when a triggering condition is satisfied.  The condition relates to
+the projection of Adam steps on the gradient subspace.
+
+#### Constructors
+
+ * `SWATS()`
+ * `SWATS(`_`stepSize, batchSize`_`)`
+ * `SWATS(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process at each step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-16` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
+
+Attributes of the optimizer can also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`,
+`MaxIterations()`, `Tolerance()`, and `Shuffle()`.
+
+#### Examples:
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+SWATS optimizer(0.001, 1, 0.9, 0.999, 1e-16, 5000000, 1e-9, true);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [Improving generalization performance by switching from Adam to SGD](https://arxiv.org/abs/1712.07628)
+ * [Adam](#adam)
+ * [Standard SGD](#standard-sgd)
+ * [Stochastic gradient descent in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## WNGrad
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
