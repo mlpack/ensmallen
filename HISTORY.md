@@ -1,3 +1,7 @@
+### ensmallen 1.12.1
+###### 2019-01-03
+ * Make sure all files end with newlines.
+
 ### ensmallen 1.12.0
 ###### 2018-12-30
  * Add link to ensmallen PDF to README.md.
