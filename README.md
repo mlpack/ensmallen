@@ -61,3 +61,4 @@ the library.
 * Vasanth Kalingeri
 * Zhihao Lou
 * Conrad Sanderson
+* Dan Timson
