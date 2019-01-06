@@ -30,10 +30,6 @@ namespace ens {
  * documentation on function types included with this distribution or on the
  * ensmallen website.
  */
-
-// TODO expose LBFGS params
-// TODO finalise docs update
-
 class AugLagrangian
 {
  public:
@@ -46,14 +42,10 @@ class AugLagrangian
    *    value. The default value of 10 is taken from Burer and Monteiro (2002).
    * @param maxIterations Maximum number of iterations of the Augmented
    *     Lagrangian algorithm.  0 indicates no maximum.
-   * @param internalMaxIterations Maximum number of iterations of L-BFGS
-   *    iterations internal to the Augmented Lagrangian algorithm.
-   *    0 indicates no maximum.
    */
   AugLagrangian(const size_t maxIterations = 1000,
                 const double penaltyThresholdFactor = 0.25,
-                const double sigmaUpdateFactor = 10.0,
-                const size_t internalMaxIterations = 1000);
+                const double sigmaUpdateFactor = 10.0);
 
   /**
    * Optimize the function.  The value '1' is used for the initial value of each
@@ -108,12 +100,6 @@ class AugLagrangian
   //! Modify the maximum iterations
   size_t& MaxIterations() { return maxIterations; }
 
-  // TODO remove
-  //! Get the maximum iterations
-  size_t InternalMaxIterations() const { return internalMaxIterations; }
-  //! Modify the maximum iterations
-  size_t& InternalMaxIterations() { return internalMaxIterations; }
-
   //! Get the penalty threshold updating parameter
   double PenaltyThresholdFactor() const { return penaltyThresholdFactor; }
   //! Modify the penalty threshold updating parameter
@@ -133,10 +119,6 @@ class AugLagrangian
 
   //! Parameter for updating sigma
   double sigmaUpdateFactor;
-
-  // TODO remove
-  //! Internal max iterations
-  size_t internalMaxIterations;
 
   //! If the user did not pass an L_BFGS object, we'll use our own internal one.
   L_BFGS lbfgsInternal;

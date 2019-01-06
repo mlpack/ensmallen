@@ -21,17 +21,13 @@ namespace ens {
 
 inline AugLagrangian::AugLagrangian(const size_t maxIterations,
                                     const double penaltyThresholdFactor,
-                                    const double sigmaUpdateFactor,
-                                    const size_t internalMaxIterations) :
+                                    const double sigmaUpdateFactor) :
     maxIterations(maxIterations),
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
-    internalMaxIterations(internalMaxIterations),
     lbfgsInternal(),
     lbfgs(lbfgsInternal)
 {
-  // Set the internal max iterations for the optimisation
-  lbfgs.MaxIterations() = internalMaxIterations;
 }
 
 template<typename LagrangianFunctionType>

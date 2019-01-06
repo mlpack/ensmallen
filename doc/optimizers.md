@@ -265,19 +265,18 @@ optimizer uses [L-BFGS](#l-bfgs).
 
 #### Constructors
 
- * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor sigmaUpdateFactor, internalMaxIterations`_`)`
+ * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor sigmaUpdateFactor`_`)`
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `1000` |
-| `size_t` | **`internalMaxIterations`** | Maximum number of iterations allowed by L-BFGS (0 means no limit). | `1000` |
 | `double` | **`penaltyThresholdFactor`** | When penalty threshold is updated, set it to this multiplied by the penalty. | `10.0` |
 | `double` | **`sigmaUpdateFactor`** | When sigma is updated, multiply it by this. | `0.25` |
 
 The attributes of the optimizer may also be modified via the member methods
-`MaxIterations()`, `InternalMaxIterations()`, `PenaltyThresholdFactor()`, and `SigmaUpdateFactor()`
+`MaxIterations()`, `PenaltyThresholdFactor()`, and `SigmaUpdateFactor()`
 
 ```c++
 /**
