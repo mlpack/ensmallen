@@ -35,7 +35,7 @@ class AugLagrangian
 {
  public:
   /**
-   * Initialize the Augmented Lagrangian with the default L-BFGS optimizer.  We
+   * Initialize the Augmented Lagrangian with the default L-BFGS optimizer.
    */
   AugLagrangian();
 
