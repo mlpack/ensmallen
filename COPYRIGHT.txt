@@ -34,6 +34,7 @@ Copyright:
   Copyright 2018, Moksh Jain <mokshjn00@gmail.com>
   Copyright 2018, Shikhar Jaiswal <jaiswalshikhar87@gmail.com>
   Copyright 2018, Conrad Sanderson
+  Copyright 2018, Dan Timson
   
 License: BSD-3-clause
   All rights reserved.
