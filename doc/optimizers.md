@@ -282,13 +282,24 @@ functions with different signatures that allow the behavior to be controlled:
  *     class.
  * @param function The function to optimize.
  * @param coordinates Output matrix to store the optimized coordinates in.
+ * @param penaltyThresholdFactor When the penalty threshold is updated set
+ *    the penalty threshold to the penalty multplied by this factor. The
+ *    default value of 0.25 is is taken from Burer and Monteiro (2002).
+ * @param sigmaUpdateFactor When sigma is updated  multiply sigma by this
+ *    value. The default value of 10 is taken from Burer and Monteiro (2002).
  * @param maxIterations Maximum number of iterations of the Augmented
  *     Lagrangian algorithm.  0 indicates no maximum.
+ * @param internalMaxIterations Maximum number of iterations of L-BFGS
+ *    iterations internal to the Augmented Lagrangian algorithm.
+ *    0 indicates no maximum.
  */
 template<typename LagrangianFunctionType>
 bool Optimize(LagrangianFunctionType& function,
               arma::mat& coordinates,
-              const size_t maxIterations = 1000);
+              const double penaltyThresholdFactor = 0.25,
+              const double sigmaUpdateFactor = 10.0,
+              const size_t maxIterations = 1000,
+              const size_t internalMaxIterations = 1000);
 
 /**
  * Optimize the function, giving initial estimates for the Lagrange
@@ -302,15 +313,26 @@ bool Optimize(LagrangianFunctionType& function,
  * @param initLambda Vector of initial Lagrange multipliers.  Should have
  *     length equal to the number of constraints.
  * @param initSigma Initial penalty parameter.
+ * @param penaltyThresholdFactor When the penalty threshold is updated set
+ *    the penalty threshold to the penalty multplied by this factor. The
+ *    default value of 0.25 is is taken from Burer and Monteiro (2002).
+ * @param sigmaUpdateFactor When sigma is updated  multiply sigma by this
+ *    value. The default value of 10 is taken from Burer and Monteiro (2002).
  * @param maxIterations Maximum number of iterations of the Augmented
  *     Lagrangian algorithm.  0 indicates no maximum.
+ * @param internalMaxIterations Maximum number of iterations of L-BFGS
+ *    iterations internal to the Augmented Lagrangian algorithm.
+ *    0 indicates no maximum.
  */
 template<typename LagrangianFunctionType>
 bool Optimize(LagrangianFunctionType& function,
               arma::mat& coordinates,
               const arma::vec& initLambda,
               const double initSigma,
-              const size_t maxIterations = 1000);
+              const double penaltyThresholdFactor = 0.25,
+              const double sigmaUpdateFactor = 10.0,
+              const size_t maxIterations = 1000,
+              const size_t internalMaxIterations = 1000);
 ```
 
 #### Examples
