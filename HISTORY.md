@@ -1,3 +1,7 @@
+### ensmallen 1.12.2
+###### 2019-01-05
+ * Fix list of contributors.
+
 ### ensmallen 1.12.1
 ###### 2019-01-03
  * Make sure all files end with newlines.
