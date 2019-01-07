@@ -21,12 +21,12 @@ namespace ens {
 
 inline AugLagrangian::AugLagrangian(const size_t maxIterations,
                                     const double penaltyThresholdFactor,
-                                    const double sigmaUpdateFactor) :
+                                    const double sigmaUpdateFactor,
+                                    const L_BFGS& lbfgs) :
     maxIterations(maxIterations),
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
-    lbfgsInternal(),
-    lbfgs(lbfgsInternal)
+    lbfgs(lbfgs)
 {
 }
 

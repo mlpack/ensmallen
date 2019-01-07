@@ -45,7 +45,8 @@ class AugLagrangian
    */
   AugLagrangian(const size_t maxIterations = 1000,
                 const double penaltyThresholdFactor = 0.25,
-                const double sigmaUpdateFactor = 10.0);
+                const double sigmaUpdateFactor = 10.0,
+                const L_BFGS& lbfgs = L_BFGS());
 
   /**
    * Optimize the function.  The value '1' is used for the initial value of each
@@ -120,11 +121,8 @@ class AugLagrangian
   //! Parameter for updating sigma
   double sigmaUpdateFactor;
 
-  //! If the user did not pass an L_BFGS object, we'll use our own internal one.
-  L_BFGS lbfgsInternal;
-
   //! The L-BFGS optimizer that we will use.
-  L_BFGS& lbfgs;
+  L_BFGS lbfgs;
 
   //! Lagrange multipliers.
   arma::vec lambda;
