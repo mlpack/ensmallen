@@ -614,7 +614,7 @@ int main()
   // Use RMSprop to find the best parameters for the linear regression model.
   // The type 'ens::RMSprop' can be changed for any ensmallen optimizer able to
   // handle differentiable separable functions.
-  ens::RMSprop rmsprop;
+  ens::RMSProp rmsprop;
   LinearRegressionFunction lrf(data, responses);
   rmsprop.Optimize(lrf, params);
 
