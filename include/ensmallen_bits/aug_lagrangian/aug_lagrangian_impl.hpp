@@ -19,19 +19,22 @@
 
 namespace ens {
 
-inline AugLagrangian::AugLagrangian() :
-    lbfgsInternal(),
-    lbfgs(lbfgsInternal)
+inline AugLagrangian::AugLagrangian(const size_t maxIterations,
+                                    const double penaltyThresholdFactor,
+                                    const double sigmaUpdateFactor,
+                                    const L_BFGS& lbfgs) :
+    maxIterations(maxIterations),
+    penaltyThresholdFactor(penaltyThresholdFactor),
+    sigmaUpdateFactor(sigmaUpdateFactor),
+    lbfgs(lbfgs)
 {
-  lbfgs.MaxIterations() = 1000;
 }
 
 template<typename LagrangianFunctionType>
 bool AugLagrangian::Optimize(LagrangianFunctionType& function,
                              arma::mat& coordinates,
                              const arma::vec& initLambda,
-                             const double initSigma,
-                             const size_t maxIterations)
+                             const double initSigma)
 {
   lambda = initLambda;
   sigma = initSigma;
@@ -39,34 +42,31 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
   AugLagrangianFunction<LagrangianFunctionType> augfunc(function,
       lambda, sigma);
 
-  return Optimize(augfunc, coordinates, maxIterations);
+  return Optimize(augfunc, coordinates);
 }
 
 template<typename LagrangianFunctionType>
 bool AugLagrangian::Optimize(LagrangianFunctionType& function,
-                             arma::mat& coordinates,
-                             const size_t maxIterations)
+                             arma::mat& coordinates)
 {
   // If the user did not specify the right size for sigma and lambda, we will
   // use defaults.
   if (!lambda.is_empty())
   {
-    AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda,
-        sigma);
-    return Optimize(augfunc, coordinates, maxIterations);
+    AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda, sigma);
+    return Optimize(augfunc, coordinates);
   }
   else
   {
     AugLagrangianFunction<LagrangianFunctionType> augfunc(function);
-    return Optimize(augfunc, coordinates, maxIterations);
+    return Optimize(augfunc, coordinates);
   }
 }
 
 template<typename LagrangianFunctionType>
 bool AugLagrangian::Optimize(
     AugLagrangianFunction<LagrangianFunctionType>& augfunc,
-    arma::mat& coordinates,
-    const size_t maxIterations)
+    arma::mat& coordinates)
 {
   traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType>();
 
@@ -133,17 +133,14 @@ bool AugLagrangian::Optimize(
             function.EvaluateConstraint(i, coordinates);
 
       // We also update the penalty threshold to be a factor of the current
-      // penalty.  TODO: this factor should be a parameter (from CLI).  The
-      // value of 0.25 is taken from Burer and Monteiro (2002).
-      penaltyThreshold = 0.25 * penalty;
+      // penalty.
+      penaltyThreshold = penaltyThresholdFactor * penalty;
       Info << "Lagrange multiplier estimates updated." << std::endl;
     }
     else
     {
-      // We multiply sigma by a constant value.  TODO: this factor should be a
-      // parameter (from CLI).  The value of 10 is taken from Burer and Monteiro
-      // (2002).
-      augfunc.Sigma() *= 10;
+      // We multiply sigma by a constant value.
+      augfunc.Sigma() *= sigmaUpdateFactor;
       Info << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
     }
   }
