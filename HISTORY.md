@@ -1,3 +1,7 @@
+### ensmallen 1.13.0
+###### ????-??-??
+ * Enhance options for AugLagrangian optimizer (#66).
+
 ### ensmallen 1.12.2
 ###### 2019-01-05
  * Fix list of contributors.

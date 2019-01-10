@@ -265,12 +265,19 @@ optimizer uses [L-BFGS](#l-bfgs).
 
 #### Constructors
 
- * `AugLagrangian()`
+ * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor sigmaUpdateFactor`_`)`
 
 #### Attributes
 
-This optimizer has no attributes, but instead has two separate `Optimize()`
-functions with different signatures that allow the behavior to be controlled:
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `1000` |
+| `double` | **`penaltyThresholdFactor`** | When penalty threshold is updated, set it to this multiplied by the penalty. | `10.0` |
+| `double` | **`sigmaUpdateFactor`** | When sigma is updated, multiply it by this. | `0.25` |
+| `L_BFGS&` | **`lbfgs`** | Internal l-bfgs optimizer. | `L_BFGS()` |
+
+The attributes of the optimizer may also be modified via the member methods
+`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `L_BFGS()`.
 
 ```c++
 /**
@@ -282,13 +289,10 @@ functions with different signatures that allow the behavior to be controlled:
  *     class.
  * @param function The function to optimize.
  * @param coordinates Output matrix to store the optimized coordinates in.
- * @param maxIterations Maximum number of iterations of the Augmented
- *     Lagrangian algorithm.  0 indicates no maximum.
  */
 template<typename LagrangianFunctionType>
 bool Optimize(LagrangianFunctionType& function,
-              arma::mat& coordinates,
-              const size_t maxIterations = 1000);
+              arma::mat& coordinates);
 
 /**
  * Optimize the function, giving initial estimates for the Lagrange
@@ -302,15 +306,12 @@ bool Optimize(LagrangianFunctionType& function,
  * @param initLambda Vector of initial Lagrange multipliers.  Should have
  *     length equal to the number of constraints.
  * @param initSigma Initial penalty parameter.
- * @param maxIterations Maximum number of iterations of the Augmented
- *     Lagrangian algorithm.  0 indicates no maximum.
  */
 template<typename LagrangianFunctionType>
 bool Optimize(LagrangianFunctionType& function,
               arma::mat& coordinates,
               const arma::vec& initLambda,
-              const double initSigma,
-              const size_t maxIterations = 1000);
+              const double initSigma);
 ```
 
 #### Examples
@@ -320,7 +321,7 @@ GockenbachFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
 AugLagrangian optimizer;
-optimizer.Optimize(f, coords, 0);
+optimizer.Optimize(f, coords);
 ```
 
 #### See also:

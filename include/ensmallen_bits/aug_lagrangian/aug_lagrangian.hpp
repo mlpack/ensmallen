@@ -34,11 +34,19 @@ class AugLagrangian
 {
  public:
   /**
-   * Initialize the Augmented Lagrangian with the default L-BFGS optimizer.  We
-   * limit the number of L-BFGS iterations to 1000, rather than the unlimited
-   * default L-BFGS.
+   * Initialize the Augmented Lagrangian with the default L-BFGS optimizer.
+   * @param penaltyThresholdFactor When the penalty threshold is updated set
+   *    the penalty threshold to the penalty multplied by this factor. The
+   *    default value of 0.25 is is taken from Burer and Monteiro (2002).
+   * @param sigmaUpdateFactor When sigma is updated  multiply sigma by this
+   *    value. The default value of 10 is taken from Burer and Monteiro (2002).
+   * @param maxIterations Maximum number of iterations of the Augmented
+   *     Lagrangian algorithm.  0 indicates no maximum.
    */
-  AugLagrangian();
+  AugLagrangian(const size_t maxIterations = 1000,
+                const double penaltyThresholdFactor = 0.25,
+                const double sigmaUpdateFactor = 10.0,
+                const L_BFGS& lbfgs = L_BFGS());
 
   /**
    * Optimize the function.  The value '1' is used for the initial value of each
@@ -49,13 +57,10 @@ class AugLagrangian
    *     class.
    * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
-   * @param maxIterations Maximum number of iterations of the Augmented
-   *     Lagrangian algorithm.  0 indicates no maximum.
    */
   template<typename LagrangianFunctionType>
   bool Optimize(LagrangianFunctionType& function,
-                arma::mat& coordinates,
-                const size_t maxIterations = 1000);
+                arma::mat& coordinates);
 
   /**
    * Optimize the function, giving initial estimates for the Lagrange
@@ -69,15 +74,12 @@ class AugLagrangian
    * @param initLambda Vector of initial Lagrange multipliers.  Should have
    *     length equal to the number of constraints.
    * @param initSigma Initial penalty parameter.
-   * @param maxIterations Maximum number of iterations of the Augmented
-   *     Lagrangian algorithm.  0 indicates no maximum.
    */
   template<typename LagrangianFunctionType>
   bool Optimize(LagrangianFunctionType& function,
                 arma::mat& coordinates,
                 const arma::vec& initLambda,
-                const double initSigma,
-                const size_t maxIterations = 1000);
+                const double initSigma);
 
   //! Get the L-BFGS object used for the actual optimization.
   const L_BFGS& LBFGS() const { return lbfgs; }
@@ -94,12 +96,33 @@ class AugLagrangian
   //! Modify the penalty parameter.
   double& Sigma() { return sigma; }
 
+  //! Get the maximum iterations
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum iterations
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the penalty threshold updating parameter
+  double PenaltyThresholdFactor() const { return penaltyThresholdFactor; }
+  //! Modify the penalty threshold updating parameter
+  double& PenaltyThresholdFactor() { return penaltyThresholdFactor; }
+
+  //! Get the sigma update factor
+  double SigmaUpdateFactor() const { return sigmaUpdateFactor; }
+  //! Modify the sigma update factor
+  double& SigmaUpdateFactor() { return sigmaUpdateFactor; }
+
  private:
-  //! If the user did not pass an L_BFGS object, we'll use our own internal one.
-  L_BFGS lbfgsInternal;
+  //! Maximum number of iterations.
+  size_t maxIterations;
+
+  //! Parameter for updating the penalty threshold
+  double penaltyThresholdFactor;
+
+  //! Parameter for updating sigma
+  double sigmaUpdateFactor;
 
   //! The L-BFGS optimizer that we will use.
-  L_BFGS& lbfgs;
+  L_BFGS lbfgs;
 
   //! Lagrange multipliers.
   arma::vec lambda;
@@ -112,8 +135,7 @@ class AugLagrangian
    */
   template<typename LagrangianFunctionType>
   bool Optimize(AugLagrangianFunction<LagrangianFunctionType>& augfunc,
-                arma::mat& coordinates,
-                const size_t maxIterations);
+                arma::mat& coordinates);
 };
 
 } // namespace ens
