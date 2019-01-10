@@ -1,25 +1,24 @@
 /**
- * @file spsa_update.hpp
+ * @file spsa.hpp
  * @author N Rajiv Vaidyanathan
+ * @author Marcus Edel
  *
- * SPSA update for faster convergence.
+ * SPSA (Simultaneous perturbation stochastic approximation) method for
+ * faster convergence.
  *
- * ensmallen is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with ensmallen.  If not, see
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef ENSMALLEN_SPSA_SPSA_HPP
 #define ENSMALLEN_SPSA_SPSA_HPP
 
-#include <ensmallen_bits/sgd/sgd.hpp>
-
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
- * Implementation of the SPSA update policy. SPSA update policy improves
- * the rate of optimization by performing simultaneously on all parameters.
+ * Implementation of the SPSA methodT. The SPSA algorithm approximates the
+ * gradient of the function by finite differences along stochastic directions.
  *
  * For more information, see the following.
  *
@@ -40,81 +39,100 @@ namespace optimization {
 class SPSA
 {
  public:
-  // Specifies the maximum number of iterations.
-  size_t maxIter;
-  arma::vec spVector;
-
-  // Control the amount of gradient update.
-  double a;
-  double A;
-
-  // Non-negative co-efficients controlling the optimizer.
-  double alpha;
-  double gamma;
-  double c;
-
-  // Gain sequences.
-  double ak;
-  double ck;
-
-  SPSA(const double& alpha = 0.602,
-       const double& gamma = 0.101,
-       const double& a = 0.16,
-       const double& c = 0.3,
-       const size_t& maxIterations = 100000):
-    maxIter(maxIterations),
-    a(a),
-    A(0.001*maxIter),
-    alpha(alpha),
-    gamma(gamma),
-    c(c),
-    ak(0),
-    ck(0)
-  {
-    // Nothing to do.
-  }
+  /**
+   * Construct the SPSA optimizer with the given function and parameters.  The
+   * defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.  The
+   * maximum number of iterations refers to the maximum number of points that
+   * are processed (i.e., one iteration equals one point; one iteration does not
+   * equal one pass over the dataset).
+   *
+   * @param alpha Scaling exponent for the step size.
+   * @param batchSize Batch size to use for each step.
+   * @param gamma Scaling exponent for evaluation step size.
+   * @param a Scaling parameter for step size.
+   * @param c Scaling parameter for evaluation step size.
+   * @param maxIterations Maximum number of iterations allowed (0 means no
+   *     limit).
+   * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param shuffle If true, the function order is shuffled; otherwise, each
+   *     function is visited in linear order.
+   */
+  SPSA(const double alpha = 0.602,
+       const size_t batchSize = 32,
+       const double gamma = 0.101,
+       const double a = 0.16,
+       const double c = 0.3,
+       const size_t maxIterations = 100000,
+       const double tolerance = 1e-5,
+       const bool shuffle = true);
 
   template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
-  {
-    arma::mat gradient = arma::zeros(iterate.n_rows, iterate.n_cols);
+  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
-    for (size_t i = 0; i < maxIter; i++)
-    {
-      ak = a/std::pow((i + 1 + A), alpha);
-      ck = c/std::pow((i + 1), gamma);
+  //! Get the scaling exponent for the step size.
+  double Alpha() const { return alpha; }
+  //! Modify the scaling exponent for the step size.
+  double& Alpha() { return alpha; }
 
-      gradient.zeros();
-      for (size_t b = 0; b < 10; b++)
-      {
-        spVector = arma::conv_to<arma::vec>::from(
-                    randi(iterate.n_elem, arma::distr_param(0, 1))) * 2 - 1;
+  //! Get the batch size.
+  size_t BatchSize() const { return batchSize; }
+  //! Modify the batch size.
+  size_t& BatchSize() { return batchSize; }
 
-        iterate += ck * spVector;
-        double f_plus = function.Evaluate(iterate, 0, iterate.n_elem);
+  //! Get the scaling exponent for evaluation step size.
+  double Gamma() const { return gamma; }
+  //! Modify the scaling exponent for evaluation step size.
+  double& Gamma() { return gamma; }
 
-        iterate -= 2 * ck * spVector;
-        double f_minus = function.Evaluate(iterate, 0, iterate.n_elem);
-        iterate += ck * spVector;
+  //! Get the scaling parameter for step size.
+  double A() const { return a; }
+  //! Modify the scaling parameter for step size.
+  double& A() { return a; }
 
-        gradient += (f_plus - f_minus) * (1 / (2 * ck * spVector));
-      }
+  //! Get the scaling parameter for step size.
+  double C() const { return c; }
+  //! Modify the scaling parameter for step size.
+  double& C() { return c; }
 
-        gradient /= 10;
-        iterate -= ak*gradient;
-    }
+  //! Get the maximum number of iterations (0 indicates no limit).
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations (0 indicates no limit).
+  size_t& MaxIterations() { return maxIterations; }
 
-    return function.Evaluate(iterate, 0, iterate.n_elem);
-  }
+ private:
+  //! Scaling exponent for the step size.
+  double alpha;
 
-  const double& Alpha() const { return alpha; }
+  //! The batch size for processing.
+  size_t batchSize;
 
-  const double& Gamma() const { return gamma; }
+  //! Scaling exponent for evaluation step size.
+  double gamma;
 
-  const double& C() const { return c; }
+  //! Scaling parameter for step size.
+  double a;
+
+  //! Scaling parameter for step size.
+  double c;
+
+  //! The maximum number of allowed iterations.
+  size_t maxIterations;
+
+  //! The tolerance for termination.
+  double tolerance;
+
+  //! Controls whether or not the individual functions are shuffled when
+  //! iterating.
+  bool shuffle;
+
+  //! Control the amount of gradient update.
+  double Ak;
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
+
+// Include implementation.
+#include "spsa_impl.hpp"
 
 #endif
