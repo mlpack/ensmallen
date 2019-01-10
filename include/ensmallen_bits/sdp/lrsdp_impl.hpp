@@ -30,7 +30,8 @@ template <typename SDPType>
 double LRSDP<SDPType>::Optimize(arma::mat& coordinates)
 {
   augLag.Sigma() = 10;
-  augLag.Optimize(function, coordinates, maxIterations);
+  augLag.MaxIterations() = maxIterations;
+  augLag.Optimize(function, coordinates);
 
   return function.Evaluate(coordinates);
 }
