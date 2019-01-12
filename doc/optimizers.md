@@ -1469,7 +1469,7 @@ optimizer.Optimize(f, coordinates);
 
 ## Simultaneous Perturbation Stochastic Approximation (SPSA)
 
-*An optimizer for [arbitrary functions](#arbitrary-functions).*
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
 The SPSA algorithm approximates the gradient of the function by finite
 differences along stochastic directions.
