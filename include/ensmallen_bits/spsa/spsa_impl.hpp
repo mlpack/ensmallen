@@ -24,16 +24,16 @@ namespace ens {
 inline SPSA::SPSA(const double alpha,
                   const size_t batchSize,
                   const double gamma,
-                  const double a,
-                  const double c,
+                  const double stepSize,
+                  const double evaluationStepSize,
                   const size_t maxIterations,
                   const double tolerance,
                   const bool shuffle) :
     alpha(alpha),
     batchSize(batchSize),
     gamma(gamma),
-    a(a),
-    c(c),
+    stepSize(stepSize),
+    evaluationStepSize(evaluationStepSize),
     Ak(0.001 * maxIterations),
     maxIterations(maxIterations),
     tolerance(tolerance),
@@ -88,8 +88,8 @@ inline double SPSA::Optimize(
     }
 
     // Gain sequences.
-    const double ak = a / std::pow(k + 1 + Ak, alpha);
-    const double ck = c / std::pow(k + 1, gamma);
+    const double ak = stepSize / std::pow(k + 1 + Ak, alpha);
+    const double ck = evaluationStepSize / std::pow(k + 1, gamma);
 
     gradient.zeros();
     for (size_t b = 0; b < batchSize; b++)

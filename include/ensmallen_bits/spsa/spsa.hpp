@@ -17,7 +17,7 @@
 namespace ens {
 
 /**
- * Implementation of the SPSA methodT. The SPSA algorithm approximates the
+ * Implementation of the SPSA method. The SPSA algorithm approximates the
  * gradient of the function by finite differences along stochastic directions.
  *
  * For more information, see the following.
@@ -35,6 +35,9 @@ namespace ens {
  * }
  * @endcode
  *
+ * SPSA can optimize differentiable separable functions.  For more details,
+ * see the documentation on function types included with this distribution or on
+ * the ensmallen website.
  */
 class SPSA
 {
@@ -50,8 +53,8 @@ class SPSA
    * @param alpha Scaling exponent for the step size.
    * @param batchSize Batch size to use for each step.
    * @param gamma Scaling exponent for evaluation step size.
-   * @param a Scaling parameter for step size.
-   * @param c Scaling parameter for evaluation step size.
+   * @param stepSize Scaling parameter for step size (named as 'a' in the paper).
+   * @param evaluationStepSize Scaling parameter for evaluation step size (named as 'c' in the paper).
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -61,8 +64,8 @@ class SPSA
   SPSA(const double alpha = 0.602,
        const size_t batchSize = 32,
        const double gamma = 0.101,
-       const double a = 0.16,
-       const double c = 0.3,
+       const double stepSize = 0.16,
+       const double evaluationStepSize = 0.3,
        const size_t maxIterations = 100000,
        const double tolerance = 1e-5,
        const bool shuffle = true);
@@ -86,14 +89,14 @@ class SPSA
   double& Gamma() { return gamma; }
 
   //! Get the scaling parameter for step size.
-  double A() const { return a; }
+  double StepSize() const { return stepSize; }
   //! Modify the scaling parameter for step size.
-  double& A() { return a; }
+  double& StepSize() { return stepSize; }
 
   //! Get the scaling parameter for step size.
-  double C() const { return c; }
+  double EvaluationStepSize() const { return evaluationStepSize; }
   //! Modify the scaling parameter for step size.
-  double& C() { return c; }
+  double& EvaluationStepSize() { return evaluationStepSize; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -111,10 +114,10 @@ class SPSA
   double gamma;
 
   //! Scaling parameter for step size.
-  double a;
+  double stepSize;
 
   //! Scaling parameter for step size.
-  double c;
+  double evaluationStepSize;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
