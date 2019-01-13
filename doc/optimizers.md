@@ -1506,6 +1506,7 @@ optimizer.Optimize(f, coordinates);
 
 #### See also:
 
+ * [An Overview of the Simultaneous Perturbation Method for Efficient Optimization](https://pdfs.semanticscholar.org/bf67/0fb6b1bd319938c6a879570fa744cf36b240.pdf)
  * [SPSA on Wikipedia](https://en.wikipedia.org/wiki/Simultaneous_perturbation_stochastic_approximation)
  * [Stochastic gradient descent in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
