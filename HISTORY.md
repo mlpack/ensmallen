@@ -2,6 +2,8 @@
 ###### ????-??-??
  * Enhance options for AugLagrangian optimizer (#66).
 
+ * Add SPSA optimizer (#69).
+
 ### ensmallen 1.12.2
 ###### 2019-01-05
  * Fix list of contributors.
