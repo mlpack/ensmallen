@@ -60,14 +60,6 @@ class L_BFGS
          const double maxStep = 1e20);
 
   /**
-   * Return the point where the lowest function value has been found.
-   *
-   * @return arma::vec representing the point and a double with the function
-   *     value at that point.
-   */
-  const std::pair<arma::mat, double>& MinPointIterate() const;
-
-  /**
    * Use L-BFGS to optimize the given function, starting at the given iterate
    * point and finding the minimum.  The maximum number of iterations is set in
    * the constructor (or with MaxIterations()).  Alternately, another overload
@@ -80,8 +72,9 @@ class L_BFGS
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename FunctionType>
-  double Optimize(FunctionType& function, arma::mat& iterate);
+  template<typename FunctionType, typename MatType>
+  typename MatType::elem_type Optimize(FunctionType& function,
+                                       MatType& iterate);
 
   //! Get the memory size.
   size_t NumBasis() const { return numBasis; }
@@ -158,10 +151,11 @@ class L_BFGS
    * @param s Differences between the iterate and old iterate matrix.
    * @param y Differences between the gradient and the old gradient matrix.
    */
+  template<typename MatType, typename CubeType>
   double ChooseScalingFactor(const size_t iterationNum,
-                             const arma::mat& gradient,
-                             const arma::cube& s,
-                             const arma::cube& y);
+                             const MatType& gradient,
+                             const CubeType& s,
+                             const CubeType& y);
 
   /**
    * Perform a back-tracking line search along the search direction to
@@ -173,17 +167,18 @@ class L_BFGS
    * @param iterate The initial point to begin the line search from.
    * @param gradient The gradient at the initial point.
    * @param searchDirection A vector specifying the search direction.
-   * @param stepSize Variable the calculated step size will be stored in.
+   * @param finalStepSize The resulting step size (0 if no step).
    *
    * @return false if no step size is suitable, true otherwise.
    */
-  template<typename FunctionType>
+  template<typename FunctionType, typename ElemType, typename MatType, typename GradType>
   bool LineSearch(FunctionType& function,
-                  double& functionValue,
-                  arma::mat& iterate,
-                  arma::mat& gradient,
-                  arma::mat& newIterateTmp,
-                  const arma::mat& searchDirection);
+                  ElemType& functionValue,
+                  MatType& iterate,
+                  GradType& gradient,
+                  MatType& newIterateTmp,
+                  const GradType& searchDirection,
+                  double& finalStepSize);
 
   /**
    * Find the L-BFGS search direction.
@@ -195,12 +190,13 @@ class L_BFGS
    * @param y Differences between the gradient and the old gradient matrix.
    * @param searchDirection Vector to store search direction in.
    */
-  void SearchDirection(const arma::mat& gradient,
+  template<typename MatType, typename CubeType>
+  void SearchDirection(const MatType& gradient,
                        const size_t iterationNum,
                        const double scalingFactor,
-                       const arma::cube& s,
-                       const arma::cube& y,
-                       arma::mat& searchDirection);
+                       const CubeType& s,
+                       const CubeType& y,
+                       MatType& searchDirection);
 
   /**
    * Update the y and s matrices, which store the differences
@@ -215,13 +211,14 @@ class L_BFGS
    * @param s Differences between the iterate and old iterate matrix.
    * @param y Differences between the gradient and the old gradient matrix.
    */
+  template<typename MatType, typename GradType, typename CubeType>
   void UpdateBasisSet(const size_t iterationNum,
-                      const arma::mat& iterate,
-                      const arma::mat& oldIterate,
-                      const arma::mat& gradient,
-                      const arma::mat& oldGradient,
-                      arma::cube& s,
-                      arma::cube& y);
+                      const MatType& iterate,
+                      const MatType& oldIterate,
+                      const GradType& gradient,
+                      const GradType& oldGradient,
+                      CubeType& s,
+                      CubeType& y);
 };
 
 } // namespace ens
