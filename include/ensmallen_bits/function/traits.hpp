@@ -39,59 +39,62 @@ ENS_HAS_EXACT_METHOD_FORM(NumFeatures, HasNumFeatures)
 //! Detect a PartialGradient() method.
 ENS_HAS_EXACT_METHOD_FORM(PartialGradient, HasPartialGradient)
 
-//! This is the form of a non-const Evaluate() method.
-template<typename FunctionType>
-using EvaluateForm = double(FunctionType::*)(const arma::mat&);
+template<typename MatType, typename GradType>
+struct TypedForms
+{
+  //! This is the form of a non-const Evaluate() method.
+  template<typename FunctionType>
+  using EvaluateForm =
+      typename MatType::elem_type(FunctionType::*)(const MatType&);
 
-//! This is the form of a const Evaluate() method.
-template<typename FunctionType>
-using EvaluateConstForm =
-    double(FunctionType::*)(const arma::mat&) const;
+  //! This is the form of a const Evaluate() method.
+  template<typename FunctionType>
+  using EvaluateConstForm =
+      typename MatType::elem_type(FunctionType::*)(const MatType&) const;
 
-//! This is the form of a static Evaluate() method.
-template<typename FunctionType>
-using EvaluateStaticForm = double(*)(const arma::mat&);
+  //! This is the form of a static Evaluate() method.
+  template<typename FunctionType>
+  using EvaluateStaticForm = typename MatType::elem_type(*)(const MatType&);
 
-//! This is the form of a non-const Gradient() method.
-template<typename FunctionType>
-using GradientForm = void(FunctionType::*)(const arma::mat&, arma::mat&);
+  //! This is the form of a non-const Gradient() method.
+  template<typename FunctionType>
+  using GradientForm = void(FunctionType::*)(const MatType&, GradType&);
 
-//! This is the form of a const Gradient() method.
-template<typename FunctionType>
-using GradientConstForm =
-    void(FunctionType::*)(const arma::mat&, arma::mat&) const;
+  //! This is the form of a const Gradient() method.
+  template<typename FunctionType>
+  using GradientConstForm =
+      void(FunctionType::*)(const MatType&, GradType&) const;
 
-//! This is the form of a static Gradient() method.
-template<typename FunctionType>
-using GradientStaticForm = void(*)(const arma::mat&, arma::mat&);
+  //! This is the form of a static Gradient() method.
+  template<typename FunctionType>
+  using GradientStaticForm = void(*)(const MatType&, GradType&);
 
-//! This is the form of a non-const EvaluateWithGradient() method.
-template<typename FunctionType>
-using EvaluateWithGradientForm =
-    double(FunctionType::*)(const arma::mat&, arma::mat&);
+  //! This is the form of a non-const EvaluateWithGradient() method.
+  template<typename FunctionType>
+  using EvaluateWithGradientForm =
+      double(FunctionType::*)(const MatType&, GradType&);
 
-//! This is the form of a const EvaluateWithGradient() method.
-template<typename FunctionType>
-using EvaluateWithGradientConstForm =
-    double(FunctionType::*)(const arma::mat&, arma::mat&) const;
+  //! This is the form of a const EvaluateWithGradient() method.
+  template<typename FunctionType>
+  using EvaluateWithGradientConstForm =
+      double(FunctionType::*)(const MatType&, GradType&) const;
 
-//! This is the form of a static EvaluateWithGradient() method.
-template<typename FunctionType>
-using EvaluateWithGradientStaticForm =
-    double(*)(const arma::mat&, arma::mat&);
+  //! This is the form of a static EvaluateWithGradient() method.
+  template<typename FunctionType>
+  using EvaluateWithGradientStaticForm = double(*)(const MatType&, GradType&);
 
-//! This is the form of a non-const NumFunctions() method.
-template <typename FunctionType>
-using NumFunctionsForm = size_t(FunctionType::*)();
+  //! This is the form of a non-const NumFunctions() method.
+  //template <typename FunctionType>
+//  using NumFunctionsForm = size_t(FunctionType::*)();
 
 //! This is the form of a const NumFunctions() method.
-template <typename FunctionType>
-using NumFunctionsConstForm = size_t(FunctionType::*)() const;
+//template <typename FunctionType>
+//using NumFunctionsConstForm = size_t(FunctionType::*)() const;
 
 //! This is the form of a static NumFunctions() method.
-template<typename FunctionType>
-using NumFunctionsStaticForm = size_t(*)();
-
+//template<typename FunctionType>
+//using NumFunctionsStaticForm = size_t(*)();
+/*
 //! This is the form of a non-const Shuffle() method.
 template<typename FunctionType>
 using ShuffleForm = void(FunctionType::*)();
@@ -243,6 +246,8 @@ using OtherConstForm = double(FunctionType::*)(Ts...) const;
 //! This is a utility struct that will match any static form.
 template<typename FunctionType, typename... Ts>
 using OtherStaticForm = double(*)(Ts...);
+*/
+};
 
 /**
  * This is a utility type used to provide unusable overloads from each of the

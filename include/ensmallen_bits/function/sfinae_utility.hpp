@@ -105,6 +105,27 @@ struct MethodFormDetector<Class, MethodForm, 7>
 //! Utility struct for checking signatures.
 template<typename U, U> struct SigCheck : std::true_type {};
 
+template<typename... Args>
+struct pack {};
+
+template<typename Func>
+struct FunctionTypes {};
+
+template<typename R, typename... A>
+struct FunctionTypes<R(A...)>
+{
+  typedef R Ret;
+  using Args = pack<A...>;
+};
+
+template<typename R, typename C, typename... A>
+struct FunctionTypes<R(C::*)(A...)>
+{
+  typedef R Ret;
+  typedef C Class;
+  using Args = pack<A...>;
+};
+
 } // namespace sfinae
 } // namespace ens
 
@@ -133,8 +154,12 @@ struct NAME                                                                    \
 <                                                                              \
   T,                                                                           \
   sig,                                                                         \
-  std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
+  std::is_same<decltype(std::declval<T>().FUNC(std::declval<                   \
+      ens::sfinae::FunctionTypes<sig>::A...>()...)),                           \
+      ens::sfinae::FunctionTypes<sig>::Ret>::type>                             \
 > : std::true_type {};
+
+//std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
 
 /**
  * Base macro for ENS_HAS_METHOD_FORM() and ENS_HAS_EXACT_METHOD_FORM() macros.
