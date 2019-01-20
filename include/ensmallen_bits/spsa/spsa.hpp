@@ -119,6 +119,9 @@ class SPSA
   //! Scaling parameter for step size.
   double evaluationStepSize;
 
+  //! Control the amount of gradient update.
+  double Ak;
+
   //! The maximum number of allowed iterations.
   size_t maxIterations;
 
@@ -128,9 +131,6 @@ class SPSA
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
-
-  //! Control the amount of gradient update.
-  double Ak;
 };
 
 } // namespace ens
