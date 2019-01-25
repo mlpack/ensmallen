@@ -1,3 +1,7 @@
+### ensmallen 1.13.1
+###### 2019-01-24
+ * Fix -Wreorder warning (#75).
+
 ### ensmallen 1.13.0
 ###### 2019-01-14
  * Enhance options for AugLagrangian optimizer (#66).
