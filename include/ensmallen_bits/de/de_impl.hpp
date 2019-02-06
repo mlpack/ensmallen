@@ -124,8 +124,8 @@ inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterat
     // Update helper variables 
     lastBestFitness = fitnessValues.min();
     for(int it = 0; it < populationSize; it++)
-    if(fitnessValues[it] == lastBestFitness)
-    bestElement = population.slice(it);
+      if(fitnessValues[it] == lastBestFitness)
+        bestElement = population.slice(it);
   }
   iterate = bestElement;
   return lastBestFitness;
