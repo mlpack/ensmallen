@@ -15,15 +15,18 @@
 namespace ens {
 
 /**
- * Momentum update for Stochastic Gradient Descent with weight decay.
+ * De-Coupled Weight Decay Policy for SGD with Momentum (SGDR).
  *
- * TODO: add documentation for SGD momentum as well?
+ * This Implments Decoupled Weight Decay Policy  in which the weight decay is
+ * decoupled from the optimization steps w.r.t. to the loss function.
+ * For SGD variants, this simplifies hyperparameter search since it decouples
+ * the settings of weight decay and learning rate.
  *
- * 
  *
+ * The Update Policy for SGDR
  * \f[
- * v = mu*v - \alpha \nabla f_i(A)
- * A_{j + 1} = A_j - \nabla \lamdba A_j + v
+ * v = mu*v + \alpha \nabla f_i(A)
+ * A_{j + 1} = A_j - \nabla \lamdba A_j - v
  * \f]
  *
  * @code
@@ -39,7 +42,7 @@ namespace ens {
  /**
   * TODO: better name?
   */
-class WeightDecayMomentumUpdate
+class DecoupledWeightDecayMomentumUpdate
 {
  public:
   /**
@@ -49,10 +52,10 @@ class WeightDecayMomentumUpdate
    * @param momentum The momentum parameter
    * @param weight_decay The weight decay parameter
    */
-  WeightDecayMomentumUpdate(const double momentum = 0.5,
-                            const double weight_decay = 0.0005) :
-      momentum(momentum),
-      weight_decay(weight_decay)
+  DecoupledWeightDecayMomentumUpdate(const double momentum = 0.5,
+                                     const double weightDecay = 0.0005) :
+    momentum(momentum),
+    weightDecay(weightDecay)
   {
     // Nothing to do
   }
@@ -82,8 +85,8 @@ class WeightDecayMomentumUpdate
               const double stepSize,
               const arma::mat& gradient)
   {
-    velocity = momentum * velocity - stepSize * gradient;
-    iterate += velocity - stepSize * weight_decay * iterate;
+    velocity = momentum * velocity + stepSize * gradient;
+    iterate += - velocity - stepSize * weightDecay * iterate;
   }
 
  private:
@@ -92,7 +95,7 @@ class WeightDecayMomentumUpdate
   // The velocity matrix
   arma::mat velocity;
   // The weight decay (lambda) parameter
-  double weight_decay;
+  double weightDecay;
 };
 
 } // namespace ens
