@@ -19,11 +19,11 @@ namespace ens {
  *
  * TODO: add documentation for SGD momentum as well?
  *
- * TODO: is the following equation right?
+ * 
  *
  * \f[
  * v = mu*v - \alpha \nabla f_i(A)
- * A_{j + 1} = A_j - \nabla \lamdba A_j - v
+ * A_{j + 1} = A_j - \nabla \lamdba A_j + v
  * \f]
  *
  * @code
@@ -83,7 +83,7 @@ class WeightDecayMomentumUpdate
               const arma::mat& gradient)
   {
     velocity = momentum * velocity - stepSize * gradient;
-    iterate -= stepSize * weight_decay * iterate + velocity;
+    iterate += velocity - stepSize * weight_decay * iterate;
   }
 
  private:
