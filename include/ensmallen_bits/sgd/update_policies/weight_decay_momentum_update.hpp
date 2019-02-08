@@ -15,7 +15,7 @@
 namespace ens {
 
 /**
- * De-Coupled Weight Decay Policy for SGD with Momentum (SGDR).
+ * De-Coupled Weight Decay Policy for SGD with Momentum (SGDW).
  *
  * This Implments Decoupled Weight Decay Policy  in which the weight decay is
  * decoupled from the optimization steps w.r.t. to the loss function.
@@ -86,7 +86,7 @@ class DecoupledWeightDecayMomentumUpdate
               const arma::mat& gradient)
   {
     velocity = momentum * velocity + stepSize * gradient;
-    iterate += - velocity - stepSize * weightDecay * iterate;
+    iterate -= velocity + stepSize * weightDecay * iterate;
   }
 
  private:
