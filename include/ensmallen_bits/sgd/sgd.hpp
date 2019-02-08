@@ -190,7 +190,7 @@ using StandardSGD = SGD<VanillaUpdate>;
 
 using MomentumSGD = SGD<MomentumUpdate>;
 
-using WeightDecayMomentumSGD = SGD<WeightDecayMomentumUpdate>;
+using WeightDecayMomentumSGD = SGD<DecoupledWeightDecayMomentumUpdate>;
 
 using NesterovMomentumSGD = SGD<NesterovMomentumUpdate>;
 

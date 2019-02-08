@@ -69,7 +69,7 @@ class DecoupledWeightDecayMomentumUpdate
    */
   void Initialize(const size_t rows, const size_t cols)
   {
-    velocity = arma::zeros<arma::mat>(rows, cols)
+    velocity = arma::zeros<arma::mat>(rows, cols);
   }
 
 
