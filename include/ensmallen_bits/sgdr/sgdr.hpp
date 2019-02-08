@@ -16,6 +16,7 @@
 
 #include <ensmallen_bits/sgd/sgd.hpp>
 #include <ensmallen_bits/sgd/update_policies/momentum_update.hpp>
+#include <ensmallen_bits/sgd/update_policies/weight_decay_momentum_update.hpp>
 #include "cyclical_decay.hpp"
 
 namespace ens {
@@ -145,6 +146,8 @@ class SGDR
   //! Locally-stored optimizer instance.
   OptimizerType optimizer;
 };
+
+using WeightDecayMomentumSGDR = SGDR<DecoupledWeightDecayMomentumUpdate>;
 
 } // namespace ens
 
