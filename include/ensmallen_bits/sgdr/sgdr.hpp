@@ -147,7 +147,7 @@ class SGDR
   OptimizerType optimizer;
 };
 
-using WeightDecayMomentumSGDR = SGDR<DecoupledWeightDecayMomentumUpdate>;
+using SGDRW = SGDR<DecoupledWeightDecayMomentumUpdate>;
 
 } // namespace ens
 

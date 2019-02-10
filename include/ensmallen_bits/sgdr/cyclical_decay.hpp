@@ -78,9 +78,7 @@ class CyclicalDecay
     if (epoch >= epochRestart)
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-      stepSize = 0.5 * constStepSize * (1 + cos((batchRestart / epochBatches)
-          * arma::datum::pi));
-
+      stepSize = 0.5 * constStepSize * (1 + cos(batchRestart / epochBatches));
       // Keep track of the number of batches since the last restart.
       batchRestart++;
     }
