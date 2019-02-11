@@ -59,7 +59,7 @@ class CyclicalDecay
       constStepSize(stepSize),
       nextRestart(epochRestart),
       batchRestart(0),
-      epochBatches(0),
+      epochBatches(epochRestart),
       epoch(0)
   { /* Nothing to do here */ }
 
@@ -75,16 +75,18 @@ class CyclicalDecay
               const arma::mat& /* gradient */)
   {
     // Time to adjust the step size.
-    if (epoch >= epochRestart)
+    if (epoch < nextRestart)
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-      stepSize = 0.5 * constStepSize * (1 + cos(batchRestart / epochBatches));
+      stepSize = 0.5 * constStepSize *
+                       (1 + cos((( double ) batchRestart / epochRestart)
+                        * arma::datum::pi));
       // Keep track of the number of batches since the last restart.
       batchRestart++;
     }
 
     // Time to restart.
-    if (epoch > nextRestart)
+    if (epoch >= nextRestart)
     {
       batchRestart = 0;
 
