@@ -16,6 +16,8 @@
 #ifndef ENSMALLEN_ADAM_ADAMW_UPDATE_HPP
 #define ENSMALLEN_ADAM_ADAMW_UPDATE_HPP
 
+#include "adam_update.hpp"
+
 namespace ens {
 
 /**
@@ -45,19 +47,16 @@ class AdamWUpdate
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
+   * @param weightDecay the rate at which the Update regularises the iterant
    */
   AdamWUpdate(const double epsilon = 1e-8,
               const double beta1 = 0.9,
               const double beta2 = 0.999,
               const double weightDecay = 0.0005) :
-    epsilon(epsilon),
-    beta1(beta1),
-    beta2(beta2),
+    optimiser(epsilon, beta1, beta2),
     weightDecay(weightDecay),
     iteration(0)
-  {
-    // Nothing to do.
-  }
+  {/* Nothing to do.*/ }
 
   /**
    * The Initialize method is called by SGD Optimizer method before the start of
@@ -68,8 +67,7 @@ class AdamWUpdate
    */
   void Initialize(const size_t rows, const size_t cols)
   {
-    m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
+    optimiser.Initialize(rows, cols);
   }
 
   /**
@@ -83,65 +81,32 @@ class AdamWUpdate
               const double stepSize,
               const arma::mat& gradient)
   {
-    // Increment the iteration counter variable.
-    ++iteration;
-
-    // And update the iterate.
-    m *= beta1;
-    m += (1 - beta1) * gradient;
-
-    v *= beta2;
-    v += (1 - beta2) * (gradient % gradient);
-
-    const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
-
-    /**
-     * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
-     * following expression is an approximation of the following actual term;
-     * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
-     */
-    iterate -= ((stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-        m / (arma::sqrt(v) + epsilon)) + weightDecay * iterate;
-
-    //std::cout<<stepSize<<std::endl;
+    optimiser.Update(iterate, stepSize, gradient);
+    iterate -= weightDecay * iterate;
   }
 
   //! Get the value used to initialise the squared gradient parameter.
-  double Epsilon() const { return epsilon; }
+  double Epsilon() const { return optimiser.Epsilon(); }
   //! Modify the value used to initialise the squared gradient parameter.
-  double& Epsilon() { return epsilon; }
+  double& Epsilon() { return optimiser.Epsilon(); }
 
   //! Get the smoothing parameter.
-  double Beta1() const { return beta1; }
+  double Beta1() const { return optimiser.Beta1(); }
   //! Modify the smoothing parameter.
-  double& Beta1() { return beta1; }
+  double& Beta1() { return optimiser.Beta1(); }
 
   //! Get the second moment coefficient.
-  double Beta2() const { return beta2; }
+  double Beta2() const { return optimiser.Beta2(); }
   //! Modify the second moment coefficient.
-  double& Beta2() { return beta2; }
+  double& Beta2() { return optimiser.Beta2(); }
 
  private:
-  // The epsilon value used to initialise the squared gradient parameter.
-  double epsilon;
-
-  // The smoothing parameter.
-  double beta1;
-
-  // The second moment coefficient.
-  double beta2;
-
-  // The exponential moving average of gradient values.
-  arma::mat m;
-
-  // The exponential moving average of squared gradient values.
-  arma::mat v;
-
   // The number of iterations.
   double iteration;
   // The weight decay rate.
   double weightDecay;
+  //The AdamUpdate optimser
+  AdamUpdate optimiser;
 };
 
 } // namespace ens
