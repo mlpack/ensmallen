@@ -18,9 +18,9 @@ namespace ens {
 
 template<typename UpdateRule>
 AdamRType<UpdateRule>::AdamRType(
+    const double stepSize,
     const size_t epochRestart,
     const double multFactor,
-    const double stepSize,
     const size_t batchSize,
     const double beta1,
     const double beta2,
@@ -45,10 +45,10 @@ AdamRType<UpdateRule>::AdamRType(
 
 template<typename UpdateRule>
 AdamRType<UpdateRule>::AdamRType(
-    const size_t epochRestart,
-    const double multFactor,
     const double stepSize,
     const double stepSizeMin,
+    const size_t epochRestart,
+    const double multFactor,
     const size_t batchSize,
     const double beta1,
     const double beta2,

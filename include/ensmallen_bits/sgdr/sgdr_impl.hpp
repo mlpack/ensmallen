@@ -19,10 +19,10 @@ namespace ens {
 
 template<typename UpdatePolicyType>
 SGDR<UpdatePolicyType>::SGDR(
+    const double stepSize,
     const size_t epochRestart,
     const double multFactor,
     const size_t batchSize,
-    const double stepSize,
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
@@ -44,11 +44,11 @@ SGDR<UpdatePolicyType>::SGDR(
 
 template<typename UpdatePolicyType>
 SGDR<UpdatePolicyType>::SGDR(
+    const double stepSizeMax,
+    const double stepSizeMin,
     const size_t epochRestart,
     const double multFactor,
     const size_t batchSize,
-    const double stepSizeMax,
-    const double stepSizeMin,
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,

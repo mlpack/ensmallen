@@ -65,6 +65,7 @@
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
 #include "ensmallen_bits/adamr/adamr.hpp"
+
 #include "ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp"
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"

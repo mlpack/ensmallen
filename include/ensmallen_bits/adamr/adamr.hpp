@@ -16,15 +16,34 @@
 #include <ensmallen_bits/sgd/sgd.hpp>
 #include <ensmallen_bits/adam/adamw_update.hpp>
 
-namespace ens{
+namespace ens {
+/**
+ * This class is based on the Adam Update where the Optimiser
+ * simulates a new warm-started run/restart once a number of epochs are
+ * performed.
+ *
+ * @code
+ * @article{
+ *   title   = {Decoupled Weight Decay Regularization},
+ *   author  = {{Ilya}, L. and {Frank}, H.},
+ *   journal = {ArXiv e-prints},
+ *   url     = {https://arxiv.org/pdf/1711.05101.pdf}
+ *   year    = {2019}
+ * }
+ * @endcode
+ *
+ * AdamR can optimize differentiable separable functions.  For more details, see
+ * the documentation on function types included with this distribution or on the
+ * ensmallen website.
+*/
 template<typename UpdateRule = AdamUpdate>
 class AdamRType
 {
  public:
   //Overloaded Constructor to Allow for min stepSize
-  AdamRType(const size_t epochRestart = 50,
+  AdamRType(const double stepSize = 0.001,
+            const size_t epochRestart = 50,
             const double multFactor = 2.0,
-            const double stepSize = 0.001,
             const size_t batchSize = 32,
             const double beta1 = 0.9,
             const double beta2 = 0.999,
@@ -34,10 +53,10 @@ class AdamRType
             const bool shuffle = true,
             const bool resetPolicy = true);
 
-  AdamRType(const size_t epochRestart = 50,
+  AdamRType(double stepSize,
+            double stepSizeMin,
+            const size_t epochRestart = 50,
             const double multFactor = 2.0,
-            const double stepSize = 0.001,
-            const double stepSizeMin = 0,
             const size_t batchSize = 32,
             const double beta1 = 0.9,
             const double beta2 = 0.999,
@@ -113,7 +132,7 @@ class AdamRType
 
 using AdamWR = AdamRType<AdamWUpdate>;
 
-using AdamR = AdamRType<>;
+using AdamR = AdamRType<AdamUpdate>;
 
 }
 

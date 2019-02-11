@@ -1,7 +1,7 @@
 /**
  * @file weight_decay_momentum_update.hpp
  * @author Ajinkya Tejankar
- *
+ * @author Niteya Shah
  * Momentum update with weight decay for Stochastic Gradient Descent
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -38,10 +38,8 @@ namespace ens {
  *   year    = {2019}
  * }
  * @endcode
- */
- /**
-  * TODO: better name?
-  */
+ *
+*/
 class DecoupledWeightDecayMomentumUpdate
 {
  public:

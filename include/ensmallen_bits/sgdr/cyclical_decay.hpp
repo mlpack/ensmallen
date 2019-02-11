@@ -82,8 +82,8 @@ class CyclicalDecay
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
       stepSize = stepSizeMin + 0.5 * constStepSize *
-                       (1 + cos((( double ) batchRestart / epochRestart)
-                        * arma::datum::pi));
+                 (1 + cos((( double ) batchRestart / epochRestart)
+                 * arma::datum::pi));
       // Keep track of the number of batches since the last restart.
       batchRestart++;
     }
