@@ -1,3 +1,13 @@
+/**
+ * @file adamr.hpp
+ * @author Niteya Shah
+ * Declaration of the AdamR optimizer.
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef ENSMALLEN_ADAM_ADAMR_HPP
 #define ENSMALLEN_ADAM_ADAMR_HPP
 
@@ -11,6 +21,7 @@ template<typename UpdateRule = AdamUpdate>
 class AdamRType
 {
  public:
+  //Overloaded Constructor to Allow for min stepSize
   AdamRType(const size_t epochRestart = 50,
             const double multFactor = 2.0,
             const double stepSize = 0.001,
@@ -23,6 +34,18 @@ class AdamRType
             const bool shuffle = true,
             const bool resetPolicy = true);
 
+  AdamRType(const size_t epochRestart = 50,
+            const double multFactor = 2.0,
+            const double stepSize = 0.001,
+            const double stepSizeMin = 0,
+            const size_t batchSize = 32,
+            const double beta1 = 0.9,
+            const double beta2 = 0.999,
+            const double eps = 1e-8,
+            const size_t maxIterations = 100000,
+            const double tolerance = 1e-5,
+            const bool shuffle = true,
+            const bool resetPolicy = true);
   /**
    * Optimize the given function using AdamR. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
@@ -87,10 +110,13 @@ class AdamRType
   // The SGDR object with AdamR policy.
   SGD<UpdateRule, CyclicalDecay> optimizer;
 };
+
 using AdamWR = AdamRType<AdamWUpdate>;
 
 using AdamR = AdamRType<>;
+
 }
+
 #include "adamr_impl.hpp"
 
 #endif

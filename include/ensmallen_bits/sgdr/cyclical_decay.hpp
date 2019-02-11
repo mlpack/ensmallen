@@ -46,21 +46,24 @@ class CyclicalDecay
    *
    * @param epochRestart Initial epoch where decay is applied.
    * @param multFactor Factor to increase the number of epochs before a restart.
-   * @param stepSize Initial step size for each restart.
+   * @param stepSizeMax Initial step size for each restart.
    * @param batchSize Size of each mini-batch.
    * @param numFunctions The number of separable functions (the number of
    *        predictor points).
+   * @param stepSizeMin Final step size before each restart
    */
   CyclicalDecay(const size_t epochRestart,
                 const double multFactor,
-                const double stepSize) :
+                const double stepSizeMax,
+                const double stepSizeMin = 0) :
       epochRestart(epochRestart),
       multFactor(multFactor),
-      constStepSize(stepSize),
+      constStepSize(stepSizeMax - stepSizeMin),
       nextRestart(epochRestart),
       batchRestart(0),
       epochBatches(epochRestart),
-      epoch(0)
+      epoch(0),
+      stepSizeMin(stepSizeMin)
   { /* Nothing to do here */ }
 
   /**
@@ -78,7 +81,7 @@ class CyclicalDecay
     if (epoch < nextRestart)
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-      stepSize = 0.5 * constStepSize *
+      stepSize = stepSizeMin + 0.5 * constStepSize *
                        (1 + cos((( double ) batchRestart / epochRestart)
                         * arma::datum::pi));
       // Keep track of the number of batches since the last restart.
@@ -131,6 +134,8 @@ class CyclicalDecay
 
   //! Locally-stored epoch.
   size_t epoch;
+  //Locally-stored min step size_t
+  double stepSizeMin;
 };
 
 } // namespace ens

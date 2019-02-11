@@ -43,6 +43,35 @@ AdamRType<UpdateRule>::AdamRType(
               resetPolicy)
 { /* Nothing to do. */ }
 
+template<typename UpdateRule>
+AdamRType<UpdateRule>::AdamRType(
+    const size_t epochRestart,
+    const double multFactor,
+    const double stepSize,
+    const double stepSizeMin,
+    const size_t batchSize,
+    const double beta1,
+    const double beta2,
+    const double epsilon,
+    const size_t maxIterations,
+    const double tolerance,
+    const bool shuffle,
+    const bool resetPolicy) :
+    batchSize(batchSize),
+    optimizer(stepSize,
+              batchSize,
+              maxIterations,
+              tolerance,
+              shuffle,
+              UpdateRule(epsilon, beta1, beta2),
+              CyclicalDecay(
+                  epochRestart,
+                  multFactor,
+                  stepSize,
+                  stepSizeMin),
+              resetPolicy)
+{ /* Nothing to do. */ }
+
 template<typename UpdatePolicyType>
 template<typename DecomposableFunctionType>
 double AdamRType<UpdatePolicyType>::Optimize(
