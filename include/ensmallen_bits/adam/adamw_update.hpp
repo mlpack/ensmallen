@@ -67,7 +67,7 @@ class AdamWUpdate
    */
   void Initialize(const size_t rows, const size_t cols)
   {
-    optimiser.Initialize(rows, cols);
+    update.Initialize(rows, cols);
   }
 
   /**
@@ -81,24 +81,24 @@ class AdamWUpdate
               const double stepSize,
               const arma::mat& gradient)
   {
-    optimiser.Update(iterate, stepSize, gradient);
+    update.Update(iterate, stepSize, gradient);
     iterate -= weightDecay * iterate;
   }
 
   //! Get the value used to initialise the squared gradient parameter.
-  double Epsilon() const { return optimiser.Epsilon(); }
+  double Epsilon() const { return update.Epsilon(); }
   //! Modify the value used to initialise the squared gradient parameter.
-  double& Epsilon() { return optimiser.Epsilon(); }
+  double& Epsilon() { return update.Epsilon(); }
 
   //! Get the smoothing parameter.
-  double Beta1() const { return optimiser.Beta1(); }
+  double Beta1() const { return update.Beta1(); }
   //! Modify the smoothing parameter.
-  double& Beta1() { return optimiser.Beta1(); }
+  double& Beta1() { return update.Beta1(); }
 
   //! Get the second moment coefficient.
-  double Beta2() const { return optimiser.Beta2(); }
+  double Beta2() const { return update.Beta2(); }
   //! Modify the second moment coefficient.
-  double& Beta2() { return optimiser.Beta2(); }
+  double& Beta2() { return update.Beta2(); }
 
  private:
   // The number of iterations.
