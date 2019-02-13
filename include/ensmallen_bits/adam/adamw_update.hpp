@@ -53,7 +53,7 @@ class AdamWUpdate
               const double beta1 = 0.9,
               const double beta2 = 0.999,
               const double weightDecay = 0.0005) :
-    optimiser(epsilon, beta1, beta2),
+    update(epsilon, beta1, beta2),
     weightDecay(weightDecay),
     iteration(0)
   {/* Nothing to do.*/ }
@@ -106,7 +106,7 @@ class AdamWUpdate
   // The weight decay rate.
   double weightDecay;
   //The AdamUpdate optimser
-  AdamUpdate optimiser;
+  AdamUpdate update;
 };
 
 } // namespace ens

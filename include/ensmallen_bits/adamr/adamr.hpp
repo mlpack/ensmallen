@@ -40,7 +40,31 @@ template<typename UpdateRule = AdamUpdate>
 class AdamRType
 {
  public:
-  //Overloaded Constructor to Allow for min stepSize
+  /**
+   * Construct the Adam optimizer with the given function and parameters. The
+   * defaults here are not necessarily good for the given problem, so it is
+   * suggested that the values used be tailored to the task at hand.  The
+   * maximum number of iterations refers to the maximum number of points that
+   * are processed (i.e., one iteration equals one point; one iteration does not
+   * equal one pass over the dataset).
+   *
+   * @param stepSize Maximum and initial step size for each batch of warm
+                     restart.
+   * @param stepSizeMin Minimum and final step size for each batch of warm
+                        restart.
+   * @param batchSize Number of points to process in a single step.
+   * @param beta1 Exponential decay rate for the first moment estimates.
+   * @param beta2 Exponential decay rate for the weighted infinity norm
+                  estimates.
+   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param maxIterations Maximum number of iterations allowed (0 means no
+   *                      limit).
+   * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param shuffle If true, the function order is shuffled; otherwise, each
+   *        function is visited in linear order.
+   * @param resetPolicy If true, parameters are reset before every Optimize
+   *        call; otherwise, their values are retained.
+   */
   AdamRType(const double stepSize = 0.001,
             const size_t epochRestart = 50,
             const double multFactor = 2.0,
