@@ -82,3 +82,33 @@ TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
     REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
+
+/**
+ * Run SGDWR on logistic regression and make sure the results are better.
+ */
+TEST_CASE("SGDWRLogisticRegressionTest","[SGDRTest]")
+{
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run SGDWR with a couple of batch sizes.
+  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  {
+    SGDWR sgdr(0.02, 0.01, 50, 2.0, batchSize, 10000, 1e-3);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
+
+    arma::mat coordinates = lr.GetInitialPoint();
+    sgdr.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.001)); // 0.1% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+  }
+}
