@@ -77,6 +77,16 @@ class CyclicalDecay
               double& stepSize,
               const arma::mat& /* gradient */)
   {
+    if (epoch >= nextRestart)
+    {
+      batchRestart = 0;
+
+      // Adjust the period of restarts.
+      epochRestart *= multFactor;
+
+      // Update the time for the next restart.
+      nextRestart += epochRestart;
+    }
     // Time to adjust the step size.
     if (epoch < nextRestart)
     {
@@ -89,17 +99,6 @@ class CyclicalDecay
     }
 
     // Time to restart.
-    if (epoch >= nextRestart)
-    {
-      batchRestart = 0;
-
-      // Adjust the period of restarts.
-      epochRestart *= multFactor;
-
-      // Update the time for the next restart.
-      nextRestart += epochRestart;
-    }
-
     epoch++;
   }
 

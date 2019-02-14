@@ -39,12 +39,12 @@ TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
       arma::Col<size_t> nextRestart(1000 / 10 /  mult);
       nextRestart(0) = restart;
       for (size_t j = 1; j < nextRestart.n_elem; ++j)
-        nextRestart(j) = nextRestart(j - 1) * mult;
+        nextRestart(j) = nextRestart(j - 1) + restart * std::pow(mult, j);
 
       for (size_t i = 0; i < 1000; ++i)
       {
         cyclicalDecay.Update(iterate, epochStepSize, iterate);
-        if (i <= restart || arma::accu(arma::find(nextRestart == i)) > 0)
+        if (arma::accu(arma::find(nextRestart == i)) > 0)
         {
           REQUIRE(epochStepSize == stepSize);
         }
@@ -67,7 +67,7 @@ TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
   // Now run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    SGDR<> sgdr(0.01, 50, 2.0, batchSize, 10000, 1e-3);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
