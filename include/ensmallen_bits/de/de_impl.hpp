@@ -14,16 +14,13 @@
 #define ENSMALLEN_DE_DE_IMPL_HPP
 
 #include "de.hpp"
-#include <random>
-#include <tuple>
-#include <iostream>
 
 namespace ens {
 
 inline DE::DE(const size_t populationSize ,
-			  const size_t maxGenerations,
-			  const double crossoverRate,
-			  const double differentialWeight):
+			        const size_t maxGenerations,
+			        const double crossoverRate,
+			        const double differentialWeight):
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverRate(crossoverRate),
@@ -36,10 +33,10 @@ inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterat
 {
   // Population Size must be atleast 3 for DE to work
   if (populationSize < 3)
-    {
-      throw std::logic_error("CNE::Optimize(): population size should be at least"
-          " 3!");
-    }
+  {
+    throw std::logic_error("CNE::Optimize(): population size should be at least"
+        " 3!");
+  }
 
   // Initialize helper variables
   fitnessValues.set_size(populationSize);
@@ -49,7 +46,7 @@ inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterat
   // Generate a population based on a Gaussian distribution around the given starting point.
   // Also finds the best element of the population
   population = arma::randn(iterate.n_rows, iterate.n_cols, populationSize);
-  for(int i = 0; i < populationSize; i++)
+  for (size_t i = 0; i < populationSize; i++)
   {
     population.slice(i) = population.slice(i) + iterate;
     fitnessValues[i] = function.Evaluate(population.slice(i));
@@ -60,71 +57,67 @@ inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterat
     }
   }
 
-  // Initialize random number generator
-  std::mt19937 rng;
-  rng.seed(std::random_device()());
-  std::uniform_int_distribution<std::mt19937::result_type> dist(0,populationSize-1);
-
   Info << "DE initialized successfully. Optimization started."
   << std::endl;
 
   // Iterate until maximum number of generations are completed
-  for(size_t gen = 0; gen < maxGenerations; gen++)
+  for (size_t gen = 0; gen < maxGenerations; gen++)
   {
 
     Info << "Generation: " << gen<< "\nBest Fitness: " << lastBestFitness << std::endl;
 
     // Generate new populationbased on /best/1/bin strategy
-    for(size_t member = 0; member < populationSize; member++)
+    for (size_t member = 0; member < populationSize; member++)
     {
-	  iterate = population.slice(member);
+	    iterate = population.slice(member);
 
-	  int l=0, m=0;
-	  do
-	  {
-	    l = dist(rng);
-	  }
-	  while(l == member);
-	  do
-	  {
-	    m = dist(rng);
-	  }
-	  while(m == member && m == l);
-
-	  // Generate new "mutant" from two randomly chosen members
-	  arma::mat a = population.slice(l);
-	  arma::mat b = population.slice(m);
-	  arma::mat mutant = bestElement + differentialWeight*(a - b);
-
-	  // Perform crossover
-	  arma::mat cr = arma::randu(iterate.n_rows);
-	  for(int it = 0; it<iterate.n_rows; it++)
-	  {
-	    if(cr[it] >= crossoverRate)
+      // Generate two different random numbers to choose two random members
+	    int l=0, m=0;
+	    do
 	    {
-	      mutant[it] = iterate[it];
+	      l = arma::as_scalar(arma::randi<arma::uvec>(1, arma::distr_param(0, populationSize - 1)));
 	    }
-	  }
+	    while(l == member);
+	    do
+	    {
+	      m = arma::as_scalar(arma::randi<arma::uvec>(1, arma::distr_param(0, populationSize - 1)));
+	    }
+	    while(m == member && m == l);
 
-	  double iterateValue = function.Evaluate(iterate);
-	  double mutantValue = function.Evaluate(mutant);
+	    // Generate new "mutant" from two randomly chosen members
+	    arma::mat a = population.slice(l);
+	    arma::mat b = population.slice(m);
+	    arma::mat mutant = bestElement + differentialWeight * (a - b);
 
-	  // Replace the current member if mutant is better
-	  if(mutantValue < iterateValue)
+	    // Perform crossover
+	    arma::mat cr = arma::randu(iterate.n_rows);
+	    for (size_t it = 0; it<iterate.n_rows; it++)
+	    {
+	      if (cr[it] >= crossoverRate)
+	      {
+	        mutant[it] = iterate[it];
+	      }
+	    }
+
+	    double iterateValue = function.Evaluate(iterate);
+	    double mutantValue = function.Evaluate(mutant);
+
+	    // Replace the current member if mutant is better
+	    if (mutantValue < iterateValue)
 	    {
 	      iterate = mutant;
 	      iterateValue = mutantValue;
 	    }
 
-	  fitnessValues[member] = iterateValue;
+	    fitnessValues[member] = iterateValue;
 
-	  population.slice(member) = iterate;			
+	    population.slice(member) = iterate;			
     }
 
     // Update helper variables 
     lastBestFitness = fitnessValues.min();
-    for(int it = 0; it < populationSize; it++)
-      if(fitnessValues[it] == lastBestFitness)
+    for (size_t it = 0; it < populationSize; it++)
+      if (fitnessValues[it] == lastBestFitness)
         bestElement = population.slice(it);
   }
   iterate = bestElement;
