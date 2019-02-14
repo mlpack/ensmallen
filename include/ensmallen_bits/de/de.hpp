@@ -17,7 +17,7 @@
 #ifndef ENSMALLEN_DE_DE_HPP
 #define ENSMALLEN_DE_DE_HPP
 
-namespace ens{
+namespace ens {
 
 /**
  * Differential evolution is a stochastic evolutionary algorithm used for global optimization. 
@@ -45,7 +45,6 @@ namespace ens{
  * documentation on function types included with this distribution or on the
  * ensmallen website.
  */
-
 class DE
 {
  public:
@@ -64,9 +63,9 @@ class DE
    *     solutions controls amplification factor of the differentiation.
    */
   DE(const size_t populationSize = 100,
-   const size_t maxGenerations = 2000,
-   const double crossoverRate = 0.6,
-   const double differentialWeight = 0.8);
+     const size_t maxGenerations = 2000,
+     const double crossoverRate = 0.6,
+     const double differentialWeight = 0.8);
 
   /**
    * Optimize the given function using CNE. The given
