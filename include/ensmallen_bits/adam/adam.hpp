@@ -11,7 +11,7 @@
  * for first-order gradient-based optimization of stochastic objective
  * functions, based on adaptive estimates of lower-order moments. AdaMax is
  * simply a variant of Adam based on the infinity norm. AMSGrad is another
- * variant of Adam with guaranteed convergence. Nadam is another variant of 
+ * variant of Adam with guaranteed convergence. Nadam is another variant of
  * Adam based on NAG. NadaMax is a variant for Nadam based on Infinity form.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -29,6 +29,7 @@
 #include "nadam_update.hpp"
 #include "nadamax_update.hpp"
 #include "optimisticadam_update.hpp"
+#include "qhadam_update.hpp"
 
 namespace ens {
 
@@ -99,6 +100,17 @@ class AdamType
            const bool shuffle = true,
            const bool resetPolicy = true);
 
+  AdamType(double stepSize,
+           double v1,
+           double v2,
+           const size_t batchSize = 32,
+           const double beta1 = 0.9,
+           const double beta2 = 0.999,
+           const double eps = 1e-8,
+           const size_t maxIterations = 100000,
+           const double tolerance = 1e-5,
+           const bool shuffle = true,
+           const bool resetPolicy = true);
   /**
    * Optimize the given function using Adam. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
@@ -178,6 +190,8 @@ using Nadam = AdamType<NadamUpdate>;
 using NadaMax = AdamType<NadaMaxUpdate>;
 
 using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
+
+using QHAdam = AdamType<QHAdamUpdate>;
 
 } // namespace ens
 

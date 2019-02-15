@@ -41,6 +41,30 @@ AdamType<UpdateRule>::AdamType(
               resetPolicy)
 { /* Nothing to do. */ }
 
+//Template Specialisation to allow to set parameters of QHAdam 
+template<>
+AdamType<QHAdamUpdate>::AdamType(
+    double stepSize,
+    double v1,
+    double v2,
+    const size_t batchSize,
+    const double beta1,
+    const double beta2,
+    const double epsilon,
+    const size_t maxIterations,
+    const double tolerance,
+    const bool shuffle,
+    const bool resetPolicy) :
+    optimizer(stepSize,
+              batchSize,
+              maxIterations,
+              tolerance,
+              shuffle,
+              QHAdamUpdate(epsilon, beta1, beta2, v1, v2),
+              NoDecay(),
+              resetPolicy)
+{ /* Nothing to do. */ }
+
 } // namespace ens
 
 #endif
