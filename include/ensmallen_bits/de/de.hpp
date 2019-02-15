@@ -11,9 +11,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <tuple>
-#include <vector>
-
 #ifndef ENSMALLEN_DE_DE_HPP
 #define ENSMALLEN_DE_DE_HPP
 
@@ -40,6 +37,15 @@ namespace ens {
  * This is done only if a randomly generated number between 0 and 1 is greater than the crossover rate.
  *
  * The final value and the parameters are returned by the Optimize() method.
+ * 
+ * For more information, see the following
+ *
+ * @techreport{storn1995,
+ *   title    = {Differential Evolution—a simple and efficient adaptive scheme for 
+ *               global optimization over continuous spaces},
+ *   author   = {Storn, Rainer and Price, Kenneth},
+ *   year     = 1995
+ * }
  * 
  * DE can optimize arbitrary functions.  For more details, see the
  * documentation on function types included with this distribution or on the
