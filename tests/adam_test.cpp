@@ -423,22 +423,15 @@ TEST_CASE("SimpleAdamWTestFunction", "[AdamTest]")
 {
   // Sometimes this test can fail randomly, so we allow it to run up to three
   // times.
-  bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
-  {
-    SGDTestFunction f;
-    AdamW optimizer(1e-2, 1, 0.9, 0.99, 0.25, 1e-8);
+  SGDTestFunction f;
+  AdamW optimizer(1e-2, 100, 0.9, 0.99, 1e-8, 0, 1e-9, true);
 
-    arma::mat coordinates = f.GetInitialPoint();
-    optimizer.Optimize(f, coordinates);
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
 
-    success = (coordinates[0] == Approx(0.0).margin(0.3)) &&
-              (coordinates[1] == Approx(0.0).margin(0.3)) &&
-              (coordinates[2] == Approx(0.0).margin(0.3));
-    if (success)
-      break;
-  }
-
+  bool success = (coordinates[0] == Approx(0.0).margin(0.3)) &&
+                 (coordinates[1] == Approx(0.0).margin(0.3)) &&
+                 (coordinates[2] == Approx(0.0).margin(0.3));
   REQUIRE(success == true);
 }
 
