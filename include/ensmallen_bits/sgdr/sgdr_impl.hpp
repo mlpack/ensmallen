@@ -42,32 +42,6 @@ SGDR<UpdatePolicyType>::SGDR(
                             resetPolicy))
 { /* Nothing to do here */ }
 
-template<typename UpdatePolicyType>
-SGDR<UpdatePolicyType>::SGDR(
-    const double stepSizeMax,
-    const double stepSizeMin,
-    const size_t epochRestart,
-    const double multFactor,
-    const size_t batchSize,
-    const size_t maxIterations,
-    const double tolerance,
-    const bool shuffle,
-    const UpdatePolicyType& updatePolicy,
-    const bool resetPolicy) :
-    batchSize(batchSize),
-    optimizer(OptimizerType(stepSizeMax,
-                            batchSize,
-                            maxIterations,
-                            tolerance,
-                            shuffle,
-                            updatePolicy,
-                            CyclicalDecay(
-                                epochRestart,
-                                multFactor,
-                                stepSizeMax,
-                                stepSizeMin),
-                            resetPolicy))
-{ /* Nothing to do here */ }
 
 template<typename UpdatePolicyType>
 template<typename DecomposableFunctionType>

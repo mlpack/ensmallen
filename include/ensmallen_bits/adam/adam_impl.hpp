@@ -20,8 +20,8 @@
 
 namespace ens {
 
-template<typename UpdateRule>
-AdamType<UpdateRule>::AdamType(
+template<typename UpdateRule, typename DecayPolicyType>
+AdamType<UpdateRule, DecayPolicyType>::AdamType(
     const double stepSize,
     const size_t batchSize,
     const double beta1,
@@ -37,7 +37,7 @@ AdamType<UpdateRule>::AdamType(
               tolerance,
               shuffle,
               UpdateRule(epsilon, beta1, beta2),
-              NoDecay(),
+              DecayPolicyType(),
               resetPolicy)
 { /* Nothing to do. */ }
 

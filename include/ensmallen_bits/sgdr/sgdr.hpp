@@ -84,16 +84,6 @@ class SGDR
        const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
        const bool resetPolicy = true);
 
-  SGDR(double stepSizeMax,
-       double stepSizeMin,
-       const size_t epochRestart = 50,
-       const double multFactor = 2.0,
-       const size_t batchSize = 1000,
-       const size_t maxIterations = 100000,
-       const double tolerance = 1e-5,
-       const bool shuffle = true,
-       const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
-       const bool resetPolicy = true);
   /**
    * Optimize the given function using SGDR.  The given starting point
    * will be modified to store the finishing point of the algorithm, and the

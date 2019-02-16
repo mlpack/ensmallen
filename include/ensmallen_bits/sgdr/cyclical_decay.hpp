@@ -52,9 +52,9 @@ class CyclicalDecay
    *        predictor points).
    * @param stepSizeMin Final step size before each restart
    */
-  CyclicalDecay(const size_t epochRestart,
-                const double multFactor,
-                const double stepSizeMax,
+  CyclicalDecay(const size_t epochRestart = 50,
+                const double multFactor = 2,
+                const double stepSizeMax = 0.01,
                 const double stepSizeMin = 0) :
       epochRestart(epochRestart),
       multFactor(multFactor),

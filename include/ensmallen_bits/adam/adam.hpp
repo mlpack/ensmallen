@@ -64,7 +64,7 @@ namespace ens {
  *
  * @tparam UpdateRule Adam optimizer update rule to be used.
  */
-template<typename UpdateRule = AdamUpdate>
+template<typename UpdateRule = AdamUpdate,typename DecayPolicyType = NoDecay>
 class AdamType
 {
  public:
@@ -163,24 +163,34 @@ class AdamType
   //! are reset before Optimize call.
   bool& ResetPolicy() { return optimizer.ResetPolicy(); }
 
+  //! Get the update policy.
+  const UpdateRule& UpdatePolicy() const { return optimizer.UpdatePolicy(); }
+  //! Modify the update policy.
+  UpdateRule& UpdatePolicy() { return optimizer.UpdatePolicy(); }
+
+  //! Get the step size decay policy.
+  const DecayPolicyType& DecayPolicy() const { return optimizer.DecayPolicy(); }
+  //! Modify the step size decay policy.
+  DecayPolicyType& DecayPolicy() { return optimizer.DecayPolicy(); }
+
  private:
   //! The Stochastic Gradient Descent object with Adam policy.
-  SGD<UpdateRule> optimizer;
+  SGD<UpdateRule, DecayPolicyType> optimizer;
 };
 
-using Adam = AdamType<AdamUpdate>;
+using Adam = AdamType<AdamUpdate, NoDecay>;
 
-using AdaMax = AdamType<AdaMaxUpdate>;
+using AdaMax = AdamType<AdaMaxUpdate, NoDecay>;
 
-using AMSGrad = AdamType<AMSGradUpdate>;
+using AMSGrad = AdamType<AMSGradUpdate, NoDecay>;
 
-using Nadam = AdamType<NadamUpdate>;
+using Nadam = AdamType<NadamUpdate, NoDecay>;
 
-using NadaMax = AdamType<NadaMaxUpdate>;
+using NadaMax = AdamType<NadaMaxUpdate, NoDecay>;
 
-using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
+using OptimisticAdam = AdamType<OptimisticAdamUpdate, NoDecay>;
 
-using AdamW = AdamType<AdamWUpdate>;
+using AdamW = AdamType<AdamWUpdate, NoDecay>;
 
 } // namespace ens
 
