@@ -70,7 +70,6 @@
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
-#include "ensmallen_bits/de/de.hpp"
 
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
