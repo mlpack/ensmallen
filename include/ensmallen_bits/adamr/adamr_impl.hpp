@@ -16,8 +16,8 @@
 
 namespace ens {
 
-template<typename UpdateRule>
-AdamRType<UpdateRule>::AdamRType(
+template<typename UpdateRule, typename DecayPolicyType>
+AdamRType<UpdateRule, DecayPolicyType>::AdamRType(
     const double stepSize,
     const size_t epochRestart,
     const double multFactor,
@@ -36,16 +36,16 @@ AdamRType<UpdateRule>::AdamRType(
               tolerance,
               shuffle,
               UpdateRule(epsilon, beta1, beta2),
-              CyclicalDecay(
+              DecayPolicyType(
                   epochRestart,
                   multFactor,
                   stepSize),
               resetPolicy)
 { /* Nothing to do. */ }
 
-template<typename UpdatePolicyType>
+template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType>
-double AdamRType<UpdatePolicyType>::Optimize(
+double AdamRType<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
     arma::mat& iterate)
 {

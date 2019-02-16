@@ -36,12 +36,12 @@ namespace ens {
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
 */
-template<typename UpdateRule = AdamUpdate>
+template<typename UpdateRule = AdamUpdate,typename DecayPolicyType = CyclicalDecay>
 class AdamRType
 {
  public:
   /**
-   * Construct the Adam optimizer with the given function and parameters. The
+   * Construct the AdamR optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -50,6 +50,8 @@ class AdamRType
    *
    * @param stepSize Maximum and initial step size for each batch of warm
                      restart.
+   * @param epochRestart Restart Rate for Warm Restarts
+   * @param multFactor Multiplier for epochRestart
    * @param stepSizeMin Minimum and final step size for each batch of warm
                         restart (Use DecayPolicy() method with CyclicalDecay).
    * @param batchSize Number of points to process in a single step.
@@ -136,10 +138,20 @@ class AdamRType
   //! are reset before Optimize call.
   bool& ResetPolicy() { return optimizer.ResetPolicy(); }
 
+  //! Get the update policy.
+  const UpdateRule& UpdatePolicy() const { return optimizer.UpdatePolicy(); }
+  //! Modify the update policy.
+  UpdateRule& UpdatePolicy() { return optimizer.UpdatePolicy(); }
+
+  //! Get the step size decay policy.
+  const DecayPolicyType& DecayPolicy() const { return optimizer.DecayPolicy(); }
+  //! Modify the step size decay policy.
+  DecayPolicyType& DecayPolicy() { return optimizer.DecayPolicy(); }
+
  private:
   size_t batchSize;
   // The SGDR object with AdamR policy.
-  SGD<UpdateRule, CyclicalDecay> optimizer;
+  SGD<UpdateRule, DecayPolicyType> optimizer;
 };
 
 using AdamWR = AdamRType<AdamWUpdate>;
