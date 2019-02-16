@@ -41,9 +41,9 @@ AdamType<UpdateRule>::AdamType(
               resetPolicy)
 { /* Nothing to do. */ }
 
-//Template Specialisation to allow to set parameters of QHAdam 
+//Template Specialisation to allow to set parameters of QHAdam
 template<>
-AdamType<QHAdamUpdate>::AdamType(
+inline AdamType<QHAdamUpdate>::AdamType(
     double stepSize,
     double v1,
     double v2,
