@@ -100,17 +100,6 @@ class AdamType
            const bool shuffle = true,
            const bool resetPolicy = true);
 
-  AdamType(double stepSize,
-           double v1,
-           double v2,
-           const size_t batchSize = 32,
-           const double beta1 = 0.9,
-           const double beta2 = 0.999,
-           const double eps = 1e-8,
-           const size_t maxIterations = 100000,
-           const double tolerance = 1e-5,
-           const bool shuffle = true,
-           const bool resetPolicy = true);
   /**
    * Optimize the given function using Adam. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
