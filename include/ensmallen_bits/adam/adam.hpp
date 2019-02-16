@@ -178,19 +178,19 @@ class AdamType
   SGD<UpdateRule, DecayPolicyType> optimizer;
 };
 
-using Adam = AdamType<AdamUpdate, NoDecay>;
+using Adam = AdamType<AdamUpdate>;
 
-using AdaMax = AdamType<AdaMaxUpdate, NoDecay>;
+using AdaMax = AdamType<AdaMaxUpdate>;
 
-using AMSGrad = AdamType<AMSGradUpdate, NoDecay>;
+using AMSGrad = AdamType<AMSGradUpdate>;
 
-using Nadam = AdamType<NadamUpdate, NoDecay>;
+using Nadam = AdamType<NadamUpdate>;
 
-using NadaMax = AdamType<NadaMaxUpdate, NoDecay>;
+using NadaMax = AdamType<NadaMaxUpdate>;
 
-using OptimisticAdam = AdamType<OptimisticAdamUpdate, NoDecay>;
+using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
 
-using AdamW = AdamType<AdamWUpdate, NoDecay>;
+using AdamW = AdamType<AdamWUpdate>;
 
 } // namespace ens
 
