@@ -51,7 +51,7 @@ class AdamRType
    * @param stepSize Maximum and initial step size for each batch of warm
                      restart.
    * @param stepSizeMin Minimum and final step size for each batch of warm
-                        restart.
+                        restart (Use DecayPolicy() method with CyclicalDecay).
    * @param batchSize Number of points to process in a single step.
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
@@ -77,18 +77,6 @@ class AdamRType
             const bool shuffle = true,
             const bool resetPolicy = true);
 
-  AdamRType(double stepSize,
-            double stepSizeMin,
-            const size_t epochRestart = 50,
-            const double multFactor = 2.0,
-            const size_t batchSize = 32,
-            const double beta1 = 0.9,
-            const double beta2 = 0.999,
-            const double eps = 1e-8,
-            const size_t maxIterations = 100000,
-            const double tolerance = 1e-5,
-            const bool shuffle = true,
-            const bool resetPolicy = true);
   /**
    * Optimize the given function using AdamR. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
