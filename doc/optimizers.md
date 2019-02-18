@@ -524,7 +524,7 @@ Differential Evolution is an evolutionary optimzation algorithm which selects be
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 3 in size. | `100` |
-| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for CNE. | `2000` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for DE. | `2000` |
 | `double` | **`crossoverRate`** | Probability that a candidate will undergo crossover | `0.6` |
 | `double` | **`differentialWeight`** | Amplification factor for differentiation | `0.02` |
 

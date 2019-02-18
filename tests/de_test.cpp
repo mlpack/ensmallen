@@ -1,6 +1,6 @@
 /**
- * @file cne_test.cpp
- * @author Rahul Prabhu
+ * @file de_test.cpp
+ * @author Rahul Ganesh Prabhu
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -16,7 +16,7 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Train and test a logistic regression function using CNE optimizer
+ * Train and test a logistic regression function using DE optimizer
  */
 TEST_CASE("DELogisticRegressionTest", "[DETest]")
 {
