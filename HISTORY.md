@@ -1,5 +1,5 @@
 ### ensmallen 1.13.2
-###### ????-??-??
+###### 2019-02-18
  * Minor documentation fixes (#82).
 
 ### ensmallen 1.13.1
