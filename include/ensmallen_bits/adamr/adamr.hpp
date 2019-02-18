@@ -85,9 +85,9 @@ class AdamRType
             const bool resetPolicy = true);
 
 
-  AdamRType(const double stepSize = 0.001,
-            const UpdateRule& updateRule = UpdateRule(),
+  AdamRType(const UpdateRule& updateRule,
             const DecayPolicyType& decayPolicy = DecayPolicyType(),
+            const double stepSize = 0.001,
             const size_t batchSize = 32,
             const size_t maxIterations = 100000,
             const double tolerance = 1e-5,

@@ -46,9 +46,9 @@ AdamType<UpdateRule, DecayPolicyType>::AdamType(
 
 template<typename UpdateRule, typename DecayPolicyType>
 AdamType<UpdateRule, DecayPolicyType>::AdamType(
-    const double stepSize,
     const UpdateRule& updateRule,
     const DecayPolicyType& decayPolicy,
+    const double stepSize,
     const size_t batchSize,
     const size_t maxIterations,
     const double tolerance,
