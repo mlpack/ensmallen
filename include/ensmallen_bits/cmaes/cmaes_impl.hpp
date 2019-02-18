@@ -128,20 +128,7 @@ double CMAES<SelectionPolicyType>::Optimize(
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
 
-    arma::mat covLower;
-
-    try
-    {
-      covLower = arma::chol(C.slice(idx0), "lower");
-    }
-    catch (const std::runtime_error& error)
-    {
-      // If the matrix is not positive definite, add a small value to the diagonal
-      // and try again
-      arma::mat I(iterate.n_elem, iterate.n_elem, fill::eye);
-      C.slice(idx0) += I * (1e-16);
-      covLower = arma::chol(C.slice(idx0), "lower");
-    }
+    const arma::mat covLower = arma::chol(C.slice(idx0), "lower");
 
     for (size_t j = 0; j < lambda; ++j)
     {
