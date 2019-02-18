@@ -35,6 +35,9 @@ namespace ens {
  * AdamR can optimize differentiable separable functions.  For more details, see
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
+ * @tparam UpdateRule Adam optimizer update rule to be used.
+ * @tparam DecayPolicy The StepSize decay policy to be used by default
+ * CyclicalDecay.
 */
 template<typename UpdateRule = AdamUpdate,typename DecayPolicyType = CyclicalDecay>
 class AdamRType
@@ -66,6 +69,8 @@ class AdamRType
    *        function is visited in linear order.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
+   * @param updateRule Update Policy to be used for AdamR.
+   * @param decayPolicy Decay Policy to be used for AdamR.
    */
   AdamRType(const double stepSize = 0.001,
             const size_t epochRestart = 50,
@@ -74,6 +79,16 @@ class AdamRType
             const double beta1 = 0.9,
             const double beta2 = 0.999,
             const double eps = 1e-8,
+            const size_t maxIterations = 100000,
+            const double tolerance = 1e-5,
+            const bool shuffle = true,
+            const bool resetPolicy = true);
+
+
+  AdamRType(const double stepSize = 0.001,
+            const UpdateRule& updateRule = UpdateRule(),
+            const DecayPolicyType& decayPolicy = DecayPolicyType(),
+            const size_t batchSize = 32,
             const size_t maxIterations = 100000,
             const double tolerance = 1e-5,
             const bool shuffle = true,

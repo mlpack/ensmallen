@@ -41,6 +41,29 @@ AdamType<UpdateRule, DecayPolicyType>::AdamType(
               resetPolicy)
 { /* Nothing to do. */ }
 
+// Overloaded Constructor to allow the user to pass their own Update
+// and DecayPolicy.
+
+template<typename UpdateRule, typename DecayPolicyType>
+AdamType<UpdateRule, DecayPolicyType>::AdamType(
+    const double stepSize,
+    const UpdateRule& updateRule,
+    const DecayPolicyType& decayPolicy,
+    const size_t batchSize,
+    const size_t maxIterations,
+    const double tolerance,
+    const bool shuffle,
+    const bool resetPolicy) :
+    optimizer(stepSize,
+              batchSize,
+              maxIterations,
+              tolerance,
+              shuffle,
+              updateRule,
+              decayPolicy,
+              resetPolicy)
+{ /* Nothing to do. */ }
+
 } // namespace ens
 
 #endif

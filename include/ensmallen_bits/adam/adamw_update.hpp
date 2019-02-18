@@ -47,7 +47,7 @@ class AdamWUpdate
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
-   * @param weightDecay the rate at which the Update regularises the iterant
+   * @param weightDecay The rate at which the Update regularises the iterant.
    */
   AdamWUpdate(const double epsilon = 1e-8,
               const double beta1 = 0.9,

@@ -98,4 +98,4 @@ class DecoupledWeightDecayMomentumUpdate
 
 } // namespace ens
 
-#endif //ENSMALLEN_WEIGHT_DECAY_MOMENTUM_UPDATE_HPP
+#endif // ENSMALLEN_WEIGHT_DECAY_MOMENTUM_UPDATE_HPP
