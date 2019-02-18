@@ -551,7 +551,7 @@ optimizer.Optimize(f, coordinates);
 
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
- * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
+ * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](https://arxiv.org/pdf/1611.01505.pdf)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Frank-Wolfe
@@ -829,15 +829,15 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
 Katyusha is a direct, primal-only stochastic gradient method which uses a
-"negative momentum" on top of Nesterovâ€™s momentum.  Two types are
+"negative momentum" on top of Nesterov's momentum.  Two types are
 available---one that uses a proximal update step, and one that uses the standard
 update step.
 
 #### Constructors
 
  * `KatyushaType<`_`proximal`_`>()`
- * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz_`)`
- * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz, batchSize_`)`
+ * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz`_`)`
+ * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz, batchSize`_`)`
  * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz, batchSize, maxIterations, innerIterations, tolerance, shuffle`_`)`
 
 The _`proximal`_ template parameter is a boolean value (`true` or `false`) that
@@ -1185,7 +1185,7 @@ optimizer.Optimize(f, coordinates);
 #### See also:
 
  * [Standard SGD](#standard-sgd)
- * [Nesterov Momentum SGD](#nesterov-momentum-sgd)
+ * [Momentum SGD](#momentum-sgd)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
@@ -1243,7 +1243,7 @@ optimizer.Optimize(f, coordinates);
 
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
- * [Incorporating Nesterov Momentum into Adam](http://cs229.stanford.edu/proj2015/054_report.pdf)
+ * [Training GANs with Optimism](https://arxiv.org/pdf/1711.00141.pdf)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Padam
