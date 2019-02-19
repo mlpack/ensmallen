@@ -128,25 +128,22 @@ double CMAES<SelectionPolicyType>::Optimize(
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
 
+    // Perform Cholesky decomposition. If the matrix isn't positive definite,
+    // we add a small value to the diagonal and try again.
     arma::mat covLower; 
-
-    try
-    {
-      covLower = arma::chol(C.slice(idx0), "lower");
+    bool choleskyWorked = false;
+    do
+    {  
+      choleskyWorked = arma::chol(C.slice(idx0), covLower, "lower");
+      if(!choleskyWorked)
+        C.slice(idx0).diag() += (1e-16);
     }
-    catch (const std::runtime_error& err)
-    {
-      // If the covariance matrix isn't positive definite, add a small amount
-      // to the diagonal and try again
-      arma::mat I(iterate.n_elem, iterate.n_elem, arma::fill::eye);
-      C.slice(idx0) += I*(1e-16);
-      covLower = arma::chol(C.slice(idx0), "lower");
-    }
+    while(!choleskyWorked);
 
     for (size_t j = 0; j < lambda; ++j)
     {
       if (iterate.n_rows > iterate.n_cols)
-      {
+      { 
         pStep.slice(idx(j)) = covLower *
             arma::randn(iterate.n_rows, iterate.n_cols);
       }
