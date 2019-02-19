@@ -506,47 +506,6 @@ optimizer.Optimize(f, coordinates);
  * [Neuroevolution in Wikipedia](https://en.wikipedia.org/wiki/Neuroevolution)
  * [Arbitrary functions](#arbitrary-functions)
 
-## DE
-
-*An optimizer for [arbitrary functions](#arbitrary-functions).*
-
-Differential Evolution is an evolutionary optimzation algorithm which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
-
-#### Constructors
-
-* `DE()`
-* `DE(`_`populationSize, maxGenerations`_`)`
-* `DE(`_`populationSize, maxGenerations, crossoverRate`_`)`
-* `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight`_`)`
-
-#### Attributes
-
-| **type** | **name** | **description** | **default** |
-|----------|----------|-----------------|-------------|
-| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 3 in size. | `100` |
-| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for CNE. | `2000` |
-| `double` | **`crossoverRate`** | Probability that a candidate will undergo crossover | `0.6` |
-| `double` | **`differentialWeight`** | Amplification factor for differentiation | `0.02` |
-
-Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `DifferentialWeight()`
-
-#### Examples:
-
-```c++
-RosenbrockFunction f;
-arma::mat coordinates = f.GetInitialPoint();
-
-DE optimizer(200, 1000, 0.6, 0.8);
-optimizer.Optimize(f, coordinates);
-```
-
-#### See also:
-
- * [Differential Evolution - A simple and efficient adaptive scheme for global optimization over continuous spaces](http://www1.icsi.berkeley.edu/~storn/TR-95-012.pdf)
- * [Differential Evolution in Wikipedia](https://en.wikipedia.org/wiki/Differential_Evolution)
- * [Arbitrary functions](#arbitrary-functions)
-
 ## Eve
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
