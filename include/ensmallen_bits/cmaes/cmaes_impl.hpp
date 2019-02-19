@@ -129,19 +129,14 @@ double CMAES<SelectionPolicyType>::Optimize(
     const size_t idx1 = i % 2;
 
     arma::mat covLower; 
-
-    try
-    {
-      covLower = arma::chol(C.slice(idx0), "lower");
+    bool choleskyWorked = false;
+    do
+    {  
+      choleskyWorked = arma::chol(covLower, C.slice(idx0), "lower");
+      if(!choleskyWorked)
+        C.slice(idx0).diag() += 1e-16;
     }
-    catch (const std::runtime_error& err)
-    {
-      // If the covariance matrix isn't positive definite, add a small amount
-      // to the diagonal and try again
-      arma::mat I(iterate.n_elem, iterate.n_elem, arma::fill::eye);
-      C.slice(idx0) += I*(1e-16);
-      covLower = arma::chol(C.slice(idx0), "lower");
-    }
+    while(!choleskyWorked);
 
     for (size_t j = 0; j < lambda; ++j)
     {
