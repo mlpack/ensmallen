@@ -116,9 +116,15 @@ inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterat
 
     // Update helper variables 
     lastBestFitness = fitnessValues.min();
+    arma::uword index = arma::index_min(fitnessValues);
     for (size_t it = 0; it < populationSize; it++)
+    {  
       if (fitnessValues[it] == lastBestFitness)
+      {
         bestElement = population.slice(it);
+        break;
+      }
+    }
   }
   iterate = bestElement;
   return lastBestFitness;
