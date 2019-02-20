@@ -1,6 +1,8 @@
-### ensmallen 1.13.3
-###### ????-??-??
+### ensmallen 1.14.0
+###### 2019-02-20
   * Add DE optimizer (#77).
+
+  * Fix for Cholesky decomposition in CMAES (#83).
 
 ### ensmallen 1.13.2
 ###### 2019-02-18
