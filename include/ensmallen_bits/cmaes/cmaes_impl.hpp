@@ -130,7 +130,7 @@ double CMAES<SelectionPolicyType>::Optimize(
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again
-    arma::mat covLower; 
+    arma::mat covLower;
     while (!arma::chol(covLower, C.slice(idx0), "lower"))
       C.slice(idx0).diag() += 1e-16;
 
