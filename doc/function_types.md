@@ -23,6 +23,7 @@ The following optimizers can be used to optimize an arbitrary function:
 
  - [Simulated Annealing](#simulated-annealing-sa)
  - [CNE](#cne)
+ - [DE](#de)
 
 Each of these optimizers has an `Optimize()` function that is called as
 `Optimize(f, x)` where `f` is the function to be optimized (which implements
