@@ -72,7 +72,6 @@
 #include "ensmallen_bits/eve/eve.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
 
-
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
