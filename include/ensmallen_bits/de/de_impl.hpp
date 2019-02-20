@@ -2,8 +2,8 @@
  * @file de_impl.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Differential Evolution
- * An evolutionary algorithm used for global optimization of arbitrary functions
+ * Implementation of Differential Evolution an evolutionary algorithm used for
+ * global optimization of arbitrary functions.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -18,33 +18,34 @@
 namespace ens {
 
 inline DE::DE(const size_t populationSize ,
-			        const size_t maxGenerations,
-			        const double crossoverRate,
-			        const double differentialWeight):
+              const size_t maxGenerations,
+              const double crossoverRate,
+              const double differentialWeight):
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverRate(crossoverRate),
     differentialWeight(differentialWeight)
-{ /*Nothing to do here*/ }
+{ /* Nothing to do here. */ }
 
 //!Optimize the function
 template<typename DecomposableFunctionType>
-inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+inline double DE::Optimize(DecomposableFunctionType& function,
+                           arma::mat& iterate)
 {
-  // Population Size must be atleast 3 for DE to work
+  // Population Size must be atleast 3 for DE to work.
   if (populationSize < 3)
   {
     throw std::logic_error("CNE::Optimize(): population size should be at least"
         " 3!");
   }
 
-  // Initialize helper variables
+  // Initialize helper variables.
   fitnessValues.set_size(populationSize);
   double lastBestFitness = DBL_MAX;
   arma::mat bestElement;
 
-  // Generate a population based on a Gaussian distribution around the given starting point.
-  // Also finds the best element of the population
+  // Generate a population based on a Gaussian distribution around the given
+  // starting point. Also finds the best element of the population.
   population = arma::randn(iterate.n_rows, iterate.n_cols, populationSize);
   for (size_t i = 0; i < populationSize; i++)
   {
@@ -57,67 +58,62 @@ inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterat
     }
   }
 
-  Info << "DE initialized successfully. Optimization started."
-  << std::endl;
-
-  // Iterate until maximum number of generations are completed
+  // Iterate until maximum number of generations are completed.
   for (size_t gen = 0; gen < maxGenerations; gen++)
   {
-
-    Info << "Generation: " << gen<< "\nBest Fitness: " << lastBestFitness << std::endl;
-
-    // Generate new populationbased on /best/1/bin strategy
+    // Generate new populationbased on /best/1/bin strategy.
     for (size_t member = 0; member < populationSize; member++)
     {
-	    iterate = population.slice(member);
+      iterate = population.slice(member);
 
-      // Generate two different random numbers to choose two random members
-	    int l=0, m=0;
-	    do
-	    {
-	      l = arma::as_scalar(arma::randi<arma::uvec>(1, arma::distr_param(0, populationSize - 1)));
-	    }
-	    while(l == member);
-	    do
-	    {
-	      m = arma::as_scalar(arma::randi<arma::uvec>(1, arma::distr_param(0, populationSize - 1)));
-	    }
-	    while(m == member && m == l);
+      // Generate two different random numbers to choose two random members.
+      size_t l = 0, m = 0;
+      do
+      {
+        l = arma::as_scalar(arma::randi<arma::uvec>(
+            1, arma::distr_param(0, populationSize - 1)));
+      }
+      while(l == member);
 
-	    // Generate new "mutant" from two randomly chosen members
-	    arma::mat a = population.slice(l);
-	    arma::mat b = population.slice(m);
-	    arma::mat mutant = bestElement + differentialWeight * (a - b);
+      do
+      {
+        m = arma::as_scalar(arma::randi<arma::uvec>(
+            1, arma::distr_param(0, populationSize - 1)));
+      }
+      while(m == member && m == l);
 
-	    // Perform crossover
-	    arma::mat cr = arma::randu(iterate.n_rows);
-	    for (size_t it = 0; it<iterate.n_rows; it++)
-	    {
-	      if (cr[it] >= crossoverRate)
-	      {
-	        mutant[it] = iterate[it];
-	      }
-	    }
+      // Generate new "mutant" from two randomly chosen members.
+      arma::mat mutant = bestElement + differentialWeight *
+          (population.slice(l) - population.slice(m));
 
-	    double iterateValue = function.Evaluate(iterate);
-	    double mutantValue = function.Evaluate(mutant);
+      // Perform crossover.
+      const arma::mat cr = arma::randu(iterate.n_rows);
+      for (size_t it = 0; it < iterate.n_rows; it++)
+      {
+        if (cr[it] >= crossoverRate)
+        {
+          mutant[it] = iterate[it];
+        }
+      }
 
-	    // Replace the current member if mutant is better
-	    if (mutantValue < iterateValue)
-	    {
-	      iterate = mutant;
-	      iterateValue = mutantValue;
-	    }
+      double iterateValue = function.Evaluate(iterate);
+      const double mutantValue = function.Evaluate(mutant);
 
-	    fitnessValues[member] = iterateValue;
+      // Replace the current member if mutant is better.
+      if (mutantValue < iterateValue)
+      {
+        iterate = mutant;
+        iterateValue = mutantValue;
+      }
 
-	    population.slice(member) = iterate;			
+      fitnessValues[member] = iterateValue;
+      population.slice(member) = iterate;
     }
 
-    // Update helper variables 
+    // Update helper variables.
     lastBestFitness = fitnessValues.min();
     for (size_t it = 0; it < populationSize; it++)
-    {  
+    {
       if (fitnessValues[it] == lastBestFitness)
       {
         bestElement = population.slice(it);
@@ -125,10 +121,11 @@ inline double DE::Optimize(DecomposableFunctionType& function, arma::mat& iterat
       }
     }
   }
+
   iterate = bestElement;
   return lastBestFitness;
 }
 
-}
+} // namespace ens
 
 #endif

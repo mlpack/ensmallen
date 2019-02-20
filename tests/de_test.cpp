@@ -16,7 +16,7 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Train and test a logistic regression function using DE optimizer
+ * Train and test a logistic regression function using DE optimizer.
  */
 TEST_CASE("DELogisticRegressionTest", "[DETest]")
 {

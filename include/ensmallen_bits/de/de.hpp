@@ -2,8 +2,9 @@
  * @file de.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Differential Evolution
- * An evolutionary algorithm used for global optimization of arbitrary functions
+ * Differential Evolution is a method used for global optimization of arbitrary
+ * functions that optimizes a problem by iteratively trying to improve a
+ * candidate solution.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -17,36 +18,38 @@
 namespace ens {
 
 /**
- * Differential evolution is a stochastic evolutionary algorithm used for global optimization. 
- * This class implements the best/1/bin strategy of differential evolution to converge a given
- * function to minima.
+ * Differential evolution is a stochastic evolutionary algorithm used for global
+ * optimization. This class implements the best/1/bin strategy of differential
+ * evolution to converge a given function to minima.
  *
- * The algorithm works by generating a fixed number of candidates from the given starting point.
- * At each pass through the population, the algorithm mutates each candidate solution to create 
- * a trial solution. If the trial solution is better than the candidate, it is replaced in the
+ * The algorithm works by generating a fixed number of candidates from the
+ * given starting point. At each pass through the population, the algorithm
+ * mutates each candidate solution to create a trial solution. If the trial
+ * solution is better than the candidate, it is replaced in the
  * population.
  *
  * The evolution takes place in two steps:
  * - Mutation
  * - Crossover
- * 
- * Mutation is done by generating a new candidate solution from the best candidate of the previous
- * solution and two random other candidates. 
  *
- * Crossover is done by mixing the parameters of the candidate solution and the mutant solution.
- * This is done only if a randomly generated number between 0 and 1 is greater than the crossover rate.
+ * Mutation is done by generating a new candidate solution from the best
+ * candidate of the previous solution and two random other candidates.
+ *
+ * Crossover is done by mixing the parameters of the candidate solution and the
+ * mutant solution. This is done only if a randomly generated number between 0
+ * and 1 is greater than the crossover rate.
  *
  * The final value and the parameters are returned by the Optimize() method.
- * 
+ *
  * For more information, see the following
  *
  * @techreport{storn1995,
- *   title    = {Differential Evolution—a simple and efficient adaptive scheme for 
- *               global optimization over continuous spaces},
+ *   title    = {Differential Evolution—a simple and efficient adaptive scheme
+ *               for global optimization over continuous spaces},
  *   author   = {Storn, Rainer and Price, Kenneth},
  *   year     = 1995
  * }
- * 
+ *
  * DE can optimize arbitrary functions.  For more details, see the
  * documentation on function types included with this distribution or on the
  * ensmallen website.
@@ -96,14 +99,14 @@ class DE
   //! Modify maximum number of generations.
   size_t& MaxGenerations() { return maxGenerations; }
 
-  //! Get Crossover rate
+  //! Get Crossover rate.
   double CrossoverRate() const { return crossoverRate; }
-  //! Modify crossover rate
+  //! Modify crossover rate.
   double& CrossoverRate() { return crossoverRate; }
 
-  //! Get Differential weight
+  //! Get differential weight.
   double DifferentialWeight() const {return differentialWeight; }
-  //! Modify Differential weight
+  //! Modify differential weight.
   double& DifferentialWeight() { return differentialWeight; }
 
  private:
@@ -119,10 +122,10 @@ class DE
   //! Maximum number of generations before termination criteria is met.
   size_t maxGenerations;
 
-  //! Probability that crossover will occur
+  //! Probability that crossover will occur.
   double crossoverRate;
 
-  //! Amplification factor for differentiation
+  //! Amplification factor for differentiation.
   double differentialWeight;
 };
 
