@@ -22,7 +22,14 @@ namespace ens {
  * QHSGD). This allows this method to combine the features of many optimisers
  * and provide better optimisation control.
  *
- * TODO: Paper information
+ * @code
+ * @inproceedings{ma2019qh,
+ *   title={Quasi-hyperbolic momentum and Adam for deep learning},
+ *   author={Jerry Ma and Denis Yarats},
+ *   booktitle={International Conference on Learning Representations},
+ *   year={2019}
+ * }
+ * @endcode
  *
  */
 class QHUpdate
@@ -31,7 +38,7 @@ class QHUpdate
   /**
    * Construct the Quasi Hyperbolic update policy with the given parameters.
    * @param v The quasi hyperbolic term.
-   * @param momentum The momentum ter.
+   * @param momentum The momentum term.
    */
    QHUpdate(const double v = 0.7,
             const double momentum = 0.999) :
@@ -42,8 +49,6 @@ class QHUpdate
    }
 
   /**
-   *
-   *
    * @param rows Number of rows in the gradient matrix.
    * @param cols Number of columns in the gradient matrix.
    */

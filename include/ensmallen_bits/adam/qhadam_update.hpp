@@ -13,17 +13,19 @@
 namespace ens {
 
 /**
+ * QHAdam is a optimising strategy based on the Quasi-Hyperbolic step when
+ * applied to the Adam Optimiser . QH updates can be considered to a weighted
+ * average of the momentum . QHAdam , based on its paramterisation can recover
+ * many algorithms such as NAdam, and RMSProp.
  *
- * TODO: Fill in these details as well on info about algorithm
  * For more information, see the following.
  *
  * @code
- * @article{Kingma2014,
- *   author  = {Diederik P. Kingma and Jimmy Ba},
- *   title   = {Adam: {A} Method for Stochastic Optimization},
- *   journal = {CoRR},
- *   year    = {2014},
- *   url     = {http://arxiv.org/abs/1412.6980}
+ * @inproceedings{ma2019qh,
+ *   title={Quasi-hyperbolic momentum and Adam for deep learning},
+ *   author={Jerry Ma and Denis Yarats},
+ *   booktitle={International Conference on Learning Representations},
+ *   year={2019}
  * }
  * @endcode
  */
@@ -33,12 +35,12 @@ class QHAdamUpdate
   /**
    * Construct the QHAdam update policy with the given parameters.
    *
+   * @param v1 The first quasi-hyperbolic term.
+   * @param v1 The second quasi-hyperbolic term.
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
-   * @param v1 The first quasi-hyperbolic term.
-   * @param v1 The second quasi-hyperbolic term.
    */
   QHAdamUpdate(const double v1 = 0.7,
                const double v2 = 1,
@@ -92,12 +94,13 @@ class QHAdamUpdate
     const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
     const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
 
-    const auto mDash = m / biasCorrection1;
-    const auto vDash = v / biasCorrection2;
+    const double mDash = m / biasCorrection1;
+    const double vDash = v / biasCorrection2;
 
+    //QHAdam recovers Adam when v2 == v1.
     iterate -= stepSize * ((((1 - v1) * gradient) + v1 * mDash) /
                (arma::sqrt(((1 - v2) * (gradient % gradient)) +
-               v2 * vDash) + epsilon ));
+               v2 * vDash) + epsilon));
   }
 
   //! Get the value used to initialise the squared gradient parameter.
@@ -144,10 +147,10 @@ class QHAdamUpdate
   // The number of iterations.
   double iteration;
 
-  //The first quasi-hyperbolic term.
+  // The first quasi-hyperbolic term.
   double v1;
 
-  //The second quasi-hyperbolic term.
+  // The second quasi-hyperbolic term.
   double v2;
 };
 
