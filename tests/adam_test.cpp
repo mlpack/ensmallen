@@ -422,7 +422,7 @@ TEST_CASE("PadamLogisticRegressionTest", "[AdamTest]")
 /**
  * Tests the QHadam optimizer using a simple test function.
  */
-TEST_CASE("SimpleQHdamTestFunction", "[AdamTest]")
+TEST_CASE("SimpleQHAdamTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
   QHAdam optimizer(0.02, 32, 0.9, 0.999, 1e-8, 200000, 1e-7, true);
@@ -439,7 +439,7 @@ TEST_CASE("SimpleQHdamTestFunction", "[AdamTest]")
 /**
  * Run QHAdam on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("QHadamLogisticRegressionTest", "[AdamTest]")
+TEST_CASE("QHAdamLogisticRegressionTest", "[AdamTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
