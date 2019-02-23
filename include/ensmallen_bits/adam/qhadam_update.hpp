@@ -97,7 +97,7 @@ class QHAdamUpdate
     const double mDash = m / biasCorrection1;
     const double vDash = v / biasCorrection2;
 
-    //QHAdam recovers Adam when v2 = v1 = 1.
+    // QHAdam recovers Adam when v2 = v1 = 1.
     iterate -= stepSize * ((((1 - v1) * gradient) + v1 * mDash) /
                (arma::sqrt(((1 - v2) * (gradient % gradient)) +
                v2 * vDash) + epsilon));
