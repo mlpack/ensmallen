@@ -103,15 +103,6 @@ class AdamType
            const bool shuffle = true,
            const bool resetPolicy = true);
 
-  AdamType(const UpdateRule& updateRule,
-           const DecayPolicyType& decayPolicy = DecayPolicyType(),
-           const double stepSize = 0.001,
-           const size_t batchSize = 32,
-           const size_t maxIterations = 100000,
-           const double tolerance = 1e-5,
-           const bool shuffle = true,
-           const bool resetPolicy = true);
-
   /**
    * Optimize the given function using Adam. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
