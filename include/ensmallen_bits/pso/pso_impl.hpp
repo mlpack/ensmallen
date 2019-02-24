@@ -5,19 +5,20 @@
  * Implementation of the Particle Swarm Optimizer as proposed
  * by J. Kennedy et al. in "Particle swarm optimization".
  *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_PSO_PSO_IMPL_HPP
-#define MLPACK_CORE_OPTIMIZERS_PSO_PSO_IMPL_HPP
+#ifndef ENSMALLEN_PSO_PSO_IMPL_HPP
+#define ENSMALLEN_PSO_PSO_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "pso.hpp"
 
-namespace mlpack {
-namespace optimization {
+#include <ensmallen_bits/function.hpp>
+
+namespace ens {
 
 template<typename VelocityVectorType>
 PSOType<VelocityVectorType>::
@@ -104,7 +105,7 @@ double PSOType<VelocityVectorType>::Optimize(
     // Compare current objective with tolerance.
     if (currentObjective < tolerance)
     {
-      Log::Info << "PSO: minimized within tolerance " << tolerance << "; "
+      Info << "PSO: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
       return currentObjective;
     }
@@ -112,7 +113,6 @@ double PSOType<VelocityVectorType>::Optimize(
   return lastObjectiveGlobal;
 }
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
-#endif
+#endif // ENSMALLEN_PSO_PSO_IMPL_HPP

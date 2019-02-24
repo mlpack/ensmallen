@@ -5,21 +5,18 @@
  * Definition of the Particle Swarm Optimizer as proposed
  * by J. Kennedy et al. in "Particle swarm optimization".
  *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_PSO_PSO_HPP
-#define MLPACK_CORE_OPTIMIZERS_PSO_PSO_HPP
-
-#include <mlpack/prereqs.hpp>
+#ifndef ENSMALLEN_PSO_PSO_HPP
+#define ENSMALLEN_PSO_PSO_HPP
 
 #include "inertia_weight.hpp"
 #include "constriction_factor.hpp"
 
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /**
  * PSO - Particle swarm optimization is a method based on  the social behavior
@@ -107,9 +104,9 @@ class PSOType
   double& CognitiveAcceleration() { return cognitiveAcceleration; }
 
   //! Get the social acceleration of particles.
-  size_t SocialAcceleration() const { return socialAcceleration; }
+  double SocialAcceleration() const { return socialAcceleration; }
   //! Modify the social acceleration of particles.
-  size_t& SocialAcceleration() { return socialAcceleration; }
+  double& SocialAcceleration() { return socialAcceleration; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -162,10 +159,9 @@ class PSOType
 using PSO = PSOType<InertiaWeight>;
 using ConstrictionPSO = PSOType<ConstrictionFactor>;
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
 // Include implementation.
 #include "pso_impl.hpp"
 
-#endif
+#endif // ENSMALLEN_PSO_PSO_HPP

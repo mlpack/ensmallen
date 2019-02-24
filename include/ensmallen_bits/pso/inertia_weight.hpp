@@ -4,18 +4,15 @@
  *
  * PSO with inertia weight.
  *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_OPTIMIZERS_PSO_INERTIA_WEIGHT_HPP
-#define MLPACK_CORE_OPTIMIZERS_PSO_INERTIA_WEIGHT_HPP
+#ifndef ENSMALLEN_PSO_INERTIA_WEIGHT_HPP
+#define ENSMALLEN_PSO_INERTIA_WEIGHT_HPP
 
-#include <mlpack/prereqs.hpp>
-
-namespace mlpack {
-namespace optimization {
+namespace ens {
 
 /*
  * PSO with inertia weight.
@@ -77,7 +74,6 @@ class InertiaWeight
   }
 };
 
-} // namespace optimization
-} // namespace mlpack
+} // namespace ens
 
-#endif
+#endif // ENSMALLEN_PSO_INERTIA_WEIGHT_HPP

@@ -104,4 +104,7 @@
 #include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
 
+#include "ensmallen_bits/pso/pso.hpp"
+#include "ensmallen_bits/pso/test_function.hpp"
+
 #endif
