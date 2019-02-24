@@ -46,27 +46,6 @@ AdamRType<UpdateRule, DecayPolicyType>::AdamRType(
 // Overloaded Constructor to allow the user to pass their own Update
 // and DecayPolicy.
 
-template<typename UpdateRule, typename DecayPolicyType>
-AdamRType<UpdateRule, DecayPolicyType>::AdamRType(
-    const UpdateRule& updateRule,
-    const DecayPolicyType& decayPolicy,
-    const double stepSize,
-    const size_t batchSize,
-    const size_t maxIterations,
-    const double tolerance,
-    const bool shuffle,
-    const bool resetPolicy) :
-    batchSize(batchSize),
-    optimizer(stepSize,
-              batchSize,
-              maxIterations,
-              tolerance,
-              shuffle,
-              updateRule,
-              decayPolicy,
-              resetPolicy)
-{ /* Nothing to do. */ }
-
 template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType>
 double AdamRType<UpdatePolicyType, DecayPolicyType>::Optimize(
