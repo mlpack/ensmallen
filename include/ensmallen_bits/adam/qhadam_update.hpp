@@ -94,8 +94,8 @@ class QHAdamUpdate
     const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
     const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
 
-    const double mDash = m / biasCorrection1;
-    const double vDash = v / biasCorrection2;
+    arma::mat mDash = m / biasCorrection1;
+    arma::mat vDash = v / biasCorrection2;
 
     // QHAdam recovers Adam when v2 = v1 = 1.
     iterate -= stepSize * ((((1 - v1) * gradient) + v1 * mDash) /
