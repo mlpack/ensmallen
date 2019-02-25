@@ -90,9 +90,9 @@ class CMAES
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
-  //! Get the step size.
+  //! Get the population size.
   size_t PopulationSize() const { return lambda; }
-  //! Modify the step size.
+  //! Modify the population size.
   size_t& PopulationSize() { return lambda; }
 
   //! Get the lower bound of decision variables.
