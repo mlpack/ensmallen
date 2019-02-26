@@ -90,9 +90,8 @@ class AdamType
    *        function is visited in linear order.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
-   * @param updateRule Update Policy to be used for Adam.
-   * @param decayPolicy Decay Policy to be used for Adam.
    */
+
   AdamType(const double stepSize = 0.001,
            const size_t batchSize = 32,
            const double beta1 = 0.9,

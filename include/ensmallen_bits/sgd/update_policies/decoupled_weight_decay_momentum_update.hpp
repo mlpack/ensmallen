@@ -17,22 +17,24 @@ namespace ens {
 /**
  * De-Coupled Weight Decay Policy for SGD with Momentum (SGDW).
  *
- * This Implments Decoupled Weight Decay Policy  in which the weight decay is
+ * This Implments the decoupled weight decay policy in which the weight decay is
  * decoupled from the optimization steps w.r.t. to the loss function.
  * For SGD variants, this simplifies hyperparameter search since it decouples
  * the settings of weight decay and learning rate.
  *
  *
- * The Update Policy for SGDR
+ * The Update Policy for SGDW is given below
  * \f[
  * v = mu*v + \alpha \nabla f_i(A)
  * A_{j + 1} = A_j - \nabla \lamdba A_j - v
  * \f]
  *
+ * The Update strategy is discussed in the following paper.
+ *
  * @code
  * @article{
  *   title   = {Decoupled Weight Decay Regularization},
- *   author  = {{Ilya}, L. and {Frank}, H.},
+ *   author  = {Loschilov, I. and Hutter, F.},
  *   journal = {ArXiv e-prints},
  *   url     = {https://arxiv.org/pdf/1711.05101.pdf}
  *   year    = {2019}
@@ -69,7 +71,6 @@ class DecoupledWeightDecayMomentumUpdate
   {
     velocity = arma::zeros<arma::mat>(rows, cols);
   }
-
 
   /**
    * Update the given paramters. (see ens::MomentumUpdate::Update for more

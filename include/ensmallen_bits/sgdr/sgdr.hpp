@@ -16,7 +16,7 @@
 
 #include <ensmallen_bits/sgd/sgd.hpp>
 #include <ensmallen_bits/sgd/update_policies/momentum_update.hpp>
-#include <ensmallen_bits/sgd/update_policies/weight_decay_momentum_update.hpp>
+#include <ensmallen_bits/sgd/update_policies/decoupled_weight_decay_momentum_update.hpp>
 #include "cyclical_decay.hpp"
 
 namespace ens {
@@ -62,7 +62,7 @@ class SGDR
    *
    * @param epochRestart Initial epoch where decay is applied.
    * @param batchSize Size of each mini-batch.
-   * @param stepSizeMax Initial Step size for each iteration.
+   * @param stepSizeMax Initial step size for each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -74,10 +74,11 @@ class SGDR
    *        call; otherwise, their values are retained.
    * @param stepSizeMin Final step size before each restart
    */
-  SGDR(const double stepSizeMax = 0.01,
-       const size_t epochRestart = 50,
+  SGDR(const size_t epochRestart = 50,
        const double multFactor = 2.0,
        const size_t batchSize = 1000,
+       const double stepSizeMax = 0.01,
+       const double stepSizeMin = 0.005,
        const size_t maxIterations = 100000,
        const double tolerance = 1e-5,
        const bool shuffle = true,

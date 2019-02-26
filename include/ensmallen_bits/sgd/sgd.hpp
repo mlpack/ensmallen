@@ -17,7 +17,7 @@
 
 #include "update_policies/vanilla_update.hpp"
 #include "update_policies/momentum_update.hpp"
-#include "update_policies/weight_decay_momentum_update.hpp"
+#include "update_policies/decoupled_weight_decay_momentum_update.hpp"
 #include "update_policies/nesterov_momentum_update.hpp"
 #include "decay_policies/no_decay.hpp"
 

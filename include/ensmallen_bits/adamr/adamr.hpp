@@ -18,14 +18,14 @@
 
 namespace ens {
 /**
- * This class is based on the Adam Update where the Optimiser
+ * This class is based on the Adam class where the optimizer
  * simulates a new warm-started run/restart once a number of epochs are
  * performed.
  *
  * @code
  * @article{
  *   title   = {Decoupled Weight Decay Regularization},
- *   author  = {{Ilya}, L. and {Frank}, H.},
+ *   author  = {Loschilov, I. and Hutter, F.},
  *   journal = {ArXiv e-prints},
  *   url     = {https://arxiv.org/pdf/1711.05101.pdf}
  *   year    = {2019}
@@ -36,8 +36,8 @@ namespace ens {
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
  * @tparam UpdateRule Adam optimizer update rule to be used.
- * @tparam DecayPolicy The StepSize decay policy to be used by default
- * CyclicalDecay.
+ * @tparam DecayPolicy The step size decay policy to be used; by default,
+ * CyclicalDecay is used.
 */
 template<typename UpdateRule = AdamUpdate,typename DecayPolicyType = CyclicalDecay>
 class AdamRType
@@ -51,12 +51,12 @@ class AdamRType
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
    *
-   * @param stepSize Maximum and initial step size for each batch of warm
-                     restart.
+   * @param stepSizeMax Maximum and initial step size for each batch of warm
+     restart.
+   * @param stepSizeMin Minimum and final step size for each batch of warm
+     restart.
    * @param epochRestart Restart Rate for Warm Restarts
    * @param multFactor Multiplier for epochRestart
-   * @param stepSizeMin Minimum and final step size for each batch of warm
-                        restart (Use DecayPolicy() method with CyclicalDecay).
    * @param batchSize Number of points to process in a single step.
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
@@ -72,7 +72,8 @@ class AdamRType
    * @param updateRule Update Policy to be used for AdamR.
    * @param decayPolicy Decay Policy to be used for AdamR.
    */
-  AdamRType(const double stepSize = 0.001,
+  AdamRType(const double stepSizeMax = 0.002,
+            const double stepSizeMin = 0.001,
             const size_t epochRestart = 50,
             const double multFactor = 2.0,
             const size_t batchSize = 32,
@@ -96,6 +97,7 @@ class AdamRType
    */
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+
   //! Get the step size.
   double StepSize() const { return optimizer.StepSize(); }
   //! Modify the step size.
@@ -155,7 +157,7 @@ class AdamRType
 
  private:
   size_t batchSize;
-  // The SGDR object with AdamR policy.
+  // The SGD object with AdamR update policy and decay policy.
   SGD<UpdateRule, DecayPolicyType> optimizer;
 };
 

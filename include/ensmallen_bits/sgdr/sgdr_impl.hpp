@@ -19,17 +19,18 @@ namespace ens {
 
 template<typename UpdatePolicyType>
 SGDR<UpdatePolicyType>::SGDR(
-    const double stepSize,
     const size_t epochRestart,
     const double multFactor,
     const size_t batchSize,
+    const double stepSizeMax,
+    const double stepSizeMin,
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
     const UpdatePolicyType& updatePolicy,
     const bool resetPolicy) :
     batchSize(batchSize),
-    optimizer(OptimizerType(stepSize,
+    optimizer(OptimizerType(stepSizeMax,
                             batchSize,
                             maxIterations,
                             tolerance,
@@ -38,7 +39,8 @@ SGDR<UpdatePolicyType>::SGDR(
                             CyclicalDecay(
                                 epochRestart,
                                 multFactor,
-                                stepSize),
+                                stepSizeMax,
+                                stepSizeMin),
                             resetPolicy))
 { /* Nothing to do here */ }
 

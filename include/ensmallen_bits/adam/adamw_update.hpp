@@ -20,23 +20,31 @@
 
 namespace ens {
 
-/**
- * Adam is an optimizer that computes individual adaptive learning rates for
- * different parameters from estimates of first and second moments of the
- * gradients as given in the section 7 of the following paper.
- *
- * For more information, see the following.
- *
- * @code
- * @article{Kingma2014,
- *   author  = {Diederik P. Kingma and Jimmy Ba},
- *   title   = {Adam: {A} Method for Stochastic Optimization},
- *   journal = {CoRR},
- *   year    = {2014},
- *   url     = {http://arxiv.org/abs/1412.6980}
- * }
- * @endcode
- */
+  /**
+   * De-Coupled Weight Decay Policy for Adam (AdamW).
+   *
+   * This Implments Decoupled Weight Decay Policy in which the weight decay is
+   * decoupled from the optimization steps w.r.t. to the loss function.
+   *
+   *
+   * The Update Policy for AdamW follows Adam with the following additional step
+   * \f[
+   * iterate -= weightDecay * iterate
+   * \f]
+   *
+   * The Update strategy is discussed in the following paper.
+   *
+   * @code
+   * @article{
+   *   title   = {Decoupled Weight Decay Regularization},
+   *   author  = {Loschilov, I. and Hutter, F.},
+   *   journal = {ArXiv e-prints},
+   *   url     = {https://arxiv.org/pdf/1711.05101.pdf}
+   *   year    = {2019}
+   * }
+   * @endcode
+   *
+  */
 class AdamWUpdate
 {
  public:
@@ -47,7 +55,7 @@ class AdamWUpdate
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
-   * @param weightDecay The rate at which the Update regularises the iterant.
+   * @param weightDecay The rate at which the update regularises the iterate.
    */
   AdamWUpdate(const double epsilon = 1e-8,
               const double beta1 = 0.9,
@@ -105,7 +113,7 @@ class AdamWUpdate
   double iteration;
   // The weight decay rate.
   double weightDecay;
-  //The AdamUpdate optimser
+  //The AdamUpdate optimser.
   AdamUpdate update;
 };
 

@@ -18,7 +18,8 @@ namespace ens {
 
 template<typename UpdateRule, typename DecayPolicyType>
 AdamRType<UpdateRule, DecayPolicyType>::AdamRType(
-    const double stepSize,
+    const double stepSizeMax,
+    const double stepSizeMin,
     const size_t epochRestart,
     const double multFactor,
     const size_t batchSize,
@@ -30,7 +31,7 @@ AdamRType<UpdateRule, DecayPolicyType>::AdamRType(
     const bool shuffle,
     const bool resetPolicy) :
     batchSize(batchSize),
-    optimizer(stepSize,
+    optimizer(stepSizeMax,
               batchSize,
               maxIterations,
               tolerance,
@@ -39,12 +40,10 @@ AdamRType<UpdateRule, DecayPolicyType>::AdamRType(
               DecayPolicyType(
                   epochRestart,
                   multFactor,
-                  stepSize),
+                  stepSizeMax,
+                  stepSizeMin),
               resetPolicy)
 { /* Nothing to do. */ }
-
-// Overloaded Constructor to allow the user to pass their own Update
-// and DecayPolicy.
 
 template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType>
