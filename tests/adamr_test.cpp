@@ -32,9 +32,7 @@ TEST_CASE("AdamRLogisticRegressionTest","[AdamRTest]")
   // Now run AdamR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    AdamR adamr(0.03, 32, 2.0, batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
-    adamr.DecayPolicy() = CyclicalDecay(50,2,0.03,0.01);
-
+    AdamR adamr(0.03, 0.01, 50, 2, batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
@@ -64,8 +62,7 @@ TEST_CASE("AdamWRLogisticRegressionTest","[AdamRTest]")
   // Now run AdamWR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    AdamWR adamwr(0.04, 100, 2.0, batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
-    adamwr.DecayPolicy() = CyclicalDecay(50,2,0.04,0.02);
+    AdamR adamwr(0.04, 0.02, 50, 2, batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
 
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
