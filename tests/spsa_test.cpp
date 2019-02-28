@@ -82,7 +82,7 @@ TEST_CASE("SPSALogisticRegressionTest", "[SPSATest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  SPSA optimizer(0.1, 1, 0.102, 0.16, 0.3, 100000, 1e-8);
+  SPSA optimizer(0.5, 1, 0.102, 0.16, 0.3, 100000, 1e-7);
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);
 
