@@ -23,7 +23,7 @@ set(ENSMALLEN_TESTS_SOURCES
     nesterov_momentum_sgd_test.cpp
     parallel_sgd_test.cpp
     proximal_test.cpp
-    pso_test.cpp
+	pso_test.cpp
     rmsprop_test.cpp
     sa_test.cpp
     sarah_test.cpp
