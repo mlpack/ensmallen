@@ -18,7 +18,7 @@
 // In case it hasn't been included yet.
 #include "cmaes.hpp"
 
-#include <ensmallen_bits/function.hpp>
+#include "../function.hpp"
 
 namespace ens {
 
@@ -69,14 +69,14 @@ double CMAES<SelectionPolicyType>::Optimize(
   arma::vec sigma(3);
   sigma(0) = 0.3 * (upperBound - lowerBound);
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
-  const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
+  ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
   const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
       (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
 
   // Covariance update parameters.
   // Cumulation for distribution.
-  const double cc = (4 + muEffective / iterate.n_elem) /
+  cc = (4 + muEffective / iterate.n_elem) /
       (4 + iterate.n_elem + 2 * muEffective / iterate.n_elem);
   const double h = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * enn;
 
@@ -87,9 +87,7 @@ double CMAES<SelectionPolicyType>::Optimize(
       alphaMu * muEffective / 2));
 
   arma::cube mPosition(iterate.n_rows, iterate.n_cols, 3);
-  mPosition.slice(0) = lowerBound + arma::randu(
-      iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
-
+  mPosition.slice(0) = iterate + arma::randu(iterate.n_rows, iterate.n_cols);
   arma::mat step = arma::zeros(iterate.n_rows, iterate.n_cols);
 
   // Calculate the first objective function.

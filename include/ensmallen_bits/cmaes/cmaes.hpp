@@ -125,6 +125,16 @@ class CMAES
   //! Modify the selection policy.
   SelectionPolicyType& SelectionPolicy() { return selectionPolicy; }
 
+  //! Get the step size damping
+  double StepSizeDamping() const { return ds; }
+  //! Modify the step size damping
+  double& StepSizeDamping() { return ds; }
+
+  //! Get the cumulation constant
+  double CumulationConstant() const { return cc; }
+  //! Modify the cumulation constant
+  double& CumulationConstant() { return cc; }
+
  private:
   //! Population size.
   size_t lambda;
@@ -146,6 +156,13 @@ class CMAES
 
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy;
+
+  //! Step size damping
+  double ds;
+
+  //! Cumulation constant
+  double cc;
+
 };
 
 /**
