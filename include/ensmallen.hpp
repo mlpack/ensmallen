@@ -68,6 +68,7 @@
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
+#include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
 
