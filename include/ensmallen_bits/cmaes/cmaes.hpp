@@ -163,6 +163,9 @@ class CMAES
   //! Cumulation constant
   double cc;
 
+  //! Methods used to transform the candidates into the constraints
+  void BoundaryTransform(arma::mat& iterate);
+  void BoundaryTransformInverse(arma::mat& iterate);
 };
 
 /**

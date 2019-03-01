@@ -149,8 +149,10 @@ double CMAES<SelectionPolicyType>::Optimize(
           pStep.slice(idx(j));
 
       // Calculate the objective function.
+      BoundaryTransform(pPosition.slice(idx(j)));
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
           pPosition.slice(idx(j)));
+      BoundaryTransformInverse(pPosition.slice(idx(j)));
     }
 
     // Sort population.
@@ -163,8 +165,10 @@ double CMAES<SelectionPolicyType>::Optimize(
     mPosition.slice(idx1) = mPosition.slice(idx0) + sigma(idx0) * step;
 
     // Calculate the objective function.
+    BoundaryTransform(mPosition.slice(idx1));
     currentObjective = selectionPolicy.Select(function, batchSize,
           mPosition.slice(idx1));
+    BoundaryTransformInverse(mPosition.slice(idx1));
 
     // Update best parameters.
     if (currentObjective < overallObjective)
@@ -280,6 +284,81 @@ double CMAES<SelectionPolicyType>::Optimize(
 
   return overallObjective;
 }
+
+// Transforms the candidate into the given bounds
+template<typename SelectionPolicyType>
+void CMAES<SelectionPolicyType>::BoundaryTransform(arma::mat& iterate)
+{
+  double al = std::min((upperBound - lowerBound) / 2, (1 + std::abs(lowerBound)) / 20 );
+  double au = std::min((upperBound - lowerBound) / 2, (1 + std::abs(upperBound)) / 20 );
+  for(size_t ii = 0; ii < iterate.n_cols; ii++)
+  {
+    for (size_t it = 0; it < iterate.n_rows; it++)
+    {
+      double x = iterate(it,ii);
+
+      // Shift x into [lowerBound-al, upperBound+au]
+      if (x < lowerBound - 2 * al - (upperBound - lowerBound) / 2 || x > upperBound + 2 * au + (upperBound - lowerBound) / 2)
+      {
+        double r = 2 * (upperBound - lowerBound + al + au);
+        double s = lowerBound - 2 * al - (upperBound - lowerBound) / 2;
+        x -= r * std::fmod((x - s), r);
+      }
+      if (x > upperBound + au)
+        x -= 2 * (x - upperBound - au);
+      if (x < lowerBound - al)
+        x += 2 * (lowerBound - al - x);
+
+      // Shifts x into [upperBound - lowerBound] 
+      if (x < lowerBound + al)
+        x = lowerBound + std::pow((x - (lowerBound - al)), 2) / 4 / al;
+      else if (x < upperBound - au)
+        x = x;
+      else if (x < upperBound + 3 * au)
+        x = upperBound - std::pow((x - (upperBound + au)), 2) / 4 / au;
+      else
+        x = upperBound + au - (x - (upperBound + au));
+
+      iterate(it, ii) = x;
+    }
+  }
+}
+
+// Computes the inverse of the transformation
+template<typename SelectionPolicyType>
+void CMAES<SelectionPolicyType>::BoundaryTransformInverse(arma::mat& iterate)
+{
+  double al = std::min((upperBound - lowerBound) / 2, (1 + std::abs(lowerBound)) / 20 );
+  double au = std::min((upperBound - lowerBound) / 2, (1 + std::abs(upperBound)) / 20 );
+  for(size_t ii = 0; ii < iterate.n_cols; ii++)
+  {
+    for (size_t it = 0; it < iterate.n_rows; it++)
+    {
+      double y = iterate(it,ii);
+      if (y > upperBound || y < lowerBound)
+      {
+        y -= 2 * (upperBound - lowerBound) * int((y - lowerBound) / (2 * (upperBound - lowerBound)));  
+        while (y > upperBound)
+          y -= 2 * (upperBound - lowerBound);
+        while (y < lowerBound)
+          y += 2 * (upperBound - lowerBound);
+        if (y > upperBound)
+          y = upperBound - (y - upperBound); 
+      }
+
+      if (y < lowerBound + al)
+          y =  (lowerBound - al) + 2 * std::pow(std::abs(al * (y - lowerBound)),0.5);
+      else if (y < upperBound - au)
+          y = y;
+      else
+          y = (upperBound + au) - 2 * std::pow(std::abs(au * (upperBound - y)),0.5);
+
+      iterate(it, ii) = y;
+    }
+  }
+}
+
+
 
 } // namespace ens
 
