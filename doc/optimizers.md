@@ -502,7 +502,6 @@ optimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [The CMA Evolution Strategy: A Tutorial](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmatutorial110628.pdf)
  * [Neuroevolution in Wikipedia](https://en.wikipedia.org/wiki/Neuroevolution)
  * [Arbitrary functions](#arbitrary-functions)
 
