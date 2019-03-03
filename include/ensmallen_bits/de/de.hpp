@@ -78,8 +78,7 @@ class DE
      const size_t maxGenerations = 2000,
      const double crossoverRate = 0.6,
      const double differentialWeight = 0.8,
-     const double tolerance = 1e-5,
-     const double objectiveChange = 1e-5);
+     const double tolerance = 1e-5);
 
   /**
    * Optimize the given function using CNE. The given
@@ -119,11 +118,6 @@ class DE
   //! Modify the final objective value.
   double& Tolerance() { return tolerance; }
 
-  //! Get the change in fitness history between generations.
-  double ObjectiveChange() const { return objectiveChange; }
-  //! Modify the termination criteria of change in fitness value.
-  double& ObjectiveChange() { return objectiveChange; }
-
  private:
   //! Population matrix. Each column is a candidate.
   arma::cube population;
@@ -143,11 +137,8 @@ class DE
   //! Amplification factor for differentiation.
   double differentialWeight;
 
-  //! The final value of the objective function.
+  //! The tolerance for termination.
   double tolerance;
-
-  //! Minimum change in best fitness values between two generations.
-  double objectiveChange;
 };
 
 } //namespace ens
