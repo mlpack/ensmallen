@@ -518,6 +518,7 @@ Differential Evolution is an evolutionary optimzation algorithm which selects be
 * `DE(`_`populationSize, maxGenerations`_`)`
 * `DE(`_`populationSize, maxGenerations, crossoverRate`_`)`
 * `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight`_`)`
+* `DE(`_`populationSize, maxGenerations, mutationProb, mutationSize, tolerance, objectiveChange`_`)`
 
 #### Attributes
 
@@ -526,10 +527,13 @@ Differential Evolution is an evolutionary optimzation algorithm which selects be
 | `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 3 in size. | `100` |
 | `size_t` | **`maxGenerations`** | The maximum number of generations allowed for DE. | `2000` |
 | `double` | **`crossoverRate`** | Probability that a candidate will undergo crossover | `0.6` |
-| `double` | **`differentialWeight`** | Amplification factor for differentiation | `0.02` |
+| `double` | **`differentialWeight`** | Amplification factor for differentiation | `0.8` |
+| `double` | **`tolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-5` |
+| `double` | **`objectiveChange`** | Minimum change in best fitness values between two consecutive generations should be greater than threshold. If set to negative value, objectiveChange is not considered. | `1e-5` |
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `DifferentialWeight()`
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `DifferentialWeight()`,
+`Tolerance()`, and `ObjectiveChange()`.
 
 #### Examples:
 
@@ -537,7 +541,7 @@ Attributes of the optimizer may also be changed via the member methods
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-DE optimizer(200, 1000, 0.6, 0.8);
+DE optimizer(200, 1000, 0.6, 0.8, 1e-5, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
 

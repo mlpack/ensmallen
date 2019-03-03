@@ -20,11 +20,15 @@ namespace ens {
 inline DE::DE(const size_t populationSize ,
               const size_t maxGenerations,
               const double crossoverRate,
-              const double differentialWeight):
+              const double differentialWeight,
+              const double tolerance,
+              const double objectiveChange):
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverRate(crossoverRate),
-    differentialWeight(differentialWeight)
+    differentialWeight(differentialWeight),
+    tolerance(tolerance),
+    objectiveChange(objectiveChange)
 { /* Nothing to do here. */ }
 
 //!Optimize the function
@@ -110,6 +114,15 @@ inline double DE::Optimize(DecomposableFunctionType& function,
       population.slice(member) = iterate;
     }
 
+    // Check for termination criteria.
+    if (lastBestFitness - fitnessValues.min() < objectiveChange)
+    {
+      Info << "CNE::Optimize(): terminating. Fitness history change "
+          << (lastBestFitness - fitnessValues.min())
+          << " < " << objectiveChange << "." << std::endl;
+      break;
+    }
+
     // Update helper variables.
     lastBestFitness = fitnessValues.min();
     for (size_t it = 0; it < populationSize; it++)
@@ -120,6 +133,15 @@ inline double DE::Optimize(DecomposableFunctionType& function,
         break;
       }
     }
+
+    // Check for termination criteria.
+    if (tolerance >= lastBestFitness)
+    {
+      Info << "CNE::Optimize(): terminating. Given fitness criteria "
+          << tolerance << " > " << lastBestFitness << "." << std::endl;
+      break;
+    }
+
   }
 
   iterate = bestElement;
