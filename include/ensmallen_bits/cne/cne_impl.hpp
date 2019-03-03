@@ -25,15 +25,13 @@ inline CNE::CNE(const size_t populationSize,
                 const double mutationProb,
                 const double mutationSize,
                 const double selectPercent,
-                const double tolerance,
-                const double objectiveChange) :
+                const double tolerance) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     mutationProb(mutationProb),
     mutationSize(mutationSize),
     selectPercent(selectPercent),
     tolerance(tolerance),
-    objectiveChange(objectiveChange),
     numElite(0),
     elements(0)
 { /* Nothing to do here. */ }
@@ -108,19 +106,10 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     Reproduce();
 
     // Check for termination criteria.
-    if (tolerance >= fitnessValues.min())
+    if (std::abs(lastBestFitness - fitnessValues.min()) < tolerance)
     {
-      Info << "CNE::Optimize(): terminating. Given fitness criteria "
-          << tolerance << " > " << fitnessValues.min() << "." << std::endl;
-      break;
-    }
-
-    // Check for termination criteria.
-    if (lastBestFitness - fitnessValues.min() < objectiveChange)
-    {
-      Info << "CNE::Optimize(): terminating. Fitness history change "
-          << (lastBestFitness - fitnessValues.min())
-          << " < " << objectiveChange << "." << std::endl;
+      Info << "CNE: minimized within tolerance " << tolerance << "; "
+            << "terminating optimization." << std::endl;
       break;
     }
 
