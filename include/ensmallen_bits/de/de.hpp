@@ -70,11 +70,16 @@ class DE
    * @param crossoverRate  The probability that a crossover will occur
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
+   * @param tolerance The final value of the objective function for termination.
+   * @param objectiveChange Minimum change in best fitness values between two
+   *     consecutive generations should be greater than threshold.
    */
   DE(const size_t populationSize = 100,
      const size_t maxGenerations = 2000,
      const double crossoverRate = 0.6,
-     const double differentialWeight = 0.8);
+     const double differentialWeight = 0.8,
+     const double tolerance = 1e-5,
+     const double objectiveChange = 1e-5);
 
   /**
    * Optimize the given function using CNE. The given
@@ -109,6 +114,16 @@ class DE
   //! Modify differential weight.
   double& DifferentialWeight() { return differentialWeight; }
 
+  //! Get the final objective value.
+  double Tolerance() const { return tolerance; }
+  //! Modify the final objective value.
+  double& Tolerance() { return tolerance; }
+
+  //! Get the change in fitness history between generations.
+  double ObjectiveChange() const { return objectiveChange; }
+  //! Modify the termination criteria of change in fitness value.
+  double& ObjectiveChange() { return objectiveChange; }
+
  private:
   //! Population matrix. Each column is a candidate.
   arma::cube population;
@@ -127,6 +142,12 @@ class DE
 
   //! Amplification factor for differentiation.
   double differentialWeight;
+
+  //! The final value of the objective function.
+  double tolerance;
+
+  //! Minimum change in best fitness values between two generations.
+  double objectiveChange;
 };
 
 } //namespace ens

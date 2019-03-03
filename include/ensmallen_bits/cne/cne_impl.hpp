@@ -70,8 +70,11 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
         "children. Increase population size.");
   }
 
-  // Set the population size and fill random values [0,1].
-  population = arma::randu(iterate.n_rows, iterate.n_cols, populationSize);
+  // Generate the population based on a Gaussian disribution around the given
+  // starting point.
+  population = arma::randn(iterate.n_rows, iterate.n_cols, populationSize);
+  for (size_t i = 0; i < populationSize; i++)
+    population.slice(i) += iterate;
 
   // Store the number of elements in a cube slice or a matrix column.
   elements = population.n_rows * population.n_cols;
