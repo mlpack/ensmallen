@@ -21,14 +21,12 @@ inline DE::DE(const size_t populationSize ,
               const size_t maxGenerations,
               const double crossoverRate,
               const double differentialWeight,
-              const double tolerance,
-              const double objectiveChange):
+              const double tolerance):
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverRate(crossoverRate),
     differentialWeight(differentialWeight),
-    tolerance(tolerance),
-    objectiveChange(objectiveChange)
+    tolerance(tolerance)
 { /* Nothing to do here. */ }
 
 //!Optimize the function
@@ -115,11 +113,10 @@ inline double DE::Optimize(DecomposableFunctionType& function,
     }
 
     // Check for termination criteria.
-    if (lastBestFitness - fitnessValues.min() < objectiveChange)
+    if (std::abs(lastBestFitness - fitnessValues.min()) < tolerance)
     {
-      Info << "CNE::Optimize(): terminating. Fitness history change "
-          << (lastBestFitness - fitnessValues.min())
-          << " < " << objectiveChange << "." << std::endl;
+      Info << "DE: minimized within tolerance " << tolerance << "; "
+            << "terminating optimization." << std::endl;
       break;
     }
 
@@ -132,14 +129,6 @@ inline double DE::Optimize(DecomposableFunctionType& function,
         bestElement = population.slice(it);
         break;
       }
-    }
-
-    // Check for termination criteria.
-    if (tolerance >= lastBestFitness)
-    {
-      Info << "CNE::Optimize(): terminating. Given fitness criteria "
-          << tolerance << " > " << lastBestFitness << "." << std::endl;
-      break;
     }
 
   }
