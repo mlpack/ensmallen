@@ -71,8 +71,6 @@ class DE
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param tolerance The final value of the objective function for termination.
-   * @param objectiveChange Minimum change in best fitness values between two
-   *     consecutive generations should be greater than threshold.
    */
   DE(const size_t populationSize = 100,
      const size_t maxGenerations = 2000,

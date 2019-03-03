@@ -29,7 +29,7 @@ TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  CNE opt(200, 10000, 0.2, 0.2, 0.3, 65, -1);
+  CNE opt(200, 1000, 0.2, 0.2, 0.2, 1e-5);
   arma::mat coordinates = lr.GetInitialPoint();
   opt.Optimize(lr, coordinates);
 
