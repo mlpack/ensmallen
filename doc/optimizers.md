@@ -1510,30 +1510,28 @@ optimizer.Optimize(f, coordinates);
 
 ## Simultaneous Perturbation Stochastic Approximation (SPSA)
 
-*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [arbitrary functions](#arbitrary-functions).*
 
 The SPSA algorithm approximates the gradient of the function by finite
 differences along stochastic directions.
 
-### Constructors
+#### Constructors
 
- * `SPSA(`_`alpha, batchSize, gamma, stepSize, evaluationStepSize, maxIterations, tolerance, shuffle`_`)`
+ * `SPSA(`_`alpha, gamma, stepSize, evaluationStepSize, maxIterations, tolerance, shuffle`_`)`
 
- #### Attributes
+#### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `double` | **`alpha`** | Scaling exponent for the step size. | `0.602` |
-| `size_t` | **`batchSize`** | Batch size to use for each step. | `32` |
 | `double` | **`gamma`** | Scaling exponent for evaluation step size. | `0.101` |
 | `double` | **`stepSize`** | Scaling parameter for step size (named as 'a' in the paper). | `0.16` |
 | `double` | **`evaluationStepSize`** | Scaling parameter for evaluation step size (named as 'c' in the paper). | `0.3` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
-| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 
 Attributes of the optimizer may also be changed via the member methods
-`Alpha()`, `BatchSize()`, `Gamma()`, `StepSize()`, `EvaluationStepSize()`, and `MaxIterations()`.
+`Alpha()`, `Gamma()`, `StepSize()`, `EvaluationStepSize()`, and `MaxIterations()`.
 
 #### Examples:
 
@@ -1541,7 +1539,7 @@ Attributes of the optimizer may also be changed via the member methods
 SphereFunction f(2);
 arma::mat coordinates = f.GetInitialPoint();
 
-SPSA optimizer(0.1, 2, 0.102, 0.16, 0.3, 100000, 0);
+SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
 
