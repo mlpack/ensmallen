@@ -130,7 +130,6 @@ inline double DE::Optimize(DecomposableFunctionType& function,
         break;
       }
     }
-
   }
 
   iterate = bestElement;
