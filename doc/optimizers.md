@@ -495,7 +495,7 @@ and `Tolerance()`
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 0.1e-4);
+CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
 
@@ -517,7 +517,7 @@ Differential Evolution is an evolutionary optimzation algorithm which selects be
 * `DE(`_`populationSize, maxGenerations`_`)`
 * `DE(`_`populationSize, maxGenerations, crossoverRate`_`)`
 * `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight`_`)`
-* `DE(`_`populationSize, maxGenerations, mutationProb, mutationSize, tolerance`_`)`
+* `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight, tolerance`_`)`
 
 #### Attributes
 

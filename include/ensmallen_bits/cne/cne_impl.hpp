@@ -71,8 +71,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   // Generate the population based on a Gaussian disribution around the given
   // starting point.
   population = arma::randn(iterate.n_rows, iterate.n_cols, populationSize);
-  for (size_t i = 0; i < populationSize; i++)
-    population.slice(i) += iterate;
+  population.each_slice() += iterate;
 
   // Store the number of elements in a cube slice or a matrix column.
   elements = population.n_rows * population.n_cols;
