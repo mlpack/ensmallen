@@ -57,8 +57,6 @@ TEST_CASE("SPSAMatyasFunctionTest", "[SPSATest]")
  */
 TEST_CASE("SPSALogisticRegressionTest", "[SPSATest]")
 {
-  srand(std::time(NULL));
-  arma::arma_rng::set_seed(std::time(NULL));
   arma::mat data, testData, shuffledData;
   bool success = false;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
