@@ -1,3 +1,7 @@
+### ensmallen 1.14.1
+###### ????-??-??
+  * Fixes for SPSA (#87).
+
 ### ensmallen 1.14.0
 ###### 2019-02-20
   * Add DE optimizer (#77).
