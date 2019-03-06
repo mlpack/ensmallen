@@ -111,9 +111,9 @@ class DE
   //! Modify differential weight.
   double& DifferentialWeight() { return differentialWeight; }
 
-  //! Get the final objective value.
+  //! Get the tolerance.
   double Tolerance() const { return tolerance; }
-  //! Modify the final objective value.
+  //! Modify the tolerance.
   double& Tolerance() { return tolerance; }
 
  private:
