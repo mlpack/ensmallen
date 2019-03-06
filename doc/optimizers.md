@@ -423,7 +423,7 @@ For convenience the following types can be used:
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
-| `double` | **`initialSigma`** | The initial step size | `0.6` |
+| `double` | **`initialSigma`** | The initial step size. | `0.6` |
 | `double` | **`lowerBound`** | Lower bound of decision variables. | `-10.0` |
 | `double` | **`upperBound`** | Upper bound of decision variables. | `10.0` |
 | `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |

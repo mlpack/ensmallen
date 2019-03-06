@@ -60,7 +60,7 @@ class CMAES
    * equal one pass over the dataset).
    *
    * @param lambda The population size (0 use the default size).
-   * @param initialSigma The initial step size
+   * @param initialSigma The initial step size.
    * @param lowerBound Lower bound of decision variables.
    * @param upperBound Upper bound of decision variables.
    * @param batchSize Batch size to use for the objective calculation.
