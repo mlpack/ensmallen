@@ -60,6 +60,7 @@ class CMAES
    * equal one pass over the dataset).
    *
    * @param lambda The population size (0 use the default size).
+   * @param initialSigma The initial step size
    * @param lowerBound Lower bound of decision variables.
    * @param upperBound Upper bound of decision variables.
    * @param batchSize Batch size to use for the objective calculation.
@@ -70,6 +71,7 @@ class CMAES
    *     objective.
    */
   CMAES(const size_t lambda = 0,
+        const double initialSigma = 0.6,
         const double lowerBound = -10,
         const double upperBound = 10,
         const size_t batchSize = 32,
@@ -94,6 +96,11 @@ class CMAES
   size_t PopulationSize() const { return lambda; }
   //! Modify the population size.
   size_t& PopulationSize() { return lambda; }
+
+  //! Get the initial step size.
+  double InitialSigma() const { return initialSigma; }
+  //! Modify the initial step size.
+  double& InitialSigma() { return initialSigma; }
 
   //! Get the lower bound of decision variables.
   double LowerBound() const { return lowerBound; }
@@ -138,6 +145,9 @@ class CMAES
  private:
   //! Population size.
   size_t lambda;
+
+  //! Initial step size.
+  double initialSigma;
 
   //! Lower bound of decision variables.
   double lowerBound;

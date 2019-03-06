@@ -24,6 +24,7 @@ namespace ens {
 
 template<typename SelectionPolicyType>
 CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
+                                  const double initialSigma,
                                   const double lowerBound,
                                   const double upperBound,
                                   const size_t batchSize,
@@ -31,6 +32,7 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy) :
     lambda(lambda),
+    initialSigma(initialSigma),
     lowerBound(lowerBound),
     upperBound(upperBound),
     batchSize(batchSize),
@@ -67,7 +69,7 @@ double CMAES<SelectionPolicyType>::Optimize(
 
   // Step size control parameters.
   arma::vec sigma(3);
-  sigma(0) = 0.3 * (upperBound - lowerBound);
+  sigma(0) = initialSigma;
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);

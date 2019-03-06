@@ -23,7 +23,7 @@ using namespace ens::test;
 TEST_CASE("SimpleTestFunction", "[CMAESTest]")
 {
   SGDTestFunction f;
-  CMAES<> optimizer(0, -1, 1, 32, 200, -1);
+  CMAES<> optimizer(0, 0.6, -1, 1, 32, 200, -1);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -50,7 +50,7 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
         responses, testResponses, shuffledResponses);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-    CMAES<> cmaes(0, -20, 20, 32, 200, 1e-3);
+    CMAES<> cmaes(0, 0.6, -20, 20, 32, 200, 1e-3);
     arma::mat coordinates = lr.GetInitialPoint();
     cmaes.Optimize(lr, coordinates);
 
@@ -85,7 +85,7 @@ TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
         responses, testResponses, shuffledResponses);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-    ApproxCMAES<> cmaes(0, -20, 20, 32, 200, 1e-3);
+    ApproxCMAES<> cmaes(0, 0.6, -20, 20, 32, 200, 1e-3);
     arma::mat coordinates = lr.GetInitialPoint();
     cmaes.Optimize(lr, coordinates);
 

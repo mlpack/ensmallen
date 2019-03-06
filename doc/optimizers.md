@@ -403,9 +403,10 @@ matrix within an iterative procedure using the covariance matrix.
 #### Constructors
 
  * `CMAES<`_`SelectionPolicyType`_`>()`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound`_`)`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize`_`)`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, initialSigma, lowerBound, upperBound`_`)`
+ * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, initialSigma, lowerBound, upperBound, batchSize`_`)`
+ * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, initialSigma, lowerBound, upperBound, batchSize, maxIterations, 
+ 	tolerance, selectionPolicy`_`)`
 
 The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
@@ -422,6 +423,7 @@ For convenience the following types can be used:
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
+| `double` | **`initialSigma`** | The initial step size | `0.6` |
 | `double` | **`lowerBound`** | Lower bound of decision variables. | `-10.0` |
 | `double` | **`upperBound`** | Upper bound of decision variables. | `10.0` |
 | `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
@@ -430,7 +432,7 @@ For convenience the following types can be used:
 | `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
 
 Attributes of the optimizer may also be changed via the member methods
-`Lambda()`, `LowerBound()`, `UpperBound()`, `BatchSize()`, `MaxIterations()`,
+`Lambda()`, `InitialSigma()`, `LowerBound()`, `UpperBound()`, `BatchSize()`, `MaxIterations()`,
 `Tolerance()`, and `SelectionPolicy()`.
 
 The `selectionPolicy` attribute allows an instantiated `SelectionPolicyType` to
@@ -447,7 +449,7 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
 // CMAES with the FullSelection policy.
-CMAES<> optimizer(0, -1, 1, 32, 200, 0.1e-4);
+CMAES<> optimizer(0, 0.6, -1, 1, 32, 200, 0.1e-4);
 optimizer.Optimize(f, coordinates);
 
 // CMAES with the RandomSelection policy.
