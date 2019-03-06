@@ -133,9 +133,9 @@ class CNE
   //! Modify the selection percentage.
   double& SelectionPercentage() { return selectPercent; }
 
-  //! Get the final objective value.
+  //! Get the final tolerance.
   double Tolerance() const { return tolerance; }
-  //! Modify the final objective value.
+  //! Modify the final tolerance.
   double& Tolerance() { return tolerance; }
 
  private:
