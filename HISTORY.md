@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Fixes for SPSA (#87).
 
+  * Optimized CNE and DE (#90). 
+
 ### ensmallen 1.14.0
 ###### 2019-02-20
   * Add DE optimizer (#77).
