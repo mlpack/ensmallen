@@ -509,7 +509,7 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [arbitrary functions](#arbitrary-functions).*
 
-Differential Evolution is an evolutionary optimzation algorithm which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
+Differential Evolution is an evolutionary optimization algorithm which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
 
 #### Constructors
 
