@@ -41,7 +41,7 @@ namespace ens {
  *
  * The final value and the parameters are returned by the Optimize() method.
  *
- * For more information, see the following
+ * For more information, see the following:
  *
  * @techreport{storn1995,
  *   title    = {Differential Evolution—a simple and efficient adaptive scheme
@@ -67,7 +67,7 @@ class DE
    * @param populationSize The number of candidates in the population.
    *     This should be at least 3 in size.
    * @param maxGenerations The maximum number of generations allowed for CNE.
-   * @param crossoverRate  The probability that a crossover will occur
+   * @param crossoverRate  The probability that a crossover will occur.
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param tolerance The final value of the objective function for termination.

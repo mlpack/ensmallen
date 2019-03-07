@@ -63,7 +63,7 @@ inline double DE::Optimize(DecomposableFunctionType& function,
   // Iterate until maximum number of generations are completed.
   for (size_t gen = 0; gen < maxGenerations; gen++)
   {
-    // Generate new populationbased on /best/1/bin strategy.
+    // Generate new population based on /best/1/bin strategy.
     for (size_t member = 0; member < populationSize; member++)
     {
       iterate = population.slice(member);
