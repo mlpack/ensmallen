@@ -79,7 +79,7 @@ class DE
      const double tolerance = 1e-5);
 
   /**
-   * Optimize the given function using CNE. The given
+   * Optimize the given function using DE. The given
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
    *
@@ -101,7 +101,7 @@ class DE
   //! Modify maximum number of generations.
   size_t& MaxGenerations() { return maxGenerations; }
 
-  //! Get Crossover rate.
+  //! Get crossover rate.
   double CrossoverRate() const { return crossoverRate; }
   //! Modify crossover rate.
   double& CrossoverRate() { return crossoverRate; }
@@ -120,7 +120,7 @@ class DE
   //! Population matrix. Each column is a candidate.
   arma::cube population;
 
-  //! Vector of fintness values corresponding to each candidate.
+  //! Vector of fitness values corresponding to each candidate.
   arma::vec fitnessValues;
 
   //! The number of candidates in the population.
@@ -139,9 +139,9 @@ class DE
   double tolerance;
 };
 
-} //namespace ens
+} // namespace ens
 
-//Include Implementation
+// Include implementation.
 #include "de_impl.hpp"
 
 #endif
