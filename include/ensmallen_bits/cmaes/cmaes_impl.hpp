@@ -129,7 +129,7 @@ double CMAES<SelectionPolicyType>::Optimize(
     const size_t idx1 = i % 2;
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
-    // add a small value and try again
+    // add a small value and try again.
     arma::mat covLower;
     while (!arma::chol(covLower, C.slice(idx0), "lower"))
       C.slice(idx0).diag() += 1e-16;
@@ -287,19 +287,19 @@ double CMAES<SelectionPolicyType>::Optimize(
   return overallObjective;
 }
 
-// Transforms the candidate into the given bounds
+// Transforms the candidate into the given bounds.
 template<typename SelectionPolicyType>
 void CMAES<SelectionPolicyType>::BoundaryTransform(arma::mat& iterate)
 {
   double al = std::min((upperBound - lowerBound) / 2, (1 + std::abs(lowerBound)) / 20 );
   double au = std::min((upperBound - lowerBound) / 2, (1 + std::abs(upperBound)) / 20 );
-  for(size_t ii = 0; ii < iterate.n_cols; ii++)
+  for (size_t ii = 0; ii < iterate.n_cols; ii++)
   {
     for (size_t it = 0; it < iterate.n_rows; it++)
     {
       double x = iterate(it,ii);
 
-      // Shift x into [lowerBound-al, upperBound+au]
+      // Shift x into [lowerBound-al, upperBound+au].
       if (x < lowerBound - 2 * al - (upperBound - lowerBound) / 2 || x > upperBound + 2 * au + (upperBound - lowerBound) / 2)
       {
         double r = 2 * (upperBound - lowerBound + al + au);
@@ -311,7 +311,7 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(arma::mat& iterate)
       if (x < lowerBound - al)
         x += 2 * (lowerBound - al - x);
 
-      // Shifts x into [upperBound - lowerBound] 
+      // Shifts x into [upperBound - lowerBound].
       if (x < lowerBound + al)
         x = lowerBound + std::pow((x - (lowerBound - al)), 2) / 4 / al;
       else if (x < upperBound - au)
@@ -326,13 +326,13 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(arma::mat& iterate)
   }
 }
 
-// Computes the inverse of the transformation
+// Computes the inverse of the transformation.
 template<typename SelectionPolicyType>
 void CMAES<SelectionPolicyType>::BoundaryTransformInverse(arma::mat& iterate)
 {
   double al = std::min((upperBound - lowerBound) / 2, (1 + std::abs(lowerBound)) / 20 );
   double au = std::min((upperBound - lowerBound) / 2, (1 + std::abs(upperBound)) / 20 );
-  for(size_t ii = 0; ii < iterate.n_cols; ii++)
+  for (size_t ii = 0; ii < iterate.n_cols; ii++)
   {
     for (size_t it = 0; it < iterate.n_rows; it++)
     {
@@ -359,8 +359,6 @@ void CMAES<SelectionPolicyType>::BoundaryTransformInverse(arma::mat& iterate)
     }
   }
 }
-
-
 
 } // namespace ens
 
