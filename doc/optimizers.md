@@ -440,7 +440,7 @@ be given.  The `FullSelection` policy has no need to be instantiated and thus
 the option is not relevant when the `CMAES<>` optimizer type is being used; the
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
-estimate the objective function.
+estimate the objective function. By default, _`fraction`_ is 0.3.
 
 #### Examples:
 
@@ -452,9 +452,15 @@ arma::mat coordinates = f.GetInitialPoint();
 CMAES<> optimizer(0, 0.6, -1, 1, 32, 200, 0.1e-4);
 optimizer.Optimize(f, coordinates);
 
-// CMAES with the RandomSelection policy.
-ApproxCMAES<> approxOptimizer(batchSize, 0.01, 0.1, 8000, 1e-4);
+// CMAES with the default RandomSelection policy.
+ApproxCMAES<> approxOptimizer(0, 0.6, -1, 1, 32, 200, 0.1e-4);
 approxOptimizer.Optimize(f, coordinates);
+
+// CMAES with user defined RandomSelection policy.
+RandomSelection myPolicy(0.5);
+CMAES<RandomSelection> optimizer(0, 0.6, -1, 1, 32, 200, 0.1e-4, myPolicy);
+optimizer.Optimize(f,coordinates);
+
 ```
 
 #### See also:
