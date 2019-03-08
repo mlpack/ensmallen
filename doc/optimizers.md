@@ -460,7 +460,6 @@ approxOptimizer.Optimize(f, coordinates);
 RandomSelection myPolicy(0.5);
 CMAES<RandomSelection> optimizer(0, 0.6, -1, 1, 32, 200, 0.1e-4, myPolicy);
 optimizer.Optimize(f,coordinates);
-
 ```
 
 #### See also:
