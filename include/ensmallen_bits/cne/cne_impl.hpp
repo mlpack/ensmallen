@@ -68,7 +68,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
         "children. Increase population size.");
   }
 
-  // Generate the population based on a Gaussian disribution around the given
+  // Generate the population based on a Gaussian distribution around the given
   // starting point.
   population = arma::randn(iterate.n_rows, iterate.n_cols, populationSize);
   population.each_slice() += iterate;
