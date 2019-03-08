@@ -465,7 +465,7 @@ approxOptimizer.Optimize(f, coordinates);
 
 *An optimizer for [arbitrary functions](#arbitrary-functions).*
 
-Conventional Neural Evolution is an optimizer that works like biological evolution which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
+Conventional Neural Evolution is an optimizer that works like biological evolution which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population. The initial population is generated based on a normal distibution centered at the given initial point.
 
 #### Constructors
 
