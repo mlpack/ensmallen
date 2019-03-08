@@ -107,9 +107,9 @@ class CMAES
   //! Modify the lower bound of decision variables.
   double& LowerBound() { return lowerBound; }
 
-  //! Get the upper bound of decision variables
+  //! Get the upper bound of decision variables.
   double UpperBound() const { return upperBound; }
-  //! Modify the upper bound of decision variables
+  //! Modify the upper bound of decision variables.
   double& UpperBound() { return upperBound; }
 
   //! Get the batch size.
@@ -132,14 +132,14 @@ class CMAES
   //! Modify the selection policy.
   SelectionPolicyType& SelectionPolicy() { return selectionPolicy; }
 
-  //! Get the step size damping
+  //! Get the step size damping.
   double StepSizeDamping() const { return ds; }
-  //! Modify the step size damping
+  //! Modify the step size damping.
   double& StepSizeDamping() { return ds; }
 
-  //! Get the cumulation constant
+  //! Get the cumulation constant.
   double CumulationConstant() const { return cc; }
-  //! Modify the cumulation constant
+  //! Modify the cumulation constant.
   double& CumulationConstant() { return cc; }
 
  private:
@@ -152,7 +152,7 @@ class CMAES
   //! Lower bound of decision variables.
   double lowerBound;
 
-  //! Upper bound of decision variables
+  //! Upper bound of decision variables.
   double upperBound;
 
   //! The batch size for processing.
@@ -167,13 +167,13 @@ class CMAES
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy;
 
-  //! Step size damping
+  //! Step size damping.
   double ds;
 
-  //! Cumulation constant
+  //! Cumulation constant.
   double cc;
 
-  //! Methods used to transform the candidates into the constraints
+  //! Methods used to transform the candidates into the constraints.
   void BoundaryTransform(arma::mat& iterate);
   void BoundaryTransformInverse(arma::mat& iterate);
 };

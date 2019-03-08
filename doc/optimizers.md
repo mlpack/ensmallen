@@ -415,8 +415,8 @@ by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
 
- * **`CMAES<>`** (equivalent to `CMAES<FullSelection>`): uses all separable functions to compute objective
- * **`ApproxCMAES`** (equivalent to `CMAES<RandomSelection>`): uses a small amount of separable functions to compute approximate objective
+ * **`CMAES<>`** (equivalent to `CMAES<FullSelection>`): uses all separable functions to compute objective.
+ * **`ApproxCMAES`** (equivalent to `CMAES<RandomSelection>`): uses a small amount of separable functions to compute approximate objective.
 
 #### Attributes
 
