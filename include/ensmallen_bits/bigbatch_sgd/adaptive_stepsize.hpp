@@ -81,12 +81,6 @@ class AdaptiveStepsize
               const size_t backtrackingBatchSize,
               const bool /* reset */)
   {
-    // Initialize previous iterate, if not already initialized
-    if (iteratePrev.is_empty())
-    {
-      iteratePrev.zeros(iterate.n_rows, iterate.n_cols);
-    }
-
     Backtracking(function, stepSize, iterate, gradient, gradientNorm, offset,
         backtrackingBatchSize);
 
@@ -99,6 +93,12 @@ class AdaptiveStepsize
 
     size_t k = 1;
     double vB = 0;
+
+    // Initialize previous iterate, if not already initialized.
+    if (iteratePrev.is_empty())
+    {
+      iteratePrev.zeros(iterate.n_rows, iterate.n_cols);
+    }
 
     // Compute the stochastic gradient estimation.
     function.Gradient(iteratePrev, offset, gradPrevIterate, 1);
@@ -119,8 +119,11 @@ class AdaptiveStepsize
     }
 
     double v = arma::trace(arma::trans(iterate - iteratePrev) *
-        (iterate - gradPrevIterate)) /
+        (gradient - gradPrevIterate)) /
         std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
+
+    // Update previous iterate.
+    iteratePrev = iterate;
 
     // TODO: Develop an absolute strategy to deal with stepSizeDecay updates in
     // case we arrive at local minima. See #1469 for more details.
