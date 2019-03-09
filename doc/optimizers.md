@@ -465,14 +465,14 @@ approxOptimizer.Optimize(f, coordinates);
 
 *An optimizer for [arbitrary functions](#arbitrary-functions).*
 
-Conventional Neural Evolution is an optimizer that works like biological evolution which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
+Conventional Neural Evolution is an optimizer that works like biological evolution which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population. The initial population is generated based on a random normal distribution centered at the given starting point.
 
 #### Constructors
 
  * `CNE()`
  * `CNE(`_`populationSize, maxGenerations`_`)`
  * `CNE(`_`populationSize, maxGenerations, mutationProb, mutationSize`_`)`
- * `CNE(`_`populationSize, maxGenerations, mutationProb, mutationSize, selectPercent, tolerance, objectiveChange`_`)`
+ * `CNE(`_`populationSize, maxGenerations, mutationProb, mutationSize, selectPercent, tolerance`_`)`
 
 #### Attributes
 
@@ -484,11 +484,10 @@ Conventional Neural Evolution is an optimizer that works like biological evoluti
 | `double` | **`mutationSize`** | The range of mutation noise to be added. This range is between 0 and mutationSize. | `0.02` |
 | `double` | **`selectPercent`** | The percentage of candidates to select to become the the next generation. | `0.2` |
 | `double` | **`tolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-5` |
-| `double` | **`objectiveChange`** | Minimum change in best fitness values between two consecutive generations should be greater than threshold. If set to negative value, objectiveChange is not considered. | `1e-5` |
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `MaxGenerations()`, `MutationProb()`, `SelectPercent()`,
-`Tolerance()`, and `ObjectiveChange()`.
+`PopulationSize()`, `MaxGenerations()`, `MutationProb()`, `SelectPercent()`
+and `Tolerance()`.
 
 #### Examples:
 
@@ -496,7 +495,7 @@ Attributes of the optimizer may also be changed via the member methods
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 65, 0.1e-4);
+CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
 
@@ -509,7 +508,7 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [arbitrary functions](#arbitrary-functions).*
 
-Differential Evolution is an evolutionary optimzation algorithm which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
+Differential Evolution is an evolutionary optimization algorithm which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
 
 #### Constructors
 
@@ -517,6 +516,7 @@ Differential Evolution is an evolutionary optimzation algorithm which selects be
 * `DE(`_`populationSize, maxGenerations`_`)`
 * `DE(`_`populationSize, maxGenerations, crossoverRate`_`)`
 * `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight`_`)`
+* `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight, tolerance`_`)`
 
 #### Attributes
 
@@ -524,11 +524,13 @@ Differential Evolution is an evolutionary optimzation algorithm which selects be
 |----------|----------|-----------------|-------------|
 | `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 3 in size. | `100` |
 | `size_t` | **`maxGenerations`** | The maximum number of generations allowed for DE. | `2000` |
-| `double` | **`crossoverRate`** | Probability that a candidate will undergo crossover | `0.6` |
-| `double` | **`differentialWeight`** | Amplification factor for differentiation | `0.02` |
+| `double` | **`crossoverRate`** | Probability that a candidate will undergo crossover. | `0.6` |
+| `double` | **`differentialWeight`** | Amplification factor for differentiation. | `0.8` |
+| `double` | **`tolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-5` |
 
 Attributes of the optimizer may also be changed via the member methods
 `PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `DifferentialWeight()`
+and `Tolerance()`.
 
 #### Examples:
 
@@ -536,7 +538,7 @@ Attributes of the optimizer may also be changed via the member methods
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-DE optimizer(200, 1000, 0.6, 0.8);
+DE optimizer(200, 1000, 0.6, 0.8, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
 
