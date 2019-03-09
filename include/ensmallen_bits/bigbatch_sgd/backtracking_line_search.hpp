@@ -89,7 +89,7 @@ class BacktrackingLineSearch
         offset, backtrackingBatchSize);
 
     while (overallObjectiveUpdate >
-        (overallObjective + searchParameter * stepSize * gradientNorm))
+        (overallObjective - searchParameter * stepSize * gradientNorm))
     {
       stepSize /= 2;
 
@@ -97,6 +97,9 @@ class BacktrackingLineSearch
       overallObjectiveUpdate = function.Evaluate(iterateUpdate,
         offset, backtrackingBatchSize);
     }
+
+    // Update the iterate.
+    iterate -= stepSize * gradient;
   }
 
  private:

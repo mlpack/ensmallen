@@ -173,9 +173,6 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
     updatePolicy.Update(f, stepSize, iterate, gradient, gB, vB,
         currentFunction, batchSize, effectiveBatchSize, reset);
 
-    // Update the iterate.
-    iterate -= stepSize * gradient;
-
     overallObjective += f.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
 
