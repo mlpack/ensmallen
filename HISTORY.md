@@ -1,5 +1,5 @@
 ### ensmallen 1.14.1
-###### ????-??-??
+###### 2019-03-09
   * Fixes for SPSA (#87).
 
   * Optimized CNE and DE (#90). Changed initial population generation in CNE
