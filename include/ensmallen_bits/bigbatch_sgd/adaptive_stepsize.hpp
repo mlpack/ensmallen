@@ -48,7 +48,7 @@ class AdaptiveStepsize
    * @param searchParameter The backtracking search parameter for each
    *        iteration.
    */
-  AdaptiveStepsize(const double backtrackStepSize = 0.1,
+  AdaptiveStepsize(const double backtrackStepSize = 0.5,
                    const double searchParameter = 0.1) :
       backtrackStepSize(backtrackStepSize),
       searchParameter(searchParameter)
@@ -81,11 +81,46 @@ class AdaptiveStepsize
               const size_t backtrackingBatchSize,
               const bool /* reset */)
   {
+    // Initialize previous iterate, if not already initialized
+    if (iteratePrev.is_empty())
+    {
+      iteratePrev.zeros(iterate.n_rows, iterate.n_cols);
+    }
+
     Backtracking(function, stepSize, iterate, gradient, gradientNorm, offset,
         backtrackingBatchSize);
 
     // Update the iterate.
     iterate -= stepSize * gradient;
+
+    // Calculate v.
+    arma::mat gradPrevIterate(iterate.n_rows, iterate.n_cols);
+    arma::mat functionGradientPrev(iterate.n_rows, iterate.n_cols);
+
+    size_t k = 1;
+    double vB = 0;
+
+    // Compute the stochastic gradient estimation.
+    function.Gradient(iteratePrev, offset, gradPrevIterate, 1);
+    arma::mat delta0, delta1;
+
+    delta1 = gradPrevIterate;
+    for (size_t j = 1; j < backtrackingBatchSize; ++j, ++k)
+    {
+      function.Gradient(iteratePrev, offset + j, functionGradientPrev, 1);
+      delta0 = delta1 + (functionGradientPrev - delta1) / k;
+
+      // Compute sample variance.
+      vB += arma::norm(functionGradientPrev - delta1, 2.0) *
+          arma::norm(functionGradientPrev - delta0, 2.0);
+
+      delta1 = delta0;
+      gradPrevIterate += functionGradientPrev;
+    }
+
+    double v = arma::trace(arma::trans(iterate - iteratePrev) *
+        (iterate - gradPrevIterate)) /
+        std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
 
     // TODO: Develop an absolute strategy to deal with stepSizeDecay updates in
     // case we arrive at local minima. See #1469 for more details.
@@ -95,11 +130,11 @@ class AdaptiveStepsize
       if (batchSize < function.NumFunctions())
       {
         stepSizeDecay = (1 - (1 / ((double) batchSize - 1) * sampleVariance) /
-            (batchSize * gradientNorm)) / batchSize;
+            (batchSize * gradientNorm)) / v;
       }
       else
       {
-        stepSizeDecay = 1 / function.NumFunctions();
+        stepSizeDecay = 1 / v;
       }
     }
 
@@ -109,6 +144,9 @@ class AdaptiveStepsize
 
     Backtracking(function, stepSize, iterate, gradient, gradientNorm, offset,
         backtrackingBatchSize);
+
+    // Update the iterate.
+    iterate -= stepSize * gradient;
   }
 
   //! Get the backtracking step size.
@@ -153,7 +191,7 @@ class AdaptiveStepsize
         backtrackingBatchSize);
 
     while (overallObjectiveUpdate >
-        (overallObjective + searchParameter * stepSize * gradientNorm))
+        (overallObjective - searchParameter * stepSize * gradientNorm))
     {
       stepSize *= backtrackStepSize;
 
@@ -162,6 +200,9 @@ class AdaptiveStepsize
           backtrackingBatchSize);
     }
   }
+
+  //! Last function parameters value.
+  arma::mat iteratePrev;
 
   //! The backtracking step size for each iteration.
   double backtrackStepSize;
