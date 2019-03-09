@@ -20,11 +20,13 @@ namespace ens {
 inline DE::DE(const size_t populationSize ,
               const size_t maxGenerations,
               const double crossoverRate,
-              const double differentialWeight):
+              const double differentialWeight,
+              const double tolerance):
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverRate(crossoverRate),
-    differentialWeight(differentialWeight)
+    differentialWeight(differentialWeight),
+    tolerance(tolerance)
 { /* Nothing to do here. */ }
 
 //!Optimize the function
@@ -61,7 +63,7 @@ inline double DE::Optimize(DecomposableFunctionType& function,
   // Iterate until maximum number of generations are completed.
   for (size_t gen = 0; gen < maxGenerations; gen++)
   {
-    // Generate new populationbased on /best/1/bin strategy.
+    // Generate new population based on /best/1/bin strategy.
     for (size_t member = 0; member < populationSize; member++)
     {
       iterate = population.slice(member);
@@ -108,6 +110,14 @@ inline double DE::Optimize(DecomposableFunctionType& function,
 
       fitnessValues[member] = iterateValue;
       population.slice(member) = iterate;
+    }
+
+    // Check for termination criteria.
+    if (std::abs(lastBestFitness - fitnessValues.min()) < tolerance)
+    {
+      Info << "DE: minimized within tolerance " << tolerance << "; "
+            << "terminating optimization." << std::endl;
+      break;
     }
 
     // Update helper variables.
