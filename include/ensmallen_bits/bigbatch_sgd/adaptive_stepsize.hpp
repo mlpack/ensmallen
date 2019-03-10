@@ -73,9 +73,9 @@ class AdaptiveStepsize
   void Update(DecomposableFunctionType& function,
               double& stepSize,
               arma::mat& iterate,
-              const arma::mat& gradient,
-              const double gradientNorm,
-              const double sampleVariance,
+              arma::mat& gradient,
+              double& gradientNorm,
+              double& sampleVariance,
               const size_t offset,
               const size_t batchSize,
               const size_t backtrackingBatchSize,
@@ -87,12 +87,13 @@ class AdaptiveStepsize
     // Update the iterate.
     iterate -= stepSize * gradient;
 
-    // Calculate v.
+    // Update Gradient & calculate curvature of quadratic approximation.
+    arma::mat functionGradient(iterate.n_rows, iterate.n_cols);
     arma::mat gradPrevIterate(iterate.n_rows, iterate.n_cols);
     arma::mat functionGradientPrev(iterate.n_rows, iterate.n_cols);
 
-    size_t k = 1;
     double vB = 0;
+    arma::mat delta0, delta1;
 
     // Initialize previous iterate, if not already initialized.
     if (iteratePrev.is_empty())
@@ -101,23 +102,33 @@ class AdaptiveStepsize
     }
 
     // Compute the stochastic gradient estimation.
+    function.Gradient(iterate, offset, gradient, 1);
     function.Gradient(iteratePrev, offset, gradPrevIterate, 1);
-    arma::mat delta0, delta1;
 
-    delta1 = gradPrevIterate;
-    for (size_t j = 1; j < backtrackingBatchSize; ++j, ++k)
+    delta1 = gradient;
+
+    for (size_t j = 1, k = 1; j < backtrackingBatchSize; ++j, ++k)
     {
-      function.Gradient(iteratePrev, offset + j, functionGradientPrev, 1);
-      delta0 = delta1 + (functionGradientPrev - delta1) / k;
+      function.Gradient(iterate, offset + j, functionGradient, 1);
+      delta0 = delta1 + (functionGradient - delta1) / k;
 
       // Compute sample variance.
-      vB += arma::norm(functionGradientPrev - delta1, 2.0) *
-          arma::norm(functionGradientPrev - delta0, 2.0);
+      vB += arma::norm(functionGradient - delta1, 2.0) *
+          arma::norm(functionGradient - delta0, 2.0);
 
       delta1 = delta0;
+      gradient += functionGradient;
+
+      // Used for curvature calculation.
+      function.Gradient(iteratePrev, offset + j, functionGradientPrev, 1);
       gradPrevIterate += functionGradientPrev;
     }
 
+    // Update sample variance & norm of the gradient.
+    sampleVariance = vB;
+    gradientNorm = std::pow(arma::norm(gradient / backtrackingBatchSize, 2), 2.0);
+
+    // Compute curvature.
     double v = arma::trace(arma::trans(iterate - iteratePrev) *
         (gradient - gradPrevIterate)) /
         std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
@@ -147,9 +158,6 @@ class AdaptiveStepsize
 
     Backtracking(function, stepSize, iterate, gradient, gradientNorm, offset,
         backtrackingBatchSize);
-
-    // Update the iterate.
-    iterate -= stepSize * gradient;
   }
 
   //! Get the backtracking step size.
