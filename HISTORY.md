@@ -1,3 +1,7 @@
+### ensmallen 1.14.2
+###### ????-??-??
+  * Minor documentation fixes (#95).
+
 ### ensmallen 1.14.1
 ###### 2019-03-09
   * Fixes for SPSA (#87).
