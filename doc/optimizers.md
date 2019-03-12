@@ -171,18 +171,18 @@ with _`UpdateRule`_` = AdamUpdate`.
 
 #### Attributes
 
- | **type** | **name** | **description** | **default** |
- |----------|----------|-----------------|-------------|
- | `double` | **`stepSizeMax`** | Intitial step size for each iteration. | `0.02` |
- | `double` | **`stepSizeMin`** | Final step size for each iteration. | `0.01` |
- | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
- | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
- | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
- | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
- | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
- | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
- | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
- | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSizeMax`** | Intitial step size for each iteration. | `0.02` |
+| `double` | **`stepSizeMin`** | Final step size for each iteration. | `0.01` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
  `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
@@ -224,39 +224,39 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Attributes
 
- | **type** | **name** | **description** | **default** |
- |----------|----------|-----------------|-------------|
- | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
- | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
- | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
- | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
- | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
- | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
- | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
- | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
- | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
-   The attributes of the optimizer may also be modified via the member methods
-   `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
-   `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
+`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
 
-  ```c++
-  RosenbrockFunction f;
-  arma::mat coordinates = f.GetInitialPoint();
+ ```c++
+ RosenbrockFunction f;
+ arma::mat coordinates = f.GetInitialPoint();
 
-  AdamW optimizer(0.01, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  optimizer.Optimize(f, coordinates);
-  ```
+ AdamW optimizer(0.01, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+ optimizer.Optimize(f, coordinates);
+ ```
 
 #### See also:
 
-   * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
-   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
-   * [SGD](#standard-sgd)
-   * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
-   * [Differentiable separable functions](#differentiable-separable-functions)
+ * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+ * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## AdaMax
 
@@ -1864,63 +1864,64 @@ optimizer.Optimize(f, coordinates);
 
 ## Decoupled Weight Decay Momentum SGD (SGDW)
 
- *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
- Stochastic Gradient Descent is a technique for minimizing a function which
- can be expressed as a sum of other functions. This is modified version of SGD which decouples the
- weight decay.
+Stochastic Gradient Descent is a technique for minimizing a function which
+can be expressed as a sum of other functions. This is modified version of SGD which decouples the
+weight decay.
 
 #### Constructors
 
-  * `SGDW()`
-  * `SGDW(`_`stepSize, batchSize`_`)`
-  * `SGDW(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
-  * `SGDW(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, momentumPolicy`_`)`
+ * `SGDW()`
+ * `SGDW(`_`stepSize, batchSize`_`)`
+ * `SGDW(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
+ * `SGDW(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, momentumPolicy`_`)`
 
- Note that `MomentumSGD` is based on the templated type
- `SGD<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
- DecoupledWeightDecayMomentumUpdate` and _`DecayPolicyType`_` = NoDecay`.
+Note that `MomentumSGD` is based on the templated type
+`SGD<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
+DecoupledWeightDecayMomentumUpdate` and _`DecayPolicyType`_` = NoDecay`.
 
- #### Attributes
+#### Attributes
 
- | **type** | **name** | **description** | **default** |
- |----------|----------|-----------------|-------------|
- | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
- | `size_t` | **`batchSize`** | Batch size to use for each step. | `32` |
- | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
- | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
- | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
- | `DecoupledWeightDecayMomentumUpdate` | **`updatePolicy`** | An instantiated `MomentumUpdate`. | `DecoupledWeightDecayMomentumUpdate()` |
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `size_t` | **`batchSize`** | Batch size to use for each step. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `DecoupledWeightDecayMomentumUpdate` | **`updatePolicy`** | An instantiated `MomentumUpdate`. | `DecoupledWeightDecayMomentumUpdate()` |
 
- Attributes of the optimizer may also be modified via the member methods
- `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
- `UpdatePolicy()`.
+Attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
+`UpdatePolicy()`.
 
- Note that the `DecoupledWeightDecayMomentumUpdate` class has the constructor
- `DecoupledWeightDecayMomentumUpdate(`_`momentum, weightDecay`_`)` with a
- default value of `0.5` for the momentum and `0.0005` for the weight decay.
+Note that the `DecoupledWeightDecayMomentumUpdate` class has the constructor
+`DecoupledWeightDecayMomentumUpdate(`_`momentum, weightDecay`_`)` with a
+default value of `0.5` for the momentum and `0.0005` for the weight decay.
 
 #### Examples
 
- ```c++
- RosenbrockFunction f;
- arma::mat coordinates = f.GetInitialPoint();
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
 
- SGDW optimizer(0.01, 32, 100000, 1e-5, true, DecoupledWeightDecayMomentumUpdate(0.5, 0.0003));
- optimizer.Optimize(f, coordinates);
- ```
+SGDW optimizer(0.01, 32, 100000, 1e-5, true, DecoupledWeightDecayMomentumUpdate(0.5, 0.0003));
+optimizer.Optimize(f, coordinates);
+```
 
 #### See also:
-  * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
-  * [Standard SGD](#standard-sgd)
-  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
-  * [Differentiable separable functions](#differentiable-separable-functions)
+
+ * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
+ * [Standard SGD](#standard-sgd)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Decoupled Weight Decay Stochastic Gradient Descent with Restarts (SGDWR)
 
- *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
- SGDWR is a modified version of SGDR with the weight decay decoupled.
+SGDWR is a modified version of SGDR with the weight decay decoupled.
 
 #### Constructors
 
@@ -1929,51 +1930,51 @@ optimizer.Optimize(f, coordinates);
  * `SGDWR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSizeMax, stepSizeMin, maxIterations, tolerance, shuffle, updatePolicy`_`)`
  * `SGDWR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSizeMax, stepSizeMin, maxIterations, tolerance, shuffle, updatePolicy`_`, resetPolicy)`
 
- The _`UpdatePolicyType`_ template parameter controls the update policy used
- during the iterative update process.
+The _`UpdatePolicyType`_ template parameter controls the update policy used
+during the iterative update process.
 
 #### Attributes
 
- | **type** | **name** | **description** | **default** |
- |----------|----------|-----------------|-------------|
- | `size_t` | **`epochRestart`** | Initial epoch where decay is applied. | `50` |
- | `double` | **`multFactor`** | Batch size multiplication factor. | `2.0` |
- | `size_t` | **`batchSize`** | Size of each mini-batch. | `1000` |
- | `double` | **`stepSizeMax`** | Intitial step size for each iteration. | `0.01` |
- | `double` | **`stepSizeMin`** | Final step size for each iteration. | `0.005` |
- | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
- | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
- | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
- | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
- | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`epochRestart`** | Initial epoch where decay is applied. | `50` |
+| `double` | **`multFactor`** | Batch size multiplication factor. | `2.0` |
+| `size_t` | **`batchSize`** | Size of each mini-batch. | `1000` |
+| `double` | **`stepSizeMax`** | Intitial step size for each iteration. | `0.01` |
+| `double` | **`stepSizeMin`** | Final step size for each iteration. | `0.005` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
+| `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
- Attributes of the optimizer can also be modified via the member methods
- `EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
- `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, and
- `ResetPolicy()`.
+Attributes of the optimizer can also be modified via the member methods
+`EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, and
+`ResetPolicy()`.
 
- Note that the default value for `updatePolicy` is the default constructor for
- the `UpdatePolicyType`.
+Note that the default value for `updatePolicy` is the default constructor for
+the `UpdatePolicyType`.
 
- Note that the `SGDWR` class is based on the `SGDR<`_`UpdateRule`_`>` class
- with _`UpdateRule`_` = DecoupledWeightDecayMomentumUpdate`.
+Note that the `SGDWR` class is based on the `SGDR<`_`UpdateRule`_`>` class
+with _`UpdateRule`_` = DecoupledWeightDecayMomentumUpdate`.
 
 #### Examples:
 
- ```c++
- RosenbrockFunction f;
- arma::mat coordinates = f.GetInitialPoint();
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
 
- SGDWR optimizer(50, 2, 32, 0.002, 0.001, 0, 1e-9, true, DecoupledWeightDecayMomentumUpdate(0.5, 0.0003));
- optimizer.Optimize(f, coordinates);
- ```
+SGDWR optimizer(50, 2, 32, 0.002, 0.001, 0, 1e-9, true, DecoupledWeightDecayMomentumUpdate(0.5, 0.0003));
+optimizer.Optimize(f, coordinates);
+```
 
 #### See also:
 
-  * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
-  * [SGDR: Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
-  * [Stochastic gradient descent in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
-  * [Differentiable separable functions](#differentiable-separable-functions)
+ * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
+ * [SGDR: Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
+ * [Stochastic gradient descent in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Snapshot Stochastic Gradient Descent with Restarts (SnapshotSGDR)
 
