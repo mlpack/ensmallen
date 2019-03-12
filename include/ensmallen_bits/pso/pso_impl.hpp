@@ -32,10 +32,11 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   ArbitraryFunctionType& f(static_cast<ArbitraryFunctionType&>(function));
   
   // Make sure we have the methods that we need.
-  traits::CheckFunctionTypeAPI<ArbitraryFunctionType>();
+  traits::CheckEvaluate<ArbitraryFunctionType>();
 
   // Initialize particles using the init policy.
   initPolicy.InitializeParticles(
+      function,
       iterate,
       numParticles,
       particlePositions,
