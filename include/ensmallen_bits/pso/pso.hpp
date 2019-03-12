@@ -15,6 +15,7 @@
 
 #include "update_policies/lbest_update.hpp"
 #include "init_policies/default_init.hpp"
+#include "init_policies/constrained_init.hpp"
 #include <iostream>
 
 namespace ens {
@@ -128,8 +129,8 @@ class PSOType
   InitPolicy initPolicy;
 };
 
-using LBestPSO = PSOType<LBestUpdate>;
-
+//using LBestPSO = PSOType<LBestUpdate>;
+using LBestPSO = PSOType<LBestUpdate, ConstrainedInit>;
 } // ens
 
 #include "pso_impl.hpp"

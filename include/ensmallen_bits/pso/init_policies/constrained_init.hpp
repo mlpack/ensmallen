@@ -10,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
-#define ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
+#ifndef ENSMALLEN_PSO_INIT_POLICIES_CONSTRAINED_INIT_HPP
+#define ENSMALLEN_PSO_INIT_POLICIES_CONSTRAINED_INIT_HPP
 
 namespace ens {
 
@@ -21,7 +21,7 @@ namespace ens {
  * bests of the particles to the initial positions, and all fitness values to
  * std::numeric_limits<double>::max().
  */
-class DefaultInit
+class ConstrainedInit
 {
  public:
   /**
@@ -31,7 +31,7 @@ class DefaultInit
    * @param lowerBound Lower bound of the position initialization range.
    * @param upperBound Upper bound of the position initialization range.
    */
-  DefaultInit(const double lowerBound = -1.0,
+  ConstrainedInit(const double lowerBound = -1.0,
               const double upperBound = 1.0):
       lowerBound(lowerBound),
       upperBound(upperBound)
@@ -64,6 +64,25 @@ class DefaultInit
   {
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
+    // User provided weights replacement performed here.
+    arma::mat positionVector;
+    double positionFitness;
+    double inf = std::numeric_limits<double>::max();
+    for (size_t i = 0; i < numParticles; i++)
+    {
+      bool positionFeasible = 0; //Flag for tracking if generated position vector is feasible or not
+      while (positionFeasible != 0)
+      {
+        //Generate random position vector
+        positionVector.randu(iterate.n_rows,iterate.n_cols);
+        positionFitness = function.Evaluate(positionVector);
+        if (positionFitness != inf)
+        {
+          particlePositions.slice(i) = positionVector;
+          positionFeasible = 1;
+        }
+      }
+    }
 
     // Distribute particles in [lowerBound, upperBound].
     particlePositions *= upperBound - lowerBound;
