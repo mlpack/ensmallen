@@ -931,7 +931,7 @@ proximalOptimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable functions](#differentiable-functions)*
 
-L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broydenâ€“Fletcherâ€“Goldfarbâ€“Shanno (BFGS) algorithm using a limited amount of computer memory.  
+L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm using a limited amount of computer memory.  
   
 #### Constructors
 
