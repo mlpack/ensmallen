@@ -61,13 +61,13 @@ TEST_CASE("SPSALogisticRegressionTest", "[SPSATest]")
   bool success = false;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 6; ++trial)
   {
     LogisticRegressionTestData(data, testData, shuffledData,
         responses, testResponses, shuffledResponses);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-    SPSA optimizer(0.5, 0.102, 0.002, 0.3, 1000, 1e-4);
+    SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
     arma::mat coordinates = lr.GetInitialPoint();
     optimizer.Optimize(lr, coordinates);
 
