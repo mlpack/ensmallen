@@ -1,6 +1,8 @@
 ### ensmallen 1.14.2
-###### ????-??-??
-  * Minor documentation fixes (#95).
+###### 2019-03-14
+  * SPSA test tolerance fix (#97).
+
+  * Minor documentation fixes (#95, #98).
 
   * Fix newlines at end of file (#92).
 
