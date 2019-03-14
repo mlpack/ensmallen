@@ -288,7 +288,7 @@ f(x) = f_0(x) + f_1(x) + ... + f_N(x).
 ```
 
 In this function type, we assume the gradient `f'(x)` is not computable.  If it
-is, see [#Differentiable-separable-functions].
+is, see [differentiable separable functions](#differentiable-separable-functions).
 
 For machine learning tasks, the objective function may be, e.g., the sum of a
 function taken across many data points.  Implementing an arbitrary separable
@@ -335,7 +335,7 @@ intensive operation for your objective function, it may be best to avoid using
 a non-separable arbitrary function optimizer.
 
 **Note**: if possible, it's often better to try and use a gradient-based
-approach.  See [#Differentiable-separable-functions]
+approach.  See [differentiable separable functions](#differentiable-separable-functions)
 for separable f(x) where the gradient f'(x) can be computed.
 
 The example program below demonstrates the implementation and use of an
