@@ -20,30 +20,12 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Test the SPSA optimizer on the SGDTest function.
- */
-TEST_CASE("SPSASimpleSGDTestFunction","[SPSATest]")
-{
-  SGDTestFunction f;
-  SPSA optimizer(0.1, 1, 0.102, 0.16, 0.3, 100000, 0);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  coordinates.ones();
-  double result = optimizer.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-7));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-7));
-}
-
-/**
  * Test the SPSA optimizer on the Sphere function.
  */
 TEST_CASE("SPSASphereFunctionTest", "[SPSATest]")
 {
   SphereFunction f(2);
-  SPSA optimizer(0.1, 2, 0.102, 0.16, 0.3, 100000, 0);
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -58,7 +40,7 @@ TEST_CASE("SPSASphereFunctionTest", "[SPSATest]")
 TEST_CASE("SPSAMatyasFunctionTest", "[SPSATest]")
 {
   MatyasFunction f;
-  SPSA optimizer(0.1, 1, 0.102, 0.16, 0.3, 100000, 0);
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -76,21 +58,30 @@ TEST_CASE("SPSAMatyasFunctionTest", "[SPSATest]")
 TEST_CASE("SPSALogisticRegressionTest", "[SPSATest]")
 {
   arma::mat data, testData, shuffledData;
+  bool success = false;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
+  for (size_t trial = 0; trial < 6; ++trial)
+  {
+    LogisticRegressionTestData(data, testData, shuffledData,
+        responses, testResponses, shuffledResponses);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  SPSA optimizer(0.1, 1, 0.102, 0.16, 0.3, 100000, 1e-8);
-  arma::mat coordinates = lr.GetInitialPoint();
-  optimizer.Optimize(lr, coordinates);
+    SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
+    arma::mat coordinates = lr.GetInitialPoint();
+    optimizer.Optimize(lr, coordinates);
 
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    if (acc == Approx(100.0).epsilon(0.003) &&
+        testAcc == Approx(100.0).epsilon(0.006))
+      success = true;
 
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+    if (success)
+      break;
+  }
+
+  REQUIRE(success == true);
 }
