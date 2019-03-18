@@ -1,8 +1,6 @@
 /**
- * @file cne_test.cpp
- * @author Marcus Edel
- * @author Kartik Nighania
- * @author Conrad Sanderson
+ * @file de_test.cpp
+ * @author Rahul Ganesh Prabhu
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -10,7 +8,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <ensmallen.hpp>
+#include "../include/ensmallen.hpp"
 #include "catch.hpp"
 #include "test_function_tools.hpp"
 
@@ -18,9 +16,9 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Train and test a logistic regression function using CNE optimizer
+ * Train and test a logistic regression function using DE optimizer.
  */
-TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
+TEST_CASE("DELogisticRegressionTest", "[DETest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -29,7 +27,7 @@ TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  CNE opt(200, 1000, 0.2, 0.2, 0.2, 1e-5);
+  DE opt(200, 1000, 0.6, 0.8, 1e-5);
   arma::mat coordinates = lr.GetInitialPoint();
   opt.Optimize(lr, coordinates);
 
