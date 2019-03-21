@@ -308,13 +308,12 @@ bool L_BFGS::LineSearch(FunctionType& function,
  * @param numIterations Maximum number of iterations to perform
  * @param iterate Starting point (will be modified)
  */
-template<typename FunctionType, typename MatType>
+template<typename FunctionType, typename MatType, typename GradType>
 typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
                                              MatType& iterate)
 {
   // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
-  typedef arma::Mat<ElemType> GradType;
 
   // Use the Function<> wrapper to ensure the function has all of the functions
   // that we need.
@@ -341,11 +340,14 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
   bool optimizeUntilConvergence = (maxIterations == 0);
 
   // The gradient: the current and the old.
-  GradType gradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
-  GradType oldGradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
+  gradient.zeros();
+  GradType oldGradient(iterate.n_rows, iterate.n_cols);
+  oldGradient.zeros();
 
   // The search direction.
-  GradType searchDirection(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
+  GradType searchDirection(iterate.n_rows, iterate.n_cols);
+  searchDirection.zeros();
 
   // The initial function value and gradient.
   ElemType functionValue = f.EvaluateWithGradient(iterate, gradient);
@@ -420,7 +422,6 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
   } // End of the optimization loop.
 
-  std::cout << "done optimization, value " << functionValue << "\n";
   return functionValue;
 }
 

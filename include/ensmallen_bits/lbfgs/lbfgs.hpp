@@ -72,7 +72,7 @@ class L_BFGS
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename FunctionType, typename MatType>
+  template<typename FunctionType, typename MatType, typename GradType = MatType>
   typename MatType::elem_type Optimize(FunctionType& function,
                                        MatType& iterate);
 
