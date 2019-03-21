@@ -26,10 +26,12 @@ template<typename FunctionType,
          typename GradType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::TypedForms<MatType, GradType>::template EvaluateWithGradientForm
+                 traits::TypedForms<MatType, GradType>::template
+                     EvaluateWithGradientForm
              >::value,
          bool HasGradient = traits::HasGradient<FunctionType,
-             traits::TypedForms<MatType, GradType>::template GradientForm>::value>
+             traits::TypedForms<MatType, GradType>::template 
+                     GradientForm>::value>
 class AddGradient
 {
  public:
@@ -54,8 +56,11 @@ class AddGradient<FunctionType,
   // Reflect the existing Gradient().
   void Gradient(const MatType& coordinates, GradType& gradient)
   {
-    static_cast<FunctionType*>(static_cast<Function<FunctionType, MatType, GradType>*>(
-        this))->Gradient(coordinates, gradient);
+    static_cast<FunctionType*>(
+        static_cast<Function<FunctionType,
+                             MatType,
+                             GradType>*>(this))->Gradient(coordinates,
+                                                          gradient);
   }
 };
 
@@ -76,7 +81,9 @@ class AddGradient<FunctionType, MatType, GradType, true, false>
   void Gradient(const MatType& coordinates, GradType& gradient)
   {
     // The returned objective value will be ignored.
-    (void) static_cast<Function<FunctionType, MatType, GradType>*>(this)->EvaluateWithGradient(
+    (void) static_cast<Function<FunctionType,
+                                MatType,
+                                GradType>*>(this)->EvaluateWithGradient(
         coordinates, gradient);
   }
 };
@@ -91,10 +98,12 @@ template<typename FunctionType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType,
-                                    GradType>::template EvaluateWithGradientConstForm
+                                    GradType>::template
+                     EvaluateWithGradientConstForm
              >::value,
          bool HasGradient = traits::HasGradient<FunctionType,
-             traits::TypedForms<MatType, GradType>::template GradientConstForm>::value>
+             traits::TypedForms<MatType, GradType>::template GradientConstForm
+         >::value>
 class AddGradientConst
 {
  public:
@@ -119,8 +128,11 @@ class AddGradientConst<FunctionType,
   // Reflect the existing Gradient().
   void Gradient(const MatType& coordinates, GradType& gradient) const
   {
-    static_cast<const FunctionType*>(static_cast<const
-        Function<FunctionType, MatType, GradType>*>(this))->Gradient(coordinates, gradient);
+    static_cast<const FunctionType*>(
+        static_cast<const Function<FunctionType,
+                                   MatType,
+                                   GradType>*>(this))->Gradient(coordinates,
+                                                                gradient);
   }
 };
 
@@ -142,8 +154,10 @@ class AddGradientConst<FunctionType, MatType, GradType, true, false>
   {
     // The returned objective value will be ignored.
     (void) static_cast<
-        const Function<FunctionType, MatType, GradType>*>(this)->EvaluateWithGradient(coordinates,
-        gradient);
+        const Function<FunctionType,
+                       MatType,
+                       GradType>*>(this)->EvaluateWithGradient(coordinates,
+                                                               gradient);
   }
 };
 
@@ -157,10 +171,12 @@ template<typename FunctionType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType,
-                                    GradType>::template EvaluateWithGradientStaticForm
+                                    GradType>::template
+                     EvaluateWithGradientStaticForm
              >::value,
          bool HasGradient = traits::HasGradient<FunctionType,
-             traits::TypedForms<MatType, GradType>::template GradientStaticForm>::value>
+             traits::TypedForms<MatType, GradType>::template GradientStaticForm
+         >::value>
 class AddGradientStatic
 {
  public:
