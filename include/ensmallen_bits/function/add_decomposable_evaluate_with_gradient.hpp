@@ -23,45 +23,61 @@ namespace ens {
  * decomposable Gradient() method exists, or nothing otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          // Check if there is at least one non-const Evaluate() or Gradient().
          bool HasDecomposableEvaluateGradient = traits::HasNonConstSignatures<
              FunctionType,
              traits::HasEvaluate,
-             traits::DecomposableEvaluateForm,
-             traits::DecomposableEvaluateConstForm,
-             traits::DecomposableEvaluateStaticForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableEvaluateForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableEvaluateConstForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableEvaluateStaticForm,
              traits::HasGradient,
-             traits::DecomposableGradientForm,
-             traits::DecomposableGradientConstForm,
-             traits::DecomposableGradientStaticForm>::value,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableGradientForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableGradientConstForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableGradientStaticForm>::value,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::DecomposableEvaluateWithGradientForm>::value>
+                 traits::TypedForms<MatType, GradType>::template
+                     DecomposableEvaluateWithGradientForm>::value>
 class AddDecomposableEvaluateWithGradient
 {
  public:
   // Provide a dummy overload so the name 'EvaluateWithGradient' exists for this
   // object.
-  double EvaluateWithGradient(traits::UnconstructableType&, const size_t,
+  typename MatType::elem_type EvaluateWithGradient(
+      traits::UnconstructableType&,
+      const size_t,
       const size_t);
 };
 
 /**
  * Reflect the existing EvaluateWithGradient().
  */
-template<typename FunctionType, bool HasDecomposableEvaluateGradient>
-class AddDecomposableEvaluateWithGradient<FunctionType,
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasDecomposableEvaluateGradient>
+class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType,
     HasDecomposableEvaluateGradient, true>
 {
  public:
-  // Reflect the existing Evaluate().
-  double EvaluateWithGradient(const arma::mat& coordinates,
-                              const size_t begin,
-                              arma::mat& gradient,
-                              const size_t batchSize)
+  // Reflect the existing EvaluateWithGradient().
+  typename MatType::elem_type EvaluateWithGradient(const MatType& coordinates,
+                                                   const size_t begin,
+                                                   GradType& gradient,
+                                                   const size_t batchSize)
   {
     return static_cast<FunctionType*>(
-        static_cast<Function<FunctionType>*>(this))->EvaluateWithGradient(
+        static_cast<Function<FunctionType,
+                             MatType,
+                             GradType>*>(this))->EvaluateWithGradient(
         coordinates, begin, gradient, batchSize);
   }
 };
@@ -71,8 +87,9 @@ class AddDecomposableEvaluateWithGradient<FunctionType,
  * not a decomposable EvaluateWithGradient(), add a decomposable
  * EvaluateWithGradient() method.
  */
-template<typename FunctionType>
-class AddDecomposableEvaluateWithGradient<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType, true,
+    false>
 {
  public:
   /**
@@ -85,16 +102,16 @@ class AddDecomposableEvaluateWithGradient<FunctionType, true, false>
    * @param gradient Matrix to store the gradient into.
    * @param batchSize Number of decomposable functions to evaluate.
    */
-  double EvaluateWithGradient(const arma::mat& coordinates,
-                              const size_t begin,
-                              arma::mat& gradient,
-                              const size_t batchSize)
+  typename MatType::elem_type EvaluateWithGradient(const MatType& coordinates,
+                                                   const size_t begin,
+                                                   GradType& gradient,
+                                                   const size_t batchSize)
   {
-    const double objective =
-        static_cast<Function<FunctionType>*>(this)->Evaluate(coordinates, begin,
-        batchSize);
-    static_cast<Function<FunctionType>*>(this)->Gradient(coordinates, begin,
-        gradient, batchSize);
+    const typename MatType::elem_type objective =
+        static_cast<Function<FunctionType, MatType, GradType>*>(this)->Evaluate(
+        coordinates, begin, batchSize);
+    static_cast<Function<FunctionType, MatType, GradType>*>(this)->Gradient(
+        coordinates, begin, gradient, batchSize);
     return objective;
   }
 };
@@ -106,43 +123,57 @@ class AddDecomposableEvaluateWithGradient<FunctionType, true, false>
  * otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          // Check if there is at least one const Evaluate() or Gradient().
          bool HasDecomposableEvaluateGradient = traits::HasConstSignatures<
              FunctionType,
              traits::HasEvaluate,
-             traits::DecomposableEvaluateConstForm,
-             traits::DecomposableEvaluateStaticForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableEvaluateConstForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableEvaluateStaticForm,
              traits::HasGradient,
-             traits::DecomposableGradientConstForm,
-             traits::DecomposableGradientStaticForm>::value,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableGradientConstForm,
+             traits::TypedForms<MatType, GradType>::template
+                 DecomposableGradientStaticForm>::value,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::DecomposableEvaluateWithGradientConstForm>::value>
+                 traits::TypedForms<MatType, GradType>::template
+                     DecomposableEvaluateWithGradientConstForm>::value>
 class AddDecomposableEvaluateWithGradientConst
 {
  public:
   // Provide a dummy overload so the name 'EvaluateWithGradient' exists for this
   // object.
-  double EvaluateWithGradient(traits::UnconstructableType&, const size_t,
+  typename MatType::elem_type EvaluateWithGradient(
+      traits::UnconstructableType&,
+      const size_t,
       const size_t) const;
 };
 
 /**
  * Reflect the existing EvaluateWithGradient().
  */
-template<typename FunctionType, bool HasDecomposableEvaluateGradient>
-class AddDecomposableEvaluateWithGradientConst<FunctionType,
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasDecomposableEvaluateGradient>
+class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
     HasDecomposableEvaluateGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
-  double EvaluateWithGradient(const arma::mat& coordinates,
-                              const size_t begin,
-                              arma::mat& gradient,
-                              const size_t batchSize) const
+  typename MatType::elem_type EvaluateWithGradient(const MatType& coordinates,
+                                                   const size_t begin,
+                                                   GradType& gradient,
+                                                   const size_t batchSize) const
   {
     return static_cast<const FunctionType*>(
-        static_cast<const Function<FunctionType>*>(this))->EvaluateWithGradient(
+        static_cast<const Function<FunctionType,
+                                   MatType,
+                                   GradType>*>(this))->EvaluateWithGradient(
         coordinates, begin, gradient, batchSize);
   }
 };
@@ -152,8 +183,9 @@ class AddDecomposableEvaluateWithGradientConst<FunctionType,
  * Gradient() but not a decomposable const EvaluateWithGradient(), add a
  * decomposable const EvaluateWithGradient() method.
  */
-template<typename FunctionType>
-class AddDecomposableEvaluateWithGradientConst<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
+    true, false>
 {
  public:
   /**
@@ -166,15 +198,19 @@ class AddDecomposableEvaluateWithGradientConst<FunctionType, true, false>
    * @param gradient Matrix to store the gradient into.
    * @param batchSize Number of decomposable functions to evaluate.
    */
-  double EvaluateWithGradient(const arma::mat& coordinates,
-                              const size_t begin,
-                              arma::mat& gradient,
-                              const size_t batchSize) const
+  typename MatType::elem_type EvaluateWithGradient(const MatType& coordinates,
+                                                   const size_t begin,
+                                                   GradType& gradient,
+                                                   const size_t batchSize) const
   {
-    const double objective =
-        static_cast<const Function<FunctionType>*>(this)->Evaluate(coordinates,
+    const typename MatType::elem_type objective =
+        static_cast<const Function<FunctionType,
+                                   MatType,
+                                   GradType>*>(this)->Evaluate(coordinates,
         begin, batchSize);
-    static_cast<const Function<FunctionType>*>(this)->Gradient(coordinates,
+    static_cast<const Function<FunctionType,
+                               MatType,
+                               GradType>*>(this)->Gradient(coordinates,
         begin, gradient, batchSize);
     return objective;
   }
@@ -187,36 +223,47 @@ class AddDecomposableEvaluateWithGradientConst<FunctionType, true, false>
  * nothing otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          bool HasDecomposableEvaluateGradient =
              traits::HasEvaluate<FunctionType,
-                 traits::DecomposableEvaluateStaticForm>::value &&
+                 traits::TypedForms<MatType, GradType>::template
+                     DecomposableEvaluateStaticForm>::value &&
              traits::HasGradient<FunctionType,
-                 traits::DecomposableGradientStaticForm>::value,
+                 traits::TypedForms<MatType, GradType>::template
+                     DecomposableGradientStaticForm>::value,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::DecomposableEvaluateWithGradientStaticForm>::value>
+                 traits::TypedForms<MatType, GradType>::template
+                     DecomposableEvaluateWithGradientStaticForm>::value>
 class AddDecomposableEvaluateWithGradientStatic
 {
  public:
   // Provide a dummy overload so the name 'EvaluateWithGradient' exists for this
   // object.
-  static double EvaluateWithGradient(traits::UnconstructableType&, const size_t,
+  static typename MatType::elem_type EvaluateWithGradient(
+      traits::UnconstructableType&,
+      const size_t,
       const size_t);
 };
 
 /**
  * Reflect the existing EvaluateWithGradient().
  */
-template<typename FunctionType, bool HasDecomposableEvaluateGradient>
-class AddDecomposableEvaluateWithGradientStatic<FunctionType,
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasDecomposableEvaluateGradient>
+class AddDecomposableEvaluateWithGradientStatic<FunctionType, MatType, GradType,
     HasDecomposableEvaluateGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
-  static double EvaluateWithGradient(const arma::mat& coordinates,
-                                     const size_t begin,
-                                     arma::mat& gradient,
-                                     const size_t batchSize)
+  static typename MatType::elem_type EvaluateWithGradient(
+      const MatType& coordinates,
+      const size_t begin,
+      GradType& gradient,
+      const size_t batchSize)
   {
     return FunctionType::EvaluateWithGradient(coordinates, begin, gradient,
         batchSize);
@@ -228,8 +275,9 @@ class AddDecomposableEvaluateWithGradientStatic<FunctionType,
  * Gradient() but not a decomposable static EvaluateWithGradient(), add a
  * decomposable static Gradient() method.
  */
-template<typename FunctionType>
-class AddDecomposableEvaluateWithGradientStatic<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddDecomposableEvaluateWithGradientStatic<FunctionType, MatType, GradType,
+    true, false>
 {
  public:
   /**
@@ -242,13 +290,14 @@ class AddDecomposableEvaluateWithGradientStatic<FunctionType, true, false>
    * @param gradient Matrix to store the gradient into.
    * @param batchSize Number of decomposable functions to evaluate.
    */
-  double EvaluateWithGradient(const arma::mat& coordinates,
-                              const size_t begin,
-                              arma::mat& gradient,
-                              const size_t batchSize) const
+  typename MatType::elem_type EvaluateWithGradient(
+      const MatType& coordinates,
+      const size_t begin,
+      GradType& gradient,
+      const size_t batchSize) const
   {
-    const double objective = FunctionType::Evaluate(coordinates, begin,
-        batchSize);
+    const typename MatType::elem_type objective = FunctionType::Evaluate(
+        coordinates, begin, batchSize);
     FunctionType::Gradient(coordinates, begin, gradient, batchSize);
     return objective;
   }

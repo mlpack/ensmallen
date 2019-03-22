@@ -47,7 +47,8 @@ class AddEvaluateWithGradient
  public:
   // Provide a dummy overload so the name 'EvaluateWithGradient' exists for this
   // object.
-  double EvaluateWithGradient(traits::UnconstructableType&);
+  typename MatType::elem_type EvaluateWithGradient(
+      traits::UnconstructableType&);
 };
 
 /**

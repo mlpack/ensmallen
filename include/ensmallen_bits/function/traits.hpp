@@ -84,169 +84,171 @@ struct TypedForms
   using EvaluateWithGradientStaticForm = double(*)(const MatType&, GradType&);
 
   //! This is the form of a non-const NumFunctions() method.
-  //template <typename FunctionType>
-//  using NumFunctionsForm = size_t(FunctionType::*)();
+  template <typename FunctionType>
+  using NumFunctionsForm = size_t(FunctionType::*)();
 
-//! This is the form of a const NumFunctions() method.
-//template <typename FunctionType>
-//using NumFunctionsConstForm = size_t(FunctionType::*)() const;
+  //! This is the form of a const NumFunctions() method.
+  template <typename FunctionType>
+  using NumFunctionsConstForm = size_t(FunctionType::*)() const;
 
-//! This is the form of a static NumFunctions() method.
-//template<typename FunctionType>
-//using NumFunctionsStaticForm = size_t(*)();
-/*
-//! This is the form of a non-const Shuffle() method.
-template<typename FunctionType>
-using ShuffleForm = void(FunctionType::*)();
+  //! This is the form of a static NumFunctions() method.
+  template<typename FunctionType>
+  using NumFunctionsStaticForm = size_t(*)();
 
-//! This is the form of a const Shuffle() method.
-template<typename FunctionType>
-using ShuffleConstForm = void(FunctionType::*)() const;
+  //! This is the form of a non-const Shuffle() method.
+  template<typename FunctionType>
+  using ShuffleForm = void(FunctionType::*)();
 
-//! This is the form of a static Shuffle() method.
-template<typename FunctionType>
-using ShuffleStaticForm = void(*)();
+  //! This is the form of a const Shuffle() method.
+  template<typename FunctionType>
+  using ShuffleConstForm = void(FunctionType::*)() const;
 
-//! This is the form of a decomposable Evaluate() method.
-template<typename FunctionType>
-using DecomposableEvaluateForm = double(FunctionType::*)(
-    const arma::mat&, const size_t, const size_t);
+  //! This is the form of a static Shuffle() method.
+  template<typename FunctionType>
+  using ShuffleStaticForm = void(*)();
 
-//! This is the form of a decomposable const Evaluate() method.
-template<typename FunctionType>
-using DecomposableEvaluateConstForm = double(FunctionType::*)(
-    const arma::mat&, const size_t, const size_t) const;
+  //! This is the form of a decomposable Evaluate() method.
+  template<typename FunctionType>
+  using DecomposableEvaluateForm = typename MatType::elem_type(FunctionType::*)(
+      const MatType&, const size_t, const size_t);
 
-//! This is the form of a decomposable static Evaluate() method.
-template<typename FunctionType>
-using DecomposableEvaluateStaticForm = double(*)(
-    const arma::mat&, const size_t, const size_t);
+  //! This is the form of a decomposable const Evaluate() method.
+  template<typename FunctionType>
+  using DecomposableEvaluateConstForm =
+      typename MatType::elem_type(FunctionType::*)(const MatType&,
+          const size_t, const size_t) const;
 
-//! This is the form of a decomposable non-const Gradient() method.
-template<typename FunctionType>
-using DecomposableGradientForm = void(FunctionType::*)(
-    const arma::mat&, const size_t, arma::mat&, const size_t);
+  //! This is the form of a decomposable static Evaluate() method.
+  template<typename FunctionType>
+  using DecomposableEvaluateStaticForm = typename MatType::elem_type(*)(
+        const MatType&, const size_t, const size_t);
 
-//! This the form of a decomposable const Gradient() method.
-template<typename FunctionType>
-using DecomposableGradientConstForm = void(FunctionType::*)(
-    const arma::mat&, const size_t, arma::mat&, const size_t) const;
+  //! This is the form of a decomposable non-const Gradient() method.
+  template<typename FunctionType>
+  using DecomposableGradientForm = void(FunctionType::*)(
+      const MatType&, const size_t, GradType&, const size_t);
 
-//! This is the form of a decomposable static Gradient() method.
-template<typename FunctionType>
-using DecomposableGradientStaticForm = void(*)(
-    const arma::mat&, const size_t, arma::mat&, const size_t);
+  //! This the form of a decomposable const Gradient() method.
+  template<typename FunctionType>
+  using DecomposableGradientConstForm = void(FunctionType::*)(
+      const MatType&, const size_t, GradType&, const size_t) const;
 
-//! This is the form of a decomposable non-const EvaluateWithGradient() method.
-template<typename FunctionType>
-using DecomposableEvaluateWithGradientForm = double(FunctionType::*)(
-    const arma::mat&, const size_t, arma::mat&, const size_t);
+  //! This is the form of a decomposable static Gradient() method.
+  template<typename FunctionType>
+  using DecomposableGradientStaticForm = void(*)(
+      const MatType&, const size_t, GradType&, const size_t);
 
-//! This is the form of a decomposable const EvaluateWithGradient() method.
-template<typename FunctionType>
-using DecomposableEvaluateWithGradientConstForm = double(FunctionType::*)(
-    const arma::mat&, const size_t, arma::mat&, const size_t) const;
+  //! This is the form of a decomposable non-const EvaluateWithGradient()
+  //! method.
+  template<typename FunctionType>
+  using DecomposableEvaluateWithGradientForm = double(FunctionType::*)(
+      const MatType&, const size_t, GradType&, const size_t);
 
-//! This is the form of a decomposable static EvaluateWithGradient() method.
-template<typename FunctionType>
-using DecomposableEvaluateWithGradientStaticForm = double(*)(
-    const arma::mat&, const size_t, arma::mat&, const size_t);
+  //! This is the form of a decomposable const EvaluateWithGradient() method.
+  template<typename FunctionType>
+  using DecomposableEvaluateWithGradientConstForm = double(FunctionType::*)(
+      const MatType&, const size_t, GradType&, const size_t) const;
 
-//! This is the form of a non-const NumConstraints() method.
-template<typename FunctionType>
-using NumConstraintsForm = size_t(FunctionType::*)();
+  //! This is the form of a decomposable static EvaluateWithGradient() method.
+  template<typename FunctionType>
+  using DecomposableEvaluateWithGradientStaticForm = double(*)(
+      const MatType&, const size_t, GradType&, const size_t);
 
-//! This is the form of a const NumConstraints() method.
-template<typename FunctionType>
-using NumConstraintsConstForm = size_t(FunctionType::*)() const;
+  //! This is the form of a non-const NumConstraints() method.
+  template<typename FunctionType>
+  using NumConstraintsForm = size_t(FunctionType::*)();
 
-//! This is the form of a static NumConstraints() method.
-template<typename FunctionType>
-using NumConstraintsStaticForm = size_t(*)();
+  //! This is the form of a const NumConstraints() method.
+  template<typename FunctionType>
+  using NumConstraintsConstForm = size_t(FunctionType::*)() const;
 
-//! This is the form of a non-const EvaluateConstraint() method.
-template <typename FunctionType>
-using EvaluateConstraintForm = double(FunctionType::*)(
-    const size_t, const arma::mat&);
+  //! This is the form of a static NumConstraints() method.
+  template<typename FunctionType>
+  using NumConstraintsStaticForm = size_t(*)();
 
-//! This is the form of a const EvaluateConstraint() method.
-template<typename FunctionType>
-using EvaluateConstraintConstForm = double(FunctionType::*)(
-    const size_t, const arma::mat&) const;
+  //! This is the form of a non-const EvaluateConstraint() method.
+  template <typename FunctionType>
+  using EvaluateConstraintForm = double(FunctionType::*)(
+      const size_t, const MatType&);
 
-//! This is the form of a static EvaluateConstraint() method.
-template<typename FunctionType>
-using EvaluateConstraintStaticForm = double(*)(const size_t, const arma::mat&);
+  //! This is the form of a const EvaluateConstraint() method.
+  template<typename FunctionType>
+  using EvaluateConstraintConstForm = double(FunctionType::*)(
+      const size_t, const MatType&) const;
 
-//! This is the form of a non-const GradientConstraint() method.
-template <typename FunctionType>
-using GradientConstraintForm = void(FunctionType::*)(
-    const size_t, const arma::mat&, arma::mat&);
+  //! This is the form of a static EvaluateConstraint() method.
+  template<typename FunctionType>
+  using EvaluateConstraintStaticForm = double(*)(const size_t, const MatType&);
 
-//! This is the form of a const GradientConstraint() method.
-template<typename FunctionType>
-using GradientConstraintConstForm = void(FunctionType::*)(
-    const size_t, const arma::mat&, arma::mat&) const;
+  //! This is the form of a non-const GradientConstraint() method.
+  template <typename FunctionType>
+  using GradientConstraintForm = void(FunctionType::*)(
+      const size_t, const MatType&, GradType&);
 
-//! This is the form of a static GradientConstraint() method.
-template<typename Class, typename... Ts>
-using GradientConstraintStaticForm = void(*)(
-    const size_t, const arma::mat&, arma::mat&);
+  //! This is the form of a const GradientConstraint() method.
+  template<typename FunctionType>
+  using GradientConstraintConstForm = void(FunctionType::*)(
+      const size_t, const MatType&, GradType&) const;
 
-//! This is the form of a non-const sparse Gradient() method.
-template<typename FunctionType>
-using SparseGradientForm = void(FunctionType::*)(
-    const arma::mat&, const size_t, arma::sp_mat&, const size_t);
+  //! This is the form of a static GradientConstraint() method.
+  template<typename Class, typename... Ts>
+  using GradientConstraintStaticForm = void(*)(
+      const size_t, const MatType&, GradType&);
 
-//! This is the form of a const sparse Gradient() method.
-template<typename FunctionType>
-using SparseGradientConstForm = void(FunctionType::*)(
-    const arma::mat&, const size_t, arma::sp_mat&, const size_t) const;
+  //! This is the form of a non-const sparse Gradient() method.
+  template<typename FunctionType>
+  using SparseGradientForm = void(FunctionType::*)(
+      const MatType&, const size_t, arma::sp_mat&, const size_t);
 
-//! This is the form of a static sparse Gradient() method.
-template<typename FunctionType>
-using SparseGradientStaticForm = void(*)(
-    const arma::mat&, const size_t, arma::sp_mat&, const size_t);
+  //! This is the form of a const sparse Gradient() method.
+  template<typename FunctionType>
+  using SparseGradientConstForm = void(FunctionType::*)(
+      const MatType&, const size_t, arma::sp_mat&, const size_t) const;
 
-//! This is the form of a non-const NumFeatures() method.
-template<typename FunctionType>
-using NumFeaturesForm = size_t(FunctionType::*)();
+  //! This is the form of a static sparse Gradient() method.
+  template<typename FunctionType>
+  using SparseGradientStaticForm = void(*)(
+      const MatType&, const size_t, arma::sp_mat&, const size_t);
 
-//! This is the form of a const NumFeatures() method.
-template<typename FunctionType>
-using NumFeaturesConstForm = size_t(FunctionType::*)() const;
+  //! This is the form of a non-const NumFeatures() method.
+  template<typename FunctionType>
+  using NumFeaturesForm = size_t(FunctionType::*)();
 
-//! This is the form of a static NumFeatures() method.
-template<typename FunctionType>
-using NumFeaturesStaticForm = size_t(*)();
+  //! This is the form of a const NumFeatures() method.
+  template<typename FunctionType>
+  using NumFeaturesConstForm = size_t(FunctionType::*)() const;
 
-//! This is the form of a non-const PartialGradient() method.
-template<typename FunctionType>
-using PartialGradientForm = void(FunctionType::*)(
-    const arma::mat&, const size_t, arma::sp_mat&);
+  //! This is the form of a static NumFeatures() method.
+  template<typename FunctionType>
+  using NumFeaturesStaticForm = size_t(*)();
 
-//! This is the form of a const PartialGradient() method.
-template<typename FunctionType>
-using PartialGradientConstForm = void(FunctionType::*)(
-    const arma::mat&, const size_t, arma::sp_mat&) const;
+  //! This is the form of a non-const PartialGradient() method.
+  template<typename FunctionType>
+  using PartialGradientForm = void(FunctionType::*)(
+      const MatType&, const size_t, arma::sp_mat&);
 
-//! This is the form of a static PartialGradient() method.
-template<typename FunctionType>
-using PartialGradientStaticForm = void(*)(
-    const arma::mat&, const size_t, arma::sp_mat&);
+  //! This is the form of a const PartialGradient() method.
+  template<typename FunctionType>
+  using PartialGradientConstForm = void(FunctionType::*)(
+      const MatType&, const size_t, arma::sp_mat&) const;
 
-//! This is a utility struct that will match any non-const form.
-template<typename FunctionType, typename... Ts>
-using OtherForm = double(FunctionType::*)(Ts...);
+  //! This is the form of a static PartialGradient() method.
+  template<typename FunctionType>
+  using PartialGradientStaticForm = void(*)(
+      const MatType&, const size_t, arma::sp_mat&);
 
-//! This is a utility struct that will match any const form.
-template<typename FunctionType, typename... Ts>
-using OtherConstForm = double(FunctionType::*)(Ts...) const;
+  //! This is a utility struct that will match any non-const form.
+  template<typename FunctionType, typename... Ts>
+  using OtherForm = typename MatType::elem_type(FunctionType::*)(Ts...);
 
-//! This is a utility struct that will match any static form.
-template<typename FunctionType, typename... Ts>
-using OtherStaticForm = double(*)(Ts...);
-*/
+  //! This is a utility struct that will match any const form.
+  template<typename FunctionType, typename... Ts>
+  using OtherConstForm = typename MatType::elem_type(FunctionType::*)(Ts...)
+      const;
+
+  //! This is a utility struct that will match any static form.
+  template<typename FunctionType, typename... Ts>
+  using OtherStaticForm = typename MatType::elem_type(*)(Ts...);
 };
 
 /**
