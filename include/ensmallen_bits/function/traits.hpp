@@ -306,12 +306,12 @@ struct HasNonConstSignatures
 /**
  * Utility struct: sometimes we want to know if we have two functions available,
  * and that at least one of them is const and both of them are not non-const and
- * non-static.  If the corresponding checkers (from ENS_HAS_METHOD_FORM()) are given
- * as CheckerA and CheckerB, and the corresponding const and static function
- * signatures are given as ConstSignatureA, StaticSignatureA, ConstSignatureB,
- * and StaticSignatureB, then 'value' will be true if methods with the correct
- * names exist in the given ClassType and at least one of those two methods is
- * const, and neither method is non-const and non-static.
+ * non-static.  If the corresponding checkers (from ENS_HAS_METHOD_FORM()) are
+ * given as CheckerA and CheckerB, and the corresponding const and static
+ * function signatures are given as ConstSignatureA, StaticSignatureA,
+ * ConstSignatureB, and StaticSignatureB, then 'value' will be true if methods
+ * with the correct names exist in the given ClassType and at least one of those
+ * two methods is const, and neither method is non-const and non-static.
  */
 template<typename ClassType,
          template<typename, template<typename...> class, size_t> class CheckerA,
