@@ -321,7 +321,7 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.
-  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
+//  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
 
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.
