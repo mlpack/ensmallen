@@ -59,6 +59,8 @@
 #include "ensmallen_bits/ens_version.hpp"
 #include "ensmallen_bits/log.hpp" // TODO: should move to another place
 
+#include "ensmallen_bits/utility/any.hpp"
+
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
 //#include "ensmallen_bits/ada_delta/ada_delta.hpp"
@@ -90,9 +92,9 @@
 //#include "ensmallen_bits/sdp/lrsdp.hpp"
 //#include "ensmallen_bits/sdp/primal_dual.hpp"
 
-//#include "ensmallen_bits/sgd/sgd.hpp"
+#include "ensmallen_bits/sgd/sgd.hpp"
 // TODO: this should probably be included in sgd.hpp
-//#include "ensmallen_bits/sgd/update_policies/gradient_clipping.hpp"
+#include "ensmallen_bits/sgd/update_policies/gradient_clipping.hpp"
 //#include "ensmallen_bits/sgdr/sgdr.hpp"
 //#include "ensmallen_bits/sgdr/snapshot_ensembles.hpp"
 //#include "ensmallen_bits/sgdr/snapshot_sgdr.hpp"

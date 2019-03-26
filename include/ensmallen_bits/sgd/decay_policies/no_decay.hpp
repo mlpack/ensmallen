@@ -35,9 +35,10 @@ class NoDecay
   * @param stepSize Step size to be used for the given iteration.
   * @param gradient The gradient matrix.
   */
-  void Update(arma::mat& /* iterate */,
+  template<typename MatType, typename GradType>
+  void Update(MatType& /* iterate */,
               double& /* stepSize */,
-              const arma::mat& /* gradient */)
+              const GradType& /* gradient */)
   {
     // Nothing to do here.
   }
@@ -51,10 +52,11 @@ class NoDecay
    * @param fullGradient The computed full gradient.
    * @param stepSize Step size to be used for the given iteration.
    */
-  void Update(const arma::mat& /* iterate */,
-              const arma::mat& /*iterate0 */,
-              const arma::mat& /* gradient */,
-              const arma::mat& /* fullGradient */,
+  template<typename MatType, typename GradType>
+  void Update(const MatType& /* iterate */,
+              const MatType& /* iterate0 */,
+              const GradType& /* gradient */,
+              const GradType& /* fullGradient */,
               const size_t /* numBatches */,
               double& /* stepSize */)
   {
