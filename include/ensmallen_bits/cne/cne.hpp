@@ -87,17 +87,13 @@ class CNE
    *     the next generation.
    * @param tolerance The final value of the objective function for termination.
    *     If set to negative value, tolerance is not considered.
-   * @param objectiveChange Minimum change in best fitness values between two
-   *     consecutive generations should be greater than threshold. If set to
-   *     negative value, objectiveChange is not considered.
    */
   CNE(const size_t populationSize = 500,
       const size_t maxGenerations = 5000,
       const double mutationProb = 0.1,
       const double mutationSize = 0.02,
       const double selectPercent = 0.2,
-      const double tolerance = 1e-5,
-      const double objectiveChange = 1e-5);
+      const double tolerance = 1e-5);
 
   /**
    * Optimize the given function using CNE. The given
@@ -137,15 +133,10 @@ class CNE
   //! Modify the selection percentage.
   double& SelectionPercentage() { return selectPercent; }
 
-  //! Get the final objective value.
+  //! Get the tolerance.
   double Tolerance() const { return tolerance; }
-  //! Modify the final objective value.
+  //! Modify the tolerance.
   double& Tolerance() { return tolerance; }
-
-  //! Get the change in fitness history between generations.
-  double ObjectiveChange() const { return objectiveChange; }
-  //! Modify the termination criteria of change in fitness value.
-  double& ObjectiveChange() { return objectiveChange; }
 
  private:
   //! Reproduce candidates to create the next generation.
@@ -197,9 +188,6 @@ class CNE
 
   //! The final value of the objective function.
   double tolerance;
-
-  //! Minimum change in best fitness values between two generations.
-  double objectiveChange;
 
   //! Number of candidates to become parent for the next generation.
   size_t numElite;

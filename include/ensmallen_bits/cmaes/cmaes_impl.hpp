@@ -128,7 +128,11 @@ double CMAES<SelectionPolicyType>::Optimize(
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
 
-    const arma::mat covLower = arma::chol(C.slice(idx0), "lower");
+    // Perform Cholesky decomposition. If the matrix is not positive definite,
+    // add a small value and try again
+    arma::mat covLower;
+    while (!arma::chol(covLower, C.slice(idx0), "lower"))
+      C.slice(idx0).diag() += 1e-16;
 
     for (size_t j = 0; j < lambda; ++j)
     {
