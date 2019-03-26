@@ -1425,6 +1425,9 @@ double Optimize(arma::mat& X);
  Attributes of the optimizer may also be modified via the member methods
  `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, and `Shuffle()`.
 
+ Note that the `QHUpdate` class has the constructor
+ `MomentumUpdate(`_`v`_`)` with a default value of `0.7` for the quasi hyperbolic momentum.
+
 #### Examples
 
  ```c++

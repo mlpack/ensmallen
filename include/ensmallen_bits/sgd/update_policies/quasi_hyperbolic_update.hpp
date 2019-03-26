@@ -1,5 +1,5 @@
 /**
- * @file nesterov_momentum_update.hpp
+ * @file quasi_hyperbolic_update.hpp
  * @author Niteya Shah
  *
  * Quasi Hyperbolic Update for Stochastic Gradient Descent.
