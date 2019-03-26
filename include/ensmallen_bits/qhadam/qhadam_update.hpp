@@ -16,7 +16,7 @@ namespace ens {
  * QHAdam is a optimising strategy based on the Quasi-Hyperbolic step when
  * applied to the Adam Optimiser . QH updates can be considered to a weighted
  * average of the momentum . QHAdam , based on its paramterisation can recover
- * many algorithms such as NAdam, and RMSProp.
+ * many algorithms such as NAdam and RMSProp.
  *
  * For more information, see the following.
  *

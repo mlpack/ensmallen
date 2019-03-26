@@ -425,7 +425,7 @@ TEST_CASE("PadamLogisticRegressionTest", "[AdamTest]")
 TEST_CASE("SimpleQHAdamTestFunction", "[AdamTest]")
 {
   SGDTestFunction f;
-  QHAdam optimizer(0.02, 32, 0.9, 0.999, 1e-8, 200000, 1e-7, true);
+  QHAdam optimizer(0.02, 32, 0.6, 0.9, 0.9, 0.999, 1e-8, 200000, 1e-7, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
