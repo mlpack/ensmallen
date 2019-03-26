@@ -1,29 +1,26 @@
 /**
- * @file adam_impl.hpp
- * @author Ryan Curtin
- * @author Vasanth Kalingeri
- * @author Marcus Edel
- * @author Vivek Pal
+ * @file adamw_impl.hpp
+ * @author Niteya Shah
  *
- * Implementation of the Adam, AdaMax, AMSGrad, Nadam and NadaMax optimizer.
+ * Implmentation of AdamW Update Policy
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_ADAM_ADAM_IMPL_HPP
-#define ENSMALLEN_ADAM_ADAM_IMPL_HPP
+#ifndef ENSMALLEN_ADAM_ADAMW_IMPL_HPP
+#define ENSMALLEN_ADAM_ADAMW_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "adam.hpp"
+#include "adamw.hpp"
 
 namespace ens {
 
-template<typename UpdateRule>
-AdamType<UpdateRule>::AdamType(
+inline AdamW::AdamW(
     const double stepSize,
     const size_t batchSize,
+    const double weightDecay,
     const double beta1,
     const double beta2,
     const double epsilon,
@@ -36,7 +33,7 @@ AdamType<UpdateRule>::AdamType(
               maxIterations,
               tolerance,
               shuffle,
-              UpdateRule(epsilon, beta1, beta2),
+              AdamWUpdate(epsilon, beta1, beta2, weightDecay),
               NoDecay(),
               resetPolicy)
 { /* Nothing to do. */ }

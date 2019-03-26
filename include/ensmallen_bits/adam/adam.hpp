@@ -29,7 +29,6 @@
 #include "nadam_update.hpp"
 #include "nadamax_update.hpp"
 #include "optimisticadam_update.hpp"
-#include "adamw_update.hpp"
 
 namespace ens {
 
@@ -65,7 +64,7 @@ namespace ens {
  * @tparam UpdateRule Adam optimizer update rule to be used.
  * @tparam DecayPolicy The StepSize decay policy to be used.
  */
-template<typename UpdateRule = AdamUpdate, typename DecayPolicyType = NoDecay>
+template<typename UpdateRule = AdamUpdate>
 class AdamType
 {
  public:
@@ -170,14 +169,9 @@ class AdamType
   //! Modify the update policy.
   UpdateRule& UpdatePolicy() { return optimizer.UpdatePolicy(); }
 
-  //! Get the step size decay policy.
-  const DecayPolicyType& DecayPolicy() const { return optimizer.DecayPolicy(); }
-  //! Modify the step size decay policy.
-  DecayPolicyType& DecayPolicy() { return optimizer.DecayPolicy(); }
-
  private:
   //! The Stochastic Gradient Descent object with Adam policy.
-  SGD<UpdateRule, DecayPolicyType> optimizer;
+  SGD<UpdateRule> optimizer;
 };
 
 using Adam = AdamType<AdamUpdate>;
@@ -191,8 +185,6 @@ using Nadam = AdamType<NadamUpdate>;
 using NadaMax = AdamType<NadaMaxUpdate>;
 
 using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
-
-using AdamW = AdamType<AdamWUpdate>;
 
 } // namespace ens
 

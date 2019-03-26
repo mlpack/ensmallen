@@ -16,8 +16,6 @@
 #ifndef ENSMALLEN_ADAM_ADAMW_UPDATE_HPP
 #define ENSMALLEN_ADAM_ADAMW_UPDATE_HPP
 
-#include "adam_update.hpp"
-
 namespace ens {
 
   /**
@@ -108,13 +106,19 @@ class AdamWUpdate
   //! Modify the second moment coefficient.
   double& Beta2() { return update.Beta2(); }
 
+  //! Get weight decay parameter.
+  double WeightDecay() const { return weightDecay; }
+  //! Modify weight decay parameter.
+  double& WeightDecay() { return weightDecay; }
+
  private:
   // The number of iterations.
   double iteration;
   // The weight decay rate.
   double weightDecay;
-  //The AdamUpdate optimser.
+  // The AdamWUpdate optimser.
   AdamUpdate update;
+
 };
 
 } // namespace ens

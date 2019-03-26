@@ -62,7 +62,7 @@ TEST_CASE("AdamWRLogisticRegressionTest","[AdamRTest]")
   // Now run AdamWR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    AdamR adamwr(0.04, 0.02, 50, 2, batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
+    AdamWR adamwr(0.04, 0.02, 50, 2, 0.0003,batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
 
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 

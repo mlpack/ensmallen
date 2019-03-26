@@ -162,9 +162,9 @@ step size without modification. AdamR uses the Cyclical Decay decay policy.
 #### Constructors
 
  * `AdamR()`
- * `AdamR(`_`stepSizeMax, stepSizeMax, batchSize`_`)`
- * `AdamR(`_`stepSizeMax, stepSizeMax, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `AdamR(`_`stepSizeMax, stepSizeMax, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `AdamR(`_`stepSizeMax, stepSizeMin, epochRestart, multFactor, batchSize`_`)`
+ * `AdamR(`_`stepSizeMax, stepSizeMin, epochRestart, multFactor, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `AdamR(`_`stepSizeMax, stepSizeMin, epochRestart, multFactor, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `AdamR` class is based on the `AdamRType<`_`UpdateRule`_`>` class
 with _`UpdateRule`_` = AdamUpdate`.
@@ -175,6 +175,8 @@ with _`UpdateRule`_` = AdamUpdate`.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSizeMax`** | Intitial step size for each iteration. | `0.02` |
 | `double` | **`stepSizeMin`** | Final step size for each iteration. | `0.01` |
+| `size_t` | **`epochRestart`** | Size of initial iteration. | `50` |
+| `double` | **`multFactor`** | Rate at which iteration size changes. | `2.0` |
 | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
@@ -194,12 +196,13 @@ The attributes of the optimizer may also be modified via the member methods
  RosenbrockFunction f;
  arma::mat coordinates = f.GetInitialPoint();
 
- AdamR optimizer(0.01, 0.005, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+ AdamR optimizer(0.01, 0.005, 100, 1.5, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
  optimizer.Optimize(f, coordinates);
  ```
 
 #### See also:
 
+  * [SGDR: Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
   * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
   * [SGD](#standard-sgd)
@@ -216,11 +219,9 @@ The attributes of the optimizer may also be modified via the member methods
 
  * `AdamW()`
  * `AdamW(`_`stepSize, batchSize`_`)`
- * `AdamW(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `AdamW(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `AdamW(`_`stepSize, batchSize, weightDecay, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `AdamW(`_`stepSize, batchSize, weightDecay, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
- Note that the `AdamW` class is based on the `AdamType<`_`UpdateRule`_`>` class
- with _`UpdateRule`_` = AdamWUpdate`.
 
 #### Attributes
 
@@ -228,6 +229,7 @@ The attributes of the optimizer may also be modified via the member methods
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`weightDecay`** | Decay rate for the parameters. | `0.0005` |
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
@@ -237,8 +239,8 @@ The attributes of the optimizer may also be modified via the member methods
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
-`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`Tolerance()`, `Shuffle()`, `WeightDecay()` and `ResetPolicy()`.
 
 #### Examples
 
@@ -246,12 +248,68 @@ The attributes of the optimizer may also be modified via the member methods
  RosenbrockFunction f;
  arma::mat coordinates = f.GetInitialPoint();
 
- AdamW optimizer(0.01, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+ AdamW optimizer(0.01, 32, 0.0007, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
  optimizer.Optimize(f, coordinates);
  ```
 
 #### See also:
 
+ * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## AdamWR
+
+ *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+ AdamWR is a modified version of AdamW with warm restarts and is combination of AdamW and AdamR
+
+
+#### Constructors
+
+ * `AdamWR()`
+ * `AdamWR(`_`stepSizeMax, stepSizeMin, epochRestart, multFactor, weightDecay, batchSize`_`)`
+ * `AdamWR(`_`stepSizeMax, stepSizeMin, epochRestart, multFactor, weightDecay, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `AdamWR(`_`stepSizeMax, stepSizeMin, epochRestart, multFactor, weightDecay, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+
+
+  #### Attributes
+
+  | **type** | **name** | **description** | **default** |
+  |----------|----------|-----------------|-------------|
+  | `double` | **`stepSizeMax`** | Intitial step size for each iteration. | `0.02` |
+  | `double` | **`stepSizeMin`** | Final step size for each iteration. | `0.01` |
+  | `size_t` | **`epochRestart`** | Size of initial iteration. | `50` |
+  | `double` | **`multFactor`** | Rate at which iteration size changes. | `2.0` |
+  | `double` | **`weightDecay`** | Decay rate for the parameters. | `0.0005` |
+  | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+  | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+  | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+  | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+  | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+  | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+  | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+  | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+
+  The attributes of the optimizer may also be modified via the member methods
+   `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `WeightDecay()`,
+   `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
+
+ #### Examples
+
+  ```c++
+  RosenbrockFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+
+  AdamWR optimizer(0.01, 0.005, 100, 1.5, 0.0007,32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+  optimizer.Optimize(f, coordinates);
+  ```
+
+#### See also:
+
+ * [SGDR: Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
  * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
