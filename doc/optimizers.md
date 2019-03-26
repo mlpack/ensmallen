@@ -1459,11 +1459,8 @@ double Optimize(arma::mat& X);
 
   * `QHAdam()`
   * `QHAdam(`_`stepSize, batchSize`_`)`
-  * `QHAdam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
-  * `QHAdam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
-
- Note that the `QHAdam` class is based on the
- `AdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = QHAdamUpdate`.
+  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations`_`)`
+  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -1471,10 +1468,10 @@ double Optimize(arma::mat& X);
  |----------|----------|-----------------|-------------|
  | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
  | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
- | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
- | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
  | `double` | **`v1`** | The First Quasi Hyperbolic Term. | `0.7` |
  | `double` | **`v2`** | The Second Quasi Hyperbolic Term. | `1.00` |
+ | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+ | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
  | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
  | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
  | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
@@ -1491,7 +1488,7 @@ double Optimize(arma::mat& X);
  RosenbrockFunction f;
  arma::mat coordinates = f.GetInitialPoint();
 
- QHAdam optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+ QHAdam optimizer(0.001, 32, 0.7, 0.9, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
  optimizer.Optimize(f, coordinates);
  ```
 
