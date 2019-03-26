@@ -3,8 +3,7 @@
  * @author N Rajiv Vaidyanathan
  * @author Marcus Edel
  *
- * SPSA (Simultaneous perturbation stochastic approximation) method for
- * faster convergence.
+ * SPSA (Simultaneous perturbation stochastic approximation) method.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -35,7 +34,7 @@ namespace ens {
  * }
  * @endcode
  *
- * SPSA can optimize differentiable separable functions.  For more details,
+ * SPSA can optimize arbitrary functions.  For more details,
  * see the documentation on function types included with this distribution or on
  * the ensmallen website.
  */
@@ -45,16 +44,13 @@ class SPSA
   /**
    * Construct the SPSA optimizer with the given function and parameters.  The
    * defaults here are not necessarily good for the given problem, so it is
-   * suggested that the values used be tailored to the task at hand.  The
-   * maximum number of iterations refers to the maximum number of points that
-   * are processed (i.e., one iteration equals one point; one iteration does not
-   * equal one pass over the dataset).
+   * suggested that the values used be tailored to the task at hand.
    *
    * @param alpha Scaling exponent for the step size.
-   * @param batchSize Batch size to use for each step.
    * @param gamma Scaling exponent for evaluation step size.
    * @param stepSize Scaling parameter for step size (named as 'a' in the paper).
-   * @param evaluationStepSize Scaling parameter for evaluation step size (named as 'c' in the paper).
+   * @param evaluationStepSize Scaling parameter for evaluation step size (named
+   *     as 'c' in the paper).
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -62,7 +58,6 @@ class SPSA
    *     function is visited in linear order.
    */
   SPSA(const double alpha = 0.602,
-       const size_t batchSize = 32,
        const double gamma = 0.101,
        const double stepSize = 0.16,
        const double evaluationStepSize = 0.3,
@@ -77,11 +72,6 @@ class SPSA
   double Alpha() const { return alpha; }
   //! Modify the scaling exponent for the step size.
   double& Alpha() { return alpha; }
-
-  //! Get the batch size.
-  size_t BatchSize() const { return batchSize; }
-  //! Modify the batch size.
-  size_t& BatchSize() { return batchSize; }
 
   //! Get the scaling exponent for evaluation step size.
   double Gamma() const { return gamma; }
@@ -107,9 +97,6 @@ class SPSA
   //! Scaling exponent for the step size.
   double alpha;
 
-  //! The batch size for processing.
-  size_t batchSize;
-
   //! Scaling exponent for evaluation step size.
   double gamma;
 
@@ -120,7 +107,7 @@ class SPSA
   double evaluationStepSize;
 
   //! Control the amount of gradient update.
-  double Ak;
+  double ak;
 
   //! The maximum number of allowed iterations.
   size_t maxIterations;
