@@ -92,8 +92,8 @@ class AddEvaluateWithGradient<FunctionType, MatType, GradType, true, false>
    * @param coordinates Coordinates to evaluate the function at.
    * @param gradient Matrix to store the gradient into.
    */
-  double EvaluateWithGradient(const MatType& coordinates,
-                              GradType& gradient)
+  typename MatType::elem_type EvaluateWithGradient(const MatType& coordinates,
+                                                   GradType& gradient)
   {
     const typename MatType::elem_type objective =
         static_cast<Function<FunctionType,
@@ -178,8 +178,8 @@ class AddEvaluateWithGradientConst<FunctionType, MatType, GradType, true, false>
    * @param coordinates Coordinates to evaluate the function at.
    * @param gradient Matrix to store the gradient into.
    */
-  double EvaluateWithGradient(const MatType& coordinates,
-                              GradType& gradient) const
+  typename MatType::elem_type EvaluateWithGradient(const MatType& coordinates,
+                                                   GradType& gradient) const
   {
     const typename MatType::elem_type objective =
         static_cast<const Function<FunctionType,
