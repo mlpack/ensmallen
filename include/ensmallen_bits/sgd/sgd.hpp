@@ -107,9 +107,11 @@ class SGD
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate);
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -183,6 +185,9 @@ class SGD
   //! Flag indicating whether the update policy
   //! parameters have been initialized.
   bool isInitialized;
+
+  //! The initialized update policy.
+  Any instUpdatePolicy;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;

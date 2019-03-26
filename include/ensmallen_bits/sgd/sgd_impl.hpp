@@ -44,34 +44,46 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType, typename DecayPolicyType>
-template<typename DecomposableFunctionType>
-double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
+template<typename DecomposableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate)
 {
-  typedef Function<DecomposableFunctionType> FullFunctionType;
+  typedef Function<DecomposableFunctionType, MatType, GradType>
+      FullFunctionType;
+
+  // The update policy internally uses a templated class so that we can know
+  // MatType and GradType only when Optimize() is called.
+  typedef typename UpdatePolicyType::template Policy<MatType, GradType>
+      InstUpdatePolicyType;
+
+  typedef typename MatType::elem_type ElemType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+//  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
+//      GradType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
 
   // Initialize the update policy.
-  if (resetPolicy || !isInitialized)
+  if (resetPolicy || !isInitialized ||
+      !instUpdatePolicy.Has<InstUpdatePolicyType>())
   {
-    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
+    instUpdatePolicy.Clean();
+    instUpdatePolicy = InstUpdatePolicyType(updatePolicy, iterate.n_rows,
+        iterate.n_cols);
     isInitialized = true;
   }
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
@@ -122,7 +134,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         gradient, effectiveBatchSize);
 
     // Use the update policy to take a step.
-    updatePolicy.Update(iterate, stepSize, gradient);
+    instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, stepSize,
+        gradient);
 
     // Now update the learning rate if requested by the user.
     decayPolicy.Update(iterate, stepSize, gradient);
