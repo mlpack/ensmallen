@@ -179,7 +179,6 @@ using NadaMax = AdamType<NadaMaxUpdate>;
 
 using OptimisticAdam = AdamType<OptimisticAdamUpdate>;
 
-
 } // namespace ens
 
 // Include implementation.
