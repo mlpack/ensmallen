@@ -27,7 +27,6 @@ namespace ens {
  *
  * @code
  * @article{Loshchilov2016,
- *   title   = {Learning representations by back-propagating errors},
  *   author  = {Ilya Loshchilov and Frank Hutter},
  *   title   = {{SGDR:} Stochastic Gradient Descent with Restarts},
  *   journal = {CoRR},
