@@ -97,7 +97,7 @@ TEST_CASE("SGDWRLogisticRegressionTest","[SGDRTest]")
   // Now run SGDWR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SGDWR sgdr(50, 2.0, batchSize, 0.02, 0.01, 20000, 1e-5);
+    SGDWR sgdr(50, 2.0, batchSize, 0.03, 0.02, 25000, 1e-6);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
