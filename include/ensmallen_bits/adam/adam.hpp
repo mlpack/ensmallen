@@ -62,7 +62,6 @@ namespace ens {
  * types included with this distribution or on the ensmallen website.
  *
  * @tparam UpdateRule Adam optimizer update rule to be used.
- * @tparam DecayPolicy The StepSize decay policy to be used.
  */
 template<typename UpdateRule = AdamUpdate>
 class AdamType

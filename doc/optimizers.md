@@ -1716,9 +1716,7 @@ For convenience the following typedefs have been defined:
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `MaxIterations()`, `InnerIterations()`,
 `Tolerance()`, `Shuffle()`, and `UpdatePolicy()`.
-The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
+
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.
 
