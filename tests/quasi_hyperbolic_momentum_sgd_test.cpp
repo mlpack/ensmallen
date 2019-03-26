@@ -19,8 +19,8 @@ using namespace ens::test;
 TEST_CASE("QHSGDSpeedUpTestFunction", "[QHMomentumSGDTest]")
 {
   SGDTestFunction f;
-  QHUpdate update(0.8);
-  QHSGD s(0.0003, 1, 2500000, 1e-9, true, update);
+  QHUpdate update(0.9, 0.9);
+  QHSGD s(0.005, 1, 2500000, 1e-9, true, update);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
@@ -40,14 +40,14 @@ TEST_CASE("QHSGDSGDGeneralizedRosenbrockTest", "[QHMomentumSGDTest]")
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
-    QHUpdate update(0.8);
-    QHSGD s(0.0003, 1, 2500000, 1e-9, true, update);
+    QHUpdate update(0.99, 0.999);
+    QHSGD s(0.0005, 1, 2500000, 1e-15, true, update);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-4));
   }
 }
