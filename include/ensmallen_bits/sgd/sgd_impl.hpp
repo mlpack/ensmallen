@@ -77,8 +77,8 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
       !instUpdatePolicy.Has<InstUpdatePolicyType>())
   {
     instUpdatePolicy.Clean();
-    instUpdatePolicy = InstUpdatePolicyType(updatePolicy, iterate.n_rows,
-        iterate.n_cols);
+    instUpdatePolicy.Set<InstUpdatePolicyType>(
+        new InstUpdatePolicyType(updatePolicy, iterate.n_rows, iterate.n_cols));
     isInitialized = true;
   }
 

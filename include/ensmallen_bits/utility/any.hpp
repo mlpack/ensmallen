@@ -58,13 +58,11 @@ class Any
    * Set the Any as the given type.
    */
   template<typename T>
-  Any& operator=(T&& t)
+  void Set(T* t)
   {
     type = std::type_index(typeid(T));
-    held = (void*) &t;
-    destructor = [](const void* x) { static_cast<const T*>(x)->~T(); };
-
-    return *this;
+    held = (void*) t;
+    destructor = [](const void* x) { delete static_cast<const T*>(x); };
   }
 
   /**
@@ -77,9 +75,9 @@ class Any
   }
 
   /**
-   * Call the destructor of the thing we are holding.  Be careful with this
-   * one.  It automatically does nothing if 'held' is NULL, but that's the only
-   * guarantee you get.
+   * Call delete on the thing we are holding.  Be careful with this one.  It
+   * automatically does nothing if 'held' is NULL, but that's the only guarantee
+   * you get.  Also, I hope you used 'new' to make the thing you're holding.
    */
   void Clean()
   {
