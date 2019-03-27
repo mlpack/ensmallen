@@ -66,7 +66,7 @@ class QHAdam
           const double v2 = 1,
           const double beta1 = 0.9,
           const double beta2 = 0.999,
-          const double eps = 1e-8,
+          const double epsilon = 1e-8,
           const size_t maxIterations = 100000,
           const double tolerance = 1e-5,
           const bool shuffle = true,

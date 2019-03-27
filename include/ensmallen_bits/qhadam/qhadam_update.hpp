@@ -42,11 +42,11 @@ class QHAdamUpdate
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
    */
-  QHAdamUpdate(const double v1 = 0.7,
-               const double v2 = 1,
-               const double epsilon = 1e-8,
+  QHAdamUpdate(const double epsilon = 1e-8,
                const double beta1 = 0.9,
-               const double beta2 = 0.999) :
+               const double beta2 = 0.999,
+               const double v1 = 0.7,
+               const double v2 = 1) :
     epsilon(epsilon),
     beta1(beta1),
     beta2(beta2),

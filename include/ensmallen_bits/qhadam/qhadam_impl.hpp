@@ -34,7 +34,7 @@
               maxIterations,
               tolerance,
               shuffle,
-              QHAdamUpdate(v1, v2, epsilon, beta1, beta2),
+              QHAdamUpdate(epsilon, beta1, beta2, v1, v2),
               NoDecay(),
               resetPolicy)
 { /* Nothing to do. */ }
