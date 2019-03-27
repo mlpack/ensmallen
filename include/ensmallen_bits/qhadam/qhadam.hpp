@@ -27,6 +27,9 @@
  * }
  * @endcode
  *
+ * QHAdam can optimize differentiable separable functions.
+ * For more details, see the documentation on function
+ * types included with this distribution or on the ensmallen website.
  */
 class QHAdam
 {
