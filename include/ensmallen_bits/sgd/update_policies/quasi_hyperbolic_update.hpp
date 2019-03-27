@@ -17,8 +17,8 @@ namespace ens {
 /**
  * Quasi Hyperbolic Update policy for Stochastic Gradient Descent (QHSGD).
  *
- * Learning with SGD can be slow. QHSGD is a update policy that is defined to be
- * a parent of most update policies(most update policies can reconstructed from
+ * QHSGD is a update policy that is defined to be a parent of 
+ * most update policies(most update policies can reconstructed from
  * QHSGD). This allows this method to combine the features of many optimisers
  * and provide better optimisation control.
  *
