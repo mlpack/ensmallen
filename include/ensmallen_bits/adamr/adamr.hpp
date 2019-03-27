@@ -18,8 +18,11 @@
 namespace ens {
 /**
  * This class is based on the Adam class where the optimizer
- * simulates a new warm-started run/restart once a number of epochs are
- * performed.
+ * simulates a new warm-started restart once the set number of epochs are
+ * performed. It modifies the learning rate at via the decay policy and once the
+ * set epoch number is reached , it resets the learning rate
+ *
+ * For more information , see the following.
  *
  * @code
  * @article{
@@ -38,7 +41,8 @@ namespace ens {
  * @tparam DecayPolicy The step size decay policy to be used; by default,
  * CyclicalDecay is used.
 */
-template<typename UpdateRule = AdamUpdate, typename DecayPolicyType = CyclicalDecay>
+template<typename UpdateRule = AdamUpdate,
+         typename DecayPolicyType = CyclicalDecay>
 class AdamRType
 {
  public:
@@ -51,16 +55,16 @@ class AdamRType
    * equal one pass over the dataset).
    *
    * @param stepSizeMax Maximum and initial step size for each batch of warm
-     restart.
+   * restart.
    * @param stepSizeMin Minimum and final step size for each batch of warm
-     restart.
+   * restart.
    * @param epochRestart Restart Rate for Warm Restarts
    * @param multFactor Multiplier for epochRestart
    * @param batchSize Number of points to process in a single step.
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
-                  estimates.
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * estimates.
+   * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *                      limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -68,8 +72,6 @@ class AdamRType
    *        function is visited in linear order.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
-   * @param updateRule Update Policy to be used for AdamR.
-   * @param decayPolicy Decay Policy to be used for AdamR.
    */
   AdamRType(const double stepSizeMax = 0.002,
             const double stepSizeMin = 0.001,
@@ -78,7 +80,7 @@ class AdamRType
             const size_t batchSize = 32,
             const double beta1 = 0.9,
             const double beta2 = 0.999,
-            const double eps = 1e-8,
+            const double epsilon = 1e-8,
             const size_t maxIterations = 100000,
             const double tolerance = 1e-5,
             const bool shuffle = true,
@@ -156,7 +158,7 @@ class AdamRType
 
  private:
   size_t batchSize;
-  // The SGD object with AdamR update policy and decay policy.
+  //! The SGD object with update policy and decay policy.
   SGD<UpdateRule, DecayPolicyType> optimizer;
 };
 

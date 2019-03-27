@@ -1,6 +1,7 @@
 /**
  * @file adamwr.hpp
  * @author Niteya Shah
+ *
  * Declaration of the AdamWR optimizer.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -17,6 +18,9 @@
 
 namespace ens {
 /*
+ * This is a wrapper class for the AdamW update policy with CyclicalDecay on the
+ * SGD object, combining the benefits of both the strategies to provide better
+ * convergence.
  *
  * @code
  * @article{
@@ -60,8 +64,6 @@ class AdamWR
    *        function is visited in linear order.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
-   * @param updateRule Update Policy to be used for AdamR.
-   * @param decayPolicy Decay Policy to be used for AdamR.
    */
   AdamWR(const double stepSizeMax = 0.002,
          const double stepSizeMin = 0.001,

@@ -2,6 +2,7 @@
  * @file weight_decay_momentum_update.hpp
  * @author Ajinkya Tejankar
  * @author Niteya Shah
+ *
  * Momentum update with weight decay for Stochastic Gradient Descent
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -50,7 +51,7 @@ class DecoupledWeightDecayMomentumUpdate
    * momentum and weight decay to given values.
    *
    * @param momentum The momentum parameter
-   * @param weight_decay The weight decay parameter
+   * @param weightDecay The weight decay parameter
    */
   DecoupledWeightDecayMomentumUpdate(const double momentum = 0.5,
                                      const double weightDecay = 0.0005) :

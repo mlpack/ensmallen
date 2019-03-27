@@ -36,6 +36,9 @@ namespace ens {
  * }
  * @endcode
  *
+ * AdamW can optimize differentiable separable functions.  For more details,
+ * see the documentation on function types included with this distribution
+ * or on the ensmallen website.
  */
 class AdamW
 {
@@ -54,7 +57,7 @@ class AdamW
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
             estimates.
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -69,7 +72,7 @@ class AdamW
         const double weightDecay = 0.0005,
         const double beta1 = 0.9,
         const double beta2 = 0.999,
-        const double eps = 1e-8,
+        const double epsilon = 1e-8,
         const size_t maxIterations = 100000,
         const double tolerance = 1e-5,
         const bool shuffle = true,

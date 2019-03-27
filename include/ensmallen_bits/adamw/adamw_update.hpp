@@ -42,7 +42,7 @@ namespace ens {
    * }
    * @endcode
    *
-  */
+   */
 class AdamWUpdate
 {
  public:
@@ -118,7 +118,6 @@ class AdamWUpdate
   double weightDecay;
   // The AdamWUpdate optimser.
   AdamUpdate update;
-
 };
 
 } // namespace ens
