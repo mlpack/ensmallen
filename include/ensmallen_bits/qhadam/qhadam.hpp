@@ -1,10 +1,17 @@
 /**
- * @file adamw.hpp
+ * @file qhadam.hpp
  * @author Niteya Shah
  *
+ * Class wrapper for the QHAdam update Policy. QHAdam is a variant of the Adam
+ * based on quasi hyperbolic moments.
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_ADAM_ADAMW_HPP
-#define ENSMALLEN_ADAM_ADAMW_HPP
+#ifndef ENSMALLEN_ADAM_QHADAM_HPP
+#define ENSMALLEN_ADAM_QHADAM_HPP
 
  #include <ensmallen_bits/sgd/sgd.hpp>
 #include "qhadam_update.hpp"
@@ -50,7 +57,7 @@ class QHAdam
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
             estimates.
-   * @param eps Value used to initialise the mean squared gradient parameter.
+   * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
@@ -59,7 +66,6 @@ class QHAdam
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
    */
-
    QHAdam(const double stepSize = 0.001,
           const size_t batchSize = 32,
           const double v1 = 0.7,
@@ -146,7 +152,7 @@ class QHAdam
   double& V2() { return optimizer.UpdatePolicy().V2(); }
 
   private:
-  //! The Stochastic Gradient Descent object with AdamW policy.
+  //! The Stochastic Gradient Descent object with QHAdam policy.
   SGD<QHAdamUpdate> optimizer;
 };
 

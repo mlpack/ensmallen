@@ -2,6 +2,9 @@
  * @file qhadam_update.hpp
  * @author Niteya Shah
  *
+ * Implments the QHAdam Optimizer. QHAdam is a variant of Adam which introduces
+ * quasi hyperbolic moment terms to improve paramterisation and performance.
+ *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
@@ -14,8 +17,8 @@ namespace ens {
 
 /**
  * QHAdam is a optimising strategy based on the Quasi-Hyperbolic step when
- * applied to the Adam Optimiser . QH updates can be considered to a weighted
- * average of the momentum . QHAdam , based on its paramterisation can recover
+ * applied to the Adam Optimiser.QH updates can be considered to a weighted
+ * average of the momentum.QHAdam,based on its paramterisation can recover
  * many algorithms such as NAdam and RMSProp.
  *
  * For more information, see the following.
@@ -35,12 +38,12 @@ class QHAdamUpdate
   /**
    * Construct the QHAdam update policy with the given parameters.
    *
-   * @param v1 The first quasi-hyperbolic term.
-   * @param v1 The second quasi-hyperbolic term.
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
+   * @param v1 The first quasi-hyperbolic term.
+   * @param v1 The second quasi-hyperbolic term.
    */
   QHAdamUpdate(const double epsilon = 1e-8,
                const double beta1 = 0.9,
