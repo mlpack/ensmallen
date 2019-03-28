@@ -1,8 +1,8 @@
 /**
- * @file adamw_impl.hpp
+ * @file qhadam_impl.hpp
  * @author Niteya Shah
  *
- * Implmentation of QHdamW Update Policy
+ * Implmentation of QHAdam class wraper
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
