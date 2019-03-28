@@ -132,7 +132,7 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`,
 `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
@@ -347,7 +347,7 @@ with _`UpdateRule`_` = AdaMaxUpdate`.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`,
 `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
@@ -398,7 +398,7 @@ with _`UpdateRule`_` = AMSGradUpdate`.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`,
 `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
@@ -1267,7 +1267,7 @@ with _`UpdateRule`_` = NadamUpdate`.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`,
 `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
@@ -1319,7 +1319,7 @@ with _`UpdateRule`_` = NadaMaxUpdate`.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`,
 `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
