@@ -1,6 +1,7 @@
 /**
  * @file adamr_impl.hpp
  * @author Niteya Shah
+ *
  * Implementation of the AdamR optimizer.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under

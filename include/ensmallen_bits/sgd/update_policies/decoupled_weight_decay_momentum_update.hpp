@@ -41,8 +41,7 @@ namespace ens {
  *   year    = {2019}
  * }
  * @endcode
- *
-*/
+ */
 class DecoupledWeightDecayMomentumUpdate
 {
  public:

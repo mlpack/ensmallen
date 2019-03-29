@@ -1,6 +1,7 @@
 /**
  * @file adamr.hpp
  * @author Niteya Shah
+ *
  * Declaration of the AdamR optimizer.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -20,7 +21,7 @@ namespace ens {
  * This class is based on the Adam class where the optimizer
  * simulates a new warm-started restart once the set number of epochs are
  * performed. It modifies the learning rate at via the decay policy and once the
- * set epoch number is reached , it resets the learning rate
+ * set epoch number is reached, it resets the learning rate
  *
  * For more information , see the following.
  *
@@ -37,10 +38,11 @@ namespace ens {
  * AdamR can optimize differentiable separable functions.  For more details, see
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
+ *
  * @tparam UpdateRule Adam optimizer update rule to be used.
  * @tparam DecayPolicy The step size decay policy to be used; by default,
- * CyclicalDecay is used.
-*/
+ *         CyclicalDecay is used.
+ */
 template<typename UpdateRule = AdamUpdate,
          typename DecayPolicyType = CyclicalDecay>
 class AdamRType
@@ -55,15 +57,15 @@ class AdamRType
    * equal one pass over the dataset).
    *
    * @param stepSizeMax Maximum and initial step size for each batch of warm
-   * restart.
+   *        restart.
    * @param stepSizeMin Minimum and final step size for each batch of warm
-   * restart.
+   *        restart.
    * @param epochRestart Restart Rate for Warm Restarts
    * @param multFactor Multiplier for epochRestart
    * @param batchSize Number of points to process in a single step.
    * @param beta1 Exponential decay rate for the first moment estimates.
    * @param beta2 Exponential decay rate for the weighted infinity norm
-   * estimates.
+   *        estimates.
    * @param epsilon Value used to initialise the mean squared gradient parameter.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *                      limit).

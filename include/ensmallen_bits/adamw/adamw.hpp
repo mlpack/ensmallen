@@ -2,6 +2,12 @@
  * @file adamw.hpp
  * @author Niteya Shah
  *
+ * Declaration of the AdamW optimizer.
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef ENSMALLEN_ADAM_ADAMW_HPP
 #define ENSMALLEN_ADAM_ADAMW_HPP
@@ -66,7 +72,6 @@ class AdamW
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
    */
-
   AdamW(const double stepSize = 0.001,
         const size_t batchSize = 32,
         const double weightDecay = 0.0005,

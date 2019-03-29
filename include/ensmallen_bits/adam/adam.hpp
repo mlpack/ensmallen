@@ -89,7 +89,6 @@ class AdamType
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
    */
-
   AdamType(const double stepSize = 0.001,
            const size_t batchSize = 32,
            const double beta1 = 0.9,
