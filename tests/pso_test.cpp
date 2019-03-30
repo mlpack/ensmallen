@@ -1,7 +1,7 @@
 /**
  * @file pso_test.cpp
- * @author Chintan Soni
  * @author Suryoday Basak
+ * @author Chintan Soni
  *
  * Test file for PSO optimizer.
  *
@@ -58,7 +58,7 @@ TEST_CASE("ConstrainedSquaredFunctionTest", "[PSOTest]")
     // This returns f(x) = 2 |x|^2.
     double Evaluate(const arma::mat& x)
     {
-      if (x.at(0,0) < 1.0)
+      if (x.at(0,0) < 0.5)
 	return std::numeric_limits<double>::max();
       else
         return std::pow(arma::norm(x), 2.0);
@@ -75,8 +75,8 @@ TEST_CASE("ConstrainedSquaredFunctionTest", "[PSOTest]")
   
   double finalValue = f.Evaluate(coords);
   //BOOST_REQUIRE_SMALL(result, 1e-5);
-  REQUIRE(finalValue == Approx(1.0).epsilon(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-5));
+  REQUIRE(finalValue == Approx(0.25).epsilon(1e-5));
+  REQUIRE(coords[0] == Approx(0.5).epsilon(1e-5));
 }
 
 TEST_CASE("ConstrainedAffineFunctionTest", "[PSOTest]")
