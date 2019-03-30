@@ -15,8 +15,7 @@
 
 #include "update_policies/lbest_update.hpp"
 #include "init_policies/default_init.hpp"
-#include "init_policies/constrained_init.hpp"
-#include <iostream>
+#include "init_policies/feasible_init.hpp"
 
 namespace ens {
 
@@ -28,8 +27,6 @@ namespace ens {
  * This class must implement the following function:
  *
  *   double Evaluate(const arma::mat& coordinates);
- *   void Gradient(const arma::mat& coordinates,
- *                 arma::mat& gradient);
  */
 template<typename VelocityUpdatePolicy = LBestUpdate,
          typename InitPolicy = DefaultInit>
@@ -46,10 +43,6 @@ class PSOType
    * @param maxIterations Number of iterations allowed.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
-   * @param enableGradientDescent Enable the use of gradient descent optimizer.
-   * @param psoIterationsRatio Portion of maxIterations which will be run using
-   *    the PSO optimizer. The rest of the iterations will use gradient descent.
-   * @param stepSize The step size for the gradient descent optimizer.
    */
   PSOType(
     const size_t numParticles = 16,
