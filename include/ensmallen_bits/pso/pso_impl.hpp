@@ -35,7 +35,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   traits::CheckEvaluate<ArbitraryFunctionType>();
 
   // Initialize particles using the init policy.
-  initPolicy.InitializeParticles(
+  initPolicy.Initialize(
       function,
       iterate,
       numParticles,
