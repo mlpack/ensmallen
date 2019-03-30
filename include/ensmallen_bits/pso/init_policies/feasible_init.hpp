@@ -53,14 +53,14 @@ class ConstrainedInit
    * @param particleBestFitnesses Best fitness values attained by each particle.
    */
   template<typename FunctionType>
-  void InitializeParticles(FunctionType& function,
-			   const arma::mat& iterate,
-                           const size_t numParticles,
-                           arma::cube& particlePositions,
-                           arma::cube& particleVelocities,
-                           arma::mat& particleFitnesses,
-                           arma::cube& particleBestPositions,
-                           arma::mat& particleBestFitnesses)
+  void Initialize(FunctionType& function,
+			const arma::mat& iterate,
+                        const size_t numParticles,
+                        arma::cube& particlePositions,
+                        arma::cube& particleVelocities,
+                        arma::mat& particleFitnesses,
+                        arma::cube& particleBestPositions,
+                        arma::mat& particleBestFitnesses)
   {
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
@@ -71,7 +71,7 @@ class ConstrainedInit
     for (size_t i = 0; i < numParticles; i++)
     {
       bool positionFeasible = 0; //Flag for tracking if generated position vector is feasible or not
-      while (positionFeasible != 0)
+      while (positionFeasible == 0)
       {
         //Generate random position vector
         positionVector.randu(iterate.n_rows,iterate.n_cols);
