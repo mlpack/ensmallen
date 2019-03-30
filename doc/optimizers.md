@@ -157,7 +157,7 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
 AdamR is a modified version of Adam with warm restarts. This allows the optimiser to have a automated decreasing
-step size without modification. AdamR uses the Cyclical Decay decay policy.
+step size without modification. AdamR uses Cyclical Decay as its default decay policy.
 
 #### Constructors
 
