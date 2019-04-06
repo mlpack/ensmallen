@@ -45,7 +45,7 @@ class BacktrackingLineSearch
    * problem, so it is suggested that the values used be tailored to the task at
    * hand.
    *
-   * @param function Function to be optimized (minimized).
+   * @param searchParameter The search parameter for each iteration.
    */
   BacktrackingLineSearch(const double searchParameter = 0.1) :
       searchParameter(searchParameter)
