@@ -21,7 +21,7 @@ namespace ens {
 
 /**
  * Big-batch Stochastic Gradient Descent is a technique for minimizing a
- * function which can be expressed as a sum of other functions.  That is,
+ * function which can be expressed as a sum of other functions. That is,
  * suppose we have
  *
  * \f[
@@ -42,13 +42,13 @@ namespace ens {
  * a full sequence of updates through each of the big-batches produces an
  * improvement within a certain tolerance \f$ \epsilon \f$.
  *
- * The parameter \f$ \epsilon \f$ is specified by the tolerance parameter tot he
+ * The parameter \f$ \epsilon \f$ is specified by the tolerance parameter to the
  * constructor, as is the maximum number of iterations specified by the
  * maxIterations parameter.
  *
  * This class is useful for data-dependent functions whose objective function
  * can be expressed as a sum of objective functions operating on an individual
- * point.  Then, big-batch SGD considers the gradient of the objective function
+ * point. Then, big-batch SGD considers the gradient of the objective function
  * operation on an individual big-batch of points in its update of \f$ A \f$.
  *
  * For more information, please refer to:
@@ -65,7 +65,7 @@ namespace ens {
  * }
  * @endcode
  *
- * Big-batch SGD can optimize differentiable separable functions.  For more
+ * Big-batch SGD can optimize differentiable separable functions. For more
  * details, see the documentation on function types included with this
  * distribution or on the ensmallen website.
  *
@@ -78,9 +78,9 @@ class BigBatchSGD
  public:
   /**
    * Construct the BigBatchSGD optimizer with the given function and
-   * parameters.  The defaults here are not necessarily good for the given
+   * parameters. The defaults here are not necessarily good for the given
    * problem, so it is suggested that the values used be tailored for the task
-   * at hand.  The maximum number of iterations refers to the maximum number of
+   * at hand. The maximum number of iterations refers to the maximum number of
    * batches that are processed.
    *
    * @param batchSize Initial batch size.
@@ -99,7 +99,7 @@ class BigBatchSGD
               const double tolerance = 1e-5,
               const bool shuffle = true);
   /**
-   * Optimize the given function using big-batch SGD.  The given starting point
+   * Optimize the given function using big-batch SGD. The given starting point
    * will be modified to store the finishing point of the algorithm, and the
    * final objective value is returned.
    *
