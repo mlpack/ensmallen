@@ -36,7 +36,7 @@ namespace ens {
  * The parameter \f$\epsilon\f$ is specified by the tolerance parameter to the
  * constructor.
  *
- * GradientDescent can optimize differentiable functions.  For more details, see
+ * GradientDescent can optimize differentiable functions. For more details, see
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
  */
@@ -45,11 +45,10 @@ class GradientDescent
  public:
   /**
    * Construct the Gradient Descent optimizer with the given function and
-   * parameters.  The defaults here are not necessarily good for the given
+   * parameters. The defaults here are not necessarily good for the given
    * problem, so it is suggested that the values used be tailored to the task
    * at hand.
    *
-   * @param function Function to be optimized (minimized).
    * @param stepSize Step size for each iteration.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
@@ -60,7 +59,7 @@ class GradientDescent
                   const double tolerance = 1e-5);
 
   /**
-   * Optimize the given function using gradient descent.  The given starting
+   * Optimize the given function using gradient descent. The given starting
    * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
    *
@@ -84,7 +83,7 @@ class GradientDescent
    * @tparam FunctionType Type of the function to optimize.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
-   * @param categoricalDimensions A vector of dimension information.  If a value
+   * @param categoricalDimensions A vector of dimension information. If a value
    *     is true, then that dimension is a categorical dimension.
    * @param numCategories Number of categories in each categorical dimension.
    * @return Objective value of the final point.
