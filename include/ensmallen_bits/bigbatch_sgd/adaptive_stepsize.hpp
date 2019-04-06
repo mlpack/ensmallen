@@ -63,6 +63,7 @@ class AdaptiveStepsize
    * @param iterate Parameters that minimize the function.
    * @param gradient The gradient matrix.
    * @param gradientNorm The gradient norm to be used for the given iteration.
+   * @param sampleVariance Variance in the sample.
    * @param offset The batch offset to be used for the given iteration.
    * @param batchSize Batch size to be used for the given iteration.
    * @param backtrackingBatchSize Backtracking batch size to be used for the
