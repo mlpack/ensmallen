@@ -1,6 +1,7 @@
 /**
  * @file no_decay.hpp
  * @author Marcus Edel
+ * @Gaurav Sharma
  *
  * Definition of the policy type for the decay class.
  *
@@ -16,7 +17,7 @@
 #define ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
 
 namespace ens {
-
+	
 /**
  * Definition of the NoDecay class. Use this as a template for your own.
  */
@@ -28,13 +29,24 @@ class NoDecay
    */
   NoDecay() { }
 
+ /**
+  * This function is called in each iteration after the policy update.
+  * It sets the value of effective batch size.
+  *
+  * @param effectiveBatchSize current effective batch size.
+  */
+  void setEffectiveBatchSize(const size_t& /* effectiveBatchSize */)
+  {
+	/* Nothing to do here. */
+  }
+  
   /**
    * This function is called in each iteration after the policy update.
    *
-  * @param iterate Parameters that minimize the function.
-  * @param stepSize Step size to be used for the given iteration.
-  * @param gradient The gradient matrix.
-  */
+   * @param iterate Parameters that minimize the function.
+   * @param stepSize Step size to be used for the given iteration.
+   * @param gradient The gradient matrix.
+   */
   void Update(arma::mat& /* iterate */,
               double& /* stepSize */,
               const arma::mat& /* gradient */)
@@ -59,9 +71,9 @@ class NoDecay
               double& /* stepSize */)
   {
     // Nothing to do here.
-  }
-};
+  }  
 
-} // namespace ens
+}; // class NoDecay 
+}  // namespace ens
 
 #endif // ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
