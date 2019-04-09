@@ -4,6 +4,7 @@
  * @author Arun Reddy
  * @author Abhinav Moudgil
  * @author Sourabh Varshney
+ * @author Gaurav Sharma
  *
  * Stochastic Gradient Descent (SGD).
  *
@@ -19,6 +20,9 @@
 #include "update_policies/momentum_update.hpp"
 #include "update_policies/nesterov_momentum_update.hpp"
 #include "decay_policies/no_decay.hpp"
+#include "decay_policies/drop_decay.hpp"
+#include "decay_policies/exponential_decay.hpp"
+#include "decay_policies/time_decay.hpp"
 
 namespace ens {
 
@@ -68,7 +72,7 @@ class SGD
 {
  public:
   /**
-   * Construct the SGD optimizer with the given function and parameters. The
+   * Construct the SGD optimizer with the given function and parameters.  The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -179,10 +183,6 @@ class SGD
   //! Flag indicating whether update policy
   //! should be reset before running optimization.
   bool resetPolicy;
-
-  //! Flag indicating whether the update policy
-  //! parameters have been initialized.
-  bool isInitialized;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;
