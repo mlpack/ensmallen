@@ -28,7 +28,7 @@ namespace ens {
 
 /**
  * Stochastic Gradient Descent is a technique for minimizing a function which
- * can be expressed as a sum of other functions.  That is, suppose we have
+ * can be expressed as a sum of other functions. That is, suppose we have
  *
  * \f[
  * f(A) = \sum_{i = 0}^{n} f_i(A)
@@ -72,9 +72,9 @@ class SGD
 {
  public:
   /**
-   * Construct the SGD optimizer with the given function and parameters.  The
+   * Construct the SGD optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
-   * suggested that the values used be tailored to the task at hand.  The
+   * suggested that the values used be tailored to the task at hand. The
    * maximum number of iterations refers to the maximum number of points that
    * are processed (i.e., one iteration equals one point; one iteration does not
    * equal one pass over the dataset).
@@ -183,6 +183,10 @@ class SGD
   //! Flag indicating whether update policy
   //! should be reset before running optimization.
   bool resetPolicy;
+
+  //! Flag indicating whether the update policy
+  //! parameters have been initialized.
+  bool isInitialized;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;
