@@ -1,6 +1,7 @@
 /**
  * @file snapshot_ensembles.hpp
  * @author Marcus Edel
+ * @Gaurav Sharma
  *
  * Definition of the Snapshot ensembles technique described in:
  * "Snapshot ensembles: Train 1, get m for free" by G. Huang et al.
@@ -82,6 +83,17 @@ class SnapshotEnsembles
         snapshotEpochs - snapshots + 1);
   }
 
+ /**
+  * This function is called in each iteration after the policy update.
+  * It sets the value of effective batch size.
+  *
+  * @param effectiveBatchSize current effective batch size.
+  */
+  void setEffectiveBatchSize(const size_t& /* effectiveBatchSize */)
+  {
+	/* Nothing to do here. */
+  }
+  
   /**
    * This function is called in each iteration after the policy update.
    *
@@ -167,8 +179,8 @@ class SnapshotEnsembles
 
   //! Locally-stored parameter snapshots.
   std::vector<arma::mat> snapshots;
-};
 
-} // namespace ens
+}; // class SnapshotEnsembles
+}  // namespace ens
 
 #endif // ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP
