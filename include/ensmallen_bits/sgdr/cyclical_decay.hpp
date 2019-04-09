@@ -1,6 +1,7 @@
 /**
  * @file cyclical_decay.hpp
  * @author Marcus Edel
+ * @Gaurav Sharma
  *
  * Definition of the warm restart technique (SGDR) described in:
  * "SGDR: Stochastic Gradient Descent with Warm Restarts" by
@@ -62,6 +63,17 @@ class CyclicalDecay
       epoch(0)
   { /* Nothing to do here */ }
 
+ /**
+  * This function is called in each iteration after the policy update.
+  * It sets the value of effective batch size.
+  *
+  * @param effectiveBatchSize current effective batch size.
+  */
+  void setEffectiveBatchSize(const size_t& /* effectiveBatchSize */)
+  {
+	/* Nothing to do here. */
+  }
+  
   /**
    * This function is called in each iteration after the policy update.
    *
@@ -78,7 +90,7 @@ class CyclicalDecay
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
       stepSize = 0.5 * constStepSize * (1 + cos((batchRestart / epochBatches)
-          * arma::datum::pi));
+          * M_PI));
 
       // Keep track of the number of batches since the last restart.
       batchRestart++;
@@ -130,8 +142,8 @@ class CyclicalDecay
 
   //! Locally-stored epoch.
   size_t epoch;
-};
 
-} // namespace ens
+}; // class CyclicalDecay
+}  // namespace ens
 
 #endif // ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP
