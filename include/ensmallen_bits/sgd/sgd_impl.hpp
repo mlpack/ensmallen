@@ -3,6 +3,7 @@
  * @author Ryan Curtin
  * @author Arun Reddy
  * @author Abhinav Moudgil
+ * @author Gaurav Sharma
  *
  * Implementation of stochastic gradient descent.
  *
@@ -38,8 +39,7 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     shuffle(shuffle),
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
-    resetPolicy(resetPolicy),
-    isInitialized(false)
+    resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -64,11 +64,8 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   double lastObjective = DBL_MAX;
 
   // Initialize the update policy.
-  if (resetPolicy || !isInitialized)
-  {
+  if (resetPolicy)
     updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
-    isInitialized = true;
-  }
 
   // Now iterate!
   arma::mat gradient(iterate.n_rows, iterate.n_cols);
@@ -80,19 +77,19 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
       // Output current objective function.
-      Info << "SGD: iteration " << i << ", objective " << overallObjective
-         << "." << std::endl;
+      Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
+          << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Warn << "SGD: converged to " << overallObjective << "; terminating"
+        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
         return overallObjective;
       }
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Info << "SGD: minimized within tolerance " << tolerance << "; "
+        Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
         return overallObjective;
       }
@@ -125,13 +122,14 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     updatePolicy.Update(iterate, stepSize, gradient);
 
     // Now update the learning rate if requested by the user.
-    decayPolicy.Update(iterate, stepSize, gradient);
+    decayPolicy.setEffectiveBatchSize(effectiveBatchSize);
+	decayPolicy.Update(iterate, stepSize, gradient);
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
   }
 
-  Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
+  Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
   // Calculate final objective.
