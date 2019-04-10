@@ -17,7 +17,7 @@
 #define ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
 
 namespace ens {
-	
+
 /**
  * Definition of the NoDecay class. Use this as a template for your own.
  */
@@ -28,7 +28,7 @@ class NoDecay
    * This constructor is called before the first iteration.
    */
   NoDecay() { }
-	
+
  /**
   * This function is called in each iteration after the policy update.
   * It sets the value of effective batch size.
@@ -39,7 +39,7 @@ class NoDecay
   {
 	/* Nothing to do here. */
   }
-  
+
   /**
    * This function is called in each iteration after the policy update.
    *
