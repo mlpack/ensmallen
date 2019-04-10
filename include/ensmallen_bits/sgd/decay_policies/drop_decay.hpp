@@ -28,28 +28,28 @@ class DropDecay
    * @param initialStepSize Step Size at the beginning.
    * @param dropRate Factor by which stepSize is dropped.
    * @param epochDrop Number of epochs after which stepSize is dropped.
-   */	
-	DropDecay(const double initialStepSize = 0.01,
-			  const double dropRate = 0.1,
-			  const size_t epochDrop = 1000) :
+   */
+  DropDecay(const double initialStepSize = 0.01,
+	    const double dropRate = 0.1,
+	    const size_t epochDrop = 1000) :
 	initialStepSize(initialStepSize),
 	dropRate(dropRate),
 	epochDrop(epochDrop),
 	epoch(0),
 	effectiveBatchSize(1)
 	{ /* Nothing to do here. */}
-	
+
   /**
    * This function is called in each iteration after the policy update.
    * It sets the value of effective batch size.
    *
    * @param effectiveBatchSize current effective batch size.
-   */	
+   */
   void setEffectiveBatchSize(const size_t& effBatchSize)
   {
-	effectiveBatchSize = effBatchSize;
+    effectiveBatchSize = effBatchSize;
   }
-	
+
   /**
    * This function is called in each iteration after the policy update.
    *
@@ -61,24 +61,24 @@ class DropDecay
               double& stepSize,
               const arma::mat& /* gradient */)
   {
-	epoch += effectiveBatchSize;
+    epoch += effectiveBatchSize;
     stepSize = initialStepSize * pow(dropRate, floor((1.0 + epoch) / epochDrop));
   }
 
   private:
 	// stepSize at the beginning.
 	double initialStepSize;
-	
+
 	// Factor by which stepSize is dropped.
 	double dropRate;
-	
+
 	// Number of epochs after which stepSize is dropped.
 	size_t epochDrop;
-	
+
 	// Current epoch.
 	size_t epoch;
-	
-	// Effective batch size.	
+
+	// Effective batch size.
 	size_t effectiveBatchSize;
 
 }; // class DropDecay
