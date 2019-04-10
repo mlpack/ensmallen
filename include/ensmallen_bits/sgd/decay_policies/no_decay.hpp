@@ -28,17 +28,6 @@ class NoDecay
    * This constructor is called before the first iteration.
    */
   NoDecay() { }
-
- /**
-  * This function is called in each iteration after the policy update.
-  * It sets the value of effective batch size.
-  *
-  * @param effectiveBatchSize current effective batch size.
-  */
-  void setEffectiveBatchSize(const size_t& /* effectiveBatchSize */)
-  {
-	/* Nothing to do here. */
-  }
   
   /**
    * This function is called in each iteration after the policy update.
