@@ -117,9 +117,9 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         numFunctions - currentFunction);
 
     if( effectiveBatchSize == 0 )
-	{
-	  break;
-	}
+    {
+      break;
+    }
 
     // Technically we are computing the objective before we take the step, but
     // for many FunctionTypes it may be much quicker to do it like this.
@@ -145,12 +145,12 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   {
     size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
 
-	if (effectiveBatchSize == 0)
-	{
-	  effectiveBatchSize = 1;
-	  ++i;
-	}		
-	overallObjective += f.Evaluate(iterate, i-1, effectiveBatchSize);
+    if (effectiveBatchSize == 0)
+    {
+      effectiveBatchSize = 1;
+      ++i;
+    }
+    overallObjective += f.Evaluate(iterate, i-1, effectiveBatchSize);
   }
 
   return overallObjective;
