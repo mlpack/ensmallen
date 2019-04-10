@@ -25,11 +25,11 @@ class ExponentialDecay
  public:
   /**
    * This constructor is called before the first iteration.
-   * @param initialStepSize Step Size at the beginning.   
+   * @param initialStepSize Step Size at the beginning.
    * @param decayRate Rate at which stepSize is decayed.
-   */	
-	ExponentialDecay(const double initialStepSize = 0.01,
-				     const double decayRate = 0.1) : 
+   */
+  ExponentialDecay(const double initialStepSize = 0.01,
+		   const double decayRate = 0.1) :
 	initialStepSize(initialStepSize),
 	decayRate(decayRate),
 	epoch(0),
@@ -44,7 +44,7 @@ class ExponentialDecay
    */
   void setEffectiveBatchSize(const size_t& effBatchSize)
    {
-	effectiveBatchSize = effBatchSize;
+     effectiveBatchSize = effBatchSize;
    }
 
   /**
@@ -58,21 +58,21 @@ class ExponentialDecay
               double& stepSize,
               const arma::mat& /* gradient */)
   {
-	epoch += effectiveBatchSize;
+    epoch += effectiveBatchSize;
     stepSize = initialStepSize * exp(-decayRate * epoch);
   }
 
   private:
 	// stepSize at the beginning. 
   	double initialStepSize;
-	
+
 	// Rate at which stepSize is decayed.
 	double decayRate;
-	
+
 	// Current epoch.
-	size_t epoch;	
-	
-	// Effective batch size.	
+	size_t epoch;
+
+	// Effective batch size.
 	size_t effectiveBatchSize;
 
 }; // class ExponentialDecay
