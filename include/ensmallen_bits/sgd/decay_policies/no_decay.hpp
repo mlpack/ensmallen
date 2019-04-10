@@ -34,10 +34,10 @@ class NoDecay
   * It sets the value of effective batch size.
   *
   * @param effectiveBatchSize current effective batch size.
-  */	
-  void setEffectiveBatchSize(const size_t& effBatchSize)
+  */
+  void setEffectiveBatchSize(const size_t& /* effectiveBatchSize */)
   {
-    effectiveBatchSize = effBatchSize;
+	/* Nothing to do here. */
   }
   
   /**
