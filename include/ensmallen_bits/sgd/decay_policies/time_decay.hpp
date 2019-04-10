@@ -36,12 +36,12 @@ class TimeDecay
   * It sets the value of effective batch size.
   *
   * @param effectiveBatchSize current effective batch size.
-  */	
+  */
   void setEffectiveBatchSize(const size_t& effBatchSize)
   {
-		effectiveBatchSize = effBatchSize;
+    effectiveBatchSize = effBatchSize;
   }
-	
+
   /**
    * This function is called in each iteration after the policy update.
    *
@@ -53,18 +53,18 @@ class TimeDecay
               double& stepSize,
               const arma::mat& /* gradient */)
   {
-	epoch += effectiveBatchSize;
-	stepSize *= 1.0 / (1.0 + decay * epoch);
+    epoch += effectiveBatchSize;
+    stepSize *= 1.0 / (1.0 + decay * epoch);
   }
 
   private:
 	// Factor by which stepSize is decayed.
 	double decay;
-	
+
 	// Current epoch.
-	size_t epoch;	
-	
-	// Effective batch size.	
+	size_t epoch;
+
+	// Effective batch size.
 	size_t effectiveBatchSize;
 
 }; // class TimeDecay
