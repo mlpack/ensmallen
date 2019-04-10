@@ -116,6 +116,11 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         std::min(batchSize, actualMaxIterations - i),
         numFunctions - currentFunction);
 
+    if( effectiveBatchSize == 0 )
+	{
+	  break;
+	}
+
     // Technically we are computing the objective before we take the step, but
     // for many FunctionTypes it may be much quicker to do it like this.
     overallObjective += f.EvaluateWithGradient(iterate, currentFunction,
@@ -138,9 +143,16 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   overallObjective = 0;
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+
+	if (effectiveBatchSize == 0)
+	{
+	  effectiveBatchSize = 1;
+	  ++i;
+	}		
+	overallObjective += f.Evaluate(iterate, i-1, effectiveBatchSize);
   }
+
   return overallObjective;
 }
 
