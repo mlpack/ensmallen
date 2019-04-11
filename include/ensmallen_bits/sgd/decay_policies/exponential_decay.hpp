@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_SGD_DECAY_POLICIES_EXPONENTIAL_DECAY_HPP
 #define ENSMALLEN_SGD_DECAY_POLICIES_EXPONENTIAL_DECAY_HPP
 
-#include <cmath>
-
 namespace ens {
 
 /**
@@ -32,20 +30,8 @@ class ExponentialDecay
 		   const double decayRate = 0.1) :
 	initialStepSize(initialStepSize),
 	decayRate(decayRate),
-	epoch(0),
-	effectiveBatchSize(1)
+	epoch(0)
 	{/* Nothing to do here. */ }
-
-  /**
-   * This function is called in each iteration after the policy update.
-   * It sets the value of effective batch size.
-   *
-   * @param effectiveBatchSize current effective batch size.
-   */
-  void setEffectiveBatchSize(const size_t& effBatchSize)
-   {
-     effectiveBatchSize = effBatchSize;
-   }
 
   /**
    * This function is called in each iteration after the policy update.
@@ -58,8 +44,8 @@ class ExponentialDecay
               double& stepSize,
               const arma::mat& /* gradient */)
   {
-    epoch += effectiveBatchSize;
     stepSize = initialStepSize * exp(-decayRate * epoch);
+    ++epoch;
   }
 
   private:
@@ -71,11 +57,8 @@ class ExponentialDecay
 
 	// Current epoch.
 	size_t epoch;
-
-	// Effective batch size.
-	size_t effectiveBatchSize;
-
 }; // class ExponentialDecay
+
 }  // namespace ens
 
 #endif // ENSMALLEN_SGD_DECAY_POLICIES_EXPONENTIAL_DECAY_HPP
