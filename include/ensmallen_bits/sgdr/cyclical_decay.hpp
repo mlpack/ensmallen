@@ -61,7 +61,7 @@ class CyclicalDecay
       epochBatches(0),
       epoch(0)
   { /* Nothing to do here */ }
-  
+
   /**
    * This function is called in each iteration after the policy update.
    *
@@ -130,8 +130,8 @@ class CyclicalDecay
 
   //! Locally-stored epoch.
   size_t epoch;
+};
 
-}; // class CyclicalDecay
-}  // namespace ens
+} // namespace ens
 
 #endif // ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP
