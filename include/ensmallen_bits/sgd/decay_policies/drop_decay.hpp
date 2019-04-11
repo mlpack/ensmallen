@@ -22,14 +22,18 @@ class DropDecay
 {
  public: 
   /**
-   * This constructor is called before the first iteration.
+   * This constructor is called before the first iteration.The
+   * defaults here are not necessarily good for the given problem,
+   * so it is suggested that the values used be tailored to the
+   * task at hand.
+   *
    * @param initialStepSize Step Size at the beginning.
    * @param dropRate Factor by which stepSize is dropped.
    * @param epochDrop Number of epochs after which stepSize is dropped.
    */
   DropDecay(const double initialStepSize = 0.01,
-	    const double dropRate = 0.1,
-	    const size_t epochDrop = 1000) :
+	    const double dropRate = 0.99,
+	    const size_t epochDrop = 10000) :
 	initialStepSize(initialStepSize),
 	dropRate(dropRate),
 	epochDrop(epochDrop),
