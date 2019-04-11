@@ -13,8 +13,6 @@
 #ifndef ENSMALLEN_SGD_DECAY_POLICIES_DROP_DECAY_HPP
 #define ENSMALLEN_SGD_DECAY_POLICIES_DROP_DECAY_HPP
 
-#include <cmath>
-
 namespace ens {
 
 /**
@@ -35,20 +33,8 @@ class DropDecay
 	initialStepSize(initialStepSize),
 	dropRate(dropRate),
 	epochDrop(epochDrop),
-	epoch(0),
-	effectiveBatchSize(1)
+	epoch(0)
 	{ /* Nothing to do here. */}
-
-  /**
-   * This function is called in each iteration after the policy update.
-   * It sets the value of effective batch size.
-   *
-   * @param effectiveBatchSize current effective batch size.
-   */
-  void setEffectiveBatchSize(const size_t& effBatchSize)
-  {
-    effectiveBatchSize = effBatchSize;
-  }
 
   /**
    * This function is called in each iteration after the policy update.
@@ -61,8 +47,8 @@ class DropDecay
               double& stepSize,
               const arma::mat& /* gradient */)
   {
-    epoch += effectiveBatchSize;
     stepSize = initialStepSize * pow(dropRate, floor((1.0 + epoch) / epochDrop));
+    ++epoch;
   }
 
   private:
@@ -77,11 +63,8 @@ class DropDecay
 
 	// Current epoch.
 	size_t epoch;
-
-	// Effective batch size.
-	size_t effectiveBatchSize;
-
 }; // class DropDecay
+
 }  // namespace ens
 
 #endif // ENSMALLEN_SGD_DECAY_POLICIES_DROP_DECAY_HPP
