@@ -27,20 +27,8 @@ class TimeDecay
   */
   TimeDecay(const double decay = 0.01) :
 	decay(decay),
-	epoch(0),
-	effectiveBatchSize(1)
+	epoch(0)
 	{ /* Nothing to do here.*/ }
-
- /**
-  * This function is called in each iteration after the policy update.
-  * It sets the value of effective batch size.
-  *
-  * @param effectiveBatchSize current effective batch size.
-  */
-  void setEffectiveBatchSize(const size_t& effBatchSize)
-  {
-    effectiveBatchSize = effBatchSize;
-  }
 
   /**
    * This function is called in each iteration after the policy update.
@@ -53,8 +41,8 @@ class TimeDecay
               double& stepSize,
               const arma::mat& /* gradient */)
   {
-    epoch += effectiveBatchSize;
     stepSize *= 1.0 / (1.0 + decay * epoch);
+    ++epoch;
   }
 
   private:
@@ -63,11 +51,8 @@ class TimeDecay
 
 	// Current epoch.
 	size_t epoch;
-
-	// Effective batch size.
-	size_t effectiveBatchSize;
-
 }; // class TimeDecay
+
 }  // namespace ens
 
 #endif // ENSMALLEN_SGD_DECAY_POLICIES_TIME_DECAY_HPP
