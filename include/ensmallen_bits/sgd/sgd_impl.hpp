@@ -126,8 +126,7 @@ double SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     updatePolicy.Update(iterate, stepSize, gradient);
 
     // Now update the learning rate if requested by the user.
-    decayPolicy.setEffectiveBatchSize(effectiveBatchSize);
-	decayPolicy.Update(iterate, stepSize, gradient);
+    decayPolicy.Update(iterate, stepSize, gradient);
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
