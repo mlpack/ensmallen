@@ -3,7 +3,6 @@
  * @author Ryan Curtin
  * @author Arun Reddy
  * @author Abhinav Moudgil
- * @author Gaurav Sharma
  *
  * Implementation of stochastic gradient descent.
  *
