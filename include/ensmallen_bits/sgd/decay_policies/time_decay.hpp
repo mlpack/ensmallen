@@ -22,7 +22,11 @@ class TimeDecay
 {
  public:
  /**
-  * This constructor is called before the first iteration.
+  * This constructor is called before the first iteration. The
+  * defaults here are not necessarily good for the given problem,
+  * so it is suggested that the values used be tailored to the
+  * task at hand.
+  * 
   * @param decay Factor by which stepSize is decayed
   */
   TimeDecay(const double decay = 0.01) :
