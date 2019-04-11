@@ -16,7 +16,7 @@
 #define ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
 
 namespace ens {
-	
+
 /**
  * Definition of the NoDecay class. Use this as a template for your own.
  */
@@ -59,9 +59,9 @@ class NoDecay
               double& /* stepSize */)
   {
     // Nothing to do here.
-  }  
+  }
 }; // class NoDecay 
 
-}  // namespace ens
+} // namespace ens
 
 #endif // ENSMALLEN_SGD_DECAY_POLICIES_NO_DECAY_HPP
