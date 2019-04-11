@@ -22,7 +22,11 @@ class ExponentialDecay
 {
  public:
   /**
-   * This constructor is called before the first iteration.
+   * This constructor is called before the first iteration. The
+   * defaults here are not necessarily good for the given problem,
+   * so it is suggested that the values used be tailored to the
+   * task at hand.
+   *
    * @param initialStepSize Step Size at the beginning.
    * @param decayRate Rate at which stepSize is decayed.
    */
