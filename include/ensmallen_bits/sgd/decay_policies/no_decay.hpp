@@ -60,7 +60,7 @@ class NoDecay
   {
     // Nothing to do here.
   }
-}; // class NoDecay 
+};
 
 } // namespace ens
 
