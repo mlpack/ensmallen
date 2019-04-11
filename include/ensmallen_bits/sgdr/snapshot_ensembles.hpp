@@ -167,8 +167,8 @@ class SnapshotEnsembles
 
   //! Locally-stored parameter snapshots.
   std::vector<arma::mat> snapshots;
+};
 
-}; // class SnapshotEnsembles
-}  // namespace ens
+} // namespace ens
 
 #endif // ENSMALLEN_SGDR_CYCLICAL_DECAY_HPP
