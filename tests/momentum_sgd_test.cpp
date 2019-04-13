@@ -34,7 +34,7 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
   SGDTestFunction f1;
   StandardSGD s1(0.0003, 1, 2500000, 1e-9, true);
 
-  arma::mat coordinates1 = f.GetInitialPoint();
+  arma::mat coordinates1 = f1.GetInitialPoint();
   double result1 = s1.Optimize(f1, coordinates1);
 
   // Result doesn't converge in 2500000 iterations.
