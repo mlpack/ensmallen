@@ -20,13 +20,26 @@
 namespace ens {
 
 /**
- * EXTREMELY DETAILED DESCRIPTION OF THE WORKING OF PSO.
+ * Particle swarm optimization (PSO) is an evolutionary optimization approach.
+ * PSO can optimize functions continuous as well as discrete functions. It does
+ * not require the gradient to be computable for its working. For PSO to work,
+ * the ArbitraryFunctionType parameter is required.
  *
- * For Particle Swarm Optimization to work, a FunctionType template parameter is
- * required.
  * This class must implement the following function:
  *
  *   double Evaluate(const arma::mat& coordinates);
+ *
+ * For more information, refer to the following paper:
+ *
+ * @inproceedings{Kennedy,
+ * doi = {10.1109/icnn.1995.488968},
+ * url = {https://doi.org/10.1109/icnn.1995.488968},
+ * publisher = {{IEEE}},
+ * author = {J. Kennedy and R. Eberhart},
+ * title = {Particle swarm optimization},
+ * booktitle = {ICNN}{\textquotesingle}95 - 
+ * 	International Conference on Neural Networks}
+ *}
  */
 template<typename VelocityUpdatePolicy = LBestUpdate,
          typename InitPolicy = DefaultInit>
@@ -43,6 +56,8 @@ class PSOType
    * @param maxIterations Number of iterations allowed.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
+   * @param VelocityUpdatePolicy Determines how the velocity of the particles are iteratively updated.
+   * @param InitPolicy Determines how the particles are initialized.
    */
   PSOType(
     const size_t numParticles = 16,
@@ -59,8 +74,6 @@ class PSOType
     initPolicy(initPolicy) { /* Nothing to do */ }
 
   /**
-   * ADD PSO OPTIMIZATION DESCRIPTION.
-   *
    * Optimize the given function using particle swarm optimization. The given
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
