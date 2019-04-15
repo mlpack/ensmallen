@@ -1440,7 +1440,7 @@ double Optimize(arma::mat& X);
 
 #### See also:
 
-  * [Quasi-Hyperbolic Momentom and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
+  * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
   * [Momentum SGD](#momentum-sgd)
   * [Nesterov Momentum SGD](#nesterov-momentum-sgd)
   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
@@ -1451,8 +1451,8 @@ double Optimize(arma::mat& X);
  *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
  QHAdam is an optimizer which implements the QHAdam Adam algorithm
- which uses Quasi-Hyperbolic Descent with the Adam Optimizer. This Method is the Adam Variant of the Quasi -
- Hyperbolic Update for Adam. It replaces the moment estimators of Adam with Quasi - Hyperbolic terms , and with
+ which uses Quasi-Hyperbolic Descent with the Adam Optimizer. This method is the Adam variant of the quasi-hyperbolic update for Adam.
+ It replaces the moment estimators of Adam with Quasi - Hyperbolic terms , and with
  different values of those terms can recover the following Adam Polices
  QHAdam recovers Adam when ν1 = ν2 = 1
  QHAdam recovers RMSProp when ν1 = 0 and ν2 = 1
@@ -1496,7 +1496,7 @@ double Optimize(arma::mat& X);
  ```
 
 #### See also:
-  * [Quasi-Hyperbolic Momentom and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
+  * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
   * [SGD](#standard-sgd)
   * [Incorporating Nesterov Momentum into Adam](http://cs229.stanford.edu/proj2015/054_report.pdf)
