@@ -87,3 +87,35 @@ TEST_CASE("EveStyblinskiTangFunctionTest","[EveTest]")
   REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
   REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
 }
+
+/**
+ * Test the Eve optimizer on the Styblinski-Tang function using arma::fmat as
+ * the objective type.
+ */
+TEST_CASE("EveStyblinskiTangFunctionFMatTest","[EveTest]")
+{
+  StyblinskiTangFunction f(2);
+  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
+}
+
+/**
+ * Test the Eve optimizer on the Styblinski-Tang function, using arma::sp_mat as
+ * the objective type.
+ */
+TEST_CASE("EveStyblinskiTangFunctionSpMatTest","[EveTest]")
+{
+  StyblinskiTangFunction f(2);
+  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
+}

@@ -20,15 +20,12 @@ namespace test {
 
 template<typename MatType>
 LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses,
+    MatType& predictors,
+    arma::Row<size_t>& responses,
     const double lambda) :
     // We promise to be well-behaved... the elements won't be modified.
-    predictors(MatType(const_cast<MatType&>(predictors).memptr(),
-        predictors.n_rows, predictors.n_cols, false, false)),
-    responses(arma::Row<size_t>(
-        const_cast<arma::Row<size_t>&>(responses).memptr(),
-        responses.n_elem, false, false)),
+    predictors(predictors),
+    responses(responses),
     lambda(lambda)
 {
   initialPoint = arma::Row<typename MatType::elem_type>(predictors.n_rows + 1,
@@ -48,16 +45,13 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
 
 template<typename MatType>
 LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
-    const MatType& predictors,
-    const arma::Row<size_t>& responses,
-    const arma::vec& initialPoint,
+    MatType& predictors,
+    arma::Row<size_t>& responses,
+    MatType& initialPoint,
     const double lambda) :
     initialPoint(initialPoint),
-    predictors(MatType(const_cast<MatType&>(predictors).memptr(),
-        predictors.n_rows, predictors.n_cols, false, false)),
-    responses(arma::Row<size_t>(
-        const_cast<arma::Row<size_t>&>(responses).memptr(),
-        responses.n_elem, false, false)),
+    predictors(predictors),
+    responses(responses),
     lambda(lambda)
 {
   // To check if initialPoint is compatible with predictors.
@@ -79,15 +73,10 @@ void LogisticRegressionFunction<MatType>::Shuffle()
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       predictors.n_cols - 1, predictors.n_cols));
 
-  newPredictors = predictors.cols(ordering);
+  newPredictors.set_size(predictors.n_rows, predictors.n_cols);
+  for (size_t i = 0; i < predictors.n_cols; ++i)
+    newPredictors.col(i) = predictors.col(ordering[i]);
   newResponses = responses.cols(ordering);
-
-  // If we are an alias, make sure we don't write to the original data.
-  if (predictors.mem_state >= 1)
-    predictors.reset();
-
-  if (responses.mem_state >= 1)
-    responses.reset();
 
   // Take ownership of the new data.
   predictors = std::move(newPredictors);

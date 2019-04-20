@@ -66,11 +66,13 @@ class BacktrackingLineSearch
    *        given iteration.
    * @param reset Reset the step size decay parameter.
    */
-  template<typename DecomposableFunctionType>
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType>
   void Update(DecomposableFunctionType& function,
               double& stepSize,
-              arma::mat& iterate,
-              const arma::mat& gradient,
+              MatType& iterate,
+              const GradType& gradient,
               const double gradientNorm,
               const double /* sampleVariance */,
               const size_t offset,
@@ -81,12 +83,14 @@ class BacktrackingLineSearch
     if (reset)
       stepSize *= 2;
 
-    double overallObjective = function.Evaluate(iterate, offset,
+    typedef typename MatType::elem_type ElemType;
+
+    ElemType overallObjective = function.Evaluate(iterate, offset,
         backtrackingBatchSize);
 
-    arma::mat iterateUpdate = iterate - (stepSize * gradient);
-    double overallObjectiveUpdate = function.Evaluate(iterateUpdate,
-        offset, backtrackingBatchSize);
+    MatType iterateUpdate = iterate - (stepSize * gradient);
+    ElemType overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
+        backtrackingBatchSize);
 
     while (overallObjectiveUpdate >
         (overallObjective + searchParameter * stepSize * gradientNorm))

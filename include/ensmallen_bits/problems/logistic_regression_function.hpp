@@ -26,13 +26,13 @@ template<typename MatType = arma::mat>
 class LogisticRegressionFunction
 {
  public:
-  LogisticRegressionFunction(const MatType& predictors,
-                             const arma::Row<size_t>& responses,
+  LogisticRegressionFunction(MatType& predictors,
+                             arma::Row<size_t>& responses,
                              const double lambda = 0);
 
-  LogisticRegressionFunction(const MatType& predictors,
-                             const arma::Row<size_t>& responses,
-                             const arma::vec& initialPoint,
+  LogisticRegressionFunction(MatType& predictors,
+                             arma::Row<size_t>& responses,
+                             MatType& initialPoint,
                              const double lambda = 0);
 
   //! Return the initial point for the optimization.
@@ -201,10 +201,10 @@ class LogisticRegressionFunction
   MatType initialPoint;
   //! The matrix of data points (predictors).  This is an alias until shuffling
   //! is done.
-  MatType predictors;
+  MatType& predictors;
   //! The vector of responses to the input data points.  This is an alias until
   //! shuffling is done.
-  arma::Row<size_t> responses;
+  arma::Row<size_t>& responses;
   //! The regularization parameter for L2-regularization.
   double lambda;
 };

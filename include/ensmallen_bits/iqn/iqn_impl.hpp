@@ -32,10 +32,16 @@ inline IQN::IQN(const double stepSize,
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType>
-double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType>
+typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& function,
+                                          MatType& iterate)
 {
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+  // TODO: add Function<>
+
+//  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
+//      GradType>();
 
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
@@ -46,37 +52,37 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   // To keep track of where we are and how things are going.
   double overallObjective = 0;
 
-  arma::cube y(iterate.n_rows, iterate.n_cols, numBatches);
-  arma::cube t(iterate.n_elem, 1, numBatches);
-  arma::cube Q(iterate.n_elem, iterate.n_elem, numBatches);
-  arma::mat initialIterate = arma::randn(iterate.n_rows, iterate.n_cols);
-  arma::mat B = arma::eye(iterate.n_elem, iterate.n_elem);
+  std::vector<GradType> y(numBatches, GradType(iterate.n_rows, iterate.n_cols));
+  std::vector<MatType> t(numBatches, MatType(iterate.n_rows, iterate.n_cols));
+  std::vector<MatType> Q(numBatches, MatType(iterate.n_elem, iterate.n_elem));
+  MatType initialIterate =
+      arma::randn<arma::Mat<typename MatType::elem_type>>(iterate.n_rows,
+                                                          iterate.n_cols);
+  GradType B(iterate.n_elem, iterate.n_elem);
+  B.eye();
 
-  arma::mat g = arma::zeros(iterate.n_rows, iterate.n_cols);
+  GradType g(iterate.n_rows, iterate.n_cols);
+  g.zeros();
   for (size_t i = 0, f = 0; i < numFunctions; f++)
   {
     // Find the effective batch size (the last batch may be smaller).
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
 
-    t.slice(f) = arma::mat(initialIterate.memptr(), iterate.n_elem,
-        1, false, false);
-    function.Gradient(initialIterate, i, y.slice(f), effectiveBatchSize);
+    // It would be nice to avoid this copy but it is difficult to be generic to
+    // any MatType and still do that.
+    t[f] = initialIterate;
+    function.Gradient(initialIterate, i, y[f], effectiveBatchSize);
 
-    Q.slice(f).eye();
-    g += y.slice(f);
-    y.slice(f) /= (double) effectiveBatchSize;
+    Q[f].eye();
+    g += y[f];
+    y[f] /= (double) effectiveBatchSize;
 
     i += effectiveBatchSize;
   }
   g /= numFunctions;
 
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat u = t.slice(0);
-
-  // Convenience alias to avoid multiple use of arma::vectorise.
-  arma::mat iterateVec = arma::mat(iterate.memptr(), iterate.n_elem,
-      1, false, false);
-  arma::mat gVec = arma::mat(g.memptr(), iterate.n_elem, 1, false, false);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
+  MatType u = t[0];
 
   for (size_t i = 1; i != maxIterations; ++i)
   {
@@ -89,36 +95,37 @@ double IQN::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions -
           it * batchSize);
 
-      if (arma::norm(iterateVec - t.slice(it)) > 0)
+      if (arma::norm(iterate - t[it]) > 0)
       {
         function.Gradient(iterate, it * batchSize, gradient,
             effectiveBatchSize);
         gradient /= effectiveBatchSize;
 
-        const arma::mat s = iterateVec - t.slice(it);
-        const arma::mat yy = arma::vectorise(gradient - y.slice(it));
+        const MatType s = arma::vectorise(iterate - t[it]);
+        const GradType yy = arma::vectorise(gradient - y[it]);
 
-        const arma::mat stochasticHessian = Q.slice(it) + yy * yy.t() /
-            arma::as_scalar(yy.t() * s) - Q.slice(it) * s * s.t() *
-            Q.slice(it) / arma::as_scalar(s.t() * Q.slice(it) * s);
+        const GradType stochasticHessian = Q[it] + yy * yy.t() /
+            arma::as_scalar(yy.t() * s) - Q[it] * s * s.t() *
+            Q[it] / arma::as_scalar(s.t() * Q[it] * s);
 
         // Update aggregate Hessian approximation.
-        B += (1.0 / numBatches) * (stochasticHessian - Q.slice(it));
+        B += (1.0 / numBatches) * (stochasticHessian - Q[it]);
 
         // Update aggregate Hessian-variable product.
-        u += (1.0 / numBatches) * (stochasticHessian * iterateVec -
-            Q.slice(it) * t.slice(it));
+        u += arma::reshape((1.0 / numBatches) * (stochasticHessian *
+            arma::vectorise(iterate) - Q[it] * arma::vectorise(t[it])),
+            u.n_rows, u.n_cols);;
 
         // Update aggregate gradient.
-        g += (1.0 / numBatches) * (gradient - y.slice(it));
+        g += (1.0 / numBatches) * (gradient - y[it]);
 
         // Update the function information tables.
-        Q.slice(it) = stochasticHessian;
-        y.slice(it) = gradient;
-        t.slice(it) = iterateVec;
+        Q[it] = std::move(stochasticHessian);
+        y[it] = std::move(gradient);
+        t[it] = iterate;
 
-        iterateVec = stepSize * B.i() * (u - gVec) + (1 - stepSize) *
-            iterateVec;
+        iterate = arma::reshape(stepSize * B.i() * (u.t() - arma::vectorise(g)),
+            iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
       }
 
       f += effectiveBatchSize;

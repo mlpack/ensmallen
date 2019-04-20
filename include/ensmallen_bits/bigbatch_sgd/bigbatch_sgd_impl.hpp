@@ -38,15 +38,17 @@ BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
-double BigBatchSGD<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+template<typename DecomposableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function, MatType& iterate)
 {
-  typedef Function<DecomposableFunctionType> FullFunctionType;
+  typedef Function<DecomposableFunctionType, MatType, GradType>
+      FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+//  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
+//      GradType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
@@ -56,11 +58,11 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
   bool reset = false;
-  arma::mat delta0, delta1;
+  GradType delta0, delta1;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat functionGradient(iterate.n_rows, iterate.n_cols);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
+  GradType functionGradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)

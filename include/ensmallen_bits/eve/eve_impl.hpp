@@ -43,16 +43,17 @@ inline Eve::Eve(const double stepSize,
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType>
-double Eve::Optimize(
+template<typename DecomposableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type Eve::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate)
 {
-  typedef Function<DecomposableFunctionType> FullFunctionType;
+  typedef Function<DecomposableFunctionType, MatType, GradType>
+      FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+//  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
@@ -67,13 +68,15 @@ double Eve::Optimize(
   double dt = 1;
 
   // The exponential moving average of gradient values.
-  arma::mat m = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  GradType m(iterate.n_rows, iterate.n_cols);
+  m.zeros();
 
   // The exponential moving average of squared gradient values.
-  arma::mat v = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  GradType v(iterate.n_rows, iterate.n_cols);
+  v.zeros();
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)

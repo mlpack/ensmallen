@@ -77,3 +77,127 @@ TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGDTest]")
     REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
+
+/**
+ * Run big-batch SGD using BBS_BB on logistic regression and make sure the
+ * results are acceptable.  Use arma::fmat as the objective type.
+ */
+TEST_CASE("BBSBBLogisticRegressionFMatTest", "[BigBatchSGDTest]")
+{
+  arma::fmat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run big-batch SGD with a couple of batch sizes.
+  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
+  {
+    BBS_BB bbsgd(batchSize, 0.01, 0.1, 8000, 1e-4);
+
+    LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
+    arma::fmat coordinates = lr.GetInitialPoint();
+    bbsgd.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}
+
+/**
+ * Run big-batch SGD using BBS_Armijo on logistic regression and make sure the
+ * results are acceptable.  Use arma::fmat as the objective type.
+ */
+TEST_CASE("BBSArmijoLogisticRegressionFMatTest", "[BigBatchSGDTest]")
+{
+  arma::fmat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run big-batch SGD with a couple of batch sizes.
+  for (size_t batchSize = 30; batchSize < 40; batchSize += 1)
+  {
+    BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 8000, 1e-4);
+
+    LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
+    arma::fmat coordinates = lr.GetInitialPoint();
+    bbsgd.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}
+
+/**
+ * Run big-batch SGD using BBS_BB on logistic regression and make sure the
+ * results are acceptable.  Use arma::sp_mat as the objective type.
+ */
+TEST_CASE("BBSBBLogisticRegressionSpMatTest", "[BigBatchSGDTest]")
+{
+  arma::sp_mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run big-batch SGD with a couple of batch sizes.
+  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
+  {
+    BBS_BB bbsgd(batchSize, 0.01, 0.1, 8000, 1e-4);
+
+    LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
+    arma::sp_mat coordinates = lr.GetInitialPoint();
+    bbsgd.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}
+
+/**
+ * Run big-batch SGD using BBS_Armijo on logistic regression and make sure the
+ * results are acceptable.  Use arma::sp_mat as the objective type.
+ */
+TEST_CASE("BBSArmijoLogisticRegressionSpMatTest", "[BigBatchSGDTest]")
+{
+  arma::sp_mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run big-batch SGD with a couple of batch sizes.
+  for (size_t batchSize = 30; batchSize < 40; batchSize += 1)
+  {
+    BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 8000, 1e-4);
+
+    LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
+    arma::sp_mat coordinates = lr.GetInitialPoint();
+    bbsgd.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}

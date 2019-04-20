@@ -4,17 +4,18 @@ set(ENSMALLEN_TESTS_SOURCES
     main.cpp
     ada_delta_test.cpp
     ada_grad_test.cpp
-#    adam_test.cpp
+    adam_test.cpp
 #    aug_lagrangian_test.cpp
-#    bigbatch_sgd_test.cpp
+    bigbatch_sgd_test.cpp
 #    cmaes_test.cpp
 #    cne_test.cpp
-#    eve_test.cpp
+    eve_test.cpp
 #    frankwolfe_test.cpp
+    ftml_test.cpp
 #    function_test.cpp
 #    gradient_descent_test.cpp
 #    grid_search_test.cpp
-#    iqn_test.cpp
+    iqn_test.cpp
 #    katyusha_test.cpp
     lbfgs_test.cpp
 #    line_search_test.cpp

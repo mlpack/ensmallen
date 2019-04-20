@@ -58,7 +58,7 @@ namespace ens {
  *   title   = {Big Batch {SGD:} Automated Inference using Adaptive Batch
  *              Sizes},
  *   author  = {Soham De and Abhay Kumar Yadav and David W. Jacobs and
-                Tom Goldstein},
+ *              Tom Goldstein},
  *   journal = {CoRR},
  *   year    = {2017},
  *   url     = {http://arxiv.org/abs/1610.05792},
@@ -108,9 +108,11 @@ class BigBatchSGD
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate);
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }

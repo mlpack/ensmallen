@@ -90,12 +90,17 @@ class Eve
    * algorithm, and the final objective value is returned.
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of the parameters matrix.
+   * @tparam GradType Type of the gradient matrix.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
