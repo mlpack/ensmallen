@@ -69,11 +69,13 @@ class AdaptiveStepsize
    *        given iteration.
    * @param reset Reset the step size decay parameter.
    */
-  template<typename DecomposableFunctionType>
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType>
   void Update(DecomposableFunctionType& function,
               double& stepSize,
-              arma::mat& iterate,
-              const arma::mat& gradient,
+              MatType& iterate,
+              const GradType& gradient,
               const double gradientNorm,
               const double sampleVariance,
               const size_t offset,
@@ -136,20 +138,24 @@ class AdaptiveStepsize
    * @param offset The batch offset to be used for the given iteration.
    * @param backtrackingBatchSize The backtracking batch size.
    */
-  template<typename DecomposableFunctionType>
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType>
   void Backtracking(DecomposableFunctionType& function,
                     double& stepSize,
-                    const arma::mat& iterate,
-                    const arma::mat& gradient,
+                    const MatType& iterate,
+                    const GradType& gradient,
                     const double gradientNorm,
                     const size_t offset,
                     const size_t backtrackingBatchSize)
   {
-    double overallObjective = function.Evaluate(iterate, offset,
-        backtrackingBatchSize);
+    typedef typename MatType::elem_type ElemType;
 
-    arma::mat iterateUpdate = iterate - (stepSize * gradient);
-    double overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
+    ElemType overallObjective = function.Evaluate(iterate,
+        offset, backtrackingBatchSize);
+
+    MatType iterateUpdate = iterate - (stepSize * gradient);
+    ElemType overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
         backtrackingBatchSize);
 
     while (overallObjectiveUpdate >

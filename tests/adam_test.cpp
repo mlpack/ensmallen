@@ -36,6 +36,52 @@ TEST_CASE("AdamSphereFunctionTest", "[AdamTest]")
 }
 
 /**
+ * Test the Adam optimizer on the Sphere function with arma::fmat.
+ */
+TEST_CASE("AdamSphereFunctionTestFMat", "[AdamTest]")
+{
+  SphereFunction f(2);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+}
+
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
+ */
+TEST_CASE("AdamSphereFunctionTestSpMat", "[AdamTest]")
+{
+  SphereFunction f(2);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+}
+
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat but a
+ * dense (arma::mat) gradient.
+ */
+TEST_CASE("AdamSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
+{
+  SphereFunction f(2);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+}
+
+/**
  * Test the Adam optimizer on the Wood function.
  */
 TEST_CASE("AdamStyblinskiTangFunctionTest", "[AdamTest]")
@@ -61,8 +107,9 @@ TEST_CASE("AdamMcCormickFunctionTest", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-0.547).epsilon(0.03)); // 3% error tolerance.
-  REQUIRE(coordinates[1] == Approx(-1.547).epsilon(0.03)); // 3% error tolerance.
+  // 3% error tolerance.
+  REQUIRE(coordinates[0] == Approx(-0.547).epsilon(0.03));
+  REQUIRE(coordinates[1] == Approx(-1.547).epsilon(0.03));
 }
 
 /**
@@ -77,8 +124,10 @@ TEST_CASE("AdamMatyasFunctionTest", "[AdamTest]")
   optimizer.Optimize(f, coordinates);
 
   // 3% error tolerance.
-  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) == Approx(0.0).epsilon(0.003));
-  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) == Approx(0.0).epsilon(0.003));
+  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) ==
+      Approx(0.0).epsilon(0.003));
+  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) ==
+      Approx(0.0).epsilon(0.003));
 }
 
 /**
@@ -93,8 +142,10 @@ TEST_CASE("AdamEasomFunctionTest", "[AdamTest]")
   optimizer.Optimize(f, coordinates);
 
   // 5% error tolerance.
-  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) == Approx(3.14).epsilon(0.005));
-  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) == Approx(3.14).epsilon(0.005));
+  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) ==
+      Approx(3.14).epsilon(0.005));
+  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) ==
+      Approx(3.14).epsilon(0.005));
 }
 
 /**
@@ -158,6 +209,52 @@ TEST_CASE("SimpleAMSGradTestFunction", "[AdamTest]")
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.3));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.3));
   REQUIRE(coordinates[2] == Approx(0.0).margin(0.3));
+}
+
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::fmat.
+ */
+TEST_CASE("AMSGradSphereFunctionTestFMat", "[AdamTest]")
+{
+  SphereFunction f(2);
+  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
+
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+}
+
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
+ */
+TEST_CASE("AMSGradSphereFunctionTestSpMat", "[AdamTest]")
+{
+  SphereFunction f(2);
+  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+}
+
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat but a
+ * dense (arma::mat) gradient.
+ */
+TEST_CASE("AMSGradSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
+{
+  SphereFunction f(2);
+  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
 }
 
 /**
