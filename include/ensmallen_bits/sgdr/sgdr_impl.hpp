@@ -26,6 +26,7 @@ SGDR<UpdatePolicyType>::SGDR(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
+    const bool exactObjective,
     const UpdatePolicyType& updatePolicy,
     const bool resetPolicy) :
     batchSize(batchSize),
@@ -34,6 +35,7 @@ SGDR<UpdatePolicyType>::SGDR(
                             maxIterations,
                             tolerance,
                             shuffle,
+                            exactObjective,
                             updatePolicy,
                             CyclicalDecay(
                                 epochRestart,

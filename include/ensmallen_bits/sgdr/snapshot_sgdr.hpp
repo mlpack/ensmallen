@@ -80,6 +80,9 @@ class SnapshotSGDR
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the mini-batch order is shuffled; otherwise, each
    *        mini-batch is visited in linear order.
+   * @param exactObjective Flag that determines whether actual objective over
+   *                       entire training set is calculated or not after
+   *                       training.
    * @param snapshots Maximum number of snapshots.
    * @param accumulate Accumulate the snapshot parameter (default true).
    * @param updatePolicy Instantiated update policy used to adjust the given
@@ -94,6 +97,7 @@ class SnapshotSGDR
                const size_t maxIterations = 100000,
                const double tolerance = 1e-5,
                const bool shuffle = true,
+               const bool exactObjective = false,
                const size_t snapshots = 5,
                const bool accumulate = true,
                const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
@@ -135,6 +139,11 @@ class SnapshotSGDR
   bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
+
+  //! Get whether or not the actual objective is calculated after training.
+  bool ExactObjective() const { return optimizer.ExactObjective(); }
+  //! Modify whether or not the actual objective is calculated after training.
+  bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get the snapshots.
   std::vector<arma::mat> Snapshots() const
@@ -179,6 +188,10 @@ class SnapshotSGDR
 
   //! Locally-stored optimizer instance.
   OptimizerType optimizer;
+
+  //! Controls whether or not the actual Objective value is calculated after
+  //! training.
+  bool exactObjective;
 };
 
 } // namespace ens
