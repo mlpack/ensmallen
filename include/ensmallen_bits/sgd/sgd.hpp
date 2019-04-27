@@ -83,6 +83,9 @@ class SGD
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *     function is visited in linear order.
+   * @param exactObjective Flag that determines whether actual objective over
+   *                       entire training set is calculated or not after
+   *                       training.
    * @param updatePolicy Instantiated update policy used to adjust the given
    *                     parameters.
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
@@ -94,6 +97,7 @@ class SGD
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
+      const bool exactObjective = false,
       const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
       const DecayPolicyType& decayPolicy = DecayPolicyType(),
       const bool resetPolicy = true);
@@ -136,6 +140,11 @@ class SGD
   bool Shuffle() const { return shuffle; }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
+
+  //! Get whether or not the actual objective is calculated after training.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify whether or not the actual objective is calculated after training.
+  bool& ExactObjective() { return exactObjective; }
 
   //! Get whether or not the update policy parameters
   //! are reset before Optimize call.
@@ -184,6 +193,10 @@ class SGD
   //! Flag indicating whether the update policy
   //! parameters have been initialized.
   bool isInitialized;
+
+  //! Controls whether or not the actual Objective value is calculated after
+  //! training.
+  bool exactObjective;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;

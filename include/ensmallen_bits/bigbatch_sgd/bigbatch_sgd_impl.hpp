@@ -26,13 +26,15 @@ BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
     const double batchDelta,
     const size_t maxIterations,
     const double tolerance,
-    const bool shuffle) :
+    const bool shuffle,
+    const bool exactObjective) :
     batchSize(batchSize),
     stepSize(stepSize),
     batchDelta(batchDelta),
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
+    exactObjective(exactObjective),
     updatePolicy(UpdatePolicyType())
 { /* Nothing to do. */ }
 
@@ -186,12 +188,15 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
   Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
       << "reached; terminating optimization." << std::endl;
 
-  // Calculate final objective.
-  overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; i += batchSize)
+  // Calculate final objective if exactObjective is set to true.
+  if (exactObjective)
   {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective = 0;
+    for (size_t i = 0; i < numFunctions; i += batchSize)
+    {
+      const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+      overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    }
   }
   return overallObjective;
 }
