@@ -91,13 +91,17 @@ class BigBatchSGD
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the batch order is shuffled; otherwise, each
    *        batch is visited in linear order.
+   * @param exactObjective Flag that determines whether actual objective over
+   *                       entire training set is calculated or not after
+   *                       training.
    */
   BigBatchSGD(const size_t batchSize = 1000,
               const double stepSize = 0.01,
               const double batchDelta = 0.1,
               const size_t maxIterations = 100000,
               const double tolerance = 1e-5,
-              const bool shuffle = true);
+              const bool shuffle = true,
+              const bool exactObjective = false);
   /**
    * Optimize the given function using big-batch SGD.  The given starting point
    * will be modified to store the finishing point of the algorithm, and the
@@ -147,6 +151,11 @@ class BigBatchSGD
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
+  //! Get the exactObjective parameter.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify the exactObjective parameter.
+  bool& ExactObjective() { return exactObjective; }
+
  private:
   //! The size of the current batch.
   size_t batchSize;
@@ -169,6 +178,10 @@ class BigBatchSGD
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
+
+  //! Controls whether or not the actual Objective value is calculated after
+  //! training.
+  bool exactObjective;
 };
 
 using BBS_Armijo = BigBatchSGD<BacktrackingLineSearch>;
