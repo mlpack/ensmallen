@@ -56,6 +56,9 @@ class WNGrad
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
+   * @param exactObjective Flag that determines whether actual objective over
+   *                       entire training set is calculated or not after
+   *                       training.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
    */
@@ -64,6 +67,7 @@ class WNGrad
          const size_t maxIterations = 100000,
          const double tolerance = 1e-5,
          const bool shuffle = true,
+         const bool exactObjective = false,
          const bool resetPolicy = true);
 
   /**
@@ -106,6 +110,11 @@ class WNGrad
   bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
+
+  //! Get whether or not the actual objective is calculated after training.
+  bool ExactObjective() const { return optimizer.ExactObjective(); }
+  //! Modify whether or not the actual objective is calculated after training.
+  bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get whether or not the update policy parameters
   //! are reset before Optimize call.

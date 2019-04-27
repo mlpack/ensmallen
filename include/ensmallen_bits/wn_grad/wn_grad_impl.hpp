@@ -23,12 +23,14 @@ inline WNGrad::WNGrad(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
+    const bool exactObjective,
     const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
+              exactObjective,
               WNGradUpdate(),
               NoDecay(),
               resetPolicy)
