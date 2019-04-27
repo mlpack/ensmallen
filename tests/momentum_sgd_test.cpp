@@ -20,7 +20,7 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
 {
   SGDTestFunction f;
   MomentumUpdate momentumUpdate(0.7);
-  MomentumSGD s(0.0003, 1, 2500000, 1e-9, true, momentumUpdate);
+  MomentumSGD s(0.0003, 1, 2500000, 1e-9, true, true, momentumUpdate);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
@@ -32,7 +32,7 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
 
   // Compare with SGD with vanilla update.
   SGDTestFunction f1;
-  StandardSGD s1(0.0003, 1, 2500000, 1e-9, true);
+  StandardSGD s1(0.0003, 1, 2500000, 1e-9, true, true);
 
   arma::mat coordinates1 = f1.GetInitialPoint();
   double result1 = s1.Optimize(f1, coordinates1);
@@ -54,7 +54,7 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGDTest]")
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
     MomentumUpdate momentumUpdate(0.4);
-    MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate);
+    MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, true, momentumUpdate);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);

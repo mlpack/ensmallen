@@ -30,12 +30,14 @@ AdamType<UpdateRule>::AdamType(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
+    const bool exactObjective,
     const bool resetPolicy) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
+              exactObjective,
               UpdateRule(epsilon, beta1, beta2),
               NoDecay(),
               resetPolicy)
