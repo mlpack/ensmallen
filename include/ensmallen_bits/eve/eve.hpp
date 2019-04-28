@@ -72,6 +72,9 @@ class Eve
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
+   * @param exactObjective Flag that determines whether actual objective over
+   *                       entire training set is calculated or not after
+   *                       training.
    */
   Eve(const double stepSize = 0.001,
       const size_t batchSize = 32,
@@ -82,7 +85,8 @@ class Eve
       const double clip = 10,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
-      const bool shuffle = true);
+      const bool shuffle = true,
+      const bool exactObjective = false);
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given
@@ -147,6 +151,11 @@ class Eve
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the actual objective is calculated after training.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify whether or not the actual objective is calculated after training.
+  bool& ExactObjective() { return exactObjective; }
+
  private:
   //! The step size for each example.
   double stepSize;
@@ -178,6 +187,10 @@ class Eve
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Controls whether or not the actual Objective value is calculated after
+  //! training.
+  bool exactObjective;
 };
 
 } // namespace ens

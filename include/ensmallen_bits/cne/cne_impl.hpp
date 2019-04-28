@@ -25,13 +25,15 @@ inline CNE::CNE(const size_t populationSize,
                 const double mutationProb,
                 const double mutationSize,
                 const double selectPercent,
-                const double tolerance) :
+                const double tolerance,
+                const bool exactObjective) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     mutationProb(mutationProb),
     mutationSize(mutationSize),
     selectPercent(selectPercent),
     tolerance(tolerance),
+    exactObjective(exactObjective),
     numElite(0),
     elements(0)
 { /* Nothing to do here. */ }
@@ -119,7 +121,11 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   // Set the best candidate into the network parameters.
   iterate = population.slice(index(0));
 
-  return function.Evaluate(iterate);
+  if (exactObjective)
+  {
+    lastBestFitness = function.Evaluate(iterate);
+  }
+  return lastBestFitness;
 }
 
 //! Reproduce candidates to create the next generation.
