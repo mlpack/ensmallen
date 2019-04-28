@@ -96,8 +96,12 @@ inline double SPSA::Optimize(
     overallObjective = function.Evaluate(iterate);
   }
 
-  // Calculate final objective.
-  return function.Evaluate(iterate);
+  // Calculate final objective if exactObjective is set to true.
+  if (exactObjective)
+  {
+    overallObjective = function.Evaluate(iterate);
+  }
+  return overallObjective;
 }
 
 } // namespace ens
