@@ -87,13 +87,17 @@ class CNE
    *     the next generation.
    * @param tolerance The final value of the objective function for termination.
    *     If set to negative value, tolerance is not considered.
+   * @param exactObjective Flag that determines whether actual objective over
+   *                       entire training set is calculated or not after
+   *                       training.
    */
   CNE(const size_t populationSize = 500,
       const size_t maxGenerations = 5000,
       const double mutationProb = 0.1,
       const double mutationSize = 0.02,
       const double selectPercent = 0.2,
-      const double tolerance = 1e-5);
+      const double tolerance = 1e-5,
+      const bool exactObjective = false);
 
   /**
    * Optimize the given function using CNE. The given
@@ -137,6 +141,11 @@ class CNE
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance.
   double& Tolerance() { return tolerance; }
+
+  //! Get whether or not the actual objective is calculated after training.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify whether or not the actual objective is calculated after training.
+  bool& ExactObjective() { return exactObjective; }
 
  private:
   //! Reproduce candidates to create the next generation.
@@ -194,6 +203,10 @@ class CNE
 
   //! Store the number of elements in a cube slice or a matrix column.
   size_t elements;
+
+  //! Controls whether or not the actual Objective value is calculated after
+  //! training.
+  bool exactObjective;
 };
 
 } // namespace ens
