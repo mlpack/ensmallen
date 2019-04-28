@@ -65,6 +65,9 @@ class SARAHType
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *     function is visited in linear order.
+   * @param exactObjective Flag that determines whether actual objective over
+   *                       entire training set is calculated or not after
+   *                       training.
    * @param updatePolicy Instantiated update policy used to adjust the given
    *     parameters.
    */
@@ -74,6 +77,7 @@ class SARAHType
             const size_t innerIterations = 0,
             const double tolerance = 1e-5,
             const bool shuffle = true,
+            const bool exactObjective = false,
             const UpdatePolicyType& updatePolicy = UpdatePolicyType());
 
   /**
@@ -119,6 +123,11 @@ class SARAHType
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the actual objective is calculated after training.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify whether or not the actual objective is calculated after training.
+  bool& ExactObjective() { return exactObjective; }
+
   //! Get the update policy.
   const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
   //! Modify the update policy.
@@ -143,6 +152,10 @@ class SARAHType
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Controls whether or not the actual Objective value is calculated after
+  //! training.
+  bool exactObjective;
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;

@@ -25,11 +25,13 @@ SCD<DescentPolicyType>::SCD(
     const size_t maxIterations,
     const double tolerance,
     const size_t updateInterval,
+    const bool exactObjective,
     const DescentPolicyType descentPolicy) :
     stepSize(stepSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     updateInterval(updateInterval),
+    exactObjective(exactObjective),
     descentPolicy(descentPolicy)
 { /* Nothing to do */ }
 
@@ -89,8 +91,12 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
   Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
-  // Calculate and return final objective.
-  return function.Evaluate(iterate);
+  // Calculate and final objective if exactObjective is set to true.
+  if (exactObjective)
+  {
+    lastObjective = function.Evaluate(iterate);
+  }
+  return lastObjective;
 }
 
 } // namespace ens
