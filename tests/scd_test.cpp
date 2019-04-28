@@ -30,7 +30,7 @@ TEST_CASE("PreCalcSCDTest","[SCDTest]")
 
   LogisticRegressionFunction<arma::mat> f(predictors, responses, 0.0001);
 
-  SCD<> s(0.02, 60000, 1e-5);
+  SCD<> s(0.02, 60000, 1e-5, 1e3, true);
   arma::mat iterate = f.InitialPoint();
 
   double objective = s.Optimize(f, iterate);
@@ -47,7 +47,7 @@ TEST_CASE("DisjointFeatureTest","[SCDTest]")
   // The test function for parallel SGD should work with SCD, as the gradients
   // of the individual functions are projections into the ith dimension.
   SparseTestFunction f;
-  SCD<> s(0.4);
+  SCD<> s(0.4, 100000, 1e-5, 1e3, true);
 
   arma::mat iterate = f.GetInitialPoint();
 
