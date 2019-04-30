@@ -18,7 +18,7 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Train and test a logistic regression function using CNE optimizer
+ * Train and test a logistic regression function using CNE optimizer.
  */
 TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
 {
@@ -31,6 +31,32 @@ TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
 
   CNE opt(200, 10000, 0.2, 0.2, 0.3, 65, -1);
   arma::mat coordinates = lr.GetInitialPoint();
+  opt.Optimize(lr, coordinates);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+      coordinates);
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+}
+
+/**
+ * Train and test a logistic regression function using CNE optimizer.  Use
+ * arma::fmat.
+ */
+TEST_CASE("CNELogisticRegressionFMatTest", "[CNETest]")
+{
+  arma::fmat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+  LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
+
+  CNE opt(200, 10000, 0.2, 0.2, 0.3, 65, -1);
+  arma::fmat coordinates = lr.GetInitialPoint();
   opt.Optimize(lr, coordinates);
 
   // Ensure that the error is close to zero.

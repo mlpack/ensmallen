@@ -26,9 +26,9 @@ inline AugLagrangian::AugLagrangian() :
   lbfgs.MaxIterations() = 1000;
 }
 
-template<typename LagrangianFunctionType>
+template<typename LagrangianFunctionType, typename MatType, typename GradType>
 bool AugLagrangian::Optimize(LagrangianFunctionType& function,
-                             arma::mat& coordinates,
+                             MatType& coordinates,
                              const arma::vec& initLambda,
                              const double initSigma,
                              const size_t maxIterations)
@@ -42,9 +42,9 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
   return Optimize(augfunc, coordinates, maxIterations);
 }
 
-template<typename LagrangianFunctionType>
+template<typename LagrangianFunctionType, typename MatType, typename GradType>
 bool AugLagrangian::Optimize(LagrangianFunctionType& function,
-                             arma::mat& coordinates,
+                             MatType& coordinates,
                              const size_t maxIterations)
 {
   // If the user did not specify the right size for sigma and lambda, we will
@@ -62,24 +62,27 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
   }
 }
 
-template<typename LagrangianFunctionType>
+template<typename LagrangianFunctionType, typename MatType, typename GradType>
 bool AugLagrangian::Optimize(
     AugLagrangianFunction<LagrangianFunctionType>& augfunc,
-    arma::mat& coordinates,
+    MatType& coordinates,
     const size_t maxIterations)
 {
-  traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType>();
+  // TODO:
+  //traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType>();
+
+  typedef typename MatType::elem_type ElemType;
 
   LagrangianFunctionType& function = augfunc.Function();
 
   // Ensure that we update lambda immediately.
-  double penaltyThreshold = DBL_MAX;
+  ElemType penaltyThreshold = std::numeric_limits<ElemType>::max();
 
   // Track the last objective to compare for convergence.
-  double lastObjective = function.Evaluate(coordinates);
+  ElemType lastObjective = function.Evaluate(coordinates);
 
   // Then, calculate the current penalty.
-  double penalty = 0;
+  ElemType penalty = 0;
   for (size_t i = 0; i < function.NumConstraints(); i++)
     penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
 
@@ -115,7 +118,7 @@ bool AugLagrangian::Optimize(
     // term is too high, and we update lambda otherwise.
 
     // First, calculate the current penalty.
-    double penalty = 0;
+    ElemType penalty = 0;
     for (size_t i = 0; i < function.NumConstraints(); i++)
     {
       penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);

@@ -21,7 +21,7 @@ TEST_CASE("SimpleGDTestFunction", "[GradientDescentTest]")
   GDTestFunction f;
   GradientDescent s(0.01, 5000000, 1e-9);
 
-  arma::vec coordinates = f.GetInitialPoint();
+  arma::mat coordinates = f.GetInitialPoint<arma::mat>();
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -37,10 +37,25 @@ TEST_CASE("GDRosenbrockTest", "[GradientDescentTest]")
 
   GradientDescent s(0.001, 0, 1e-15);
 
-  arma::mat coordinates = f.GetInitialPoint();
+  arma::mat coordinates = f.GetInitialPoint<arma::mat>();
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
   for (size_t j = 0; j < 2; ++j)
     REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+}
+
+TEST_CASE("GDRosenbrockFMatTest", "[GradientDescentTest]")
+{
+  // Create the Rosenbrock function.
+  RosenbrockFunction f;
+
+  GradientDescent s(0.001, 0, 1e-15);
+
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+  float result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0.0).margin(1e-5));
+  for (size_t j = 0; j < 2; ++j)
+    REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-3));
 }

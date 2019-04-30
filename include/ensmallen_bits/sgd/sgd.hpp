@@ -150,10 +150,24 @@ class SGD
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
+  //! Get the instantiated update policy type.  Be sure to check its type with
+  //! Has() before using!
+  const Any& InstUpdatePolicy() const { return instUpdatePolicy; }
+  //! Modify the instantiated update policy type.  Be sure to check its type
+  //! with Has() before using!
+  Any& InstUpdatePolicy() { return instUpdatePolicy; }
+
   //! Get the step size decay policy.
   const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
   //! Modify the step size decay policy.
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
+
+  //! Get the instantiated decay policy type.  Be sure to check its type with
+  //! Has() before using!
+  const Any& InstDecayPolicy() const { return instDecayPolicy; }
+  //! Modify the instantiated decay policy type.  Be sure to check its type with
+  //! Has() before using!
+  Any& InstDecayPolicy() { return instDecayPolicy; }
 
  private:
   //! The step size for each example.
@@ -188,6 +202,8 @@ class SGD
 
   //! The initialized update policy.
   Any instUpdatePolicy;
+  //! The initialized decay policy.
+  Any instDecayPolicy;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;

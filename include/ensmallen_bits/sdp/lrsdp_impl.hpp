@@ -17,7 +17,7 @@
 
 namespace ens {
 
-template <typename SDPType>
+template<typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
                       const size_t numDenseConstraints,
                       const arma::mat& initialPoint,
@@ -26,9 +26,13 @@ LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
     maxIterations(maxIterations)
 { }
 
-template <typename SDPType>
-double LRSDP<SDPType>::Optimize(arma::mat& coordinates)
+template<typename SDPType>
+template<typename MatType>
+typename MatType::elem_type LRSDP<SDPType>::Optimize(MatType& coordinates)
 {
+  rrt.Clean();
+  rrt.Set<MatType>(coordinates * coordinates.t());
+
   augLag.Sigma() = 10;
   augLag.Optimize(function, coordinates, maxIterations);
 

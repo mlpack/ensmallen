@@ -90,12 +90,14 @@ class SA
    * the final objective value is returned.
    *
    * @tparam FunctionType Type of function to optimize.
+   * @tparam MatType Type of objective matrix.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename FunctionType>
-  double Optimize(FunctionType& function, arma::mat& iterate);
+  template<typename FunctionType, typename MatType>
+  typename MatType::elem_type Optimize(FunctionType& function,
+                                       MatType& iterate);
 
   //! Get the temperature.
   double Temperature() const { return temperature; }
@@ -170,12 +172,12 @@ class SA
    * @param sweepCounter Current counter representing how many sweeps have been
    *      completed.
    */
-  template<typename FunctionType>
+  template<typename FunctionType, typename MatType>
   void GenerateMove(FunctionType& function,
-                    arma::mat& iterate,
-                    arma::mat& accept,
-                    arma::mat& moveSize,
-                    double& energy,
+                    MatType& iterate,
+                    MatType& accept,
+                    MatType& moveSize,
+                    typename MatType::elem_type& energy,
                     size_t& idx,
                     size_t& sweepCounter);
 
@@ -197,7 +199,8 @@ class SA
    * @param nMoves Number of moves since last call.
    * @param accept Matrix representing which parameters have had accepted moves.
    */
-  void MoveControl(const size_t nMoves, arma::mat& accept, arma::mat& moveSize);
+  template<typename MatType>
+  void MoveControl(const size_t nMoves, MatType& accept, MatType& moveSize);
 };
 
 } // namespace ens

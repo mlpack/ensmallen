@@ -127,8 +127,11 @@ class SVRGType
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -206,6 +209,14 @@ class SVRGType
   //! Flag indicating whether update policy
   //! should be reset before running optimization.
   bool resetPolicy;
+
+  //! Whether the instantiated policies are initialized.
+  bool isInitialized;
+
+  //! Instantiated update policy.
+  Any instUpdatePolicy;
+  //! Instantiated decay policy.
+  Any instDecayPolicy;
 };
 
 // Convenience typedefs.

@@ -15,9 +15,10 @@
 
 using namespace ens;
 using namespace ens::test;
-/*
-* Tests the Nesterov Momentum SGD update policy.
-*/
+
+/**
+ * Tests the Nesterov Momentum SGD update policy.
+ */
 TEST_CASE("NesterovMomentumSGDSpeedUpTestFunction", "[NesterovMomentumSGDTest]")
 {
   SGDTestFunction f;
@@ -34,9 +35,9 @@ TEST_CASE("NesterovMomentumSGDSpeedUpTestFunction", "[NesterovMomentumSGDTest]")
   REQUIRE(coordinates[2] == Approx(0.0).margin(1e-6));
 }
 
-/*
-* Tests the Nesterov Momentum SGD with Generalized Rosenbrock Test.
-*/
+/**
+ * Tests the Nesterov Momentum SGD with Generalized Rosenbrock Test.
+ */
 TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockTest", "[NesterovMomentumSGDTest]")
 {
   // Loop over several variants.
@@ -48,6 +49,54 @@ TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockTest", "[NesterovMomentumSGDT
     NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate);
 
     arma::mat coordinates = f.GetInitialPoint();
+    double result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-4));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+  }
+}
+
+/**
+ * Tests the Nesterov Momentum SGD with Generalized Rosenbrock Test.  Uses
+ * arma::fmat.
+ */
+TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockFMatTest",
+          "[NesterovMomentumSGDTest]")
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+    NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
+    NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate);
+
+    arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+    float result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-2));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-3));
+  }
+}
+
+/**
+ * Tests the Nesterov Momentum SGD with Generalized Rosenbrock Test.  Uses
+ * arma::sp_mat.
+ */
+TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockSpMatTest",
+          "[NesterovMomentumSGDTest]")
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+    NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
+    NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate);
+
+    arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
     double result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-4));

@@ -39,28 +39,32 @@ SARAHType<UpdatePolicyType>::SARAHType(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
-double SARAHType<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+template<typename DecomposableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function,
+    MatType& iterate)
 {
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+  typedef typename MatType::elem_type ElemType;
+
+  //traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
+  //  GradType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
 
   // To keep track of where we are and how things are going.
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
 
   // Set epoch length to n / b if the user asked for.
   if (innerIterations == 0)
     innerIterations = numFunctions;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat v(iterate.n_rows, iterate.n_cols);
-  arma::mat gradient0(iterate.n_rows, iterate.n_cols);
-  arma::mat iterate0;
+  GradType gradient(iterate.n_rows, iterate.n_cols);
+  GradType v(iterate.n_rows, iterate.n_cols);
+  GradType gradient0(iterate.n_rows, iterate.n_cols);
+  MatType iterate0;
 
   // Find the number of batches.
   size_t numBatches = numFunctions / batchSize;

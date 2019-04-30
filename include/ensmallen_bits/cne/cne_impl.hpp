@@ -39,9 +39,20 @@ inline CNE::CNE(const size_t populationSize,
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template<typename DecomposableFunctionType>
-double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+template<typename DecomposableFunctionType, typename MatType>
+typename MatType::elem_type CNE::Optimize(DecomposableFunctionType& function,
+                                          MatType& iterate)
 {
+  // TODO: check function type
+  // TODO: disable sp_mat
+
+  typedef typename MatType::elem_type ElemType;
+
+  // Vector of fitness values corresponding to each candidate.
+  MatType fitnessValues;
+  //! Index of sorted fitness values.
+  arma::uvec index;
+
   // Make sure for evolution to work at least four candidates are present.
   if (populationSize < 4)
   {
@@ -71,12 +82,14 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   }
 
   // Set the population size and fill random values [0,1].
-  population = arma::randu(iterate.n_rows, iterate.n_cols, populationSize);
+  std::vector<MatType> population;
+  for (size_t i = 0 ; i < populationSize; ++i)
+    population.push_back(arma::randu<MatType>(iterate.n_rows, iterate.n_cols));
 
-  // Store the number of elements in a cube slice or a matrix column.
-  elements = population.n_rows * population.n_cols;
+  // Store the number of elements in the objective matrix.
+  elements = iterate.n_rows * iterate.n_cols;
 
-  // initializing helper variables.
+  // Initialize helper variables.
   fitnessValues.set_size(populationSize);
 
   Info << "CNE initialized successfully. Optimization started."
@@ -92,7 +105,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
     for (size_t i = 0; i < populationSize; i++)
     {
        // Select a candidate and insert the parameters in the function.
-       iterate = population.slice(i);
+       iterate = population[i];
 
        // Find fitness of candidate.
        fitnessValues[i] = function.Evaluate(iterate);
@@ -102,7 +115,7 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
         << fitnessValues.min() << std::endl;
 
     // Create next generation of species.
-    Reproduce();
+    Reproduce(population, fitnessValues, index);
 
     // Check for termination criteria.
     if (tolerance >= fitnessValues.min())
@@ -126,13 +139,16 @@ double CNE::Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   }
 
   // Set the best candidate into the network parameters.
-  iterate = population.slice(index(0));
+  iterate = population[index(0)];
 
   return function.Evaluate(iterate);
 }
 
 //! Reproduce candidates to create the next generation.
-inline void CNE::Reproduce()
+template<typename MatType>
+inline void CNE::Reproduce(std::vector<MatType>& population,
+                           const MatType& fitnessValues,
+                           arma::uvec& index)
 {
   // Sort fitness values. Smaller fitness value means better performance.
   index = arma::sort_index(fitnessValues);
@@ -167,54 +183,57 @@ inline void CNE::Reproduce()
 
     // Parents generate 2 children replacing the dropped-out candidates.
     // Also finding the index of these candidates in the population matrix.
-    Crossover(index[mom], index[dad], index[i], index[i + 1]);
+    Crossover(population, index[mom], index[dad], index[i], index[i + 1]);
   }
 
   // Mutating the weights with small noise values.
   // This is done to bring change in the next generation.
-  Mutate();
+  Mutate(population, index);
 }
 
 //! Crossover parents to create new children.
-inline void CNE::Crossover(const size_t mom,
+template<typename MatType>
+inline void CNE::Crossover(std::vector<MatType>& population,
+                           const size_t mom,
                            const size_t dad,
                            const size_t child1,
                            const size_t child2)
 {
   // Replace the candidates with parents at their place.
-  population.slice(child1) = population.slice(mom);
-  population.slice(child2) = population.slice(dad);
-
-  // Preallocate random selection vector (values between 0 and 1).
-  arma::vec selection = arma::randu(elements);
+  population[child1] = population[mom];
+  population[child2] = population[dad];
 
   // Randomly alter mom and dad genome weights to get two different children.
   for (size_t i = 0; i < elements; i++)
   {
     // Using it to alter the weights of the children.
-    if (selection(i) > 0.5)
+    const double random = arma::randu<typename MatType::elem_type>();
+    if (random > 0.5)
     {
-      population.slice(child1)(i) = population.slice(mom)(i);
-      population.slice(child2)(i) = population.slice(dad)(i);
+      population[child1](i) = population[mom](i);
+      population[child2](i) = population[dad](i);
     }
     else
     {
-      population.slice(child1)(i) = population.slice(dad)(i);
-      population.slice(child2)(i) = population.slice(mom)(i);
+      population[child1](i) = population[dad](i);
+      population[child2](i) = population[mom](i);
     }
   }
 }
 
 //! Modify weights with some noise for the evolution of next generation.
-inline void CNE::Mutate()
+template<typename MatType>
+inline void CNE::Mutate(std::vector<MatType>& population, arma::uvec& index)
 {
   // Mutate the whole matrix with the given rate and probability.
   // The best candidate is not altered.
   for (size_t i = 1; i < populationSize; i++)
   {
-    population.slice(index(i)) += (arma::randu(
-        population.n_rows, population.n_cols) < mutationProb) %
-        (mutationSize * arma::randn(population.n_rows, population.n_cols));
+    population[index(i)] += (arma::randu<MatType>(
+        population[index(i)].n_rows, population[index(i)].n_cols) <
+            mutationProb) %
+        (mutationSize * arma::randn<MatType>(population[index(i)].n_rows,
+                                             population[index(i)].n_cols));
   }
 }
 

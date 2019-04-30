@@ -52,9 +52,11 @@ class AugLagrangian
    * @param maxIterations Maximum number of iterations of the Augmented
    *     Lagrangian algorithm.  0 indicates no maximum.
    */
-  template<typename LagrangianFunctionType>
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename GradType = MatType>
   bool Optimize(LagrangianFunctionType& function,
-                arma::mat& coordinates,
+                MatType& coordinates,
                 const size_t maxIterations = 1000);
 
   /**
@@ -72,9 +74,11 @@ class AugLagrangian
    * @param maxIterations Maximum number of iterations of the Augmented
    *     Lagrangian algorithm.  0 indicates no maximum.
    */
-  template<typename LagrangianFunctionType>
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename GradType = MatType>
   bool Optimize(LagrangianFunctionType& function,
-                arma::mat& coordinates,
+                MatType& coordinates,
                 const arma::vec& initLambda,
                 const double initSigma,
                 const size_t maxIterations = 1000);
@@ -110,7 +114,9 @@ class AugLagrangian
    * Internal optimization function: given an initialized AugLagrangianFunction,
    * perform the optimization itself.
    */
-  template<typename LagrangianFunctionType>
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename GradType = MatType>
   bool Optimize(AugLagrangianFunction<LagrangianFunctionType>& augfunc,
                 arma::mat& coordinates,
                 const size_t maxIterations);

@@ -41,13 +41,17 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
 
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType>
-template<typename DecomposableFunctionType>
-double CMAES<SelectionPolicyType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+template<typename DecomposableFunctionType, typename MatType>
+typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
+    DecomposableFunctionType& function, MatType& iterate)
 {
+  // TODO: no sp_mat allowed
+
   // Make sure that we have the methods that we need.  Long name...
-  traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
-      DecomposableFunctionType>();
+  //traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
+  //    DecomposableFunctionType, MatType>();
+
+  typedef typename MatType::elem_type ElemType;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -58,15 +62,15 @@ double CMAES<SelectionPolicyType>::Optimize(
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  arma::vec w = std::log(mu + 0.5) - arma::log(
-    arma::linspace<arma::vec>(0, mu - 1, mu) + 1.0);
-  w /= arma::sum(w);
+  MatType w = std::log(mu + 0.5) - arma::log(
+      arma::linspace<MatType>(0, mu - 1, mu) + 1.0);
+  w /= arma::accu(w);
 
   // Number of effective solutions.
   const double muEffective = 1 / arma::accu(arma::pow(w, 2));
 
   // Step size control parameters.
-  arma::vec sigma(3);
+  MatType sigma(3, 1); // sigma is vector-shaped.
   sigma(0) = 0.3 * (upperBound - lowerBound);
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
@@ -86,37 +90,40 @@ double CMAES<SelectionPolicyType>::Optimize(
       muEffective) / (std::pow(iterate.n_elem + 2, 2) +
       alphaMu * muEffective / 2));
 
-  arma::cube mPosition(iterate.n_rows, iterate.n_cols, 3);
-  mPosition.slice(0) = lowerBound + arma::randu(
+  std::vector<MatType> mPosition(3, MatType(iterate.n_rows, iterate.n_cols));
+  mPosition[0] = lowerBound + arma::randu<MatType>(
       iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
 
-  arma::mat step = arma::zeros(iterate.n_rows, iterate.n_cols);
+  MatType step(iterate.n_rows, iterate.n_cols);
+  step.zeros();
 
   // Calculate the first objective function.
-  double currentObjective = 0;
+  ElemType currentObjective = 0;
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-    currentObjective += function.Evaluate(mPosition.slice(0), f,
-        effectiveBatchSize);
+    currentObjective += function.Evaluate(mPosition[0], f, effectiveBatchSize);
   }
 
-  double overallObjective = currentObjective;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = currentObjective;
+  ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   // Population parameters.
-  arma::cube pStep(iterate.n_rows, iterate.n_cols, lambda);
-  arma::cube pPosition(iterate.n_rows, iterate.n_cols, lambda);
-  arma::vec pObjective(lambda);
-  arma::cube ps = arma::zeros(iterate.n_rows, iterate.n_cols, 2);
-  arma::cube pc = ps;
-  arma::cube C(iterate.n_elem, iterate.n_elem, 2);
-  C.slice(0).eye();
+  std::vector<MatType> pStep(lambda, MatType(iterate.n_rows, iterate.n_cols));
+  std::vector<MatType> pPosition(lambda, MatType(iterate.n_rows, iterate.n_cols));
+  MatType pObjective(lambda, 1); // pObjective is vector-shaped.
+  std::vector<MatType> ps(2, MatType(iterate.n_rows, iterate.n_cols));
+  ps[0].zeros();
+  ps[1].zeros();
+  std::vector<MatType> pc = ps;
+  std::vector<MatType> C(2, MatType(iterate.n_elem, iterate.n_elem));
+  C[0].eye();
 
   // Covariance matrix parameters.
-  arma::vec eigval;
-  arma::mat eigvec;
-  arma::vec eigvalZero = arma::zeros(iterate.n_elem);
+  arma::Col<ElemType> eigval; // TODO: might need a more general type.
+  MatType eigvec;
+  MatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
+  eigvalZero.zeros();
 
   // The current visitation order (sorted by population objectives).
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
@@ -128,97 +135,94 @@ double CMAES<SelectionPolicyType>::Optimize(
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
 
-    const arma::mat covLower = arma::chol(C.slice(idx0), "lower");
+    const MatType covLower = arma::chol(C[idx0], "lower");
 
     for (size_t j = 0; j < lambda; ++j)
     {
       if (iterate.n_rows > iterate.n_cols)
       {
-        pStep.slice(idx(j)) = covLower *
-            arma::randn(iterate.n_rows, iterate.n_cols);
+        pStep[idx(j)] = covLower *
+            arma::randn<MatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
-        pStep.slice(idx(j)) = arma::randn(iterate.n_rows, iterate.n_cols) *
+        pStep[idx(j)] = arma::randn<MatType>(iterate.n_rows, iterate.n_cols) *
             covLower;
       }
 
-      pPosition.slice(idx(j)) = mPosition.slice(idx0) + sigma(idx0) *
-          pStep.slice(idx(j));
+      pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          pPosition.slice(idx(j)));
+          pPosition[idx(j)]);
     }
 
     // Sort population.
-    idx = sort_index(pObjective);
+    idx = arma::sort_index(pObjective);
 
-    step = w(0) * pStep.slice(idx(0));
+    step = w(0) * pStep[idx(0)];
     for (size_t j = 1; j < mu; ++j)
-      step += w(j) * pStep.slice(idx(j));
+      step += w(j) * pStep[idx(j)];
 
-    mPosition.slice(idx1) = mPosition.slice(idx0) + sigma(idx0) * step;
+    mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
 
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
-          mPosition.slice(idx1));
+        mPosition[idx1]);
 
     // Update best parameters.
     if (currentObjective < overallObjective)
     {
       overallObjective = currentObjective;
-      iterate = mPosition.slice(idx1);
+      iterate = mPosition[idx1];
     }
 
     // Update Step Size.
     if (iterate.n_rows > iterate.n_cols)
     {
-      ps.slice(idx1) = (1 - cs) * ps.slice(idx0) + std::sqrt(
+      ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
           cs * (2 - cs) * muEffective) * covLower.t() * step;
     }
     else
     {
-      ps.slice(idx1) = (1 - cs) * ps.slice(idx0) + std::sqrt(
+      ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
           cs * (2 - cs) * muEffective) * step * covLower.t();
     }
 
-    const double psNorm = arma::norm(ps.slice(idx1));
+    const ElemType psNorm = arma::norm(ps[idx1]);
     sigma(idx1) = sigma(idx0) * std::pow(
         std::exp(cs / ds * psNorm / enn - 1), 0.3);
 
     // Update covariance matrix.
     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
     {
-      pc.slice(idx1) = (1 - cc) * pc.slice(idx0) + std::sqrt(cc * (2 - cc) *
+      pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) *
         muEffective) * step;
-
 
       if (iterate.n_rows > iterate.n_cols)
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 *
-          (pc.slice(idx1) * pc.slice(idx1).t());
+        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
+          (pc[idx1] * pc[idx1].t());
       }
       else
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 *
-          (pc.slice(idx1).t() * pc.slice(idx1));
+        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
+          (pc[idx1].t() * pc[idx1]);
       }
     }
     else
     {
-      pc.slice(idx1) = (1 - cc) * pc.slice(idx0);
+      pc[idx1] = (1 - cc) * pc[idx0];
 
       if (iterate.n_rows > iterate.n_cols)
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 * (pc.slice(idx1) *
-            pc.slice(idx1).t() + (cc * (2 - cc)) * C.slice(idx0));
+        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * (pc[idx1] *
+            pc[idx1].t() + (cc * (2 - cc)) * C[idx0]);
       }
       else
       {
-        C.slice(idx1) = (1 - c1 - cmu) * C.slice(idx0) + c1 *
-            (pc.slice(idx1).t() * pc.slice(idx1) + (cc * (2 - cc)) *
-            C.slice(idx0));
+        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
+            (pc[idx1].t() * pc[idx1] + (cc * (2 - cc)) * C[idx0]);
       }
     }
 
@@ -226,30 +230,30 @@ double CMAES<SelectionPolicyType>::Optimize(
     {
       for (size_t j = 0; j < mu; ++j)
       {
-        C.slice(idx1) = C.slice(idx1) + cmu * w(j) *
-            pStep.slice(idx(j)) * pStep.slice(idx(j)).t();
+        C[idx1] = C[idx1] + cmu * w(j) *
+            pStep[idx(j)] * pStep[idx(j)].t();
       }
     }
     else
     {
       for (size_t j = 0; j < mu; ++j)
       {
-        C.slice(idx1) = C.slice(idx1) + cmu * w(j) *
-            pStep.slice(idx(j)).t() * pStep.slice(idx(j));
+        C[idx1] = C[idx1] + cmu * w(j) *
+            pStep[idx(j)].t() * pStep[idx(j)];
       }
     }
 
-    arma::eig_sym(eigval, eigvec, C.slice(idx1));
-    const arma::uvec negativeEigval = find(eigval < 0, 1);
+    arma::eig_sym(eigval, eigvec, C[idx1]);
+    const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
     if (!negativeEigval.is_empty())
     {
       if (negativeEigval(0) == 0)
       {
-        C.slice(idx1).zeros();
+        C[idx1].zeros();
       }
       else
       {
-        C.slice(idx1) = eigvec.cols(0, negativeEigval(0) - 1) *
+        C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
             arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
             eigvec.cols(0, negativeEigval(0) - 1).t();
       }

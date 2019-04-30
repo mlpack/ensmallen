@@ -60,7 +60,7 @@ class NesterovMomentumUpdate
    public:
     /**
      * This is called by the optimizer method before the start of the iteration
-     * update process.  The vanilla update doesn't initialize anything.
+     * update process.
      *
      * @param parent Instantiated parent class.
      * @param rows Number of rows in the gradient matrix.

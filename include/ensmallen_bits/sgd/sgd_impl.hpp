@@ -52,10 +52,12 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   typedef Function<DecomposableFunctionType, MatType, GradType>
       FullFunctionType;
 
-  // The update policy internally uses a templated class so that we can know
-  // MatType and GradType only when Optimize() is called.
+  // The update policy and decay policy internally use a templated class so that
+  // we can know MatType and GradType only when Optimize() is called.
   typedef typename UpdatePolicyType::template Policy<MatType, GradType>
       InstUpdatePolicyType;
+  typedef typename DecayPolicyType::template Policy<MatType, GradType>
+      InstDecayPolicyType;
 
   typedef typename MatType::elem_type ElemType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
@@ -71,6 +73,14 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   size_t currentFunction = 0;
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
+
+  // Initialize the decay policy if needed.
+  if (!isInitialized || !instDecayPolicy.Has<InstDecayPolicyType>())
+  {
+    instDecayPolicy.Clean();
+    instDecayPolicy.Set<InstDecayPolicyType>(
+        new InstDecayPolicyType(decayPolicy));
+  }
 
   // Initialize the update policy.
   if (resetPolicy || !isInitialized ||
@@ -138,7 +148,8 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         gradient);
 
     // Now update the learning rate if requested by the user.
-    decayPolicy.Update(iterate, stepSize, gradient);
+    instDecayPolicy.As<InstDecayPolicyType>().Update(iterate, stepSize,
+        gradient);
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
