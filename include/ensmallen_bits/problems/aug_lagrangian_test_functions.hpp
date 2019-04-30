@@ -81,7 +81,7 @@ class GockenbachFunction
                           GradType& gradient);
 
   template<typename MatType>
-  const MatType& GetInitialPoint() const
+  MatType GetInitialPoint() const
   {
     return arma::conv_to<MatType>::from(initialPoint);
   }

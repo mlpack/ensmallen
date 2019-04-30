@@ -118,7 +118,7 @@ class AugLagrangian
            typename MatType,
            typename GradType = MatType>
   bool Optimize(AugLagrangianFunction<LagrangianFunctionType>& augfunc,
-                arma::mat& coordinates,
+                MatType& coordinates,
                 const size_t maxIterations);
 };
 

@@ -39,6 +39,25 @@ class Any
    * Get the Any, cast as the thing we want.
    */
   template<typename T>
+  const T& As() const
+  {
+    if (std::type_index(typeid(T)) != type)
+    {
+      std::string error = "Invalid cast to type '";
+      error += typeid(T).name();
+      error += "' when Any is holding '";
+      error += type.name();
+      error += "'!";
+      throw std::invalid_argument(error);
+    }
+
+    return *reinterpret_cast<const T*>(held);
+  }
+
+  /**
+   * Get the Any, cast as the thing we want.
+   */
+  template<typename T>
   T& As()
   {
     if (std::type_index(typeid(T)) != type)
