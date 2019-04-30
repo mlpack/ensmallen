@@ -86,8 +86,11 @@ class SCD
    * @param iterate Starting point (will be modified).
    * @return Objective value at the final point.
    */
-  template <typename ResolvableFunctionType>
-  double Optimize(ResolvableFunctionType& function, arma::mat& iterate);
+  template<typename ResolvableFunctionType,
+           typename MatType,
+           typename GradType = arma::SpMat<typename MatType::elem_type>>
+  typename MatType::elem_type Optimize(ResolvableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the step size.
   double StepSize() const { return stepSize; }

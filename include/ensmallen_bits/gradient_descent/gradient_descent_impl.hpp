@@ -30,23 +30,25 @@ inline GradientDescent::GradientDescent(
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename FunctionType>
-double GradientDescent::Optimize(
-    FunctionType& function, arma::mat& iterate)
+template<typename FunctionType, typename MatType, typename GradType>
+typename MatType::elem_type GradientDescent::Optimize(
+    FunctionType& function, MatType& iterate)
 {
   // Use the Function<> wrapper type to provide additional functionality.
-  typedef Function<FunctionType> FullFunctionType;
+  typedef Function<FunctionType, MatType, GradType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have the methods that we need.
-  traits::CheckFunctionTypeAPI<FullFunctionType>();
+  //traits::CheckFunctionTypeAPI<FullFunctionType>();
+
+  typedef typename MatType::elem_type ElemType;
 
   // To keep track of where we are and how things are going.
-  double overallObjective = std::numeric_limits<double>::max();
-  double lastObjective = std::numeric_limits<double>::max();
+  ElemType overallObjective = std::numeric_limits<ElemType>::max();
+  ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
   for (size_t i = 1; i != maxIterations; ++i)
   {
     overallObjective = f.EvaluateWithGradient(iterate, gradient);
@@ -82,10 +84,10 @@ double GradientDescent::Optimize(
   return overallObjective;
 }
 
-template<typename FunctionType>
-double GradientDescent::Optimize(
+template<typename FunctionType, typename MatType, typename GradType>
+typename MatType::elem_type GradientDescent::Optimize(
     FunctionType& function,
-    arma::mat& iterate,
+    MatType& iterate,
     const std::vector<bool>& categoricalDimensions,
     const arma::Row<size_t>& numCategories)
 {

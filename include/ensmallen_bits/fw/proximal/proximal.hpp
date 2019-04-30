@@ -35,7 +35,8 @@ class Proximal
    *          also saved in v.
    * @param tau Norm of l1 ball.
    */
-  static void ProjectToL1Ball(arma::vec& v, double tau);
+  template<typename MatType>
+  static void ProjectToL1Ball(MatType& v, double tau);
 
   /**
    * Project the vector onto the l0 ball with norm tau. That is, we try to
@@ -48,7 +49,8 @@ class Proximal
    *          also saved in v.
    * @param tau Norm of l0 ball.
    */
-  static void ProjectToL0Ball(arma::vec& v, int tau);
+  template<typename MatType>
+  static void ProjectToL0Ball(MatType& v, int tau);
 };  // class Proximal
 
 } // namespace ens

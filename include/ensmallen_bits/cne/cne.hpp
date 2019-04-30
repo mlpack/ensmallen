@@ -105,12 +105,14 @@ class CNE
    * algorithm, and the final objective value is returned.
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename DecomposableFunctionType, typename MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -149,10 +151,14 @@ class CNE
 
  private:
   //! Reproduce candidates to create the next generation.
-  void Reproduce();
+  template<typename MatType>
+  void Reproduce(std::vector<MatType>& population,
+                 const MatType& fitnessValues,
+                 arma::uvec& index);
 
   //! Modify weights with some noise for the evolution of next generation.
-  void Mutate();
+  template<typename MatType>
+  void Mutate(std::vector<MatType>& population, arma::uvec& index);
 
   /**
    * Crossover parents and create new childs. Two parents create two new childs.
@@ -166,19 +172,12 @@ class CNE
    *                 generation and place a child over there for the
    *                 next generation.
    */
-  void Crossover(const size_t mom,
+  template<typename MatType>
+  void Crossover(std::vector<MatType>& population,
+                 const size_t mom,
                  const size_t dad,
                  const size_t dropout1,
                  const size_t dropout2);
-
-  //! Population matrix. Each column is a candidate.
-  arma::cube population;
-
-  //! Vector of fintness values corresponding to each candidate.
-  arma::vec fitnessValues;
-
-  //! Index of sorted fitness values.
-  arma::uvec index;
 
   //! The number of candidates in the population.
   size_t populationSize;

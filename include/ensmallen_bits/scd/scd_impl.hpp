@@ -35,23 +35,27 @@ SCD<DescentPolicyType>::SCD(
 
 //! Optimize the function (minimize).
 template <typename DescentPolicyType>
-template <typename ResolvableFunctionType>
-double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
-                                        arma::mat& iterate)
+template <typename ResolvableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
+    ResolvableFunctionType& function,
+    MatType& iterate)
 {
   // Make sure we have the methods that we need.
-  traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType>();
+  //traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType>();
 
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  typedef typename MatType::elem_type ElemType;
 
-  arma::sp_mat gradient;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = std::numeric_limits<ElemType>::max();
+
+  GradType gradient;
 
   // Start iterating.
   for (size_t i = 1; i != maxIterations; ++i)
   {
     // Get the coordinate to descend on.
-    size_t featureIdx = descentPolicy.DescentFeature(i, iterate, function);
+    size_t featureIdx = descentPolicy.template DescentFeature<
+        ResolvableFunctionType, MatType, GradType>(i, iterate, function);
 
     // Get the partial gradient with respect to this feature.
     function.PartialGradient(iterate, featureIdx, gradient);

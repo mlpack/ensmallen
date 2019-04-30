@@ -39,22 +39,24 @@ FrankWolfe(const LinearConstrSolverType linearConstrSolver,
 template<
     typename LinearConstrSolverType,
     typename UpdateRuleType>
-template<typename FunctionType>
-double FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
-Optimize(FunctionType& function, arma::mat& iterate)
+template<typename FunctionType, typename MatType, typename GradType>
+typename MatType::elem_type FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
+Optimize(FunctionType& function, MatType& iterate)
 {
-  typedef Function<FunctionType> FullFunctionType;
+  typedef Function<FunctionType, MatType, GradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Make sure we have all necessary functions.
-  traits::CheckFunctionTypeAPI<FullFunctionType>();
+  //traits::CheckFunctionTypeAPI<FullFunctionType>();
+
+  typedef typename MatType::elem_type ElemType;
 
   // To keep track of the function value.
-  double currentObjective = DBL_MAX;
+  ElemType currentObjective = std::numeric_limits<ElemType>::max();
 
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat s(iterate.n_rows, iterate.n_cols);
-  arma::mat iterateNew(iterate.n_rows, iterate.n_cols);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
+  MatType s(iterate.n_rows, iterate.n_cols);
+  MatType iterateNew(iterate.n_rows, iterate.n_cols);
   double gap = 0;
 
   for (size_t i = 1; i != maxIterations; ++i)
@@ -77,9 +79,9 @@ Optimize(FunctionType& function, arma::mat& iterate)
       return currentObjective;
     }
 
-
     // Update solution, save in iterateNew.
-    updateRule.Update(f, iterate, s, iterateNew, i);
+    updateRule.template Update<FunctionType, MatType, GradType>(f, iterate, s,
+        iterateNew, i);
 
     iterate = std::move(iterateNew);
   }

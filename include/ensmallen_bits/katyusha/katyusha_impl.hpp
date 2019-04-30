@@ -39,12 +39,15 @@ KatyushaType<Proximal>::KatyushaType(
 
 //! Optimize the function (minimize).
 template<bool Proximal>
-template<typename DecomposableFunctionType>
-double KatyushaType<Proximal>::Optimize(
+template<typename DecomposableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type KatyushaType<Proximal>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate)
 {
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+  typedef typename MatType::elem_type ElemType;
+
+  //traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
+  //    GradType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -74,18 +77,19 @@ double KatyushaType<Proximal>::Optimize(
   normalizer = 1.0 / normalizer;
 
   // To keep track of where we are and how things are going.
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat fullGradient(iterate.n_rows, iterate.n_cols);
-  arma::mat gradient0(iterate.n_rows, iterate.n_cols);
+  GradType gradient(iterate.n_rows, iterate.n_cols);
+  GradType fullGradient(iterate.n_rows, iterate.n_cols);
+  GradType gradient0(iterate.n_rows, iterate.n_cols);
 
-  arma::mat iterate0 = iterate;
-  arma::mat y = iterate;
-  arma::mat z = iterate;
-  arma::mat w = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  MatType iterate0 = iterate;
+  MatType y = iterate;
+  MatType z = iterate;
+  MatType w(iterate.n_rows, iterate.n_cols);
+  w.zeros();
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
@@ -161,7 +165,7 @@ double KatyushaType<Proximal>::Optimize(
 
       // By the minimality definition of z_{k + 1}, we have that:
       // z_{k+1} − z_k + \alpha * \sigma_{k+1} + \alpha g = 0.
-      arma::mat zNew = z - alpha * (fullGradient + (gradient - gradient0) /
+      MatType zNew = z - alpha * (fullGradient + (gradient - gradient0) /
           (double) batchSize);
 
       // Proximal update, choose between Option I and Option II. Shift relative

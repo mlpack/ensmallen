@@ -68,7 +68,7 @@ class UndirectedGraph
     // data::Load(edgesFilename, g.edges, true, transposeEdges);
     if (g.edges.load(edgesFilename) == false)  { FAIL("couldn't load data"); }
     if (transposeEdges)  { g.edges = g.edges.t(); }
-    
+
     if (g.edges.n_rows != 2)
       FAIL("Invalid datafile");
     
@@ -283,7 +283,8 @@ TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
   SolveMaxCutPositiveSDP(sdp);
 }
 
-TEST_CASE("SmallLovaszThetaSdp","[SdpPrimalDualTest]")
+// This test is deprecated and can be removed in ensmallen 2.10.0.
+TEST_CASE("DeprecatedSmallLovaszThetaSdp", "[SdpPrimalDualTest]")
 {
   UndirectedGraph g;
   UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
@@ -294,6 +295,20 @@ TEST_CASE("SmallLovaszThetaSdp","[SdpPrimalDualTest]")
   arma::mat X, Z;
   arma::vec ysparse, ydense;
   solver.Optimize(X, ysparse, ydense, Z);
+  CheckKKT(sdp, X, ysparse, ydense, Z);
+}
+
+TEST_CASE("SmallLovaszThetaSdp", "[SdpPrimalDualTest]")
+{
+  UndirectedGraph g;
+  UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
+  auto sdp = ConstructLovaszThetaSDPFromGraph(g);
+
+  PrimalDualSolver<> solver(sdp);
+
+  arma::mat X, Z, ysparse, ydense;
+  sdp.GetInitialPoints(X, ysparse, ydense, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 

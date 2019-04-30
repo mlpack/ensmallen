@@ -62,3 +62,49 @@ TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
   REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-7));
   REQUIRE(coords[2] == Approx(0.015099932).epsilon(1e-5));
 }
+
+/**
+ * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
+ * arma::fmat.
+ */
+TEST_CASE("GockenbachFunctionFMatTest", "[AugLagrangianTest]")
+{
+  GockenbachFunction f;
+  AugLagrangian aug;
+
+  arma::fmat coords = f.GetInitialPoint<arma::fmat>();
+
+  if (!aug.Optimize(f, coords, 0))
+    FAIL("Optimization reported failure.");
+
+  float finalValue = f.Evaluate(coords);
+
+  // Higher tolerance for smaller values.
+  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-5));
+  REQUIRE(coords[0] == Approx(0.12288178).epsilon(1e-3));
+  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-5));
+  REQUIRE(coords[2] == Approx(0.015099932).epsilon(1e-3));
+}
+
+/**
+ * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
+ * arma::sp_mat.
+ */
+TEST_CASE("GockenbachFunctionSpMatTest", "[AugLagrangianTest]")
+{
+  GockenbachFunction f;
+  AugLagrangian aug;
+
+  arma::sp_mat coords = f.GetInitialPoint<arma::sp_mat>();
+
+  if (!aug.Optimize(f, coords, 0))
+    FAIL("Optimization reported failure.");
+
+  double finalValue = f.Evaluate(coords);
+
+  // Higher tolerance for smaller values.
+  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
+  REQUIRE(coords[0] == Approx(0.12288178).epsilon(1e-5));
+  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-7));
+  REQUIRE(coords[2] == Approx(0.015099932).epsilon(1e-5));
+}

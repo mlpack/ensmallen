@@ -70,7 +70,8 @@ class LRSDP
    *
    * @param coordinates Starting coordinates for the optimization.
    */
-  double Optimize(arma::mat& coordinates);
+  template<typename MatType>
+  typename MatType::elem_type Optimize(MatType& coordinates);
 
   //! Return the SDP that will be solved.
   const SDPType& SDP() const { return function.SDP(); }

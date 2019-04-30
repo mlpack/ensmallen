@@ -28,15 +28,15 @@ class FullSelection
    * @param batchSize Batch size to use for each step.
    * @param iterate starting point.
    */
-  template<typename DecomposableFunctionType>
+  template<typename DecomposableFunctionType, typename MatType>
   double Select(DecomposableFunctionType& function,
                       const size_t batchSize,
-                      const arma::mat& iterate)
+                      const MatType& iterate)
   {
     // Find the number of functions to use.
     const size_t numFunctions = function.NumFunctions();
 
-    double objective = 0;
+    typename MatType::elem_type objective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);

@@ -49,31 +49,36 @@ class UpdateFullCorrection
    * Update rule for FrankWolfe, recalculate the coefficents of of current
    * atoms, while satisfying the norm constraint.
    *
-   * @param function function to be optimized.
-   * @param oldCoords previous solution coords.
-   * @param s current linear_constr_solution result.
-   * @param newCoords new output solution coords.
-   * @param numIter current iteration number.
+   * FuncSqType is an ignored type to match the requirements of the class.
+   *
+   * @param function Function to be optimized.
+   * @param oldCoords Previous solution coords.
+   * @param s Current linear_constr_solution result.
+   * @param newCoords New output solution coords.
+   * @param numIter Current iteration number.
    */
+  template<typename FuncSqType, typename MatType, typename GradType>
   void Update(FuncSq& function,
-              const arma::mat& oldCoords,
-              const arma::mat& s,
-              arma::mat& newCoords,
+              const MatType& oldCoords,
+              const MatType& s,
+              MatType& newCoords,
               const size_t /* numIter */)
   {
     // Line search, with explicit solution here.
-    arma::mat v = tau * s - oldCoords;
-    arma::mat b = function.Vectorb();
-    arma::mat A = function.MatrixA();
-    double gamma = arma::dot(b - A * oldCoords, A * v);
+    MatType v = tau * s - oldCoords;
+    MatType b = function.Vectorb();
+    MatType A = function.MatrixA();
+    typename MatType::elem_type gamma = arma::dot(b - A * oldCoords, A * v);
     gamma = gamma / std::pow(arma::norm(A * v, "fro"), 2);
     gamma = std::min(gamma, 1.0);
     atoms.CurrentCoeffs() = (1.0 - gamma) * atoms.CurrentCoeffs();
-    atoms.AddAtom(s, function, gamma * tau);
+    atoms.AddAtom(arma::mat(s), function, gamma * tau);
 
     // Projected gradient method for enhancement.
     atoms.ProjectedGradientEnhancement(function, tau, stepSize);
-    atoms.RecoverVector(newCoords);
+    arma::mat tmp;
+    atoms.RecoverVector(tmp);
+    newCoords = arma::conv_to<MatType>::from(tmp);
   }
 
  private:

@@ -19,6 +19,32 @@
 
 namespace ens {
 
+// Utility function to update a location of a dense matrix or other type using
+// an atomic section.
+template<typename MatType>
+inline void UpdateLocation(MatType& iterate,
+                           const size_t row,
+                           const size_t col,
+                           const typename MatType::elem_type value)
+{
+  ENS_PRAGMA_OMP_ATOMIC
+  iterate(row, col) -= value;
+}
+
+// Utility function to update a location of a sparse matrix using a critical
+// section.
+template<typename eT>
+inline void UpdateLocation(arma::SpMat<eT>& iterate,
+                           const size_t row,
+                           const size_t col,
+                           const eT value)
+{
+  ENS_PRAGMA_OMP_CRITICAL
+  {
+    iterate(row, col) -= value;
+  }
+}
+
 template <typename DecayPolicyType>
 ParallelSGD<DecayPolicyType>::ParallelSGD(
     const size_t maxIterations,
@@ -34,18 +60,21 @@ ParallelSGD<DecayPolicyType>::ParallelSGD(
 { /* Nothing to do. */ }
 
 template <typename DecayPolicyType>
-template <typename SparseFunctionType>
-double ParallelSGD<DecayPolicyType>::Optimize(
+template <typename SparseFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate)
 {
-  // Check that we have all the functions that we need.
-  traits::CheckSparseFunctionTypeAPI<SparseFunctionType>();
+  typedef typename MatType::elem_type ElemType;
 
-  double overallObjective = DBL_MAX;
-  double lastObjective;
+  // Check that we have all the functions that we need.
+  //traits::CheckSparseFunctionTypeAPI<SparseFunctionType, MatType, GradType>();
+
+  ElemType overallObjective = DBL_MAX;
+  ElemType lastObjective;
 
   // The order in which the functions will be visited.
+  // TODO: maybe use function.Shuffle() instead?
   arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
       (function.NumFunctions() - 1), function.NumFunctions());
 
@@ -103,9 +132,10 @@ double ParallelSGD<DecayPolicyType>::Optimize(
       {
         // Each instance affects only some components of the decision variable.
         // So the gradient is sparse.
-        arma::sp_mat gradient;
+        GradType gradient;
 
         // Evaluate the sparse gradient.
+        // TODO: support for batch size > 1 could be really useful.
         function.Gradient(iterate, visitationOrder[j], gradient, 1);
 
         // Update the decision variable with non-zero components of the
@@ -113,19 +143,23 @@ double ParallelSGD<DecayPolicyType>::Optimize(
         for (size_t i = 0; i < gradient.n_cols; ++i)
         {
           // Iterate over the non-zero elements.
-          for (arma::sp_mat::iterator cur = gradient.begin_col(i);
+          for (typename GradType::iterator cur = gradient.begin_col(i);
               cur != gradient.end_col(i); ++cur)
           {
-            ENS_PRAGMA_OMP_ATOMIC
-            iterate(cur.row(), i) -= stepSize * (*cur);
+            const ElemType value = (*cur);
+            const arma::uword row = cur.row();
+
+            // Call out to utility function to use the right type of OpenMP
+            // lock.
+            UpdateLocation(iterate, row, i, stepSize * value);
           }
         }
       }
     }
   }
 
-  Info << "\n Parallel SGD terminated with objective : "
-    << overallObjective << std::endl;
+  Info << "\nParallel SGD terminated with objective : " << overallObjective
+      << "." << std::endl;
   return overallObjective;
 }
 

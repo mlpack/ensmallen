@@ -69,8 +69,11 @@ class GradientDescent
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename FunctionType>
-  double Optimize(FunctionType& function, arma::mat& iterate);
+  template<typename FunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(FunctionType& function,
+                                       MatType& iterate);
 
   /**
    * Assert all dimensions are numeric and optimize the given function using
@@ -89,10 +92,12 @@ class GradientDescent
    * @param numCategories Number of categories in each categorical dimension.
    * @return Objective value of the final point.
    */
-  template<typename FunctionType>
-  double Optimize(
+  template<typename FunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(
        FunctionType& function,
-       arma::mat& iterate,
+       MatType& iterate,
        const std::vector<bool>& categoricalDimensions,
        const arma::Row<size_t>& numCategories);
 

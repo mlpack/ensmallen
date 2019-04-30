@@ -17,14 +17,17 @@
 namespace ens {
 namespace test {
 
-inline double GDTestFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+inline typename MatType::elem_type GDTestFunction::Evaluate(
+    const MatType& coordinates) const
 {
-  arma::vec temp = arma::trans(coordinates) * coordinates;
+  MatType temp = arma::trans(coordinates) * coordinates;
   return temp(0, 0);
 }
 
-inline void GDTestFunction::Gradient(const arma::mat& coordinates,
-                                     arma::mat& gradient) const
+template<typename MatType, typename GradType>
+inline void GDTestFunction::Gradient(const MatType& coordinates,
+                                     GradType& gradient) const
 {
   gradient = 2 * coordinates;
 }

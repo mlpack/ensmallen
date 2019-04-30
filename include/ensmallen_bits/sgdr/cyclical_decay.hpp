@@ -63,43 +63,6 @@ class CyclicalDecay
       epoch(0)
   { /* Nothing to do here */ }
 
-  /**
-   * This function is called in each iteration after the policy update.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& /* iterate */,
-              double& stepSize,
-              const arma::mat& /* gradient */)
-  {
-    // Time to adjust the step size.
-    if (epoch >= epochRestart)
-    {
-      // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-      stepSize = 0.5 * constStepSize * (1 + cos((batchRestart / epochBatches)
-          * arma::datum::pi));
-
-      // Keep track of the number of batches since the last restart.
-      batchRestart++;
-    }
-
-    // Time to restart.
-    if (epoch > nextRestart)
-    {
-      batchRestart = 0;
-
-      // Adjust the period of restarts.
-      epochRestart *= multFactor;
-
-      // Update the time for the next restart.
-      nextRestart += epochRestart;
-    }
-
-    epoch++;
-  }
-
   //! Get the step size.
   double StepSize() const { return constStepSize; }
   //! Modify the step size.
@@ -109,6 +72,90 @@ class CyclicalDecay
   double EpochBatches() const { return epochBatches; }
   //! Modify the restart fraction.
   double& EpochBatches() { return epochBatches; }
+
+  //! Get the epoch where decay is applied.
+  size_t EpochRestart() const { return epochRestart; }
+  //! Modify the epoch where decay is applied.
+  size_t& EpochRestart() { return epochRestart; }
+
+  //! Get the parameter to modify epochs before a restart.
+  double MultFactor() const { return multFactor; }
+  //! Modify the parameter to modify epochs before a restart.
+  double& MultFactor() { return multFactor; }
+
+  //! Get the next restart time.
+  size_t NextRestart() const { return nextRestart; }
+  //! Modify the next restart time.
+  size_t& NextRestart() { return nextRestart; }
+
+  //! Get the number of batches since the last restart.
+  size_t BatchRestart() const { return batchRestart; }
+  //! Modify the number of batches since the last restart.
+  size_t& BatchRestart() { return batchRestart; }
+
+  //! Get the epoch.
+  size_t Epoch() const { return epoch; }
+  //! Modify the epoch.
+  size_t& Epoch() { return epoch; }
+
+  /**
+   * The DecayPolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * initialized at the start of the optimization, and holds parameters specific
+   * to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This constructor is called by the SGD Optimize() method before the start
+     * of the iteration update process.
+     */
+    Policy(CyclicalDecay& parent) : parent(parent) { }
+
+    /**
+     * This function is called in each iteration after the policy update.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& /* iterate */,
+                double& stepSize,
+                const GradType& /* gradient */)
+    {
+      // Time to adjust the step size.
+      if (parent.Epoch() >= parent.EpochRestart())
+      {
+        // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
+        stepSize = 0.5 * parent.StepSize() *
+            (1 + cos((parent.BatchRestart() / parent.EpochBatches())
+            * arma::datum::pi));
+
+        // Keep track of the number of batches since the last restart.
+        parent.BatchRestart()++;
+      }
+
+      // Time to restart.
+      if (parent.Epoch() > parent.NextRestart())
+      {
+        parent.BatchRestart() = 0;
+
+        // Adjust the period of restarts.
+        parent.EpochRestart() *= parent.MultFactor();
+
+        // Update the time for the next restart.
+        parent.NextRestart() += parent.EpochRestart();
+      }
+
+      parent.Epoch()++;
+    }
+
+   private:
+    // Reference to the parent object.
+    CyclicalDecay& parent;
+  };
 
  private:
   //! Epoch where decay is applied.

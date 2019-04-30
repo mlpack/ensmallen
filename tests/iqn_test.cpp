@@ -79,35 +79,3 @@ TEST_CASE("IQNLogisticRegressionFMatTest", "[IQNTest]")
     REQUIRE(testAcc == Approx(100.0).epsilon(0.016)); // 1.6% error tolerance.
   }
 }
-
-/**
- * Run IQN on logistic regression and make sure the results are acceptable.  Use
- * arma::sp_mat.
- */
-TEST_CASE("IQNLogisticRegressionSpMatTest", "[IQNTest]")
-{
-  arma::sp_mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
-
-  // Now run SGDR with snapshot ensembles on a couple of batch sizes.
-  for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
-  {
-    IQN iqn(0.01, batchSize, 5000, 1e-3);
-    LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
-
-    arma::sp_mat coordinates = lr.GetInitialPoint();
-    iqn.Optimize(lr, coordinates);
-
-    // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-    REQUIRE(acc == Approx(100.0).epsilon(0.013)); // 1.3% error tolerance.
-
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-    REQUIRE(testAcc == Approx(100.0).epsilon(0.016)); // 1.6% error tolerance.
-  }
-}

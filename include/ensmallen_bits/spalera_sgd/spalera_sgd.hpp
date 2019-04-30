@@ -119,8 +119,11 @@ class SPALeRASGD
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -203,6 +206,14 @@ class SPALeRASGD
   //! Flag that determines whether update policy parameters
   //! are reset before every Optimize call.
   bool resetPolicy;
+
+  //! Whether or not the decay policy is initialized.
+  bool isInitialized;
+
+  //! The initialized update policy.
+  Any instUpdatePolicy;
+  //! The initialized decay policy.
+  Any instDecayPolicy;
 };
 
 } // namespace ens

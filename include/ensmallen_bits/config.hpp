@@ -46,7 +46,18 @@
 #if defined(ENS_USE_OPENMP)
   #define ENS_PRAGMA_OMP_PARALLEL _Pragma("omp parallel")
   #define ENS_PRAGMA_OMP_ATOMIC   _Pragma("omp atomic")
+  #define ENS_PRAGMA_OMP_CRITICAL _Pragma("omp critical")
 #else
   #define ENS_PRAGMA_OMP_PARALLEL
   #define ENS_PRAGMA_OMP_ATOMIC
+  #define ENS_PRAGMA_OMP_CRITICAL
+#endif
+
+
+// Define arma_deprecated for deprecated functionality.
+
+#if defined(_MSC_VER)
+  #define ens_deprecated __declspec(deprecated)
+#else
+  #define ens_deprecated __attribute__((__deprecated__))
 #endif

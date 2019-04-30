@@ -44,8 +44,12 @@ class LineSearch
    *           coordinate of the optimal solution.
    * @return Minimum solution function value.
    */
-  template<typename FunctionType>
-  double Optimize(FunctionType& function, const arma::mat& x1, arma::mat& x2);
+  template<typename FunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(FunctionType& function,
+                                       const MatType& x1,
+                                       MatType& x2);
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
@@ -74,11 +78,11 @@ class LineSearch
    *
    * @return Derivative of function(x0 + gamma * deltaX) with respect to gamma.
    */
-  template<typename FunctionType>
-  double Derivative(FunctionType& function,
-                    const arma::mat& x0,
-                    const arma::mat& deltaX,
-                    const double gamma);
+  template<typename FunctionType, typename MatType, typename GradType>
+  typename MatType::elem_type Derivative(FunctionType& function,
+                                         const MatType& x0,
+                                         const MatType& deltaX,
+                                         const double gamma);
 };  // class LineSearch
 } // namespace ens
 

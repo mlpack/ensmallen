@@ -45,9 +45,10 @@ class ExponentialSchedule
    * @param currentTemperature Current temperature of system.
    * @param currentEnergy Current energy of system (not used).
    */
+  template<typename ElemType>
   double NextTemperature(
       const double currentTemperature,
-      const double /* currentEnergy */)
+      const ElemType /* currentEnergy */)
   {
     return (1 - lambda) * currentTemperature;
   }

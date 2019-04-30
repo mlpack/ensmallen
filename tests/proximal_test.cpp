@@ -20,7 +20,7 @@ using namespace ens::test;
 /**
  * Approximate vector using a vector with l1 norm small than or equal to tau.
  */
-TEST_CASE("ProjectToL1","[ProximalTest]")
+TEST_CASE("ProjectToL1", "[ProximalTest]")
 {
   int D = 100;  // Dimension of the problem.
 
@@ -56,7 +56,7 @@ TEST_CASE("ProjectToL1","[ProximalTest]")
 /**
  * Approximate a vector with a tau-sparse vector.
  */
-TEST_CASE("ProjectToL0","[ProximalTest]")
+TEST_CASE("ProjectToL0", "[ProximalTest]")
 {
   int D = 100;  // Dimension of the problem.
   int tau = 25; // Sparsity requirement.

@@ -50,10 +50,10 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
 }
 
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
-double SnapshotSGDR<UpdatePolicyType>::Optimize(
+template<typename DecomposableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type SnapshotSGDR<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate)
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do here.
@@ -72,16 +72,23 @@ double SnapshotSGDR<UpdatePolicyType>::Optimize(
     batchSize = optimizer.BatchSize();
   }
 
-  double overallObjective = optimizer.Optimize(function, iterate);
+  typename MatType::elem_type overallObjective = optimizer.Optimize(function,
+      iterate);
+
+  typedef SnapshotEnsembles::Policy<MatType, GradType> InstDecayPolicyType;
 
   // Accumulate snapshots.
   if (accumulate)
   {
-    for (size_t i = 0; i < optimizer.DecayPolicy().Snapshots().size(); ++i)
+    Any& instDecayPolicy = optimizer.InstDecayPolicy();
+    size_t numSnapshots =
+        instDecayPolicy.As<InstDecayPolicyType>().Snapshots().size();
+
+    for (size_t i = 0; i < numSnapshots; ++i)
     {
-      iterate += optimizer.DecayPolicy().Snapshots()[i];
+      iterate += instDecayPolicy.As<InstDecayPolicyType>().Snapshots()[i];
     }
-    iterate /= (optimizer.DecayPolicy().Snapshots().size() + 1);
+    iterate /= (numSnapshots + 1);
 
     // Calculate final objective.
     overallObjective = 0;

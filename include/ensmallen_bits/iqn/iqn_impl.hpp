@@ -40,6 +40,8 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& function,
 {
   // TODO: add Function<>
 
+  // TODO: disallow sparse matrices
+
 //  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
 //      GradType>();
 

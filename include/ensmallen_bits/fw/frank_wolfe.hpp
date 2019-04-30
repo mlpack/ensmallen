@@ -114,13 +114,17 @@ class FrankWolfe
    *   void Gradient(const arma::mat& coordinates,
    *                 arma::mat& gradient);
    *
+   * @tparam FunctionType Type of function to be optimized.
+   * @tparam MatType Type of objective matrix.
+   * @tparam GradType Type of gradient matrix (default is MatType).
    * @param function Function to be optimized.
    * @param iterate Input with starting point, and will be modified to save
    *                the output optimial solution coordinates.
    * @return Objective value at the final solution.
    */
-  template<typename FunctionType>
-  double Optimize(FunctionType& function, arma::mat& iterate);
+  template<typename FunctionType, typename MatType, typename GradType = MatType>
+  typename MatType::elem_type Optimize(FunctionType& function,
+                                       MatType& iterate);
 
   //! Get the linear constrained solver.
   const LinearConstrSolverType& LinearConstrSolver()

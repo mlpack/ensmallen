@@ -26,13 +26,16 @@ class GDTestFunction
   GDTestFunction() { }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("1; 3; 2"); }
+  template<typename MatType>
+  MatType GetInitialPoint() const { return MatType("1; 3; 2"); }
 
   //! Evaluate a function.
-  double Evaluate(const arma::mat& coordinates) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   //! Evaluate the gradient of a function.
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const;
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient) const;
 };
 
 } // namespace test

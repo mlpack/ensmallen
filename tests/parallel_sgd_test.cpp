@@ -48,7 +48,7 @@ TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
 
     ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, true, decayPolicy);
 
-    arma::mat coordinates = f.GetInitialPoint();
+    arma::mat coordinates = f.GetInitialPoint<arma::mat>();
     double result = s.Optimize(f, coordinates);
 
     // The final value of the objective function should be close to the optimal
@@ -80,6 +80,58 @@ TEST_CASE("ParallelSGDGeneralizedRosenbrockTest", "[ParallelSGDTest]")
     ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, true, decayPolicy);
 
     arma::mat coordinates = f.GetInitialPoint();
+
+    omp_set_num_threads(1);
+    double result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-8));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(coordinates[j] == Approx(1.0).epsilon(0.0001));
+  }
+}
+
+/**
+ * Check that parallel SGD works with arma::fmat.
+ */
+TEST_CASE("ParallelSGDGeneralizedRosenbrockFMatTest", "[ParallelSGDTest]")
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+
+    ConstantStep decayPolicy(0.001);
+
+    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, true, decayPolicy);
+
+    arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+
+    omp_set_num_threads(1);
+    float result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-8));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(coordinates[j] == Approx(1.0).epsilon(0.001));
+  }
+}
+
+/**
+ * Check that parallel SGD works with arma::sp_mat.
+ */
+TEST_CASE("ParallelSGDGeneralizedRosenbrockSpMatTest", "[ParallelSGDTest]")
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+
+    ConstantStep decayPolicy(0.001);
+
+    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, true, decayPolicy);
+
+    arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
 
     omp_set_num_threads(1);
     double result = s.Optimize(f, coordinates);

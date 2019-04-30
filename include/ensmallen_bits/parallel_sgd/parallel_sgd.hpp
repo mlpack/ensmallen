@@ -72,12 +72,18 @@ class ParallelSGD
    * returned.
    *
    * @tparam SparseFunctionType Type of function to be optimized.
+   * @tparam MatType Type of the objective function.
+   * @tparam GradType Type of gradient (it is strongly suggested that this be a
+   *     sparse matrix of some sort!).
    * @param function Function to be optimized(minimized).
    * @param iterate Starting point(will be modified).
    * @return Objective value at the final point.
    */
-  template <typename SparseFunctionType>
-  double Optimize(SparseFunctionType& function, arma::mat& iterate);
+  template <typename SparseFunctionType,
+            typename MatType,
+            typename GradType = arma::SpMat<typename MatType::elem_type>>
+  typename MatType::elem_type Optimize(SparseFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the maximum number of iterations (0 indicates no limits).
   size_t MaxIterations() const { return maxIterations; }

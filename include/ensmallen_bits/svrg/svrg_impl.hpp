@@ -41,30 +41,55 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType, typename DecayPolicyType>
-template<typename DecomposableFunctionType>
-double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
+template<typename DecomposableFunctionType, typename MatType, typename GradType>
+typename MatType::elem_type SVRGType<UpdatePolicyType,
+                                     DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate)
 {
+  // TODO: check function type
+
+  typedef typename MatType::elem_type ElemType;
+
+  typedef typename UpdatePolicyType::template Policy<MatType, GradType>
+      InstUpdatePolicyType;
+  typedef typename DecayPolicyType::template Policy<MatType, GradType>
+      InstDecayPolicyType;
+
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
 
   // To keep track of where we are and how things are going.
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
 
   // Set epoch length to n / b if the user asked for.
   if (innerIterations == 0)
     innerIterations = numFunctions;
 
+  // Initialize the decay policy.
+  if (!isInitialized ||
+      !instDecayPolicy.Has<InstDecayPolicyType>())
+  {
+    instDecayPolicy.Clean();
+    instDecayPolicy.Set<InstDecayPolicyType>(
+        new InstDecayPolicyType(decayPolicy));
+  }
+
   // Initialize the update policy.
-  if (resetPolicy)
-    updatePolicy.Initialize(iterate.n_rows, iterate.n_cols);
+  if (resetPolicy || !isInitialized ||
+      !instUpdatePolicy.Has<InstUpdatePolicyType>())
+  {
+    instUpdatePolicy.Clean();
+    instUpdatePolicy.Set<InstUpdatePolicyType>(
+        new InstUpdatePolicyType(updatePolicy, iterate.n_rows, iterate.n_cols));
+    isInitialized = true;
+  }
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat gradient0(iterate.n_rows, iterate.n_cols);
-  arma::mat iterate0;
+  GradType gradient(iterate.n_rows, iterate.n_cols);
+  GradType gradient0(iterate.n_rows, iterate.n_cols);
+  MatType iterate0;
 
   // Find the number of batches.
   size_t numBatches = numFunctions / batchSize;
@@ -102,7 +127,7 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     // Compute the full gradient.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
-    arma::mat fullGradient(iterate.n_rows, iterate.n_cols);
+    GradType fullGradient(iterate.n_rows, iterate.n_cols);
     function.Gradient(iterate, 0, fullGradient, effectiveBatchSize);
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)
@@ -144,16 +169,16 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
           effectiveBatchSize);
 
       // Use the update policy to take a step.
-      updatePolicy.Update(iterate, fullGradient, gradient, gradient0,
-          effectiveBatchSize, stepSize);
+      instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, fullGradient,
+          gradient, gradient0, effectiveBatchSize, stepSize);
 
       currentFunction += effectiveBatchSize;
       f += effectiveBatchSize;
     }
 
     // Update the learning rate if requested by the user.
-    decayPolicy.Update(iterate, iterate0, gradient, fullGradient, numBatches,
-        stepSize);
+    instDecayPolicy.As<InstDecayPolicyType>().Update(iterate, iterate0,
+        gradient, fullGradient, numBatches, stepSize);
   }
 
   Info << "SVRG: maximum iterations (" << maxIterations << ") reached; "
