@@ -20,7 +20,7 @@ namespace ens {
 template<typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
                       const size_t numDenseConstraints,
-                      const arma::mat& initialPoint,
+                      const arma::Mat<typename SDPType::ElemType>& initialPoint,
                       const size_t maxIterations) :
     function(numSparseConstraints, numDenseConstraints, initialPoint),
     maxIterations(maxIterations)
@@ -30,8 +30,9 @@ template<typename SDPType>
 template<typename MatType>
 typename MatType::elem_type LRSDP<SDPType>::Optimize(MatType& coordinates)
 {
-  rrt.Clean();
-  rrt.Set<MatType>(coordinates * coordinates.t());
+  function.RRTAny().Clean();
+  function.RRTAny().template Set<MatType>(
+      new MatType(coordinates * coordinates.t()));
 
   augLag.Sigma() = 10;
   augLag.Optimize(function, coordinates, maxIterations);

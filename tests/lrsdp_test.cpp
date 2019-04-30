@@ -20,8 +20,9 @@ using namespace ens::test;
 /**
  * Create a Lovasz-Theta initial point.
  */
-void CreateLovaszThetaInitialPoint(const arma::mat& edges,
-                                   arma::mat& coordinates)
+template<typename MatType>
+void CreateLovaszThetaInitialPoint(const MatType& edges,
+                                   MatType& coordinates)
 {
   // Get the number of vertices in the problem.
   const size_t vertices = max(max(edges)) + 1;
@@ -157,17 +158,17 @@ TEST_CASE("Johnson844LovaszThetaFMatSDP", "[LRSDPTest]")
   float finalValue = lovasz.Optimize(coordinates);
 
   // Final value taken from Monteiro + Burer 2004.
-  REQUIRE(finalValue == Approx(-14.0).epsilon(1e-7));
+  REQUIRE(finalValue == Approx(-14.0).epsilon(1e-4));
 
   // Now ensure that all the constraints are satisfied.
   arma::fmat rrt = coordinates * trans(coordinates);
-  REQUIRE(trace(rrt) == Approx(1.0).epsilon(1e-4));
+  REQUIRE(trace(rrt) == Approx(1.0).epsilon(1e-2));
 
   // All those edge constraints...
   for (size_t i = 0; i < edges.n_cols; ++i)
   {
-    REQUIRE(rrt(edges(0, i), edges(1, i)) == Approx(0.0).margin(1e-3));
-    REQUIRE(rrt(edges(1, i), edges(0, i)) == Approx(0.0).margin(1e-3));
+    REQUIRE(rrt(edges(0, i), edges(1, i)) == Approx(0.0).margin(0.1));
+    REQUIRE(rrt(edges(1, i), edges(0, i)) == Approx(0.0).margin(0.1));
   }
 }
 

@@ -49,7 +49,7 @@ TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
   GockenbachFunction f;
   AugLagrangian aug;
 
-  arma::vec coords = f.GetInitialPoint();
+  arma::mat coords = f.GetInitialPoint<arma::mat>();
 
   if (!aug.Optimize(f, coords, 0))
     FAIL("Optimization reported failure.");
@@ -80,10 +80,10 @@ TEST_CASE("GockenbachFunctionFMatTest", "[AugLagrangianTest]")
   float finalValue = f.Evaluate(coords);
 
   // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-5));
-  REQUIRE(coords[0] == Approx(0.12288178).epsilon(1e-3));
-  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-5));
-  REQUIRE(coords[2] == Approx(0.015099932).epsilon(1e-3));
+  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
+  REQUIRE(coords[0] == Approx(0.12288178).epsilon(0.1));
+  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-3));
+  REQUIRE(coords[2] == Approx(0.015099932).epsilon(0.1));
 }
 
 /**

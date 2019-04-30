@@ -45,7 +45,7 @@ class LRSDP
    */
   LRSDP(const size_t numSparseConstraints,
         const size_t numDenseConstraints,
-        const arma::mat& initialPoint,
+        const arma::Mat<typename SDPType::ElemType>& initialPoint,
         const size_t maxIterations = 1000);
 
   /**

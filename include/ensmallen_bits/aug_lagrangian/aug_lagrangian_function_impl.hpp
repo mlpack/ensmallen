@@ -101,7 +101,7 @@ template<typename MatType>
 const MatType& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
     const
 {
-  return function.GetInitialPoint<MatType>();
+  return function.template GetInitialPoint<MatType>();
 }
 
 } // namespace ens
