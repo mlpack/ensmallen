@@ -5,7 +5,7 @@ set(ENSMALLEN_TESTS_SOURCES
     ada_delta_test.cpp
     ada_grad_test.cpp
     adam_test.cpp
-#    aug_lagrangian_test.cpp
+    aug_lagrangian_test.cpp
     bigbatch_sgd_test.cpp
     cmaes_test.cpp
     cne_test.cpp
@@ -19,7 +19,7 @@ set(ENSMALLEN_TESTS_SOURCES
     katyusha_test.cpp
     lbfgs_test.cpp
     line_search_test.cpp
-#    lrsdp_test.cpp
+    lrsdp_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp
     parallel_sgd_test.cpp
