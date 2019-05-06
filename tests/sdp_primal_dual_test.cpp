@@ -182,8 +182,9 @@ ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 
 static bool CheckPositiveSemiDefinite(const arma::mat& X)
 {
+  // TODO: Armadillo 9.300+ has .is_sympd()
   arma::vec evals;
-  if(!arma::eig_sym(evals, X))
+  if (!arma::eig_sym(evals, X))
     return false;
   else
     return (evals(0) > 1e-20);
