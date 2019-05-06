@@ -182,8 +182,11 @@ ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 
 static bool CheckPositiveSemiDefinite(const arma::mat& X)
 {
-  const auto evals = arma::eig_sym(X);
-  return (evals(0) > 1e-20);
+  arma::vec evals;
+  if(!arma::eig_sym(evals, X))
+    return false;
+  else
+    return (evals(0) > 1e-20);
 }
 
 template <typename SDPType>
