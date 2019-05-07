@@ -1,3 +1,7 @@
+### ensmallen 1.14.3
+###### 2019-05-06
+  * Handle eig_sym() failures correctly (#100).
+
 ### ensmallen 1.14.2
 ###### 2019-03-14
   * SPSA test tolerance fix (#97).
