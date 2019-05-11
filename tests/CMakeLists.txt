@@ -11,7 +11,7 @@ set(ENSMALLEN_TESTS_SOURCES
     cne_test.cpp
     eve_test.cpp
     frankwolfe_test.cpp
-#    ftml_test.cpp
+    ftml_test.cpp
 #    function_test.cpp
     gradient_descent_test.cpp
     grid_search_test.cpp
