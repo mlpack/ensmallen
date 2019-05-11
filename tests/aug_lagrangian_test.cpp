@@ -31,7 +31,7 @@ TEST_CASE("AugLagrangianTestFunctionTest", "[AugLagrangianTest]")
 
   arma::vec coords = f.GetInitialPoint();
 
-  if (!aug.Optimize(f, coords, 0))
+  if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
@@ -97,7 +97,7 @@ TEST_CASE("GockenbachFunctionSpMatTest", "[AugLagrangianTest]")
 
   arma::sp_mat coords = f.GetInitialPoint<arma::sp_mat>();
 
-  if (!aug.Optimize(f, coords, 0))
+  if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);

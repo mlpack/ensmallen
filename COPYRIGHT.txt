@@ -26,7 +26,7 @@ Copyright:
   Copyright 2017, Abhinav Moudgil <abhinavmoudgil95@gmail.com>
   Copyright 2017, Konstantin Sidorov <partobs.mdp@gmail.com>
   Copyright 2017, Kirill Mishchenko <ki.mishchenko@gmail.com>
-  Copyright 2017, N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
+  Copyright 2017&2019, N Rajiv Vaidyanathan <rajivvaidyanathan4@gmail.com>
   Copyright 2017, Kartik Nighania <kartiknighania@gmail.com>
   Copyright 2017-2018, Manish Kumar <manish887kr@gmail.com>
   Copyright 2017-2018, Haritha Sreedharan Nair <haritha1313@gmail.com>
@@ -35,6 +35,7 @@ Copyright:
   Copyright 2018, Shikhar Jaiswal <jaiswalshikhar87@gmail.com>
   Copyright 2018, Conrad Sanderson
   Copyright 2018, Dan Timson
+  Copyright 2019, Rahul Ganesh Prabhu
   
 License: BSD-3-clause
   All rights reserved.

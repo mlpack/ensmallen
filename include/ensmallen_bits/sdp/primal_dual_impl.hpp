@@ -113,9 +113,12 @@ Alpha(const MatType& a, const MatType& dA, double tau, double& alpha)
 
   // TODO(stephentu): We only want the top eigenvalue, we should
   // be able to do better than full eigen-decomposition.
-  const MatType evals = arma::eig_sym(-lInv * dA * lInv.t());
+  arma::Col<typename MatType::elem_type> evals;
+  if (!arma::eig_sym(evals, -Linv * dA * Linv.t()))
+    return false;
   const double alphahatInv = evals(evals.n_elem - 1);
   double alphahat = 1. / alphahatInv;
+
   if (alphahat < 0.)
     // dA is PSD already
     alphahat = 1.;

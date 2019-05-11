@@ -62,3 +62,4 @@ the library.
 * Zhihao Lou
 * Conrad Sanderson
 * Dan Timson
+* N Rajiv Vaidyanathan
