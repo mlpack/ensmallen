@@ -1302,14 +1302,8 @@ programs.
 
 #### Constructors
 
- * `PrimalDualSolver<`_`SDPType`_`>(`_`sdp`_`)`
- * `PrimalDualSolver<`_`SDPType`_`>(`_`sdp, initialX, initialYSparse, initialYDense, initialZ`_`)`
-
-The _`SDPType`_ template parameter specifies the type of SDP to solve.  The
-`SDP<arma::mat>` and `SDP<arma::sp_mat>` classes are available for use; these
-represent SDPs with dense and sparse `C` matrices, respectively.  The `SDP<>`
-class is detailed in the [semidefinite program
-documentation](#semidefinite-programs).
+ * `PrimalDualSolver<>(`_`maxIterations`_`)`
+ * `PrimalDualSolver<>(`_`maxIterations, tau, normXzTol, primalInfeasTol, dualInfeasTol`_`)`
 
 #### Attributes
 
@@ -1334,7 +1328,9 @@ optionally return the converged values for the dual variables.
  * Invoke the optimization procedure, returning the converged values for the
  * primal and dual variables.
  */
-double Optimize(arma::mat& X,
+template<typename SDPType>
+double Optimize(SDPType& s,
+                arma::mat& X,
                 arma::vec& ySparse,
                 arma::vec& yDense,
                 arma::mat& Z);
@@ -1342,8 +1338,16 @@ double Optimize(arma::mat& X,
 /**
  * Invoke the optimization procedure, and only return the primal variable.
  */
-double Optimize(arma::mat& X);
+template<typename SDPType>
+double Optimize(SDPType& s, arma::mat& X);
 ```
+
+The _`SDPType`_ template parameter specifies the type of SDP to solve.  The
+`SDP<arma::mat>` and `SDP<arma::sp_mat>` classes are available for use; these
+represent SDPs with dense and sparse `C` matrices, respectively.  The `SDP<>`
+class is detailed in the [semidefinite program
+documentation](#semidefinite-programs).  _`SDPType`_ is automatically inferred
+when `Optimize()` is called with an SDP.
 
 #### See also:
 
