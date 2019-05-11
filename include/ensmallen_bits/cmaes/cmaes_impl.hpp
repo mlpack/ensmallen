@@ -43,15 +43,18 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
 template<typename SelectionPolicyType>
 template<typename DecomposableFunctionType, typename MatType>
 typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
-    DecomposableFunctionType& function, MatType& iterate)
+    DecomposableFunctionType& function, MatType& iterateIn)
 {
-  // TODO: no sp_mat allowed
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
 
   // Make sure that we have the methods that we need.  Long name...
   traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
-      DecomposableFunctionType, MatType>();
+      DecomposableFunctionType, BaseMatType>();
+  RequireDenseFloatingPointType<BaseMatType>();
 
-  typedef typename MatType::elem_type ElemType;
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -62,15 +65,15 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  MatType w = std::log(mu + 0.5) - arma::log(
-      arma::linspace<MatType>(0, mu - 1, mu) + 1.0);
+  BaseMatType w = std::log(mu + 0.5) - arma::log(
+      arma::linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
   w /= arma::accu(w);
 
   // Number of effective solutions.
   const double muEffective = 1 / arma::accu(arma::pow(w, 2));
 
   // Step size control parameters.
-  MatType sigma(3, 1); // sigma is vector-shaped.
+  BaseMatType sigma(3, 1); // sigma is vector-shaped.
   sigma(0) = 0.3 * (upperBound - lowerBound);
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
@@ -90,11 +93,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       muEffective) / (std::pow(iterate.n_elem + 2, 2) +
       alphaMu * muEffective / 2));
 
-  std::vector<MatType> mPosition(3, MatType(iterate.n_rows, iterate.n_cols));
-  mPosition[0] = lowerBound + arma::randu<MatType>(
+  std::vector<BaseMatType> mPosition(3, BaseMatType(iterate.n_rows,
+      iterate.n_cols));
+  mPosition[0] = lowerBound + arma::randu<BaseMatType>(
       iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
 
-  MatType step(iterate.n_rows, iterate.n_cols);
+  BaseMatType step(iterate.n_rows, iterate.n_cols);
   step.zeros();
 
   // Calculate the first objective function.
@@ -109,20 +113,22 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   // Population parameters.
-  std::vector<MatType> pStep(lambda, MatType(iterate.n_rows, iterate.n_cols));
-  std::vector<MatType> pPosition(lambda, MatType(iterate.n_rows, iterate.n_cols));
-  MatType pObjective(lambda, 1); // pObjective is vector-shaped.
-  std::vector<MatType> ps(2, MatType(iterate.n_rows, iterate.n_cols));
+  std::vector<BaseMatType> pStep(lambda, BaseMatType(iterate.n_rows,
+      iterate.n_cols));
+  std::vector<BaseMatType> pPosition(lambda, BaseMatType(iterate.n_rows,
+      iterate.n_cols));
+  BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
+  std::vector<BaseMatType> ps(2, BaseMatType(iterate.n_rows, iterate.n_cols));
   ps[0].zeros();
   ps[1].zeros();
-  std::vector<MatType> pc = ps;
-  std::vector<MatType> C(2, MatType(iterate.n_elem, iterate.n_elem));
+  std::vector<BaseMatType> pc = ps;
+  std::vector<BaseMatType> C(2, BaseMatType(iterate.n_elem, iterate.n_elem));
   C[0].eye();
 
   // Covariance matrix parameters.
   arma::Col<ElemType> eigval; // TODO: might need a more general type.
-  MatType eigvec;
-  MatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
+  BaseMatType eigvec;
+  BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
   eigvalZero.zeros();
 
   // The current visitation order (sorted by population objectives).
@@ -135,19 +141,19 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
 
-    const MatType covLower = arma::chol(C[idx0], "lower");
+    const BaseMatType covLower = arma::chol(C[idx0], "lower");
 
     for (size_t j = 0; j < lambda; ++j)
     {
       if (iterate.n_rows > iterate.n_cols)
       {
         pStep[idx(j)] = covLower *
-            arma::randn<MatType>(iterate.n_rows, iterate.n_cols);
+            arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
-        pStep[idx(j)] = arma::randn<MatType>(iterate.n_rows, iterate.n_cols) *
-            covLower;
+        pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
+            * covLower;
       }
 
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
@@ -267,6 +273,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     {
       Warn << "CMA-ES: converged to " << overallObjective << "; "
           << "terminating with failure.  Try a smaller step size?" << std::endl;
+
       return overallObjective;
     }
 
@@ -274,6 +281,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     {
       Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
+
       return overallObjective;
     }
 

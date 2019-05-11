@@ -40,15 +40,25 @@ BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
 template<typename UpdatePolicyType>
 template<typename DecomposableFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function, MatType& iterate)
+    DecomposableFunctionType& function, MatType& iterateIn)
 {
-  typedef Function<DecomposableFunctionType, MatType, GradType>
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
-      GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
@@ -58,11 +68,11 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
   double overallObjective = 0;
   double lastObjective = DBL_MAX;
   bool reset = false;
-  GradType delta0, delta1;
+  BaseGradType delta0, delta1;
 
   // Now iterate!
-  GradType gradient(iterate.n_rows, iterate.n_cols);
-  GradType functionGradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType functionGradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
@@ -195,6 +205,7 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
   }
+
   return overallObjective;
 }
 

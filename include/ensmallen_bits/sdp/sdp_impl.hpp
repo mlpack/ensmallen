@@ -95,7 +95,7 @@ template<typename MatType>
 MatType SDP<ObjectiveMatrixType,
             DenseConstraintMatrixType,
             SparseConstraintMatrixType,
-            BVectorType>::GetInitialPoint()
+            BVectorType>::GetInitialPoint() const
 {
   return arma::eye<MatType>(c.n_rows, c.n_rows);
 }
@@ -112,7 +112,7 @@ void SDP<ObjectiveMatrixType,
          BVectorType>::GetInitialPoints(MatType& coordinates,
                                         MatType& ySparse,
                                         MatType& yDense,
-                                        MatType& dualCoordinates)
+                                        MatType& dualCoordinates) const
 {
   coordinates = arma::eye<MatType>(c.n_rows, c.n_rows);
   ySparse = arma::ones<MatType>(NumSparseConstraints(), 1);

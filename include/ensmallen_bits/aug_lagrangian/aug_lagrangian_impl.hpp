@@ -65,14 +65,22 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
 template<typename LagrangianFunctionType, typename MatType, typename GradType>
 bool AugLagrangian::Optimize(
     AugLagrangianFunction<LagrangianFunctionType>& augfunc,
-    MatType& coordinates,
+    MatType& coordinatesIn,
     const size_t maxIterations)
 {
-  // TODO:
-  traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType, MatType,
-      GradType>();
-
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  BaseMatType& coordinates = (BaseMatType&) coordinatesIn;
+
+  // Check that the types satisfy our needs.
+  traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
   LagrangianFunctionType& function = augfunc.Function();
 

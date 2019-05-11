@@ -35,6 +35,7 @@ typename MatType::elem_type GridSearch::Optimize(
     }
   }
 
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
 
   ElemType bestObjective = std::numeric_limits<ElemType>::max();
@@ -63,8 +64,13 @@ void GridSearch::Optimize(
     const arma::Row<size_t>& numCategories,
     size_t i)
 {
-  // Make sure we have the methods that we need.
-  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, MatType>();
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  // Make sure we have the methods that we need.  No restrictions on the matrix
+  // type are needed.
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, BaseMatType>();
 
   if (i < categoricalDimensions.size())
   {
@@ -77,8 +83,7 @@ void GridSearch::Optimize(
   }
   else
   {
-    typename MatType::elem_type objective =
-        function.Evaluate(currentParameters);
+    ElemType objective = function.Evaluate((BaseMatType&) currentParameters);
     if (objective < bestObjective)
     {
       bestObjective = objective;

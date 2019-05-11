@@ -104,14 +104,14 @@ class CNE
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam ArbitraryFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType, typename MatType>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  template<typename ArbitraryFunctionType, typename MatType>
+  typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
                                        MatType& iterate);
 
   //! Get the population size.

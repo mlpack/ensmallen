@@ -310,43 +310,50 @@ bool L_BFGS::LineSearch(FunctionType& function,
  */
 template<typename FunctionType, typename MatType, typename GradType>
 typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
-                                             MatType& iterate)
+                                             MatType& iterateIn)
 {
-  // Convenience typedef.
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
   // Use the Function<> wrapper to ensure the function has all of the functions
   // that we need.
-  typedef Function<FunctionType, MatType, GradType> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.
-  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;
 
-  MatType newIterateTmp(rows, cols);
+  BaseMatType newIterateTmp(rows, cols);
   arma::Cube<ElemType> s(rows, cols, numBasis);
   arma::Cube<ElemType> y(rows, cols, numBasis);
 
   // The old iterate to be saved.
-  MatType oldIterate(iterate.n_rows, iterate.n_cols);
+  BaseMatType oldIterate(iterate.n_rows, iterate.n_cols);
   oldIterate.zeros();
 
   // Whether to optimize until convergence.
   bool optimizeUntilConvergence = (maxIterations == 0);
 
   // The gradient: the current and the old.
-  GradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   gradient.zeros();
-  GradType oldGradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType oldGradient(iterate.n_rows, iterate.n_cols);
   oldGradient.zeros();
 
   // The search direction.
-  GradType searchDirection(iterate.n_rows, iterate.n_cols);
+  BaseGradType searchDirection(iterate.n_rows, iterate.n_cols);
   searchDirection.zeros();
 
   // The initial function value and gradient.
@@ -365,7 +372,7 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
     // least one descent step.
     if (itNum > 0 && (arma::norm(gradient, 2) < minGradientNorm))
     {
-      Warn << "L-BFGS gradient norm too small (terminating successfully)."
+      Info << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
       break;
     }

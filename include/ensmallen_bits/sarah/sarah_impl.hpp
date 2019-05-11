@@ -41,13 +41,25 @@ SARAHType<UpdatePolicyType>::SARAHType(
 template<typename UpdatePolicyType>
 template<typename DecomposableFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function,
-    MatType& iterate)
+    DecomposableFunctionType& functionIn,
+    MatType& iterateIn)
 {
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
-    GradType>();
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
+  FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
+
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+      BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -61,10 +73,10 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
     innerIterations = numFunctions;
 
   // Now iterate!
-  GradType gradient(iterate.n_rows, iterate.n_cols);
-  GradType v(iterate.n_rows, iterate.n_cols);
-  GradType gradient0(iterate.n_rows, iterate.n_cols);
-  MatType iterate0;
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType v(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient0(iterate.n_rows, iterate.n_cols);
+  BaseMatType iterate0;
 
   // Find the number of batches.
   size_t numBatches = numFunctions / batchSize;
@@ -119,7 +131,7 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
     // Update iterate with full gradient (v).
     iterate -= stepSize * v;
 
-    const double vNorm = arma::norm(v);
+    const ElemType vNorm = arma::norm(v);
 
     for (size_t f = 0, currentFunction = 0; f < innerIterations;
         /* incrementing done manually */)

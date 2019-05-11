@@ -63,12 +63,21 @@ template <typename DecayPolicyType>
 template <typename SparseFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
-    MatType& iterate)
+    MatType& iterateIn)
 {
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
   // Check that we have all the functions that we need.
-  traits::CheckSparseFunctionTypeAPI<SparseFunctionType, MatType, GradType>();
+  traits::CheckSparseFunctionTypeAPI<SparseFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   ElemType overallObjective = DBL_MAX;
   ElemType lastObjective;
@@ -132,7 +141,7 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
       {
         // Each instance affects only some components of the decision variable.
         // So the gradient is sparse.
-        GradType gradient;
+        BaseGradType gradient;
 
         // Evaluate the sparse gradient.
         // TODO: support for batch size > 1 could be really useful.

@@ -39,17 +39,21 @@ inline CNE::CNE(const size_t populationSize,
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template<typename DecomposableFunctionType, typename MatType>
-typename MatType::elem_type CNE::Optimize(DecomposableFunctionType& function,
-                                          MatType& iterate)
+template<typename ArbitraryFunctionType, typename MatType>
+typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
+                                          MatType& iterateIn)
 {
-  // TODO: check function type
-  // TODO: disable sp_mat
-
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  // Make sure that we have the methods that we need.  Long name...
+  traits::CheckNonDifferentiableFunctionTypeAPI< ArbitraryFunctionType,
+      BaseMatType>();
+  RequireDenseFloatingPointType<BaseMatType>();
 
   // Vector of fitness values corresponding to each candidate.
-  MatType fitnessValues;
+  BaseMatType fitnessValues;
   //! Index of sorted fitness values.
   arma::uvec index;
 
@@ -81,10 +85,15 @@ typename MatType::elem_type CNE::Optimize(DecomposableFunctionType& function,
         "children. Increase population size.");
   }
 
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+
   // Set the population size and fill random values [0,1].
-  std::vector<MatType> population;
+  std::vector<BaseMatType> population;
   for (size_t i = 0 ; i < populationSize; ++i)
-    population.push_back(arma::randu<MatType>(iterate.n_rows, iterate.n_cols));
+  {
+    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
+        iterate.n_cols));
+  }
 
   // Store the number of elements in the objective matrix.
   elements = iterate.n_rows * iterate.n_cols;
@@ -139,7 +148,7 @@ typename MatType::elem_type CNE::Optimize(DecomposableFunctionType& function,
   }
 
   // Set the best candidate into the network parameters.
-  iterate = population[index(0)];
+  iterateIn = population[index(0)];
 
   return function.Evaluate(iterate);
 }

@@ -48,24 +48,30 @@ template<typename DecayPolicyType>
 template<typename DecomposableFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
-    MatType& iterate)
+    MatType& iterateIn)
 {
-  // TODO: disable sparse MatType (sparse GradType could be okay)
-
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, MatType, GradType>
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
-      GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireDenseFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // The update policy and decay policy internally use a templated class so that
   // we can know MatType and GradType only when Optimize() is called.
-  typedef typename SPALeRAStepsize::Policy<MatType, GradType>
+  typedef typename SPALeRAStepsize::Policy<BaseMatType, BaseGradType>
       InstUpdatePolicyType;
-  typedef typename DecayPolicyType::template Policy<MatType, GradType>
+  typedef typename DecayPolicyType::template Policy<BaseMatType, BaseGradType>
       InstDecayPolicyType;
 
   // Find the number of functions to use.
@@ -105,7 +111,7 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
   }
 
   // Now iterate!
-  GradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)

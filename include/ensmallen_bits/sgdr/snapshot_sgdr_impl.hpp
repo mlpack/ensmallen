@@ -75,7 +75,11 @@ typename MatType::elem_type SnapshotSGDR<UpdatePolicyType>::Optimize(
   typename MatType::elem_type overallObjective = optimizer.Optimize(function,
       iterate);
 
-  typedef SnapshotEnsembles::Policy<MatType, GradType> InstDecayPolicyType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef SnapshotEnsembles::Policy<BaseMatType, BaseGradType>
+      InstDecayPolicyType;
 
   // Accumulate snapshots.
   if (accumulate)

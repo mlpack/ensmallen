@@ -41,22 +41,30 @@ template<
     typename UpdateRuleType>
 template<typename FunctionType, typename MatType, typename GradType>
 typename MatType::elem_type FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
-Optimize(FunctionType& function, MatType& iterate)
+Optimize(FunctionType& function, MatType& iterateIn)
 {
-  typedef Function<FunctionType, MatType, GradType> FullFunctionType;
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Make sure we have all necessary functions.
-  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
-  typedef typename MatType::elem_type ElemType;
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // To keep track of the function value.
   ElemType currentObjective = std::numeric_limits<ElemType>::max();
 
-  GradType gradient(iterate.n_rows, iterate.n_cols);
-  MatType s(iterate.n_rows, iterate.n_cols);
-  MatType iterateNew(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseMatType s(iterate.n_rows, iterate.n_cols);
+  BaseMatType iterateNew(iterate.n_rows, iterate.n_cols);
   double gap = 0;
 
   for (size_t i = 1; i != maxIterations; ++i)
@@ -80,8 +88,8 @@ Optimize(FunctionType& function, MatType& iterate)
     }
 
     // Update solution, save in iterateNew.
-    updateRule.template Update<FunctionType, MatType, GradType>(f, iterate, s,
-        iterateNew, i);
+    updateRule.template Update<FunctionType, BaseMatType, BaseGradType>(f,
+        iterate, s, iterateNew, i);
 
     iterate = std::move(iterateNew);
   }

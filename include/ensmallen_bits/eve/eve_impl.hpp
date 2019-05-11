@@ -46,38 +46,48 @@ inline Eve::Eve(const double stepSize,
 template<typename DecomposableFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type Eve::Optimize(
     DecomposableFunctionType& function,
-    MatType& iterate)
+    MatType& iterateIn)
 {
-  typedef Function<DecomposableFunctionType, MatType, GradType>
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
-      GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
-  double overallObjective = 0;
-  double lastOverallObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastOverallObjective = DBL_MAX;
 
-  double objective = 0;
-  double lastObjective = 0;
-  double dt = 1;
+  ElemType objective = 0;
+  ElemType lastObjective = 0;
+  ElemType dt = 1;
 
   // The exponential moving average of gradient values.
-  GradType m(iterate.n_rows, iterate.n_cols);
+  BaseGradType m(iterate.n_rows, iterate.n_cols);
   m.zeros();
 
   // The exponential moving average of squared gradient values.
-  GradType v(iterate.n_rows, iterate.n_cols);
+  BaseGradType v(iterate.n_rows, iterate.n_cols);
   v.zeros();
 
   // Now iterate!
-  GradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
@@ -139,11 +149,12 @@ typename MatType::elem_type Eve::Optimize(
 
     if (i > 0)
     {
-      const double d = std::abs(objective - lastObjective) /
+      const ElemType d = std::abs(objective - lastObjective) /
           (std::min(objective, lastObjective) + epsilon);
 
       dt *= beta3;
-      dt += (1 - beta3) * std::min(std::max(d, 1.0 / clip), clip);
+      dt += (1 - beta3) * std::min(std::max(d, ElemType(1.0 / clip)),
+          ElemType(clip));
     }
 
     lastObjective = objective;
