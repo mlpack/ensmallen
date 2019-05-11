@@ -14,6 +14,7 @@
 #define ENSMALLEN_FUNCTION_TRAITS_HPP
 
 #include "sfinae_utility.hpp"
+#include "arma_traits.hpp"
 
 namespace ens {
 namespace traits {
@@ -42,46 +43,53 @@ ENS_HAS_EXACT_METHOD_FORM(PartialGradient, HasPartialGradient)
 template<typename MatType, typename GradType>
 struct TypedForms
 {
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
   //! This is the form of a non-const Evaluate() method.
   template<typename FunctionType>
   using EvaluateForm =
-      typename MatType::elem_type(FunctionType::*)(const MatType&);
+      typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&);
 
   //! This is the form of a const Evaluate() method.
   template<typename FunctionType>
-  using EvaluateConstForm =
-      typename MatType::elem_type(FunctionType::*)(const MatType&) const;
+  using EvaluateConstForm = typename BaseMatType::elem_type(FunctionType::*)(
+      const BaseMatType&) const;
 
   //! This is the form of a static Evaluate() method.
   template<typename FunctionType>
-  using EvaluateStaticForm = typename MatType::elem_type(*)(const MatType&);
+  using EvaluateStaticForm = typename BaseMatType::elem_type(*)(
+      const BaseMatType&);
 
   //! This is the form of a non-const Gradient() method.
   template<typename FunctionType>
-  using GradientForm = void(FunctionType::*)(const MatType&, GradType&);
+  using GradientForm = void(FunctionType::*)(const BaseMatType&, BaseGradType&);
 
   //! This is the form of a const Gradient() method.
   template<typename FunctionType>
   using GradientConstForm =
-      void(FunctionType::*)(const MatType&, GradType&) const;
+      void(FunctionType::*)(const BaseMatType&, BaseGradType&) const;
 
   //! This is the form of a static Gradient() method.
   template<typename FunctionType>
-  using GradientStaticForm = void(*)(const MatType&, GradType&);
+  using GradientStaticForm = void(*)(const BaseMatType&, BaseGradType&);
 
   //! This is the form of a non-const EvaluateWithGradient() method.
   template<typename FunctionType>
   using EvaluateWithGradientForm =
-      typename MatType::elem_type(FunctionType::*)(const MatType&, GradType&);
+      typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
+                                                       BaseGradType&);
 
   //! This is the form of a const EvaluateWithGradient() method.
   template<typename FunctionType>
   using EvaluateWithGradientConstForm =
-      typename MatType::elem_type(FunctionType::*)(const MatType&, GradType&) const;
+      typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
+                                                       BaseGradType&) const;
 
   //! This is the form of a static EvaluateWithGradient() method.
   template<typename FunctionType>
-  using EvaluateWithGradientStaticForm = typename MatType::elem_type(*)(const MatType&, GradType&);
+  using EvaluateWithGradientStaticForm = typename BaseMatType::elem_type(*)(
+      const BaseMatType&, BaseGradType&);
 
   //! This is the form of a non-const NumFunctions() method.
   template <typename FunctionType>
@@ -109,50 +117,62 @@ struct TypedForms
 
   //! This is the form of a decomposable Evaluate() method.
   template<typename FunctionType>
-  using DecomposableEvaluateForm = typename MatType::elem_type(FunctionType::*)(
-      const MatType&, const size_t, const size_t);
+  using DecomposableEvaluateForm =
+      typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
+                                                       const size_t,
+                                                       const size_t);
 
   //! This is the form of a decomposable const Evaluate() method.
   template<typename FunctionType>
   using DecomposableEvaluateConstForm =
-      typename MatType::elem_type(FunctionType::*)(const MatType&,
-          const size_t, const size_t) const;
+      typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
+                                                       const size_t,
+                                                       const size_t) const;
 
   //! This is the form of a decomposable static Evaluate() method.
   template<typename FunctionType>
-  using DecomposableEvaluateStaticForm = typename MatType::elem_type(*)(
-        const MatType&, const size_t, const size_t);
+  using DecomposableEvaluateStaticForm = typename BaseMatType::elem_type(*)(
+        const BaseMatType&, const size_t, const size_t);
 
   //! This is the form of a decomposable non-const Gradient() method.
   template<typename FunctionType>
   using DecomposableGradientForm = void(FunctionType::*)(
-      const MatType&, const size_t, GradType&, const size_t);
+      const BaseMatType&, const size_t, BaseGradType&, const size_t);
 
   //! This the form of a decomposable const Gradient() method.
   template<typename FunctionType>
   using DecomposableGradientConstForm = void(FunctionType::*)(
-      const MatType&, const size_t, GradType&, const size_t) const;
+      const BaseMatType&, const size_t, BaseGradType&, const size_t) const;
 
   //! This is the form of a decomposable static Gradient() method.
   template<typename FunctionType>
   using DecomposableGradientStaticForm = void(*)(
-      const MatType&, const size_t, GradType&, const size_t);
+      const BaseMatType&, const size_t, BaseGradType&, const size_t);
 
   //! This is the form of a decomposable non-const EvaluateWithGradient()
   //! method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientForm = typename MatType::elem_type(FunctionType::*)(
-      const MatType&, const size_t, GradType&, const size_t);
+  using DecomposableEvaluateWithGradientForm =
+      typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
+                                                       const size_t,
+                                                       BaseGradType&,
+                                                       const size_t);
 
   //! This is the form of a decomposable const EvaluateWithGradient() method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientConstForm = typename MatType::elem_type(FunctionType::*)(
-      const MatType&, const size_t, GradType&, const size_t) const;
+  using DecomposableEvaluateWithGradientConstForm =
+      typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
+                                                       const size_t,
+                                                       BaseGradType&,
+                                                       const size_t) const;
 
   //! This is the form of a decomposable static EvaluateWithGradient() method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientStaticForm = typename MatType::elem_type(*)(
-      const MatType&, const size_t, GradType&, const size_t);
+  using DecomposableEvaluateWithGradientStaticForm =
+      typename BaseMatType::elem_type(*)(const BaseMatType&,
+                                         const size_t,
+                                         BaseGradType&,
+                                         const size_t);
 
   //! This is the form of a non-const NumConstraints() method.
   template<typename FunctionType>
@@ -168,47 +188,57 @@ struct TypedForms
 
   //! This is the form of a non-const EvaluateConstraint() method.
   template <typename FunctionType>
-  using EvaluateConstraintForm = typename MatType::elem_type(FunctionType::*)(
-      const size_t, const MatType&);
+  using EvaluateConstraintForm =
+      typename BaseMatType::elem_type(FunctionType::*)(const size_t,
+                                                       const BaseMatType&);
 
   //! This is the form of a const EvaluateConstraint() method.
   template<typename FunctionType>
-  using EvaluateConstraintConstForm = typename MatType::elem_type(FunctionType::*)(
-      const size_t, const MatType&) const;
+  using EvaluateConstraintConstForm =
+      typename BaseMatType::elem_type(FunctionType::*)(const size_t,
+                                                       const BaseMatType&)
+          const;
 
   //! This is the form of a static EvaluateConstraint() method.
   template<typename FunctionType>
-  using EvaluateConstraintStaticForm = typename MatType::elem_type(*)(const size_t, const MatType&);
+  using EvaluateConstraintStaticForm = typename BaseMatType::elem_type(*)(
+      const size_t, const BaseMatType&);
 
   //! This is the form of a non-const GradientConstraint() method.
   template <typename FunctionType>
   using GradientConstraintForm = void(FunctionType::*)(
-      const size_t, const MatType&, GradType&);
+      const size_t, const BaseMatType&, BaseGradType&);
 
   //! This is the form of a const GradientConstraint() method.
   template<typename FunctionType>
   using GradientConstraintConstForm = void(FunctionType::*)(
-      const size_t, const MatType&, GradType&) const;
+      const size_t, const BaseMatType&, BaseGradType&) const;
 
   //! This is the form of a static GradientConstraint() method.
   template<typename Class, typename... Ts>
   using GradientConstraintStaticForm = void(*)(
-      const size_t, const MatType&, GradType&);
+      const size_t, const BaseMatType&, BaseGradType&);
 
   //! This is the form of a non-const sparse Gradient() method.
+  //! This check isn't particularly useful---the user needs to specify a sparse
+  //! gradient type...
   template<typename FunctionType>
   using SparseGradientForm = void(FunctionType::*)(
-      const MatType&, const size_t, arma::sp_mat&, const size_t);
+      const BaseMatType&, const size_t, BaseGradType&, const size_t);
 
   //! This is the form of a const sparse Gradient() method.
+  //! This check isn't particularly useful---the user needs to specify a sparse
+  //! gradient type...
   template<typename FunctionType>
   using SparseGradientConstForm = void(FunctionType::*)(
-      const MatType&, const size_t, arma::sp_mat&, const size_t) const;
+      const BaseMatType&, const size_t, BaseGradType&, const size_t) const;
 
   //! This is the form of a static sparse Gradient() method.
+  //! This check isn't particularly useful---the user needs to specify a sparse
+  //! gradient type...
   template<typename FunctionType>
   using SparseGradientStaticForm = void(*)(
-      const MatType&, const size_t, arma::sp_mat&, const size_t);
+      const BaseMatType&, const size_t, BaseGradType&, const size_t);
 
   //! This is the form of a non-const NumFeatures() method.
   template<typename FunctionType>
@@ -225,30 +255,30 @@ struct TypedForms
   //! This is the form of a non-const PartialGradient() method.
   template<typename FunctionType>
   using PartialGradientForm = void(FunctionType::*)(
-      const MatType&, const size_t, arma::sp_mat&);
+      const BaseMatType&, const size_t, BaseGradType&);
 
   //! This is the form of a const PartialGradient() method.
   template<typename FunctionType>
   using PartialGradientConstForm = void(FunctionType::*)(
-      const MatType&, const size_t, arma::sp_mat&) const;
+      const BaseMatType&, const size_t, BaseGradType&) const;
 
   //! This is the form of a static PartialGradient() method.
   template<typename FunctionType>
   using PartialGradientStaticForm = void(*)(
-      const MatType&, const size_t, arma::sp_mat&);
+      const BaseMatType&, const size_t, BaseGradType&);
 
   //! This is a utility struct that will match any non-const form.
   template<typename FunctionType, typename... Ts>
-  using OtherForm = typename MatType::elem_type(FunctionType::*)(Ts...);
+  using OtherForm = typename BaseMatType::elem_type(FunctionType::*)(Ts...);
 
   //! This is a utility struct that will match any const form.
   template<typename FunctionType, typename... Ts>
-  using OtherConstForm = typename MatType::elem_type(FunctionType::*)(Ts...)
+  using OtherConstForm = typename BaseMatType::elem_type(FunctionType::*)(Ts...)
       const;
 
   //! This is a utility struct that will match any static form.
   template<typename FunctionType, typename... Ts>
-  using OtherStaticForm = typename MatType::elem_type(*)(Ts...);
+  using OtherStaticForm = typename BaseMatType::elem_type(*)(Ts...);
 };
 
 /**
