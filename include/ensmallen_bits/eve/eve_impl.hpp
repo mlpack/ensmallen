@@ -53,7 +53,8 @@ typename MatType::elem_type Eve::Optimize(
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-//  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
+      GradType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();

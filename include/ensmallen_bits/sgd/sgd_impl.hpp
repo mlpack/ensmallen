@@ -63,8 +63,8 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-//  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
-//      GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
+      GradType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();

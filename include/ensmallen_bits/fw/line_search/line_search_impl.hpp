@@ -30,7 +30,7 @@ typename MatType::elem_type LineSearch::Optimize(FunctionType& function,
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.
-  //traits::CheckFunctionTypeAPI<FullFunctionType, MatType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
 
   // Set up the search line, that is,
   // find the zero of der(gamma) = Derivative(gamma).

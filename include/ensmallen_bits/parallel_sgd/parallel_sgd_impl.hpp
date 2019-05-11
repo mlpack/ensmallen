@@ -68,7 +68,7 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
   typedef typename MatType::elem_type ElemType;
 
   // Check that we have all the functions that we need.
-  //traits::CheckSparseFunctionTypeAPI<SparseFunctionType, MatType, GradType>();
+  traits::CheckSparseFunctionTypeAPI<SparseFunctionType, MatType, GradType>();
 
   ElemType overallObjective = DBL_MAX;
   ElemType lastObjective;

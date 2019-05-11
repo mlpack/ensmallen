@@ -72,16 +72,16 @@ struct TypedForms
   //! This is the form of a non-const EvaluateWithGradient() method.
   template<typename FunctionType>
   using EvaluateWithGradientForm =
-      double(FunctionType::*)(const MatType&, GradType&);
+      typename MatType::elem_type(FunctionType::*)(const MatType&, GradType&);
 
   //! This is the form of a const EvaluateWithGradient() method.
   template<typename FunctionType>
   using EvaluateWithGradientConstForm =
-      double(FunctionType::*)(const MatType&, GradType&) const;
+      typename MatType::elem_type(FunctionType::*)(const MatType&, GradType&) const;
 
   //! This is the form of a static EvaluateWithGradient() method.
   template<typename FunctionType>
-  using EvaluateWithGradientStaticForm = double(*)(const MatType&, GradType&);
+  using EvaluateWithGradientStaticForm = typename MatType::elem_type(*)(const MatType&, GradType&);
 
   //! This is the form of a non-const NumFunctions() method.
   template <typename FunctionType>
@@ -141,17 +141,17 @@ struct TypedForms
   //! This is the form of a decomposable non-const EvaluateWithGradient()
   //! method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientForm = double(FunctionType::*)(
+  using DecomposableEvaluateWithGradientForm = typename MatType::elem_type(FunctionType::*)(
       const MatType&, const size_t, GradType&, const size_t);
 
   //! This is the form of a decomposable const EvaluateWithGradient() method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientConstForm = double(FunctionType::*)(
+  using DecomposableEvaluateWithGradientConstForm = typename MatType::elem_type(FunctionType::*)(
       const MatType&, const size_t, GradType&, const size_t) const;
 
   //! This is the form of a decomposable static EvaluateWithGradient() method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientStaticForm = double(*)(
+  using DecomposableEvaluateWithGradientStaticForm = typename MatType::elem_type(*)(
       const MatType&, const size_t, GradType&, const size_t);
 
   //! This is the form of a non-const NumConstraints() method.
@@ -168,17 +168,17 @@ struct TypedForms
 
   //! This is the form of a non-const EvaluateConstraint() method.
   template <typename FunctionType>
-  using EvaluateConstraintForm = double(FunctionType::*)(
+  using EvaluateConstraintForm = typename MatType::elem_type(FunctionType::*)(
       const size_t, const MatType&);
 
   //! This is the form of a const EvaluateConstraint() method.
   template<typename FunctionType>
-  using EvaluateConstraintConstForm = double(FunctionType::*)(
+  using EvaluateConstraintConstForm = typename MatType::elem_type(FunctionType::*)(
       const size_t, const MatType&) const;
 
   //! This is the form of a static EvaluateConstraint() method.
   template<typename FunctionType>
-  using EvaluateConstraintStaticForm = double(*)(const size_t, const MatType&);
+  using EvaluateConstraintStaticForm = typename MatType::elem_type(*)(const size_t, const MatType&);
 
   //! This is the form of a non-const GradientConstraint() method.
   template <typename FunctionType>

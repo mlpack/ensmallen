@@ -50,7 +50,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
     MatType& iterate)
 {
   // Make sure we have the methods that we need.
-  //traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, MatType>();
 
   typedef typename MatType::elem_type ElemType;
 

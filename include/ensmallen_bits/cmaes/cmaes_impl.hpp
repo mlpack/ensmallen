@@ -48,8 +48,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   // TODO: no sp_mat allowed
 
   // Make sure that we have the methods that we need.  Long name...
-  //traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
-  //    DecomposableFunctionType, MatType>();
+  traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
+      DecomposableFunctionType, MatType>();
 
   typedef typename MatType::elem_type ElemType;
 

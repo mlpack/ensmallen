@@ -58,7 +58,8 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
       FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
-//  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType, GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, MatType,
+      GradType>();
 
   // The update policy and decay policy internally use a templated class so that
   // we can know MatType and GradType only when Optimize() is called.

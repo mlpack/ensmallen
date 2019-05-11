@@ -369,10 +369,10 @@ inline void CheckSparseFunctionTypeAPI()
 /**
  * Perform checks for the NonDifferentiableFunctionType API.
  */
-template<typename FunctionType, typename MatType, typename GradType>
+template<typename FunctionType, typename MatType>
 inline void CheckNonDifferentiableFunctionTypeAPI()
 {
-  static_assert(CheckEvaluate<FunctionType, MatType, GradType>::value,
+  static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the NonDifferentiableFunctionType API; see the optimizer tutorial for "
@@ -445,12 +445,12 @@ inline void CheckConstrainedFunctionTypeAPI()
  * Perform checks for the NonDifferentiableDecomposableFunctionType API.  (I
  * know, it is a long name...)
  */
-template<typename FunctionType, typename MatType, typename GradType>
+template<typename FunctionType, typename MatType>
 inline void CheckNonDifferentiableDecomposableFunctionTypeAPI()
 {
   static_assert(CheckDecomposableEvaluate<FunctionType,
                                           MatType,
-                                          GradType>::value,
+                                          MatType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the NonDifferentiableDecomposableFunctionType API; see the optimizer "
