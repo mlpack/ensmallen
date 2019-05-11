@@ -25,15 +25,13 @@ inline CNE::CNE(const size_t populationSize,
                 const double mutationProb,
                 const double mutationSize,
                 const double selectPercent,
-                const double tolerance,
-                const double objectiveChange) :
+                const double tolerance) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     mutationProb(mutationProb),
     mutationSize(mutationSize),
     selectPercent(selectPercent),
     tolerance(tolerance),
-    objectiveChange(objectiveChange),
     numElite(0),
     elements(0)
 { /* Nothing to do here. */ }
@@ -87,12 +85,13 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
-  // Set the population size and fill random values [0,1].
+  // Generate the population based on a Gaussian distribution around the given
+  // starting point.
   std::vector<BaseMatType> population;
   for (size_t i = 0 ; i < populationSize; ++i)
   {
     population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
-        iterate.n_cols));
+        iterate.n_cols) + iterate);
   }
 
   // Store the number of elements in the objective matrix.
@@ -127,19 +126,10 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
     Reproduce(population, fitnessValues, index);
 
     // Check for termination criteria.
-    if (tolerance >= fitnessValues.min())
+    if (std::abs(lastBestFitness - fitnessValues.min()) < tolerance)
     {
-      Info << "CNE::Optimize(): terminating. Given fitness criteria "
-          << tolerance << " > " << fitnessValues.min() << "." << std::endl;
-      break;
-    }
-
-    // Check for termination criteria.
-    if (lastBestFitness - fitnessValues.min() < objectiveChange)
-    {
-      Info << "CNE::Optimize(): terminating. Fitness history change "
-          << (lastBestFitness - fitnessValues.min())
-          << " < " << objectiveChange << "." << std::endl;
+      Info << "CNE: minimized within tolerance " << tolerance << "; "
+            << "terminating optimization." << std::endl;
       break;
     }
 

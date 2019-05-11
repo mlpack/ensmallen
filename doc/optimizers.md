@@ -265,12 +265,19 @@ optimizer uses [L-BFGS](#l-bfgs).
 
 #### Constructors
 
- * `AugLagrangian()`
+ * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor sigmaUpdateFactor`_`)`
 
 #### Attributes
 
-This optimizer has no attributes, but instead has two separate `Optimize()`
-functions with different signatures that allow the behavior to be controlled:
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `1000` |
+| `double` | **`penaltyThresholdFactor`** | When penalty threshold is updated, set it to this multiplied by the penalty. | `10.0` |
+| `double` | **`sigmaUpdateFactor`** | When sigma is updated, multiply it by this. | `0.25` |
+| `L_BFGS&` | **`lbfgs`** | Internal l-bfgs optimizer. | `L_BFGS()` |
+
+The attributes of the optimizer may also be modified via the member methods
+`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `L_BFGS()`.
 
 ```c++
 /**
@@ -282,13 +289,10 @@ functions with different signatures that allow the behavior to be controlled:
  *     class.
  * @param function The function to optimize.
  * @param coordinates Output matrix to store the optimized coordinates in.
- * @param maxIterations Maximum number of iterations of the Augmented
- *     Lagrangian algorithm.  0 indicates no maximum.
  */
 template<typename LagrangianFunctionType>
 bool Optimize(LagrangianFunctionType& function,
-              arma::mat& coordinates,
-              const size_t maxIterations = 1000);
+              arma::mat& coordinates);
 
 /**
  * Optimize the function, giving initial estimates for the Lagrange
@@ -302,15 +306,12 @@ bool Optimize(LagrangianFunctionType& function,
  * @param initLambda Vector of initial Lagrange multipliers.  Should have
  *     length equal to the number of constraints.
  * @param initSigma Initial penalty parameter.
- * @param maxIterations Maximum number of iterations of the Augmented
- *     Lagrangian algorithm.  0 indicates no maximum.
  */
 template<typename LagrangianFunctionType>
 bool Optimize(LagrangianFunctionType& function,
               arma::mat& coordinates,
               const arma::vec& initLambda,
-              const double initSigma,
-              const size_t maxIterations = 1000);
+              const double initSigma);
 ```
 
 #### Examples
@@ -320,7 +321,7 @@ GockenbachFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
 AugLagrangian optimizer;
-optimizer.Optimize(f, coords, 0);
+optimizer.Optimize(f, coords);
 ```
 
 #### See also:
@@ -464,14 +465,14 @@ approxOptimizer.Optimize(f, coordinates);
 
 *An optimizer for [arbitrary functions](#arbitrary-functions).*
 
-Conventional Neural Evolution is an optimizer that works like biological evolution which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
+Conventional Neural Evolution is an optimizer that works like biological evolution which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population. The initial population is generated based on a random normal distribution centered at the given starting point.
 
 #### Constructors
 
  * `CNE()`
  * `CNE(`_`populationSize, maxGenerations`_`)`
  * `CNE(`_`populationSize, maxGenerations, mutationProb, mutationSize`_`)`
- * `CNE(`_`populationSize, maxGenerations, mutationProb, mutationSize, selectPercent, tolerance, objectiveChange`_`)`
+ * `CNE(`_`populationSize, maxGenerations, mutationProb, mutationSize, selectPercent, tolerance`_`)`
 
 #### Attributes
 
@@ -483,11 +484,10 @@ Conventional Neural Evolution is an optimizer that works like biological evoluti
 | `double` | **`mutationSize`** | The range of mutation noise to be added. This range is between 0 and mutationSize. | `0.02` |
 | `double` | **`selectPercent`** | The percentage of candidates to select to become the the next generation. | `0.2` |
 | `double` | **`tolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-5` |
-| `double` | **`objectiveChange`** | Minimum change in best fitness values between two consecutive generations should be greater than threshold. If set to negative value, objectiveChange is not considered. | `1e-5` |
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `MaxGenerations()`, `MutationProb()`, `SelectPercent()`,
-`Tolerance()`, and `ObjectiveChange()`.
+`PopulationSize()`, `MaxGenerations()`, `MutationProb()`, `SelectPercent()`
+and `Tolerance()`.
 
 #### Examples:
 
@@ -495,14 +495,57 @@ Attributes of the optimizer may also be changed via the member methods
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 65, 0.1e-4);
+CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
 
 #### See also:
 
- * [The CMA Evolution Strategy: A Tutorial](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmatutorial110628.pdf)
  * [Neuroevolution in Wikipedia](https://en.wikipedia.org/wiki/Neuroevolution)
+ * [Arbitrary functions](#arbitrary-functions)
+
+## DE
+
+*An optimizer for [arbitrary functions](#arbitrary-functions).*
+
+Differential Evolution is an evolutionary optimization algorithm which selects best candidates based on their fitness scores and creates new generation by mutation and crossover of population.
+
+#### Constructors
+
+* `DE()`
+* `DE(`_`populationSize, maxGenerations`_`)`
+* `DE(`_`populationSize, maxGenerations, crossoverRate`_`)`
+* `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight`_`)`
+* `DE(`_`populationSize, maxGenerations, crossoverRate, differentialWeight, tolerance`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 3 in size. | `100` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for DE. | `2000` |
+| `double` | **`crossoverRate`** | Probability that a candidate will undergo crossover. | `0.6` |
+| `double` | **`differentialWeight`** | Amplification factor for differentiation. | `0.8` |
+| `double` | **`tolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-5` |
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `DifferentialWeight()`
+and `Tolerance()`.
+
+#### Examples:
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+DE optimizer(200, 1000, 0.6, 0.8, 1e-5);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [Differential Evolution - A simple and efficient adaptive scheme for global optimization over continuous spaces](http://www1.icsi.berkeley.edu/~storn/TR-95-012.pdf)
+ * [Differential Evolution in Wikipedia](https://en.wikipedia.org/wiki/Differential_Evolution)
  * [Arbitrary functions](#arbitrary-functions)
 
 ## Eve
@@ -550,7 +593,7 @@ optimizer.Optimize(f, coordinates);
 
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
- * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
+ * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](https://arxiv.org/pdf/1611.01505.pdf)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Frank-Wolfe
@@ -828,15 +871,15 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
 Katyusha is a direct, primal-only stochastic gradient method which uses a
-"negative momentum" on top of Nesterovâ€™s momentum.  Two types are
+"negative momentum" on top of Nesterov's momentum.  Two types are
 available---one that uses a proximal update step, and one that uses the standard
 update step.
 
 #### Constructors
 
  * `KatyushaType<`_`proximal`_`>()`
- * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz_`)`
- * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz, batchSize_`)`
+ * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz`_`)`
+ * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz, batchSize`_`)`
  * `KatyushaType<`_`proximal`_`>(`_`convexity, lipschitz, batchSize, maxIterations, innerIterations, tolerance, shuffle`_`)`
 
 The _`proximal`_ template parameter is a boolean value (`true` or `false`) that
@@ -888,7 +931,7 @@ proximalOptimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable functions](#differentiable-functions)*
 
-L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broydenâ€“Fletcherâ€“Goldfarbâ€“Shanno (BFGS) algorithm using a limited amount of computer memory.  
+L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm using a limited amount of computer memory.  
   
 #### Constructors
 
@@ -1184,7 +1227,7 @@ optimizer.Optimize(f, coordinates);
 #### See also:
 
  * [Standard SGD](#standard-sgd)
- * [Nesterov Momentum SGD](#nesterov-momentum-sgd)
+ * [Momentum SGD](#momentum-sgd)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
@@ -1242,7 +1285,7 @@ optimizer.Optimize(f, coordinates);
 
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
- * [Incorporating Nesterov Momentum into Adam](http://cs229.stanford.edu/proj2015/054_report.pdf)
+ * [Training GANs with Optimism](https://arxiv.org/pdf/1711.00141.pdf)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## Padam
@@ -1470,7 +1513,49 @@ optimizer.Optimize(f, coordinates);
  * [Simulated annealing on Wikipedia](https://en.wikipedia.org/wiki/Simulated_annealing)
  * [Arbitrary functions](#arbitrary-functions)
 
-## StochAstic Recusive gRadient algoritHm (SARAH/SARAH+)
+## Simultaneous Perturbation Stochastic Approximation (SPSA)
+
+*An optimizer for [arbitrary functions](#arbitrary-functions).*
+
+The SPSA algorithm approximates the gradient of the function by finite
+differences along stochastic directions.
+
+#### Constructors
+
+ * `SPSA(`_`alpha, gamma, stepSize, evaluationStepSize, maxIterations, tolerance, shuffle`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`alpha`** | Scaling exponent for the step size. | `0.602` |
+| `double` | **`gamma`** | Scaling exponent for evaluation step size. | `0.101` |
+| `double` | **`stepSize`** | Scaling parameter for step size (named as 'a' in the paper). | `0.16` |
+| `double` | **`evaluationStepSize`** | Scaling parameter for evaluation step size (named as 'c' in the paper). | `0.3` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+
+Attributes of the optimizer may also be changed via the member methods
+`Alpha()`, `Gamma()`, `StepSize()`, `EvaluationStepSize()`, and `MaxIterations()`.
+
+#### Examples:
+
+```c++
+SphereFunction f(2);
+arma::mat coordinates = f.GetInitialPoint();
+
+SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 1e-5);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [An Overview of the Simultaneous Perturbation Method for Efficient Optimization](https://pdfs.semanticscholar.org/bf67/0fb6b1bd319938c6a879570fa744cf36b240.pdf)
+ * [SPSA on Wikipedia](https://en.wikipedia.org/wiki/Simultaneous_perturbation_stochastic_approximation)
+ * [Stochastic gradient descent in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## Stochastic Recursive Gradient Algorithm (SARAH/SARAH+)
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 

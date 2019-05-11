@@ -35,7 +35,8 @@ typename MatType::elem_type LRSDP<SDPType>::Optimize(MatType& coordinates)
       new MatType(coordinates * coordinates.t()));
 
   augLag.Sigma() = 10;
-  augLag.Optimize(function, coordinates, maxIterations);
+  augLag.MaxIterations() = maxIterations;
+  augLag.Optimize(function, coordinates);
 
   return function.Evaluate(coordinates);
 }
