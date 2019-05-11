@@ -44,17 +44,30 @@ template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type SVRGType<UpdatePolicyType,
                                      DecayPolicyType>::Optimize(
-    DecomposableFunctionType& function,
-    MatType& iterate)
+    DecomposableFunctionType& functionIn,
+    MatType& iterateIn)
 {
-  // TODO: check function type
-
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef typename UpdatePolicyType::template Policy<MatType, GradType>
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
+  FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
+
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+      BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  typedef typename UpdatePolicyType::template Policy<BaseMatType, BaseGradType>
       InstUpdatePolicyType;
-  typedef typename DecayPolicyType::template Policy<MatType, GradType>
+  typedef typename DecayPolicyType::template Policy<BaseMatType, BaseGradType>
       InstDecayPolicyType;
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -87,9 +100,9 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
   }
 
   // Now iterate!
-  GradType gradient(iterate.n_rows, iterate.n_cols);
-  GradType gradient0(iterate.n_rows, iterate.n_cols);
-  MatType iterate0;
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient0(iterate.n_rows, iterate.n_cols);
+  BaseMatType iterate0;
 
   // Find the number of batches.
   size_t numBatches = numFunctions / batchSize;
@@ -127,7 +140,7 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
 
     // Compute the full gradient.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
-    GradType fullGradient(iterate.n_rows, iterate.n_cols);
+    BaseGradType fullGradient(iterate.n_rows, iterate.n_cols);
     function.Gradient(iterate, 0, fullGradient, effectiveBatchSize);
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)

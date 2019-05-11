@@ -35,15 +35,27 @@ inline IQN::IQN(const double stepSize,
 template<typename DecomposableFunctionType,
          typename MatType,
          typename GradType>
-typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& function,
-                                          MatType& iterate)
+typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
+                                          MatType& iterateIn)
 {
-  // TODO: add Function<>
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  // TODO: disallow sparse matrices
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
+  FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
 
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
-      GradType>();
+  // Make sure we have all the methods that we need.
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireDenseFloatingPointType<BaseMatType>();
+  RequireDenseFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+      BaseMatType, BaseGradType>();
 
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();
@@ -51,19 +63,23 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& function,
   if (numFunctions % batchSize != 0)
     ++numBatches; // Capture last few.
 
-  // To keep track of where we are and how things are going.
-  double overallObjective = 0;
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
-  std::vector<GradType> y(numBatches, GradType(iterate.n_rows, iterate.n_cols));
-  std::vector<MatType> t(numBatches, MatType(iterate.n_rows, iterate.n_cols));
-  std::vector<MatType> Q(numBatches, MatType(iterate.n_elem, iterate.n_elem));
-  MatType initialIterate =
-      arma::randn<arma::Mat<typename MatType::elem_type>>(iterate.n_rows,
-                                                          iterate.n_cols);
-  GradType B(iterate.n_elem, iterate.n_elem);
+  // To keep track of where we are and how things are going.
+  ElemType overallObjective = 0;
+
+  std::vector<BaseGradType> y(numBatches, BaseGradType(iterate.n_rows,
+      iterate.n_cols));
+  std::vector<BaseMatType> t(numBatches, BaseMatType(iterate.n_rows,
+      iterate.n_cols));
+  std::vector<BaseMatType> Q(numBatches, BaseMatType(iterate.n_elem,
+      iterate.n_elem));
+  BaseMatType initialIterate = arma::randn<arma::Mat<ElemType>>(iterate.n_rows,
+      iterate.n_cols);
+  BaseGradType B(iterate.n_elem, iterate.n_elem);
   B.eye();
 
-  GradType g(iterate.n_rows, iterate.n_cols);
+  BaseGradType g(iterate.n_rows, iterate.n_cols);
   g.zeros();
   for (size_t i = 0, f = 0; i < numFunctions; f++)
   {
@@ -83,8 +99,8 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& function,
   }
   g /= numFunctions;
 
-  GradType gradient(iterate.n_rows, iterate.n_cols);
-  MatType u = t[0];
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseMatType u = t[0];
 
   for (size_t i = 1; i != maxIterations; ++i)
   {
@@ -103,10 +119,10 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& function,
             effectiveBatchSize);
         gradient /= effectiveBatchSize;
 
-        const MatType s = arma::vectorise(iterate - t[it]);
-        const GradType yy = arma::vectorise(gradient - y[it]);
+        const BaseMatType s = arma::vectorise(iterate - t[it]);
+        const BaseGradType yy = arma::vectorise(gradient - y[it]);
 
-        const GradType stochasticHessian = Q[it] + yy * yy.t() /
+        const BaseGradType stochasticHessian = Q[it] + yy * yy.t() /
             arma::as_scalar(yy.t() * s) - Q[it] * s * s.t() *
             Q[it] / arma::as_scalar(s.t() * Q[it] * s);
 

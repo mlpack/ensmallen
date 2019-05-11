@@ -32,23 +32,31 @@ inline GradientDescent::GradientDescent(
 //! Optimize the function (minimize).
 template<typename FunctionType, typename MatType, typename GradType>
 typename MatType::elem_type GradientDescent::Optimize(
-    FunctionType& function, MatType& iterate)
+    FunctionType& function, MatType& iterateIn)
 {
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
   // Use the Function<> wrapper type to provide additional functionality.
-  typedef Function<FunctionType, MatType, GradType> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have the methods that we need.
-  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
-
-  typedef typename MatType::elem_type ElemType;
+  traits::CheckFunctionTypeAPI<FullFunctionType, BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
   // To keep track of where we are and how things are going.
   ElemType overallObjective = std::numeric_limits<ElemType>::max();
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+
   // Now iterate!
-  GradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   for (size_t i = 1; i != maxIterations; ++i)
   {
     overallObjective = f.EvaluateWithGradient(iterate, gradient);

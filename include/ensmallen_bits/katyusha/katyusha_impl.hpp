@@ -42,12 +42,20 @@ template<bool Proximal>
 template<typename DecomposableFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type KatyushaType<Proximal>::Optimize(
     DecomposableFunctionType& function,
-    MatType& iterate)
+    MatType& iterateIn)
 {
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
-      GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+      BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -81,14 +89,14 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
   ElemType lastObjective = DBL_MAX;
 
   // Now iterate!
-  GradType gradient(iterate.n_rows, iterate.n_cols);
-  GradType fullGradient(iterate.n_rows, iterate.n_cols);
-  GradType gradient0(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType fullGradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient0(iterate.n_rows, iterate.n_cols);
 
-  MatType iterate0 = iterate;
-  MatType y = iterate;
-  MatType z = iterate;
-  MatType w(iterate.n_rows, iterate.n_cols);
+  BaseMatType iterate0 = iterate;
+  BaseMatType y = iterate;
+  BaseMatType z = iterate;
+  BaseMatType w(iterate.n_rows, iterate.n_cols);
   w.zeros();
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
@@ -165,7 +173,7 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
 
       // By the minimality definition of z_{k + 1}, we have that:
       // z_{k+1} − z_k + \alpha * \sigma_{k+1} + \alpha g = 0.
-      MatType zNew = z - alpha * (fullGradient + (gradient - gradient0) /
+      BaseMatType zNew = z - alpha * (fullGradient + (gradient - gradient0) /
           (double) batchSize);
 
       // Proximal update, choose between Option I and Option II. Shift relative

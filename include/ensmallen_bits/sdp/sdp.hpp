@@ -134,14 +134,14 @@ class SDP
 
   //! Get an initial point for the primal coordinates.
   template<typename MatType>
-  MatType GetInitialPoint();
+  MatType GetInitialPoint() const;
 
   //! Get initial points for the primal and dual coordinates.
   template<typename MatType>
   void GetInitialPoints(MatType& coordinates,
                         MatType& ySparse,
                         MatType& yDense,
-                        MatType& dualCoordinates);
+                        MatType& dualCoordinates) const;
 
  private:
   //! Objective function matrix c.

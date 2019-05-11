@@ -47,12 +47,17 @@ template<typename CoolingScheduleType>
 template<typename FunctionType, typename MatType>
 typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
     FunctionType& function,
-    MatType& iterate)
+    MatType& iterateIn)
 {
-  // Make sure we have the methods that we need.
-  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, MatType>();
-
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  // Make sure we have the methods that we need.
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, BaseMatType>();
+  RequireFloatingPointType<BaseMatType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;
@@ -64,8 +69,8 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   size_t idx = 0;
   size_t sweepCounter = 0;
 
-  MatType accept(rows, cols, arma::fill::zeros);
-  MatType moveSize(rows, cols);
+  BaseMatType accept(rows, cols, arma::fill::zeros);
+  BaseMatType moveSize(rows, cols);
   moveSize.fill(initMoveCoef);
 
   // Initial moves to get rid of dependency of initial states.

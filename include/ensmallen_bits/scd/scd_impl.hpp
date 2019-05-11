@@ -38,25 +38,32 @@ template <typename DescentPolicyType>
 template <typename ResolvableFunctionType, typename MatType, typename GradType>
 typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
     ResolvableFunctionType& function,
-    MatType& iterate)
+    MatType& iterateIn)
 {
-  // Make sure we have the methods that we need.
-  traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType, MatType,
-      GradType>();
-
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  // Make sure we have the methods that we need.
+  traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
 
   ElemType overallObjective = 0;
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
-  GradType gradient;
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+  BaseGradType gradient;
 
   // Start iterating.
   for (size_t i = 1; i != maxIterations; ++i)
   {
     // Get the coordinate to descend on.
     size_t featureIdx = descentPolicy.template DescentFeature<
-        ResolvableFunctionType, MatType, GradType>(i, iterate, function);
+        ResolvableFunctionType, BaseMatType, BaseGradType>(i, iterate,
+        function);
 
     // Get the partial gradient with respect to this feature.
     function.PartialGradient(iterate, featureIdx, gradient);
