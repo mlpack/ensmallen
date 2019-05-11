@@ -39,7 +39,7 @@ typename MatType::elem_type GradientDescent::Optimize(
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have the methods that we need.
-  //traits::CheckFunctionTypeAPI<FullFunctionType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
 
   typedef typename MatType::elem_type ElemType;
 

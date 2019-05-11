@@ -47,7 +47,7 @@ Optimize(FunctionType& function, MatType& iterate)
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Make sure we have all necessary functions.
-  //traits::CheckFunctionTypeAPI<FullFunctionType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
 
   typedef typename MatType::elem_type ElemType;
 

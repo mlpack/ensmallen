@@ -64,7 +64,7 @@ void GridSearch::Optimize(
     size_t i)
 {
   // Make sure we have the methods that we need.
-  //traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, MatType>();
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, MatType>();
 
   if (i < categoricalDimensions.size())
   {

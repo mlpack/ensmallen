@@ -46,8 +46,8 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
 {
   typedef typename MatType::elem_type ElemType;
 
-  //traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
-  //  GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
+    GradType>();
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();

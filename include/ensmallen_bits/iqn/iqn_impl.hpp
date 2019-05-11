@@ -42,8 +42,8 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& function,
 
   // TODO: disallow sparse matrices
 
-//  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
-//      GradType>();
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType, MatType,
+      GradType>();
 
   // Find the number of functions.
   const size_t numFunctions = function.NumFunctions();

@@ -69,7 +69,8 @@ bool AugLagrangian::Optimize(
     const size_t maxIterations)
 {
   // TODO:
-  //traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType>();
+  traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType, MatType,
+      GradType>();
 
   typedef typename MatType::elem_type ElemType;
 

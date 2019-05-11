@@ -41,7 +41,8 @@ typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
     MatType& iterate)
 {
   // Make sure we have the methods that we need.
-  //traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType>();
+  traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType, MatType,
+      GradType>();
 
   typedef typename MatType::elem_type ElemType;
 
