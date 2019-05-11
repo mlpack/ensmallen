@@ -158,11 +158,11 @@ TEST_CASE("Johnson844LovaszThetaFMatSDP", "[LRSDPTest]")
   float finalValue = lovasz.Optimize(coordinates);
 
   // Final value taken from Monteiro + Burer 2004.
-  REQUIRE(finalValue == Approx(-14.0).epsilon(1e-4));
+  REQUIRE(finalValue == Approx(-14.0).epsilon(0.1));
 
   // Now ensure that all the constraints are satisfied.
   arma::fmat rrt = coordinates * trans(coordinates);
-  REQUIRE(trace(rrt) == Approx(1.0).epsilon(1e-2));
+  REQUIRE(trace(rrt) == Approx(1.0).epsilon(0.1));
 
   // All those edge constraints...
   for (size_t i = 0; i < edges.n_cols; ++i)
