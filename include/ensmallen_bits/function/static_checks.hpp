@@ -278,6 +278,7 @@ struct CheckDecomposableEvaluateWithGradient
 template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckFunctionTypeAPI()
 {
+#ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckEvaluate<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
@@ -294,6 +295,7 @@ inline void CheckFunctionTypeAPI()
       "EvaluateWithGradient().  Please check that the FunctionType fully "
       "satisfies the requirements of the FunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 /**
@@ -302,6 +304,7 @@ inline void CheckFunctionTypeAPI()
 template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckDecomposableFunctionTypeAPI()
 {
+#ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckDecomposableEvaluate<FunctionType,
                                           MatType,
                                           GradType>::value,
@@ -337,6 +340,7 @@ inline void CheckDecomposableFunctionTypeAPI()
       "Please check that the FunctionType fully satisfies the requirements of "
       "the DecomposableFunctionType API; see the optimizer tutorial for more "
       "details.");
+#endif
 }
 
 /**
@@ -345,6 +349,7 @@ inline void CheckDecomposableFunctionTypeAPI()
 template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckSparseFunctionTypeAPI()
 {
+#ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckNumFunctions<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of NumFunctions(). "
       "Please check that the FunctionType fully satisfies the requirements of "
@@ -364,6 +369,7 @@ inline void CheckSparseFunctionTypeAPI()
       "Gradient() method. Please check that the FunctionType fully satisfies "
       "the requirements of the SparseFunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 /**
@@ -372,11 +378,13 @@ inline void CheckSparseFunctionTypeAPI()
 template<typename FunctionType, typename MatType>
 inline void CheckNonDifferentiableFunctionTypeAPI()
 {
+#ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the NonDifferentiableFunctionType API; see the optimizer tutorial for "
       "more details.");
+#endif
 }
 
 /**
@@ -385,6 +393,7 @@ inline void CheckNonDifferentiableFunctionTypeAPI()
 template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckResolvableFunctionTypeAPI()
 {
+#ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckNumFeatures<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of NumFeatures(). "
       "Please check that the FunctionType fully satisfies the requirements of "
@@ -402,6 +411,7 @@ inline void CheckResolvableFunctionTypeAPI()
       "Gradient() function. Please check that the FunctionType fully satisfies "
       "the requirements of the ResolvableFunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 /**
@@ -410,6 +420,7 @@ inline void CheckResolvableFunctionTypeAPI()
 template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckConstrainedFunctionTypeAPI()
 {
+#ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckEvaluate<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
@@ -439,6 +450,7 @@ inline void CheckConstrainedFunctionTypeAPI()
       "GradientConstraint(). Please check that the FunctionType fully satisfies"
       " the ConstrainedFunctionType API; see the optimizer tutorial for more "
       "details.");
+#endif
 }
 
 /**
@@ -448,6 +460,7 @@ inline void CheckConstrainedFunctionTypeAPI()
 template<typename FunctionType, typename MatType>
 inline void CheckNonDifferentiableDecomposableFunctionTypeAPI()
 {
+#ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckDecomposableEvaluate<FunctionType,
                                           MatType,
                                           MatType>::value,
@@ -455,6 +468,7 @@ inline void CheckNonDifferentiableDecomposableFunctionTypeAPI()
       "Please check that the FunctionType fully satisfies the requirements of "
       "the NonDifferentiableDecomposableFunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 } // namespace traits
