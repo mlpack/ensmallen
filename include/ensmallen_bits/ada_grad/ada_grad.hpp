@@ -62,9 +62,8 @@ class AdaGrad
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
-   * @param exactObjective Flag that determines whether actual objective over
-   *                       entire training set is calculated or not after
-   *                       training.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
    */
@@ -123,9 +122,9 @@ class AdaGrad
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
 
-  //! Get whether or not the actual objective is calculated after training.
+  //! Get whether or not the actual objective is calculated.
   bool ExactObjective() const { return optimizer.ExactObjective(); }
-  //! Modify whether or not the actual objective is calculated after training.
+  //! Modify whether or not the actual objective is calculated.
   bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get whether or not the update policy parameters

@@ -91,9 +91,8 @@ class BigBatchSGD
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the batch order is shuffled; otherwise, each
    *        batch is visited in linear order.
-   * @param exactObjective Flag that determines whether actual objective over
-   *                       entire training set is calculated or not after
-   *                       training.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   BigBatchSGD(const size_t batchSize = 1000,
               const double stepSize = 0.01,
@@ -151,9 +150,9 @@ class BigBatchSGD
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
-  //! Get the exactObjective parameter.
+  //! Get whether or not the actual objective is calculated.
   bool ExactObjective() const { return exactObjective; }
-  //! Modify the exactObjective parameter.
+  //! Modify whether or not the actual objective is calculated.
   bool& ExactObjective() { return exactObjective; }
 
  private:
@@ -179,8 +178,7 @@ class BigBatchSGD
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
 
-  //! Controls whether or not the actual Objective value is calculated after
-  //! training.
+  //! Controls whether or not the actual Objective value is calculated.
   bool exactObjective;
 };
 

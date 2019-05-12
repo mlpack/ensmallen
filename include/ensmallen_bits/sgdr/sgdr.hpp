@@ -67,9 +67,8 @@ class SGDR
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the mini-batch order is shuffled; otherwise, each
    *        mini-batch is visited in linear order.
-   * @param exactObjective Flag that determines whether actual objective over
-   *                       entire training set is calculated or not after
-   *                       training.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
    * @param resetPolicy If true, parameters are reset before every Optimize
@@ -124,9 +123,9 @@ class SGDR
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
 
-  //! Get whether or not the actual objective is calculated after training.
+  //! Get whether or not the actual objective is calculated.
   bool ExactObjective() const { return optimizer.ExactObjective(); }
-  //! Modify whether or not the actual objective is calculated after training.
+  //! Modify whether or not the actual objective is calculated.
   bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get the update policy.
