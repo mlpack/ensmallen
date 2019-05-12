@@ -1,3 +1,7 @@
+### ensmallen 1.14.4
+###### 2019-05-11
+  * Fixes for BigBatchSGD (#91).
+
 ### ensmallen 1.14.3
 ###### 2019-05-06
   * Handle eig_sym() failures correctly (#100).
