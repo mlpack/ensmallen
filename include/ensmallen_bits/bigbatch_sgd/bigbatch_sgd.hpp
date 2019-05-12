@@ -171,6 +171,9 @@ class BigBatchSGD
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
+
+  //! Instantiated update policy.
+  Any instUpdatePolicy;
 };
 
 using BBS_Armijo = BigBatchSGD<BacktrackingLineSearch>;
