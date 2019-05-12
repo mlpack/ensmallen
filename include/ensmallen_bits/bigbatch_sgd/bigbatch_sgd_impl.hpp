@@ -60,6 +60,16 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
+  typedef typename UpdatePolicyType::template Policy<BaseMatType>
+      InstUpdatePolicyType;
+
+  if (!instUpdatePolicy.Has<InstUpdatePolicyType>())
+  {
+    instUpdatePolicy.Clean();
+    instUpdatePolicy.Set<InstUpdatePolicyType>(
+        new InstUpdatePolicyType(updatePolicy));
+  }
+
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
 
@@ -182,8 +192,9 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
       }
     }
 
-    updatePolicy.Update(f, stepSize, iterate, gradient, gB, vB,
-        currentFunction, batchSize, effectiveBatchSize, reset);
+    instUpdatePolicy.As<InstUpdatePolicyType>().Update(f, stepSize, iterate,
+        gradient, gB, vB, currentFunction, batchSize, effectiveBatchSize,
+        reset);
 
     // Update the iterate.
     iterate -= stepSize * gradient;
