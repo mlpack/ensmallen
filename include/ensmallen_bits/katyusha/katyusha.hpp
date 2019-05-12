@@ -63,9 +63,8 @@ class KatyushaType
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *    function is visited in linear order.
-   * @param exactObjective Flag that determines whether actual objective over
-   *                       entire training set is calculated or not after
-   *                       training.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   KatyushaType(const double convexity = 1.0,
                const double lipschitz = 10.0,
@@ -124,9 +123,9 @@ class KatyushaType
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
-  //! Get whether or not the actual objective is calculated after training.
+  //! Get whether or not the actual objective is calculated.
   bool ExactObjective() const { return exactObjective; }
-  //! Modify whether or not the actual objective is calculated after training.
+  //! Modify whether or not the actual objective is calculated.
   bool& ExactObjective() { return exactObjective; }
 
  private:
@@ -152,8 +151,7 @@ class KatyushaType
   //! iterating.
   bool shuffle;
 
-  //! Controls whether or not the actual Objective value is calculated after
-  //! training.
+  //! Controls whether or not the actual Objective value is calculated.
   bool exactObjective;
 };
 
