@@ -1,5 +1,5 @@
 ### ensmallen 1.14.4
-###### 2019-05-11
+###### 2019-05-12
   * Fixes for BigBatchSGD (#91).
 
 ### ensmallen 1.14.3
