@@ -1,7 +1,6 @@
 /**
- * @file sgdr_test.cpp
- * @author Marcus Edel
- * @author Conrad Sanderson
+ * @file adamr_test.cpp
+ * @author Niteya Shah
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -17,46 +16,12 @@ using namespace ens;
 using namespace ens::test;
 
 /*
- * Test that the step size resets after a specified number of epochs.
+ * The test to check for cyclic consistency has been perfomed in SGDR test
+ *
+ * Run AdamR on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
-{
-  const double stepSize = 0.5;
-  arma::mat iterate;
 
-  // Now run cyclical decay policy with a couple of multiplicators and initial
-  // restarts.
-  for (size_t restart = 5; restart < 100; restart += 10)
-  {
-    for (size_t mult = 2; mult < 5; ++mult)
-    {
-      double epochStepSize = stepSize;
-
-      CyclicalDecay cyclicalDecay(restart, double(mult), stepSize);
-      cyclicalDecay.EpochBatches() = (double) 1000 / 10;
-
-      // Create all restart epochs.
-      arma::Col<size_t> nextRestart(1000 / 10 /  mult);
-      nextRestart(0) = restart;
-      for (size_t j = 1; j < nextRestart.n_elem; ++j)
-        nextRestart(j) = nextRestart(j - 1) + restart * std::pow(mult, j);
-
-      for (size_t i = 0; i < 1000; ++i)
-      {
-        cyclicalDecay.Update(iterate, epochStepSize, iterate);
-        if (arma::accu(arma::find(nextRestart == i)) > 0)
-        {
-          REQUIRE(epochStepSize == stepSize);
-        }
-      }
-    }
-  }
-}
-
-/**
- * Run SGDR on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
+TEST_CASE("AdamRLogisticRegressionTest","[AdamRTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -64,14 +29,14 @@ TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
   LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
 
-  // Now run SGDR with a couple of batch sizes.
+  // Now run AdamR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SGDR<> sgdr(50, 2.0, batchSize, 0.01, 0.005, 10000, 1e-3);
+    AdamR adamr(0.03, 0.01, 50, 2, batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
-    sgdr.Optimize(lr, coordinates);
+    adamr.Optimize(lr, coordinates);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses, coordinates);
@@ -84,9 +49,9 @@ TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
 }
 
 /**
- * Run SGDWR on logistic regression and make sure the results are better.
+ * Run AdamWR on logistic regression and make sure the results are better.
  */
-TEST_CASE("SGDWRLogisticRegressionTest","[SGDRTest]")
+TEST_CASE("AdamWRLogisticRegressionTest","[AdamRTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -94,14 +59,15 @@ TEST_CASE("SGDWRLogisticRegressionTest","[SGDRTest]")
   LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
 
-  // Now run SGDWR with a couple of batch sizes.
+  // Now run AdamWR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SGDWR sgdr(50, 2.0, batchSize, 0.03, 0.02, 25000, 1e-6);
+    AdamWR adamwr(0.04, 0.02, 50, 2, 0.0003,batchSize, 0.9, 0.999 ,1e-8, 10000, 1e-3);
+
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
-    sgdr.Optimize(lr, coordinates);
+    adamwr.Optimize(lr, coordinates);
 
     // Ensure that the error is close to zero.
     const double acc = lr.ComputeAccuracy(data, responses, coordinates);
