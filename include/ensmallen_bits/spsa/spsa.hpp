@@ -95,11 +95,6 @@ class SPSA
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
-  //! Get whether or not the actual objective is calculated after training.
-  bool ExactObjective() const { return exactObjective; }
-  //! Modify whether or not the actual objective is calculated after training.
-  bool& ExactObjective() { return exactObjective; }
-
  private:
   //! Scaling exponent for the step size.
   double alpha;
