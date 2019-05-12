@@ -35,6 +35,36 @@ TEST_CASE("SPSASphereFunctionTest", "[SPSATest]")
 }
 
 /**
+ * Test the SPSA optimizer on the Sphere function using arma::fmat.
+ */
+TEST_CASE("SPSASphereFunctionFMatTest", "[SPSATest]")
+{
+  SphereFunction f(2);
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
+
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+}
+
+/**
+ * Test the SPSA optimizer on the Sphere function using arma::sp_mat.
+ */
+TEST_CASE("SPSASphereFunctionSpMatTest", "[SPSATest]")
+{
+  SphereFunction f(2);
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+}
+
+/**
  * Test the SPSA optimizer on the Matyas function.
  */
 TEST_CASE("SPSAMatyasFunctionTest", "[SPSATest]")

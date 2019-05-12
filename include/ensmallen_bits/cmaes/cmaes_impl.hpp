@@ -143,9 +143,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
-    const BaseMatType covLower;
-    while (!arma::chol(covLower, C.slice(idx0), "lower"))
-      C.slice(idx0).diag() += 1e-16;
+    BaseMatType covLower;
+    while (!arma::chol(covLower, C[idx0], "lower"))
+      C[idx0].diag() += 1e-16;
 
     for (size_t j = 0; j < lambda; ++j)
     {

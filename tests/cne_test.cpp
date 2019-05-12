@@ -55,7 +55,7 @@ TEST_CASE("CNELogisticRegressionFMatTest", "[CNETest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
 
-  CNE opt(200, 10000, 0.2, 0.2, 0.3, 65, -1);
+  CNE opt(200, 10000, 0.2, 0.2, 0.2, 1e-5);
   arma::fmat coordinates = lr.GetInitialPoint();
   opt.Optimize(lr, coordinates);
 
