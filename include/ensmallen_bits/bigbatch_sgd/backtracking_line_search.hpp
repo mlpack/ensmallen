@@ -89,7 +89,7 @@ class BacktrackingLineSearch
         offset, backtrackingBatchSize);
 
     while (overallObjectiveUpdate >
-        (overallObjective + searchParameter * stepSize * gradientNorm))
+        (overallObjective - searchParameter * stepSize * gradientNorm))
     {
       stepSize /= 2;
 
