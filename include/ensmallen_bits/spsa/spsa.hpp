@@ -65,8 +65,9 @@ class SPSA
        const double tolerance = 1e-5,
        const bool shuffle = true);
 
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename ArbitraryFunctionType, typename MatType>
+  typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the scaling exponent for the step size.
   double Alpha() const { return alpha; }

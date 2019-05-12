@@ -51,7 +51,7 @@ TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
 
   arma::mat coords = f.GetInitialPoint<arma::mat>();
 
-  if (!aug.Optimize(f, coords, 0))
+  if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
@@ -74,7 +74,7 @@ TEST_CASE("GockenbachFunctionFMatTest", "[AugLagrangianTest]")
 
   arma::fmat coords = f.GetInitialPoint<arma::fmat>();
 
-  if (!aug.Optimize(f, coords, 0))
+  if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
 
   float finalValue = f.Evaluate(coords);

@@ -38,20 +38,25 @@ inline SPSA::SPSA(const double alpha,
     shuffle(shuffle)
 { /* Nothing to do. */ }
 
-template<typename ArbitraryFunctionType>
-inline double SPSA::Optimize(
-    ArbitraryFunctionType& function, arma::mat& iterate)
+template<typename ArbitraryFunctionType, typename MatType>
+typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
+                                           MatType& iterate)
 {
-  // Make sure that we have the methods that we need.
-  // TODO: CheckArbitraryFunctionTypeAPI isn't implemented yet.
-//  traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType>();
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
 
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat spVector(iterate.n_rows, iterate.n_cols);
+  // Make sure that we have the methods that we need.
+  traits::CheckNonDifferentiableFunctionTypeAPI<ArbitraryFunctionType,
+      MatType>();
+  RequireFloatingPointType<MatType>();
+
+  BaseMatType gradient(iterate.n_rows, iterate.n_cols);
+  arma::Mat<ElemType> spVector(iterate.n_rows, iterate.n_cols);
 
   // To keep track of where we are and how things are going.
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
 
   for (size_t k = 0; k < maxIterations; ++k)
   {
@@ -81,7 +86,7 @@ inline double SPSA::Optimize(
     const double ck = evaluationStepSize / std::pow(k + 1, gamma);
 
     // Choose stochastic directions.
-    spVector = arma::conv_to<arma::mat>::from(
+    spVector = arma::conv_to<arma::Mat<ElemType>>::from(
         arma::randi(iterate.n_rows, iterate.n_cols,
         arma::distr_param(0, 1))) * 2 - 1;
 
