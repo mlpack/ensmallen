@@ -67,9 +67,6 @@ class SCD
    * @param tolerance Maximum absolute tolerance to terminate the algorithm.
    * @param updateInterval The interval at which the objective is to be
    *    reported and checked for convergence.
-   * @param exactObjective Flag that determines whether actual objective over
-   *                       entire training set is calculated or not after
-   *                       training.
    * @param descentPolicy The policy to use for picking up the coordinate to
    *    descend on.
    */
@@ -77,7 +74,6 @@ class SCD
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const size_t updateInterval = 1e3,
-      const bool exactObjective = false,
       const DescentPolicyType descentPolicy = DescentPolicyType());
 
   /**
@@ -113,11 +109,6 @@ class SCD
   //! Modify the update interval for reporting objective.
   size_t& UpdateInterval() { return updateInterval; }
 
-  //! Get whether or not the actual objective is calculated after training.
-  bool ExactObjective() const { return exactObjective; }
-  //! Modify whether or not the actual objective is calculated after training.
-  bool& ExactObjective() { return exactObjective; }
-
   //! Get the descent policy.
   DescentPolicyType DescentPolicy() const { return descentPolicy; }
   //! Modify the descent policy.
@@ -135,10 +126,6 @@ class SCD
 
   //! The update interval for reporting objective and testing for convergence.
   size_t updateInterval;
-
-  //! Controls whether or not the actual Objective value is calculated after
-  //! training.
-  bool exactObjective;
 
   //! The descent policy used to pick the coordinates for the update.
   DescentPolicyType descentPolicy;
