@@ -87,6 +87,9 @@ TEST_CASE("SWATSStyblinskiTangFunctionFMatTest", "[SWATSTest]")
   REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
 }
 
+#if ARMA_VERSION_MAJOR > 9 ||\
+    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
+
 /**
  * Test the SWATS optimizer on the Styblinski-Tang function.  Use arma::sp_mat.
  */
@@ -101,3 +104,5 @@ TEST_CASE("SWATSStyblinskiTangFunctionSpMatTest", "[SWATSTest]")
   REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
   REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
 }
+
+#endif
