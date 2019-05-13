@@ -140,6 +140,9 @@ TEST_CASE("BBSArmijoLogisticRegressionFMatTest", "[BigBatchSGDTest]")
   }
 }
 
+#if ARMA_VERSION_MAJOR > 9 ||\
+    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
+
 /**
  * Run big-batch SGD using BBS_BB on logistic regression and make sure the
  * results are acceptable.  Use arma::sp_mat as the objective type.
@@ -201,3 +204,5 @@ TEST_CASE("BBSArmijoLogisticRegressionSpMatTest", "[BigBatchSGDTest]")
     REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
+
+#endif

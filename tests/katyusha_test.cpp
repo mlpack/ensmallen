@@ -139,6 +139,9 @@ TEST_CASE("KatyushaProximalLogisticRegressionFMatTest", "[KatyushaTest]")
   }
 }
 
+#if ARMA_VERSION_MAJOR > 9 ||\
+    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
+
 /**
  * Run Katyusha on logistic regression and make sure the results are acceptable.
  * Use arma::sp_mat.
@@ -200,3 +203,5 @@ TEST_CASE("KatyushaProximalLogisticRegressionSpMatTest", "[KatyushaTest]")
     REQUIRE(testAcc == Approx(100.0).epsilon(0.015)); // 1.5% error tolerance.
   }
 }
+
+#endif

@@ -104,6 +104,9 @@ TEST_CASE("EveStyblinskiTangFunctionFMatTest","[EveTest]")
   REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
 }
 
+#if ARMA_VERSION_MAJOR > 9 ||\
+    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
+
 /**
  * Test the Eve optimizer on the Styblinski-Tang function, using arma::sp_mat as
  * the objective type.
@@ -119,3 +122,5 @@ TEST_CASE("EveStyblinskiTangFunctionSpMatTest","[EveTest]")
   REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
   REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
 }
+
+#endif
