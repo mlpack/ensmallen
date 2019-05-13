@@ -54,7 +54,7 @@
 #endif
 
 
-// Define arma_deprecated for deprecated functionality.
+// Define ens_deprecated for deprecated functionality.
 
 #if defined(_MSC_VER)
   #define ens_deprecated __declspec(deprecated)
