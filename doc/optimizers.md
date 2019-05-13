@@ -1394,13 +1394,13 @@ double Optimize(arma::mat& X);
  * [Semidefinite programming on Wikipedia](https://en.wikipedia.org/wiki/Semidefinite_programming)
  * [Semidefinite programs](#semidefinite-programs) (includes example usage of `PrimalDualSolver`)
 
-## Quasi-Hyperbolic Momentum Update
+## Quasi-Hyperbolic Momentum Update SGD (QHSGD)
 
  *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
- Quasi Hyperbolic Momentum Update is an update policy for SGD where the Quasi Hyperbolic terms are added to the
- parametrisation. Simply put QHM’s update rule is a weighted average of momentum’s and plain SGD’s
- update rule.
+ Quasi-hyperbolic momentum update SGD (QHSGD) is an SGD-like optimizer with momentum where quasi-hyperbolic terms are added to the parametrization.
+ The update rule for this optimizer is a weighted average of momentum SGD and vanilla SGD.
+
 
 #### Constructors
 
@@ -1450,13 +1450,13 @@ double Optimize(arma::mat& X);
 
  *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
- QHAdam is an optimizer which implements the QHAdam Adam algorithm
- which uses Quasi-Hyperbolic Descent with the Adam Optimizer. This method is the Adam variant of the quasi-hyperbolic update for Adam.
- It replaces the moment estimators of Adam with Quasi - Hyperbolic terms , and with
- different values of those terms can recover the following Adam Polices
- QHAdam recovers Adam when ν1 = ν2 = 1
- QHAdam recovers RMSProp when ν1 = 0 and ν2 = 1
- QHAdam reovers NAdam when ν1 = β1 and ν2 = 1
+ QHAdam is an optimizer that uses quasi-hyperbolic descent with the Adam optimizer.  This replaces the moment estimators of Adam with quasi-hyperbolic terms, and different values of the `v1` and `v2` parameters are equivalent to the following other optimizers:
+
+  * When `v1 = v2 = 1`, `QHAdam` is equivalent to `Adam`.
+
+  * When `v1 = 0` and `v2 = 1`, `QHAdam` is equivalent to `RMSProp`.
+
+  * When `v1 = beta1` and `v2 = 1`, `QHAdam` is equivalent to `Nadam`.
 
 #### Constructors
 
@@ -1496,9 +1496,12 @@ double Optimize(arma::mat& X);
  ```
 
 #### See also:
+
   * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
   * [SGD](#standard-sgd)
+  * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+  * [Divide the gradient by a running average of its recent magnitude](http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf)
   * [Incorporating Nesterov Momentum into Adam](http://cs229.stanford.edu/proj2015/054_report.pdf)
   * [Differentiable separable functions](#differentiable-separable-functions)
 

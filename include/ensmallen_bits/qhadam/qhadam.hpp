@@ -13,12 +13,12 @@
 #ifndef ENSMALLEN_ADAM_QHADAM_HPP
 #define ENSMALLEN_ADAM_QHADAM_HPP
 
- #include <ensmallen_bits/sgd/sgd.hpp>
+#include <ensmallen_bits/sgd/sgd.hpp>
 #include "qhadam_update.hpp"
 
  namespace ens {
 
- /**
+/**
  * QHadam is an variation of Adam with Quasi-Hyperbolic step. It can be
  * a weighted mean of the momentum step. Due to its paramterisation it can
  * recover many other optimisation strategies.
@@ -34,9 +34,9 @@
  * }
  * @endcode
  *
- * QHAdam can optimize differentiable separable functions.
- * For more details, see the documentation on function
- * types included with this distribution or on the ensmallen website.
+ * QHAdam can optimize differentiable separable functions. For more details,
+ * see the documentation on function types included with this distribution or
+ * on the ensmallen website.
  */
 class QHAdam
 {
@@ -79,15 +79,15 @@ class QHAdam
           const bool resetPolicy = true);
 
    /**
-   * Optimize the given function using QHAdam. The given starting point will be
-   * modified to store the finishing point of the algorithm, and the final
-   * objective value is returned.
-   *
-   * @tparam DecomposableFunctionType Type of the function to optimize.
-   * @param function Function to optimize.
-   * @param iterate Starting point (will be modified).
-   * @return Objective value of the final point.
-   */
+    * Optimize the given function using QHAdam. The given starting point will be
+    * modified to store the finishing point of the algorithm, and the final
+    * objective value is returned.
+    *
+    * @tparam DecomposableFunctionType Type of the function to optimize.
+    * @param function Function to optimize.
+    * @param iterate Starting point (will be modified).
+    * @return Objective value of the final point.
+    */
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
   {

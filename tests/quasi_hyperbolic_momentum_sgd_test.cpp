@@ -16,7 +16,7 @@ using namespace ens::test;
 /*
 * Tests the Quasi Hyperbolic Momentum SGD update policy.
 */
-TEST_CASE("QHSGDSpeedUpTestFunction", "[QHMomentumSGDTest]")
+TEST_CASE("QHSGDTestFunction", "[QHMomentumSGDTest]")
 {
   SGDTestFunction f;
   QHUpdate update(0.9, 0.9);
