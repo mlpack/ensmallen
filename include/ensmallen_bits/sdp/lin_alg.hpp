@@ -66,7 +66,8 @@ inline void Svec(const MatAType& input,
 
   output.zeros(n2bar, 1);
 
-  for (auto it = iMat.begin(); it != iMat.end(); ++it)
+  const auto itEnd = iMat.end();
+  for (auto it = iMat.begin(); it != itEnd; ++it)
   {
     const size_t i = it.row();
     const size_t j = it.col();

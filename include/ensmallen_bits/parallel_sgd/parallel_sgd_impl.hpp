@@ -152,8 +152,9 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
         for (size_t i = 0; i < gradient.n_cols; ++i)
         {
           // Iterate over the non-zero elements.
+          const typename GradType::iterator curEnd = gradient.end_col(i);
           for (typename GradType::iterator cur = gradient.begin_col(i);
-              cur != gradient.end_col(i); ++cur)
+              cur != curEnd; ++cur)
           {
             const ElemType value = (*cur);
             const arma::uword row = cur.row();
