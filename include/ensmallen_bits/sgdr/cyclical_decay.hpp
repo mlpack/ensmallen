@@ -125,30 +125,30 @@ class CyclicalDecay
                 const GradType& /* gradient */)
     {
       // Time to adjust the step size.
-      if (parent.Epoch() >= parent.EpochRestart())
+      if (parent.epoch >= parent.epochRestart)
       {
         // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-        stepSize = 0.5 * parent.StepSize() *
-            (1 + cos((parent.BatchRestart() / parent.EpochBatches())
+        stepSize = 0.5 * parent.constStepSize *
+            (1 + cos((parent.batchRestart / parent.epochBatches)
             * arma::datum::pi));
 
         // Keep track of the number of batches since the last restart.
-        parent.BatchRestart()++;
+        parent.batchRestart++;
       }
 
       // Time to restart.
-      if (parent.Epoch() > parent.NextRestart())
+      if (parent.epoch > parent.nextRestart)
       {
-        parent.BatchRestart() = 0;
+        parent.batchRestart = 0;
 
         // Adjust the period of restarts.
-        parent.EpochRestart() *= parent.MultFactor();
+        parent.epochRestart *= parent.multFactor;
 
         // Update the time for the next restart.
-        parent.NextRestart() += parent.EpochRestart();
+        parent.nextRestart += parent.epochRestart;
       }
 
-      parent.Epoch()++;
+      parent.epoch++;
     }
 
    private:

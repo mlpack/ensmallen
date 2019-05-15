@@ -119,27 +119,27 @@ class NadamUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.Iteration();
+      ++parent.iteration;
 
       // And update the iterate.
-      m *= parent.Beta1();
-      m += (1 - parent.Beta1()) * gradient;
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
 
-      v *= parent.Beta2();
-      v += (1 - parent.Beta2()) * gradient % gradient;
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * gradient % gradient;
 
-      double beta1T = parent.Beta1() * (1 - (0.5 *
-          std::pow(0.96, parent.Iteration() * parent.ScheduleDecay())));
+      double beta1T = parent.beta1 * (1 - (0.5 *
+          std::pow(0.96, parent.iteration * parent.scheduleDecay)));
 
-      double beta1T1 = parent.Beta1() * (1 - (0.5 *
-          std::pow(0.96, (parent.Iteration() + 1) * parent.ScheduleDecay())));
+      double beta1T1 = parent.beta1 * (1 - (0.5 *
+          std::pow(0.96, (parent.iteration + 1) * parent.scheduleDecay)));
 
       cumBeta1 *= beta1T;
 
       const double biasCorrection1 = 1.0 - cumBeta1;
 
-      const double biasCorrection2 = 1.0 - std::pow(parent.Beta2(),
-          parent.Iteration());
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
 
       const double biasCorrection3 = 1.0 - (cumBeta1 * beta1T1);
 
@@ -148,7 +148,7 @@ class NadamUpdate
        */
       iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
           + (beta1T1 / biasCorrection3) * m) * sqrt(biasCorrection2))
-          / (arma::sqrt(v) + parent.Epsilon());
+          / (arma::sqrt(v) + parent.epsilon);
     }
 
    private:

@@ -102,8 +102,8 @@ class GradientClipping
 
       // First, clip the gradient.
       GradType clippedGradient = arma::clamp(gradient,
-          GradElemType(parent.MinGradient()),
-          GradElemType(parent.MaxGradient()));
+          GradElemType(parent.minGradient),
+          GradElemType(parent.maxGradient));
 
       // And only then do the update.
       instPolicy.Update(iterate, stepSize, clippedGradient);

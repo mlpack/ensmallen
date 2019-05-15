@@ -115,22 +115,22 @@ class OptimisticAdamUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.Iteration();
+      ++parent.iteration;
 
       // And update the iterate.
-      m *= parent.Beta1();
-      m += (1 - parent.Beta1()) * gradient;
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
 
-      v *= parent.Beta2();
-      v += (1 - parent.Beta2()) * arma::square(gradient);
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * arma::square(gradient);
 
-      GradType mCorrected = m / (1.0 - std::pow(parent.Beta1(),
-          parent.Iteration()));
-      GradType vCorrected = v / (1.0 - std::pow(parent.Beta2(),
-          parent.Iteration()));
+      GradType mCorrected = m / (1.0 - std::pow(parent.beta1,
+          parent.iteration));
+      GradType vCorrected = v / (1.0 - std::pow(parent.beta2,
+          parent.iteration));
 
       GradType update = mCorrected /
-          (arma::sqrt(vCorrected) + parent.Epsilon());
+          (arma::sqrt(vCorrected) + parent.epsilon);
 
       iterate -= (2 * stepSize * update - stepSize * g);
 

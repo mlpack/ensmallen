@@ -215,10 +215,10 @@ class AdaptiveStepsize
           backtrackingBatchSize);
 
       while (overallObjectiveUpdate >
-          (overallObjective - parent.SearchParameter() * stepSize *
+          (overallObjective - parent.searchParameter * stepSize *
            gradientNorm))
       {
-        stepSize *= parent.BacktrackStepSize();
+        stepSize *= parent.backtrackStepSize;
 
         iterateUpdate = iterate - (stepSize * gradient);
         overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,

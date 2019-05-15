@@ -94,12 +94,12 @@ class SMORMS3Update
       g2 = (1 - r) % g2;
       g2 += r % (gradient % gradient);
 
-      MatType x = (g % g) / (g2 + parent.Epsilon());
+      MatType x = (g % g) / (g2 + parent.epsilon);
 
       x.transform( [stepSize](typename MatType::elem_type &v)
           { return std::min(v, (typename MatType::elem_type) stepSize); } );
 
-      iterate -= gradient % x / (arma::sqrt(g2) + parent.Epsilon());
+      iterate -= gradient % x / (arma::sqrt(g2) + parent.epsilon);
 
       mem %= (1 - x);
       mem += 1;

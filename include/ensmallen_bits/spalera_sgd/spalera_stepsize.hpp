@@ -110,7 +110,7 @@ class SPALeRAStepsize
       learningRates.ones(rows, cols);
       relaxedSums.zeros(rows, cols);
 
-      parent.Lambda() = lambda;
+      parent.lambda = lambda;
     }
 
     /**
@@ -161,13 +161,14 @@ class SPALeRAStepsize
         mn = un;
 
       // If the condition is true we reset the parameter and update parameter.
-      if ((un - mn) > parent.Lambda())
+      if ((un - mn) > parent.lambda)
       {
         // Backtracking, reset the parameter.
         iterate = previousIterate;
 
         // Dividing learning rates by 2 as proposed in:
-        // Stochastic Gradient Descent: Going As Fast As Possible But Not Faster.
+        // Stochastic Gradient Descent: Going As Fast As Possible But Not
+        // Faster.
         learningRates /= 2;
 
         if (arma::any(arma::vectorise(learningRates) <= 1e-15))
@@ -181,21 +182,22 @@ class SPALeRAStepsize
       }
       else
       {
-        const double paramMean = (parent.Alpha() / (2 - parent.Alpha()) *
-            (1 - std::pow(1 - parent.Alpha(), 2 * (eveCounter + 1)))) / iterate.n_elem;
+        const double paramMean = (parent.alpha / (2 - parent.alpha) *
+            (1 - std::pow(1 - parent.alpha, 2 * (eveCounter + 1)))) /
+            iterate.n_elem;
 
-        const double paramStd = (parent.Alpha() / std::sqrt(iterate.n_elem)) /
+        const double paramStd = (parent.alpha / std::sqrt(iterate.n_elem)) /
             std::sqrt(iterate.n_elem);
 
         const typename MatType::elem_type normGradient =
             std::sqrt(arma::accu(arma::pow(gradient, 2)));
 
-        relaxedSums *= (1 - parent.Alpha());
-        if (normGradient > parent.Epsilon())
-          relaxedSums += gradient * (parent.Alpha() / normGradient);
+        relaxedSums *= (1 - parent.alpha);
+        if (normGradient > parent.epsilon)
+          relaxedSums += gradient * (parent.alpha / normGradient);
 
         learningRates %= arma::exp((arma::pow(relaxedSums, 2) - paramMean) *
-            (parent.AdaptRate() / paramStd));
+            (parent.adaptRate / paramStd));
 
         previousIterate = iterate;
 

@@ -115,19 +115,19 @@ class AdamUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.Iteration();
+      ++parent.iteration;
 
       // And update the iterate.
-      m *= parent.Beta1();
-      m += (1 - parent.Beta1()) * gradient;
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
 
-      v *= parent.Beta2();
-      v += (1 - parent.Beta2()) * (gradient % gradient);
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.Beta1(),
-          parent.Iteration());
-      const double biasCorrection2 = 1.0 - std::pow(parent.Beta2(),
-          parent.Iteration());
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+          parent.iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
 
       /**
        * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
@@ -135,7 +135,7 @@ class AdamUpdate
        * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
        */
       iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-          m / (arma::sqrt(v) + parent.Epsilon());
+          m / (arma::sqrt(v) + parent.epsilon);
     }
 
    private:
