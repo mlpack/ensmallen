@@ -17,10 +17,10 @@ namespace ens {
 /**
  * Quasi Hyperbolic Update policy for Stochastic Gradient Descent (QHSGD).
  *
- * QHSGD is a update policy that is defined to be a parent of
- * most update policies(most update policies can reconstructed from
- * QHSGD). This allows this method to combine the features of many optimisers
- * and provide better optimisation control.
+ * QHSGD is a update policy that is defined to be a parent of most update
+ * policies (most update policies can reconstructed from QHSGD). This allows
+ * this method to combine the features of many optimisers and provide better
+ * optimisation control.
  *
  * @code
  * @inproceedings{ma2019qh,
@@ -30,24 +30,23 @@ namespace ens {
  *   year={2019}
  * }
  * @endcode
- *
  */
 class QHUpdate
 {
  public:
-
   /**
    * Construct the Quasi Hyperbolic update policy with the given parameters.
+   *
    * @param v The quasi hyperbolic term.
    * @param momentum The momentum term.
    */
-   QHUpdate(const double v = 0.7,
-            const double momentum = 0.999) :
+  QHUpdate(const double v = 0.7,
+           const double momentum = 0.999) :
        momentum(momentum),
        v(v)
-   {
-     // Nothing to do.
-   }
+  {
+    // Nothing to do.
+  }
 
   /**
    * @param rows Number of rows in the gradient matrix.
