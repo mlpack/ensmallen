@@ -11,7 +11,7 @@
  * for first-order gradient-based optimization of stochastic objective
  * functions, based on adaptive estimates of lower-order moments. AdaMax is
  * simply a variant of Adam based on the infinity norm. AMSGrad is another
- * variant of Adam with guaranteed convergence. Nadam is another variant of 
+ * variant of Adam with guaranteed convergence. Nadam is another variant of
  * Adam based on NAG. NadaMax is a variant for Nadam based on Infinity form.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
