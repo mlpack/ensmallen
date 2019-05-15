@@ -102,10 +102,10 @@ class RMSPropUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      meanSquaredGradient *= parent.Alpha();
-      meanSquaredGradient += (1 - parent.Alpha()) * (gradient % gradient);
+      meanSquaredGradient *= parent.alpha;
+      meanSquaredGradient += (1 - parent.alpha) * (gradient % gradient);
       iterate -= stepSize * gradient / (arma::sqrt(meanSquaredGradient) +
-          parent.Epsilon());
+          parent.epsilon);
     }
 
    private:

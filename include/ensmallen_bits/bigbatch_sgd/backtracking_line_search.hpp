@@ -104,7 +104,7 @@ class BacktrackingLineSearch
           backtrackingBatchSize);
 
       while (overallObjectiveUpdate >
-          (overallObjective - parent.SearchParameter() * stepSize *
+          (overallObjective - parent.searchParameter * stepSize *
            gradientNorm))
       {
         stepSize /= 2;

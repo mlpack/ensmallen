@@ -131,46 +131,46 @@ class SWATSUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.Iteration();
+      ++parent.iteration;
 
-      if (parent.PhaseSGD())
+      if (parent.phaseSGD)
       {
-        // Note we reuse the exponential moving average parameter here instead of
-        // introducing a new parameter (sgdV) as done in the paper.
-        v *= parent.Beta1();
+        // Note we reuse the exponential moving average parameter here instead
+        // of introducing a new parameter (sgdV) as done in the paper.
+        v *= parent.beta1;
         v += gradient;
 
-        iterate -= (1 - parent.Beta1()) * parent.SGDRate() * v;
+        iterate -= (1 - parent.beta1) * parent.sgdRate * v;
         return;
       }
 
-      m *= parent.Beta1();
-      m += (1 - parent.Beta1()) * gradient;
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
 
-      v *= parent.Beta2();
-      v += (1 - parent.Beta2()) * (gradient % gradient);
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.Beta1(),
-          parent.Iteration());
-      const double biasCorrection2 = 1.0 - std::pow(parent.Beta2(),
-          parent.Iteration());
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+          parent.iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
 
       GradType delta = stepSize * m / biasCorrection1 /
-          (arma::sqrt(v / biasCorrection2) + parent.Epsilon());
+          (arma::sqrt(v / biasCorrection2) + parent.epsilon);
       iterate -= delta;
 
       const double deltaGradient = arma::dot(delta, gradient);
       if (deltaGradient != 0)
       {
         const double rate = arma::dot(delta, delta) / deltaGradient;
-        parent.SGDLambda() = parent.Beta2() * parent.SGDLambda() +
-            (1 - parent.Beta2()) * rate;
-        parent.SGDRate() = parent.SGDLambda() / biasCorrection2;
+        parent.sgdLambda = parent.beta2 * parent.sgdLambda +
+            (1 - parent.beta2) * rate;
+        parent.sgdRate = parent.sgdLambda / biasCorrection2;
 
-        if (std::abs(parent.SGDRate() - rate) < parent.Epsilon() &&
-            parent.Iteration() > 1)
+        if (std::abs(parent.sgdRate - rate) < parent.epsilon &&
+            parent.iteration > 1)
         {
-          parent.PhaseSGD() = true;
+          parent.phaseSGD = true;
           v.zeros();
         }
       }

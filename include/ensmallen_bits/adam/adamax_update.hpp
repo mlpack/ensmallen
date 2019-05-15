@@ -117,21 +117,21 @@ class AdaMaxUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.Iteration();
+      ++parent.iteration;
 
       // And update the iterate.
-      m *= parent.Beta1();
-      m += (1 - parent.Beta1()) * gradient;
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
 
       // Update the exponentially weighted infinity norm.
-      u *= parent.Beta2();
+      u *= parent.beta2;
       u = arma::max(u, arma::abs(gradient));
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.Beta1(),
-          parent.Iteration());
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+          parent.iteration);
 
       if (biasCorrection1 != 0)
-        iterate -= (stepSize / biasCorrection1 * m / (u + parent.Epsilon()));
+        iterate -= (stepSize / biasCorrection1 * m / (u + parent.epsilon));
     }
 
    private:

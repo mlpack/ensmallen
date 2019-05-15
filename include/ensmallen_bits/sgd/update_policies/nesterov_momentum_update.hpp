@@ -89,9 +89,9 @@ class NesterovMomentumUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      velocity = parent.Momentum() * velocity - stepSize * gradient;
+      velocity = parent.momentum * velocity - stepSize * gradient;
 
-      iterate += parent.Momentum() * velocity - stepSize * gradient;
+      iterate += parent.momentum * velocity - stepSize * gradient;
     }
 
    private:

@@ -112,24 +112,24 @@ class FTMLUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.Iteration();
+      ++parent.iteration;
 
       // And update the iterate.
-      v *= parent.Beta2();
-      v += (1 - parent.Beta2()) * (gradient % gradient);
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.Beta1(),
-          parent.Iteration());
-      const double biasCorrection2 = 1.0 - std::pow(parent.Beta2(),
-          parent.Iteration());
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+          parent.iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
 
-      MatType sigma = -parent.Beta1() * d;
+      MatType sigma = -parent.beta1 * d;
       d = biasCorrection1 / stepSize *
-        (arma::sqrt(v / biasCorrection2) +parent.Epsilon());
+        (arma::sqrt(v / biasCorrection2) + parent.epsilon);
       sigma += d;
 
-      z *= parent.Beta1();
-      z += (1 - parent.Beta1()) * gradient - sigma % iterate;
+      z *= parent.beta1;
+      z += (1 - parent.beta1) * gradient - sigma % iterate;
       iterate = -z / d;
     }
 
