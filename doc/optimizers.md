@@ -65,7 +65,7 @@ parameters.
  - `AdaGrad(`_`stepSize, batchSize`_`)`
  - `AdaGrad(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle`_`)`
  - `AdaGrad(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy`_`)`
- 
+
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
@@ -932,7 +932,7 @@ proximalOptimizer.Optimize(f, coordinates);
 *An optimizer for [differentiable functions](#differentiable-functions)*
 
 L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm using a limited amount of computer memory.  
-  
+
 #### Constructors
 
  * `L_BFGS()`
@@ -1394,6 +1394,124 @@ double Optimize(arma::mat& X);
  * [Semidefinite programming on Wikipedia](https://en.wikipedia.org/wiki/Semidefinite_programming)
  * [Semidefinite programs](#semidefinite-programs) (includes example usage of `PrimalDualSolver`)
 
+## Quasi-Hyperbolic Momentum Update SGD (QHSGD)
+
+*An optimizer for [differentiable separable
+functions](#differentiable-separable-functions).*
+
+Quasi-hyperbolic momentum update SGD (QHSGD) is an SGD-like optimizer with
+momentum where quasi-hyperbolic terms are added to the parametrization.  The
+update rule for this optimizer is a weighted average of momentum SGD and vanilla
+SGD.
+
+#### Constructors
+
+  * `QHSGD()`
+  * `QHSGD(`_`stepSize, batchSize`_`)`
+  * `QHSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
+
+ Note that `QHSGD` is based on the templated type
+ `SGD<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
+ QHUpdate` and _`DecayPolicyType`_` = NoDecay`.
+
+#### Attributes
+
+ | **type** | **name** | **description** | **default** |
+ |----------|----------|-----------------|-------------|
+ | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+ | `size_t` | **`batchSize`** | Batch size to use for each step. | `32` |
+ | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+ | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+ | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+
+ Attributes of the optimizer may also be modified via the member methods
+ `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, and `Shuffle()`.
+
+ Note that the `QHUpdate` class has the constructor  `QHUpdate(`_`v, momentum`_`)` with a
+ default value of `0.7` for the quasi hyperbolic term and `0.999` for the momentum term.
+
+#### Examples
+
+ ```c++
+ RosenbrockFunction f;
+ arma::mat coordinates = f.GetInitialPoint();
+
+ QHSGD optimizer(0.01, 32, 100000, 1e-5, true);
+ optimizer.Optimize(f, coordinates);
+ ```
+
+#### See also:
+
+  * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
+  * [SGD](#sgd)
+  * [Momentum SGD](#momentum-sgd)
+  * [Nesterov Momentum SGD](#nesterov-momentum-sgd)
+  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+  * [Differentiable separable functions](#differentiable-separable-functions)
+
+## QHAdam
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+QHAdam is an optimizer that uses quasi-hyperbolic descent with the Adam
+optimizer.  This replaces the moment estimators of Adam with quasi-hyperbolic
+terms, and different values of the `v1` and `v2` parameters are equivalent to
+the following other optimizers:
+
+ * When `v1 = v2 = 1`, `QHAdam` is equivalent to `Adam`.
+
+ * When `v1 = 0` and `v2 = 1`, `QHAdam` is equivalent to `RMSProp`.
+
+ * When `v1 = beta1` and `v2 = 1`, `QHAdam` is equivalent to `Nadam`.
+
+#### Constructors
+
+  * `QHAdam()`
+  * `QHAdam(`_`stepSize, batchSize`_`)`
+  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations`_`)`
+  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+
+#### Attributes
+
+ | **type** | **name** | **description** | **default** |
+ |----------|----------|-----------------|-------------|
+ | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+ | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+ | `double` | **`v1`** | The First Quasi Hyperbolic Term. | `0.7` |
+ | `double` | **`v2`** | The Second Quasi Hyperbolic Term. | `1.00` |
+ | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+ | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+ | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+ | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+ | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+ | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+ | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+
+ The attributes of the optimizer may also be modified via the member methods
+ `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+ `Tolerance()`, `Shuffle()`,`V1()`,`V2()`, and `ResetPolicy()`.
+
+#### Examples
+
+ ```c++
+ RosenbrockFunction f;
+ arma::mat coordinates = f.GetInitialPoint();
+
+ QHAdam optimizer(0.001, 32, 0.7, 0.9, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+ optimizer.Optimize(f, coordinates);
+ ```
+
+#### See also:
+
+  * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
+  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+  * [SGD](#standard-sgd)
+  * [Adam](#adam)
+  * [RMSprop](#rmsprop)
+  * [Nadam](#nadam)
+  * [Incorporating Nesterov Momentum into Adam](http://cs229.stanford.edu/proj2015/054_report.pdf)
+  * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## RMSProp
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -1735,9 +1853,11 @@ cyclicscd.Optimize(f, coordinates);
 
 ## Stochastic Gradient Descent with Restarts (SGDR)
 
-*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [differentiable separable
+functions](#differentiable-separable-functions).*
 
-SGDR is based on Mini-batch Stochastic Gradient Descent class and simulates a new warm-started run/restart once a number of epochs are performed. 
+SGDR is based on Mini-batch Stochastic Gradient Descent class and simulates a
+new warm-started run/restart once a number of epochs are performed.
 
 #### Constructors
 
