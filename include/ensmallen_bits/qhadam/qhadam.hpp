@@ -85,12 +85,17 @@ class QHAdam
    * objective value is returned.
    *
    * @tparam DecomposableFunctionType Type of the function to optimize.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate)
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType = MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate)
   {
     return optimizer.Optimize(function, iterate);
   }
