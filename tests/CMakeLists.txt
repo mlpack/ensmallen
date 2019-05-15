@@ -9,6 +9,7 @@ set(ENSMALLEN_TESTS_SOURCES
     bigbatch_sgd_test.cpp
     cmaes_test.cpp
     cne_test.cpp
+    de_test.cpp
     eve_test.cpp
     frankwolfe_test.cpp
     ftml_test.cpp
