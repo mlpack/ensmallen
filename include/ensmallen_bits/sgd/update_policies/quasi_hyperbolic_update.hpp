@@ -48,33 +48,6 @@ class QHUpdate
     // Nothing to do.
   }
 
-  /**
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    // Initialize an empty velocity matrix.
-    velocity = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for QHSGD.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    velocity *= momentum;
-    velocity += (1 - momentum) * gradient;
-
-    iterate -= stepSize * ((1 - v) * gradient + v * velocity);
-  }
-
   //! Get the value used to initialize the momentum coefficient.
   double Momentum() const { return momentum; }
   //! Modify the value used to initialize the momentum coefficient.
@@ -85,11 +58,58 @@ class QHUpdate
   //! Modify the value used to initialize the momentum coefficient.
   double& V() { return v; }
 
- private:
-  // The velocity matrix.
-  arma::mat velocity;
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This constructor is called by the SGD Optimize() method before the start
+     * of the iteration update process.
+     *
+     * @param parent AdamUpdate object.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(QHUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent)
+    {
+      // Initialize an empty velocity matrix.
+      velocity.zeros(rows, cols);
+    }
 
-  // The Momentum coefficient.
+    /**
+     * Update step for QHSGD.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      velocity *= parent.momentum;
+      velocity += (1 - parent.momentum) * gradient;
+
+      iterate -= stepSize * ((1 - parent.v) * gradient + parent.v * velocity);
+    }
+
+   private:
+    //! Instantiated parent object.
+    QHUpdate& parent;
+
+    //! The velocity matrix.
+    GradType velocity;
+  };
+
+ private:
+  // The momentum coefficient.
   double momentum;
 
   //The quasi-hyperbolic term.
