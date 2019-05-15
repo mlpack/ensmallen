@@ -1396,11 +1396,13 @@ double Optimize(arma::mat& X);
 
 ## Quasi-Hyperbolic Momentum Update SGD (QHSGD)
 
- *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [differentiable separable
+functions](#differentiable-separable-functions).*
 
- Quasi-hyperbolic momentum update SGD (QHSGD) is an SGD-like optimizer with momentum where quasi-hyperbolic terms are added to the parametrization.
- The update rule for this optimizer is a weighted average of momentum SGD and vanilla SGD.
-
+Quasi-hyperbolic momentum update SGD (QHSGD) is an SGD-like optimizer with
+momentum where quasi-hyperbolic terms are added to the parametrization.  The
+update rule for this optimizer is a weighted average of momentum SGD and vanilla
+SGD.
 
 #### Constructors
 
@@ -1441,6 +1443,7 @@ double Optimize(arma::mat& X);
 #### See also:
 
   * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
+  * [SGD](#sgd)
   * [Momentum SGD](#momentum-sgd)
   * [Nesterov Momentum SGD](#nesterov-momentum-sgd)
   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
@@ -1448,15 +1451,18 @@ double Optimize(arma::mat& X);
 
 ## QHAdam
 
- *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
- QHAdam is an optimizer that uses quasi-hyperbolic descent with the Adam optimizer.  This replaces the moment estimators of Adam with quasi-hyperbolic terms, and different values of the `v1` and `v2` parameters are equivalent to the following other optimizers:
+QHAdam is an optimizer that uses quasi-hyperbolic descent with the Adam
+optimizer.  This replaces the moment estimators of Adam with quasi-hyperbolic
+terms, and different values of the `v1` and `v2` parameters are equivalent to
+the following other optimizers:
 
-  * When `v1 = v2 = 1`, `QHAdam` is equivalent to `Adam`.
+ * When `v1 = v2 = 1`, `QHAdam` is equivalent to `Adam`.
 
-  * When `v1 = 0` and `v2 = 1`, `QHAdam` is equivalent to `RMSProp`.
+ * When `v1 = 0` and `v2 = 1`, `QHAdam` is equivalent to `RMSProp`.
 
-  * When `v1 = beta1` and `v2 = 1`, `QHAdam` is equivalent to `Nadam`.
+ * When `v1 = beta1` and `v2 = 1`, `QHAdam` is equivalent to `Nadam`.
 
 #### Constructors
 
@@ -1500,8 +1506,9 @@ double Optimize(arma::mat& X);
   * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
   * [SGD](#standard-sgd)
-  * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
-  * [Divide the gradient by a running average of its recent magnitude](http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf)
+  * [Adam](#adam)
+  * [RMSprop](#rmsprop)
+  * [Nadam](#nadam)
   * [Incorporating Nesterov Momentum into Adam](http://cs229.stanford.edu/proj2015/054_report.pdf)
   * [Differentiable separable functions](#differentiable-separable-functions)
 
@@ -1846,9 +1853,11 @@ cyclicscd.Optimize(f, coordinates);
 
 ## Stochastic Gradient Descent with Restarts (SGDR)
 
-*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [differentiable separable
+functions](#differentiable-separable-functions).*
 
-SGDR is based on Mini-batch Stochastic Gradient Descent class and simulates a new warm-started run/restart once a number of epochs are performed.
+SGDR is based on Mini-batch Stochastic Gradient Descent class and simulates a
+new warm-started run/restart once a number of epochs are performed.
 
 #### Constructors
 
