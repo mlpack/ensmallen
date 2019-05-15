@@ -19,6 +19,7 @@
 #include "update_policies/momentum_update.hpp"
 #include "update_policies/nesterov_momentum_update.hpp"
 #include "decay_policies/no_decay.hpp"
+#include "update_policies/quasi_hyperbolic_update.hpp"
 
 namespace ens {
 
@@ -191,6 +192,7 @@ using MomentumSGD = SGD<MomentumUpdate>;
 
 using NesterovMomentumSGD = SGD<NesterovMomentumUpdate>;
 
+using QHSGD = SGD<QHUpdate>;
 } // namespace ens
 
 // Include implementation.
