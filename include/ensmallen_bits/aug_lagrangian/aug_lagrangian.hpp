@@ -55,6 +55,8 @@ class AugLagrangian
    *
    * @tparam LagrangianFunctionType Function which can be optimized by this
    *     class.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
    * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
    */
@@ -71,6 +73,8 @@ class AugLagrangian
    *
    * @tparam LagrangianFunctionType Function which can be optimized by this
    *      class.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
    * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
    * @param initLambda Vector of initial Lagrange multipliers.  Should have

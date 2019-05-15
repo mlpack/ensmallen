@@ -65,6 +65,8 @@ class GradientDescent
    * the final objective value is returned.
    *
    * @tparam FunctionType Type of the function to optimize.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
@@ -85,6 +87,8 @@ class GradientDescent
    * tuning module.
    *
    * @tparam FunctionType Type of the function to optimize.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @param categoricalDimensions A vector of dimension information.  If a value

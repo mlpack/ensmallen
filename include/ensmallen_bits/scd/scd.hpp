@@ -82,6 +82,8 @@ class SCD
    * the optimization, and the final objective value is returned.
    *
    * @tparam ResolvableFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value at the final point.

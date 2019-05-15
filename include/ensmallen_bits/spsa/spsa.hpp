@@ -65,6 +65,18 @@ class SPSA
        const double tolerance = 1e-5,
        const bool shuffle = true);
 
+  /**
+   * Optimize the given function, starting from the coordinates given in the
+   * 'iterate' matrix.  The final best set of coordinates is stored in the
+   * 'iterate' matrix, and the best objective is returned.
+   *
+   * @tparam ArbitraryFunctionType Type of function to optimize.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
+   * @param function Function to optimize.
+   * @param iterate Initial coordinates to start from (this matrix will also be
+   *     used to store final coordinates).
+   */
   template<typename ArbitraryFunctionType, typename MatType>
   typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
                                        MatType& iterate);

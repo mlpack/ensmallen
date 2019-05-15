@@ -118,6 +118,8 @@ class PrimalDualSolver
    * SDP::GetInitialPoint().  The primal objective is returned, and the final
    * coordinates are stored in the given coordinates matrix.
    *
+   * @tparam SDPType Type of SDP to optimize.
+   * @tparam MatType Type of matrix to optimize with.
    * @param sdp The SDP to optimize.
    * @param coordinates The primal SDP coordinates to optimize.
    */
@@ -132,6 +134,8 @@ class PrimalDualSolver
    * returned, and the final primal and dual variables are stored in the given
    * matrices.  Both ySparse and yDense should be vector shaped (one column).
    *
+   * @tparam SDPType Type of SDP to optimize.
+   * @tparam MatType Type of matrix to optimize with.
    * @param sdp The SDP to optimize.
    * @param coordinates The initial primal SDP coordinates to optimize.
    * @param ySparse The initial ySparse to optimize.
