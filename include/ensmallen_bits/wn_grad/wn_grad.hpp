@@ -72,6 +72,8 @@ class WNGrad
    * objective value is returned.
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.

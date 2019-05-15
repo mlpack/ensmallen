@@ -30,6 +30,8 @@ class GridSearch
    * possible combinations of values for the parameters specified in
    * datasetInfo.
    *
+   * @tparam FunctionType Type of function to optimize.
+   * @tparam MatType Type of matrix to optimize with.
    * @param function Function to optimize.
    * @param bestParameters Variable for storing results.
    * @param categoricalDimensions Set of dimension types.  If a value is true,
