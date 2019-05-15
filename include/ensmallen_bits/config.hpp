@@ -55,9 +55,17 @@
 
 
 // Define ens_deprecated for deprecated functionality.
-
+// This is adapted from Armadillo's implementation.
 #if defined(_MSC_VER)
   #define ens_deprecated __declspec(deprecated)
-#else
+#elif defined(__GNUG__) && (!defined(__clang__))
   #define ens_deprecated __attribute__((__deprecated__))
+#elif defined(__clang__)
+  #if __has_attribute(__deprecated__)
+    #define ens_deprecated __attribute__((__deprecated__))
+  #else
+    #define ens_deprecated
+  #endif
+#else
+  #define ens_deprecated
 #endif
