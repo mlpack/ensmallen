@@ -30,11 +30,28 @@ inline DE::DE(const size_t populationSize ,
 { /* Nothing to do here. */ }
 
 //!Optimize the function
-template<typename DecomposableFunctionType>
-inline double DE::Optimize(DecomposableFunctionType& function,
-                           arma::mat& iterate)
+template<typename DecomposableFunctionType, typename MatType>
+typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
+                                         MatType& iterateIn)
 {
-  // Population Size must be atleast 3 for DE to work.
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  // Population matrix. Each column is a candidate.
+  std::vector<BaseMatType> population;
+  population.resize(populationSize);
+  // Vector of fitness values corresponding to each candidate.
+  arma::Col<ElemType> fitnessValues;
+
+  // Make sure that we have the methods that we need.  Long name...
+  traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
+      DecomposableFunctionType, BaseMatType>();
+  RequireDenseFloatingPointType<BaseMatType>();
+
+  // Population Size must be at least 3 for DE to work.
   if (populationSize < 3)
   {
     throw std::logic_error("CNE::Optimize(): population size should be at least"
@@ -43,20 +60,20 @@ inline double DE::Optimize(DecomposableFunctionType& function,
 
   // Initialize helper variables.
   fitnessValues.set_size(populationSize);
-  double lastBestFitness = DBL_MAX;
-  arma::mat bestElement;
+  ElemType lastBestFitness = DBL_MAX;
+  BaseMatType bestElement;
 
   // Generate a population based on a Gaussian distribution around the given
   // starting point. Also finds the best element of the population.
-  population = arma::randn(iterate.n_rows, iterate.n_cols, populationSize);
   for (size_t i = 0; i < populationSize; i++)
   {
-    population.slice(i) = population.slice(i) + iterate;
-    fitnessValues[i] = function.Evaluate(population.slice(i));
-    if(fitnessValues[i] < lastBestFitness)
+    population[i].randn(iterate.n_rows, iterate.n_cols);
+    population[i] += iterate;
+    fitnessValues[i] = function.Evaluate(population[i]);
+    if (fitnessValues[i] < lastBestFitness)
     {
       lastBestFitness = fitnessValues[i];
-      bestElement = population.slice(i);
+      bestElement = population[i];
     }
   }
 
@@ -66,7 +83,7 @@ inline double DE::Optimize(DecomposableFunctionType& function,
     // Generate new population based on /best/1/bin strategy.
     for (size_t member = 0; member < populationSize; member++)
     {
-      iterate = population.slice(member);
+      iterate = population[member];
 
       // Generate two different random numbers to choose two random members.
       size_t l = 0, m = 0;
@@ -75,21 +92,21 @@ inline double DE::Optimize(DecomposableFunctionType& function,
         l = arma::as_scalar(arma::randi<arma::uvec>(
             1, arma::distr_param(0, populationSize - 1)));
       }
-      while(l == member);
+      while (l == member);
 
       do
       {
         m = arma::as_scalar(arma::randi<arma::uvec>(
             1, arma::distr_param(0, populationSize - 1)));
       }
-      while(m == member && m == l);
+      while (m == member && m == l);
 
       // Generate new "mutant" from two randomly chosen members.
-      arma::mat mutant = bestElement + differentialWeight *
-          (population.slice(l) - population.slice(m));
+      BaseMatType mutant = bestElement + differentialWeight *
+          (population[l] - population[m]);
 
       // Perform crossover.
-      const arma::mat cr = arma::randu(iterate.n_rows);
+      const BaseMatType cr = arma::randu<BaseMatType>(iterate.n_rows);
       for (size_t it = 0; it < iterate.n_rows; it++)
       {
         if (cr[it] >= crossoverRate)
@@ -98,8 +115,8 @@ inline double DE::Optimize(DecomposableFunctionType& function,
         }
       }
 
-      double iterateValue = function.Evaluate(iterate);
-      const double mutantValue = function.Evaluate(mutant);
+      ElemType iterateValue = function.Evaluate(iterate);
+      const ElemType mutantValue = function.Evaluate(mutant);
 
       // Replace the current member if mutant is better.
       if (mutantValue < iterateValue)
@@ -109,7 +126,7 @@ inline double DE::Optimize(DecomposableFunctionType& function,
       }
 
       fitnessValues[member] = iterateValue;
-      population.slice(member) = iterate;
+      population[member] = iterate;
     }
 
     // Check for termination criteria.
@@ -126,7 +143,7 @@ inline double DE::Optimize(DecomposableFunctionType& function,
     {
       if (fitnessValues[it] == lastBestFitness)
       {
-        bestElement = population.slice(it);
+        bestElement = population[it];
         break;
       }
     }

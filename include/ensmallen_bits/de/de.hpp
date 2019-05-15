@@ -84,12 +84,14 @@ class DE
    * algorithm, and the final objective value is returned.
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename DecomposableFunctionType, typename MatType>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -117,12 +119,6 @@ class DE
   double& Tolerance() { return tolerance; }
 
  private:
-  //! Population matrix. Each column is a candidate.
-  arma::cube population;
-
-  //! Vector of fitness values corresponding to each candidate.
-  arma::vec fitnessValues;
-
   //! The number of candidates in the population.
   size_t populationSize;
 
