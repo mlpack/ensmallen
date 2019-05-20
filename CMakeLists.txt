@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.8.10)
 project(ensmallen C CXX)
 
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
+option(SHOW_COMPILE_WARNINGS "Verify compilation is free from warnings." OFF) 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
@@ -39,6 +40,15 @@ if (OPENMP_FOUND)
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+endif ()
+
+# Verify the code conforms to ISO standards regarding C++ as
+# indicated in the GCC options
+# https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+# Moreover, treat any compilation warning as an error.
+if ( SHOW_COMPILE_WARNINGS )
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Wextra -Werror -fdiagnostics-color")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Werror -fdiagnostics-color")
 endif ()
 
 # The only dependency we need is Armadillo.
