@@ -47,8 +47,8 @@ endif ()
 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 # Moreover, treat any compilation warning as an error.
 if ( SHOW_COMPILE_WARNINGS )
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Wextra -Werror -fdiagnostics-color")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Werror -fdiagnostics-color")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Wextra -Werror")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Werror")
 endif ()
 
 # The only dependency we need is Armadillo.
