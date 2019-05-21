@@ -54,16 +54,13 @@ class SPSA
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
-   * @param shuffle If true, the function order is shuffled; otherwise, each
-   *     function is visited in linear order.
    */
   SPSA(const double alpha = 0.602,
        const double gamma = 0.101,
        const double stepSize = 0.16,
        const double evaluationStepSize = 0.3,
        const size_t maxIterations = 100000,
-       const double tolerance = 1e-5,
-       const bool shuffle = true);
+       const double tolerance = 1e-5);
 
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
@@ -114,10 +111,6 @@ class SPSA
 
   //! The tolerance for termination.
   double tolerance;
-
-  //! Controls whether or not the individual functions are shuffled when
-  //! iterating.
-  bool shuffle;
 };
 
 } // namespace ens

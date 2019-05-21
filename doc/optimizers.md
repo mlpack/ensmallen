@@ -1636,7 +1636,7 @@ differences along stochastic directions.
 
 #### Constructors
 
- * `SPSA(`_`alpha, gamma, stepSize, evaluationStepSize, maxIterations, tolerance, shuffle`_`)`
+ * `SPSA(`_`alpha, gamma, stepSize, evaluationStepSize, maxIterations, tolerance`_`)`
 
 #### Attributes
 
