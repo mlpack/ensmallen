@@ -1,3 +1,8 @@
+### ensmallen 1.15.1
+###### 2019-MM-DD
+  * Fix -Wreorder in `qhadam` warning (#115).
+  * Fix -Wunused-private-field warning in `spsa` (#115).
+
 ### ensmallen 1.15.0
 ###### 2019-05-14
   * Added QHAdam and QHSGD optimizers (#81).
