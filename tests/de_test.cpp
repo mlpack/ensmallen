@@ -27,7 +27,7 @@ TEST_CASE("DELogisticRegressionTest", "[DETest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  DE opt(200, 1000, 0.6, 0.8);
+  DE opt(200, 1000, 0.6, 0.8, 1e-5);
   arma::mat coordinates = lr.GetInitialPoint();
   opt.Optimize(lr, coordinates);
 

@@ -41,7 +41,7 @@ namespace ens {
  *
  * The final value and the parameters are returned by the Optimize() method.
  *
- * For more information, see the following
+ * For more information, see the following:
  *
  * @techreport{storn1995,
  *   title    = {Differential Evolution—a simple and efficient adaptive scheme
@@ -67,17 +67,19 @@ class DE
    * @param populationSize The number of candidates in the population.
    *     This should be at least 3 in size.
    * @param maxGenerations The maximum number of generations allowed for CNE.
-   * @param crossoverRate  The probability that a crossover will occur
+   * @param crossoverRate  The probability that a crossover will occur.
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
+   * @param tolerance The final value of the objective function for termination.
    */
   DE(const size_t populationSize = 100,
      const size_t maxGenerations = 2000,
      const double crossoverRate = 0.6,
-     const double differentialWeight = 0.8);
+     const double differentialWeight = 0.8,
+     const double tolerance = 1e-5);
 
   /**
-   * Optimize the given function using CNE. The given
+   * Optimize the given function using DE. The given
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
    *
@@ -99,7 +101,7 @@ class DE
   //! Modify maximum number of generations.
   size_t& MaxGenerations() { return maxGenerations; }
 
-  //! Get Crossover rate.
+  //! Get crossover rate.
   double CrossoverRate() const { return crossoverRate; }
   //! Modify crossover rate.
   double& CrossoverRate() { return crossoverRate; }
@@ -109,11 +111,16 @@ class DE
   //! Modify differential weight.
   double& DifferentialWeight() { return differentialWeight; }
 
+  //! Get the tolerance.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance.
+  double& Tolerance() { return tolerance; }
+
  private:
   //! Population matrix. Each column is a candidate.
   arma::cube population;
 
-  //! Vector of fintness values corresponding to each candidate.
+  //! Vector of fitness values corresponding to each candidate.
   arma::vec fitnessValues;
 
   //! The number of candidates in the population.
@@ -127,11 +134,14 @@ class DE
 
   //! Amplification factor for differentiation.
   double differentialWeight;
+
+  //! The tolerance for termination.
+  double tolerance;
 };
 
-} //namespace ens
+} // namespace ens
 
-//Include Implementation
+// Include implementation.
 #include "de_impl.hpp"
 
 #endif

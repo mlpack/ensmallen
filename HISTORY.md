@@ -1,6 +1,30 @@
+### ensmallen 1.15.0
+###### 2019-05-14
+  * Added QHAdam and QHSGD optimizers (#81).
+
+### ensmallen 1.14.4
+###### 2019-05-12
+  * Fixes for BigBatchSGD (#91).
+
+### ensmallen 1.14.3
+###### 2019-05-06
+  * Handle eig_sym() failures correctly (#100).
+
+### ensmallen 1.14.2
+###### 2019-03-14
+  * SPSA test tolerance fix (#97).
+
+  * Minor documentation fixes (#95, #98).
+
+  * Fix newlines at end of file (#92).
+
 ### ensmallen 1.14.1
-###### ????-??-??
+###### 2019-03-09
   * Fixes for SPSA (#87).
+
+  * Optimized CNE and DE (#90). Changed initial population generation in CNE
+    to be a normal distribution about the given starting point, which should
+    accelerate convergence.
 
 ### ensmallen 1.14.0
 ###### 2019-02-20

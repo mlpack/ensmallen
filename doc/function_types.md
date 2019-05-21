@@ -52,7 +52,7 @@ class SquaredFunction
 
 int main()
 {
-  // The minimum is at x = [0 0 0].  Our initial point is chosen to be 
+  // The minimum is at x = [0 0 0].  Our initial point is chosen to be
   // [1.0, -1.0, 1.0].
   arma::mat x("1.0 -1.0 1.0");
 
@@ -146,7 +146,7 @@ class LinearRegressionFunction
  public:
   // Construct the object with the given data matrix and responses.
   LinearRegressionFunction(const arma::mat& dataIn,
-                           const arma::rowvec& responsesIn) : 
+                           const arma::rowvec& responsesIn) :
       data(dataIn), responses(responsesIn) { }
 
   // Return the objective function for model parameters x.
@@ -173,13 +173,13 @@ class LinearRegressionEWGFunction
 {
  public:
   // Construct the object with the given data matrix and responses.
-  LinearRegressionEWGFunction(const arma::mat& dataIn, 
-                              const arma::rowvec& responsesIn) : 
+  LinearRegressionEWGFunction(const arma::mat& dataIn,
+                              const arma::rowvec& responsesIn) :
       data(dataIn), responses(responsesIn) { }
 
   // Simultaneously compute both the objective function and gradient for model
   // parameters x.  Note that this is faster than implementing Evaluate() and
-  // Gradient() individually because it caches the computation of 
+  // Gradient() individually because it caches the computation of
   // (responses - x.t() * data)!
   double EvaluateWithGradient(const arma::mat& x, arma::mat& g)
   {
@@ -288,7 +288,7 @@ f(x) = f_0(x) + f_1(x) + ... + f_N(x).
 ```
 
 In this function type, we assume the gradient `f'(x)` is not computable.  If it
-is, see [#Differentiable-separable-functions].
+is, see [differentiable separable functions](#differentiable-separable-functions).
 
 For machine learning tasks, the objective function may be, e.g., the sum of a
 function taken across many data points.  Implementing an arbitrary separable
@@ -335,7 +335,7 @@ intensive operation for your objective function, it may be best to avoid using
 a non-separable arbitrary function optimizer.
 
 **Note**: if possible, it's often better to try and use a gradient-based
-approach.  See [#Differentiable-separable-functions]
+approach.  See [differentiable separable functions](#differentiable-separable-functions)
 for separable f(x) where the gradient f'(x) can be computed.
 
 The example program below demonstrates the implementation and use of an
@@ -483,7 +483,7 @@ class ArbitrarySeparableFunctionType
   //
   // Given parameters x and a matrix g, return the sum of the individual
   // functions f_i(x) + ... + f_{i + batchSize - 1}(x), and store the sum of
-  // the gradient of individual functions f'_i(x) + ... + 
+  // the gradient of individual functions f'_i(x) + ... +
   // f'_{i + batchSize - 1}(x) into the provided matrix g.  g should have the
   // same size (rows, columns) as x.  i will always be greater than 0, and i +
   // batchSize will be less than or equal to the value of NumFunctions().
@@ -518,6 +518,8 @@ The following optimizers can be used with differentiable functions:
  - [NadaMax](#nadamax)
  - [NesterovMomentumSGD](#nesterov-momentum-sgd)
  - [OptimisticAdam](#optimisticadam)
+ - [QHAdam](#qhadam)
+ - [QHSGD](#qhsgd)
  - [RMSProp](#rmsprop)
  - [SARAH/SARAH+](#stochastic-recursive-gradient-algorithm-sarahsarah)
  - [SGD](#standard-sgd)
@@ -848,7 +850,7 @@ Example code showing how to solve an SDP is given below.
 ```c++
 int main()
 {
-  // We will build a toy semidefinite program and then use the PrimalDualSolver to find a solution 
+  // We will build a toy semidefinite program and then use the PrimalDualSolver to find a solution
 
   // The semi-definite constraint looks like:
   //
