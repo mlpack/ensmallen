@@ -132,7 +132,10 @@ Alpha(const arma::mat& A, const arma::mat& dA, double tau, double& alpha)
     return false;
   // TODO(stephentu): We only want the top eigenvalue, we should
   // be able to do better than full eigen-decomposition.
-  const arma::vec evals = arma::eig_sym(-Linv * dA * Linv.t());
+  arma::vec evals;
+  if (!arma::eig_sym(evals, -Linv * dA * Linv.t()))
+    return false;
+  
   const double alphahatinv = evals(evals.n_elem - 1);
   double alphahat = 1. / alphahatinv;
   if (alphahat < 0.)
