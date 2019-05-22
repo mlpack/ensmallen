@@ -30,5 +30,6 @@
 #include "sphere_function.hpp"
 #include "styblinski_tang_function.hpp"
 #include "wood_function.hpp"
+#include "ackley_function.hpp"
 
 #endif
