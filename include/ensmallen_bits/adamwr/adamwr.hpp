@@ -108,9 +108,9 @@ class AdamWR
   double& MultFactor() { return optimizer.DecayPolicy().MultFactor(); }
 
   //! Get the epoch restart
-  double EpochRestart() const { return optimizer.DecayPolicy().EpochRestart(); }
+  size_t EpochRestart() const { return optimizer.DecayPolicy().EpochRestart(); }
   //! Modify the epoch restart
-  double& EpochRestart() { return optimizer.DecayPolicy().EpochRestart(); }
+  size_t& EpochRestart() { return optimizer.DecayPolicy().EpochRestart(); }
 
   //! Get the batch size.
   size_t BatchSize() const { return optimizer.BatchSize(); }

@@ -78,9 +78,9 @@ double SGDR<UpdatePolicyType>::Optimize(
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do it here.
-  if (optimizer.StepSize() != optimizer.DecayPolicy().StepSize())
+  if (optimizer.StepSize() != optimizer.DecayPolicy().StepSizeMax())
   {
-    optimizer.DecayPolicy().StepSize() = optimizer.StepSize();
+    optimizer.DecayPolicy().StepSizeMax() = optimizer.StepSize();
   }
 
   optimizer.DecayPolicy().EpochBatches() = function.NumFunctions() /

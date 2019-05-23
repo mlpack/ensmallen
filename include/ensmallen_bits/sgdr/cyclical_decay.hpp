@@ -122,9 +122,9 @@ class CyclicalDecay
   double& MultFactor() { return multFactor; }
 
   //! Get the epoch Restart
-  double EpochRestart() const { return epochRestart; }
+  size_t EpochRestart() const { return epochRestart; }
   //! Modify the epoch Restart
-  double& EpochRestart() { return epochRestart; }
+  size_t& EpochRestart() { return epochRestart; }
 
  private:
   //! Epoch where decay is applied.

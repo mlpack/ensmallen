@@ -129,9 +129,9 @@ class SGDR
   double& MultFactor() { return optimizer.DecayPolicy().MultFactor(); }
 
   //! Get the epoch restart
-  double EpochRestart() const { return optimizer.DecayPolicy().EpochRestart(); }
+  size_t EpochRestart() const { return optimizer.DecayPolicy().EpochRestart(); }
   //! Modify the epoch restart
-  double& EpochRestart() { return optimizer.DecayPolicy().EpochRestart(); }
+  size_t& EpochRestart() { return optimizer.DecayPolicy().EpochRestart(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
