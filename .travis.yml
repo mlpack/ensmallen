@@ -18,7 +18,7 @@ before_install:
   - cmake . && make && sudo make install && cd ..
 
 install:
-  - mkdir build && cd build && cmake .. && make -j2
+  - mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
 
 script:
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
