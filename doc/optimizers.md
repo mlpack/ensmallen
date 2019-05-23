@@ -132,7 +132,7 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`,
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
@@ -187,7 +187,7 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
- `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
+ `StepSizeMax()`, `StepSizeMin()`, `EpochRestart()`, `MultFactor()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `UpdatePolicy()`, `DecayPolicy()`
  `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
 #### Examples
@@ -206,14 +206,14 @@ The attributes of the optimizer may also be modified via the member methods
   * [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
   * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
   * [SGD](#standard-sgd)
-  * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+  * [Adam](#adam)
   * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## AdamW
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
- AdamW is a modified version of Adam with decoupled weight decay.
+ AdamW is a modified version of Adam with decoupled weight decay, which tends to perform better than adam with standard L2 regularization.
 
 #### Constructors
 
@@ -239,7 +239,7 @@ The attributes of the optimizer may also be modified via the member methods
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`StepSize()`, `BatchSize()`, `WeightDecay()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `WeightDecay()` and `ResetPolicy()`.
 
 #### Examples
@@ -262,10 +262,9 @@ The attributes of the optimizer may also be modified via the member methods
 
 ## AdamWR
 
- *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
- AdamWR is a modified version of AdamW with warm restarts and is combination of AdamW and AdamR
-
+AdamWR is a modified version of AdamW with warm restarts and is combination of AdamW and AdamR, performs almost as well as SGD on large problems.
 
 #### Constructors
 
@@ -294,7 +293,7 @@ The attributes of the optimizer may also be modified via the member methods
   | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
   The attributes of the optimizer may also be modified via the member methods
-   `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`, `WeightDecay()`,
+   `StepSizeMax()`, `StepSizeMin()`, `EpochRestart`, `MultFactor`, `WeightDecay()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
    `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
 
  #### Examples
@@ -315,6 +314,8 @@ The attributes of the optimizer may also be modified via the member methods
  * [SGD](#standard-sgd)
  * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
  * [Differentiable separable functions](#differentiable-separable-functions)
+ * [AdamW](#adamw)
+ * [AdamR](#adamr)
 
 ## AdaMax
 
@@ -1935,7 +1936,7 @@ so the shorter type `SGDR<>` can be used instead of the equivalent
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer can also be modified via the member methods
-`EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
+`EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSizeMax()`, `StepSizeMin()`,
 `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, and
 `ResetPolicy()`.
 
@@ -2036,6 +2037,7 @@ during the iterative update process.
 | `size_t` | **`epochRestart`** | Initial epoch where decay is applied. | `50` |
 | `double` | **`multFactor`** | Batch size multiplication factor. | `2.0` |
 | `size_t` | **`batchSize`** | Size of each mini-batch. | `1000` |
+| `double` | **`weightDecay`** | Decay rate for the parameters. | `0.0005` |
 | `double` | **`stepSizeMax`** | Intitial step size for each iteration. | `0.01` |
 | `double` | **`stepSizeMin`** | Final step size for each iteration. | `0.005` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
@@ -2045,7 +2047,7 @@ during the iterative update process.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 Attributes of the optimizer can also be modified via the member methods
-`EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
+`EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSizeMax()`, `StepSizeMin()`,
 `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, and
 `ResetPolicy()`.
 

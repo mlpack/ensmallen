@@ -85,6 +85,16 @@ class SGDR
        const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
        const bool resetPolicy = true);
 
+   SGDR(const size_t epochRestart = 50,
+        const double multFactor = 2.0,
+        const size_t batchSize = 1000,
+        const double stepSize = 0.01,
+        const size_t maxIterations = 100000,
+        const double tolerance = 1e-5,
+        const bool shuffle = true,
+        const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+        const bool resetPolicy = true);
+
   /**
    * Optimize the given function using SGDR.  The given starting point
    * will be modified to store the finishing point of the algorithm, and the
@@ -103,10 +113,25 @@ class SGDR
   //! Modify the batch size.
   size_t& BatchSize() { return optimizer.BatchSize(); }
 
-  //! Get the step size.
-  double StepSize() const { return optimizer.StepSize(); }
-  //! Modify the step size.
-  double& StepSize() { return optimizer.StepSize(); }
+  //! Get the minimum step size.
+  double StepSizeMin() const { return optimizer.DecayPolicy().StepSizeMin(); }
+  //! Modify the minimum step size.
+  double& StepSizeMin() { return optimizer.DecayPolicy().StepSizeMin(); }
+
+  //! Get the maximum step size.
+  double StepSizeMax() const { return optimizer.DecayPolicy().StepSizeMax(); }
+  //! Modify the maximum step size.
+  double& StepSizeMax() { return optimizer.DecayPolicy().StepSizeMax(); }
+
+  //! Get the multiplier factor
+  double MultFactor() const { return optimizer.DecayPolicy().MultFactor(); }
+  //! Modify the multiplier factor
+  double& MultFactor() { return optimizer.DecayPolicy().MultFactor(); }
+
+  //! Get the epoch restart
+  double EpochRestart() const { return optimizer.DecayPolicy().EpochRestart(); }
+  //! Modify the epoch restart
+  double& EpochRestart() { return optimizer.DecayPolicy().EpochRestart(); }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }

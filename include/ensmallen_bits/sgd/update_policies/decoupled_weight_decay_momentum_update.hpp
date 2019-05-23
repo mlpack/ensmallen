@@ -18,7 +18,7 @@ namespace ens {
 /**
  * De-Coupled Weight Decay Policy for SGD with Momentum (SGDW).
  *
- * This Implments the decoupled weight decay policy in which the weight decay is
+ * This implments the decoupled weight decay policy in which the weight decay is
  * decoupled from the optimization steps w.r.t. to the loss function.
  * For SGD variants, this simplifies hyperparameter search since it decouples
  * the settings of weight decay and learning rate.

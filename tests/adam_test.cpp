@@ -421,8 +421,6 @@ TEST_CASE("PadamLogisticRegressionTest", "[AdamTest]")
 
 TEST_CASE("SimpleAdamWTestFunction", "[AdamTest]")
 {
-  // Sometimes this test can fail randomly, so we allow it to run up to three
-  // times.
   SGDTestFunction f;
   AdamW optimizer(1e-2, 100, 0.007,0.9, 0.99, 1e-8, 0, 1e-9, true);
 

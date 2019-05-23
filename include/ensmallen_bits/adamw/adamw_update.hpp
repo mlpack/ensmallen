@@ -18,31 +18,31 @@
 
 namespace ens {
 
-  /**
-   * De-Coupled Weight Decay Policy for Adam (AdamW).
-   *
-   * This Implments Decoupled Weight Decay Policy in which the weight decay is
-   * decoupled from the optimization steps w.r.t. to the loss function.
-   *
-   *
-   * The Update Policy for AdamW follows Adam with the following additional step
-   * \f[
-   * iterate -= weightDecay * iterate
-   * \f]
-   *
-   * The Update strategy is discussed in the following paper.
-   *
-   * @code
-   * @article{
-   *   title   = {Decoupled Weight Decay Regularization},
-   *   author  = {Loschilov, I. and Hutter, F.},
-   *   journal = {ArXiv e-prints},
-   *   url     = {https://arxiv.org/pdf/1711.05101.pdf}
-   *   year    = {2019}
-   * }
-   * @endcode
-   *
-   */
+/**
+ * De-Coupled Weight Decay Policy for Adam (AdamW).
+ *
+ * This Implments Decoupled Weight Decay Policy in which the weight decay is
+ * decoupled from the optimization steps w.r.t. to the loss function.
+ *
+ *
+ * The Update Policy for AdamW follows Adam with the following additional step
+ * \f[
+ * iterate -= weightDecay * iterate
+ * \f]
+ *
+ * The Update strategy is discussed in the following paper.
+ *
+ * @code
+ * @article{
+ *   title   = {Decoupled Weight Decay Regularization},
+ *   author  = {Loschilov, I. and Hutter, F.},
+ *   journal = {ArXiv e-prints},
+ *   url     = {https://arxiv.org/pdf/1711.05101.pdf}
+ *   year    = {2019}
+ * }
+ * @endcode
+ *
+ */
 class AdamWUpdate
 {
  public:

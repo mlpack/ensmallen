@@ -20,7 +20,6 @@ using namespace ens::test;
  *
  * Run AdamR on logistic regression and make sure the results are acceptable.
  */
-
 TEST_CASE("AdamRLogisticRegressionTest","[AdamRTest]")
 {
   arma::mat data, testData, shuffledData;

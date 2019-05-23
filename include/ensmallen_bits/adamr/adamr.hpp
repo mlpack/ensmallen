@@ -101,10 +101,25 @@ class AdamRType
   template<typename DecomposableFunctionType>
   double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
 
-  //! Get the step size.
-  double StepSize() const { return optimizer.StepSize(); }
-  //! Modify the step size.
-  double& StepSize() { return optimizer.StepSize(); }
+  //! Get the minimum step size.
+  double StepSizeMin() const { return optimizer.DecayPolicy().StepSizeMin(); }
+  //! Modify the minimum step size.
+  double& StepSizeMin() { return optimizer.DecayPolicy().StepSizeMin(); }
+
+  //! Get the maximum step size.
+  double StepSizeMax() const { return optimizer.DecayPolicy().StepSizeMax(); }
+  //! Modify the maximum step size.
+  double& StepSizeMax() { return optimizer.DecayPolicy().StepSizeMax(); }
+
+  //! Get the multiplier factor
+  double MultFactor() const { return optimizer.DecayPolicy().MultFactor(); }
+  //! Modify the multiplier factor
+  double& MultFactor() { return optimizer.DecayPolicy().MultFactor(); }
+
+  //! Get the epoch restart
+  double EpochRestart() const { return optimizer.DecayPolicy().EpochRestart(); }
+  //! Modify the epoch restart
+  double& EpochRestart() { return optimizer.DecayPolicy().EpochRestart(); }
 
   //! Get the batch size.
   size_t BatchSize() const { return optimizer.BatchSize(); }
@@ -166,8 +181,9 @@ class AdamRType
 
 using AdamR = AdamRType<AdamUpdate>;
 
-}
+} //namespace ens
 
+//Include implementation
 #include "adamr_impl.hpp"
 
 #endif

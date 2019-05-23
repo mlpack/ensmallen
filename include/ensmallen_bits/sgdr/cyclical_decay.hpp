@@ -57,7 +57,7 @@ class CyclicalDecay
                 const double stepSizeMin = 0) :
       epochRestart(epochRestart),
       multFactor(multFactor),
-      constStepSize(stepSizeMax - stepSizeMin),
+      stepSizeMax(stepSizeMax),
       nextRestart(epochRestart),
       batchRestart(0),
       epochBatches(epochRestart),
@@ -90,7 +90,7 @@ class CyclicalDecay
     if (epoch < nextRestart)
     {
       // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
-      stepSize = stepSizeMin + 0.5 * constStepSize *
+      stepSize = stepSizeMin + 0.5 * (stepSizeMax - stepSizeMin) *
                  (1 + cos(((double) batchRestart / epochRestart)
                  * arma::datum::pi));
       // Keep track of the number of batches since the last restart.
@@ -101,15 +101,30 @@ class CyclicalDecay
     epoch++;
   }
 
-  //! Get the step size.
-  double StepSize() const { return constStepSize; }
-  //! Modify the step size.
-  double& StepSize() { return constStepSize; }
+  //! Get the minimum step size.
+  double StepSizeMin() const { return stepSizeMin; }
+  //! Modify the minimum step size.
+  double& StepSizeMin() { return stepSizeMin; }
+
+  //! Get the maximum step size.
+  double StepSizeMax() const { return stepSizeMax; }
+  //! Modify the maximum step size.
+  double& StepSizeMax() { return stepSizeMax; }
 
   //! Get the restart fraction.
   double EpochBatches() const { return epochBatches; }
   //! Modify the restart fraction.
   double& EpochBatches() { return epochBatches; }
+
+  //! Get the multiplier factor
+  double MultFactor() const { return multFactor; }
+  //! Modify the multiplier factor
+  double& MultFactor() { return multFactor; }
+
+  //! Get the epoch Restart
+  double EpochRestart() const { return epochRestart; }
+  //! Modify the epoch Restart
+  double& EpochRestart() { return epochRestart; }
 
  private:
   //! Epoch where decay is applied.
@@ -119,7 +134,7 @@ class CyclicalDecay
   double multFactor;
 
   //! The step size for each example.
-  double constStepSize;
+  double stepSizeMax;
 
   //! Locally-stored restart time.
   size_t nextRestart;
