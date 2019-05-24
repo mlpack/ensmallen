@@ -175,11 +175,11 @@ class BigBatchSGD
   //! iterating.
   bool shuffle;
 
-  //! The update policy used to update the parameters in each iteration.
-  UpdatePolicyType updatePolicy;
-
   //! Controls whether or not the actual Objective value is calculated.
   bool exactObjective;
+
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicyType updatePolicy;
 };
 
 using BBS_Armijo = BigBatchSGD<BacktrackingLineSearch>;

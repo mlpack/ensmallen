@@ -1,3 +1,7 @@
+### ensmallen 1.1?.?
+###### ????-??-??
+  * Add option to avoid computing exact objective at end of optimization (#109).
+
 ### ensmallen 1.15.2
 ###### ????-??-??
   * Fix handling of curvature for BigBatchSGD (#118).

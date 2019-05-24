@@ -90,11 +90,6 @@ class SPSA
   //! Modify the maximum number of iterations (0 indicates no limit).
   size_t& MaxIterations() { return maxIterations; }
 
-  //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffle; }
-  //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffle; }
-
  private:
   //! Scaling exponent for the step size.
   double alpha;

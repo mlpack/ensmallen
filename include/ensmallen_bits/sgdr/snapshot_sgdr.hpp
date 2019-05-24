@@ -185,11 +185,11 @@ class SnapshotSGDR
   //! Whether or not to accumulate the snapshots.
   bool accumulate;
 
-  //! Locally-stored optimizer instance.
-  OptimizerType optimizer;
-
   //! Controls whether or not the actual Objective value is calculated.
   bool exactObjective;
+
+  //! Locally-stored optimizer instance.
+  OptimizerType optimizer;
 };
 
 } // namespace ens

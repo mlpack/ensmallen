@@ -179,6 +179,9 @@ class SGD
   //! iterating.
   bool shuffle;
 
+  //! Controls whether or not the actual Objective value is calculated.
+  bool exactObjective;
+
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
 
@@ -192,9 +195,6 @@ class SGD
   //! Flag indicating whether the update policy
   //! parameters have been initialized.
   bool isInitialized;
-
-  //! Controls whether or not the actual Objective value is calculated.
-  bool exactObjective;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;
