@@ -32,7 +32,7 @@ inline double BealeFunction::Evaluate(const arma::mat& coordinates,
 
   const double objective = std::pow((1.5 - x1 + (x1 * x2)), 2) + 
 	  		   std::pow((2.25 - x1 + (x1 * std::pow(x2, 2))), 2) + 
-			   std::pow((2.625 - x1 + (x1 * std::pow(x2, 3))), 2)
+			   std::pow((2.625 - x1 + (x1 * std::pow(x2, 3))), 2);
 
   return objective;
 }
