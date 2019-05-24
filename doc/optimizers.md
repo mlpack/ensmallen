@@ -1419,7 +1419,7 @@ SGD.
 
   * `QHSGD()`
   * `QHSGD(`_`stepSize, batchSize`_`)`
-  * `QHSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
+  * `QHSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, exactObjective`_`)`
 
  Note that `QHSGD` is based on the templated type
  `SGD<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
@@ -1434,9 +1434,10 @@ SGD.
  | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
  | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
  | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+ | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
  Attributes of the optimizer may also be modified via the member methods
- `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, and `Shuffle()`.
+ `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`,  and `ExactObjective()`.
 
  Note that the `QHUpdate` class has the constructor  `QHUpdate(`_`v,
 momentum`_`)` with a default value of `0.7` for the quasi-hyperbolic term `v`
@@ -1481,7 +1482,7 @@ the following other optimizers:
   * `QHAdam()`
   * `QHAdam(`_`stepSize, batchSize`_`)`
   * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations`_`)`
-  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
 
 #### Attributes
 
@@ -1497,11 +1498,12 @@ the following other optimizers:
  | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
  | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
  | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+ | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
  | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
  The attributes of the optimizer may also be modified via the member methods
  `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
- `Tolerance()`, `Shuffle()`,`V1()`,`V2()`, and `ResetPolicy()`.
+ `Tolerance()`, `Shuffle()`, `ExactObjective()`, `V1()`, `V2()`, and `ResetPolicy()`.
 
 #### Examples
 
