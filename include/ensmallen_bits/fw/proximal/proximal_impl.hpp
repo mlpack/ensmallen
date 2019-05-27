@@ -44,7 +44,7 @@ inline void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
   arma::vec simplexSum = arma::cumsum(simplexSol);
 
   double nu = 0;
-  size_t rho;
+  size_t rho = 0;
   for (size_t j = 1; j <= simplexSol.n_rows; j++)
   {
     rho = simplexSol.n_rows - j;
