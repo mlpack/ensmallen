@@ -1,53 +1,52 @@
 /**
- * @file cross_in_tray_function.hpp
+ * @file holder_table_function.hpp
  * @author Suryoday Basak
  *
- * Definition of the Cross-in-Tray function.
+ * Definition of the Holder table function.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_PROBLEMS_CROSS_IN_TRAY_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_CROSS_IN_TRAY_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_HOLDER_TABLE_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_HOLDER_TABLE_FUNCTION_HPP
 
 namespace ens {
 namespace test {
 
 /**
- * The Cross-in-Tray function, defined by
+ * The Holder table function, defined by
  *
  * \f[
- * f(x1, x2) = - 0.0001 * (|sin(x1) * sin(x2) * 
- * 	       exp(|100 - (sqrt(x1^2 + x2^2) / pi)|)| + 1)^0.1
+ * f(x1, x2) = - |sin(x1) * cos(x2) * exp(|1 - (sqrt(x1^2 + x2^2)) / pi|)|
  * \f]
  *
- * This should optimize to f(x1, x2) = -2.06261, at (x1, x2) = [1.34941, -1.34941], or
- * 						    (x1, x2) = [1.34941, 1.34941],  or
- * 						    (x1, x2) = [-1.34941, 1.34941], or
- * 						    (x1, x2) = [-1.34941, -1.34941]
+ * This should optimize to f(x1, x2) = -19.2085, at (x1, x2) = [-8.05502, -9.66459], or
+ * 						    (x1, x2) = [8.05502, -9.66459],  or
+ * 						    (x1, x2) = [-8.05502, 9.66459],  or
+ * 						    (x1, x2) = [8.05502, 9.66459]
  *
  * For more information, please refer to:
  *
  * @code
- * @article{1308.4008,
- *	    Author = {Momin Jamil and Xin-She Yang},
- *	    Title = {A Literature Survey of Benchmark Functions For Global Optimization Problems},
- *	    Year = {2013},
- *	    Eprint = {arXiv:1308.4008},
- *	    Howpublished = {Momin Jamil and Xin-She Yang, A literature survey of benchmark
- *	    functions for global optimization problems, Int. Journal of Mathematical
- *	    Modelling and Numerical Optimisation}, Vol. 4, No. 2, pp. 150--194 (2013)},
- *	    Doi = {10.1504/IJMMNO.2013.055204},
+ * @article{Mishra2006,
+ * 	    doi = {10.2139/ssrn.926132},
+ *	    url = {https://doi.org/10.2139/ssrn.926132},
+ *	    year = {2006},
+ *	    publisher = {Elsevier {BV}},
+ *	    author = {S. K. Mishra},
+ *	    title = {Some New Test Functions for Global Optimization and 
+ *	    	     Performance of Repulsive Particle Swarm Method},
+ *	    journal = {{SSRN} Electronic Journal}
  * }
  * @endcode
  */
-class CrossInTrayFunction
+class HolderTableFunction
 {
  public:
-  //! Initialize the CrossInTrayFunction.
-  CrossInTrayFunction();
+  //! Initialize the HolderTableFunction.
+  HolderTableFunction();
 
   /**
   * Shuffle the order of function visitation. This may be called by the
@@ -84,6 +83,6 @@ class CrossInTrayFunction
 } // namespace ens
 
 // Include implementation.
-#include "cross_in_tray_function_impl.hpp"
+#include "holder_table_function_impl.hpp"
 
-#endif // ENSMALLEN_PROBLEMS_CROSS_IN_TRAY_FUNCTION_HPP
+#endif // ENSMALLEN_PROBLEMS_HOLDER_TABLE_FUNCTION_HPP
