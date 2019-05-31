@@ -14,12 +14,14 @@
 
 // In case it hasn't been included yet.
 #include "ackley_function.hpp"
+using namespace std;
 
 namespace ens {
 namespace test {
 
-inline AckleyFunction::AckleyFunction(const double epsilon) : epsilon(epsilon)
-{ /* Nothing to do here */ }
+inline AckleyFunction::AckleyFunction(const double c,
+				      const double epsilon) : epsilon(epsilon), c(c)
+{ /* Nothing to do here */}
 
 inline void AckleyFunction::Shuffle() { /* Nothing to do here */ }
 
@@ -31,11 +33,9 @@ inline double AckleyFunction::Evaluate(const arma::mat& coordinates,
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = -20 * std::exp(-0.2 * std::sqrt(0.5 * (std::pow(x1, 2) + 
-				 std::pow(x2, 2)))) - 
-	  			 std::exp(0.5 * (std::cos(2 * arma::datum::pi * x1) + 
-				 std::cos(2 * arma::datum::pi * x2))) +
-				 std::exp(1) + 20;
+  const double objective = -20 * exp(-0.2 * sqrt(0.5 * (pow(x1, 2) +  pow(x2, 2)))) - 
+	  			 exp(0.5 * (cos(2 * arma::datum::pi * x1) + 
+				 cos(2 * arma::datum::pi * x2))) + exp(1) + 20;
 
   return objective;
 }
@@ -55,14 +55,13 @@ inline void AckleyFunction::Gradient(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   //Aliases for different terms in the expression of the gradient
-  const double t0 = std::sqrt(0.5 * (std::pow(x1, 2) + std::pow(x2, 2)));
-  const double t1 = 2.0 * std::exp(-0.2 * t0)/(t0 + epsilon);
-  const double t2 = arma::datum::pi*std::exp(0.5 * (std::cos(2 * arma::datum::pi * x1)
-			  + std::cos(2 * arma::datum::pi * x2)));
+  const double t0 = sqrt(0.5 * (pow(x1, 2) + pow(x2, 2)));
+  const double t1 = 2.0 * exp(- 0.2 * t0) / (t0 + epsilon);
+  const double t2 = 0.5 * c * exp(0.5 * (cos(c * x1) + cos(c * x2)));
 
   gradient.set_size(2, 1);
-  gradient(0) = (x1 * t1) + t2;
-  gradient(1) = (x2 * t1) + t2;
+  gradient(0) = (x1 * t1) + (t2 * std::sin(c * x1));
+  gradient(1) = (x2 * t1) + (t2 * std::sin(c * x2));
 }
 
 inline void AckleyFunction::Gradient(const arma::mat& coordinates,
