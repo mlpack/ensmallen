@@ -44,9 +44,10 @@ class AckleyFunction
   /*
    * Initialize the AckleyFunction.
    *
+   * @param c Multiplicative constant with a default value of 2 * pi
    * @param epsilon Coefficient to avoid division by zero (numerical stability).
    */
-  AckleyFunction(const double epsilon = 1e-8);
+  AckleyFunction(const double c = 2 * arma::datum::pi, const double epsilon = 1e-8);
 
   /**
   * Shuffle the order of function visitation. This may be called by the
@@ -99,12 +100,19 @@ class AckleyFunction
    */
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
+  //! Get the value used for c.
+  double MultiplicativeConstant() const { return c; }
+  //! Modify the value used for c.
+  double& MultiplicativeConstant() { return c; }
+
   //! Get the value used for numerical stability.
   double Epsilon() const { return epsilon; }
   //! Modify the value used for numerical stability.
   double& Epsilon() { return epsilon; }
 
  private:
+  //! The value of the multiplicative constant.
+  double c;
   //! The value used for numerical stability.
   double epsilon;
 };

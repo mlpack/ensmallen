@@ -460,3 +460,20 @@ TEST_CASE("QHAdamLogisticRegressionTest", "[AdamTest]")
       coordinates);
   REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
+
+/**
+ * Test the Adam optimizer on the Ackley function.
+ * This is to test the Ackley function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamAckleyFunctionTest", "[AdamTest]")
+{
+  AckleyFunction f(2);
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
+
+  arma::mat coordinates = arma::mat("0.02; 0.02");
+  optimizer.Optimize(f, coordinates);
+  
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.001));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.001));
+}
