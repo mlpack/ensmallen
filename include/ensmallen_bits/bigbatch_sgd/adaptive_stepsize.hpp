@@ -135,7 +135,8 @@ class AdaptiveStepsize
     const double vNum = arma::trace(arma::trans(iterate - iteratePrev) *
         (gradient - gradPrevIterate));
     const double vDenom = std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
-    const double v = (vNum == 0.0 && vDenom == 0.0) ? 0.0 : (vNum / vDenom);
+    const double vTmp = vNum / vDenom;
+    const double v = std::isfinite(vTmp) ? vTmp : 0.0;
 
     // Update previous iterate.
     iteratePrev = iterate;
