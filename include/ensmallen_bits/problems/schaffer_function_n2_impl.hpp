@@ -55,7 +55,7 @@ inline void SchafferFunctionN2::Gradient(const arma::mat& coordinates,
   const double x1_sq = pow(x1, 2);
   const double x2_sq = pow(x2, 2);
   const double sum1 = x1_sq - x2_sq;
-  const double sin_sum1 = sin(sum_1);
+  const double sin_sum1 = sin(sum1);
   const double sum2 = 0.001 * (x1_sq + x2_sq) + 1;
   const double trig_expression = 4 * sin_sum1 * cos(sum1);
   const double numerator1 = - 0.004 * (pow(sin_sum1, 2) - 0.5);
