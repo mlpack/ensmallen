@@ -41,6 +41,13 @@ else ()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif ()
 
+# Set the CFLAGS and CXXFLAGS depending on the options the user specified.
+if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wunused-parameter")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Wunused-parameter")
+endif()
+
 # The only dependency we need is Armadillo.
 #
 # We keep the minimum version in sync with mlpack, otherwise we could have
