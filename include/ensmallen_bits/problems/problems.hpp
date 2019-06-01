@@ -20,6 +20,7 @@
 #include "generalized_rosenbrock_function.hpp"
 #include "goldstein_price_function.hpp"
 #include "gradient_descent_test_function.hpp"
+#include "himmelblau_function.hpp"
 #include "levi_function_n13.hpp"
 #include "logistic_regression_function.hpp"
 #include "matyas_function.hpp"
