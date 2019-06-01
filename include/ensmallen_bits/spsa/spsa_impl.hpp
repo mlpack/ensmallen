@@ -26,16 +26,14 @@ inline SPSA::SPSA(const double alpha,
                   const double stepSize,
                   const double evaluationStepSize,
                   const size_t maxIterations,
-                  const double tolerance,
-                  const bool shuffle) :
+                  const double tolerance) :
     alpha(alpha),
     gamma(gamma),
     stepSize(stepSize),
     evaluationStepSize(evaluationStepSize),
     ak(0.001 * maxIterations),
     maxIterations(maxIterations),
-    tolerance(tolerance),
-    shuffle(shuffle)
+    tolerance(tolerance)
 { /* Nothing to do. */ }
 
 template<typename ArbitraryFunctionType>
