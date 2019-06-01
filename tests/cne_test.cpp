@@ -16,6 +16,7 @@
 
 using namespace ens;
 using namespace ens::test;
+using namespace std;
 
 /**
  * Train and test a logistic regression function using CNE optimizer
@@ -40,4 +41,50 @@ TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
   const double testAcc = lr.ComputeAccuracy(testData, testResponses,
       coordinates);
   REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+}
+
+/**
+ * Test the CNE optimizer on Cross-in-Tray Function.
+ */
+TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
+{
+  CrossInTrayFunction f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  //arma::mat coordinates = arma::mat("1; 1");
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.1));
+  REQUIRE(abs(coordinates[1]) == Approx(1.34941).margin(0.1));
+}
+
+/**
+ * Test the CNE optimizer on the Holder-table Function.
+ */
+TEST_CASE("CNEHolderTableFunctionTest", "[CNETest]")
+{
+  HolderTableFunction f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(abs(coordinates[0]) == Approx(8.05502).margin(0.1));
+  REQUIRE(abs(coordinates[1]) == Approx(9.66459).margin(0.1));
+}
+
+/**
+ * Test the CNE optimizer on Schaffer function N.4.
+ */
+TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
+{
+  SchafferFunctionN4 f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
+  REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.1));
 }

@@ -59,7 +59,7 @@ class CrossInTrayFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("-10; 10"); }
+  arma::mat GetInitialPoint() const { return arma::mat("-5; 5"); }
 
   /*
    * Evaluate a function for a particular batch-size.
