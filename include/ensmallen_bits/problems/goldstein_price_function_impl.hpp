@@ -33,7 +33,7 @@ inline double GoldsteinPriceFunction::Evaluate(const arma::mat& coordinates,
 
   const double x1_sq = pow(x1, 2);
   const double x2_sq = pow(x2, 2);
-  const double x1_x2 = x1 * x2
+  const double x1_x2 = x1 * x2;
   const double objective = (1 + pow((x1 + x2 + 1), 2) * (19 - (14 * x1) +
 			   (3 * x1_sq) - (14 * x2) + (6 * x1_x2) +
 			   (3 * x2_sq))) * (30 + pow(((2 * x1) - (3 * x2)), 2) *
@@ -56,32 +56,26 @@ inline void GoldsteinPriceFunction::Gradient(const arma::mat& coordinates,
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
-
-  //Aliases for different terms in the expression of the gradient
-  const double x1_sq = pow(x1, 2);
-  const double x2_sq = pow(x2, 2);
-  const double sum1 = (2 * x1) - (3 * x2)
-  const double sum2 = x1 + x2 + 1
-  const double sum3 = (6 * x1) + (6 * x2) + 14
-  const double sum4 = ((12 * x1_sq) - (36 * x1 * x2) - (32 * x1) +
-	              (27 * x2_sq) + (48 * x2) + 18)
-  const double sum5 = ((3 * x1_sq) + (6 * x1 * x2) - (14 * x1) + 
-		      (3 * x2_sq) - (14 * x2) + 19)
-  const double sum6 = (6 * x1) + (6 * x2) - 14
-  const double sum7 = ((6 * x1) - (9 * x2) - 8)
-  const double sum1_sq = pow(sum1, 2)
-  const double sum2_sq = pow(sum2, 2)
   gradient.set_size(2, 1);
 
-  gradient(0) = ((sum1_sq * 4 * sum7) +
-	  	(4 * sum1 * sum4 * ((sum2_sq * sum5) + 1))) +
-		(((sum1_sq * sum4) + 30) * ((sum2_sq * sum3) +
-		(2 * sum2 * sum5)));
-
-
-  gradient(1) = (-6 * sum1 * sum4) + (-6 * sum1_sq * sum7) *
-	  	((sum2_sq * sum5) + 1) + (((sum1_sq * sum4) + 30) *
-		((sum2_sq * sum3) + (2 * sum1 * sum5)));
+  gradient(0) = (pow((2 * x1 - 3 * x2), 2) * (24 * x1 - 36 * x2 - 32) +
+		(8 * x1 - 12 * x2) * (12 * x1 * x1 - 36 * x1 * x2 - 32 * x1 +
+		27 * x2 * x2 + 48 * x2 + 18)) * (pow((x1 + x2 + 1), 2) *
+		(3 * x1 * x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 * x2 - 14 * x2 +
+		19) + 1) + (pow((2 * x1 - 3 * x2), 2) * (12 * x1 * x1 - 36 *
+		x1 * x2 - 32 * x1 + 27 * x2 * x2 + 48 * x2 + 18) + 30) *
+		(pow((x1 + x2 + 1), 2) * (6 * x1 + 6 * x2 - 14) + (2 * x1 +
+		2 * x2 + 2) * (3 * x1 * x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 *
+		x2 - 14 * x2 + 19));
+  gradient(1) = ((- 12 * x1 + 18 * x2) * (12 * x1 * x1 - 36 * x1 * x2 - 32 *
+		x1 + 27 * x2 * x2 + 48 * x2 + 18) + pow((2 * x1 - 3 * x2), 2) *
+		(-36 * x1 + 54 * x2 + 48)) * (pow((x1 + x2 + 1), 2) * (3 * x1 * 
+		x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 * x2 - 14 * x2 + 19) + 1) +
+		(pow((2 * x1 - 3 * x2), 2) * (12 * x1 * x1 - 36 * x1 * x2 -
+		32 * x1 + 27 * x2 * x2 + 48 * x2 + 18) + 30) *
+		(pow((x1 + x2 + 1), 2) * (6 * x1 + 6 * x2 - 14) + (2 * x1 +
+		2 * x2 + 2) * (3 * x1 * x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 *
+		x2 - 14 * x2 + 19));
 }
 
 inline void GoldsteinPriceFunction::Gradient(const arma::mat& coordinates,
