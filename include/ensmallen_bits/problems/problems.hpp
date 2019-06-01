@@ -34,6 +34,7 @@
 #include "sparse_test_function.hpp"
 #include "sphere_function.hpp"
 #include "styblinski_tang_function.hpp"
+#include "three_hump_camel_function.hpp"
 #include "wood_function.hpp"
 
 #endif
