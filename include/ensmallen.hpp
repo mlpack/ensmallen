@@ -107,4 +107,11 @@
 #include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
 
+// Callbacks.
+#include "ensmallen_bits/callbacks/early_stop_at_min_loss.hpp"
+#include "ensmallen_bits/callbacks/print_loss.hpp"
+#include "ensmallen_bits/callbacks/progress_bar.hpp"
+#include "ensmallen_bits/callbacks/store_best_coordinates.hpp"
+#include "ensmallen_bits/callbacks/timer_stop.hpp"
+
 #endif
