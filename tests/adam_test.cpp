@@ -563,3 +563,20 @@ TEST_CASE("AdamThreeHumpCamelFunctionTest", "[AdamTest]")
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.01));
 }
 
+/**
+ * Test the Adam optimizer on Schaffer function N.2.
+ * This is to test Schaffer function N.2 and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamSchafferFunctionN2Test", "[AdamTest]")
+{
+  SchafferFunctionN2 f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+
+  arma::mat coordinates = arma::mat("1; 1");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.01));
+}
+

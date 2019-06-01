@@ -28,6 +28,7 @@
 #include "rastrigin_function.hpp"
 #include "rosenbrock_function.hpp"
 #include "rosenbrock_wood_function.hpp"
+#include "schaffer_function_n2.hpp"
 #include "schwefel_function.hpp"
 #include "sgd_test_function.hpp"
 #include "softmax_regression_function.hpp"
