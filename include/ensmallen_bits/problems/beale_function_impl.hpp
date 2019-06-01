@@ -60,7 +60,7 @@ inline void BealeFunction::Gradient(const arma::mat& coordinates,
 	  	(((2 * x2_sq) - 2) * ((x1 * x2_sq) - x1 + 2.25)) + 
 		(((2 * x2_cub) - 2) * ((x1 * x2_cub) -x1 + 2.625));
   gradient(1) = (6 * x1 * x2_sq * ((x1 * x2_cub) - x1 + 2.625)) +
-	  	(4 * x1 * x2 * ((x1 * x2_sq) -x1 + 2.25))
+	  	(4 * x1 * x2 * ((x1 * x2_sq) -x1 + 2.25)) +
 		(2 * x1 * ((x1 * x2) - x1 + 1.5));
 }
 
