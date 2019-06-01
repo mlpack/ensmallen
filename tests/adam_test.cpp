@@ -495,3 +495,20 @@ TEST_CASE("AdamBealeFunctionTest", "[AdamTest]")
   REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
 }
 
+/**
+ * Test the Adam optimizer on the Goldstein-Price function.
+ * This is to test the Beale function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamGoldsteinPriceFunctionTest", "[AdamTest]")
+{
+  GoldsteinPriceFunction f;
+  Adam optimizer(0.0001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+
+  arma::mat coordinates = arma::mat("0.2; -0.5");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(-1).margin(0.01));
+}
+
