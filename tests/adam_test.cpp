@@ -468,7 +468,7 @@ TEST_CASE("QHAdamLogisticRegressionTest", "[AdamTest]")
  */
 TEST_CASE("AdamAckleyFunctionTest", "[AdamTest]")
 {
-  AckleyFunction f(2);
+  AckleyFunction f;
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
 
   arma::mat coordinates = arma::mat("0.02; 0.02");
@@ -477,3 +477,21 @@ TEST_CASE("AdamAckleyFunctionTest", "[AdamTest]")
   REQUIRE(coordinates[0] == Approx(0.0).margin(0.001));
   REQUIRE(coordinates[1] == Approx(0.0).margin(0.001));
 }
+
+/**
+ * Test the Adam optimizer on the Beale function.
+ * This is to test the Beale function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamBealeFunctionTest", "[AdamTest]")
+{
+  BealeFunction f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
+
+  arma::mat coordinates = arma::mat("2.8; 0.35");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(3.0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
+}
+

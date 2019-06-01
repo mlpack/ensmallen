@@ -31,5 +31,6 @@
 #include "styblinski_tang_function.hpp"
 #include "wood_function.hpp"
 #include "ackley_function.hpp"
+#include "beale_function.hpp"
 
 #endif
