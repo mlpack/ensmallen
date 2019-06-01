@@ -30,10 +30,10 @@ class TimerStop
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
   void BeginEpoch(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,
-                const MatType& /* coordinates */,
-                const size_t /* epoch */,
-                const double /* objective */)
+                  FunctionType& /* function */,
+                  const MatType& /* coordinates */,
+                  const size_t /* epoch */,
+                  const double /* objective */)
   {
     // Start the timer.
     if (!reset)
