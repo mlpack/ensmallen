@@ -46,7 +46,7 @@ namespace test {
 class ThreeHumpCamelFunction
 {
  public:
-  //! Initialize the BealeFunction.
+  //! Initialize the ThreeHumpCamelFunction.
   ThreeHumpCamelFunction();
 
   /**
