@@ -15,7 +15,6 @@
 // In case it hasn't been included yet.
 #include "levi_function_n13.hpp"
 using namespace std;
-using namespace arma::datum;
 
 namespace ens {
 namespace test {
@@ -32,11 +31,11 @@ inline double LeviFunctionN13::Evaluate(const arma::mat& coordinates,
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = pow(sin(3 * pi * x1), 2) +
+  const double objective = pow(sin(3 * arma::datum::pi * x1), 2) +
 	  		   (pow((x1 - 1), 2) *
-			   (1 + pow(sin(3 * pi * x2), 2))) +
+			   (1 + pow(sin(3 * arma::datum::pi * x2), 2))) +
 			   (pow((x2 - 1), 2) * 
-			   (1 + pow(sin(2 * pi * x2), 2)));
+			   (1 + pow(sin(2 * arma::datum::pi * x2), 2)));
   return objective;
 }
 
@@ -55,11 +54,14 @@ inline void LeviFunctionN13::Gradient(const arma::mat& coordinates,
   const double x2 = coordinates(1);
   gradient.set_size(2, 1);
 
-  gradient(0) = (((2 * x1) - 2) * (pow(sin(3 * pi), 2) + 1)) +
-	  	(6 * pi * sin(3 * pi * x1) * cos(3 * pi * x1));
-  gradient(1) = (6 * pi * (pow(x1 - 1, 2) * sin(3 * pi * x2) * cos(3 * pi * x2))) +
-	  	(4 * pi * (pow(x2 - 1, 2) * sin(2 * pi * x2) * cos(2 * pi * x2))) +
-		(((2 * x2) - 2) * pow(sin(2 * pi * x2), 2) + 1);
+  gradient(0) = (2 * x1 - 2) * (pow(sin(3 * arma::datum::pi * x2), 2) + 1) + 
+	  	6 * arma::datum::pi * sin(3 * arma::datum::pi * x1) *
+		cos(3 * arma::datum::pi * x1);
+  gradient(1) = 6 * arma::datum::pi * pow((x1 - 1), 2) * sin(3 *
+		arma::datum::pi * x2) * cos(3 * arma::datum::pi * x2) +
+	  	4 * arma::datum::pi * pow((x2 - 1), 2) * sin(2 *
+		arma::datum::pi * x2) * cos(2 * arma::datum::pi * x2) +
+		(2 * x2 - 2) * (pow(sin(2 * arma::datum::pi * x2), 2) + 1);
 }
 
 inline void LeviFunctionN13::Gradient(const arma::mat& coordinates,
