@@ -119,3 +119,33 @@ TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
   REQUIRE(coordinates[1] == Approx(0.5).margin(0.1));
 }
 
+/**
+ * Test the CNE optimizer on the Goldstein-Price Function.
+ */
+TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
+{
+  GoldsteinPriceFunction f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = arma::mat("1; 0");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(-1).margin(0.1));
+}
+
+/**
+ * Test the CNE optimizer on the Levi Function.
+ */
+TEST_CASE("CNELeviFunctionN13Test", "[CNETest]")
+{
+  LeviFunctionN13 f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = arma::mat("3; 3");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(1).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(1).margin(0.1));
+}
+
