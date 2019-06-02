@@ -55,8 +55,8 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
-      FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
+      decltype(this)> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,

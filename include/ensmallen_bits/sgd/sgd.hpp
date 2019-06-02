@@ -112,9 +112,28 @@ class SGD
    */
   template<typename DecomposableFunctionType,
            typename MatType,
-           typename GradType = MatType>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
-                                       MatType& iterate);
+           typename GradType = MatType,
+           typename... CallbackFunctionTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(DecomposableFunctionType& function,
+           MatType& iterate,
+           CallbackFunctionTypes&&... callbacks);
+
+  // //! Forward the MatType as GradType.
+  // template<typename DecomposableFunctionType,
+  //          typename MatType,
+  //          typename... CallbackFunctionTypes>
+  // typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  //                                      MatType& iterate,
+  //                                      CallbackFunctionTypes&&... callbacks)
+  //  {
+  //     // return Optimize<DecomposableFunctionType, MatType, MatType,
+  //     //     CallbackFunctionTypes...>(function, iterate,
+  //     //     std::forward<CallbackFunctionTypes>(callbacks)...);
+
+  //   return Optimize<DecomposableFunctionType, MatType, MatType>(function, iterate);
+  //  }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -147,6 +166,11 @@ class SGD
   //! Modify whether or not the update policy parameters
   //! are reset before Optimize call.
   bool& ResetPolicy() { return resetPolicy; }
+
+  //! Get the termination value.
+  bool Terminate() const { return terminate; }
+  //! Modify the termination value.
+  bool& Terminate() { return terminate; }
 
   //! Get the update policy.
   const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
@@ -188,6 +212,9 @@ class SGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;

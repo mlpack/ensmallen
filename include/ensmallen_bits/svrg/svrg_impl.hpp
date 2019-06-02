@@ -52,8 +52,8 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
-      FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
+      decltype(this)> FullFunctionType;
   FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
 
   traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
