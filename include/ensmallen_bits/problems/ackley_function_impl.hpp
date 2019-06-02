@@ -20,8 +20,8 @@ namespace ens {
 namespace test {
 
 inline AckleyFunction::AckleyFunction(const double trig_coeff,
-				      const double epsilon) : epsilon(epsilon),
-							      trig_coeff(trig_coeff)
+				      const double epsilon) : trig_coeff(trig_coeff),
+							      epsilon(epsilon)
 { /* Nothing to do here */}
 
 inline void AckleyFunction::Shuffle() { /* Nothing to do here */ }
