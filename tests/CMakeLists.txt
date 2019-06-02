@@ -7,6 +7,7 @@ set(ENSMALLEN_TESTS_SOURCES
     adam_test.cpp
     aug_lagrangian_test.cpp
     bigbatch_sgd_test.cpp
+    callbacks_test.cpp
     cmaes_test.cpp
     cne_test.cpp
     de_test.cpp
