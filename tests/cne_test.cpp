@@ -149,3 +149,48 @@ TEST_CASE("CNELeviFunctionN13Test", "[CNETest]")
   REQUIRE(coordinates[1] == Approx(1).margin(0.1));
 }
 
+/**
+ * Test the CNE optimizer on the Himmelblau Function.
+ */
+TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
+{
+  HimmelblauFunction f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = arma::mat("2; 1");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(3.0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(2.0).margin(0.1));
+}
+
+/**
+ * Test the CNE optimizer on the Three-hump Camel Function.
+ */
+TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
+{
+  ThreeHumpCamelFunction f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = arma::mat("2; 2");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+}
+
+/**
+ * Test the CNE optimizer on Schaffer Function N.2.
+ */
+TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
+{
+  SchafferFunctionN2 f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = arma::mat("1; 1");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+}
+
