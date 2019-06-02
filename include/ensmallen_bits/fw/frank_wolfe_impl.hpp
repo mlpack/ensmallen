@@ -48,7 +48,8 @@ Optimize(FunctionType& function, MatType& iterateIn)
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType,
+      decltype(this)> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Make sure we have all necessary functions.

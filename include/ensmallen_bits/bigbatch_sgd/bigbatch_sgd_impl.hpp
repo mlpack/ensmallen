@@ -47,8 +47,8 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
-      FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
+      decltype(this)> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.

@@ -319,7 +319,8 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
 
   // Use the Function<> wrapper to ensure the function has all of the functions
   // that we need.
-  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType,
+      decltype(this)> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.
@@ -417,7 +418,8 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
     // If we can't make progress on the gradient, then we'll also accept
     // a stable function value.
     const double denom = std::max(
-        std::max(fabs(prevFunctionValue), fabs(functionValue)), 1.0);
+        std::max(std::abs(prevFunctionValue), std::abs(functionValue)),
+        (ElemType) 1.0);
     if ((prevFunctionValue - functionValue) / denom <= factr)
     {
       Info << "L-BFGS function value stable (terminating successfully)."

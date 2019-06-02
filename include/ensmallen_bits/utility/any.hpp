@@ -5,6 +5,11 @@
  * A simple and dangerous implementation of 'Any' that can be used when the
  * class needs to hold some specific information for which the type is not
  * known.
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef ENSMALLEN_UTILITY_ANY_HPP
 #define ENSMALLEN_UTILITY_ANY_HPP

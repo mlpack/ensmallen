@@ -60,6 +60,7 @@
 #include "ensmallen_bits/log.hpp" // TODO: should move to another place
 
 #include "ensmallen_bits/utility/any.hpp"
+#include "ensmallen_bits/utility/arma_traits.hpp"
 
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 

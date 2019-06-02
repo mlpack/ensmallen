@@ -36,6 +36,7 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
+    terminate(false),
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy),
@@ -44,19 +45,26 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType, typename DecayPolicyType>
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackFunctionTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackFunctionTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
-      FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
+      decltype(this)> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
+  f.Register(this);
 
   // The update policy and decay policy internally use a templated class so that
   // we can know MatType and GradType only when Optimize() is called.
@@ -104,8 +112,10 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
+  for (size_t i = 0; i < actualMaxIterations && !terminate;
+      /* incrementing done manually */)
   {
+    f.BeginEpoch(iterate, i, overallObjective, callbacks...);
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
@@ -149,7 +159,7 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     // Technically we are computing the objective before we take the step, but
     // for many FunctionTypes it may be much quicker to do it like this.
     overallObjective += f.EvaluateWithGradient(iterate, currentFunction,
-        gradient, effectiveBatchSize);
+        gradient, effectiveBatchSize, callbacks...);
 
     // Use the update policy to take a step.
     instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, stepSize,
@@ -161,6 +171,8 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
+
+    f.EndEpoch(iterate, i, overallObjective, callbacks...);
   }
 
   Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
@@ -171,7 +183,8 @@ typename MatType::elem_type SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize,
+        callbacks...);
   }
   return overallObjective;
 }

@@ -40,7 +40,8 @@ typename MatType::elem_type GradientDescent::Optimize(
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
   // Use the Function<> wrapper type to provide additional functionality.
-  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType,
+      decltype(this)> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have the methods that we need.

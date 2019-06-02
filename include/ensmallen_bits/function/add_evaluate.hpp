@@ -24,6 +24,7 @@ namespace ens {
 template<typename FunctionType,
          typename MatType,
          typename GradType,
+         typename OptimizerType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
@@ -46,12 +47,10 @@ class AddEvaluate
 template<typename FunctionType,
          typename MatType,
          typename GradType,
+         typename OptimizerType,
          bool HasEvaluateWithGradient>
-class AddEvaluate<FunctionType,
-                  MatType,
-                  GradType,
-                  HasEvaluateWithGradient,
-                  true>
+class AddEvaluate<FunctionType, MatType, GradType, OptimizerType,
+    HasEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
@@ -59,7 +58,9 @@ class AddEvaluate<FunctionType,
   {
     return static_cast<FunctionType*>(
         static_cast<Function<FunctionType,
-                             MatType, GradType>*>(this))->Evaluate(coordinates);
+                             MatType,
+                             GradType,
+                             OptimizerType>*>(this))->Evaluate(coordinates);
   }
 };
 
@@ -67,8 +68,11 @@ class AddEvaluate<FunctionType,
  * If we have EvaluateWithGradient() but no existing Evaluate(), add an
  * Evaluate() method.
  */
-template<typename FunctionType, typename MatType, typename GradType>
-class AddEvaluate<FunctionType, MatType, GradType, true, false>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         typename OptimizerType>
+class AddEvaluate<FunctionType, MatType, GradType, OptimizerType, true, false>
 {
  public:
   /**
@@ -81,7 +85,8 @@ class AddEvaluate<FunctionType, MatType, GradType, true, false>
     GradType gradient; // This will be ignored.
     return static_cast<Function<FunctionType,
                                 MatType,
-                                GradType>*>(this)->EvaluateWithGradient(
+                                GradType,
+                                OptimizerType>*>(this)->EvaluateWithGradient(
         coordinates, gradient);
   }
 };
@@ -94,6 +99,7 @@ class AddEvaluate<FunctionType, MatType, GradType, true, false>
 template<typename FunctionType,
          typename MatType,
          typename GradType,
+         typename OptimizerType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType,
@@ -118,21 +124,21 @@ class AddEvaluateConst
 template<typename FunctionType,
          typename MatType,
          typename GradType,
+         typename OptimizerType,
          bool HasEvaluateWithGradient>
-class AddEvaluateConst<FunctionType,
-                       MatType,
-                       GradType,
-                       HasEvaluateWithGradient,
-                       true>
+class AddEvaluateConst<FunctionType, MatType, GradType, OptimizerType,
+    HasEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
   typename MatType::elem_type Evaluate(const MatType& coordinates) const
   {
     return static_cast<const FunctionType*>(
-        static_cast<const Function<FunctionType,
-                                   MatType,
-                                   GradType>*>(this))->Evaluate(coordinates);
+        static_cast<
+        const Function<FunctionType,
+                       MatType,
+                       GradType,
+                       OptimizerType>*>(this))->Evaluate(coordinates);
   }
 };
 
@@ -140,8 +146,12 @@ class AddEvaluateConst<FunctionType,
  * If we have EvaluateWithGradient() but no existing Evaluate(), add an
  * Evaluate() without a using directive to make the base Evaluate() accessible.
  */
-template<typename FunctionType, typename MatType, typename GradType>
-class AddEvaluateConst<FunctionType, MatType, GradType, true, false>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         typename OptimizerType>
+class AddEvaluateConst<FunctionType, MatType, GradType,
+    OptimizerType, true, false>
 {
  public:
   /**
@@ -155,8 +165,9 @@ class AddEvaluateConst<FunctionType, MatType, GradType, true, false>
     return static_cast<
         const Function<FunctionType,
                        MatType,
-                       GradType>*>(this)->EvaluateWithGradient(coordinates,
-                                                               gradient);
+                       GradType,
+                       OptimizerType>*>(this)->EvaluateWithGradient(
+        coordinates, gradient);
   }
 };
 
@@ -168,6 +179,7 @@ class AddEvaluateConst<FunctionType, MatType, GradType, true, false>
 template<typename FunctionType,
          typename MatType,
          typename GradType,
+         typename OptimizerType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType,
@@ -192,12 +204,10 @@ class AddEvaluateStatic
 template<typename FunctionType,
          typename MatType,
          typename GradType,
+         typename OptimizerType,
          bool HasEvaluateWithGradient>
-class AddEvaluateStatic<FunctionType,
-                        MatType,
-                        GradType,
-                        HasEvaluateWithGradient,
-                        true>
+class AddEvaluateStatic<FunctionType, MatType, GradType, OptimizerType,
+    HasEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
@@ -212,8 +222,12 @@ class AddEvaluateStatic<FunctionType,
  * If we have EvaluateWithGradient() but no existing Evaluate(), add an
  * Evaluate() without a using directive to make the base Evaluate() accessible.
  */
-template<typename FunctionType, typename MatType, typename GradType>
-class AddEvaluateStatic<FunctionType, MatType, GradType, true, false>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         typename OptimizerType>
+class AddEvaluateStatic<FunctionType, MatType, GradType, OptimizerType,
+    true, false>
 {
  public:
   /**
