@@ -3,6 +3,7 @@
  * @author Marcus Edel
  * @author Kartik Nighania
  * @author Conrad Sanderson
+ * @author Suryoday Basak
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -51,7 +52,6 @@ TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
   CrossInTrayFunction f;
   CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
 
-  //arma::mat coordinates = arma::mat("1; 1");
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
@@ -88,3 +88,34 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
   REQUIRE(coordinates[0] == Approx(0).margin(0.1));
   REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.1));
 }
+
+/**
+ * Test the CNE optimizer on the Ackley Function.
+ */
+TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
+{
+  AckleyFunction f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = arma::mat("3; 3");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+}
+
+/**
+ * Test the CNE optimizer on the Beale Function.
+ */
+TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
+{
+  BealeFunction f;
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+
+  arma::mat coordinates = arma::mat("3; 3");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(3).margin(0.1));
+  REQUIRE(coordinates[1] == Approx(0.5).margin(0.1));
+}
+
