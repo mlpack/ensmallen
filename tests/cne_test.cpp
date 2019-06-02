@@ -82,7 +82,7 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
   SchafferFunctionN4 f;
   CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
 
-  arma::mat coordinates = f.GetInitialPoint();
+  arma::mat coordinates = arma::mat("2; 2");
   optimizer.Optimize(f, coordinates);
 
   REQUIRE(coordinates[0] == Approx(0).margin(0.1));
