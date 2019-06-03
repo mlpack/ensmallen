@@ -172,14 +172,14 @@ class QHAdamUpdate
   // The second moment coefficient.
   double beta2;
 
-  // The number of iterations.
-  size_t iteration;
-
   // The first quasi-hyperbolic term.
   double v1;
 
   // The second quasi-hyperbolic term.
   double v2;
+
+  // The number of iterations.
+  size_t iteration;
 };
 
 } // namespace ens
