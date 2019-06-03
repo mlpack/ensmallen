@@ -517,9 +517,9 @@ TEST_CASE("AdamGoldsteinPriceFunctionTest", "[AdamTest]")
  * This is to test the Levi function and not Adam.
  * This test will be removed later.
  */
-TEST_CASE("AdamLeviFunctionTest", "[AdamTest]")
+TEST_CASE("AdamLevyFunctionTest", "[AdamTest]")
 {
-  LeviFunctionN13 f;
+  LevyFunctionN13 f;
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
 
   arma::mat coordinates = arma::mat("0.9; 1.1");
@@ -536,7 +536,7 @@ TEST_CASE("AdamLeviFunctionTest", "[AdamTest]")
  */
 TEST_CASE("AdamHimmelblauFunctionTest", "[AdamTest]")
 {
-  LeviFunctionN13 f;
+  HimmelblauFunction f;
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
 
   arma::mat coordinates = arma::mat("2.9; 1.9");

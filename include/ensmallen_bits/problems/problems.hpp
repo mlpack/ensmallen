@@ -23,7 +23,7 @@
 #include "gradient_descent_test_function.hpp"
 #include "himmelblau_function.hpp"
 #include "holder_table_function.hpp"
-#include "levi_function_n13.hpp"
+#include "levy_function_n13.hpp"
 #include "logistic_regression_function.hpp"
 #include "matyas_function.hpp"
 #include "mc_cormick_function.hpp"
