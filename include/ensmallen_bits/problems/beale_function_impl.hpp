@@ -59,9 +59,9 @@ inline void BealeFunction::Gradient(const arma::mat& coordinates,
   gradient.set_size(2, 1);
   gradient(0) = ((2 * x2 - 2) * (x1 * x2 - x1 + 1.5)) +
                 ((2 * x2Sq - 2) * (x1 * x2Sq - x1 + 2.25)) + 
-                ((2 * x2Cub - 2) * (x1 * x2Cub -x1 + 2.625));
+                ((2 * x2Cub - 2) * (x1 * x2Cub - x1 + 2.625));
   gradient(1) = (6 * x1 * x2Sq * (x1 * x2Cub - x1 + 2.625)) +
-                (4 * x1 * x2 * (x1 * x2Sq -x1 + 2.25)) +
+                (4 * x1 * x2 * (x1 * x2Sq - x1 + 2.25)) +
                 (2 * x1 * (x1 * x2 - x1 + 1.5));
 }
 
