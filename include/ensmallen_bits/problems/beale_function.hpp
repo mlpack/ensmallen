@@ -20,8 +20,8 @@ namespace test {
  *
  * \f[
  * f(x_1,x_2) = (1.5 - x_1 + x_1 * x_2)^2 + 
- * 		(2.25 - x_1 + x_1 * x_2^2)^2 +
- * 		(2.625 - x_1 + x_1 * x_2^3)^2
+ *              (2.25 - x_1 + x_1 * x_2^2)^2 +
+ *              (2.625 - x_1 + x_1 * x_2^3)^2
  * \f]
  *
  * This should optimize to f(x) = 0, at x = [3, 0.5].
@@ -30,10 +30,10 @@ namespace test {
  *
  * @code
  * @misc{1307.5838,
- *	Author = {Masoumeh Vali},
- *	Title = {Rotational Mutation Genetic Algorithm on optimization Problems},
- *	Year = {2013},
- *	Eprint = {arXiv:1307.5838},
+ *       Author = {Masoumeh Vali},
+ *       Title = {Rotational Mutation Genetic Algorithm on optimization Problems},
+ *       Year = {2013},
+ *       Eprint = {arXiv:1307.5838},
  * }
  * @endcode
  */
