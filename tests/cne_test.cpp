@@ -137,9 +137,9 @@ TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
 /**
  * Test the CNE optimizer on the Levi Function.
  */
-TEST_CASE("CNELeviFunctionN13Test", "[CNETest]")
+TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
 {
-  LeviFunctionN13 f;
+  LevyFunctionN13 f;
   CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
 
   arma::mat coordinates = arma::mat("3; 3");

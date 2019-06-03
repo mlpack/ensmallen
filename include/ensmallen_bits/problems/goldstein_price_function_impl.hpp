@@ -19,67 +19,69 @@ using namespace std;
 namespace ens {
 namespace test {
 
-inline GoldsteinPriceFunction::GoldsteinPriceFunction() { /* Nothing to do here */ }
+inline GoldsteinPriceFunction::GoldsteinPriceFunction()
+{ /* Nothing to do here */ }
 
 inline void GoldsteinPriceFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double GoldsteinPriceFunction::Evaluate(const arma::mat& coordinates,
-                                      const size_t /* begin */,
-                                      const size_t /* batchSize */) const
+inline double GoldsteinPriceFunction::Evaluate(
+		                   const arma::mat& coordinates,
+                                   const size_t /* begin */,
+                                   const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double x1_sq = pow(x1, 2);
-  const double x2_sq = pow(x2, 2);
-  const double x1_x2 = x1 * x2;
-  const double objective = (1 + pow((x1 + x2 + 1), 2) * (19 - (14 * x1) +
-			   (3 * x1_sq) - (14 * x2) + (6 * x1_x2) +
-			   (3 * x2_sq))) * (30 + pow(((2 * x1) - (3 * x2)), 2) *
-			   (18 - (32 * x1) + (12 * x1_sq) + (48 * x2) -
-			   (36 * x1_x2) + (27 * x2_sq)));
+  const double x1Sq = pow(x1, 2);
+  const double x2Sq = pow(x2, 2);
+  const double x1x2 = x1 * x2;
+  const double objective = (1 + pow(x1 + x2 + 1, 2) * (19 - 14 * x1 + 3 * x1Sq -
+                           14 * x2 + 6 * x1x2 + 3 * x2Sq)) * (30 + pow(2 * x1 -
+                           3 * x2, 2) * (18 - 32 * x1 + 12 * x1Sq + 48 * x2 -
+                           36 * x1x2 + 27 * x2Sq));
 
   return objective;
 }
 
-inline double GoldsteinPriceFunction::Evaluate(const arma::mat& coordinates) const
+inline double GoldsteinPriceFunction::
+Evaluate(const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
 inline void GoldsteinPriceFunction::Gradient(const arma::mat& coordinates,
-                                    const size_t /* begin */,
-                                    arma::mat& gradient,
-                                    const size_t /* batchSize */) const
+                                             const size_t /* begin */,
+                                             arma::mat& gradient,
+                                             const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
   gradient.set_size(2, 1);
 
-  gradient(0) = (pow((2 * x1 - 3 * x2), 2) * (24 * x1 - 36 * x2 - 32) +
+  gradient(0) = (pow(2 * x1 - 3 * x2, 2) * (24 * x1 - 36 * x2 - 32) +
 		(8 * x1 - 12 * x2) * (12 * x1 * x1 - 36 * x1 * x2 - 32 * x1 +
-		27 * x2 * x2 + 48 * x2 + 18)) * (pow((x1 + x2 + 1), 2) *
+		27 * x2 * x2 + 48 * x2 + 18)) * (pow(x1 + x2 + 1, 2) *
 		(3 * x1 * x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 * x2 - 14 * x2 +
-		19) + 1) + (pow((2 * x1 - 3 * x2), 2) * (12 * x1 * x1 - 36 *
+		19) + 1) + (pow(2 * x1 - 3 * x2, 2) * (12 * x1 * x1 - 36 *
 		x1 * x2 - 32 * x1 + 27 * x2 * x2 + 48 * x2 + 18) + 30) *
-		(pow((x1 + x2 + 1), 2) * (6 * x1 + 6 * x2 - 14) + (2 * x1 +
+		(pow(x1 + x2 + 1, 2) * (6 * x1 + 6 * x2 - 14) + (2 * x1 +
 		2 * x2 + 2) * (3 * x1 * x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 *
 		x2 - 14 * x2 + 19));
   gradient(1) = ((- 12 * x1 + 18 * x2) * (12 * x1 * x1 - 36 * x1 * x2 - 32 *
-		x1 + 27 * x2 * x2 + 48 * x2 + 18) + pow((2 * x1 - 3 * x2), 2) *
-		(-36 * x1 + 54 * x2 + 48)) * (pow((x1 + x2 + 1), 2) * (3 * x1 * 
+		x1 + 27 * x2 * x2 + 48 * x2 + 18) + pow(2 * x1 - 3 * x2, 2) *
+		(-36 * x1 + 54 * x2 + 48)) * (pow(x1 + x2 + 1, 2) * (3 * x1 * 
 		x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 * x2 - 14 * x2 + 19) + 1) +
-		(pow((2 * x1 - 3 * x2), 2) * (12 * x1 * x1 - 36 * x1 * x2 -
+		(pow(2 * x1 - 3 * x2, 2) * (12 * x1 * x1 - 36 * x1 * x2 -
 		32 * x1 + 27 * x2 * x2 + 48 * x2 + 18) + 30) *
-		(pow((x1 + x2 + 1), 2) * (6 * x1 + 6 * x2 - 14) + (2 * x1 +
+		(pow(x1 + x2 + 1, 2) * (6 * x1 + 6 * x2 - 14) + (2 * x1 +
 		2 * x2 + 2) * (3 * x1 * x1 + 6 * x1 * x2 - 14 * x1 + 3 * x2 *
 		x2 - 14 * x2 + 19));
 }
 
 inline void GoldsteinPriceFunction::Gradient(const arma::mat& coordinates,
-                                    arma::mat& gradient)
+                                             arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }
