@@ -14,6 +14,7 @@
 
 // In case it hasn't been included yet.
 #include "beale_function.hpp"
+using namespace std;
 
 namespace ens {
 namespace test {
@@ -30,9 +31,9 @@ inline double BealeFunction::Evaluate(const arma::mat& coordinates,
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = std::pow((1.5 - x1 + (x1 * x2)), 2) + 
-	  		   std::pow((2.25 - x1 + (x1 * std::pow(x2, 2))), 2) + 
-			   std::pow((2.625 - x1 + (x1 * std::pow(x2, 3))), 2);
+  const double objective = pow(1.5 - x1 + x1 * x2, 2) +
+	                   pow(2.25 - x1 + x1 * x2 * x2, 2) + 
+                           pow(2.625 - x1 + x1 * pow(x2, 3), 2);
 
   return objective;
 }
@@ -51,17 +52,17 @@ inline void BealeFunction::Gradient(const arma::mat& coordinates,
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  //Aliases for different terms in the expression of the gradient
-  const double x2_sq = std::pow(x2, 2);
-  const double x2_cub = std::pow(x2, 3);
+  // Aliases for different terms in the expression of the gradient
+  const double x2Sq = x2 * x2;
+  const double x2Cub = pow(x2, 3);
 
   gradient.set_size(2, 1);
-  gradient(0) = (((2 * x2) - 2) * ((x1 * x2) - x1 + 1.5)) +
-	  	(((2 * x2_sq) - 2) * ((x1 * x2_sq) - x1 + 2.25)) + 
-		(((2 * x2_cub) - 2) * ((x1 * x2_cub) -x1 + 2.625));
-  gradient(1) = (6 * x1 * x2_sq * ((x1 * x2_cub) - x1 + 2.625)) +
-	  	(4 * x1 * x2 * ((x1 * x2_sq) -x1 + 2.25)) +
-		(2 * x1 * ((x1 * x2) - x1 + 1.5));
+  gradient(0) = ((2 * x2 - 2) * (x1 * x2 - x1 + 1.5)) +
+                ((2 * x2Sq - 2) * (x1 * x2Sq - x1 + 2.25)) + 
+                ((2 * x2Cub - 2) * (x1 * x2Cub -x1 + 2.625));
+  gradient(1) = (6 * x1 * x2Sq * (x1 * x2Cub - x1 + 2.625)) +
+                (4 * x1 * x2 * (x1 * x2Sq -x1 + 2.25)) +
+                (2 * x1 * (x1 * x2 - x1 + 1.5));
 }
 
 inline void BealeFunction::Gradient(const arma::mat& coordinates,
