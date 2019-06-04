@@ -22,23 +22,24 @@ namespace test {
  * f(x1, x2) = - |sin(x1) * cos(x2) * exp(|1 - (sqrt(x1^2 + x2^2)) / pi|)|
  * \f]
  *
- * This should optimize to f(x1, x2) = -19.2085, at (x1, x2) = [-8.05502, -9.66459], or
- * 						    (x1, x2) = [8.05502, -9.66459],  or
- * 						    (x1, x2) = [-8.05502, 9.66459],  or
- * 						    (x1, x2) = [8.05502, 9.66459]
+ * This should optimize to f(x1, x2) = -19.2085, at
+ *                                     (x1, x2) = [-8.05502, -9.66459], or
+ *                                     (x1, x2) = [8.05502, -9.66459],  or
+ *                                     (x1, x2) = [-8.05502, 9.66459],  or
+ *                                     (x1, x2) = [8.05502, 9.66459]
  *
  * For more information, please refer to:
  *
  * @code
  * @article{Mishra2006,
- * 	    doi = {10.2139/ssrn.926132},
- *	    url = {https://doi.org/10.2139/ssrn.926132},
- *	    year = {2006},
- *	    publisher = {Elsevier {BV}},
- *	    author = {S. K. Mishra},
- *	    title = {Some New Test Functions for Global Optimization and 
- *	    	     Performance of Repulsive Particle Swarm Method},
- *	    journal = {{SSRN} Electronic Journal}
+ *          doi = {10.2139/ssrn.926132},
+ *          url = {https://doi.org/10.2139/ssrn.926132},
+ *          year = {2006},
+ *          publisher = {Elsevier {BV}},
+ *          author = {S. K. Mishra},
+ *          title = {Some New Test Functions for Global Optimization and 
+ *                   Performance of Repulsive Particle Swarm Method},
+ *          journal = {{SSRN} Electronic Journal}
  * }
  * @endcode
  */
@@ -68,8 +69,8 @@ class HolderTableFunction
    * @param batchSize Number of points to process.
    */
   double Evaluate(const arma::mat& coordinates,
-                  const size_t begin,
-                  const size_t batchSize) const;
+		  const size_t begin,
+		  const size_t batchSize) const;
 
   /*
    * Evaluate a function with the given coordinates.

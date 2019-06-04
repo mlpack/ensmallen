@@ -28,18 +28,19 @@ namespace test {
  *
  * @code
  * @article{Ali2005,
- *  	    doi = {10.1007/s10898-004-9972-2},
- *	    url = {https://doi.org/10.1007/s10898-004-9972-2},
- *	    year = {2005},
- *	    month = apr,
- *	    publisher = {Springer Nature},
- *	    volume = {31},
- *	    number = {4},
- *	    pages = {635--672},
- *	    author = {M. Montaz Ali and Charoenchai Khompatraporn and Zelda B. Zabinsky},
- *	    title = {A Numerical Evaluation of Several Stochastic Algorithms
- *	    	     on Selected Continuous Global Optimization Test Problems},
- *	    journal = {Journal of Global Optimization}
+ *          doi = {10.1007/s10898-004-9972-2},
+ *          url = {https://doi.org/10.1007/s10898-004-9972-2},
+ *          year = {2005},
+ *          month = apr,
+ *          publisher = {Springer Nature},
+ *          volume = {31},
+ *          number = {4},
+ *          pages = {635--672},
+ *          author = {M. Montaz Ali and Charoenchai Khompatraporn and
+ *                    Zelda B. Zabinsky},
+ *          title = {A Numerical Evaluation of Several Stochastic Algorithms
+ *                   on Selected Continuous Global Optimization Test Problems},
+ *          journal = {Journal of Global Optimization}
  * }
  * @endcode
  */

@@ -24,15 +24,15 @@ inline HimmelblauFunction::HimmelblauFunction() { /* Nothing to do here */ }
 inline void HimmelblauFunction::Shuffle() { /* Nothing to do here */ }
 
 inline double HimmelblauFunction::Evaluate(const arma::mat& coordinates,
-                                    	   const size_t /* begin */,
-                                     	   const size_t /* batchSize */) const
+                                           const size_t /* begin */,
+                                           const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = pow((pow(x1, 2) + x2  - 11 ), 2) +
-	  		   pow((x1 + pow(x2, 2) - 7), 2);
+  const double objective = pow(x1 * x1 + x2  - 11 , 2) +
+                           pow(x1 + x2 * x2 - 7, 2);
   return objective;
 }
 
@@ -42,25 +42,25 @@ inline double HimmelblauFunction::Evaluate(const arma::mat& coordinates) const
 }
 
 inline void HimmelblauFunction::Gradient(const arma::mat& coordinates,
-                                    	 const size_t /* begin */,
-                                    	 arma::mat& gradient,
-                                    	 const size_t /* batchSize */) const
+                                         const size_t /* begin */,
+                                         arma::mat& gradient,
+                                         const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  //Aliases for different terms in the expression of the gradient
-  const double x1_sq = pow(x1, 2);
-  const double x2_sq = pow(x2, 2);
+  // Aliases for different terms in the expression of the gradient
+  const double x1Sq = x1 * x1;
+  const double x2Sq = x2 * x2;
 
   gradient.set_size(2, 1);
-  gradient(0) = (4 * x1 * (x1_sq + x2 - 11)) + (2 * (x1 + x2_sq - 7));
-  gradient(1) = (2 * (x1_sq + x2 - 11)) + (4 * x2 * (x1 + x2_sq - 7));
+  gradient(0) = (4 * x1 * (x1Sq + x2 - 11)) + (2 * (x1 + x2Sq - 7));
+  gradient(1) = (2 * (x1Sq + x2 - 11)) + (4 * x2 * (x1 + x2Sq - 7));
 }
 
 inline void HimmelblauFunction::Gradient(const arma::mat& coordinates,
-                                    	 arma::mat& gradient)
+                                         arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }

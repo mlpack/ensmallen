@@ -19,13 +19,15 @@ using namespace std;
 namespace ens {
 namespace test {
 
-inline ThreeHumpCamelFunction::ThreeHumpCamelFunction() { /* Nothing to do here */ }
+inline ThreeHumpCamelFunction::ThreeHumpCamelFunction()
+{ /* Nothing to do here */ }
 
 inline void ThreeHumpCamelFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double ThreeHumpCamelFunction::Evaluate(const arma::mat& coordinates,
-  	                                       const size_t /* begin */,
-          	                               const size_t /* batchSize */) const
+inline double ThreeHumpCamelFunction::Evaluate(
+                                   const arma::mat& coordinates,
+                                   const size_t /* begin */,
+                                   const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -36,15 +38,16 @@ inline double ThreeHumpCamelFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-inline double ThreeHumpCamelFunction::Evaluate(const arma::mat& coordinates) const
+inline double ThreeHumpCamelFunction::Evaluate(
+                                   const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
 inline void ThreeHumpCamelFunction::Gradient(const arma::mat& coordinates,
-                  	                     const size_t /* begin */,
-                          	             arma::mat& gradient,
-                                  	     const size_t /* batchSize */) const
+                                             const size_t /* begin */,
+                                             arma::mat& gradient,
+                                             const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
@@ -56,7 +59,7 @@ inline void ThreeHumpCamelFunction::Gradient(const arma::mat& coordinates,
 }
 
 inline void ThreeHumpCamelFunction::Gradient(const arma::mat& coordinates,
-                                   	     arma::mat& gradient)
+                                             arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }
