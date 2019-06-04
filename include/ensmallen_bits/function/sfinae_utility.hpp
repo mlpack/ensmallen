@@ -159,8 +159,6 @@ struct NAME                                                                    \
       ens::sfinae::FunctionTypes<sig>::Ret>::type>                             \
 > : std::true_type {};
 
-//std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
-
 /**
  * Base macro for ENS_HAS_METHOD_FORM() and ENS_HAS_EXACT_METHOD_FORM() macros.
  */
@@ -282,9 +280,9 @@ struct NAME                                                                  \
     ENS_HAS_METHOD_FORM_BASE(ENS_SINGLE_ARG(METHOD), ENS_SINGLE_ARG(NAME), 7)
 
 /**
- * ENS_HAS_EXACT_METHOD_FORM generates a template that allows to check at compile
- * time whether a given class has a method of the requested form. For example,
- * for the following class
+ * ENS_HAS_EXACT_METHOD_FORM generates a template that allows to check at
+ * compile time whether a given class has a method of the requested form. For
+ * example, for the following class
  *
  * class A
  * {
@@ -315,38 +313,5 @@ struct NAME                                                                  \
 #undef  ENS_HAS_EXACT_METHOD_FORM
 #define ENS_HAS_EXACT_METHOD_FORM(METHOD, NAME) \
     ENS_HAS_METHOD_FORM_BASE(ENS_SINGLE_ARG(METHOD), ENS_SINGLE_ARG(NAME), 0)
-
-/**
- * A version of ENS_HAS_METHOD_FORM() where the maximum number of extra arguments is
- * set to the default of 7.
- *
- * ENS_HAS_METHOD_FORM generates a template that allows to check at compile time
- * whether a given class has a method of the requested form. For example, for
- * the following class
- *
- * class A
- * {
- *  public:
- *   ...
- *   Train(const arma::mat&, const arma::Row<size_t>&, double);
- *   ...
- * };
- *
- * and the following form of Train methods
- *
- * template<typename Class, typename...Ts>
- * using TrainForm =
- *     void(Class::*)(const arma::mat&, const arma::Row<size_t>&, Ts...);
- *
- * we can check whether the class A has a Train method of the specified form:
- *
- * ENS_HAS_METHOD_FORM(Train, HasTrain);
- * static_assert(HasTrain<A, TrainFrom>::value, "value should be true");
- *
- * The implementation is analogous to implementation of the macro ENS_HAS_MEM_FUNC.
- *
- * @param METHOD The name of the method to check for.
- * @param NAME The name of the struct to construct.
- */
 
 #endif
