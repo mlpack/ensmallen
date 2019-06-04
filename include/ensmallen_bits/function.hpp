@@ -197,7 +197,7 @@ class Function :
            size_t begin,
            MatType& gradient,
            const size_t batchSize,
-           CType&... callbacks)
+           CType&... /* callbacks */)
   {
     Gradient(coordinates, begin, gradient, batchSize);
   }
@@ -260,9 +260,9 @@ class Function :
 
   // Provide a dummy overload so the name 'BeginEpoch' exists for this object.
   template<typename... CType>
-  void BeginEpoch(const MatType& coordinates,
-                  const size_t epoch,
-                  const double objective)
+  void BeginEpoch(const MatType& /* coordinates */,
+                  const size_t /* epoch */,
+                  const double /* objective */)
   { /* Nothing to do here. */ }
 
   /**
@@ -287,9 +287,9 @@ class Function :
 
   // Provide a dummy overload so the name 'EndEpoch' exists for this object.
   template<typename... CType>
-  void EndEpoch(const MatType& coordinates,
-                const size_t epoch,
-                const double objective)
+  void EndEpoch(const MatType& /* coordinates */,
+                const size_t /* epoch */,
+                const double /* objective */)
   { /* Nothing to do here. */ }
 
  private:

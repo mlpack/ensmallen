@@ -375,7 +375,7 @@ TEST_CASE("TimerStopCallbackTest", "[CallbacksTest]")
   timer.tic();
 
   // The optimization process should return in one second.
-  const double result = s.Optimize(f, coordinates, TimerStop(1));
+  s.Optimize(f, coordinates, TimerStop(1));
 
   // Add some time to account for the function to return.
   REQUIRE(timer.toc() < 2);
