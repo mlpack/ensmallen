@@ -23,9 +23,9 @@ class TimerStop
   /**
    * Set up the print loss callback class with the width and output stream.
    *
-   * @param time The timeout in seconds.
+   * @param duration The duration of the timer in seconds.
    */
-  TimerStop(const double time) : time(time), reset(false)
+  TimerStop(const double duration) : localDuration(duration), reset(false)
   { /* Nothing to do here. */ }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
@@ -59,7 +59,7 @@ class TimerStop
                 const size_t /* epoch */,
                 const double /* objective */)
   {
-    if (timer.toc() > time)
+    if (timer.toc() > localDuration)
     {
       Info << "Timer timeout reached; terminate optimization." << std::endl;
       optimizer->Terminate() = true;
@@ -67,8 +67,8 @@ class TimerStop
   }
 
  private:
-  //! The timeout in seconds.
-  double time;
+  //! The duration in seconds.
+  double localDuration;
 
   //! Reset the timer.
   bool reset;
