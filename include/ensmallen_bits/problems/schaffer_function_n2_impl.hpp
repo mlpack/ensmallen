@@ -24,15 +24,15 @@ inline SchafferFunctionN2::SchafferFunctionN2() { /* Nothing to do here */ }
 inline void SchafferFunctionN2::Shuffle() { /* Nothing to do here */ }
 
 inline double SchafferFunctionN2::Evaluate(const arma::mat& coordinates,
-                                    	   const size_t /* begin */,
-                                     	   const size_t /* batchSize */) const
+                                           const size_t /* begin */,
+                                           const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = 0.5 + (pow(sin(pow(x1, 2) - pow(x2, 2)), 2) - 0.5) / 
-	  		   pow((1 + 0.001 * (pow(x1, 2) + pow(x2, 2))), 2);
+  const double objective = 0.5 + (pow(sin(pow(x1, 2) - pow(x2, 2)), 2) - 0.5) /
+                           pow(1 + 0.001 * (pow(x1, 2) + pow(x2, 2)), 2);
 
   return objective;
 }
@@ -51,16 +51,16 @@ inline void SchafferFunctionN2::Gradient(const arma::mat& coordinates,
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  //Aliases for different terms in the expression of the gradient
-  const double x1_sq = pow(x1, 2);
-  const double x2_sq = pow(x2, 2);
-  const double sum1 = x1_sq - x2_sq;
-  const double sin_sum1 = sin(sum1);
-  const double sum2 = 0.001 * (x1_sq + x2_sq) + 1;
-  const double trig_expression = 4 * sin_sum1 * cos(sum1);
-  const double numerator1 = - 0.004 * (pow(sin_sum1, 2) - 0.5);
+  // Aliases for different terms in the expression of the gradient
+  const double x1Sq = x1 * x1;
+  const double x2Sq = x2 * x2;
+  const double sum1 = x1Sq - x2Sq;
+  const double sinSum1 = sin(sum1);
+  const double sum2 = 0.001 * (x1Sq + x2Sq) + 1;
+  const double trigExpression = 4 * sinSum1 * cos(sum1);
+  const double numerator1 = - 0.004 * (pow(sinSum1, 2) - 0.5);
   const double expr1 = numerator1 / pow(sum2, 3);
-  const double expr2 = trig_expression / pow(sum2, 2);
+  const double expr2 = trigExpression / pow(sum2, 2);
 
   gradient.set_size(2, 1);
   gradient(0) = x1 * (expr1 + expr2);

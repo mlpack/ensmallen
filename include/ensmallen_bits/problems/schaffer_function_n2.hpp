@@ -19,7 +19,8 @@ namespace test {
  * The Schaffer function N.2, defined by
  *
  * \f[
- * f(x1, x2) = 0.5 + ((sin^2(x1^2 - x2^2) - 0.5) / (1 + 0.001 * (x1^2 + x2^2))^2)
+ * f(x1, x2) = 0.5 + ((sin^2(x1^2 - x2^2) - 0.5) /
+ *             (1 + 0.001 * (x1^2 + x2^2))^2)
  * \f]
  *
  * This should optimize to f(x1, x2) = 0, at (x1, x2) = [0, 0].
@@ -28,14 +29,16 @@ namespace test {
  *
  * @code
  * @article{1308.4008,
- *	    Author = {Momin Jamil and Xin-She Yang},
- *	    Title = {A Literature Survey of Benchmark Functions For Global Optimization Problems},
- *	    Year = {2013},
- *	    Eprint = {arXiv:1308.4008},
- *	    Howpublished = {Momin Jamil and Xin-She Yang, A literature survey of benchmark
- *	    functions for global optimization problems, Int. Journal of Mathematical
- *	    Modelling and Numerical Optimisation}, Vol. 4, No. 2, pp. 150--194 (2013)},
- *	    Doi = {10.1504/IJMMNO.2013.055204},
+ *          Author = {Momin Jamil and Xin-She Yang},
+ *          Title = {A Literature Survey of Benchmark Functions For Global
+ *                   Optimization Problems},
+ *          Year = {2013},
+ *          Eprint = {arXiv:1308.4008},
+ *          Howpublished = {Momin Jamil and Xin-She Yang, A literature survey
+ *                          of benchmark functions for global optimization
+ *                          problems, Int. Journal of Mathematical Modelling
+ *                          and Numerical Optimisation},
+ *          Doi = {10.1504/IJMMNO.2013.055204},
  * }
  * @endcode
  */
