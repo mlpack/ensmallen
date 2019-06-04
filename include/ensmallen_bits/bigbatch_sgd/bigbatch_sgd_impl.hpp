@@ -75,8 +75,8 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
   bool reset = false;
   BaseGradType delta0, delta1;
 
