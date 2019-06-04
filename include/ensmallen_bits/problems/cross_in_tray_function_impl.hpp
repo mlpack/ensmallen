@@ -24,8 +24,8 @@ inline CrossInTrayFunction::CrossInTrayFunction() { /* Nothing to do here */ }
 inline void CrossInTrayFunction::Shuffle() { /* Nothing to do here */ }
 
 inline double CrossInTrayFunction::Evaluate(const arma::mat& coordinates,
-                                    	    const size_t /* begin */,
-                                     	    const size_t /* batchSize */) const
+                                            const size_t /* begin */,
+                                            const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);

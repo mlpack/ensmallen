@@ -24,15 +24,16 @@ inline HolderTableFunction::HolderTableFunction() { /* Nothing to do here */ }
 inline void HolderTableFunction::Shuffle() { /* Nothing to do here */ }
 
 inline double HolderTableFunction::Evaluate(const arma::mat& coordinates,
-                                    	    const size_t /* begin */,
+                                            const size_t /* begin */,
                                      	    const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = -abs(sin(x1) * cos(x2) * exp(abs(1 - (sqrt(pow(x1, 2) +
-			    pow(x2, 2)) / arma::datum::pi))));
+  const double objective = - abs(sin(x1) * cos(x2) * exp(abs(1 -
+                             (sqrt(pow(x1, 2) + pow(x2, 2)) /
+                             arma::datum::pi))));
   return objective;
 }
 
