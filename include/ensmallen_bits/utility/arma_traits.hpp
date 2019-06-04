@@ -72,6 +72,13 @@ struct IsArmaType<arma::SpRow<eT> >
 
 // template<>
 template<typename eT>
+struct IsArmaType<arma::subview<eT> >
+{
+  const static bool value = true;
+};
+
+// template<>
+template<typename eT>
 struct IsArmaType<arma::subview_col<eT> >
 {
   const static bool value = true;
