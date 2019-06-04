@@ -19,24 +19,18 @@ namespace test {
  * The Schaffer function N.4, defined by
  *
  * \f[
- * f(x1, x2) = 0.5 + (cos^2(sin(|x1^2 - x2^2|)) - 0.5)/(1 + 0.001*(x1^2 + x2^2))^2
+ * f(x1, x2) = 0.5 + (cos^2(sin(|x1^2 - x2^2|)) - 0.5) / 
+ *             (1 + 0.001 * (x1^2 + x2^2))^2
  * \f]
  *
  * This should optimize to f(x1, x2) = 0.292579, at (x1, x2) = [0, 1.25313], or
- * 						    (x1, x2) = [0, -1.25313],  or
+ *                                                  (x1, x2) = [0, -1.25313].
  *
  * For more information, please refer to:
  *
  * @code
- * @article{1308.4008,
- *	    Author = {Momin Jamil and Xin-She Yang},
- *	    Title = {A Literature Survey of Benchmark Functions For Global Optimization Problems},
- *	    Year = {2013},
- *	    Eprint = {arXiv:1308.4008},
- *	    Howpublished = {Momin Jamil and Xin-She Yang, A literature survey of benchmark
- *	    functions for global optimization problems, Int. Journal of Mathematical
- *	    Modelling and Numerical Optimisation}, Vol. 4, No. 2, pp. 150--194 (2013)},
- *	    Doi = {10.1504/IJMMNO.2013.055204},
+ * @misc{LevyFunction,
+ *       URL = {http://benchmarkfcns.xyz/benchmarkfcns/schaffern4fcn.html}
  * }
  * @endcode
  */
