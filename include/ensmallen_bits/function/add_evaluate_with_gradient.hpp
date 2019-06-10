@@ -26,7 +26,6 @@ namespace ens {
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          // Check if there is at least one non-const Evaluate() or Gradient().
          bool HasEvaluateGradient = traits::HasNonConstSignatures<
              FunctionType,
@@ -58,10 +57,12 @@ class AddEvaluateWithGradient
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasEvaluateGradient>
-class AddEvaluateWithGradient<FunctionType, MatType, GradType, OptimizerType,
-    HasEvaluateGradient, true>
+class AddEvaluateWithGradient<FunctionType,
+                              MatType,
+                              GradType,
+                              HasEvaluateGradient,
+                              true>
 {
  public:
   // Reflect the existing EvaluateWithGradient().
@@ -71,8 +72,7 @@ class AddEvaluateWithGradient<FunctionType, MatType, GradType, OptimizerType,
     return static_cast<FunctionType*>(
         static_cast<Function<FunctionType,
                              MatType,
-                             GradType,
-                             OptimizerType>*>(this))->EvaluateWithGradient(
+                             GradType>*>(this))->EvaluateWithGradient(
         coordinates, gradient);
   }
 };
@@ -81,12 +81,8 @@ class AddEvaluateWithGradient<FunctionType, MatType, GradType, OptimizerType,
  * If the FunctionType has Evaluate() and Gradient(), provide
  * EvaluateWithGradient().
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
-class AddEvaluateWithGradient<FunctionType, MatType, GradType, OptimizerType,
-    true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddEvaluateWithGradient<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -101,14 +97,10 @@ class AddEvaluateWithGradient<FunctionType, MatType, GradType, OptimizerType,
   {
     const typename MatType::elem_type objective =
         static_cast<Function<FunctionType,
-                             MatType,
-                             GradType,
-                             OptimizerType>*>(this)->Evaluate(coordinates);
+                             MatType, GradType>*>(this)->Evaluate(coordinates);
     static_cast<Function<FunctionType,
                          MatType,
-                         GradType,
-                         OptimizerType>*>(this)->Gradient(
-        coordinates, gradient);
+                         GradType>*>(this)->Gradient(coordinates, gradient);
     return objective;
   }
 };
@@ -121,7 +113,6 @@ class AddEvaluateWithGradient<FunctionType, MatType, GradType, OptimizerType,
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          // Check if there is at least one const Evaluate() or Gradient().
          bool HasEvaluateGradient = traits::HasConstSignatures<
              FunctionType,
@@ -152,10 +143,12 @@ class AddEvaluateWithGradientConst
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasEvaluateGradient>
-class AddEvaluateWithGradientConst<FunctionType, MatType, GradType,
-    OptimizerType, HasEvaluateGradient, true>
+class AddEvaluateWithGradientConst<FunctionType,
+                                   MatType,
+                                   GradType,
+                                   HasEvaluateGradient,
+                                   true>
 {
  public:
   // Reflect the existing EvaluateWithGradient().
@@ -163,11 +156,9 @@ class AddEvaluateWithGradientConst<FunctionType, MatType, GradType,
       const MatType& coordinates, GradType& gradient) const
   {
     return static_cast<const FunctionType*>(
-        static_cast<
-        const Function<FunctionType,
-                       MatType,
-                       GradType,
-                       OptimizerType>*>(this))->EvaluateWithGradient(
+        static_cast<const Function<FunctionType,
+                                   MatType,
+                                   GradType>*>(this))->EvaluateWithGradient(
         coordinates, gradient);
   }
 };
@@ -176,12 +167,8 @@ class AddEvaluateWithGradientConst<FunctionType, MatType, GradType,
  * If the FunctionType has Evaluate() const and Gradient() const, provide
  * EvaluateWithGradient() const.
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
-class AddEvaluateWithGradientConst<FunctionType, MatType, GradType,
-    OptimizerType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddEvaluateWithGradientConst<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -197,14 +184,11 @@ class AddEvaluateWithGradientConst<FunctionType, MatType, GradType,
     const typename MatType::elem_type objective =
         static_cast<const Function<FunctionType,
                                    MatType,
-                                   GradType,
-                                   OptimizerType>*>(this)->Evaluate(
-        coordinates);
+                                   GradType>*>(this)->Evaluate(coordinates);
     static_cast<const Function<FunctionType,
                                MatType,
-                               GradType,
-                               OptimizerType>*>(this)->Gradient(
-    coordinates, gradient);
+                               GradType>*>(this)->Gradient(coordinates,
+                                                           gradient);
     return objective;
   }
 };
@@ -218,7 +202,6 @@ class AddEvaluateWithGradientConst<FunctionType, MatType, GradType,
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasEvaluateGradient =
              traits::HasEvaluate<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
@@ -249,10 +232,12 @@ class AddEvaluateWithGradientStatic
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasEvaluateGradient>
-class AddEvaluateWithGradientStatic<FunctionType, MatType, GradType,
-    OptimizerType, HasEvaluateGradient, true>
+class AddEvaluateWithGradientStatic<FunctionType,
+                                    MatType,
+                                    GradType,
+                                    HasEvaluateGradient,
+                                    true>
 {
  public:
   // Reflect the existing EvaluateWithGradient().
@@ -267,12 +252,12 @@ class AddEvaluateWithGradientStatic<FunctionType, MatType, GradType,
  * If the FunctionType has static Evaluate() and static Gradient(), provide
  * static EvaluateWithGradient().
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
-class AddEvaluateWithGradientStatic<FunctionType, MatType, GradType,
-    OptimizerType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddEvaluateWithGradientStatic<FunctionType,
+                                    MatType,
+                                    GradType,
+                                    true,
+                                    false>
 {
  public:
   /**
