@@ -40,23 +40,30 @@ SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
     updatePolicy(SPALeRAStepsize(alpha, epsilon, adaptRate)),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy),
-    isInitialized(false)
+    isInitialized(false),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<typename DecayPolicyType>
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SPALeRASGD<DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
@@ -114,8 +121,13 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate;
+      /* incrementing done manually */)
   {
+    terminate |= Callback::BeginEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
+
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)
     {
@@ -128,6 +140,8 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
         Warn << "SPALeRA SGD: converged to " << overallObjective
             << "; terminating with failure.  Try a smaller step size?"
             << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -135,6 +149,8 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
       {
         Info << "SPALeRA SGD: minimized within tolerance " << tolerance
             << "; terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -161,6 +177,9 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
     currentObjective = f.EvaluateWithGradient(iterate, currentFunction,
         gradient, effectiveBatchSize);
 
+    terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        overallObjective, gradient, callbacks...);
+
     // Use the update policy to take a step.
     if (!instUpdatePolicy.As<InstUpdatePolicyType>().Update(stepSize,
         currentObjective, effectiveBatchSize, numFunctions, iterate, gradient))
@@ -168,6 +187,8 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
       Warn << "SPALeRA SGD: converged to " << overallObjective << "; "
           << "terminating with failure.  Try a smaller step size?"
           << std::endl;
+
+      Callback::EndOptimization(*this, f, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -179,6 +200,9 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
     currentFunction += effectiveBatchSize;
     overallObjective += currentObjective;
     currentObjective /= effectiveBatchSize;
+
+    terminate |= Callback::EndEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
   }
 
   Info << "SPALeRA SGD: maximum iterations (" << maxIterations
@@ -190,8 +214,11 @@ typename MatType::elem_type SPALeRASGD<DecayPolicyType>::Optimize(
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+
+    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
   }
 
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;
 }
 

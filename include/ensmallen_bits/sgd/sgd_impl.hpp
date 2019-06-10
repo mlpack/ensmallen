@@ -36,11 +36,11 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    terminate(false),
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy),
-    isInitialized(false)
+    isInitialized(false),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -48,23 +48,22 @@ template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename DecomposableFunctionType,
          typename MatType,
          typename GradType,
-         typename... CallbackFunctionTypes>
+         typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
 SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& function,
     MatType& iterateIn,
-    CallbackFunctionTypes&&... callbacks)
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
-  f.Register(this);
 
   // The update policy and decay policy internally use a templated class so that
   // we can know MatType and GradType only when Optimize() is called.
@@ -112,10 +111,13 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate;
       /* incrementing done manually */)
   {
-    f.BeginEpoch(iterate, i, overallObjective, callbacks...);
+    terminate |= Callback::BeginEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
+
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
@@ -127,6 +129,8 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
       {
         Warn << "SGD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -134,6 +138,8 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
       {
         Info << "SGD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -159,7 +165,10 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     // Technically we are computing the objective before we take the step, but
     // for many FunctionTypes it may be much quicker to do it like this.
     overallObjective += f.EvaluateWithGradient(iterate, currentFunction,
-        gradient, effectiveBatchSize, callbacks...);
+        gradient, effectiveBatchSize);
+
+    terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        overallObjective, gradient, callbacks...);
 
     // Use the update policy to take a step.
     instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, stepSize,
@@ -172,7 +181,8 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
 
-    f.EndEpoch(iterate, i, overallObjective, callbacks...);
+    terminate |= Callback::EndEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
   }
 
   Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
@@ -183,9 +193,12 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize,
-        callbacks...);
+    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+
+    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
   }
+
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;
 }
 

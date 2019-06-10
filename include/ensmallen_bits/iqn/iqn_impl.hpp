@@ -28,23 +28,28 @@ inline IQN::IQN(const double stepSize,
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<typename DecomposableFunctionType,
          typename MatType,
-         typename GradType>
-typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
-                                          MatType& iterateIn)
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+IQN::Optimize(DecomposableFunctionType& functionIn,
+              MatType& iterateIn,
+              CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
 
   // Make sure we have all the methods that we need.
@@ -91,6 +96,9 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
     t[f] = initialIterate;
     function.Gradient(initialIterate, i, y[f], effectiveBatchSize);
 
+    terminate |= Callback::Gradient(*this, function, initialIterate,
+        y[f], callbacks...);
+
     Q[f].eye();
     g += y[f];
     y[f] /= (double) effectiveBatchSize;
@@ -102,8 +110,13 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   BaseMatType u = t[0];
 
-  for (size_t i = 1; i != maxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
+
     for (size_t j = 0, f = 0; f < numFunctions; j++)
     {
       // Cyclicly iterating through the number of functions.
@@ -118,6 +131,9 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
         function.Gradient(iterate, it * batchSize, gradient,
             effectiveBatchSize);
         gradient /= effectiveBatchSize;
+
+        terminate |= Callback::Gradient(*this, function, iterate, gradient,
+            callbacks...);
 
         const BaseMatType s = arma::vectorise(iterate - t[it]);
         const BaseGradType yy = arma::vectorise(gradient - y[it]);
@@ -154,6 +170,9 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
       overallObjective += function.Evaluate(iterate, f, effectiveBatchSize);
+
+      Callback::Evaluate(*this, function, iterate, overallObjective,
+          callbacks...);
     }
     overallObjective /= numFunctions;
 
@@ -165,6 +184,8 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
     {
       Warn << "IQN: converged to " << overallObjective << "; terminating"
           << " with failure.  Try a smaller step size?" << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -172,13 +193,19 @@ typename MatType::elem_type IQN::Optimize(DecomposableFunctionType& functionIn,
     {
       Info << "IQN: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
   }
 
   Info << "IQN: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

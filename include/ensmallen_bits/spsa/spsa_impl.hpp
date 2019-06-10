@@ -33,12 +33,16 @@ inline SPSA::SPSA(const double alpha,
     evaluationStepSize(evaluationStepSize),
     ak(0.001 * maxIterations),
     maxIterations(maxIterations),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    terminate(false)
 { /* Nothing to do. */ }
 
-template<typename ArbitraryFunctionType, typename MatType>
+template<typename ArbitraryFunctionType,
+         typename MatType,
+         typename... CallbackTypes>
 typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
-                                           MatType& iterate)
+                                           MatType& iterate,
+                                           CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -56,8 +60,13 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
 
-  for (size_t k = 0; k < maxIterations; ++k)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t k = 0; k < maxIterations && !terminate; ++k)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, k,
+        overallObjective, callbacks...);
+
     // Output current objective function.
     Info << "SPSA: iteration " << k << ", objective " << overallObjective
         << "." << std::endl;
@@ -66,6 +75,8 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     {
       Warn << "SPSA: converged to " << overallObjective << "; terminating"
           << " with failure.  Try a smaller step size?" << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -73,6 +84,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     {
       Warn << "SPSA: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -90,19 +102,31 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
 
     iterate += ck * spVector;
     const double fPlus = function.Evaluate(iterate);
+    Callback::Evaluate(*this, function, iterate, fPlus, callbacks...);
 
     iterate -= 2 * ck * spVector;
     const double fMinus = function.Evaluate(iterate);
+    Callback::Evaluate(*this, function, iterate, fMinus, callbacks...);
+
     iterate += ck * spVector;
 
     gradient = (fPlus - fMinus) * (1 / (2 * ck * spVector));
     iterate -= akLocal * gradient;
 
     overallObjective = function.Evaluate(iterate);
+    Callback::Evaluate(*this, function, iterate, overallObjective,
+        callbacks...);
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, k,
+        overallObjective, callbacks...);
   }
 
   // Calculate final objective.
-  return function.Evaluate(iterate);
+  const ElemType objective = function.Evaluate(iterate);
+  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
+  return objective;
 }
 
 } // namespace ens

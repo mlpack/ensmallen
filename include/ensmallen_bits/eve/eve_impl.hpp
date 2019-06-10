@@ -39,22 +39,28 @@ inline Eve::Eve(const double stepSize,
     clip(clip),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    shuffle(shuffle)
+    shuffle(shuffle),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type Eve::Optimize(
-    DecomposableFunctionType& function,
-    MatType& iterateIn)
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+Eve::Optimize(DecomposableFunctionType& function,
+              MatType& iterateIn,
+              CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
@@ -87,11 +93,16 @@ typename MatType::elem_type Eve::Optimize(
   v.zeros();
 
   // Now iterate!
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
+  for (size_t i = 0; i < actualMaxIterations && !terminate;
+      /* incrementing done manually */)
   {
+    terminate |= Callback::BeginEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
+
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
@@ -103,6 +114,8 @@ typename MatType::elem_type Eve::Optimize(
       {
         Warn << "Eve: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -110,6 +123,8 @@ typename MatType::elem_type Eve::Optimize(
       {
         Info << "Eve: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -138,6 +153,9 @@ typename MatType::elem_type Eve::Optimize(
         gradient, effectiveBatchSize);
     overallObjective += objective;
 
+    terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        overallObjective, gradient, callbacks...);
+
     m *= beta1;
     m += (1 - beta1) * gradient;
 
@@ -164,6 +182,9 @@ typename MatType::elem_type Eve::Optimize(
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
+
+    terminate |= Callback::EndEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
   }
 
   Info << "Eve: maximum iterations (" << maxIterations << ") reached; "
@@ -175,7 +196,11 @@ typename MatType::elem_type Eve::Optimize(
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+
+    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
   }
+
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;
 }
 

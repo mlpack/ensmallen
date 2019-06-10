@@ -50,10 +50,16 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
 }
 
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type SnapshotSGDR<UpdatePolicyType>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SnapshotSGDR<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
-    MatType& iterate)
+    MatType& iterate,
+    CallbackTypes&&... callbacks)
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do here.
@@ -73,7 +79,7 @@ typename MatType::elem_type SnapshotSGDR<UpdatePolicyType>::Optimize(
   }
 
   typename MatType::elem_type overallObjective = optimizer.Optimize(function,
-      iterate);
+      iterate, callbacks...);
 
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
@@ -97,9 +103,15 @@ typename MatType::elem_type SnapshotSGDR<UpdatePolicyType>::Optimize(
     // Calculate final objective.
     overallObjective = 0;
     for (size_t i = 0; i < function.NumFunctions(); ++i)
+    {
       overallObjective += function.Evaluate(iterate, i, 1);
+
+      Callback::Evaluate(*this, function, iterate, overallObjective,
+          callbacks...);
+    }
   }
 
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

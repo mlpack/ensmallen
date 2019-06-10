@@ -26,13 +26,17 @@ inline DE::DE(const size_t populationSize ,
     maxGenerations(maxGenerations),
     crossoverRate(crossoverRate),
     differentialWeight(differentialWeight),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    terminate(false)
 { /* Nothing to do here. */ }
 
 //!Optimize the function
-template<typename DecomposableFunctionType, typename MatType>
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename... CallbackTypes>
 typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
-                                         MatType& iterateIn)
+                                         MatType& iterateIn,
+                                         CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -70,6 +74,10 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
     population[i].randn(iterate.n_rows, iterate.n_cols);
     population[i] += iterate;
     fitnessValues[i] = function.Evaluate(population[i]);
+
+    Callback::Evaluate(*this, function, population[i], fitnessValues[i],
+        callbacks...);
+
     if (fitnessValues[i] < lastBestFitness)
     {
       lastBestFitness = fitnessValues[i];
@@ -78,8 +86,13 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
   }
 
   // Iterate until maximum number of generations are completed.
-  for (size_t gen = 0; gen < maxGenerations; gen++)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t gen = 0; gen < maxGenerations && !terminate; gen++)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, gen,
+        lastBestFitness, callbacks...);
+
     // Generate new population based on /best/1/bin strategy.
     for (size_t member = 0; member < populationSize; member++)
     {
@@ -116,7 +129,10 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
       }
 
       ElemType iterateValue = function.Evaluate(iterate);
+      Callback::Evaluate(*this, function, iterate, iterateValue, callbacks...);
+
       const ElemType mutantValue = function.Evaluate(mutant);
+      Callback::Evaluate(*this, function, mutant, mutantValue, callbacks...);
 
       // Replace the current member if mutant is better.
       if (mutantValue < iterateValue)
@@ -133,7 +149,7 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
     if (std::abs(lastBestFitness - fitnessValues.min()) < tolerance)
     {
       Info << "DE: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+          << "terminating optimization." << std::endl;
       break;
     }
 
@@ -147,9 +163,14 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
         break;
       }
     }
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, gen,
+        lastBestFitness, callbacks...);
   }
 
   iterate = bestElement;
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return lastBestFitness;
 }
 

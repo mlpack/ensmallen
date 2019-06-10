@@ -70,13 +70,34 @@ class L_BFGS
    * @tparam FunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize with.
    * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize; must have Evaluate() and Gradient().
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename FunctionType, typename MatType, typename GradType = MatType>
-  typename MatType::elem_type Optimize(FunctionType& function,
-                                       MatType& iterate);
+  template<typename FunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(FunctionType& function,
+           MatType& iterate,
+           CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<DecomposableFunctionType, MatType, MatType,
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the memory size.
   size_t NumBasis() const { return numBasis; }
@@ -142,6 +163,8 @@ class L_BFGS
   double minStep;
   //! Maximum step of the line search.
   double maxStep;
+  //! Controls early termination of the optimization process.
+  bool terminate;
 
   /**
    * Calculate the scaling factor, gamma, which is used to scale the Hessian
@@ -170,17 +193,23 @@ class L_BFGS
    * @param gradient The gradient at the initial point.
    * @param searchDirection A vector specifying the search direction.
    * @param finalStepSize The resulting step size (0 if no step).
+   * @param callbacks Callback functions.
    *
    * @return false if no step size is suitable, true otherwise.
    */
-  template<typename FunctionType, typename ElemType, typename MatType, typename GradType>
+  template<typename FunctionType,
+           typename ElemType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
   bool LineSearch(FunctionType& function,
                   ElemType& functionValue,
                   MatType& iterate,
                   GradType& gradient,
                   MatType& newIterateTmp,
                   const GradType& searchDirection,
-                  double& finalStepSize);
+                  double& finalStepSize,
+                  CallbackTypes&... callbacks);
 
   /**
    * Find the L-BFGS search direction.

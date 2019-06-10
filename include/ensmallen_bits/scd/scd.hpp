@@ -84,15 +84,34 @@ class SCD
    * @tparam ResolvableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize with.
    * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value at the final point.
    */
   template<typename ResolvableFunctionType,
            typename MatType,
-           typename GradType = arma::SpMat<typename MatType::elem_type>>
-  typename MatType::elem_type Optimize(ResolvableFunctionType& function,
-                                       MatType& iterate);
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(ResolvableFunctionType& function,
+           MatType& iterate,
+           CallbackTypes&&... callbacks);
+
+  //! Forward arma::SpMat<typename MatType::elem_type> as GradType.
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<DecomposableFunctionType, MatType,
+        arma::SpMat<typename MatType::elem_type>, CallbackTypes...>(
+        function, iterate, std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -134,6 +153,9 @@ class SCD
 
   //! The descent policy used to pick the coordinates for the update.
   DescentPolicyType descentPolicy;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 };
 
 } // namespace ens

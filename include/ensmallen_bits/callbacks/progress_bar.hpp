@@ -36,6 +36,22 @@ class ProgressBar
   { /* Nothing to do here. */ }
 
   /**
+   * Callback function called at the start of the optimization process.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   */
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void BeginOptimization(OptimizerType& /* optimizer */,
+                         FunctionType& /* function */,
+                         MatType& /* coordinates */)
+  {
+    // Start the timer.
+    timer.tic();
+  }
+
+  /**
    * Callback function called at the end of a pass over the data.
    *
    * @param optimizer The optimizer used to update the function.
@@ -49,22 +65,22 @@ class ProgressBar
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t epoch,
-                const double /* objective */)
+                const double objective)
   {
-    if (!optimizer->MaxIterations())
+    if (!optimizer.MaxIterations())
     {
       Warn << "Maximum number of iterations not defined (no limit),"
            << " no progress bar shown." << std::endl;
       return;
     }
 
-    const size_t progress = ((double) epoch / optimizer->MaxIterations()) * 100;
+    const size_t progress = ((double) epoch / optimizer.MaxIterations()) * 100;
 
     // Skip if the progress hasn't changed.
     if (progress <= previousProgress)
       return;
 
-    output << "[";
+    output << epoch << "/" << optimizer.MaxIterations() << " [";
     for (size_t i = 0; i < 100; i += step)
     {
       if (i < progress)
@@ -81,7 +97,8 @@ class ProgressBar
       }
     }
 
-    output << "] " << progress << " %\r";
+    output << "] " << progress << "% - ETA: " << (size_t) timer.toc()
+        << "s - loss: " << objective <<  "\r";
     output.flush();
 
     previousProgress = progress;
@@ -96,6 +113,9 @@ class ProgressBar
 
   //! Locally-stored previous progress.
   size_t previousProgress;
+
+  //! Locally-stored timer object.
+  arma::wall_clock timer;
 };
 
 } // namespace ens

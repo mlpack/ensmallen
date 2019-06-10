@@ -33,13 +33,17 @@ inline CNE::CNE(const size_t populationSize,
     selectPercent(selectPercent),
     tolerance(tolerance),
     numElite(0),
-    elements(0)
+    elements(0),
+    terminate(false)
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template<typename ArbitraryFunctionType, typename MatType>
+template<typename ArbitraryFunctionType,
+         typename MatType,
+         typename... CallbackTypes>
 typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
-                                          MatType& iterateIn)
+                                          MatType& iterateIn,
+                                          CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -105,10 +109,16 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 
   // Find the fitness before optimization using given iterate parameters.
   ElemType lastBestFitness = function.Evaluate(iterate);
+  Callback::Evaluate(*this, function, iterate, lastBestFitness, callbacks...);
 
   // Iterate until maximum number of generations is obtained.
-  for (size_t gen = 1; gen <= maxGenerations; gen++)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t gen = 1; gen <= maxGenerations && !terminate; gen++)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, gen,
+        lastBestFitness, callbacks...);
+
     // Calculating fitness values of all candidates.
     for (size_t i = 0; i < populationSize; i++)
     {
@@ -135,12 +145,19 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 
     // Store the best fitness of present generation.
     lastBestFitness = fitnessValues.min();
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, gen,
+        lastBestFitness, callbacks...);
   }
 
   // Set the best candidate into the network parameters.
   iterateIn = population[index(0)];
 
-  return function.Evaluate(iterate);
+  const ElemType objective = function.Evaluate(iterate);
+  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
+  return objective;
 }
 
 //! Reproduce candidates to create the next generation.

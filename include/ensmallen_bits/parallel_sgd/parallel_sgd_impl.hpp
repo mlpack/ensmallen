@@ -56,14 +56,20 @@ ParallelSGD<DecayPolicyType>::ParallelSGD(
     threadShareSize(threadShareSize),
     tolerance(tolerance),
     shuffle(shuffle),
-    decayPolicy(decayPolicy)
+    decayPolicy(decayPolicy),
+    terminate(false)
 { /* Nothing to do. */ }
 
 template <typename DecayPolicyType>
-template <typename SparseFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
+template <typename SparseFunctionType,
+          typename MatType,
+          typename GradType,
+          typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -90,12 +96,20 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
   // Iterate till the objective is within tolerance or the maximum number of
   // allowed iterations is reached. If maxIterations is 0, this will iterate
   // till convergence.
-  for (size_t i = 1; i != maxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
+
     // Calculate the overall objective.
     lastObjective = overallObjective;
 
     overallObjective = function.Evaluate(iterate);
+
+    terminate |= Callback::Evaluate(*this, function, iterate, overallObjective,
+        callbacks...);
 
     // Output current objective function.
     Info << "Parallel SGD: iteration " << i << ", objective "
@@ -106,6 +120,8 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
       Warn << "Parallel SGD: converged to " << overallObjective
         << "; terminating with failure. Try a smaller step size?"
         << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -113,6 +129,8 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
     {
       Info << "SGD: minimized within tolerance " << tolerance << "; "
         << "terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -147,6 +165,9 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
         // TODO: support for batch size > 1 could be really useful.
         function.Gradient(iterate, visitationOrder[j], gradient, 1);
 
+        terminate |= Callback::Gradient(*this, function, iterate, gradient,
+            callbacks...);
+
         // Update the decision variable with non-zero components of the
         // gradient.
         for (size_t i = 0; i < gradient.n_cols; ++i)
@@ -166,10 +187,15 @@ typename MatType::elem_type ParallelSGD<DecayPolicyType>::Optimize(
         }
       }
     }
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
   }
 
   Info << "\nParallel SGD terminated with objective : " << overallObjective
       << "." << std::endl;
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

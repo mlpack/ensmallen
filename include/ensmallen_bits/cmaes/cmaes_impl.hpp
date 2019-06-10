@@ -36,14 +36,19 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    selectionPolicy(selectionPolicy)
+    selectionPolicy(selectionPolicy),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType>
-template<typename DecomposableFunctionType, typename MatType>
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename... CallbackTypes>
 typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
-    DecomposableFunctionType& function, MatType& iterateIn)
+    DecomposableFunctionType& function,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -107,6 +112,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
     currentObjective += function.Evaluate(mPosition[0], f, effectiveBatchSize);
+
+    Callback::Evaluate(*this, function, mPosition[0], currentObjective,
+        callbacks...);
   }
 
   ElemType overallObjective = currentObjective;
@@ -135,8 +143,13 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
 
   // Now iterate!
-  for (size_t i = 1; i < maxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 1; i < maxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
+
     // To keep track of where we are.
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
@@ -164,7 +177,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          pPosition[idx(j)]);
+          pPosition[idx(j)], callbacks...);
     }
 
     // Sort population.
@@ -178,7 +191,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
-        mPosition[idx1]);
+        mPosition[idx1], callbacks...);
 
     // Update best parameters.
     if (currentObjective < overallObjective)
@@ -278,6 +291,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       Warn << "CMA-ES: converged to " << overallObjective << "; "
           << "terminating with failure.  Try a smaller step size?" << std::endl;
 
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -286,12 +300,17 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
     lastObjective = overallObjective;
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
   }
 
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

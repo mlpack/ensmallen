@@ -22,8 +22,8 @@ class EarlyStopAtMinLoss
 {
  public:
   /**
-   * Set up the store best model class, which keeps the best-performing
-   * coordinates.
+   * Set up the early stop at min loss class, which keeps track of the minimum
+   * loss and stops the optimization process if the loss stops decreasing.
    *
    * @param patience The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
@@ -44,7 +44,7 @@ class EarlyStopAtMinLoss
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& optimizer,
+  bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
@@ -54,15 +54,17 @@ class EarlyStopAtMinLoss
     {
       steps = 0;
       bestObjective = objective;
-      return;
+      return false;
     }
 
     steps++;
     if (steps >= patience)
     {
       Info << "Minimum loss reached; terminate optimization." << std::endl;
-      optimizer->Terminate() = true;
+      return true;
     }
+
+    return false;
   }
 
  private:

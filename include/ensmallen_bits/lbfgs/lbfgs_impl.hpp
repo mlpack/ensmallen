@@ -55,7 +55,8 @@ inline L_BFGS::L_BFGS(const size_t numBasis,
     factr(factr),
     maxLineSearchTrials(maxLineSearchTrials),
     minStep(minStep),
-    maxStep(maxStep)
+    maxStep(maxStep),
+    terminate(false)
 {
   // Nothing to do.
 }
@@ -189,20 +190,23 @@ void L_BFGS::UpdateBasisSet(const size_t iterationNum,
  * @param gradient The gradient at the initial point.
  * @param searchDirection A vector specifying the search direction.
  * @param finalStepSize The resulting step size used.
+ * @param callbacks Callback functions.
  *
  * @return false if no step size is suitable, true otherwise.
  */
 template<typename FunctionType,
          typename ElemType,
          typename MatType,
-         typename GradType>
+         typename GradType,
+         typename... CallbackTypes>
 bool L_BFGS::LineSearch(FunctionType& function,
                         ElemType& functionValue,
                         MatType& iterate,
                         GradType& gradient,
                         MatType& newIterateTmp,
                         const GradType& searchDirection,
-                        double& finalStepSize)
+                        double& finalStepSize,
+                        CallbackTypes&... callbacks)
 {
   // Default first step size of 1.0.
   double stepSize = 1.0;
@@ -245,6 +249,10 @@ bool L_BFGS::LineSearch(FunctionType& function,
     newIterateTmp = iterate;
     newIterateTmp += stepSize * searchDirection;
     functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
+
+    terminate |= Callback::EvaluateWithGradient(*this, function, newIterateTmp,
+        functionValue, gradient, callbacks...);
+
     if (functionValue < bestObjective)
     {
       bestStepSize = stepSize;
@@ -307,10 +315,17 @@ bool L_BFGS::LineSearch(FunctionType& function,
  *
  * @param numIterations Maximum number of iterations to perform
  * @param iterate Starting point (will be modified)
+ * @param callbacks Callback functions.
  */
-template<typename FunctionType, typename MatType, typename GradType>
-typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
-                                             MatType& iterateIn)
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+L_BFGS::Optimize(FunctionType& function,
+                 MatType& iterateIn,
+                 CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -319,8 +334,7 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
 
   // Use the Function<> wrapper to ensure the function has all of the functions
   // that we need.
-  typedef Function<FunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.
@@ -359,12 +373,20 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
 
   // The initial function value and gradient.
   ElemType functionValue = f.EvaluateWithGradient(iterate, gradient);
+
+  terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        functionValue, gradient, callbacks...);
+
   ElemType prevFunctionValue = functionValue;
 
   // The main optimization loop.
-  for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
-       ++itNum)
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t itNum = 0; (optimizeUntilConvergence || (itNum != maxIterations))
+      && !terminate; ++itNum)
   {
+    terminate |= Callback::BeginEpoch(*this, f, iterate, itNum,
+        functionValue, callbacks...);
+
     prevFunctionValue = functionValue;
 
     // Break when the norm of the gradient becomes too small.
@@ -400,7 +422,7 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
 
     double stepSize; // Set by LineSearch().
     if (!LineSearch(f, functionValue, iterate, gradient, newIterateTmp,
-        searchDirection, stepSize))
+        searchDirection, stepSize, callbacks...))
     {
       Warn << "Line search failed.  Stopping optimization." << std::endl;
       break; // The line search failed; nothing else to try.
@@ -429,8 +451,12 @@ typename MatType::elem_type L_BFGS::Optimize(FunctionType& function,
 
     // Overwrite an old basis set.
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
+
+    terminate |= Callback::EndEpoch(*this, f, iterate, itNum, functionValue,
+        callbacks...);
   } // End of the optimization loop.
 
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return functionValue;
 }
 

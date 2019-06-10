@@ -34,23 +34,30 @@ SARAHType<UpdatePolicyType>::SARAHType(
     innerIterations(innerIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    updatePolicy(updatePolicy)
+    updatePolicy(updatePolicy),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SARAHType<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& functionIn,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
 
   traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
@@ -85,14 +92,22 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
+
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
       overallObjective += function.Evaluate(iterate, f, effectiveBatchSize);
+
+      Callback::Evaluate(*this, function, iterate, overallObjective,
+          callbacks...);
     }
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
@@ -100,6 +115,8 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
       Warn << "SARAH: converged to " << overallObjective
           << "; terminating  with failure.  Try a smaller step size?"
           << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -107,6 +124,8 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
     {
       Info << "SARAH: minimized within tolerance " << tolerance
           << "; terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -115,6 +134,9 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
     // Compute the full gradient.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
     function.Gradient(iterate, 0, v, effectiveBatchSize);
+
+    terminate |= Callback::Gradient(*this, function, iterate, v, callbacks...);
+
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)
     {
@@ -153,11 +175,17 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
       function.Gradient(iterate, currentFunction, gradient,
           effectiveBatchSize);
 
+      terminate |= Callback::Gradient(*this, function, iterate, gradient,
+          callbacks...);
+
       // Avoid an unnecessary copy on the first iteration.
       if (f > 0)
       {
         function.Gradient(iterate0, currentFunction, gradient0,
             effectiveBatchSize);
+
+        terminate |= Callback::Gradient(*this, function, iterate0, gradient0,
+            callbacks...);
 
         // Store current parameter for the calculation of the variance reduced
         // gradient.
@@ -187,6 +215,9 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
       currentFunction += effectiveBatchSize;
       f += effectiveBatchSize;
     }
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
   }
 
   Info << "SARAH: maximum iterations (" << maxIterations << ") reached; "
@@ -198,7 +229,12 @@ typename MatType::elem_type SARAHType<UpdatePolicyType>::Optimize(
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+
+    Callback::Evaluate(*this, function, iterate, overallObjective,
+          callbacks...);
   }
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

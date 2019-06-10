@@ -30,15 +30,22 @@ SCD<DescentPolicyType>::SCD(
     maxIterations(maxIterations),
     tolerance(tolerance),
     updateInterval(updateInterval),
-    descentPolicy(descentPolicy)
+    descentPolicy(descentPolicy),
+    terminate(false)
 { /* Nothing to do */ }
 
 //! Optimize the function (minimize).
 template <typename DescentPolicyType>
-template <typename ResolvableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
+template <typename ResolvableFunctionType,
+          typename MatType,
+          typename GradType,
+          typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SCD<DescentPolicyType>::Optimize(
     ResolvableFunctionType& function,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -58,8 +65,13 @@ typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
   BaseGradType gradient;
 
   // Start iterating.
-  for (size_t i = 1; i != maxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
+
     // Get the coordinate to descend on.
     size_t featureIdx = descentPolicy.template DescentFeature<
         ResolvableFunctionType, BaseMatType, BaseGradType>(i, iterate,
@@ -67,6 +79,9 @@ typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
 
     // Get the partial gradient with respect to this feature.
     function.PartialGradient(iterate, featureIdx, gradient);
+
+    terminate |= Callback::Gradient(*this, function, iterate, overallObjective,
+        gradient, callbacks...);
 
     // Update the decision variable with the partial gradient.
     iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);
@@ -76,6 +91,9 @@ typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
     {
       overallObjective = function.Evaluate(iterate);
 
+      terminate |= Callback::Evaluate(*this, function, iterate,
+          overallObjective, callbacks...);
+
       // Output current objective function.
       Info << "SCD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
@@ -84,6 +102,8 @@ typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
       {
         Warn << "SCD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
+
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -91,18 +111,28 @@ typename MatType::elem_type SCD<DescentPolicyType>::Optimize(
       {
         Info << "SCD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
         return overallObjective;
       }
 
       lastObjective = overallObjective;
     }
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
   }
 
   Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
   // Calculate and return final objective.
-  return function.Evaluate(iterate);
+  const ElemType objective = function.Evaluate(iterate);
+  terminate |= Callback::Evaluate(*this, function, iterate,
+          objective, callbacks...);
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
+  return objective;
 }
 
 } // namespace ens

@@ -77,15 +77,34 @@ class IQN
    * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize with.
    * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType,
            typename MatType,
-           typename GradType = MatType>
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
   typename MatType::elem_type Optimize(DecomposableFunctionType& function,
-                                       MatType& iterate);
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<DecomposableFunctionType, MatType, MatType,
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -119,6 +138,9 @@ class IQN
 
   //! The tolerance for termination.
   double tolerance;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 };
 
 } // namespace ens
