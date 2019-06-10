@@ -25,7 +25,6 @@ namespace ens {
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
@@ -47,9 +46,8 @@ class AddDecomposableGradient
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateWithGradient>
-class AddDecomposableGradient<FunctionType, MatType, GradType, OptimizerType,
+class AddDecomposableGradient<FunctionType, MatType, GradType,
     HasDecomposableEvaluateWithGradient, true>
 {
  public:
@@ -62,8 +60,7 @@ class AddDecomposableGradient<FunctionType, MatType, GradType, OptimizerType,
     static_cast<FunctionType*>(
         static_cast<Function<FunctionType,
                              MatType,
-                             GradType,
-                             OptimizerType>*>(this))->Gradient(
+                             GradType>*>(this))->Gradient(
         coordinates, begin, gradient, batchSize);
   }
 };
@@ -72,12 +69,8 @@ class AddDecomposableGradient<FunctionType, MatType, GradType, OptimizerType,
  * If we have a decomposable EvaluateWithGradient() but not a decomposable
  * Gradient(), add a decomposable Evaluate() method.
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
-class AddDecomposableGradient<FunctionType, MatType, GradType, OptimizerType,
-    true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddDecomposableGradient<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -97,8 +90,7 @@ class AddDecomposableGradient<FunctionType, MatType, GradType, OptimizerType,
     // The returned objective value will be ignored.
     (void) static_cast<Function<FunctionType,
                                 MatType,
-                                GradType,
-                                OptimizerType>*>(this)->EvaluateWithGradient(
+                                GradType>*>(this)->EvaluateWithGradient(
         coordinates, begin, gradient, batchSize);
   }
 };
@@ -111,7 +103,6 @@ class AddDecomposableGradient<FunctionType, MatType, GradType, OptimizerType,
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
@@ -133,10 +124,9 @@ class AddDecomposableGradientConst
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateWithGradient>
 class AddDecomposableGradientConst<FunctionType, MatType, GradType,
-    OptimizerType, HasDecomposableEvaluateWithGradient, true>
+    HasDecomposableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Gradient().
@@ -148,9 +138,8 @@ class AddDecomposableGradientConst<FunctionType, MatType, GradType,
     static_cast<const FunctionType*>(
         static_cast<const Function<FunctionType,
                                    MatType,
-                                   GradType,
-                                   OptimizerType>*>(this))->Gradient(
-        coordinates, begin, gradient, batchSize);
+                                   GradType>*>(this))->Gradient(coordinates,
+        begin, gradient, batchSize);
   }
 };
 
@@ -158,12 +147,8 @@ class AddDecomposableGradientConst<FunctionType, MatType, GradType,
  * If we have a decomposable const EvaluateWithGradient() but not a decomposable
  * const Gradient(), add a decomposable const Gradient() method.
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
-class AddDecomposableGradientConst<FunctionType, MatType, GradType,
-    OptimizerType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddDecomposableGradientConst<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -184,8 +169,7 @@ class AddDecomposableGradientConst<FunctionType, MatType, GradType,
     (void) static_cast<
         const Function<FunctionType,
                        MatType,
-                       GradType,
-                       OptimizerType>*>(this)->EvaluateWithGradient(
+                       GradType>*>(this)->EvaluateWithGradient(
         coordinates, begin, gradient, batchSize);
   }
 };
@@ -198,7 +182,6 @@ class AddDecomposableGradientConst<FunctionType, MatType, GradType,
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
@@ -222,10 +205,9 @@ class AddDecomposableGradientStatic
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateWithGradient>
 class AddDecomposableGradientStatic<FunctionType, MatType, GradType,
-    OptimizerType, HasDecomposableEvaluateWithGradient, true>
+    HasDecomposableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Gradient().
@@ -242,12 +224,9 @@ class AddDecomposableGradientStatic<FunctionType, MatType, GradType,
  * If we have a decomposable EvaluateWithGradient() but not a decomposable
  * Gradient(), add a decomposable Gradient() method.
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
-class AddDecomposableGradientStatic<FunctionType, MatType, GradType,
-    OptimizerType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddDecomposableGradientStatic<FunctionType, MatType, GradType, true,
+    false>
 {
  public:
   /**

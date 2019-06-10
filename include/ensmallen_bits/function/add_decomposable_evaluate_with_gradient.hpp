@@ -25,7 +25,6 @@ namespace ens {
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          // Check if there is at least one non-const Evaluate() or Gradient().
          bool HasDecomposableEvaluateGradient = traits::HasNonConstSignatures<
              FunctionType,
@@ -64,10 +63,9 @@ class AddDecomposableEvaluateWithGradient
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateGradient>
 class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType,
-    OptimizerType, HasDecomposableEvaluateGradient, true>
+    HasDecomposableEvaluateGradient, true>
 {
  public:
   // Reflect the existing EvaluateWithGradient().
@@ -79,8 +77,7 @@ class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType,
     return static_cast<FunctionType*>(
         static_cast<Function<FunctionType,
                              MatType,
-                             GradType,
-                             OptimizerType>*>(this))->EvaluateWithGradient(
+                             GradType>*>(this))->EvaluateWithGradient(
         coordinates, begin, gradient, batchSize);
   }
 };
@@ -90,12 +87,9 @@ class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType,
  * not a decomposable EvaluateWithGradient(), add a decomposable
  * EvaluateWithGradient() method.
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
-class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType,
-    OptimizerType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType, true,
+    false>
 {
  public:
   /**
@@ -114,15 +108,9 @@ class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType,
                                                    const size_t batchSize)
   {
     const typename MatType::elem_type objective =
-        static_cast<Function<FunctionType,
-                             MatType,
-                             GradType,
-                             OptimizerType>*>(this)->Evaluate(
+        static_cast<Function<FunctionType, MatType, GradType>*>(this)->Evaluate(
         coordinates, begin, batchSize);
-    static_cast<Function<FunctionType,
-                         MatType,
-                         GradType,
-                         OptimizerType>*>(this)->Gradient(
+    static_cast<Function<FunctionType, MatType, GradType>*>(this)->Gradient(
         coordinates, begin, gradient, batchSize);
     return objective;
   }
@@ -137,7 +125,6 @@ class AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType,
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          // Check if there is at least one const Evaluate() or Gradient().
          bool HasDecomposableEvaluateGradient = traits::HasConstSignatures<
              FunctionType,
@@ -172,10 +159,9 @@ class AddDecomposableEvaluateWithGradientConst
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateGradient>
 class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
-    OptimizerType, HasDecomposableEvaluateGradient, true>
+    HasDecomposableEvaluateGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
@@ -184,11 +170,10 @@ class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
                                                    GradType& gradient,
                                                    const size_t batchSize) const
   {
-    return static_cast<const FunctionType*>(static_cast<
-        const Function<FunctionType,
-                       MatType,
-                       GradType,
-                       OptimizerType>*>(this))->EvaluateWithGradient(
+    return static_cast<const FunctionType*>(
+        static_cast<const Function<FunctionType,
+                                   MatType,
+                                   GradType>*>(this))->EvaluateWithGradient(
         coordinates, begin, gradient, batchSize);
   }
 };
@@ -198,12 +183,9 @@ class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
  * Gradient() but not a decomposable const EvaluateWithGradient(), add a
  * decomposable const EvaluateWithGradient() method.
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
+template<typename FunctionType, typename MatType, typename GradType>
 class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
-    OptimizerType, true, false>
+    true, false>
 {
  public:
   /**
@@ -224,13 +206,11 @@ class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
     const typename MatType::elem_type objective =
         static_cast<const Function<FunctionType,
                                    MatType,
-                                   GradType,
-                                   OptimizerType>*>(this)->Evaluate(coordinates,
+                                   GradType>*>(this)->Evaluate(coordinates,
         begin, batchSize);
     static_cast<const Function<FunctionType,
                                MatType,
-                               GradType,
-                               OptimizerType>*>(this)->Gradient(coordinates,
+                               GradType>*>(this)->Gradient(coordinates,
         begin, gradient, batchSize);
     return objective;
   }
@@ -245,7 +225,6 @@ class AddDecomposableEvaluateWithGradientConst<FunctionType, MatType, GradType,
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateGradient =
              traits::HasEvaluate<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
@@ -274,10 +253,9 @@ class AddDecomposableEvaluateWithGradientStatic
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename OptimizerType,
          bool HasDecomposableEvaluateGradient>
 class AddDecomposableEvaluateWithGradientStatic<FunctionType, MatType, GradType,
-    OptimizerType, HasDecomposableEvaluateGradient, true>
+    HasDecomposableEvaluateGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
@@ -297,12 +275,9 @@ class AddDecomposableEvaluateWithGradientStatic<FunctionType, MatType, GradType,
  * Gradient() but not a decomposable static EvaluateWithGradient(), add a
  * decomposable static Gradient() method.
  */
-template<typename FunctionType,
-         typename MatType,
-         typename GradType,
-         typename OptimizerType>
+template<typename FunctionType, typename MatType, typename GradType>
 class AddDecomposableEvaluateWithGradientStatic<FunctionType, MatType, GradType,
-    OptimizerType, true, false>
+    true, false>
 {
  public:
   /**
