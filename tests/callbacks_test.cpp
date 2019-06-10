@@ -10,89 +10,37 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
 using namespace ens;
 using namespace ens::test;
 using namespace ens::callbacks::traits;
 
 /**
- * Utility class with no functions.
+ * Utility class with Evaluate(), Gradient(), BeginEpoch(), EndEpoch(),
+ * BeginOptimization(), EndOptimization(), EvaluateConstraint(),
+ * GradientConstraint().
  */
-class EmptyTestFunction { };
-
-/**
- * Utility class with Evaluate().
- */
-class EvaluateTestFunction
+class CompleteCallbackTestFunction
 {
  public:
+  CompleteCallbackTestFunction() :
+      calledEvaluate(false),
+      calledGradient(false),
+      calledBeginEpoch(false),
+      calledEndEpoch(false),
+      calledBeginOptimization(false),
+      calledEndOptimization(false),
+      calledEvaluateConstraint(false),
+      calledGradientConstraint(false)
+  { }
+
   template<typename OptimizerType, typename FunctionType, typename MatType>
   void Evaluate(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const double /* objective */)
-  { }
-};
-
-/**
- * Utility class with Gradient().
- */
-class GradientTestFunction
-{
- public:
-  template<typename OptimizerType,
-           typename FunctionType,
-           typename MatType,
-           typename GradType>
-  void Gradient(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,
-                const MatType& /* coordinates */,
-                const GradType& /* objective */)
-  { }
-};
-
-/**
- * Utility class with BeginEpoch().
- */
-class BeginEpochTestFunction
-{
- public:
-  template<typename OptimizerType, typename FunctionType, typename MatType>
-  void BeginEpoch(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,
-                const MatType& /* coordinates */,
-                const size_t /* epoch */,
-                const double /* objective */)
-  { }
-};
-
-/**
- * Utility class with EndEpoch().
- */
-class EndEpochTestFunction
-{
- public:
-  template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,
-                const MatType& /* coordinates */,
-                const size_t /* epoch */,
-                const double /* objective */)
-  { }
-};
-
-/**
- * Utility class with Evaluate(), Gradient(), BeginEpoch(), EndEpoch().
- */
-class CompleteTestFunction
-{
- public:
-  template<typename OptimizerType, typename FunctionType, typename MatType>
-  void Evaluate(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,
-                const MatType& /* coordinates */,
-                const double /* objective */)
-  { }
+  { calledEvaluate = true; }
 
   template<typename OptimizerType,
            typename FunctionType,
@@ -101,16 +49,16 @@ class CompleteTestFunction
   void Gradient(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
-                const GradType& /* objective */)
-  { }
+                GradType& /* objective */)
+  { calledGradient = true; }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
   void BeginEpoch(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,
-                const MatType& /* coordinates */,
-                const size_t /* epoch */,
-                const double /* objective */)
-  { }
+                  FunctionType& /* function */,
+                  const MatType& /* coordinates */,
+                  const size_t /* epoch */,
+                  const double /* objective */)
+  { calledBeginEpoch = true; }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
   void EndEpoch(OptimizerType& /* optimizer */,
@@ -118,169 +66,302 @@ class CompleteTestFunction
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
                 const double /* objective */)
-  { }
+  { calledEndEpoch = true; }
+
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void BeginOptimization(OptimizerType& /* optimizer */,
+                         FunctionType& /* function */,
+                         MatType& /* coordinates */)
+  { calledBeginOptimization = true; }
+
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EndOptimization(OptimizerType& /* optimizer */,
+                       FunctionType& /* function */,
+                       MatType& /* coordinates */)
+  { calledEndOptimization = true; }
+
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EvaluateConstraint(OptimizerType& /* optimizer */,
+                          FunctionType& /* function */,
+                          const MatType& /* coordinates */,
+                          const size_t /* constraint */,
+                          const double /* constraintValue */)
+  { calledEvaluateConstraint = true; }
+
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType>
+  void GradientConstraint(OptimizerType& /* optimizer */,
+                          FunctionType& /* function */,
+                          const MatType& /* coordinates */,
+                          const size_t /* constraint */,
+                          GradType& /* gradient */)
+  { calledGradientConstraint = true; }
+
+  bool calledEvaluate;
+  bool calledGradient;
+  bool calledBeginEpoch;
+  bool calledEndEpoch;
+  bool calledBeginOptimization;
+  bool calledEndOptimization;
+  bool calledEvaluateConstraint;
+  bool calledGradientConstraint;
 };
 
-/**
- * Make sure that an empty class doesn't have any callbacks.
- */
-TEST_CASE("CallbacksEmptyTest", "[CallbacksTest]")
+template<typename OptimizerType>
+void CallbacksFullFunctionTest(OptimizerType& optimizer,
+                               bool calledEvaluate,
+                               bool calledGradient,
+                               bool calledBeginEpoch,
+                               bool calledEndEpoch,
+                               bool calledBeginOptimization,
+                               bool calledEndOptimization,
+                               bool calledEvaluateConstraint,
+                               bool calledGradientConstraint)
 {
-  const bool hasEvaluate =  HasEvaluate<EmptyTestFunction,
-      TypedForms<StandardSGD, EmptyTestFunction,
-      arma::mat>::template EvaluateForm>::value;
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
 
-  const bool hasGradient =  HasGradient<EmptyTestFunction,
-      TypedForms<StandardSGD, EmptyTestFunction,
-      arma::mat, arma::mat>::template GradientForm>::value;
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  const bool hasBeginEpoch =  HasBeginEpoch<EmptyTestFunction,
-      TypedForms<StandardSGD, EmptyTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
+  CompleteCallbackTestFunction cb;
 
-  const bool hasEndEpoch =  HasEndEpoch<EmptyTestFunction,
-      TypedForms<StandardSGD, EmptyTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
+  arma::mat coordinates = lr.GetInitialPoint();
+  optimizer.Optimize(lr, coordinates, cb);
 
-  REQUIRE(hasEvaluate == false);
-  REQUIRE(hasGradient == false);
-  REQUIRE(hasBeginEpoch == false);
-  REQUIRE(hasEndEpoch == false);
+  REQUIRE(cb.calledEvaluate == calledEvaluate);
+  REQUIRE(cb.calledGradient == calledGradient);
+  REQUIRE(cb.calledBeginEpoch == calledBeginEpoch);
+  REQUIRE(cb.calledEndEpoch == calledEndEpoch);
+  REQUIRE(cb.calledBeginOptimization == calledBeginOptimization);
+  REQUIRE(cb.calledEndOptimization == calledEndOptimization);
+  REQUIRE(cb.calledEvaluateConstraint == calledEvaluateConstraint);
+  REQUIRE(cb.calledGradientConstraint == calledGradientConstraint);
 }
 
 /**
- * Make sure we don't add any functions if we only have Evaluate().
+ * Make sure we invoke all callbacks (AdaDelta).
  */
-TEST_CASE("CallbacksEvaluateOnlyTest", "[CallbacksTest]")
+TEST_CASE("AdaDeltaCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  const bool hasEvaluate =  HasEvaluate<EvaluateTestFunction,
-      TypedForms<StandardSGD, EvaluateTestFunction,
-      arma::mat>::template EvaluateForm>::value;
-
-  const bool hasGradient =  HasGradient<EvaluateTestFunction,
-      TypedForms<StandardSGD, EvaluateTestFunction,
-      arma::mat, arma::mat>::template GradientForm>::value;
-
-  const bool hasBeginEpoch =  HasBeginEpoch<EvaluateTestFunction,
-      TypedForms<StandardSGD, EvaluateTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  const bool hasEndEpoch =  HasEndEpoch<EvaluateTestFunction,
-      TypedForms<StandardSGD, EvaluateTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  REQUIRE(hasEvaluate == true);
-  REQUIRE(hasGradient == false);
-  REQUIRE(hasBeginEpoch == false);
-  REQUIRE(hasEndEpoch == false);
+  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 3, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
 }
 
 /**
- * Make sure we don't add any functions if we only have Gradient().
+ * Make sure we invoke all callbacks (AdaGrad).
  */
-TEST_CASE("CallbacksGradientOnlyTest", "[CallbacksTest]")
+TEST_CASE("AdaGradCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  const bool hasEvaluate =  HasEvaluate<GradientTestFunction,
-      TypedForms<StandardSGD, GradientTestFunction,
-      arma::mat>::template EvaluateForm>::value;
-
-  const bool hasGradient =  HasGradient<GradientTestFunction,
-      TypedForms<StandardSGD, GradientTestFunction,
-      arma::mat, arma::mat>::template GradientForm>::value;
-
-  const bool hasBeginEpoch =  HasBeginEpoch<GradientTestFunction,
-      TypedForms<StandardSGD, GradientTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  const bool hasEndEpoch =  HasEndEpoch<GradientTestFunction,
-      TypedForms<StandardSGD, GradientTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  REQUIRE(hasEvaluate == false);
-  REQUIRE(hasGradient == true);
-  REQUIRE(hasBeginEpoch == false);
-  REQUIRE(hasEndEpoch == false);
+  AdaGrad optimizer(0.99, 1, 1e-8, 3, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
 }
 
 /**
- * Make sure we don't add any functions if we only have BeginEpoch().
+ * Make sure we invoke all callbacks (Adam).
  */
-TEST_CASE("CallbacksBeginEpochOnlyTest", "[CallbacksTest]")
+TEST_CASE("AdamCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  const bool hasEvaluate =  HasEvaluate<BeginEpochTestFunction,
-      TypedForms<StandardSGD, BeginEpochTestFunction,
-      arma::mat>::template EvaluateForm>::value;
-
-  const bool hasGradient =  HasGradient<BeginEpochTestFunction,
-      TypedForms<StandardSGD, BeginEpochTestFunction,
-      arma::mat, arma::mat>::template GradientForm>::value;
-
-  const bool hasBeginEpoch =  HasBeginEpoch<BeginEpochTestFunction,
-      TypedForms<StandardSGD, BeginEpochTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  const bool hasEndEpoch =  HasEndEpoch<BeginEpochTestFunction,
-      TypedForms<StandardSGD, BeginEpochTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  REQUIRE(hasEvaluate == false);
-  REQUIRE(hasGradient == false);
-  REQUIRE(hasBeginEpoch == true);
-  REQUIRE(hasEndEpoch == false);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 3, 1e-3, false);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
 }
 
 /**
- * Make sure we don't add any functions if we only have EndEpoch().
+ * Make sure we invoke all callbacks (BigBatchSGD).
  */
-TEST_CASE("CallbacksEndEpochOnlyTest", "[CallbacksTest]")
+TEST_CASE("BigBatchSGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  const bool hasEvaluate =  HasEvaluate<EndEpochTestFunction,
-      TypedForms<StandardSGD, EndEpochTestFunction,
-      arma::mat>::template EvaluateForm>::value;
-
-  const bool hasGradient =  HasGradient<EndEpochTestFunction,
-      TypedForms<StandardSGD, EndEpochTestFunction,
-      arma::mat, arma::mat>::template GradientForm>::value;
-
-  const bool hasBeginEpoch =  HasBeginEpoch<EndEpochTestFunction,
-      TypedForms<StandardSGD, EndEpochTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  const bool hasEndEpoch =  HasEndEpoch<EndEpochTestFunction,
-      TypedForms<StandardSGD, EndEpochTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
-
-  REQUIRE(hasEvaluate == false);
-  REQUIRE(hasGradient == false);
-  REQUIRE(hasBeginEpoch == false);
-  REQUIRE(hasEndEpoch == true);
+  BBS_BB optimizer(1, 0.01, 0.1, 4, 1e-4);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
 }
 
 /**
- * Make sure we have all callbacks.
+ * Make sure we invoke all callbacks (CMAES).
  */
-TEST_CASE("CallbacksCompleteFunctionsTest", "[CallbacksTest]")
+TEST_CASE("CMAESCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  const bool hasEvaluate =  HasEvaluate<CompleteTestFunction,
-      TypedForms<StandardSGD, CompleteTestFunction,
-      arma::mat>::template EvaluateForm>::value;
+  CMAES<> optimizer(0, -1, 1, 32, 3, 1e-3);
+  CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
+      false, false);
+}
 
-  const bool hasGradient =  HasGradient<CompleteTestFunction,
-      TypedForms<StandardSGD, CompleteTestFunction,
-      arma::mat, arma::mat>::template GradientForm>::value;
+/**
+ * Make sure we invoke all callbacks (CNE).
+ */
+TEST_CASE("CNECallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  CNE optimizer(200, 6, 0.2, 0.2, 0.2, 1e-5);
+  CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
+      false, false);
+}
 
-  const bool hasBeginEpoch =  HasBeginEpoch<CompleteTestFunction,
-      TypedForms<StandardSGD, CompleteTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
+/**
+ * Make sure we invoke all callbacks (DE).
+ */
+TEST_CASE("DECallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  DE optimizer(200, 6, 0.6, 0.8, 1e-5);
+  CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
+      false, false);
+}
 
-  const bool hasEndEpoch =  HasEndEpoch<CompleteTestFunction,
-      TypedForms<StandardSGD, CompleteTestFunction,
-      arma::mat>::template BeginEpochForm>::value;
+/**
+ * Make sure we invoke all callbacks (Eve).
+ */
+TEST_CASE("EveCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 3, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
 
-  REQUIRE(hasEvaluate == true);
-  REQUIRE(hasGradient == true);
-  REQUIRE(hasBeginEpoch == true);
-  REQUIRE(hasEndEpoch == true);
+/**
+ * Make sure we invoke all callbacks (FTML).
+ */
+TEST_CASE("FTMLCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 3, 1e-5, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (GradientDescent).
+ */
+TEST_CASE("GradientDescentCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  GradientDescent optimizer(0.001, 3, 1e-15);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (IQN).
+ */
+TEST_CASE("IQNCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  IQN optimizer(0.01, 1, 3, 1e-3);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (Katyusha).
+ */
+TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  Katyusha optimizer(1.0, 10.0, 1, 3, 0, 1e-10, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SARAH).
+ */
+TEST_CASE("SARAHCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SARAH optimizer(0.01, 2, 3, 0, 1e-5, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SCD).
+ */
+TEST_CASE("SCDCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SCD<> optimizer(0.4, 4);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SGD).
+ */
+TEST_CASE("SGDCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  StandardSGD optimizer(0.0003, 1, 3, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SGDR).
+ */
+TEST_CASE("SGDRCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SGDR<> optimizer(50, 2.0, 1, 0.01, 4, 1e-3);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SPALeRASGD).
+ */
+TEST_CASE("SPALeRASGDCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SPALeRASGD<> optimizer(0.05, 2, 6, 1e-4);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SPSA).
+ */
+TEST_CASE("SPSACallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 10, 0);
+  CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SVRG).
+ */
+TEST_CASE("SVRGCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SVRG optimizer(0.005, 2, 4, 0, 1e-5, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (ParallelSGD).
+ */
+TEST_CASE("ParallelSGDCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  ConstantStep decayPolicy(0.4);
+  ParallelSGD<ConstantStep> optimizer(4, 2, 1e-5, true, decayPolicy);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (L_BFGS).
+ */
+TEST_CASE("L_BFGSCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  L_BFGS optimizer(10, 4);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false);
+}
+
+/**
+ * Make sure we invoke all callbacks (SA).
+ */
+TEST_CASE("SACallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  ExponentialSchedule schedule;
+  SA<> optimizer(schedule, 10, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
+  CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
+      false, false);
 }
 
 /**
@@ -298,7 +379,6 @@ TEST_CASE("EarlyStopAtMinLossCallbackTest", "[CallbacksTest]")
   // The optimization process should return in one second.
   const double result = s.Optimize(f, coordinates, EarlyStopAtMinLoss(100));
 
-  REQUIRE(s.Terminate());
   REQUIRE(result == Approx(-1.0).epsilon(0.0005));
   REQUIRE(coordinates[0] == Approx(0.0).margin(1e-3));
   REQUIRE(coordinates[1] == Approx(0.0).margin(1e-7));
@@ -341,7 +421,7 @@ TEST_CASE("ProgressBarCallbackTest", "[CallbacksTest]")
 
 /**
  * Make sure the StoreBestCoordinates callback will store the best coordinates
- * and objetive.
+ * and objective.
  */
 TEST_CASE("StoreBestCoordinatesCallbackTest", "[CallbacksTest]")
 {
@@ -369,13 +449,13 @@ TEST_CASE("TimerStopCallbackTest", "[CallbacksTest]")
 
   // Instantiate the optimizer with a number of iterations that will take a
   // long time to finish.
-  StandardSGD s(0.0003, 1, 10000000000, -10, true);
+  StandardSGD s(0.0003, 1, 10000000000, -100, true);
 
   arma::wall_clock timer;
   timer.tic();
 
   // The optimization process should return in one second.
-  s.Optimize(f, coordinates, TimerStop(1));
+  s.Optimize(f, coordinates, TimerStop(0.5));
 
   // Add some time to account for the function to return.
   REQUIRE(timer.toc() < 2);
