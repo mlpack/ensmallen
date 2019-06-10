@@ -33,22 +33,30 @@ BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    updatePolicy(UpdatePolicyType())
+    updatePolicy(UpdatePolicyType()),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function, MatType& iterateIn)
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+BigBatchSGD<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
@@ -85,8 +93,13 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
   BaseGradType functionGradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate;
+      /* incrementing done manually */)
   {
+    terminate |= Callback::BeginEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
+
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0 && i > 0)
     {
@@ -99,6 +112,8 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
         Warn << "Big-batch SGD: converged to " << overallObjective
             << "; terminating with failure.  Try a smaller step size?"
             << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -106,6 +121,8 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
       {
         Info << "Big-batch SGD: minimized within tolerance " << tolerance
             << "; terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -133,6 +150,8 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
 
     // Compute the stochastic gradient estimation.
     f.Gradient(iterate, currentFunction, gradient, 1);
+
+    terminate |= Callback::Gradient(*this, f, iterate, gradient, callbacks...);
 
     delta1 = gradient;
     for (size_t j = 1; j < effectiveBatchSize; ++j, ++k)
@@ -172,6 +191,9 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
         for (size_t j = 0; j < batchOffset; ++j, ++k)
         {
           f.Gradient(iterate, batchStart + j, functionGradient, 1);
+          terminate |= Callback::Gradient(*this, f, iterate,
+              functionGradient, callbacks...);
+
           delta0 = delta1 + (functionGradient - delta1) / (k + 1);
 
           // Compute sample variance.
@@ -202,8 +224,14 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
     overallObjective += f.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
 
+    terminate |= Callback::Evaluate(*this, f, iterate, overallObjective,
+        callbacks...);
+
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
+
+    terminate |= Callback::EndEpoch(*this, f, iterate, i, overallObjective,
+        callbacks...);
   }
 
   Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
@@ -215,8 +243,11 @@ typename MatType::elem_type BigBatchSGD<UpdatePolicyType>::Optimize(
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+
+    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
   }
 
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;
 }
 

@@ -104,13 +104,18 @@ class CNE
    *
    * @tparam ArbitraryFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename ArbitraryFunctionType, typename MatType>
+  template<typename ArbitraryFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
   typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
-                                       MatType& iterate);
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -195,6 +200,9 @@ class CNE
 
   //! Store the number of elements in a cube slice or a matrix column.
   size_t elements;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 };
 
 } // namespace ens

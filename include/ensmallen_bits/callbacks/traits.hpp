@@ -21,8 +21,16 @@ namespace traits {
 
 //! Detect an Evaluate() method.
 ENS_HAS_EXACT_METHOD_FORM(Evaluate, HasEvaluate)
+//! Detect an EvaluateConstraint() method.
+ENS_HAS_EXACT_METHOD_FORM(EvaluateConstraint, HasEvaluateConstraint)
 //! Detect an Gradient() method.
 ENS_HAS_EXACT_METHOD_FORM(Gradient, HasGradient)
+//! Detect an GradientConstraint() method.
+ENS_HAS_EXACT_METHOD_FORM(GradientConstraint, HasGradientConstraint)
+//! Detect an BeginOptimization() method.
+ENS_HAS_EXACT_METHOD_FORM(BeginOptimization, HasBeginOptimization)
+//! Detect an EndOptimization() method.
+ENS_HAS_EXACT_METHOD_FORM(EndOptimization, HasEndOptimization)
 //! Detect an BeginEpoch() method.
 ENS_HAS_EXACT_METHOD_FORM(BeginEpoch, HasBeginEpoch)
 //! Detect an EndEpoch() method.
@@ -34,39 +42,285 @@ template<typename OptimizerType,
          typename GradType = MatType>
 struct TypedForms
 {
-  //! This is the form of a Evaluate() callback method.
+  //! This is the form of a bool Evaluate() callback method.
   template<typename CallbackType>
-  using EvaluateForm =
+  using EvaluateBoolForm =
       void(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const double);
 
-  //! This is the form of a Gradient() callback method.
+  //! This is the form of a void Evaluate() callback method.
   template<typename CallbackType>
-  using GradientForm =
+  using EvaluateVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const double);
+
+  //! This is the form of a bool EvaluateConstraint() callback method.
+  template<typename CallbackType>
+  using EvaluateConstraintBoolForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            const double);
+
+  //! This is the form of a void EvaluateConstraint() callback method.
+  template<typename CallbackType>
+  using EvaluateConstraintVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            const double);
+
+  //! This is the form of a bool Gradient() callback method.
+  template<typename CallbackType>
+  using GradientBoolForm =
       void(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const MatType&);
 
-  //! This is the form of a BeginEpoch() callback method.
+  //! This is the form of a void Gradient() callback method.
   template<typename CallbackType>
-  using BeginEpochForm =
+  using GradientVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const MatType&);
+
+  //! This is the form of a bool GradientConstraint() callback method.
+  template<typename CallbackType>
+  using GradientConstraintBoolForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            const MatType&);
+
+  //! This is the form of a void GradientConstraint() callback method.
+  template<typename CallbackType>
+  using GradientConstraintVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            const MatType&);
+
+  //! This is the form of a bool BeginOptimization() callback method.
+  template<typename CallbackType>
+  using BeginOptimizationBoolForm =
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            MatType&);
+
+  //! This is the form of a void BeginOptimization() callback method.
+  template<typename CallbackType>
+  using BeginOptimizationVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            MatType&);
+
+  //! This is the form of a bool EndOptimization() callback method.
+  template<typename CallbackType>
+  using EndOptimizationBoolForm =
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            MatType&);
+
+  //! This is the form of a void EndOptimization() callback method.
+  template<typename CallbackType>
+  using EndOptimizationVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            MatType&);
+
+  //! This is the form of a bool BeginEpoch() callback method.
+  template<typename CallbackType>
+  using BeginEpochBoolForm =
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            const double);
+
+  //! This is the form of a void BeginEpoch() callback method.
+  template<typename CallbackType>
+  using BeginEpochVoidForm =
       void(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const size_t,
                             const double);
 
-  //! This is the form of a EndEpoch() callback method.
+  //! This is the form of a bool EndEpoch() callback method.
   template<typename CallbackType>
-  using EndEpochForm =
+  using EndEpochBoolForm =
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            const double);
+
+  //! This is the form of a void EndEpoch() callback method.
+  template<typename CallbackType>
+  using EndEpochVoidForm =
       void(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const size_t,
                             const double);
+};
+
+//! Utility struct, check if either void BeginOptimization() or
+//! bool BeginOptimization() exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType>
+struct HasBeginOptimizationSignature
+{
+  const static bool hasBool =
+      HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template BeginOptimizationBoolForm>::value &&
+      !HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template BeginOptimizationVoidForm>::value;
+
+  const static bool hasVoid =
+      !HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template BeginOptimizationBoolForm>::value &&
+      HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
+         FunctionType, MatType>::template BeginOptimizationVoidForm>::value;
+
+  const static bool hasNone =
+      !HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template BeginOptimizationBoolForm>::value &&
+      !HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
+         FunctionType, MatType>::template BeginOptimizationVoidForm>::value;
+};
+
+//! Utility struct, check if either void Evaluate() or bool Evaluate()
+//! exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType>
+struct HasEvaluateSignature
+{
+  const static bool value =
+      HasEvaluate<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template EvaluateBoolForm>::value ||
+      HasEvaluate<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template EvaluateVoidForm>::value;
+};
+
+//! Utility struct, check if either void EvaluateConstraint() or
+//! bool EvaluateConstraint() exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType>
+struct HasEvaluateConstraintSignature
+{
+  const static bool value =
+      HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template EvaluateConstraintBoolForm>::value ||
+      HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template EvaluateConstraintVoidForm>::value;
+};
+
+//! Utility struct, check if either void Gradient() or bool Gradient()
+//! exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType,
+         typename Gradient>
+struct HasGradientSignature
+{
+  const static bool value =
+      HasGradient<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType, Gradient>::template GradientBoolForm>::value ||
+      HasGradient<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType, Gradient>::template GradientVoidForm>::value;
+};
+
+//! Utility struct, check if either void GradientConstraint() or
+//! bool GradientConstraint() exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType,
+         typename Gradient>
+struct HasGradientConstraintSignature
+{
+  const static bool value =
+      HasGradientConstraint<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType,
+          Gradient>::template GradientConstraintBoolForm>::value ||
+      HasGradientConstraint<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType,
+          Gradient>::template GradientConstraintVoidForm>::value;
+};
+
+//! Utility struct, check if either void EndOptimization() or
+//! bool EndOptimization() exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType>
+struct HasEndOptimizationSignature
+{
+  const static bool value =
+      HasEndOptimization<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template EndOptimizationBoolForm>::value ||
+      HasEndOptimization<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template EndOptimizationVoidForm>::value;
+};
+
+//! Utility struct, check if either void BeginEpoch() or bool BeginEpoch()
+//! exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType>
+struct HasBeginEpochSignature
+{
+  const static bool value =
+      HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template BeginEpochBoolForm>::value ||
+      HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
+      FunctionType, MatType>::template BeginEpochVoidForm>::value;
+};
+
+//! Utility struct, check if either void EndEpoch() or bool EndEpoch()
+//! exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType>
+struct HasEndEpochSignature
+{
+  const static bool hasBool =
+      HasEndEpoch<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template EndEpochBoolForm>::value &&
+      !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template EndEpochVoidForm>::value;
+
+  const static bool hasVoid =
+      !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template EndEpochBoolForm>::value &&
+      HasEndEpoch<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template EndEpochVoidForm>::value;
+
+  const static bool hasNone =
+      !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template EndEpochBoolForm>::value &&
+      !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template EndEpochVoidForm>::value;
 };
 
 } // namespace traits

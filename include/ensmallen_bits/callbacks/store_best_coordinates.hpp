@@ -26,7 +26,7 @@ class StoreBestCoordinates
  public:
   /**
    * Set up the store best model class, which keeps the best-performing
-   * coordinates.
+   * coordinates and objective.
    */
   StoreBestCoordinates() : bestObjective(std::numeric_limits<double>::max())
   { /* Nothing to do here. */ }

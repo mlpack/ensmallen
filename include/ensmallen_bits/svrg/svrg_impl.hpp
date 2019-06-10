@@ -36,24 +36,31 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
     shuffle(shuffle),
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
-    resetPolicy(resetPolicy)
+    resetPolicy(resetPolicy),
+    terminate(false),
+    isInitialized(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType, typename DecayPolicyType>
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type SVRGType<UpdatePolicyType,
-                                     DecayPolicyType>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
     DecomposableFunctionType& functionIn,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
 
   traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
@@ -111,8 +118,13 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
+
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
@@ -126,6 +138,8 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
       Warn << "SVRG: converged to " << overallObjective
           << "; terminating  with failure.  Try a smaller step size?"
           << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -133,6 +147,8 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
     {
       Info << "SVRG: minimized within tolerance " << tolerance
           << "; terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -142,6 +158,9 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
     BaseGradType fullGradient(iterate.n_rows, iterate.n_cols);
     function.Gradient(iterate, 0, fullGradient, effectiveBatchSize);
+
+    terminate |= Callback::Gradient(*this, function, iterate, fullGradient,
+        callbacks...);
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)
     {
@@ -149,6 +168,9 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
       effectiveBatchSize = std::min(batchSize, numFunctions - f);
 
       function.Gradient(iterate, f, gradient, effectiveBatchSize);
+      terminate |= Callback::Gradient(*this, function, iterate, gradient,
+        callbacks...);
+
       fullGradient += gradient;
 
       f += effectiveBatchSize;
@@ -178,8 +200,13 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
       // Calculate variance reduced gradient.
       function.Gradient(iterate, currentFunction, gradient,
           effectiveBatchSize);
+      terminate |= Callback::Gradient(*this, function, iterate, gradient,
+        callbacks...);
+
       function.Gradient(iterate0, currentFunction, gradient0,
           effectiveBatchSize);
+      terminate |= Callback::Gradient(*this, function, iterate0, gradient0,
+        callbacks...);
 
       // Use the update policy to take a step.
       instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, fullGradient,
@@ -192,6 +219,9 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
     // Update the learning rate if requested by the user.
     instDecayPolicy.As<InstDecayPolicyType>().Update(iterate, iterate0,
         gradient, fullGradient, numBatches, stepSize);
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
   }
 
   Info << "SVRG: maximum iterations (" << maxIterations << ") reached; "
@@ -203,7 +233,12 @@ typename MatType::elem_type SVRGType<UpdatePolicyType,
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+
+    Callback::Evaluate(*this, function, iterate, overallObjective,
+        callbacks...);
   }
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

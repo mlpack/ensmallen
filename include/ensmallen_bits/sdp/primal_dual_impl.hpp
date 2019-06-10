@@ -266,27 +266,29 @@ double PrimalDualSolver<DeprecatedSDPType>::Optimize(
 }
 
 template<typename DeprecatedSDPType>
-template<typename SDPType, typename MatType>
+template<typename SDPType, typename MatType, typename... CallbackTypes>
 typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
     const SDPType& sdp,
-    MatType& coordinates)
+    MatType& coordinates,
+    CallbackTypes&&... callbacks)
 {
   // Initialize the other parameters and then call the other overload.
   MatType ySparse(arma::ones<MatType>(sdp.NumSparseConstraints(), 1));
   MatType yDense(arma::ones<MatType>(sdp.NumDenseConstraints(), 1));
   MatType z(arma::eye<MatType>(sdp.N(), sdp.N()));
 
-  return Optimize(sdp, coordinates, ySparse, yDense, z);
+  return Optimize(sdp, coordinates, ySparse, yDense, z, callbacks...);
 }
 
 template<typename DeprecatedSDPType>
-template<typename SDPType, typename MatType>
+template<typename SDPType, typename MatType, typename... CallbackTypes>
 typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
     const SDPType& sdp,
     MatType& coordinates,
     MatType& ySparse,
     MatType& yDense,
-    MatType& dualCoordinates)
+    MatType& dualCoordinates,
+    CallbackTypes&&... callbacks)
 {
   MatType tmp;
 
@@ -384,9 +386,18 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
   eInvFaDenseT.set_size(n2bar, sdp.NumDenseConstraints());
   m.set_size(sdp.NumConstraints(), sdp.NumConstraints());
 
+  // Controls early termination of the optimization process.
+  bool terminate = false;
+
   typename SDPType::ElemType primalObj = 0., alpha, beta;
-  for (size_t iteration = 1; iteration != maxIterations; iteration++)
+  terminate |= Callback::BeginOptimization(*this, sdp, coordinates,
+      callbacks...);
+  for (size_t iteration = 1; iteration != maxIterations && !terminate;
+      iteration++)
   {
+    terminate |= Callback::BeginEpoch(*this, sdp, coordinates, iteration,
+        primalObj, callbacks...);
+
     // Note: The Mehrotra PC algorithm works like this at a high level.
     // We first solve a KKT system with mu=0. Then, we use the results
     // of this KKT system to get a better estimate of mu and solve
@@ -481,6 +492,8 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
     {
       Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of X "
           << "failed!  Terminating optimization.";
+
+      Callback::EndOptimization(*this, sdp, coordinates, callbacks...);
       return primalObj;
     }
 
@@ -489,6 +502,8 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
     {
       Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
           << "failed!  Terminating optimization.";
+
+      Callback::EndOptimization(*this, sdp, coordinates, callbacks...);
       return primalObj;
     }
 
@@ -513,12 +528,16 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
     {
       Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of X "
           << "failed!  Terminating optimization.";
+
+      Callback::EndOptimization(*this, sdp, coordinates, callbacks...);
       return primalObj;
     }
     if (!Alpha(dualCoordinates, dZ, tau, beta))
     {
       Warn << "PrimalDualSolver::Optimize(): cholesky decomposition of Z "
           << "failed!  Terminating optimization.";
+
+      Callback::EndOptimization(*this, sdp, coordinates, callbacks...);
       return primalObj;
     }
 
@@ -571,10 +590,15 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
     if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol &&
         dualInfeas <= dualInfeasTol)
       return primalObj;
+
+    terminate |= Callback::EndEpoch(*this, sdp, coordinates, iteration,
+        primalObj, callbacks...);
   }
 
   Warn << "PrimalDualSolver::Optimizer(): Did not converge after "
       << maxIterations << " iterations!" << std::endl;
+
+  Callback::EndOptimization(*this, sdp, coordinates, callbacks...);
   return primalObj;
 }
 

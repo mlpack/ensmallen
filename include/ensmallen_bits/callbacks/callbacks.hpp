@@ -20,7 +20,153 @@ class Callback
 {
  public:
   /**
-   * Invoke the Evaluate callback if it exists.
+   * Invoke the BeginOptimization() callback if it exists.
+   *
+   * @param callback The callback to call.
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   */
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      callbacks::traits::HasBeginOptimizationSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasBool,
+      bool>::type
+  BeginOptimizationFunction(CallbackType& callback,
+                            OptimizerType& optimizer,
+                            FunctionType& function,
+                            MatType& coordinates)
+  {
+    return const_cast<CallbackType&>(callback).BeginOptimization(optimizer,
+        function, coordinates);
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      callbacks::traits::HasBeginOptimizationSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasVoid,
+      bool>::type
+  BeginOptimizationFunction(CallbackType& callback,
+                            OptimizerType& optimizer,
+                            FunctionType& function,
+                            MatType& coordinates)
+  {
+    const_cast<CallbackType&>(callback).BeginOptimization(optimizer, function,
+        coordinates);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      callbacks::traits::HasBeginOptimizationSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasNone,
+      bool>::type
+  BeginOptimizationFunction(CallbackType& /* callback */,
+                            OptimizerType& /* optimizer */,
+                            FunctionType& /* function */,
+                            MatType& /* coordinates */)
+  { return false; }
+
+  /**
+   * Iterate over the callbacks and invoke the BeginOptimization callback if it
+   * exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool BeginOptimization(OptimizerType& optimizer,
+                                FunctionType& function,
+                                MatType& coordinates,
+                                CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::BeginOptimizationFunction(callbacks, optimizer,
+            function, coordinates)... };
+     return result;
+  }
+
+  /**
+   * Invoke the EndOptimization() callback if it exists.
+   *
+   * @param callback The callback to call.
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   */
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<callbacks::traits::HasEndOptimizationSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      bool>::type
+  EndOptimizationFunction(CallbackType& callback,
+                          OptimizerType& optimizer,
+                          FunctionType& function,
+                          MatType& coordinates)
+  {
+    return (const_cast<CallbackType&>(callback).EndOptimization(
+        optimizer, function, coordinates), false);
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<!callbacks::traits::HasEndOptimizationSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      bool>::type
+  EndOptimizationFunction(CallbackType& /* callback */,
+                          OptimizerType& /* optimizer */,
+                          FunctionType& /* function */,
+                          MatType& /* coordinates */)
+  { return false; }
+
+  /**
+   * Iterate over the callbacks and invoke the EndOptimization callback if it
+   * exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool EndOptimization(OptimizerType& optimizer,
+                              FunctionType& function,
+                              MatType& coordinates,
+                              CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::EndOptimizationFunction(callbacks, optimizer,
+            function, coordinates)... };
+     return result;
+  }
+
+  /**
+   * Invoke the Evaluate() callback if it exists.
    *
    * @param callback The callback to call.
    * @param optimizer The optimizer used to update the function.
@@ -28,41 +174,141 @@ class Callback
    * @param coordinates Starting point.
    * @param objective Objective value of the current point.
    */
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<
-      callbacks::traits::HasEvaluate<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateForm>::value, void>::type
-  Evaluate(CallbackFunctionType& callback,
-           OptimizerType& optimizer,
-           FunctionType& function,
-           const MatType& coordinates,
-           const double objective)
+  static typename std::enable_if<callbacks::traits::HasEvaluateSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      bool>::type
+  EvaluateFunction(CallbackType& callback,
+                   OptimizerType& optimizer,
+                   FunctionType& function,
+                   const MatType& coordinates,
+                   const double objective)
   {
-    const_cast<CallbackFunctionType&>(callback).Evaluate(
-        optimizer, function, coordinates, objective);
+    return (const_cast<CallbackType&>(callback).Evaluate(
+        optimizer, function, coordinates, objective), false);
   }
 
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<!callbacks::traits::HasEvaluateSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      bool>::type
+  EvaluateFunction(CallbackType& /* callback */,
+                   OptimizerType& /* optimizer */,
+                   FunctionType& /* function */,
+                   const MatType& /* coordinates */,
+                   const double /* objective */)
+  { return false; }
+
+  /**
+   * Iterate over the callbacks and invoke the Evaluate() callback if it exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param objective Objective value of the current point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool Evaluate(OptimizerType& optimizer,
+                       FunctionType& function,
+                       const MatType& coordinates,
+                       const double objective,
+                       CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::EvaluateFunction(callbacks, optimizer, function,
+        coordinates, objective)... };
+     return result;
+  }
+
+  /**
+   * Invoke the EvaluateConstraint() callback if it exists.
+   *
+   * @param callback The callback to call.
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param constraint The index of the constraint.
+   * @param constraintValue Constraint value of the current point.
+   */
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
   static typename std::enable_if<
-      !callbacks::traits::HasEvaluate<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateForm>::value, void>::type
-  Evaluate(CallbackFunctionType& /* callback */,
-           OptimizerType& /* optimizer */,
-           FunctionType& /* function */,
-           const MatType& /* coordinates */,
-           const double /* objective */)
-  { /* Skip, nothing to do here. */ }
+      callbacks::traits::HasEvaluateConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      bool>::type
+  EvaluateConstraintFunction(CallbackType& callback,
+                             OptimizerType& optimizer,
+                             FunctionType& function,
+                             const MatType& coordinates,
+                             const size_t constraint,
+                             const double constraintValue)
+  {
+    return (const_cast<CallbackType&>(callback).EvaluateConstraint(
+        optimizer, function, coordinates, constraint, constraintValue), false);
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      !callbacks::traits::HasEvaluateConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      bool>::type
+  EvaluateConstraintFunction(CallbackType& /* callback */,
+                             OptimizerType& /* optimizer */,
+                             FunctionType& /* function */,
+                             const MatType& /* coordinates */,
+                             const size_t /* constraint */,
+                             const double /* constraintValue */)
+  { return false; }
 
   /**
-   * Invoke the Gradient callback if it exists.
+   * Iterate over the callbacks and invoke the EvaluateConstraint() callback if
+   * it exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param constraint The index of the constraint.
+   * @param constraintValue Constraint value of the current point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool EvaluateConstraint(OptimizerType& optimizer,
+                                 FunctionType& function,
+                                 const MatType& coordinates,
+                                 const size_t constraint,
+                                 const double constraintValue,
+                                 CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::EvaluateConstraintFunction(callbacks, optimizer,
+            function, coordinates, constraint, constraintValue)... };
+     return result;
+  }
+
+  /**
+   * Invoke the Gradient() callback if it exists.
    *
    * @param callback The callback to call.
    * @param optimizer The optimizer used to update the function.
@@ -70,45 +316,180 @@ class Callback
    * @param coordinates Starting point.
    * @param gradient Matrix that holds the gradient.
    */
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType,
            typename GradType>
-  static typename std::enable_if<
-      callbacks::traits::HasGradient<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType, GradType>::template GradientForm>::value,
-      void>::type
-  Gradient(CallbackFunctionType& callback,
-           OptimizerType& optimizer,
-           FunctionType& function,
-           const MatType& coordinates,
-           GradType& gradient)
+  static typename std::enable_if<callbacks::traits::HasGradientSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+      bool>::type
+  GradientFunction(CallbackType& callback,
+                   OptimizerType& optimizer,
+                   FunctionType& function,
+                   const MatType& coordinates,
+                   GradType& gradient)
   {
-    const_cast<CallbackFunctionType&>(callback).Gradient(
-        optimizer, function, coordinates, gradient);
+    return (const_cast<CallbackType&>(callback).Gradient(
+        optimizer, function, coordinates, gradient), false);
   }
 
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType>
+  static typename std::enable_if<!callbacks::traits::HasGradientSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+      bool>::type
+  GradientFunction(CallbackType& /* callback */,
+                   OptimizerType& /* optimizer */,
+                   FunctionType& /* function */,
+                   const MatType& /* coordinates */,
+                   GradType& /* gradient */)
+  { return false; }
+
+  /**
+   * Iterate over the callbacks and invoke the Gradient() callback if it exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param gradient Matrix that holds the gradient.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  static bool Gradient(OptimizerType& optimizer,
+                       FunctionType& function,
+                       const MatType& coordinates,
+                       GradType& gradient,
+                       CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::GradientFunction(callbacks, optimizer, function,
+        coordinates, gradient)... };
+     return result;
+  }
+
+  /**
+   * Invoke the GradientConstraint() callback if it exists.
+   *
+   * @param callback The callback to call.
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param gradient Matrix that holds the gradient.
+   */
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType,
            typename GradType>
   static typename std::enable_if<
-      !callbacks::traits::HasGradient<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType, GradType>::template GradientForm>::value,
-      void>::type
-  Gradient(CallbackFunctionType& /* callback */,
-           OptimizerType& /* optimizer */,
-           FunctionType& /* function */,
-           const MatType& /* coordinates */,
-           GradType& /* gradient */)
-  { /* Skip, nothing to do here. */ }
+      callbacks::traits::HasGradientConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+      bool>::type
+  GradientConstraintFunction(CallbackType& callback,
+                             OptimizerType& optimizer,
+                             FunctionType& function,
+                             const MatType& coordinates,
+                             const size_t constraint,
+                             GradType& gradient)
+  {
+    return (const_cast<CallbackType&>(callback).GradientConstraint(
+        optimizer, function, coordinates, constraint, gradient), false);
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType>
+  static typename std::enable_if<
+      !callbacks::traits::HasGradientConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+      bool>::type
+  GradientConstraintFunction(CallbackType& /* callback */,
+                             OptimizerType& /* optimizer */,
+                             FunctionType& /* function */,
+                             const MatType& /* coordinates */,
+                             const size_t /* constraint */,
+                             GradType& /* gradient */)
+  { return false; }
 
   /**
-   * Invoke the BeginEpoch callback if it exists in the callbacks container.
+   * Iterate over the callbacks and invoke the GradientConstraint() callback if
+   * it exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param gradient Matrix that holds the gradient.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  static bool Gradient(OptimizerType& optimizer,
+                       FunctionType& function,
+                       const MatType& coordinates,
+                       const size_t constraint,
+                       GradType& gradient,
+                       CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::GradientConstraintFunction(callbacks, optimizer,
+        function, coordinates, constraint, gradient)... };
+     return result;
+  }
+
+  /**
+   * Iterate over the callbacks and invoke the Evaluate() and Gradient()
+   * callback if it exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param objective Objective value of the current point.
+   * @param gradient Matrix that holds the gradient.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  static bool EvaluateWithGradient(OptimizerType& optimizer,
+                                   FunctionType& function,
+                                   const MatType& coordinates,
+                                   const double objective,
+                                   GradType& gradient,
+                                   CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::EvaluateFunction(callbacks, optimizer, function,
+        coordinates, objective)... };
+
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::GradientFunction(callbacks, optimizer, function,
+        coordinates, gradient)... };
+     return result;
+  }
+
+  /**
+   * Invoke the BeginEpoch() callback if it exists.
    *
    * @param callback The callback to call.
    * @param optimizer The optimizer used to update the function.
@@ -117,43 +498,69 @@ class Callback
    * @param epoch The index of the current epoch.
    * @param objective Objective value of the current point.
    */
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<
-      callbacks::traits::HasBeginEpoch<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType>::template BeginEpochForm>::value, void>::type
-  BeginEpoch(CallbackFunctionType& callback,
-             OptimizerType& optimizer,
-             FunctionType& function,
-             const MatType& coordinates,
-             const size_t epoch,
-             const double objective)
+  static typename std::enable_if<callbacks::traits::HasBeginEpochSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value, bool>::type
+  BeginEpochFunction(CallbackType& callback,
+                     OptimizerType& optimizer,
+                     FunctionType& function,
+                     const MatType& coordinates,
+                     const size_t epoch,
+                     const double objective)
   {
-    const_cast<CallbackFunctionType&>(callback).BeginEpoch(
-        optimizer, function, coordinates, epoch, objective);
+    return (const_cast<CallbackType&>(callback).BeginEpoch(
+        optimizer, function, coordinates, epoch, objective), false);
   }
 
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<
-      !callbacks::traits::HasBeginEpoch<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType>::template BeginEpochForm>::value, void>::type
-  BeginEpoch(CallbackFunctionType& /* callback */,
-             OptimizerType& /* optimizer */,
-             FunctionType& /* function */,
-             const MatType& /* coordinates */,
-             const size_t /* epoch */,
-             const double /* objective */)
-  { /* Skip, nothing to do here. */ }
+  static typename std::enable_if<!callbacks::traits::HasBeginEpochSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value, bool>::type
+  BeginEpochFunction(CallbackType& /* callback  */,
+                     OptimizerType& /* optimizer */,
+                     FunctionType& /* function  */,
+                     const MatType& /* coordinates  */,
+                     const size_t /* epoch  */,
+                     const double /* objective */)
+  { return false; }
 
   /**
-   * Invoke the EndEpoch callback if it exists.
+   * Iterate over all callbacks and invoke the BeginEpoch() callback if it
+   * exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param epoch The index of the current epoch.
+   * @param objective Objective value of the current point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool BeginEpoch(OptimizerType& optimizer,
+                         FunctionType& function,
+                         const MatType& coordinates,
+                         const size_t epoch,
+                         const double objective,
+                         CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::BeginEpochFunction(callbacks, optimizer, function,
+        coordinates, epoch, objective)... };
+     return result;
+  }
+
+  /**
+   * Invoke the EndEpoch() callback if it exists.
    *
    * @param callback The callback to call.
    * @param optimizer The optimizer used to update the function.
@@ -162,40 +569,83 @@ class Callback
    * @param epoch The index of the current epoch.
    * @param objective Objective value of the current point.
    */
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<
-      callbacks::traits::HasEndEpoch<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType>::template EndEpochForm>::value, void>::type
-  EndEpoch(CallbackFunctionType& callback,
-           OptimizerType& optimizer,
-           FunctionType& function,
-           const MatType& coordinates,
-           const size_t epoch,
-           const double objective)
+  static typename std::enable_if<callbacks::traits::HasEndEpochSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasBool, bool>::type
+  EndEpochFunction(CallbackType& callback,
+                   OptimizerType& optimizer,
+                   FunctionType& function,
+                   const MatType& coordinates,
+                   const size_t epoch,
+                   const double objective)
   {
-    const_cast<CallbackFunctionType&>(callback).EndEpoch(
+    return const_cast<CallbackType&>(callback).EndEpoch(
         optimizer, function, coordinates, epoch, objective);
   }
 
-  template<typename CallbackFunctionType,
+  template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<
-      !callbacks::traits::HasEndEpoch<
-      CallbackFunctionType, callbacks::traits::TypedForms<OptimizerType,
-      FunctionType, MatType>::template EndEpochForm>::value, void>::type
-  EndEpoch(CallbackFunctionType& /* callback */,
-           OptimizerType& /* optimizer */,
-           FunctionType& /* function */,
-           const MatType& /* coordinates */,
-           const size_t /* epoch */,
-           const double /* objective */)
-  { /* Skip, nothing to do here. */ }
+  static typename std::enable_if<callbacks::traits::HasEndEpochSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasVoid, bool>::type
+  EndEpochFunction(CallbackType& callback,
+                   OptimizerType& optimizer,
+                   FunctionType& function,
+                   const MatType& coordinates,
+                   const size_t epoch,
+                   const double objective)
+  {
+    const_cast<CallbackType&>(callback).EndEpoch(
+        optimizer, function, coordinates, epoch, objective);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<callbacks::traits::HasEndEpochSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasNone, bool>::type
+  EndEpochFunction(CallbackType& /* callback */,
+                   OptimizerType& /* optimizer */,
+                   FunctionType& /* function */,
+                   const MatType& /* coordinates */,
+                   const size_t /* epoch */,
+                   const double /* objective */)
+  { return false; }
+
+  /**
+   * Iterate over all callbacks and invoke the EndEpoch() callback if it exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param epoch The index of the current epoch.
+   * @param objective Objective value of the current point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool EndEpoch(OptimizerType& optimizer,
+                       FunctionType& function,
+                       const MatType& coordinates,
+                       const size_t epoch,
+                       const double objective,
+                       CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::EndEpochFunction(callbacks, optimizer, function,
+        coordinates, epoch, objective)... };
+     return result;
+  }
 };
 
 } // namespace ens

@@ -28,10 +28,13 @@ class FullSelection
    * @param batchSize Batch size to use for each step.
    * @param iterate starting point.
    */
-  template<typename DecomposableFunctionType, typename MatType>
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
   double Select(DecomposableFunctionType& function,
                       const size_t batchSize,
-                      const MatType& iterate)
+                      const MatType& iterate,
+                      CallbackTypes&... callbacks)
   {
     // Find the number of functions to use.
     const size_t numFunctions = function.NumFunctions();
@@ -41,6 +44,8 @@ class FullSelection
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
       objective += function.Evaluate(iterate, f, effectiveBatchSize);
+
+      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
 
     return objective;

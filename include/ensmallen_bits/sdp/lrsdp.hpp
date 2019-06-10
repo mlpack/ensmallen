@@ -69,9 +69,11 @@ class LRSDP
    * coordinates will be modified to contain the final solution.
    *
    * @param coordinates Starting coordinates for the optimization.
+   * @param callbacks Callback functions.
    */
-  template<typename MatType>
-  typename MatType::elem_type Optimize(MatType& coordinates);
+  template<typename MatType, typename... CallbackTypes>
+  typename MatType::elem_type Optimize(MatType& coordinates,
+                                       CallbackTypes&&... callbacks);
 
   //! Return the SDP that will be solved.
   const SDPType& SDP() const { return function.SDP(); }

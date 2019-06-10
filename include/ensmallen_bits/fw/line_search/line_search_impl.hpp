@@ -26,8 +26,7 @@ typename MatType::elem_type LineSearch::Optimize(FunctionType& function,
 {
   typedef typename MatType::elem_type ElemType;
 
-  typedef Function<FunctionType, MatType, GradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<FunctionType, MatType, GradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.

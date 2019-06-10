@@ -120,12 +120,15 @@ class PrimalDualSolver
    *
    * @tparam SDPType Type of SDP to optimize.
    * @tparam MatType Type of matrix to optimize with.
+   * @tparam CallbackTypes Types of callback functions.
    * @param sdp The SDP to optimize.
    * @param coordinates The primal SDP coordinates to optimize.
+   * @param callbacks Callback functions.
    */
-  template<typename SDPType, typename MatType>
+  template<typename SDPType, typename MatType, typename... CallbackTypes>
   typename MatType::elem_type Optimize(const SDPType& sdp,
-                                       MatType& coordinates);
+                                       MatType& coordinates,
+                                       CallbackTypes&&... callbacks);
 
   /**
    * Optimize the given SDP with the given initial primal and dual coordinates.
@@ -136,18 +139,21 @@ class PrimalDualSolver
    *
    * @tparam SDPType Type of SDP to optimize.
    * @tparam MatType Type of matrix to optimize with.
+   * @tparam CallbackTypes Types of callback functions.
    * @param sdp The SDP to optimize.
    * @param coordinates The initial primal SDP coordinates to optimize.
    * @param ySparse The initial ySparse to optimize.
    * @param yDense The initial yDense to optimize.
    * @param dualCoordinates The initial dual SDP coordinates to optimize.
+   * @param callbacks Callback functions.
    */
-  template<typename SDPType, typename MatType>
+  template<typename SDPType, typename MatType, typename... CallbackTypes>
   typename MatType::elem_type Optimize(const SDPType& sdp,
                                        MatType& coordinates,
                                        MatType& ySparse,
                                        MatType& yDense,
-                                       MatType& dualCoordinates);
+                                       MatType& dualCoordinates,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the maximum number of iterations to run before converging.
   size_t MaxIterations() const { return maxIterations; }

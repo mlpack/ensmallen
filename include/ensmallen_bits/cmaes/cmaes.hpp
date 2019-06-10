@@ -84,13 +84,18 @@ class CMAES
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType, typename MatType>
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
   typename MatType::elem_type Optimize(DecomposableFunctionType& function,
-                                       MatType& iterate);
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the step size.
   size_t PopulationSize() const { return lambda; }
@@ -148,6 +153,9 @@ class CMAES
 
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 };
 
 /**

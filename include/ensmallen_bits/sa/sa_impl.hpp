@@ -37,17 +37,19 @@ SA<CoolingScheduleType>::SA(
     maxToleranceSweep(maxToleranceSweep),
     maxMoveCoef(maxMoveCoef),
     initMoveCoef(initMoveCoef),
-    gain(gain)
+    gain(gain),
+    terminate(false)
 {
   // Nothing to do.
 }
 
 //! Optimize the function (minimize).
 template<typename CoolingScheduleType>
-template<typename FunctionType, typename MatType>
+template<typename FunctionType, typename MatType, typename... CallbackTypes>
 typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
     FunctionType& function,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -73,17 +75,23 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   BaseMatType moveSize(rows, cols);
   moveSize.fill(initMoveCoef);
 
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+
   // Initial moves to get rid of dependency of initial states.
   for (size_t i = 0; i < initMoves; ++i)
     GenerateMove(function, iterate, accept, moveSize, energy, idx,
-        sweepCounter);
+        sweepCounter, callbacks...);
 
   // Iterating and cooling.
-  for (size_t i = 0; i != maxIterations; ++i)
+  for (size_t i = 0; i != maxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i, energy,
+        callbacks...);
+
     oldEnergy = energy;
     GenerateMove(function, iterate, accept, moveSize, energy, idx,
-        sweepCounter);
+        sweepCounter, callbacks...);
     temperature = coolingSchedule.NextTemperature(temperature, energy);
 
     // Determine if the optimization has entered (or continues to be in) a
@@ -99,12 +107,19 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
       Info << "SA: minimized within tolerance " << tolerance << " for "
           << maxToleranceSweep << " sweeps after " << i << " iterations; "
           << "terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return energy;
     }
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i, energy,
+        callbacks...);
   }
 
   Warn << "SA: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return energy;
 }
 
@@ -117,7 +132,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
  * moveCtrlSweep, it performs moveControl and resets sweepCounter.
  */
 template<typename CoolingScheduleType>
-template<typename FunctionType, typename MatType>
+template<typename FunctionType, typename MatType, typename... CallbackTypes>
 void SA<CoolingScheduleType>::GenerateMove(
     FunctionType& function,
     MatType& iterate,
@@ -125,7 +140,8 @@ void SA<CoolingScheduleType>::GenerateMove(
     MatType& moveSize,
     typename MatType::elem_type& energy,
     size_t& idx,
-    size_t& sweepCounter)
+    size_t& sweepCounter,
+    CallbackTypes&... callbacks)
 {
   typedef typename MatType::elem_type ElemType;
 
@@ -143,6 +159,9 @@ void SA<CoolingScheduleType>::GenerateMove(
 
   iterate(idx) += move;
   energy = function.Evaluate(iterate);
+
+  Callback::Evaluate(*this, function, iterate, energy, callbacks...);
+
   // According to the Metropolis criterion, accept the move with probability
   // min{1, exp(-(E_new - E_old) / T)}.
   const double xi = arma::randu();

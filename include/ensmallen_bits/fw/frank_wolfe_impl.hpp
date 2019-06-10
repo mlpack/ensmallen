@@ -39,17 +39,21 @@ FrankWolfe(const LinearConstrSolverType linearConstrSolver,
 template<
     typename LinearConstrSolverType,
     typename UpdateRuleType>
-template<typename FunctionType, typename MatType, typename GradType>
-typename MatType::elem_type FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
-Optimize(FunctionType& function, MatType& iterateIn)
+template<typename FunctionType, typename MatType, typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
+  FunctionType& function,
+  MatType& iterateIn,
+  CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<FunctionType, BaseMatType, BaseGradType,
-      decltype(this)> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Make sure we have all necessary functions.
@@ -77,7 +81,7 @@ Optimize(FunctionType& function, MatType& iterateIn)
         << currentObjective << "." << std::endl;
 
     // Solve linear constrained problem, solution saved in s.
-    linearConstrSolver.Optimize(gradient, s);
+    linearConstrSolver.Optimize(gradient, s, callbacks...);
 
     // Check duality gap for return condition.
     gap = std::fabs(dot(iterate - s, gradient));

@@ -15,7 +15,8 @@
 namespace ens {
 
 /**
- * Timer stop function, based on the EndEpoch callback function.
+ * Timer stop function, is based on the BeginOptimization callback function to
+ * start the timer and the EndEpoch callback function to update the timer.
  */
 class TimerStop
 {
@@ -25,22 +26,23 @@ class TimerStop
    *
    * @param duration The duration of the timer in seconds.
    */
-  TimerStop(const double duration) : localDuration(duration), reset(false)
+  TimerStop(const double duration) : localDuration(duration)
   { /* Nothing to do here. */ }
 
+  /**
+   * Callback function called at the start of the optimization process.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void BeginEpoch(OptimizerType& /* optimizer */,
-                  FunctionType& /* function */,
-                  const MatType& /* coordinates */,
-                  const size_t /* epoch */,
-                  const double /* objective */)
+  void BeginOptimization(OptimizerType& /* optimizer */,
+                         FunctionType& /* function */,
+                         MatType& /* coordinates */)
   {
     // Start the timer.
-    if (!reset)
-    {
-      timer.tic();
-      reset = true;
-    }
+    timer.tic();
   }
 
   /**
@@ -53,7 +55,7 @@ class TimerStop
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& optimizer,
+  bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
@@ -62,16 +64,15 @@ class TimerStop
     if (timer.toc() > localDuration)
     {
       Info << "Timer timeout reached; terminate optimization." << std::endl;
-      optimizer->Terminate() = true;
+      return true;
     }
+
+    return false;
   }
 
  private:
   //! The duration in seconds.
   double localDuration;
-
-  //! Reset the timer.
-  bool reset;
 
   //! Locally-stored timer object.
   arma::wall_clock timer;

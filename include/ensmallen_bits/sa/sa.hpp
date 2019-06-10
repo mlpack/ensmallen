@@ -91,13 +91,16 @@ class SA
    *
    * @tparam FunctionType Type of function to optimize.
    * @tparam MatType Type of objective matrix.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename FunctionType, typename MatType>
+  template<typename FunctionType, typename MatType, typename... CallbackTypes>
   typename MatType::elem_type Optimize(FunctionType& function,
-                                       MatType& iterate);
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the temperature.
   double Temperature() const { return temperature; }
@@ -155,6 +158,8 @@ class SA
   double initMoveCoef;
   //! Proportional control in feedback move control.
   double gain;
+  //! Controls early termination of the optimization process.
+  bool terminate;
 
   /**
    * GenerateMove proposes a move on element iterate(idx), and determines if
@@ -172,14 +177,15 @@ class SA
    * @param sweepCounter Current counter representing how many sweeps have been
    *      completed.
    */
-  template<typename FunctionType, typename MatType>
+  template<typename FunctionType, typename MatType, typename... CallbackTypes>
   void GenerateMove(FunctionType& function,
                     MatType& iterate,
                     MatType& accept,
                     MatType& moveSize,
                     typename MatType::elem_type& energy,
                     size_t& idx,
-                    size_t& sweepCounter);
+                    size_t& sweepCounter,
+                    CallbackTypes&... callbacks);
 
   /**
    * MoveControl() uses a proportional feedback control to determine the size

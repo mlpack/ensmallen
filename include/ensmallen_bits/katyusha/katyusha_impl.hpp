@@ -34,15 +34,22 @@ KatyushaType<Proximal>::KatyushaType(
     maxIterations(maxIterations),
     innerIterations(innerIterations),
     tolerance(tolerance),
-    shuffle(shuffle)
+    shuffle(shuffle),
+    terminate(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<bool Proximal>
-template<typename DecomposableFunctionType, typename MatType, typename GradType>
-typename MatType::elem_type KatyushaType<Proximal>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+KatyushaType<Proximal>::Optimize(
     DecomposableFunctionType& function,
-    MatType& iterateIn)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -101,14 +108,22 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
+
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
       overallObjective += function.Evaluate(iterate0, f, effectiveBatchSize);
+
+      Callback::Evaluate(*this, function, iterate0, overallObjective,
+        callbacks...);
     }
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
@@ -116,6 +131,8 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
       Warn << "Katyusha: converged to " << overallObjective
           << "; terminating  with failure.  Try a smaller step size?"
           << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -123,6 +140,8 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
     {
       Info << "Katyusha: minimized within tolerance " << tolerance
           << "; terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -131,6 +150,8 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
     // Compute the full gradient.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
     function.Gradient(iterate, 0, fullGradient, effectiveBatchSize);
+    terminate |= Callback::Gradient(*this, function, iterate, fullGradient,
+          callbacks...);
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)
     {
@@ -139,6 +160,9 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
 
       function.Gradient(iterate0, f, gradient, effectiveBatchSize);
       fullGradient += gradient;
+
+      terminate |= Callback::Gradient(*this, function, iterate0, gradient,
+          callbacks...);
 
       f += effectiveBatchSize;
     }
@@ -168,8 +192,15 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
       // Calculate variance reduced gradient.
       function.Gradient(iterate, currentFunction, gradient,
           effectiveBatchSize);
+
+      terminate |= Callback::Gradient(*this, function, iterate, gradient,
+          callbacks...);
+
       function.Gradient(iterate0, currentFunction, gradient0,
           effectiveBatchSize);
+
+      terminate |= Callback::Gradient(*this, function, iterate0, gradient0,
+          callbacks...);
 
       // By the minimality definition of z_{k + 1}, we have that:
       // z_{k+1} − z_k + \alpha * \sigma_{k+1} + \alpha g = 0.
@@ -204,6 +235,9 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
       f += effectiveBatchSize;
     }
     iterate0 = normalizer * w;
+
+    terminate |= Callback::EndEpoch(*this, function, iterate, i,
+        overallObjective, callbacks...);
   }
 
   Info << "Katyusha: maximum iterations (" << maxIterations << ") reached"
@@ -215,7 +249,12 @@ typename MatType::elem_type KatyushaType<Proximal>::Optimize(
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
     overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+
+    Callback::Evaluate(*this, function, iterate, overallObjective,
+        callbacks...);
   }
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

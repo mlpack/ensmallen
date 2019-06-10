@@ -106,34 +106,34 @@ class SGD
    * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize with.
    * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam v Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
   template<typename DecomposableFunctionType,
            typename MatType,
-           typename GradType = MatType,
-           typename... CallbackFunctionTypes>
+           typename GradType,
+           typename... CallbackTypes>
   typename std::enable_if<IsArmaType<GradType>::value,
       typename MatType::elem_type>::type
   Optimize(DecomposableFunctionType& function,
            MatType& iterate,
-           CallbackFunctionTypes&&... callbacks);
+           CallbackTypes&&... callbacks);
 
-  // //! Forward the MatType as GradType.
-  // template<typename DecomposableFunctionType,
-  //          typename MatType,
-  //          typename... CallbackFunctionTypes>
-  // typename MatType::elem_type Optimize(DecomposableFunctionType& function,
-  //                                      MatType& iterate,
-  //                                      CallbackFunctionTypes&&... callbacks)
-  //  {
-  //     // return Optimize<DecomposableFunctionType, MatType, MatType,
-  //     //     CallbackFunctionTypes...>(function, iterate,
-  //     //     std::forward<CallbackFunctionTypes>(callbacks)...);
-
-  //   return Optimize<DecomposableFunctionType, MatType, MatType>(function, iterate);
-  //  }
+  //! Forward the MatType as GradType.
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<DecomposableFunctionType, MatType, MatType,
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -166,11 +166,6 @@ class SGD
   //! Modify whether or not the update policy parameters
   //! are reset before Optimize call.
   bool& ResetPolicy() { return resetPolicy; }
-
-  //! Get the termination value.
-  bool Terminate() const { return terminate; }
-  //! Modify the termination value.
-  bool& Terminate() { return terminate; }
 
   //! Get the update policy.
   const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
@@ -213,9 +208,6 @@ class SGD
   //! iterating.
   bool shuffle;
 
-  //! Controls early termination of the optimization process.
-  bool terminate;
-
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
 
@@ -229,6 +221,9 @@ class SGD
   //! Flag indicating whether the update policy
   //! parameters have been initialized.
   bool isInitialized;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 
   //! The initialized update policy.
   Any instUpdatePolicy;

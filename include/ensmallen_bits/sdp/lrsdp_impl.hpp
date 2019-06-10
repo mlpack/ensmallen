@@ -27,8 +27,9 @@ LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
 { }
 
 template<typename SDPType>
-template<typename MatType>
-typename MatType::elem_type LRSDP<SDPType>::Optimize(MatType& coordinates)
+template<typename MatType, typename... CallbackTypes>
+typename MatType::elem_type LRSDP<SDPType>::Optimize(
+    MatType& coordinates, CallbackTypes&&... callbacks)
 {
   function.RRTAny().Clean();
   function.RRTAny().template Set<MatType>(
@@ -36,7 +37,7 @@ typename MatType::elem_type LRSDP<SDPType>::Optimize(MatType& coordinates)
 
   augLag.Sigma() = 10;
   augLag.MaxIterations() = maxIterations;
-  augLag.Optimize(function, coordinates);
+  augLag.Optimize(function, coordinates, callbacks...);
 
   return function.Evaluate(coordinates);
 }

@@ -69,14 +69,19 @@ class SPSA
    *
    * @tparam ArbitraryFunctionType Type of function to optimize.
    * @tparam MatType Type of matrix to optimize with.
-   * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Initial coordinates to start from (this matrix will also be
    *     used to store final coordinates).
+   * @param callbacks Callback functions.
+   * @return Objective value of the final point.
    */
-  template<typename ArbitraryFunctionType, typename MatType>
+  template<typename ArbitraryFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
   typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
-                                       MatType& iterate);
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the scaling exponent for the step size.
   double Alpha() const { return alpha; }
@@ -124,6 +129,9 @@ class SPSA
 
   //! The tolerance for termination.
   double tolerance;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 };
 
 } // namespace ens
