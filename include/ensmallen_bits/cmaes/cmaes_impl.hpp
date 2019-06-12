@@ -111,9 +111,11 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-    currentObjective += function.Evaluate(mPosition[0], f, effectiveBatchSize);
+    const ElemType objective = function.Evaluate(mPosition[0], f,
+        effectiveBatchSize);
+    currentObjective += objective;
 
-    Callback::Evaluate(*this, function, mPosition[0], currentObjective,
+    Callback::Evaluate(*this, function, mPosition[0], objective,
         callbacks...);
   }
 

@@ -164,11 +164,12 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     // Technically we are computing the objective before we take the step, but
     // for many FunctionTypes it may be much quicker to do it like this.
-    overallObjective += f.EvaluateWithGradient(iterate, currentFunction,
+    const ElemType objective = f.EvaluateWithGradient(iterate, currentFunction,
         gradient, effectiveBatchSize);
+    overallObjective += objective;
 
-    terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
-        overallObjective, gradient, callbacks...);
+    terminate |= Callback::EvaluateWithGradient(*this, f, iterate, objective,
+        gradient, callbacks...);
 
     // Use the update policy to take a step.
     instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, stepSize,
@@ -193,9 +194,10 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += objective;
 
-    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
+    Callback::Evaluate(*this, f, iterate, objective, callbacks...);
   }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);

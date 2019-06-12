@@ -93,7 +93,10 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += objective;
+
+    Callback::Evaluate(*this, f, iterate, objective, callbacks...);
   }
 
   ElemType currentObjective = overallObjective / numFunctions;
@@ -178,7 +181,7 @@ SPALeRASGD<DecayPolicyType>::Optimize(
         gradient, effectiveBatchSize);
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
-        overallObjective, gradient, callbacks...);
+        currentObjective, gradient, callbacks...);
 
     // Use the update policy to take a step.
     if (!instUpdatePolicy.As<InstUpdatePolicyType>().Update(stepSize,
@@ -213,9 +216,10 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += objective;
 
-    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
+    Callback::Evaluate(*this, f, iterate, objective, callbacks...);
   }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);
