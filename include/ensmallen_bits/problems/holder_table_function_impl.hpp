@@ -32,7 +32,7 @@ inline double HolderTableFunction::Evaluate(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   const double objective = - abs(sin(x1) * cos(x2) * exp(abs(1 -
-                             (sqrt(pow(x1, 2) + pow(x2, 2)) /
+                             (sqrt(x1 * x1 + x2 * x2) /
                              arma::datum::pi))));
   return objective;
 }
