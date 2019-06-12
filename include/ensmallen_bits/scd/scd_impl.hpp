@@ -128,8 +128,7 @@ SCD<DescentPolicyType>::Optimize(
 
   // Calculate and return final objective.
   const ElemType objective = function.Evaluate(iterate);
-  terminate |= Callback::Evaluate(*this, function, iterate,
-          objective, callbacks...);
+  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return objective;

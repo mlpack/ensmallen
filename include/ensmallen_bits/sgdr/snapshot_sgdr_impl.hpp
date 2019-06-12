@@ -104,10 +104,11 @@ SnapshotSGDR<UpdatePolicyType>::Optimize(
     overallObjective = 0;
     for (size_t i = 0; i < function.NumFunctions(); ++i)
     {
-      overallObjective += function.Evaluate(iterate, i, 1);
+      const typename MatType::elem_type objective = function.Evaluate(
+          iterate, i, 1);
+      overallObjective += objective;
 
-      Callback::Evaluate(*this, function, iterate, overallObjective,
-          callbacks...);
+      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
     }
   }
 

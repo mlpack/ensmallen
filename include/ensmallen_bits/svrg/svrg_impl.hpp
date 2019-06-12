@@ -232,10 +232,11 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    const ElemType objective = function.Evaluate(iterate, i,
+        effectiveBatchSize);
+    overallObjective += objective;
 
-    Callback::Evaluate(*this, function, iterate, overallObjective,
-        callbacks...);
+    Callback::Evaluate(*this, function, iterate, objective, callbacks...);
   }
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);

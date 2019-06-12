@@ -154,7 +154,7 @@ Eve::Optimize(DecomposableFunctionType& function,
     overallObjective += objective;
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
-        overallObjective, gradient, callbacks...);
+        objective, gradient, callbacks...);
 
     m *= beta1;
     m += (1 - beta1) * gradient;
@@ -195,9 +195,10 @@ Eve::Optimize(DecomposableFunctionType& function,
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += objective;
 
-    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
+    Callback::Evaluate(*this, f, iterate, objective, callbacks...);
   }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);

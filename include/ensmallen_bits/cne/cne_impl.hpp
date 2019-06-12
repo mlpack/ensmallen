@@ -127,6 +127,9 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 
        // Find fitness of candidate.
        fitnessValues[i] = function.Evaluate(iterate);
+
+       Callback::Evaluate(*this, function, iterate, fitnessValues[i],
+          callbacks...);
     }
 
     Info << "Generation number: " << gen << " best fitness = "
@@ -245,11 +248,10 @@ inline void CNE::Mutate(std::vector<MatType>& population, arma::uvec& index)
   // The best candidate is not altered.
   for (size_t i = 1; i < populationSize; i++)
   {
-    population[index(i)] += (arma::randu<MatType>(
-        population[index(i)].n_rows, population[index(i)].n_cols) <
-            mutationProb) %
+    population[index(i)] += (arma::randu<MatType>(population[index(i)].n_rows,
+        population[index(i)].n_cols) < mutationProb) %
         (mutationSize * arma::randn<MatType>(population[index(i)].n_rows,
-                                             population[index(i)].n_cols));
+        population[index(i)].n_cols));
   }
 }
 

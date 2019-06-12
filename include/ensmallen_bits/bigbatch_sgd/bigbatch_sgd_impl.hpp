@@ -157,6 +157,10 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
     for (size_t j = 1; j < effectiveBatchSize; ++j, ++k)
     {
       f.Gradient(iterate, currentFunction + j, functionGradient, 1);
+
+      terminate |= Callback::Gradient(*this, f, iterate, functionGradient,
+          callbacks...);
+
       delta0 = delta1 + (functionGradient - delta1) / k;
 
       // Compute sample variance.
@@ -221,10 +225,11 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
     // Update the iterate.
     iterate -= stepSize * gradient;
 
-    overallObjective += f.Evaluate(iterate, currentFunction,
+    const ElemType objective = f.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
+    overallObjective += objective;
 
-    terminate |= Callback::Evaluate(*this, f, iterate, overallObjective,
+    terminate |= Callback::Evaluate(*this, f, iterate, objective,
         callbacks...);
 
     i += effectiveBatchSize;
@@ -242,9 +247,10 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
   for (size_t i = 0; i < numFunctions; i += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+    const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective += objective;
 
-    Callback::Evaluate(*this, f, iterate, overallObjective, callbacks...);
+    Callback::Evaluate(*this, f, iterate, objective, callbacks...);
   }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);

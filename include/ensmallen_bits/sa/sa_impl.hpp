@@ -66,6 +66,8 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
 
   size_t frozenCount = 0;
   ElemType energy = function.Evaluate(iterate);
+  Callback::Evaluate(*this, function, iterate, energy, callbacks...);
+
   ElemType oldEnergy = energy;
 
   size_t idx = 0;

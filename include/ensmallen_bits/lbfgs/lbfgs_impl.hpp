@@ -268,7 +268,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
     else
     {
       // Check Wolfe's condition.
-      ElemType searchDirectionDotGradient = arma::dot(gradient, searchDirection);
+      ElemType searchDirectionDotGradient = arma::dot(gradient,
+          searchDirection);
 
       if (searchDirectionDotGradient < wolfe *
           initialSearchDirectionDotGradient)
