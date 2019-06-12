@@ -52,26 +52,12 @@ TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
   CrossInTrayFunction f;
   CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
 
-  arma::mat coordinates = f.GetInitialPoint();
+  arma::mat coordinates = arma::mat("3; 3");
+  //arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
   REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.1));
   REQUIRE(abs(coordinates[1]) == Approx(1.34941).margin(0.1));
-}
-
-/**
- * Test the CNE optimizer on the Holder-table Function.
- */
-TEST_CASE("CNEHolderTableFunctionTest", "[CNETest]")
-{
-  HolderTableFunction f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(abs(coordinates[0]) == Approx(8.05502).margin(0.1));
-  REQUIRE(abs(coordinates[1]) == Approx(9.66459).margin(0.1));
 }
 
 /**
@@ -80,9 +66,9 @@ TEST_CASE("CNEHolderTableFunctionTest", "[CNETest]")
 TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
 {
   SchafferFunctionN4 f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(1000, 3000, 0.8, 0.7, 0.4, 1e-9);
 
-  arma::mat coordinates = arma::mat("2; 2");
+  arma::mat coordinates = arma::mat("0; 10");
   optimizer.Optimize(f, coordinates);
 
   REQUIRE(coordinates[0] == Approx(0).margin(0.1));
@@ -185,9 +171,9 @@ TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
 TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
 {
   SchafferFunctionN2 f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-12);
 
-  arma::mat coordinates = arma::mat("1; 1");
+  arma::mat coordinates = arma::mat("10; 10");
   optimizer.Optimize(f, coordinates);
 
   REQUIRE(coordinates[0] == Approx(0).margin(0.1));

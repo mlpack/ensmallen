@@ -19,7 +19,7 @@ namespace test {
  * The Holder table function, defined by
  *
  * \f[
- * f(x1, x2) = - |sin(x1) * cos(x2) * exp(|1 - (sqrt(x1^2 + x2^2)) / pi|)|
+ * f(x1, x2) = - |sin(x1) * cos(x2) * exp(|1 - (sqrt(x1^2 + x2^2) / pi)|)|
  * \f]
  *
  * This should optimize to f(x1, x2) = -19.2085, at
@@ -59,7 +59,7 @@ class HolderTableFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("-7; 7"); }
+  arma::mat GetInitialPoint() const { return arma::mat("7; 7"); }
 
   /*
    * Evaluate a function for a particular batch-size.
