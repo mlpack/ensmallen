@@ -50,11 +50,15 @@ namespace ens {
  *                 International Conference on Neural Networks}
  * }
  *
- * For PSO to work, the function being optimized must implement a FunctionType
- * template parameter. The respective class must implement the following
- * function:
+ * PSO can optimize arbitrary functions. For more details, see the documentation
+ * on function types included with this distribution or on the ensmallen
+ * website.
+ * 
+ * For PSO to work, the function being optimized must implement an
+ * ArbitraryFunctionType template parameter. The respective class must implement
+ * the following function:
  *
- *   double Evaluate(const arma::mat& coordinates);
+ *    double Evaluate(const arma::mat& x);
  */
 template<typename VelocityUpdatePolicy = LBestUpdate,
          typename InitPolicy = DefaultInit>
@@ -72,19 +76,19 @@ class PSOType
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
    */
-  PSOType(
-    const size_t numParticles = 16,
-    const size_t maxIterations = 3000,
-    const double exploitationFactor = 2.05,
-    const double explorationFactor = 2.05,
-    const VelocityUpdatePolicy& velocityUpdatePolicy = VelocityUpdatePolicy(),
-    const InitPolicy& initPolicy = InitPolicy()) :
-    numParticles(numParticles),
-    maxIterations(maxIterations),
-    exploitationFactor(exploitationFactor),
-    explorationFactor(explorationFactor),
-    velocityUpdatePolicy(velocityUpdatePolicy),
-    initPolicy(initPolicy) { /* Nothing to do */ }
+  PSOType(const size_t numParticles = 16,
+          const size_t maxIterations = 3000,
+          const double exploitationFactor = 2.05,
+          const double explorationFactor = 2.05,
+          const VelocityUpdatePolicy& velocityUpdatePolicy = 
+	            VelocityUpdatePolicy(),
+          const InitPolicy& initPolicy = InitPolicy()) :
+          numParticles(numParticles),
+          maxIterations(maxIterations),
+          exploitationFactor(exploitationFactor),
+          explorationFactor(explorationFactor),
+          velocityUpdatePolicy(velocityUpdatePolicy),
+          initPolicy(initPolicy) { /* Nothing to do */ }
 
   /**
    * Optimize the input function using PSO. The given variable that holds the
