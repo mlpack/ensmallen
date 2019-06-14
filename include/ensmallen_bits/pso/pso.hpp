@@ -20,7 +20,35 @@
 namespace ens {
 
 /**
- * EXTREMELY DETAILED DESCRIPTION OF THE WORKING OF PSO.
+ * Particle Swarm Optimization (PSO) is an evolutionary approach to optimization
+ * that is inspired by flocks or birds or fishes. The fundamental analogy is
+ * that every creature (particle in a swarm) is at a measurable position of
+ * `goodness' (in the context of PSO, called `fitness') in terms of being able
+ * to find food, and this information can be shared amongst the creatures in the
+ * flock, so that iteratively, the entire flock can get close to the optimal
+ * food source. In a more technical respect, the means by which the fitness
+ * information is shared determines the way in which the global optimum is
+ * approached.
+ *
+ * When this information is shared among particles whose fitness is close to
+ * each other (in a sense, the `nearest' neighbors in the fitness space), the
+ * variant of the approach is called the `local-best' or `lbest' PSO
+ * (consequently, it follows a ring-topology in an information-communication
+ * sense); and when this information is globally shared, the variant is called
+ * the `global-best' or `gbest' PSO (consequently, it follows a star-topology in
+ * an information-communication sense).
+ *
+ * For more information, refer to:
+ *
+ * @inproceedings{Kennedy,
+ *    doi = {10.1109/icnn.1995.488968},
+ *    url = {https://doi.org/10.1109/icnn.1995.488968},
+ *    publisher = {{IEEE}},
+ *    author = {J. Kennedy and R. Eberhart},
+ *    title = {Particle swarm optimization},
+ *    booktitle = {Proceedings of {ICNN}{\textquotesingle}95 - 
+ *                 International Conference on Neural Networks}
+ * }
  *
  * For Particle Swarm Optimization to work, a FunctionType template parameter is
  * required.
