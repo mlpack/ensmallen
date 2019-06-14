@@ -50,9 +50,9 @@ namespace ens {
  *                 International Conference on Neural Networks}
  * }
  *
- * For Particle Swarm Optimization to work, a FunctionType template parameter is
- * required.
- * This class must implement the following function:
+ * For PSO to work, the function being optimized must implement a FunctionType
+ * template parameter. The respective class must implement the following
+ * function:
  *
  *   double Evaluate(const arma::mat& coordinates);
  */
@@ -87,14 +87,13 @@ class PSOType
     initPolicy(initPolicy) { /* Nothing to do */ }
 
   /**
-   * ADD PSO OPTIMIZATION DESCRIPTION.
+   * Optimize the input function using PSO. The given variable that holds the
+   * initial point will be modified to store the value of the optimum, or the
+   * point where the PSO method stops, and the final objective value is
+   * returned.
    *
-   * Optimize the given function using particle swarm optimization. The given
-   * starting point will be modified to store the finishing point of the
-   * algorithm, and the final objective value is returned.
-   *
-   * @tparam FunctionType Type of the function to optimize.
-   * @param function Function to optimize.
+   * @param FunctionType Type of the function to be optimized.
+   * @param function Function to be optimized.
    * @param iterate Initial point (will be modified).
    * @return Objective value of the final point.
    */
