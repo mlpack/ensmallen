@@ -18,6 +18,17 @@
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {
+/* After the velocity of each particle is updated at the end of each iteration
+ * in PSO, the position of particle i (in iteration j) is updated as:
+ * 
+ * \f[
+ *     p_{i, j + 1} = p_{i, j} + v_{i, j}
+ * \f]
+ *
+ * pso_impl.hpp implements the position-updating procedure. The velocity update
+ * may be done using either the lbest or gbest methods, by using the
+ * appropriate templates.
+ */
 
 //! Optimize the function (minimize).
 template<typename VelocityUpdatePolicy,
@@ -26,8 +37,9 @@ template<typename FunctionType>
 double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   FunctionType& function, arma::mat& iterate)
 {
-  // The following cast is made to make sure that PSO can run on arbitrary continuous functions
-  // and to ensure that we have all the necessary functions.
+  /* The following cast is made to make sure that PSO can run on arbitrary
+   * continuous functions and to ensure that we have all the necessary functions.
+   */
   typedef Function<FunctionType> ArbitraryFunctionType;
   ArbitraryFunctionType& f(static_cast<ArbitraryFunctionType&>(function));
   
@@ -84,9 +96,8 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     particleBestPositions.slice(worstParticle) = iterate;
   }
 
-  size_t psoIterations = maxIterations;
   // Run PSO.
-  for (size_t i = 0; i < psoIterations; i++)
+  for (size_t i = 0; i < maxIterations; i++)
   {
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; j < numParticles; j++)
