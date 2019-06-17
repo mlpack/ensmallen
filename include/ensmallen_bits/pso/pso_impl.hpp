@@ -75,27 +75,6 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   }
   //std::cout<<particleFitnesses;
 
-  // Find the worst particle.
-  size_t worstParticle = 0;
-  double worstFitness = particleBestFitnesses(worstParticle);
-  for (size_t i = 1; i < numParticles; i++)
-  {
-    if (particleBestFitnesses(i) < worstFitness)
-    {
-      worstParticle = i;
-      worstFitness = particleBestFitnesses(worstParticle);
-    }
-  }
-
-  // Replace worst particle with iterate if iterate is better.
-  double iterateFitness = f.Evaluate(iterate);
-  if (iterateFitness < worstFitness)
-  {
-    particleBestFitnesses(worstParticle) = iterateFitness;
-    particlePositions.slice(worstParticle) = iterate;
-    particleBestPositions.slice(worstParticle) = iterate;
-  }
-
   // Run PSO.
   for (size_t i = 0; i < maxIterations; i++)
   {
