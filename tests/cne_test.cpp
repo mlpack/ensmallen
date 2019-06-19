@@ -53,7 +53,6 @@ TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
   CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
 
   arma::mat coordinates = arma::mat("3; 3");
-  //arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
   REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.1));

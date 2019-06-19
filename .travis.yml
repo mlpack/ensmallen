@@ -30,4 +30,4 @@ notifications:
     channels:
       - "chat.freenode.net#mlpack"
     on_success: change
-on_failure: always
+    on_failure: always
