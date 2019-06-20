@@ -14,7 +14,6 @@
 #define ENSMALLEN_PSO_PSO_IMPL_HPP
 
 #include "pso.hpp"
-
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {
@@ -73,7 +72,6 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
       particleBestPositions.slice(i) = particlePositions.slice(i);
     }
   }
-  //std::cout<<particleFitnesses;
 
   // Run PSO.
   for (size_t i = 0; i < maxIterations; i++)

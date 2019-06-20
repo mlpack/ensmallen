@@ -1,12 +1,9 @@
-/**
++/**
  * @file lbest_update.hpp
  * @author Chintan Soni
  * @author Suryoday Basak
  *
- * The local best version of PSO in which particles communicate with only two
- * neighbours each, thus forming a ring topology amongst them. This approach
- * allows PSO to converge at the global minimum, but takes significantly more
- * iterations to do so.
+ * Implementation of the lbest update policy for particle swarm optimization.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,12 +17,44 @@
 namespace ens {
 
 /**
- * ADD SLIGHTLY MORE DETAILED DESCRIPTION HERE.
+ * The local best version (lbest) of PSO in which particles communicate with
+ * only two neighbours each, thus forming a ring topology amongst them. This
+ * approach allows PSO to converge at the global minimum, but takes
+ * significantly more iterations to do so.
  *
- * For more information, see the following.
+ * The lbest update scheme is described as follows:
  *
- * REFERENCE TO A RELEVANT ARTICLE.
+ * \f{eqation}{
+ * v_{i+1} = \phi (v_i + c_1 * r_1 * (p_{best} - p_{current}) +
+ *           c_1 * r_1 * (l_{best} - p_{current}))
+ * \f}
  *
+ * where \f$ v_i \f$ is the velocity of a particle in iteration \f$ i \f$,
+ *       \f$ p_{best} \f$ is the best position of an individual particle,
+ *       \f$ p_{current} \f$ is the current position of the particle,
+ *       \f$ l_{best} \f$ is the local best position,
+ *       \f$ r_1 \f$ and \f$ r_2 \f$  are standard uniform random variables,
+ *       \f$ c_1 \f$ is the exploitation factor,
+ *       \f$ c_2 \f$ is the exploration factor, and
+ *       \f$ \phi \f$ is the constriction factor.
+ *
+ * For more information, refer the following:
+ *
+ * @code
+ * @article{Poli2007,
+ *          doi = {10.1007/s11721-007-0002-0},
+ *          url = {https://doi.org/10.1007/s11721-007-0002-0},
+ *          year = {2007},
+ *          month = aug,
+ *          publisher = {Springer Science and Business Media {LLC}},
+ *          volume = {1},
+ *          number = {1},
+ *          pages = {33--57},
+ *          author = {Riccardo Poli and James Kennedy and Tim Blackwell},
+ *          title = {Particle swarm optimization},
+ *          journal = {Swarm Intelligence}
+ * }
+ * @endcode
  */
 class LBestUpdate
 {
