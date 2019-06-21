@@ -126,20 +126,25 @@ class AdaptiveStepsize
 
     // Update sample variance & norm of the gradient.
     sampleVariance = vB;
-    gradientNorm = std::pow(arma::norm(gradient / backtrackingBatchSize, 2), 2.0);
+    gradientNorm = std::pow(arma::norm(gradient / backtrackingBatchSize, 2),
+        2.0);
 
-    // Compute curvature.
-    double v = arma::trace(arma::trans(iterate - iteratePrev) *
-        (gradient - gradPrevIterate)) /
-        std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
+    // Compute curvature.  If it can't be computed (typically due to floating
+    // point representation issues), call it 0.  If the curvature is 0, the step
+    // size will not decay.
+    const double vNum = arma::trace(arma::trans(iterate - iteratePrev) *
+        (gradient - gradPrevIterate));
+    const double vDenom = std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
+    const double vTmp = vNum / vDenom;
+    const double v = std::isfinite(vTmp) ? vTmp : 0.0;
 
     // Update previous iterate.
     iteratePrev = iterate;
 
     // TODO: Develop an absolute strategy to deal with stepSizeDecay updates in
-    // case we arrive at local minima. See #1469 for more details.
+    // case we arrive at local minima. See mlpack#1469 for more details.
     double stepSizeDecay = 0;
-    if (gradientNorm && sampleVariance && batchSize)
+    if (gradientNorm && sampleVariance && batchSize && v)
     {
       if (batchSize < function.NumFunctions())
       {
