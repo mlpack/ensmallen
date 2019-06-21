@@ -34,8 +34,7 @@ SARAHType<UpdatePolicyType>::SARAHType(
     innerIterations(innerIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    updatePolicy(updatePolicy),
-    terminate(false)
+    updatePolicy(updatePolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -74,6 +73,9 @@ SARAHType<UpdatePolicyType>::Optimize(
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Set epoch length to n / b if the user asked for.
   if (innerIterations == 0)

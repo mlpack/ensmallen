@@ -153,9 +153,6 @@ class SCD
 
   //! The descent policy used to pick the coordinates for the update.
   DescentPolicyType descentPolicy;
-
-  //! Controls early termination of the optimization process.
-  bool terminate;
 };
 
 } // namespace ens

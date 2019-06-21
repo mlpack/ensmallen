@@ -33,8 +33,7 @@ inline CNE::CNE(const size_t populationSize,
     selectPercent(selectPercent),
     tolerance(tolerance),
     numElite(0),
-    elements(0),
-    terminate(false)
+    elements(0)
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
@@ -103,6 +102,9 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 
   // Initialize helper variables.
   fitnessValues.set_size(populationSize);
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   Info << "CNE initialized successfully. Optimization started."
       << std::endl;

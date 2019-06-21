@@ -26,8 +26,7 @@ inline GradientDescent::GradientDescent(
     const double tolerance) :
     stepSize(stepSize),
     maxIterations(maxIterations),
-    tolerance(tolerance),
-    terminate(false)
+    tolerance(tolerance)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -61,6 +60,9 @@ GradientDescent::Optimize(FunctionType& function,
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);

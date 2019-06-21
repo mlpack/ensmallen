@@ -39,8 +39,7 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy),
-    isInitialized(false),
-    terminate(false)
+    isInitialized(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -88,6 +87,9 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   size_t currentFunction = 0;
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Initialize the decay policy if needed.
   if (!isInitialized || !instDecayPolicy.Has<InstDecayPolicyType>())

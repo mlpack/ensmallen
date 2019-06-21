@@ -56,8 +56,7 @@ ParallelSGD<DecayPolicyType>::ParallelSGD(
     threadShareSize(threadShareSize),
     tolerance(tolerance),
     shuffle(shuffle),
-    decayPolicy(decayPolicy),
-    terminate(false)
+    decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
 template <typename DecayPolicyType>
@@ -87,6 +86,9 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
 
   ElemType overallObjective = DBL_MAX;
   ElemType lastObjective;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // The order in which the functions will be visited.
   // TODO: maybe use function.Shuffle() instead?

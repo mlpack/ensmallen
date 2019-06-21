@@ -153,9 +153,6 @@ class CMAES
 
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy;
-
-  //! Controls early termination of the optimization process.
-  bool terminate;
 };
 
 /**

@@ -200,9 +200,6 @@ class CNE
 
   //! Store the number of elements in a cube slice or a matrix column.
   size_t elements;
-
-  //! Controls early termination of the optimization process.
-  bool terminate;
 };
 
 } // namespace ens

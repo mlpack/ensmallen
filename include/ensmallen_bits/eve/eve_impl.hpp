@@ -39,8 +39,7 @@ inline Eve::Eve(const double stepSize,
     clip(clip),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    shuffle(shuffle),
-    terminate(false)
+    shuffle(shuffle)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -83,6 +82,9 @@ Eve::Optimize(DecomposableFunctionType& function,
   ElemType objective = 0;
   ElemType lastObjective = 0;
   ElemType dt = 1;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // The exponential moving average of gradient values.
   BaseGradType m(iterate.n_rows, iterate.n_cols);

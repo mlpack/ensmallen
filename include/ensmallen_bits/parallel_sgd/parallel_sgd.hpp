@@ -147,9 +147,6 @@ class ParallelSGD
 
   //! The step size decay policy.
   DecayPolicyType decayPolicy;
-
-  //! Controls early termination of the optimization process.
-  bool terminate;
 };
 
 } // namespace ens

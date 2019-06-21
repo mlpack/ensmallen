@@ -28,8 +28,7 @@ inline IQN::IQN(const double stepSize,
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),
-    tolerance(tolerance),
-    terminate(false)
+    tolerance(tolerance)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -72,6 +71,9 @@ IQN::Optimize(DecomposableFunctionType& functionIn,
 
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   std::vector<BaseGradType> y(numBatches, BaseGradType(iterate.n_rows,
       iterate.n_cols));

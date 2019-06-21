@@ -34,8 +34,7 @@ KatyushaType<Proximal>::KatyushaType(
     maxIterations(maxIterations),
     innerIterations(innerIterations),
     tolerance(tolerance),
-    shuffle(shuffle),
-    terminate(false)
+    shuffle(shuffle)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -63,6 +62,9 @@ KatyushaType<Proximal>::Optimize(
   RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();

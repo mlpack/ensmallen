@@ -158,8 +158,6 @@ class SA
   double initMoveCoef;
   //! Proportional control in feedback move control.
   double gain;
-  //! Controls early termination of the optimization process.
-  bool terminate;
 
   /**
    * GenerateMove proposes a move on element iterate(idx), and determines if
