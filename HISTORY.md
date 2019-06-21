@@ -1,3 +1,9 @@
+### ensmallen 1.15.2
+###### ????-??-??
+  * Fix handling of curvature for BigBatchSGD (#118).
+
+  * Reduce runtime of tests (#118).
+
 ### ensmallen 1.15.1
 ###### 2019-05-22
   * Fix -Wreorder in `qhadam` warning (#115).
