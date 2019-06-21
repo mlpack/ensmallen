@@ -54,7 +54,7 @@ namespace ens {
  *          title = {Particle swarm optimization},
  *          journal = {Swarm Intelligence}
  * }
- * @endcode
+ * @endcod
  */
 class LBestUpdate
 {
@@ -75,15 +75,16 @@ class LBestUpdate
                   const size_t& numParticles,
                   const arma::mat& iterate)
   {
-    // Set number of particles.
+    // Copy values to aliases.
     n = numParticles;
-    // Set c1 = exploitationFactor and c2 = explorationFactor.
     c1 = exploitationFactor;
     c2 = explorationFactor;
 
     // Calculate the constriction factor
-    double phi = c1 + c2;
-    assert(phi > 4.0);
+    static double phi = c1 + c2;
+    assert(phi > 4.0 && "The sum of the exploitation and exploration factors "
+                        "must be greater than 4.");
+
     chi = 2.0 / std::abs(2.0 - phi - std::sqrt((phi - 4.0) * phi));
 
     // Initialize local best indices to self indices of particles.
