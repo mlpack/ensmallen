@@ -36,8 +36,7 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    selectionPolicy(selectionPolicy),
-    terminate(false)
+    selectionPolicy(selectionPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -143,6 +142,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   // The current visitation order (sorted by population objectives).
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, function, iterate,

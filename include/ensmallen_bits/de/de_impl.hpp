@@ -26,8 +26,7 @@ inline DE::DE(const size_t populationSize ,
     maxGenerations(maxGenerations),
     crossoverRate(crossoverRate),
     differentialWeight(differentialWeight),
-    tolerance(tolerance),
-    terminate(false)
+    tolerance(tolerance)
 { /* Nothing to do here. */ }
 
 //!Optimize the function
@@ -66,6 +65,9 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
   fitnessValues.set_size(populationSize);
   ElemType lastBestFitness = DBL_MAX;
   BaseMatType bestElement;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Generate a population based on a Gaussian distribution around the given
   // starting point. Also finds the best element of the population.

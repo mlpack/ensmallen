@@ -166,9 +166,6 @@ class KatyushaType
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
-
-  //! Controls early termination of the optimization process.
-  bool terminate;
 };
 
 // Convenience typedefs.

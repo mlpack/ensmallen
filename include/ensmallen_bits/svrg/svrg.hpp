@@ -231,9 +231,6 @@ class SVRGType
   //! should be reset before running optimization.
   bool resetPolicy;
 
-  //! Controls early termination of the optimization process.
-  bool terminate;
-
   //! Whether the instantiated policies are initialized.
   bool isInitialized;
 

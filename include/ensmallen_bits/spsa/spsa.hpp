@@ -129,9 +129,6 @@ class SPSA
 
   //! The tolerance for termination.
   double tolerance;
-
-  //! Controls early termination of the optimization process.
-  bool terminate;
 };
 
 } // namespace ens

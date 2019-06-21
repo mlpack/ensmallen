@@ -40,8 +40,7 @@ SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
     updatePolicy(SPALeRAStepsize(alpha, epsilon, adaptRate)),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy),
-    isInitialized(false),
-    terminate(false)
+    isInitialized(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -88,6 +87,9 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   size_t currentFunction = 0;
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; i += batchSize)

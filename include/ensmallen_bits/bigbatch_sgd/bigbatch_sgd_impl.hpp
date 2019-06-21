@@ -33,8 +33,7 @@ BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
     maxIterations(maxIterations),
     tolerance(tolerance),
     shuffle(shuffle),
-    updatePolicy(UpdatePolicyType()),
-    terminate(false)
+    updatePolicy(UpdatePolicyType())
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
@@ -87,6 +86,9 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
   ElemType lastObjective = DBL_MAX;
   bool reset = false;
   BaseGradType delta0, delta1;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Now iterate!
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);

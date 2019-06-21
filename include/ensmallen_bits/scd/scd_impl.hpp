@@ -30,8 +30,7 @@ SCD<DescentPolicyType>::SCD(
     maxIterations(maxIterations),
     tolerance(tolerance),
     updateInterval(updateInterval),
-    descentPolicy(descentPolicy),
-    terminate(false)
+    descentPolicy(descentPolicy)
 { /* Nothing to do */ }
 
 //! Optimize the function (minimize).
@@ -63,6 +62,9 @@ SCD<DescentPolicyType>::Optimize(
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
   BaseGradType gradient;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Start iterating.
   terminate |= Callback::BeginOptimization(*this, function, iterate,

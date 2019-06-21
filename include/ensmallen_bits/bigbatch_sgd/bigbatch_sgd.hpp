@@ -193,9 +193,6 @@ class BigBatchSGD
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
 
-  //! Controls early termination of the optimization process.
-  bool terminate;
-
   //! Instantiated update policy.
   Any instUpdatePolicy;
 };

@@ -37,8 +37,7 @@ SA<CoolingScheduleType>::SA(
     maxToleranceSweep(maxToleranceSweep),
     maxMoveCoef(maxMoveCoef),
     initMoveCoef(initMoveCoef),
-    gain(gain),
-    terminate(false)
+    gain(gain)
 {
   // Nothing to do.
 }
@@ -63,6 +62,9 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
 
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   size_t frozenCount = 0;
   ElemType energy = function.Evaluate(iterate);

@@ -222,9 +222,6 @@ class SGD
   //! parameters have been initialized.
   bool isInitialized;
 
-  //! Controls early termination of the optimization process.
-  bool terminate;
-
   //! The initialized update policy.
   Any instUpdatePolicy;
   //! The initialized decay policy.

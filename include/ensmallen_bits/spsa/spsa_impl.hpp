@@ -33,8 +33,7 @@ inline SPSA::SPSA(const double alpha,
     evaluationStepSize(evaluationStepSize),
     ak(0.001 * maxIterations),
     maxIterations(maxIterations),
-    tolerance(tolerance),
-    terminate(false)
+    tolerance(tolerance)
 { /* Nothing to do. */ }
 
 template<typename ArbitraryFunctionType,
@@ -59,6 +58,9 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   terminate |= Callback::BeginOptimization(*this, function, iterate,
       callbacks...);

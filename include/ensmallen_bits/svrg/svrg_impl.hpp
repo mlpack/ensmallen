@@ -37,7 +37,6 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy),
-    terminate(false),
     isInitialized(false)
 { /* Nothing to do. */ }
 
@@ -82,6 +81,9 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Set epoch length to n / b if the user asked for.
   if (innerIterations == 0)
