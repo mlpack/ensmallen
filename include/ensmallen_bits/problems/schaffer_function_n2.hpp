@@ -29,16 +29,12 @@ namespace test {
  *
  * @code
  * @article{1308.4008,
- *          Author = {Momin Jamil and Xin-She Yang},
- *          Title = {A Literature Survey of Benchmark Functions For Global
- *                   Optimization Problems},
- *          Year = {2013},
- *          Eprint = {arXiv:1308.4008},
- *          Howpublished = {Momin Jamil and Xin-She Yang, A literature survey
- *                          of benchmark functions for global optimization
- *                          problems, Int. Journal of Mathematical Modelling
- *                          and Numerical Optimisation},
- *          Doi = {10.1504/IJMMNO.2013.055204},
+ *   Author = {Momin Jamil and Xin-She Yang},
+ *   Title  = {A Literature Survey of Benchmark Functions For Global
+ *             Optimization Problems},
+ *   Year   = {2013},
+ *   Eprint = {arXiv:1308.4008},
+ *   Doi    = {10.1504/IJMMNO.2013.055204},
  * }
  * @endcode
  */
@@ -49,9 +45,9 @@ class SchafferFunctionN2
   SchafferFunctionN2();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -60,7 +56,7 @@ class SchafferFunctionN2
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("-100; 100"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -71,14 +67,14 @@ class SchafferFunctionN2
                   const size_t begin,
                   const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
   double Evaluate(const arma::mat& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -91,7 +87,7 @@ class SchafferFunctionN2
                 arma::mat& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

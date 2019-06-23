@@ -19,7 +19,7 @@ namespace test {
  * The Cross-in-Tray function, defined by
  *
  * \f[
- * f(x1, x2) = - 0.0001 * (|sin(x1) * sin(x2) * 
+ * f(x1, x2) = - 0.0001 * (|sin(x1) * sin(x2) *
  *               exp(|100 - (sqrt(x1^2 + x2^2) / pi)|)| + 1)^0.1
  * \f]
  *
@@ -33,15 +33,12 @@ namespace test {
  *
  * @code
  * @article{1308.4008,
- *          Author = {Momin Jamil and Xin-She Yang},
- *          Title = {A Literature Survey of Benchmark Functions For
- *                   Global Optimization Problems},
- *          Year = {2013},
- *          Eprint = {arXiv:1308.4008},
- *          Howpublished = {Momin Jamil and Xin-She Yang, A literature survey
- *          of benchmark functions for global optimization problems, Int. Journal
- *          of Mathematical Modelling and Numerical Optimisation},
- *          Doi = {10.1504/IJMMNO.2013.055204},
+ *   Author = {Momin Jamil and Xin-She Yang},
+ *   Title  = {A Literature Survey of Benchmark Functions For Global
+ *             Optimization Problems},
+ *   Year   = {2013},
+ *   Eprint = {arXiv:1308.4008},
+ *   Doi    = {10.1504/IJMMNO.2013.055204},
  * }
  * @endcode
  */
@@ -52,9 +49,9 @@ class CrossInTrayFunction
   CrossInTrayFunction();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).

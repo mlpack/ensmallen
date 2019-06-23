@@ -23,24 +23,21 @@ namespace test {
  * \f]
  *
  * This should optimize to f(x) = 0, at x = [3.0,  2.0], or
- * 					x = [-2.805118, 3.131312], or
- * 					x = [-3.779310, -3.283186], or
- * 					x = [3.584428, -1.848126].
+ *          x = [-2.805118, 3.131312], or
+ *          x = [-3.779310, -3.283186], or
+ *          x = [3.584428, -1.848126].
  *
  * For more information, please refer to:
  *
  * @code
  * @book{davidmautnerhimmelblau1972,
- *	 Author = {David Mautner Himmelblau},
- *	 title = {Applied Nonlinear Programming},
- *	 description = {Applied Nonlinear Programming (Book, 1972)},
- *	 publisher = {McGraw-Hill},
- *	 interhash = {80964629805141ec32d469e2004169dd},
- *	 intrahash = {fef22eda4de88f0aed5e5a071a697310},
- *	 year = {1972},
- *	 month = {jun},
- *	 isbn = {0070289212},
- *	 url = {https://www.xarg.org/ref/a/0070289212/}
+ *   Author      = {David Mautner Himmelblau},
+ *   title       = {Applied Nonlinear Programming},
+ *   description = {Applied Nonlinear Programming (Book, 1972)},
+ *   publisher   = {McGraw-Hill},
+ *   year        = {1972},
+ *   month       = {jun},
+ *   isbn        = {0070289212},
  * }
  * @endcode
  */
@@ -51,9 +48,9 @@ class HimmelblauFunction
   HimmelblauFunction();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -62,7 +59,7 @@ class HimmelblauFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("5; -5"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -73,14 +70,14 @@ class HimmelblauFunction
                   const size_t begin,
                   const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
   double Evaluate(const arma::mat& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -93,7 +90,7 @@ class HimmelblauFunction
                 arma::mat& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

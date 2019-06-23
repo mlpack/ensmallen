@@ -19,7 +19,7 @@ namespace test {
  * The Beale function, defined by
  *
  * \f[
- * f(x_1,x_2) = (1.5 - x_1 + x_1 * x_2)^2 + 
+ * f(x_1,x_2) = (1.5 - x_1 + x_1 * x_2)^2 +
  *              (2.25 - x_1 + x_1 * x_2^2)^2 +
  *              (2.625 - x_1 + x_1 * x_2^3)^2
  * \f]
@@ -30,10 +30,10 @@ namespace test {
  *
  * @code
  * @misc{1307.5838,
- *       Author = {Masoumeh Vali},
- *       Title = {Rotational Mutation Genetic Algorithm on optimization Problems},
- *       Year = {2013},
- *       Eprint = {arXiv:1307.5838},
+ *   Author = {Masoumeh Vali},
+ *   Title  = {Rotational Mutation Genetic Algorithm on optimizationProblems},
+ *   Year   = {2013},
+ *   Eprint = {arXiv:1307.5838},
  * }
  * @endcode
  */
@@ -44,9 +44,9 @@ class BealeFunction
   BealeFunction();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -55,7 +55,7 @@ class BealeFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("-4.5; 4.5"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -66,14 +66,14 @@ class BealeFunction
                   const size_t begin,
                   const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
   double Evaluate(const arma::mat& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -86,7 +86,7 @@ class BealeFunction
                 arma::mat& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

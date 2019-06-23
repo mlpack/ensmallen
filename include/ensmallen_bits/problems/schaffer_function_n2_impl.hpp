@@ -32,7 +32,7 @@ inline double SchafferFunctionN2::Evaluate(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   const double objective = 0.5 + (pow(sin(pow(x1, 2) - pow(x2, 2)), 2) - 0.5) /
-                           pow(1 + 0.001 * (pow(x1, 2) + pow(x2, 2)), 2);
+      pow(1 + 0.001 * (pow(x1, 2) + pow(x2, 2)), 2);
 
   return objective;
 }
@@ -68,7 +68,7 @@ inline void SchafferFunctionN2::Gradient(const arma::mat& coordinates,
 }
 
 inline void SchafferFunctionN2::Gradient(const arma::mat& coordinates,
-                              	         arma::mat& gradient)
+                                         arma::mat& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }
