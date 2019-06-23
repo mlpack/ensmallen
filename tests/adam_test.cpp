@@ -460,3 +460,123 @@ TEST_CASE("QHAdamLogisticRegressionTest", "[AdamTest]")
       coordinates);
   REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
+
+/**
+ * Test the Adam optimizer on the Ackley function.
+ * This is to test the Ackley function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamAckleyFunctionTest", "[AdamTest]")
+{
+  AckleyFunction f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
+
+  arma::mat coordinates = arma::mat("0.02; 0.02");
+  optimizer.Optimize(f, coordinates);
+  
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.001));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.001));
+}
+
+/**
+ * Test the Adam optimizer on the Beale function.
+ * This is to test the Beale function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamBealeFunctionTest", "[AdamTest]")
+{
+  BealeFunction f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
+
+  arma::mat coordinates = arma::mat("2.8; 0.35");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(3.0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
+}
+
+/**
+ * Test the Adam optimizer on the Goldstein-Price function.
+ * This is to test the Goldstein-Price function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamGoldsteinPriceFunctionTest", "[AdamTest]")
+{
+  GoldsteinPriceFunction f;
+  Adam optimizer(0.0001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+
+  arma::mat coordinates = arma::mat("0.2; -0.5");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(-1).margin(0.01));
+}
+
+/**
+ * Test the Adam optimizer on the Levi function.
+ * This is to test the Levi function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamLevyFunctionTest", "[AdamTest]")
+{
+  LevyFunctionN13 f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+
+  arma::mat coordinates = arma::mat("0.9; 1.1");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(1).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(1).margin(0.01));
+}
+
+/**
+ * Test the Adam optimizer on the Himmelblau function.
+ * This is to test the Himmelblau function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamHimmelblauFunctionTest", "[AdamTest]")
+{
+  HimmelblauFunction f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+
+  arma::mat coordinates = arma::mat("2.9; 1.9");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(3.0).margin(0.05));
+  REQUIRE(coordinates[1] == Approx(2.0).margin(0.05));
+}
+
+/**
+ * Test the Adam optimizer on the Three-hump camel function.
+ * This is to test the Three-hump camel function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamThreeHumpCamelFunctionTest", "[AdamTest]")
+{
+  ThreeHumpCamelFunction f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+
+  arma::mat coordinates = arma::mat("1; 1");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.01));
+}
+
+/**
+ * Test the Adam optimizer on Schaffer function N.2.
+ * This is to test Schaffer function N.2 and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamSchafferFunctionN2Test", "[AdamTest]")
+{
+  SchafferFunctionN2 f;
+  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+
+  arma::mat coordinates = arma::mat("1; 1");
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0.0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0.0).margin(0.01));
+}
+
