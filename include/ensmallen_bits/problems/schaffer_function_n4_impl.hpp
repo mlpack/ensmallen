@@ -32,8 +32,8 @@ inline double SchafferFunctionN4::Evaluate(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   const double objective = 0.5 + (pow(cos(sin(abs(pow(x1, 2) -
-                           pow(x2, 2)))), 2) - 0.5) /
-                           pow(1 + 0.001 * (pow(x1, 2) + pow(x2, 2)), 2);
+      pow(x2, 2)))), 2) - 0.5) / pow(1 + 0.001 * (pow(x1, 2) +
+      pow(x2, 2)), 2);
 
   return objective;
 }

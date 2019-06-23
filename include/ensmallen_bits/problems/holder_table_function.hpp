@@ -32,14 +32,13 @@ namespace test {
  *
  * @code
  * @article{Mishra2006,
- *          doi = {10.2139/ssrn.926132},
- *          url = {https://doi.org/10.2139/ssrn.926132},
- *          year = {2006},
- *          publisher = {Elsevier {BV}},
- *          author = {S. K. Mishra},
- *          title = {Some New Test Functions for Global Optimization and 
- *                   Performance of Repulsive Particle Swarm Method},
- *          journal = {{SSRN} Electronic Journal}
+ *   doi = {10.2139/ssrn.926132},
+ *   year = {2006},
+ *   publisher = {Elsevier {BV}},
+ *   author = {S. K. Mishra},
+ *   title = {Some New Test Functions for Global Optimization and
+ *            Performance of Repulsive Particle Swarm Method},
+ *   journal = {{SSRN} Electronic Journal}
  * }
  * @endcode
  */
@@ -50,9 +49,9 @@ class HolderTableFunction
   HolderTableFunction();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -61,7 +60,7 @@ class HolderTableFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("7; 7"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -69,10 +68,10 @@ class HolderTableFunction
    * @param batchSize Number of points to process.
    */
   double Evaluate(const arma::mat& coordinates,
-		  const size_t begin,
-		  const size_t batchSize) const;
+      const size_t begin,
+      const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

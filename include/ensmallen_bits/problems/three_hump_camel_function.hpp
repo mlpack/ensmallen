@@ -19,7 +19,7 @@ namespace test {
  * The Three-hump camel function, defined by
  *
  * \f[
- * f(x_1,x_2) = 2 * x_1^2 - 1.05 * x_1^4 + (x_1^6)/6 + x_1 * x_2 + x_2^2 
+ * f(x_1,x_2) = 2 * x_1^2 - 1.05 * x_1^4 + (x_1^6)/6 + x_1 * x_2 + x_2^2
  * \f]
  *
  * This should optimize to f(x) = 0, at x = [0, 0].
@@ -28,19 +28,18 @@ namespace test {
  *
  * @code
  * @article{Ali2005,
- *          doi = {10.1007/s10898-004-9972-2},
- *          url = {https://doi.org/10.1007/s10898-004-9972-2},
- *          year = {2005},
- *          month = apr,
- *          publisher = {Springer Nature},
- *          volume = {31},
- *          number = {4},
- *          pages = {635--672},
- *          author = {M. Montaz Ali and Charoenchai Khompatraporn and
- *                    Zelda B. Zabinsky},
- *          title = {A Numerical Evaluation of Several Stochastic Algorithms
- *                   on Selected Continuous Global Optimization Test Problems},
- *          journal = {Journal of Global Optimization}
+ *   doi       = {10.1007/s10898-004-9972-2},
+ *   year      = {2005},
+ *   month     = apr,
+ *   publisher = {Springer Nature},
+ *   volume    = {31},
+ *   number    = {4},
+ *   pages     = {635--672},
+ *   author    = {M. Montaz Ali and Charoenchai Khompatraporn and
+ *                Zelda B. Zabinsky},
+ *   title     = {A Numerical Evaluation of Several Stochastic Algorithms
+ *                on Selected Continuous Global Optimization Test Problems},
+ *   journal   = {Journal of Global Optimization}
  * }
  * @endcode
  */
@@ -51,9 +50,9 @@ class ThreeHumpCamelFunction
   ThreeHumpCamelFunction();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -62,7 +61,7 @@ class ThreeHumpCamelFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("-4.5; 4.5"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -73,14 +72,14 @@ class ThreeHumpCamelFunction
                   const size_t begin,
                   const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
   double Evaluate(const arma::mat& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -93,7 +92,7 @@ class ThreeHumpCamelFunction
                 arma::mat& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

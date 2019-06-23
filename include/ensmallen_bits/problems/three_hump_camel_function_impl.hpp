@@ -25,21 +25,21 @@ inline ThreeHumpCamelFunction::ThreeHumpCamelFunction()
 inline void ThreeHumpCamelFunction::Shuffle() { /* Nothing to do here */ }
 
 inline double ThreeHumpCamelFunction::Evaluate(
-                                   const arma::mat& coordinates,
-                                   const size_t /* begin */,
-                                   const size_t /* batchSize */) const
+    const arma::mat& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
   // For convenience; we assume these temporaries will be optimized out.
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = (2 * pow(x1, 2)) - (1.05 * pow(x1, 4)) + 
-	  		   (pow(x1, 6) / 6) + (x1 * x2) + pow(x2, 2);
+  const double objective = (2 * pow(x1, 2)) - (1.05 * pow(x1, 4)) +
+      (pow(x1, 6) / 6) + (x1 * x2) + pow(x2, 2);
   return objective;
 }
 
 inline double ThreeHumpCamelFunction::Evaluate(
-                                   const arma::mat& coordinates) const
+    const arma::mat& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }

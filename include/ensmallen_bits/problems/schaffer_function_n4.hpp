@@ -19,8 +19,8 @@ namespace test {
  * The Schaffer function N.4, defined by
  *
  * \f[
- * f(x1, x2) = 0.5 + (cos^2(sin(|x1^2 - x2^2|)) - 0.5) / 
- *             (1 + 0.001 * (x1^2 + x2^2))^2
+ * f(x1, x2) = 0.5 + (cos^2(sin(|x1^2 - x2^2|)) - 0.5) /
+ *     (1 + 0.001 * (x1^2 + x2^2))^2
  * \f]
  *
  * This should optimize to f(x1, x2) = 0.292579, at (x1, x2) = [0, 1.25313], or
@@ -30,7 +30,7 @@ namespace test {
  *
  * @code
  * @misc{LevyFunction,
- *       URL = {http://benchmarkfcns.xyz/benchmarkfcns/schaffern4fcn.html}
+ *   URL = {http://benchmarkfcns.xyz/benchmarkfcns/schaffern4fcn.html}
  * }
  * @endcode
  */
@@ -41,9 +41,9 @@ class SchafferFunctionN4
   SchafferFunctionN4();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -52,7 +52,7 @@ class SchafferFunctionN4
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("-5; 5"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -63,7 +63,7 @@ class SchafferFunctionN4
                   const size_t begin,
                   const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

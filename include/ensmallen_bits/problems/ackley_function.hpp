@@ -19,8 +19,8 @@ namespace test {
  * The Ackley function, defined by
  *
  * \f[
- * f(x_1,x_2) = -20 * e^(-0.2 * sqrt(0.5 * (x_1^2 + x_2^2))) - 
- * 		e * (0.5(cos(2 * pi * x_1) + cos(2 * pi * x_2))) + e + 20
+ * f(x_1,x_2) = -20 * e^(-0.2 * sqrt(0.5 * (x_1^2 + x_2^2))) -
+ *    e * (0.5(cos(2 * pi * x_1) + cos(2 * pi * x_2))) + e + 20
  * \f]
  *
  * This should optimize to f(x) = 0, at x = [0, 0].
@@ -29,30 +29,31 @@ namespace test {
  *
  * @code
  * @book{Ackley1987,
- *	doi = {10.1007/978-1-4613-1997-9},
- * 	url = {https://doi.org/10.1007/978-1-4613-1997-9},
- * 	year = {1987},
- * 	publisher = {Springer {US}},
- * 	author = {David H. Ackley},
- * 	title = {A Connectionist Machine for Genetic Hillclimbing}
+ *   doi       = {10.1007/978-1-4613-1997-9},
+ *   url       = {https://doi.org/10.1007/978-1-4613-1997-9},
+ *   year      = {1987},
+ *   publisher = {Springer {US}},
+ *   author    = {David H. Ackley},
+ *   title     = {A Connectionist Machine for Genetic Hillclimbing}
  * }
  * @endcode
  */
 class AckleyFunction
 {
  public:
-  /*
+  /**
    * Initialize the AckleyFunction.
    *
    * @param c Multiplicative constant with a default value of 2 * pi.
    * @param epsilon Coefficient to avoid division by zero (numerical stability).
    */
-  AckleyFunction(const double c = 2 * arma::datum::pi, const double epsilon = 1e-8);
+  AckleyFunction(const double c = 2 * arma::datum::pi,
+                 const double epsilon = 1e-8);
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -61,7 +62,7 @@ class AckleyFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return arma::mat("-5.0; 5.0"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -72,14 +73,14 @@ class AckleyFunction
                   const size_t begin,
                   const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
   double Evaluate(const arma::mat& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -92,7 +93,7 @@ class AckleyFunction
                 arma::mat& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

@@ -31,9 +31,9 @@ inline double CrossInTrayFunction::Evaluate(const arma::mat& coordinates,
   const double x1 = coordinates(0);
   const double x2 = coordinates(1);
 
-  const double objective = -0.0001 * pow(abs(sin(x1) * sin(x2) * 
-			   exp(abs(100 - (sqrt(pow(x1, 2) + pow(x2, 2)) /
-			   arma::datum::pi))) + 1), 0.1);
+  const double objective = -0.0001 * pow(abs(sin(x1) * sin(x2) *
+      exp(abs(100 - (sqrt(pow(x1, 2) + pow(x2, 2)) /
+      arma::datum::pi))) + 1), 0.1);
   return objective;
 }
 
