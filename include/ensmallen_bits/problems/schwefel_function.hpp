@@ -47,9 +47,9 @@ class SchwefelFunction
   SchwefelFunction(const size_t n);
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -58,7 +58,7 @@ class SchwefelFunction
   //! Get the starting point.
   arma::mat GetInitialPoint() const { return initialPoint; }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -69,14 +69,14 @@ class SchwefelFunction
                   const size_t begin,
                   const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
   double Evaluate(const arma::mat& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -89,7 +89,7 @@ class SchwefelFunction
                 arma::mat& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

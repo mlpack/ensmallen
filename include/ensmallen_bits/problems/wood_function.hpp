@@ -51,9 +51,9 @@ class WoodFunction
   WoodFunction();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -63,7 +63,7 @@ class WoodFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-3; -1; -3; -1"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -75,7 +75,7 @@ class WoodFunction
                                        const size_t begin,
                                        const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
@@ -83,7 +83,7 @@ class WoodFunction
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -97,7 +97,7 @@ class WoodFunction
                 GradType& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
