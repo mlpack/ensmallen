@@ -147,14 +147,14 @@ class QHAdamUpdate
   // The exponential moving average of squared gradient values.
   arma::mat v;
 
-  // The number of iterations.
-  double iteration;
-
   // The first quasi-hyperbolic term.
   double v1;
 
   // The second quasi-hyperbolic term.
   double v2;
+  
+  // The number of iterations.
+  double iteration;
 };
 
 } // namespace ens

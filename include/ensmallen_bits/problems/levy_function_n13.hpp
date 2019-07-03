@@ -1,51 +1,43 @@
 /**
- * @file sphere_function.hpp
- * @author Marcus Edel
+ * @file levy_function_n13.hpp
+ * @author Suryoday Basak
  *
- * Definition of the Sphere function.
+ * Definition of the Levy function N.13.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_PROBLEMS_SPHERE_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_SPHERE_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_LEVY_FUNCTION_N13_HPP
+#define ENSMALLEN_PROBLEMS_LEVY_FUNCTION_N13_HPP
 
 namespace ens {
 namespace test {
 
 /**
- * The Sphere function, defined by
+ * The Levy function N.13, defined by
  *
  * \f[
- * f(x) = \sum_{i=1}^{d} x_i^2
+ * f(x_1, x_2) = sin(3 * pi * x_1)^2 + (x_1 - 1)^2 *
+ *               (1 + (sin(3 * pi * x_2)^2)) +
+ *               (x_2 - 1)^2 * (1 + sin(2 * pi * x_2)^2)
  * \f]
- *
- * This should optimize to f(x) = 0, at x = [0, ..., 0].
+ * This should optimize to f(x_1, x_2) = 0, at x = [1, 1].
  *
  * For more information, please refer to:
  *
  * @code
- * @article{Jamil2013,
- *   title   = {A Literature Survey of Benchmark Functions For Global
- *              Optimization Problems},
- *   author  = {Momin Jamil and Xin{-}She Yang},
- *   journal = {CoRR},
- *   year    = {2013},
- *   url     = {http://arxiv.org/abs/1308.4008}
+ * @misc{LevyFunction,
+ *   URL = {http://www.sfu.ca/~ssurjano/levy13.html},
  * }
  * @endcode
  */
-class SphereFunction
+class LevyFunctionN13
 {
  public:
-  /*
-   * Initialize the SphereFunction.
-   *
-   * @param n Number of dimensions for the function.
-   */
-  SphereFunction(const size_t n);
+  //! Initialize the BealeFunction.
+  LevyFunctionN13();
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -54,10 +46,10 @@ class SphereFunction
   void Shuffle();
 
   //! Return 1 (the number of functions).
-  size_t NumFunctions() const { return n; }
+  size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return initialPoint; }
+  arma::mat GetInitialPoint() const { return arma::mat("-10; 10"); }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -97,21 +89,12 @@ class SphereFunction
    * @param gradient The function gradient.
    */
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
- private:
-  //! Number of dimensions for the function.
-  size_t n;
-
-  //! For shuffling.
-  arma::Row<size_t> visitationOrder;
-
-  //! Initial starting point.
-  arma::mat initialPoint;
 };
 
 } // namespace test
 } // namespace ens
 
 // Include implementation.
-#include "sphere_function_impl.hpp"
+#include "levy_function_n13_impl.hpp"
 
-#endif // ENSMALLEN_PROBLEMS_SPHERE_FUNCTION_HPP
+#endif // ENSMALLEN_PROBLEMS_LEVY_FUNCTION_N13_HPP

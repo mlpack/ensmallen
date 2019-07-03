@@ -1427,8 +1427,9 @@ SGD.
  Attributes of the optimizer may also be modified via the member methods
  `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, and `Shuffle()`.
 
- Note that the `QHUpdate` class has the constructor  `QHUpdate(`_`v, momentum`_`)` with a
- default value of `0.7` for the quasi hyperbolic term and `0.999` for the momentum term.
+ Note that the `QHUpdate` class has the constructor  `QHUpdate(`_`v,
+momentum`_`)` with a default value of `0.7` for the quasi-hyperbolic term `v`
+and `0.999` for the momentum term.
 
 #### Examples
 
@@ -1636,7 +1637,7 @@ differences along stochastic directions.
 
 #### Constructors
 
- * `SPSA(`_`alpha, gamma, stepSize, evaluationStepSize, maxIterations, tolerance, shuffle`_`)`
+ * `SPSA(`_`alpha, gamma, stepSize, evaluationStepSize, maxIterations, tolerance`_`)`
 
 #### Attributes
 
