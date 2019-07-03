@@ -15,7 +15,6 @@
 
 #include "update_policies/lbest_update.hpp"
 #include "init_policies/default_init.hpp"
-#include "init_policies/feasible_init.hpp"
 
 namespace ens {
 
