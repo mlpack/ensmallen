@@ -52,15 +52,13 @@ class DefaultInit
    * @param particleBestPositions Best positions attained by each particle.
    * @param particleBestFitnesses Best fitness values attained by each particle.
    */
-  template<typename FunctionType>
-  void Initialize(FunctionType& function,
-		   const arma::mat& iterate,
-                   const size_t numParticles,
-                   arma::cube& particlePositions,
-                   arma::cube& particleVelocities,
-                   arma::mat& particleFitnesses,
-                   arma::cube& particleBestPositions,
-                   arma::mat& particleBestFitnesses)
+  void Initialize(const arma::mat& iterate,
+                  const size_t numParticles,
+                  arma::cube& particlePositions,
+                  arma::cube& particleVelocities,
+                  arma::mat& particleFitnesses,
+                  arma::cube& particleBestPositions,
+                  arma::mat& particleBestFitnesses)
   {
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
@@ -105,3 +103,4 @@ class DefaultInit
 } // ens
 
 #endif
+
