@@ -81,7 +81,7 @@ class PSOType
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
-                VelocityUpdatePolicy(),
+              VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
           maxIterations(maxIterations),

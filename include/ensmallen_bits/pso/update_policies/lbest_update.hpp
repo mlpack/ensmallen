@@ -83,7 +83,7 @@ class LBestUpdate
     // Calculate the constriction factor
     static double phi = c1 + c2;
     assert(phi > 4.0 && "The sum of the exploitation and exploration factors "
-                        "must be greater than 4.");
+        "must be greater than 4.");
 
     chi = 2.0 / std::abs(2.0 - phi - std::sqrt((phi - 4.0) * phi));
 
@@ -115,11 +115,11 @@ class LBestUpdate
     for (size_t i = 0; i < n; i++)
     {
       localBestIndices(i) =
-        particleBestFitnesses(left(i)) < particleBestFitnesses(i) ?
-        left(i) : i;
+          particleBestFitnesses(left(i)) < particleBestFitnesses(i) ?
+          left(i) : i;
       localBestIndices(i) =
-        particleBestFitnesses(right(i)) < particleBestFitnesses(i) ?
-        right(i) : i;
+          particleBestFitnesses(right(i)) < particleBestFitnesses(i) ?
+          right(i) : i;
     }
 
     for (size_t i = 0; i < n; i++)
@@ -128,11 +128,10 @@ class LBestUpdate
       r1.randu();
       r2.randu();
       particleVelocities.slice(i) = chi * (particleVelocities.slice(i) +
-          c1 * r1 %
-              (particleBestPositions.slice(i) - particlePositions.slice(i)) +
-          c2 * r2 %
-              (particleBestPositions.slice(localBestIndices(i)) -
-                  particlePositions.slice(i)));
+          c1 * r1 % (particleBestPositions.slice(i) -
+          particlePositions.slice(i)) + c2 * r2 %
+          (particleBestPositions.slice(localBestIndices(i)) -
+          particlePositions.slice(i)));
     }
   }
 

@@ -46,19 +46,20 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   traits::CheckEvaluate<ArbitraryFunctionType>();
 
   // Initialize particles using the init policy.
-  initPolicy.Initialize(
-    function,
-    iterate,
-    numParticles,
-    particlePositions,
-    particleVelocities,
-    particleFitnesses,
-    particleBestPositions,
-    particleBestFitnesses);
+  initPolicy.Initialize(function,
+                        iterate,
+                        numParticles,
+                        particlePositions,
+                        particleVelocities,
+                        particleFitnesses,
+                        particleBestPositions,
+                        particleBestFitnesses);
 
   // Initialize the update policy.
-  velocityUpdatePolicy.Initialize(
-    exploitationFactor, explorationFactor, numParticles, iterate);
+  velocityUpdatePolicy.Initialize(exploitationFactor,
+                                  explorationFactor,
+                                  numParticles,
+                                  iterate);
 
   // User provided weights replacement performed here.
   for (size_t i = 0; i < numParticles; i++)
@@ -89,11 +90,10 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     }
 
     // Evaluate local best and update velocity.
-    velocityUpdatePolicy.Update(
-      particlePositions,
-      particleVelocities,
-      particleBestPositions,
-      particleBestFitnesses);
+    velocityUpdatePolicy.Update(particlePositions,
+                                particleVelocities,
+                                particleBestPositions,
+                                particleBestFitnesses);
 
     // In-place update of particle positions.
     particlePositions += particleVelocities;
