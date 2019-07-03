@@ -51,8 +51,8 @@ class LogisticRegressionFunction
   const arma::Row<size_t>& Responses() const { return responses; }
 
   /**
-  * Shuffle the order of function visitation.  This may be called by the optimizer.
-  */
+   * Shuffle the order of function visitation.  This may be called by the optimizer.
+   */
   void Shuffle();
 
   /**

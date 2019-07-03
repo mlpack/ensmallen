@@ -24,8 +24,7 @@ namespace ens {
 class TestFuncFW
 {
  public:
-  TestFuncFW()
-  {/* Nothing to do. */}
+  TestFuncFW() {/* Nothing to do. */}
 
   /**
    * Evaluation of the function.

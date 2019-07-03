@@ -31,7 +31,7 @@ inline double MatyasFunction::Evaluate(const arma::mat& coordinates,
   const double x2 = coordinates(1);
 
   const double objective = 0.26 * (pow(x1, 2) + std::pow(x2, 2)) -
-    0.48 * x1 * x2;
+      0.48 * x1 * x2;
 
   return objective;
 }

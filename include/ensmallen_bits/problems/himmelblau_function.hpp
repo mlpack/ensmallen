@@ -1,51 +1,51 @@
 /**
- * @file sphere_function.hpp
- * @author Marcus Edel
+ * @file himmelblau_function.hpp
+ * @author Suryoday Basak
  *
- * Definition of the Sphere function.
+ * Definition of the Himmelblau function.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_PROBLEMS_SPHERE_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_SPHERE_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_HIMMELBLAU_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_HIMMELBLAU_FUNCTION_HPP
 
 namespace ens {
 namespace test {
 
 /**
- * The Sphere function, defined by
+ * The Himmelblau function, defined by
  *
  * \f[
- * f(x) = \sum_{i=1}^{d} x_i^2
+ * f(x_1,x_2) = (x_1^2 + y - 11)^2 + (x_1 + x_2^2 - 7)^2
  * \f]
  *
- * This should optimize to f(x) = 0, at x = [0, ..., 0].
+ * This should optimize to f(x) = 0, at x = [3.0,  2.0], or
+ *          x = [-2.805118, 3.131312], or
+ *          x = [-3.779310, -3.283186], or
+ *          x = [3.584428, -1.848126].
  *
  * For more information, please refer to:
  *
  * @code
- * @article{Jamil2013,
- *   title   = {A Literature Survey of Benchmark Functions For Global
- *              Optimization Problems},
- *   author  = {Momin Jamil and Xin{-}She Yang},
- *   journal = {CoRR},
- *   year    = {2013},
- *   url     = {http://arxiv.org/abs/1308.4008}
+ * @book{davidmautnerhimmelblau1972,
+ *   Author      = {David Mautner Himmelblau},
+ *   title       = {Applied Nonlinear Programming},
+ *   description = {Applied Nonlinear Programming (Book, 1972)},
+ *   publisher   = {McGraw-Hill},
+ *   year        = {1972},
+ *   month       = {jun},
+ *   isbn        = {0070289212},
  * }
  * @endcode
  */
-class SphereFunction
+class HimmelblauFunction
 {
  public:
-  /*
-   * Initialize the SphereFunction.
-   *
-   * @param n Number of dimensions for the function.
-   */
-  SphereFunction(const size_t n);
+  //! Initialize the HimmelblauFunction.
+  HimmelblauFunction();
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -54,10 +54,10 @@ class SphereFunction
   void Shuffle();
 
   //! Return 1 (the number of functions).
-  size_t NumFunctions() const { return n; }
+  size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return initialPoint; }
+  arma::mat GetInitialPoint() const { return arma::mat("5; -5"); }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -97,21 +97,12 @@ class SphereFunction
    * @param gradient The function gradient.
    */
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
- private:
-  //! Number of dimensions for the function.
-  size_t n;
-
-  //! For shuffling.
-  arma::Row<size_t> visitationOrder;
-
-  //! Initial starting point.
-  arma::mat initialPoint;
 };
 
 } // namespace test
 } // namespace ens
 
 // Include implementation.
-#include "sphere_function_impl.hpp"
+#include "himmelblau_function_impl.hpp"
 
-#endif // ENSMALLEN_PROBLEMS_SPHERE_FUNCTION_HPP
+#endif // ENSMALLEN_PROBLEMS_HIMMELBLAU_FUNCTION_HPP

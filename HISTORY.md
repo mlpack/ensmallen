@@ -1,3 +1,17 @@
+### ensmallen 1.15.2
+###### ????-??-??
+  * Fix handling of curvature for BigBatchSGD (#118).
+
+  * Reduce runtime of tests (#118).
+
+### ensmallen 1.15.1
+###### 2019-05-22
+  * Fix -Wreorder in `qhadam` warning (#115).
+
+  * Fix -Wunused-private-field warning in `spsa` (#115).
+
+  * Add more warning output for gcc/clang (#116).
+
 ### ensmallen 1.15.0
 ###### 2019-05-14
   * Added QHAdam and QHSGD optimizers (#81).
