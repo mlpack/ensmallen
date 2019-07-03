@@ -88,9 +88,7 @@ class LBestUpdate
     chi = 2.0 / std::abs(2.0 - phi - std::sqrt((phi - 4.0) * phi));
 
     // Initialize local best indices to self indices of particles.
-    size_t index = 0;
-    localBestIndices.set_size(n);
-    localBestIndices.imbue([&]() { return index++; });
+    localBestIndices = arma::linspace<arma::vec>(0, n-1, n);
 
     // Set sizes r1 and r2.
     r1.set_size(iterate.n_rows, iterate.n_cols);
