@@ -152,8 +152,7 @@ class PSOType
   InitPolicy initPolicy;
 };
 
-//using LBestPSO = PSOType<LBestUpdate>;
-using LBestPSO = PSOType<LBestUpdate, ConstrainedInit>;
+using LBestPSO = PSOType<LBestUpdate>;
 } // ens
 
 #include "pso_impl.hpp"
