@@ -34,7 +34,7 @@ template<typename VelocityUpdatePolicy,
          typename InitPolicy>
 template<typename FunctionType>
 double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
-  FunctionType& function, arma::mat& iterate)
+    FunctionType& function, arma::mat& iterate)
 {
   /* The following cast is made to make sure that PSO can run on arbitrary
    * continuous functions and to ensure that we have all the necessary functions.
@@ -47,18 +47,18 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
 
   // Initialize particles using the init policy.
   initPolicy.Initialize(
-      function,
-      iterate,
-      numParticles,
-      particlePositions,
-      particleVelocities,
-      particleFitnesses,
-      particleBestPositions,
-      particleBestFitnesses);
+    function,
+    iterate,
+    numParticles,
+    particlePositions,
+    particleVelocities,
+    particleFitnesses,
+    particleBestPositions,
+    particleBestFitnesses);
 
   // Initialize the update policy.
   velocityUpdatePolicy.Initialize(
-      exploitationFactor, explorationFactor, numParticles, iterate);
+    exploitationFactor, explorationFactor, numParticles, iterate);
 
   // User provided weights replacement performed here.
   for (size_t i = 0; i < numParticles; i++)
@@ -79,7 +79,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; j < numParticles; j++)
     {
-    	particleFitnesses(j) = f.Evaluate(particlePositions.slice(j));
+      particleFitnesses(j) = f.Evaluate(particlePositions.slice(j));
       // Compare and copy fitness and position to particle best.
       if (particleFitnesses(j) < particleBestFitnesses(j))
       {
@@ -90,10 +90,10 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
 
     // Evaluate local best and update velocity.
     velocityUpdatePolicy.Update(
-        particlePositions,
-        particleVelocities,
-        particleBestPositions,
-        particleBestFitnesses);
+      particlePositions,
+      particleVelocities,
+      particleBestPositions,
+      particleBestFitnesses);
 
     // In-place update of particle positions.
     particlePositions += particleVelocities;

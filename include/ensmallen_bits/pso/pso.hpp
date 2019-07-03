@@ -80,8 +80,8 @@ class PSOType
           const size_t maxIterations = 3000,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
-          const VelocityUpdatePolicy& velocityUpdatePolicy = 
-	            VelocityUpdatePolicy(),
+          const VelocityUpdatePolicy& velocityUpdatePolicy =
+                VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
           maxIterations(maxIterations),
