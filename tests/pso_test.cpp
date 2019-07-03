@@ -46,3 +46,54 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
   REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-4));
 }
 
+/**
+ * Test the CNE optimizer on Cross-in-Tray Function.
+ */
+TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
+{
+  CrossInTrayFunction f;
+
+  LBestPSO s;
+  arma::vec coordinates = f.GetInitialPoint();
+
+  const double result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(-2.06261).margin(0.01));
+  REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.01));
+  REQUIRE(abs(coordinates[1]) == Approx(1.34941).margin(0.01));
+}
+
+/**
+ * Test the CNE optimizer on the Ackley Function.
+ */
+TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
+{
+  AckleyFunction f;
+
+  LBestPSO s;
+  arma::vec coordinates = f.GetInitialPoint();
+
+  const double result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0).margin(0.01));
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+}
+
+/**
+ * Test the CNE optimizer on the Beale Function.
+ */
+TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
+{
+  BealeFunction f;
+
+  LBestPSO s;
+  arma::vec coordinates = f.GetInitialPoint();
+
+  const double result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0).margin(0.01));
+  REQUIRE(coordinates[0] == Approx(3).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
+}
+
