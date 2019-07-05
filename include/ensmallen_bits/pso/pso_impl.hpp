@@ -48,6 +48,8 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   // Initialize particles using the init policy.
   initPolicy.Initialize(iterate,
       numParticles,
+      lowerBound,
+      upperBound,
       particlePositions,
       particleVelocities,
       particleFitnesses,

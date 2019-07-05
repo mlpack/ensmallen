@@ -75,7 +75,9 @@ class PSOType
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
    */
-  PSOType(const size_t numParticles = 16,
+  PSOType(const size_t numParticles = 64,
+          arma::vec lowerBound = arma::zeros<arma::vec>(1),
+	  arma::vec upperBound = arma::zeros<arma::vec>(1),
           const size_t maxIterations = 3000,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
@@ -83,6 +85,8 @@ class PSOType
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
+          lowerBound(lowerBound),
+          upperBound(upperBound),
           maxIterations(maxIterations),
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
@@ -109,6 +113,18 @@ class PSOType
   //! Modify value of numParticles.
   size_t& NumParticles() { return numParticles; }
 
+  //! Retrieve value of lowerBound.
+  size_t LowerBound() const { return lowerBound; }
+
+  //! Modify value of lowerBound.
+  size_t& LowerBound() { return lowerBound; }
+
+  //! Retrieve value of upperBound.
+  size_t UpperBound() const { return upperBound; }
+
+  //! Modify value of upperBound.
+  size_t& UpperBound() { return upperBound; }
+
   //! Retrieve value of maxIterations.
   size_t MaxIterations() const { return maxIterations; }
 
@@ -128,8 +144,13 @@ class PSOType
   double& ExplorationFactor() { return explorationFactor; }
 
  private:
+
   //! Number of particles in the swarm.
   size_t numParticles;
+  //! Lower bound of the initual swarm.
+  arma::vec lowerBound;
+  //! Upper bound of the initual swarm.
+  arma::vec upperBound;
   //! Maximum number of iterations for which the optimizer will run.
   size_t maxIterations;
   //! Exploitation factor for lbest version.
