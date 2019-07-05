@@ -54,8 +54,7 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
   CrossInTrayFunction f;
 
   LBestPSO s;
-  arma::vec coordinates = f.GetInitialPoint();
-
+  arma::mat coordinates = arma::mat("10; 10");
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-2.06261).margin(0.01));
@@ -71,8 +70,7 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
   AckleyFunction f;
 
   LBestPSO s;
-  arma::vec coordinates = f.GetInitialPoint();
-
+  arma::mat coordinates = arma::mat("5; 5");
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0).margin(0.01));
@@ -88,8 +86,7 @@ TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
   BealeFunction f;
 
   LBestPSO s;
-  arma::vec coordinates = f.GetInitialPoint();
-
+  arma::mat coordinates = arma::mat("4.5; 4.5");
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0).margin(0.01));

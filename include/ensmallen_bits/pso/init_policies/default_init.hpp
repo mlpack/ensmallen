@@ -31,10 +31,7 @@ class DefaultInit
    * @param lowerBound Lower bound of the position initialization range.
    * @param upperBound Upper bound of the position initialization range.
    */
-  DefaultInit(const double lowerBound = -1.0,
-              const double upperBound = 1.0):
-      lowerBound(lowerBound),
-      upperBound(upperBound)
+  DefaultInit()
   {
     /* Nothing to do */
   }
@@ -54,6 +51,8 @@ class DefaultInit
    */
   void Initialize(const arma::mat& iterate,
                   const size_t numParticles,
+		  arma::vec lowerBound,
+                  arma::vec upperBound,
                   arma::cube& particlePositions,
                   arma::cube& particleVelocities,
                   arma::mat& particleFitnesses,
@@ -63,9 +62,21 @@ class DefaultInit
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
 
+    //Check if lowerBound is equal to upperBound. If equal, reinitialize.
+    arma::umat lbEquality = (lowerBound == upperBound);
+    if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 1)
+    {
+      lowerBound = arma::ones<arma::vec>(iterate.n_rows);
+      lowerBound = -lowerBound;
+      upperBound = arma::ones<arma::vec>(iterate.n_rows);
+    }
+    
     // Distribute particles in [lowerBound, upperBound].
-    particlePositions *= upperBound - lowerBound;
-    particlePositions += lowerBound;
+    for (size_t i = 0; i < numParticles; i++)
+    {
+      particlePositions.slice(i) = particlePositions.slice(i) % 
+          (upperBound - lowerBound) + lowerBound;
+    }
 
     // Randomly initialize particle velocities.
     particleVelocities.randu(iterate.n_rows, iterate.n_cols, numParticles);
@@ -93,14 +104,8 @@ class DefaultInit
   //! Modify value of upperBound.
   double& UpperBound() { return upperBound; }
 
- private:
-  //! Lower bound.
-  double lowerBound;
-  //! Upper bound.
-  double upperBound;
 };
 
 } // ens
 
 #endif
-
