@@ -66,7 +66,7 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
   lowerBound.fill(8);
   upperBound.fill(9);
 
-  LBestPSO s(64, lowerBound, upperBound);
+  LBestPSO s(500, lowerBound, upperBound);
   arma::mat coordinates = arma::mat("10; 10");
   const double result = s.Optimize(f, coordinates);
 
@@ -120,3 +120,133 @@ TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
   REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
 }
 
+/**
+ * Test the CNE optimizer on the Goldstein-Price Function.
+ */
+TEST_CASE("LBestPSOGoldsteinPriceFunctionTest", "[PSOTest]")
+{
+  GoldsteinPriceFunction f;
+
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(1.6);
+  upperBound.fill(2);
+
+  LBestPSO s(64, lowerBound, upperBound);
+
+  arma::mat coordinates = arma::mat("1; 0");
+  s.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(-1).margin(0.01));
+}
+
+/**
+ * Test the CNE optimizer on the Levi Function.
+ */
+TEST_CASE("LBestPSOLevyFunctionN13Test", "[PSOTest]")
+{
+  LevyFunctionN13 f;
+
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(-10);
+  upperBound.fill(-9);
+
+  LBestPSO s(64, lowerBound, upperBound);
+
+  arma::mat coordinates = arma::mat("3; 3");
+  s.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(1).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(1).margin(0.01));
+}
+
+/**
+ * Test the CNE optimizer on the Himmelblau Function.
+ */
+TEST_CASE("LBestPSOHimmelblauFunctionTest", "[PSOTest]")
+{
+  HimmelblauFunction f;
+
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(0);
+  upperBound.fill(1);
+
+  LBestPSO s(64, lowerBound, upperBound);
+
+  arma::mat coordinates = arma::mat("2; 1");
+  s.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(3.0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(2.0).margin(0.01));
+}
+
+/**
+ * Test the CNE optimizer on the Three-hump Camel Function.
+ */
+TEST_CASE("LBestPSOThreeHumpCamelFunctionTest", "[PSOTest]")
+{
+  ThreeHumpCamelFunction f;
+
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(-5);
+  upperBound.fill(-4);
+
+  LBestPSO s(64, lowerBound, upperBound);
+
+  arma::mat coordinates = arma::mat("2; 2");
+  s.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+}
+
+/**
+ * Test the CNE optimizer on Schaffer function N.4.
+ */
+TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
+{
+  SchafferFunctionN4 f;
+ 
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(40);
+  upperBound.fill(50);
+  
+  LBestPSO s(64, lowerBound, upperBound);
+  arma::mat coordinates = arma::mat("0; 10");
+  const double result = s.Optimize(f, coordinates);
+  
+  REQUIRE(result == Approx(0.292579).margin(0.01));
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.01));
+}
+
+/**
+ * Test the CNE optimizer on Schaffer Function N.2.
+ */
+TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
+{
+  SchafferFunctionN2 f;
+
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(40);
+  upperBound.fill(50);
+
+  LBestPSO s(500, lowerBound, upperBound);
+  arma::mat coordinates = arma::mat("10; 10");
+  s.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+}
