@@ -36,7 +36,14 @@ TEST_CASE("LBestPSOSphereFunctionTest", "[PSOTest]")
 TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
 {
   RosenbrockFunction f;
-  LBestPSO s;
+
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(50);
+  upperBound.fill(60); 
+
+  LBestPSO s(64, lowerBound, upperBound);
   arma::vec coordinates = f.GetInitialPoint();
 
   const double result = s.Optimize(f, coordinates);
@@ -53,7 +60,13 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
 {
   CrossInTrayFunction f;
 
-  LBestPSO s;
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(8);
+  upperBound.fill(9);
+
+  LBestPSO s(64, lowerBound, upperBound);
   arma::mat coordinates = arma::mat("10; 10");
   const double result = s.Optimize(f, coordinates);
 
@@ -69,7 +82,13 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
 {
   AckleyFunction f;
 
-  LBestPSO s;
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(4);
+  upperBound.fill(5);
+
+  LBestPSO s(64, lowerBound, upperBound);
   arma::mat coordinates = arma::mat("5; 5");
   const double result = s.Optimize(f, coordinates);
 
@@ -85,7 +104,14 @@ TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
 {
   BealeFunction f;
 
-  LBestPSO s;
+  //Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(3);
+  upperBound.fill(4);
+
+  LBestPSO s(64, lowerBound, upperBound);
+
   arma::mat coordinates = arma::mat("4.5; 4.5");
   const double result = s.Optimize(f, coordinates);
 
