@@ -12,6 +12,7 @@
  */
 #ifndef ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
 #define ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
+#include <assert.h>
 
 namespace ens {
 
@@ -70,6 +71,12 @@ class DefaultInit
       lowerBound = -lowerBound;
       upperBound = arma::ones<arma::vec>(iterate.n_rows);
     }
+
+    //Check the dimensions of lowerBound and upperBound.
+    assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
+        " lowerBound are not the same as the dimensions of iterate.");
+    assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
+        " upperBound are not the same as the dimensions of iterate.");
     
     // Distribute particles in [lowerBound, upperBound].
     for (size_t i = 0; i < numParticles; i++)
@@ -91,18 +98,6 @@ class DefaultInit
     particleBestFitnesses.set_size(numParticles);
     particleBestFitnesses.fill(std::numeric_limits<double>::max());
   }
-
-  //! Retrieve value of lowerBound.
-  double LowerBound() const { return lowerBound; }
-
-  //! Modify value of lowerBound.
-  double& LowerBound() { return lowerBound; }
-
-  //! Retrieve value of upperBound.
-  double UpperBound() const { return upperBound; }
-
-  //! Modify value of upperBound.
-  double& UpperBound() { return upperBound; }
 
 };
 
