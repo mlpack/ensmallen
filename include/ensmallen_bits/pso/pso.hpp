@@ -76,8 +76,8 @@ class PSOType
    * @param explorationFactor Influence of the neighbours of the particle.
    */
   PSOType(const size_t numParticles = 64,
-          arma::vec lowerBound = arma::zeros<arma::vec>(1),
-	  arma::vec upperBound = arma::zeros<arma::vec>(1),
+          arma::vec lowerBound = arma::ones<arma::vec>(1),
+	  arma::vec upperBound = arma::ones<arma::vec>(1),
           const size_t maxIterations = 3000,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
@@ -92,6 +92,35 @@ class PSOType
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
           initPolicy(initPolicy) { /* Nothing to do */ }
+
+  /**
+   * Construct the particle swarm optimizer with the given function and
+   * parameters. The defaults here are not necessarily good for the given
+   * problem, so it is suggested that the values used be tailored to the task
+   * at hand.
+   *
+   * @param numParticles Number of particles in the swarm.
+   * @param maxIterations Number of iterations allowed.
+   * @param exploitationFactor Influence of the personal best of the particle.
+   * @param explorationFactor Influence of the neighbours of the particle.
+   */
+  PSOType(const size_t numParticles,
+          const double lowerBound,
+          const double upperBound,
+          const size_t maxIterations = 3000,
+          const double exploitationFactor = 2.05,
+          const double explorationFactor = 2.05,
+          const VelocityUpdatePolicy& velocityUpdatePolicy =
+              VelocityUpdatePolicy(),
+          const InitPolicy& initPolicy = InitPolicy()) :
+          numParticles(numParticles),
+          lowerBound(lowerBound * arma::ones<arma::vec>(1)),
+          upperBound(upperBound * arma::ones<arma::vec>(1)),
+          maxIterations(maxIterations),
+          exploitationFactor(exploitationFactor),
+          explorationFactor(explorationFactor),
+          velocityUpdatePolicy(velocityUpdatePolicy),
+          initPolicy(initPolicy) {/* Nothing to do */ }
 
   /**
    * Optimize the input function using PSO. The given variable that holds the

@@ -72,6 +72,16 @@ class DefaultInit
       upperBound = arma::ones<arma::vec>(iterate.n_rows);
     }
 
+    //Check if lowerBound and upperBound are vectors of a single dimension.
+    else if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 0)
+    {
+      const double lbScalar = lowerBound(0);
+      const double ubScalar = upperBound(0);
+      lowerBound = lbScalar * arma::ones<arma::vec>(iterate.n_rows);
+      lowerBound = -lowerBound;
+      upperBound = ubScalar * arma::ones<arma::vec>(iterate.n_rows);
+    }
+
     //Check the dimensions of lowerBound and upperBound.
     assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
         " lowerBound are not the same as the dimensions of iterate.");
