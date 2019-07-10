@@ -148,10 +148,14 @@ class AdaptiveStepsize
       gradientNorm = std::pow(arma::norm(gradient / backtrackingBatchSize, 2),
           2.0);
 
-      // Compute curvature.
-      double v = arma::trace(arma::trans(iterate - iteratePrev) *
-          (gradient - gradPrevIterate)) /
-          std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
+      // Compute curvature.  If it can't be computed (typically due to floating
+      // point representation issues), call it 0.  If the curvature is 0, the
+      // step size will not decay.
+      const double vNum = arma::trace(arma::trans(iterate - iteratePrev) *
+          (gradient - gradPrevIterate));
+      const double vDenom = std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
+      const double vTmp = vNum / vDenom;
+      const double v = std::isfinite(vTmp) ? vTmp : 0.0;
 
       // Update previous iterate.
       iteratePrev = iterate;

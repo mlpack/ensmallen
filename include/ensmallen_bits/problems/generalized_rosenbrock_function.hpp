@@ -53,10 +53,10 @@ class GeneralizedRosenbrockFunction
   GeneralizedRosenbrockFunction(const size_t n);
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
-  void Shuffle();
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
+ void Shuffle();
 
   //! Return 1 (the number of functions).
   size_t NumFunctions() const { return n - 1; }
@@ -68,7 +68,7 @@ class GeneralizedRosenbrockFunction
     return arma::conv_to<MatType>::from(initialPoint);
   }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -80,7 +80,7 @@ class GeneralizedRosenbrockFunction
                                        const size_t begin,
                                        const size_t batchSize = 1) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
@@ -88,7 +88,7 @@ class GeneralizedRosenbrockFunction
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -102,7 +102,7 @@ class GeneralizedRosenbrockFunction
                 GradType& gradient,
                 const size_t batchSize = 1) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.

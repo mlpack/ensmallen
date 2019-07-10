@@ -25,8 +25,7 @@ template<typename MatType = arma::mat, typename GradType = MatType>
 class TestFuncFW
 {
  public:
-  TestFuncFW()
-  {/* Nothing to do. */}
+  TestFuncFW() {/* Nothing to do. */}
 
   /**
    * Evaluation of the function.

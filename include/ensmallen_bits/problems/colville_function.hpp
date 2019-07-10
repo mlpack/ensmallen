@@ -45,9 +45,9 @@ class ColvilleFunction
   ColvilleFunction();
 
   /**
-  * Shuffle the order of function visitation. This may be called by the
-  * optimizer.
-  */
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
   void Shuffle();
 
   //! Return 1 (the number of functions).
@@ -57,7 +57,7 @@ class ColvilleFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-5; 3; 1; -9"); }
 
-  /*
+  /**
    * Evaluate a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -69,7 +69,7 @@ class ColvilleFunction
                                        const size_t begin,
                                        const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
@@ -77,7 +77,7 @@ class ColvilleFunction
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function for a particular batch-size.
    *
    * @param coordinates The function coordinates.
@@ -91,7 +91,7 @@ class ColvilleFunction
                 GradType& gradient,
                 const size_t batchSize) const;
 
-  /*
+  /**
    * Evaluate the gradient of a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
