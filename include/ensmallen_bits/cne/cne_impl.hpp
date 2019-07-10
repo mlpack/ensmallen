@@ -104,7 +104,7 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
       << std::endl;
 
   // Find the fitness before optimization using given iterate parameters.
-  ElemType lastBestFitness = function.Evaluate(iterate);
+  size_t lastBestFitness = function.Evaluate(iterate);
 
   // Iterate until maximum number of generations is obtained.
   for (size_t gen = 1; gen <= maxGenerations; gen++)
