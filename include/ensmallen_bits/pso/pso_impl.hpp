@@ -67,16 +67,22 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   {
     // Calculate fitness value.
     particleFitnesses(i) = f.Evaluate(particlePositions.slice(i));
-    // Compare and copy fitness and position to particle best.
-    if (particleFitnesses(i) < particleBestFitnesses(i))
-    {
-      particleBestFitnesses(i) = particleFitnesses(i);
-      particleBestPositions.slice(i) = particlePositions.slice(i);
-    }
+    particleBestFitnesses(i) = particleFitnesses(i);
   }
-
-  // Run PSO.
-  for (size_t i = 0; i < maxIterations; i++)
+  
+  // Declare vector to keep track of improvements over a number of iterations.
+  arma::vec performanceHorizon = arma::zeros<arma::vec>(horizonSize);
+  // Variable to store the position of the best particle.
+  size_t bestParticle = 0;
+  //Find the best fitness.
+  double bestFitness = arma::datum::inf;
+  // Run PSO for horizonSize number of iterations.
+  // This will allow the performanceHorizon to be updated.
+  // With some initial values in this, we may proceed with the remaining steps
+  // in the PSO method.
+  // The performanceHorizon will be updated with the best particle
+  // in a FIFO manner.
+  for (size_t i = 0; i < horizonSize; i++)
   {
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; j < numParticles; j++)
@@ -98,18 +104,68 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
 
     // In-place update of particle positions.
     particlePositions += particleVelocities;
+
+    // Find the best particle.
+    for (size_t j = 0; j < numParticles; j++)
+    {
+      if (particleBestFitnesses(j) < bestFitness)
+      {
+        bestParticle = j;
+        bestFitness = particleBestFitnesses(bestParticle);
+      }
+    }
+
+    //Append bestFitness to performanceHorizon.
+    performanceHorizon(i) = bestFitness;
+
   }
 
-  // Find best particle.
-  size_t bestParticle = 0;
-  double bestFitness = particleBestFitnesses(bestParticle);
-  for (size_t i = 1; i < numParticles; i++)
+  // Run the remaining iterations of PSO.
+  for (size_t i = 0; i < maxIterations - horizonSize; i++)
   {
-    if (particleBestFitnesses(i) < bestFitness)
+    //Check if there is any improvement over the horizon.
+    // If there is no significant improvement, terminate.
+    if (performanceHorizon(0) - performanceHorizon(horizonSize - 1) < 
+        impTolerance)
+	    break;
+    
+    // Calculate fitness and evaluate personal best.
+    for (size_t j = 0; j < numParticles; j++)
     {
-      bestParticle = i;
-      bestFitness = particleBestFitnesses(bestParticle);
+      particleFitnesses(j) = f.Evaluate(particlePositions.slice(j));
+      // Compare and copy fitness and position to particle best.
+      if (particleFitnesses(j) < particleBestFitnesses(j))
+      {
+        particleBestFitnesses(j) = particleFitnesses(j);
+        particleBestPositions.slice(j) = particlePositions.slice(j);
+      }
     }
+
+    // Evaluate local best and update velocity.
+    velocityUpdatePolicy.Update(particlePositions,
+        particleVelocities,
+        particleBestPositions,
+        particleBestFitnesses);
+
+    // In-place update of particle positions.
+    particlePositions += particleVelocities;
+
+    //Find the best particle.
+    for (size_t j = 0; j < numParticles; j++)
+    {
+      if (particleBestFitnesses(j) < bestFitness)
+      {
+        bestParticle = j;
+        bestFitness = particleBestFitnesses(bestParticle);
+      }
+    }
+
+    //Left-rotate performanceHorizon.
+    performanceHorizon.subvec(0, horizonSize - 2) = 
+        performanceHorizon.subvec(1, horizonSize - 1);
+
+    //Append bestFitness to performanceHorizon.
+    performanceHorizon(horizonSize - 1) = bestFitness;
   }
 
   // Copy results back.
