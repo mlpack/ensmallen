@@ -48,9 +48,9 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
 
   const double result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0.0).margin(1e-5));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-4));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-4));
+  REQUIRE(result == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-3));
+  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-3));
 }
 
 /**
