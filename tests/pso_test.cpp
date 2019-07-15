@@ -43,7 +43,7 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
   lowerBound.fill(50);
   upperBound.fill(60); 
 
-  LBestPSO s(64, lowerBound, upperBound);
+  LBestPSO s(64, lowerBound, upperBound, 3000, 400, 1e-30, 2.05, 2.05);
   arma::vec coordinates = f.GetInitialPoint();
 
   const double result = s.Optimize(f, coordinates);
@@ -221,13 +221,13 @@ TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
   lowerBound.fill(40);
   upperBound.fill(50);
   
-  LBestPSO s(64, lowerBound, upperBound);
+  LBestPSO s(4500, lowerBound, upperBound, 3000, 50, 1e-20, 1.0, 3.0);
   arma::mat coordinates = arma::mat("0; 10");
   const double result = s.Optimize(f, coordinates);
   
-  REQUIRE(result == Approx(0.292579).margin(0.01));
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.01));
+  REQUIRE(result == Approx(0.292579).margin(0.1));
+  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
+  REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.1));
 }
 
 /**
