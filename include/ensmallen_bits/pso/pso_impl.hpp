@@ -15,6 +15,7 @@
 
 #include "pso.hpp"
 #include <ensmallen_bits/function.hpp>
+#include <queue>
 
 namespace ens {
 /* After the velocity of each particle is updated at the end of each iteration
@@ -62,7 +63,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
       numParticles,
       iterate);
 
-  // User provided weights replacement performed here.
+  // Calculate initial fitness of population.
   for (size_t i = 0; i < numParticles; i++)
   {
     // Calculate fitness value.
@@ -70,12 +71,13 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     particleBestFitnesses(i) = particleFitnesses(i);
   }
   
-  // Declare vector to keep track of improvements over a number of iterations.
-  arma::vec performanceHorizon = arma::zeros<arma::vec>(horizonSize);
+  // Declare queue to keep track of improvements over a number of iterations.
+  queue <double> performanceHorizon;
   // Variable to store the position of the best particle.
   size_t bestParticle = 0;
   //Find the best fitness.
   double bestFitness = arma::datum::inf;
+  
   // Run PSO for horizonSize number of iterations.
   // This will allow the performanceHorizon to be updated.
   // With some initial values in this, we may proceed with the remaining steps
@@ -116,18 +118,17 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     }
 
     //Append bestFitness to performanceHorizon.
-    performanceHorizon(i) = bestFitness;
+    performanceHorizon.push(bestFitness);
 
   }
 
   // Run the remaining iterations of PSO.
   for (size_t i = 0; i < maxIterations - horizonSize; i++)
   {
-    //Check if there is any improvement over the horizon.
+    // Check if there is any improvement over the horizon.
     // If there is no significant improvement, terminate.
-    if (performanceHorizon(0) - performanceHorizon(horizonSize - 1) < 
-        impTolerance)
-	    break;
+    if (performanceHorizon.front() - performanceHorizon.back() < impTolerance)
+      break;
     
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; j < numParticles; j++)
@@ -160,12 +161,10 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
       }
     }
 
-    //Left-rotate performanceHorizon.
-    performanceHorizon.subvec(0, horizonSize - 2) = 
-        performanceHorizon.subvec(1, horizonSize - 1);
-
-    //Append bestFitness to performanceHorizon.
-    performanceHorizon(horizonSize - 1) = bestFitness;
+    // Pop the oldest value from performanceHorizon.
+    performanceHorizon.pop();
+    // Push most recent bestFitness to performanceHorizon.
+    performanceHorizon.push(bestFitness);
   }
 
   // Copy results back.
