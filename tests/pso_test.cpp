@@ -30,11 +30,9 @@ TEST_CASE("LBestPSOSphereFunctionTest", "[PSOTest]")
     FAIL("LBest PSO optimization reported failure for Sphere Function.");
   
   double finalValue = f.Evaluate(coords);
-  //BOOST_REQUIRE_SMALL(result, 1e-5);
   REQUIRE(finalValue <= 1e-5);
   for (size_t j = 0; j < 4; ++j)
-    //BOOST_REQUIRE_SMALL(coordinates[j], 1e-3);
-	REQUIRE(coords[j] <= 1e-3); //work on this
+    REQUIRE(coords[j] <= 1e-3);
 }
 
 /**
@@ -45,7 +43,7 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
 {
   RosenbrockFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(50);
@@ -70,7 +68,7 @@ TEST_CASE("LBestPSORosenbrockDoubleTest","[PSOTest]")
 {
   RosenbrockFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   double lowerBound = 50;
   double upperBound = 60;
 
@@ -91,7 +89,7 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
 {
   CrossInTrayFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(8);
@@ -113,7 +111,7 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
 {
   AckleyFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(4);
@@ -135,7 +133,7 @@ TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
 {
   BealeFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(3);
@@ -158,7 +156,7 @@ TEST_CASE("LBestPSOGoldsteinPriceFunctionTest", "[PSOTest]")
 {
   GoldsteinPriceFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(1.6);
@@ -180,7 +178,7 @@ TEST_CASE("LBestPSOLevyFunctionN13Test", "[PSOTest]")
 {
   LevyFunctionN13 f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(-10);
@@ -202,7 +200,7 @@ TEST_CASE("LBestPSOHimmelblauFunctionTest", "[PSOTest]")
 {
   HimmelblauFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(0);
@@ -224,7 +222,7 @@ TEST_CASE("LBestPSOThreeHumpCamelFunctionTest", "[PSOTest]")
 {
   ThreeHumpCamelFunction f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(-5);
@@ -246,7 +244,7 @@ TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
 {
   SchafferFunctionN4 f;
  
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(40);
@@ -268,7 +266,7 @@ TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
 {
   SchafferFunctionN2 f;
 
-  //Setting bounds for the initial swarm population.
+  // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(40);

@@ -28,13 +28,10 @@ class DefaultInit
   /**
    * Constructor for the DefaultInit policy. The policy initializes particle
    * posiitons in the range [lowerBound, upperBound]. Defaults to [-1, 1].
-   *
-   * @param lowerBound Lower bound of the position initialization range.
-   * @param upperBound Upper bound of the position initialization range.
    */
   DefaultInit()
   {
-    /* Nothing to do */
+    /* Nothing to do.*/
   }
 
   /**
@@ -44,6 +41,8 @@ class DefaultInit
    *
    * @param iterate Coordinates of the initial point for training.
    * @param numParticles The number of particles in the swarm.
+   * @param lowerBound Lower bound of the position initialization range.
+   * @param upperBound Upper bound of the position initialization range.
    * @param particlePositions Current positions of particles.
    * @param particleVelocities Current velocities of particles.
    * @param particleFitnesses Current fitness values of particles.
@@ -52,7 +51,7 @@ class DefaultInit
    */
   void Initialize(const arma::mat& iterate,
                   const size_t numParticles,
-		  arma::vec lowerBound,
+                  arma::vec lowerBound,
                   arma::vec upperBound,
                   arma::cube& particlePositions,
                   arma::cube& particleVelocities,
@@ -63,7 +62,7 @@ class DefaultInit
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
 
-    //Check if lowerBound is equal to upperBound. If equal, reinitialize.
+    // Check if lowerBound is equal to upperBound. If equal, reinitialize.
     arma::umat lbEquality = (lowerBound == upperBound);
     if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 1)
     {
@@ -72,7 +71,7 @@ class DefaultInit
       upperBound = arma::ones<arma::vec>(iterate.n_rows);
     }
 
-    //Check if lowerBound and upperBound are vectors of a single dimension.
+    // Check if lowerBound and upperBound are vectors of a single dimension.
     else if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 0)
     {
       const double lbScalar = lowerBound(0);
@@ -82,11 +81,11 @@ class DefaultInit
       upperBound = ubScalar * arma::ones<arma::vec>(iterate.n_rows);
     }
 
-    //Check the dimensions of lowerBound and upperBound.
+    // Check the dimensions of lowerBound and upperBound.
     assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
-        " lowerBound are not the same as the dimensions of iterate.");
+        "lowerBound are not the same as the dimensions of iterate.");
     assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
-        " upperBound are not the same as the dimensions of iterate.");
+        "upperBound are not the same as the dimensions of iterate.");
     
     // Distribute particles in [lowerBound, upperBound].
     for (size_t i = 0; i < numParticles; i++)
@@ -100,7 +99,7 @@ class DefaultInit
 
     // Initialize current fitness values to infinity.
     particleFitnesses.set_size(numParticles);
-    particleFitnesses.fill(std::numeric_limits<double>::max());
+    particleFitnesses.fill(arma::datum::inf);
 
     // Copy to personal best values for first iteration.
     particleBestPositions = particlePositions;
