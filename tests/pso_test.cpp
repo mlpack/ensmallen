@@ -16,6 +16,10 @@
 using namespace ens;
 using namespace ens::test;
 
+/**
+ * Test the PSO optimizer on the Sphere Function.
+ */
+
 TEST_CASE("LBestPSOSphereFunctionTest", "[PSOTest]")
 {
   SphereFunction f(4);
@@ -32,6 +36,10 @@ TEST_CASE("LBestPSOSphereFunctionTest", "[PSOTest]")
     //BOOST_REQUIRE_SMALL(coordinates[j], 1e-3);
 	REQUIRE(coords[j] <= 1e-3); //work on this
 }
+
+/**
+ * Test the PSO optimizer on the Rosenbrock Function.
+ */
 
 TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
 {
@@ -54,7 +62,30 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on Cross-in-Tray Function.
+ * Test the PSO optimizer on the Rosenbrock function with lowerBound and
+ * upperbound of type double.
+ */
+
+TEST_CASE("LBestPSORosenbrockDoubleTest","[PSOTest]")
+{
+  RosenbrockFunction f;
+
+  //Setting bounds for the initial swarm population.
+  double lowerBound = 50;
+  double upperBound = 60;
+
+  LBestPSO s(64, lowerBound, upperBound, 3000, 400, 1e-30, 2.05, 2.05);
+  arma::vec coordinates = f.GetInitialPoint();
+
+  const double result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-3));
+  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-3));
+}
+
+/**
+ * Test the PSO optimizer on Cross-in-Tray Function.
  */
 TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
 {
@@ -76,7 +107,7 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on the Ackley Function.
+ * Test the PSO optimizer on the Ackley Function.
  */
 TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
 {
@@ -98,7 +129,7 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on the Beale Function.
+ * Test the PSO optimizer on the Beale Function.
  */
 TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
 {
@@ -121,7 +152,7 @@ TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on the Goldstein-Price Function.
+ * Test the PSO optimizer on the Goldstein-Price Function.
  */
 TEST_CASE("LBestPSOGoldsteinPriceFunctionTest", "[PSOTest]")
 {
@@ -143,7 +174,7 @@ TEST_CASE("LBestPSOGoldsteinPriceFunctionTest", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on the Levi Function.
+ * Test the PSO optimizer on the Levi Function.
  */
 TEST_CASE("LBestPSOLevyFunctionN13Test", "[PSOTest]")
 {
@@ -165,7 +196,7 @@ TEST_CASE("LBestPSOLevyFunctionN13Test", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on the Himmelblau Function.
+ * Test the PSO optimizer on the Himmelblau Function.
  */
 TEST_CASE("LBestPSOHimmelblauFunctionTest", "[PSOTest]")
 {
@@ -187,7 +218,7 @@ TEST_CASE("LBestPSOHimmelblauFunctionTest", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on the Three-hump Camel Function.
+ * Test the PSO optimizer on the Three-hump Camel Function.
  */
 TEST_CASE("LBestPSOThreeHumpCamelFunctionTest", "[PSOTest]")
 {
@@ -209,7 +240,7 @@ TEST_CASE("LBestPSOThreeHumpCamelFunctionTest", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on Schaffer function N.4.
+ * Test the PSO optimizer on Schaffer function N.4.
  */
 TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
 {
@@ -221,7 +252,7 @@ TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
   lowerBound.fill(40);
   upperBound.fill(50);
   
-  LBestPSO s(4500, lowerBound, upperBound, 3000, 50, 1e-20, 1.0, 3.0);
+  LBestPSO s(15000, lowerBound, upperBound, 3000, 200, 1e-20, 1.5, 3.0);
   arma::mat coordinates = arma::mat("0; 10");
   const double result = s.Optimize(f, coordinates);
   
@@ -231,7 +262,7 @@ TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
 }
 
 /**
- * Test the CNE optimizer on Schaffer Function N.2.
+ * Test the PSO optimizer on Schaffer Function N.2.
  */
 TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
 {
