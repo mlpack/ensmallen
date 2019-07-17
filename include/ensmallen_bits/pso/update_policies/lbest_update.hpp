@@ -46,7 +46,7 @@ namespace ens {
  *          url = {https://doi.org/10.1007/s11721-007-0002-0},
  *          year = {2007},
  *          month = aug,
- *          publisher = {Springer Science and Business Media {LLC}},
+ *          publisher = {Springer},
  *          volume = {1},
  *          number = {1},
  *          pages = {33--57},

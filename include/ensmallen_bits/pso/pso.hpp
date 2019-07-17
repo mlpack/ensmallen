@@ -71,7 +71,11 @@ class PSOType
    * at hand.
    *
    * @param numParticles Number of particles in the swarm.
+   * @param lowerBound Lower bound of the coordinates of the initial population.
+   * @param upperBound Upper bound of the coordinates of the initial population.
    * @param maxIterations Number of iterations allowed.
+   * @param horizonSize Size of the lookback-horizon for computing improvement.
+   * @param impTolerance Improvement threshold for termination.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
    */
@@ -104,7 +108,11 @@ class PSOType
    * at hand.
    *
    * @param numParticles Number of particles in the swarm.
+   * @param lowerBound Lower bound of the coordinates of the initial population.
+   * @param upperBound Upper bound of the coordinates of the initial population.
    * @param maxIterations Number of iterations allowed.
+   * @param horizonSize Size of the lookback-horizon for computing improvement.
+   * @param impTolerance Improvement threshold for termination.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
    */
@@ -168,6 +176,18 @@ class PSOType
   //! Modify value of maxIterations.
   size_t& MaxIterations() { return maxIterations; }
 
+  //! Retrieve value of horizonSize.
+  size_t HorizonSize() const { return horizonSize; }
+
+  //! Modify value of horizonSize.
+  size_t& HorizonSize() { return horizonSize; }
+
+  //! Retrieve value of impTolerance.
+  size_t ImpTolerance() const { return impTolerance; }
+
+  //! Modify value of impTolerance.
+  size_t& ImpTolerance() { return impTolerance; }
+
   //! Retrieve value of exploitationFactor.
   double ExploitationFactor() const { return exploitationFactor; }
 
@@ -184,9 +204,9 @@ class PSOType
 
   //! Number of particles in the swarm.
   size_t numParticles;
-  //! Lower bound of the initual swarm.
+  //! Lower bound of the initial swarm.
   arma::vec lowerBound;
-  //! Upper bound of the initual swarm.
+  //! Upper bound of the initial swarm.
   arma::vec upperBound;
   //! Maximum number of iterations for which the optimizer will run.
   size_t maxIterations;
