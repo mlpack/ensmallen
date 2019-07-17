@@ -81,10 +81,10 @@ class PSOType
    */
   PSOType(const size_t numParticles = 64,
           arma::vec lowerBound = arma::ones<arma::vec>(1),
-	  arma::vec upperBound = arma::ones<arma::vec>(1),
+          arma::vec upperBound = arma::ones<arma::vec>(1),
           const size_t maxIterations = 3000,
-	  const size_t horizonSize = 350,
-	  const double impTolerance = 1e-10,
+          const size_t horizonSize = 350,
+          const double impTolerance = 1e-10,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
@@ -94,12 +94,12 @@ class PSOType
           lowerBound(lowerBound),
           upperBound(upperBound),
           maxIterations(maxIterations),
-	  horizonSize(horizonSize),
-	  impTolerance(impTolerance),
+          horizonSize(horizonSize),
+          impTolerance(impTolerance),
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy) { /* Nothing to do */ }
+          initPolicy(initPolicy) { /* Nothing to do. */ }
 
   /**
    * Construct the particle swarm optimizer with the given function and
@@ -120,8 +120,8 @@ class PSOType
           const double lowerBound,
           const double upperBound,
           const size_t maxIterations = 3000,
-	  const size_t horizonSize = 350,
-	  const double impTolerance = 1e-10,
+          const size_t horizonSize = 350,
+          const double impTolerance = 1e-10,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
@@ -131,12 +131,12 @@ class PSOType
           lowerBound(lowerBound * arma::ones<arma::vec>(1)),
           upperBound(upperBound * arma::ones<arma::vec>(1)),
           maxIterations(maxIterations),
-	  horizonSize(horizonSize),
-	  impTolerance(impTolerance),
+          horizonSize(horizonSize),
+          impTolerance(impTolerance),
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy) {/* Nothing to do */ }
+          initPolicy(initPolicy) {/* Nothing to do. */ }
 
   /**
    * Optimize the input function using PSO. The given variable that holds the
