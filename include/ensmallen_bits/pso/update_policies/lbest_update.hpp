@@ -70,10 +70,10 @@ class LBestUpdate
    * @param numParticles The number of particles in the swarm.
    * @param iterate The user input, used for shaping intermediate vectors.
    */
-  void Initialize(const double& exploitationFactor,
-                  const double& explorationFactor,
-                  const size_t& numParticles,
-                  const arma::mat& iterate)
+  void Initialize(const double exploitationFactor,
+                  const double explorationFactor,
+                  const size_t numParticles,
+                  arma::mat& iterate)
   {
     // Copy values to aliases.
     n = numParticles;
@@ -106,10 +106,10 @@ class LBestUpdate
    * @param particleBestPositions The personal best coordinates of particles.
    * @param particleBestFitnesses The personal best fitness values of particles.
    */
-  void Update(const arma::cube& particlePositions,
+  void Update(arma::cube& particlePositions,
               arma::cube& particleVelocities,
-              const arma::cube& particleBestPositions,
-              const arma::vec& particleBestFitnesses)
+              arma::cube& particleBestPositions,
+              arma::vec& particleBestFitnesses)
   {
     // Velocity update logic.
     for (size_t i = 0; i < n; i++)
@@ -151,8 +151,8 @@ class LBestUpdate
   arma::vec localBestIndices;
 
   // Helper functions for calculating neighbours.
-  inline size_t left(const size_t index) { return (index + n - 1) % n; }
-  inline size_t right(const size_t index) { return (index + 1) % n; }
+  inline size_t left(size_t index) { return (index + n - 1) % n; }
+  inline size_t right(size_t index) { return (index + 1) % n; }
 };
 
 } // ens
