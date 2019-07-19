@@ -76,7 +76,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   // Variable to store the position of the best particle.
   size_t bestParticle = 0;
   // Find the best fitness.
-  double bestFitness = arma::datum::inf;
+  double bestFitness = std::numeric_limits<double>::max();
   
   // Run PSO for horizonSize number of iterations.
   // This will allow the performanceHorizon to be updated.

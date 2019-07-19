@@ -51,8 +51,8 @@ class DefaultInit
    */
   void Initialize(const arma::mat& iterate,
                   const size_t numParticles,
-                  arma::vec lowerBound,
-                  arma::vec upperBound,
+                  arma::vec& lowerBound,
+                  arma::vec& upperBound,
                   arma::cube& particlePositions,
                   arma::cube& particleVelocities,
                   arma::mat& particleFitnesses,
@@ -97,7 +97,7 @@ class DefaultInit
 
     // Initialize current fitness values to infinity.
     particleFitnesses.set_size(numParticles);
-    particleFitnesses.fill(arma::datum::inf);
+    particleFitnesses.fill(std::numeric_limits<double>::max());
 
     // Copy to personal best values for first iteration.
     particleBestPositions = particlePositions;
