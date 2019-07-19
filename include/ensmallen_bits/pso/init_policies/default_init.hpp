@@ -66,8 +66,7 @@ class DefaultInit
     arma::umat lbEquality = (lowerBound == upperBound);
     if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 1)
     {
-      lowerBound = arma::ones<arma::vec>(iterate.n_rows);
-      lowerBound = -lowerBound;
+      lowerBound = -arma::ones<arma::vec>(iterate.n_rows);
       upperBound = arma::ones<arma::vec>(iterate.n_rows);
     }
 
@@ -76,8 +75,7 @@ class DefaultInit
     {
       const double lbScalar = lowerBound(0);
       const double ubScalar = upperBound(0);
-      lowerBound = lbScalar * arma::ones<arma::vec>(iterate.n_rows);
-      lowerBound = -lowerBound;
+      lowerBound = -lbScalar * arma::ones<arma::vec>(iterate.n_rows);
       upperBound = ubScalar * arma::ones<arma::vec>(iterate.n_rows);
     }
 
