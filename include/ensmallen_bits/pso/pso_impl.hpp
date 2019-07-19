@@ -119,7 +119,6 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
 
     // Append bestFitness to performanceHorizon.
     performanceHorizon.push(bestFitness);
-
   }
 
   // Run the remaining iterations of PSO.
