@@ -1402,7 +1402,7 @@ const double result = s.Optimize(f, coords)
 RosenbrockFunction f;
 arma::vec coordinates = f.GetInitialPoint();
 
-// Setting bounds for the initial swarm population of type double.
+// Setting bounds for the initial swarm population as type double.
 double lowerBound = 50;
 double upperBound = 60;
 
