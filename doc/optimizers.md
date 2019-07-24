@@ -1344,13 +1344,13 @@ PSO is an evolutionary approach to optimization that is inspired by flocks or bi
 
 #### Constructors
 
- * `PSOType()`
- * `PSOType(`_`numParticles`_`)`
- * `PSOType(`_`numParticles, lowerBound, upperBound`_`)`
- * `PSOType(`_`numParticles, lowerBound, upperBound, maxIterations`_`)`
- * `PSOType(`_`numParticles, lowerBound, upperBound, maxIterations, horizonSize`_`)`
- * `PSOType(`_`numParticles, lowerBound, upperBound, maxIterations, horizonSize, impTolerance`_`)`
- * `PSOType(`_`numParticles, lowerBound, upperBound, maxIterations, horizonSize, impTolerance, exploitationFactor, explorationFactor`_`)`
+ * `PSOType<`_`VelocityUpdatePolicy, InitPolicy`_`>()`
+ * `PSOType<`_`VelocityUpdatePolicy, InitPolicy`_`>(`_`numParticles`_`)`
+ * `PSOType<`_`VelocityUpdatePolicy, InitPolicy`_`>(`_`numParticles, lowerBound, upperBound`_`)`
+ * `PSOType<`_`VelocityUpdatePolicy, InitPolicy`_`>(`_`numParticles, lowerBound, upperBound, maxIterations`_`)`
+ * `PSOType<`_`VelocityUpdatePolicy, InitPolicy`_`>(`_`numParticles, lowerBound, upperBound, maxIterations, horizonSize`_`)`
+ * `PSOType<`_`VelocityUpdatePolicy, InitPolicy`_`>(`_`numParticles, lowerBound, upperBound, maxIterations, horizonSize, impTolerance`_`)`
+ * `PSOType<`_`VelocityUpdatePolicy, InitPolicy`_`>(`_`numParticles, lowerBound, upperBound, maxIterations, horizonSize, impTolerance, exploitationFactor, explorationFactor`_`)`
 
 #### Attributes
 
