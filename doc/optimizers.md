@@ -1372,7 +1372,7 @@ Attributes of the optimizer may also be changed via the member methods
 `HorizonSize()`, `ImpTolerance()`,`ExploitationFactor()`, and
 `ExplorationFactor()`.
 
-At present, only the local-best variant of PSO is present in ensmallen. The optimizer may be initialized using the class type `LBestPSO`.
+At present, only the local-best variant of PSO is present in ensmallen. The optimizer may be initialized using the class type `LBestPSO`, which is an alias for `PSOType<LBestUpdate, DefaultInit>`. 
 
 #### Examples:
 
@@ -1381,7 +1381,7 @@ SphereFunction f(4);
 arma::vec coordinates = f.GetInitialPoint();
 
 LBestPSO s;
-const double result = s.Optimize(f, coords)
+const double result = s.Optimize(f, coordinates)
 ```
 
 ```c++
@@ -1389,13 +1389,11 @@ RosenbrockFunction f;
 arma::vec coordinates = f.GetInitialPoint();
 
 // Setting bounds for the initial swarm population of size 2.
-arma::vec lowerBound(2);
-arma::vec upperBound(2);
-lowerBound.fill(50);
-upperBound.fill(60);
+arma::vec lowerBound("50 50");
+arma::vec upperBound("60 60");
 
 LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
-const double result = s.Optimize(f, coords)
+const double result = s.Optimize(f, coordinates)
 ```
 
 ```c++
@@ -1407,7 +1405,7 @@ double lowerBound = 50;
 double upperBound = 60;
 
 LBestPSO s(64, lowerBound, upperBound, 3000, 400, 1e-30, 2.05, 2.05);
-const double result = s.Optimize(f, coords)
+const double result = s.Optimize(f, coordinates)
 ```
 
 #### See also:
