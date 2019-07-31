@@ -28,17 +28,17 @@ inline QHAdam::QHAdam(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const bool exactObjective,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              exactObjective,
               QHAdamUpdate(epsilon, beta1, beta2, v1, v2),
               NoDecay(),
-              resetPolicy)
+              resetPolicy,
+              exactObjective)
 { /* Nothing to do. */ }
 
 } // namespace ens

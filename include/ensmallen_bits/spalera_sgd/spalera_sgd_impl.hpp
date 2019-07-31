@@ -29,9 +29,9 @@ SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
                                         const double epsilon,
                                         const double adaptRate,
                                         const bool shuffle,
-                                        const bool exactObjective,
                                         const DecayPolicyType& decayPolicy,
-                                        const bool resetPolicy) :
+                                        const bool resetPolicy,
+                                        const bool exactObjective) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),

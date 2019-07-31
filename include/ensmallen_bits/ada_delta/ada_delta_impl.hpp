@@ -26,17 +26,17 @@ inline AdaDelta::AdaDelta(const double stepSize,
                           const size_t maxIterations,
                           const double tolerance,
                           const bool shuffle,
-                          const bool exactObjective,
-                          const bool resetPolicy) :
+                          const bool resetPolicy,
+                          const bool exactObjective) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
               tolerance,
               shuffle,
-              exactObjective,
               AdaDeltaUpdate(rho, epsilon),
               NoDecay(),
-              resetPolicy)
+              resetPolicy,
+              exactObjective)
 { /* Nothing to do. */ }
 
 } // namespace ens

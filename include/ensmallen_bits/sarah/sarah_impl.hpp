@@ -27,8 +27,8 @@ SARAHType<UpdatePolicyType>::SARAHType(
     const size_t innerIterations,
     const double tolerance,
     const bool shuffle,
-    const bool exactObjective,
-    const UpdatePolicyType& updatePolicy) :
+    const UpdatePolicyType& updatePolicy,
+    const bool exactObjective) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),

@@ -26,22 +26,22 @@ SGDR<UpdatePolicyType>::SGDR(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const bool exactObjective,
     const UpdatePolicyType& updatePolicy,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     batchSize(batchSize),
     optimizer(OptimizerType(stepSize,
                             batchSize,
                             maxIterations,
                             tolerance,
                             shuffle,
-                            exactObjective,
                             updatePolicy,
                             CyclicalDecay(
                                 epochRestart,
                                 multFactor,
                                 stepSize),
-                            resetPolicy))
+                            resetPolicy,
+                            exactObjective))
 {
   /* Nothing to do here */
 }

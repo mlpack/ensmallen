@@ -28,10 +28,10 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const bool exactObjective,
     const UpdatePolicyType& updatePolicy,
     const DecayPolicyType& decayPolicy,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),

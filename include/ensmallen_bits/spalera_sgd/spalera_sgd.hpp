@@ -93,11 +93,11 @@ class SPALeRASGD
    * @param adaptRate Agnostic learning rate update rate.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *    function is visited in linear order.
-   * @param exactObjective Calculate the exact objective (Default: estimate the
-   *        final objective obtained on the last pass over the data).
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
    * @param resetPolicy Flag that determines whether update policy parameters
    *    are reset before every Optimize call.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SPALeRASGD(const double stepSize = 0.01,
              const size_t batchSize = 32,
@@ -108,9 +108,9 @@ class SPALeRASGD
              const double epsilon = 1e-6,
              const double adaptRate = 3.10e-8,
              const bool shuffle = true,
-             const bool exactObjective = false,
              const DecayPolicyType& decayPolicy = DecayPolicyType(),
-             const bool resetPolicy = true);
+             const bool resetPolicy = true,
+             const bool exactObjective = false);
 
   /**
    * Optimize the given function using SPALeRA SGD.  The given starting point

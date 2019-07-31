@@ -80,14 +80,14 @@ class SnapshotSGDR
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the mini-batch order is shuffled; otherwise, each
    *        mini-batch is visited in linear order.
-   * @param exactObjective Calculate the exact objective (Default: estimate the
-   *        final objective obtained on the last pass over the data).
    * @param snapshots Maximum number of snapshots.
    * @param accumulate Accumulate the snapshot parameter (default true).
    * @param updatePolicy Instantiated update policy used to adjust the given
    *        parameters.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SnapshotSGDR(const size_t epochRestart = 50,
                const double multFactor = 2.0,
@@ -96,11 +96,11 @@ class SnapshotSGDR
                const size_t maxIterations = 100000,
                const double tolerance = 1e-5,
                const bool shuffle = true,
-               const bool exactObjective = false,
                const size_t snapshots = 5,
                const bool accumulate = true,
                const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
-               const bool resetPolicy = true);
+               const bool resetPolicy = true,
+               const bool exactObjective = false);
 
   /**
    * Optimize the given function using SGDR.  The given starting point
