@@ -83,23 +83,23 @@ class SGD
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *     function is visited in linear order.
-   * @param exactObjective Calculate the exact objective (Default: estimate the
-   *        final objective obtained on the last pass over the data).
    * @param updatePolicy Instantiated update policy used to adjust the given
    *                     parameters.
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
    * @param resetPolicy Flag that determines whether update policy parameters
    *                    are reset before every Optimize call.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SGD(const double stepSize = 0.01,
       const size_t batchSize = 32,
       const size_t maxIterations = 100000,
       const double tolerance = 1e-5,
       const bool shuffle = true,
-      const bool exactObjective = false,
       const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
       const DecayPolicyType& decayPolicy = DecayPolicyType(),
-      const bool resetPolicy = true);
+      const bool resetPolicy = true,
+      const bool exactObjective = false);
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given

@@ -62,10 +62,10 @@ class AdaGrad
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *        function is visited in linear order.
-   * @param exactObjective Calculate the exact objective (Default: estimate the
-   *        final objective obtained on the last pass over the data).
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   AdaGrad(const double stepSize = 0.01,
           const size_t batchSize = 32,
@@ -73,8 +73,8 @@ class AdaGrad
           const size_t maxIterations = 100000,
           const double tolerance = 1e-5,
           const bool shuffle = true,
-          const bool exactObjective = false,
-          const bool resetPolicy = true);
+          const bool resetPolicy = true,
+          const bool exactObjective = false);
 
   /**
    * Optimize the given function using AdaGrad. The given starting point will

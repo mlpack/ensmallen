@@ -26,11 +26,11 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const bool exactObjective,
     const size_t snapshots,
     const bool accumulate,
     const UpdatePolicyType& updatePolicy,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     batchSize(batchSize),
     accumulate(accumulate),
     exactObjective(exactObjective),
@@ -39,7 +39,6 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
                             maxIterations,
                             tolerance,
                             shuffle,
-                            exactObjective,
                             updatePolicy,
                             SnapshotEnsembles(
                                 epochRestart,
@@ -47,7 +46,8 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
                                 stepSize,
                                 maxIterations,
                                 snapshots),
-                            resetPolicy))
+                            resetPolicy,
+                            exactObjective))
 {
   /* Nothing to do here */
 }
