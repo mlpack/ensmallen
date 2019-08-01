@@ -4,6 +4,9 @@
 
   * Reduce runtime of tests (#118).
 
+  * Introduce local-best particle swarm optimization, `LbestPSO`, for
+    unconstrained optimization problems (#86).
+
 ### ensmallen 1.15.1
 ###### 2019-05-22
   * Fix -Wreorder in `qhadam` warning (#115).
