@@ -83,6 +83,7 @@
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
 #include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
+#include "ensmallen_bits/pso/pso.hpp"
 #include "ensmallen_bits/rmsprop/rmsprop.hpp"
 
 #include "ensmallen_bits/sa/sa.hpp"

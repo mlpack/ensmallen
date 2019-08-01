@@ -23,6 +23,7 @@ set(ENSMALLEN_TESTS_SOURCES
     nesterov_momentum_sgd_test.cpp
     parallel_sgd_test.cpp
     proximal_test.cpp
+    pso_test.cpp
     quasi_hyperbolic_momentum_sgd_test.cpp
     rmsprop_test.cpp
     sa_test.cpp
@@ -54,4 +55,4 @@ add_custom_command(TARGET ${PROJECT_NAME}
 
 enable_testing()
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME}
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
