@@ -14,7 +14,7 @@ gradients.
  * `AdaDelta(`_`stepSize`_`)`
  * `AdaDelta(`_`stepSize, batchSize`_`)`
  * `AdaDelta(`_`stepSize, batchSize, rho, epsilon, maxIterations, tolerance, shuffle`_`)`
- * `AdaDelta(`_`stepSize, batchSize, rho, epsilon, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ * `AdaDelta(`_`stepSize, batchSize, rho, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -27,12 +27,12 @@ gradients.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `Rho()`, `Epsilon()`, `MaxIterations()`,
-`Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples:
 
@@ -65,7 +65,7 @@ parameters.
  - `AdaGrad(`_`stepSize`_`)`
  - `AdaGrad(`_`stepSize, batchSize`_`)`
  - `AdaGrad(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle`_`)`
- - `AdaGrad(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ - `AdaGrad(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -77,12 +77,12 @@ parameters.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
-`Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples:
 
@@ -114,7 +114,7 @@ moments.
  * `Adam()`
  * `Adam(`_`stepSize, batchSize`_`)`
  * `Adam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `Adam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ * `Adam(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 Note that the `Adam` class is based on the `AdamType<`_`UpdateRule`_`>` class
 with _`UpdateRule`_` = AdamUpdate`.
@@ -131,12 +131,12 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples
 
@@ -668,7 +668,7 @@ changes.
  * `FTML()`
  * `FTML(`_`stepSize, batchSize`_`)`
  * `FTML(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
- * `FTML(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ * `FTML(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -682,12 +682,12 @@ changes.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples
 
@@ -1040,7 +1040,7 @@ curves much more steeply (a steep hilly terrain with high curvature).
  * `MomentumSGD()`
  * `MomentumSGD(`_`stepSize, batchSize`_`)`
  * `MomentumSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
- * `MomentumSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, momentumPolicy`_`)`
+ * `MomentumSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, momentumPolicy, decayPolicy, resetPolicy, exactObjective`_`)`
 
 Note that `MomentumSGD` is based on the templated type
 `SGD<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
@@ -1056,10 +1056,13 @@ MomentumUpdate` and _`DecayPolicyType`_` = NoDecay`.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `MomentumUpdate` | **`updatePolicy`** | An instantiated `MomentumUpdate`. | `MomentumUpdate()` |
+| `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
+| `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
-`UpdatePolicy()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and
+`ExactObjective()`.
 
 Note that the `MomentumUpdate` class has the constructor
 `MomentumUpdate(`_`momentum`_`)` with a default value of `0.5` for the momentum.
@@ -1199,7 +1202,7 @@ the rate of convergence to O(1/k^2).
  * `NesterovMomentumSGD()`
  * `NesterovMomentumSGD(`_`stepSize, batchSize`_`)`
  * `NesterovMomentumSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
- * `NesterovMomentumSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, momentumPolicy`_`)`
+ * `NesterovMomentumSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, momentumPolicy, decayPolicy, resetPolicy, exactObjective`_`)`
 
 Note that `MomentumSGD` is based on the templated type
 `SGD<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
@@ -1215,10 +1218,13 @@ NesterovMomentumUpdate` and _`DecayPolicyType`_` = NoDecay`.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `NesterovMomentumUpdate` | **`updatePolicy`** | An instantiated `MomentumUpdate`. | `NesterovMomentumUpdate()` |
+| `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
+| `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
-`UpdatePolicy()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and
+`ExactObjective()`.
 
 Note that the `NesterovMomentumUpdate` class has the constructor
 `MomentumUpdate(`_`momentum`_`)` with a default value of `0.5` for the momentum.
@@ -1308,7 +1314,7 @@ Padam is a variant of Adam with a partially adaptive momentum estimation method.
 
  * `Padam()`
  * `Padam(`_`stepSize, batchSize`_`)`
- * `Padam(`_`stepSize, batchSize, beta1, beta2, partial, epsilon, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ * `Padam(`_`stepSize, batchSize, beta1, beta2, partial, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -1323,12 +1329,12 @@ Padam is a variant of Adam with a partially adaptive momentum estimation method.
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Partial()`, `Epsilon()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples
 
@@ -1482,7 +1488,7 @@ the following other optimizers:
   * `QHAdam()`
   * `QHAdam(`_`stepSize, batchSize`_`)`
   * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations`_`)`
-  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+  * `QHAdam(`_`stepSize, batchSize, v1, v2, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -1498,12 +1504,12 @@ the following other optimizers:
  | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
  | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
  | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
- | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
  | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+ | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
  The attributes of the optimizer may also be modified via the member methods
  `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
- `Tolerance()`, `Shuffle()`, `ExactObjective()`, `V1()`, `V2()`, and `ResetPolicy()`.
+ `Tolerance()`, `Shuffle()`, `V1()`, `V2()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples
 
@@ -1537,7 +1543,7 @@ RMSProp utilizes the magnitude of recent gradients to normalize the gradients.
  * `RMSProp()`
  * `RMSProp(`_`stepSize, batchSize`_`)`
  * `RMSProp(`_`stepSize, batchSize, alpha, epsilon, maxIterations, tolerance, shuffle`_`)`
- * `RMSProp(`_`stepSize, batchSize, alpha, epsilon, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ * `RMSProp(`_`stepSize, batchSize, alpha, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -1550,12 +1556,12 @@ RMSProp utilizes the magnitude of recent gradients to normalize the gradients.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer can also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Alpha()`, `Epsilon()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples:
 
@@ -1697,7 +1703,7 @@ losses.
 
  * `SARAHType<`_`UpdatePolicyType`_`>()`
  * `SARAHType<`_`UpdatePolicyType`_`>(`_`stepSize, batchSize`_`)`
- * `SARAHType<`_`UpdatePolicyType`_`>(`_`stepSize, batchSize, maxIterations, innerIterations, tolerance, shuffle, exactObjective, updatePolicy`_`)`
+ * `SARAHType<`_`UpdatePolicyType`_`>(`_`stepSize, batchSize, maxIterations, innerIterations, tolerance, shuffle, updatePolicy, exactObjective`_`)`
 
 The _`UpdatePolicyType`_ template parameter specifies the update step used for
 the optimizer.  The `SARAHUpdate` and `SARAHPlusUpdate` classes are available
@@ -1720,12 +1726,12 @@ For convenience the following typedefs have been defined:
 | `size_t` | **`innerIterations`** | The number of inner iterations allowed (0 means n / batchSize). Note that the full gradient is only calculated in the outer iteration. | `0` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `MaxIterations()`, `InnerIterations()`,
-`Tolerance()`, `Shuffle()`, `ExactObjective()`, and `UpdatePolicy()`.
+`Tolerance()`, `Shuffle()`, `UpdatePolicy()`, and `ExactObjective()`.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.
@@ -1764,7 +1770,7 @@ implementation may still be useful in some situations.
 
  * `StandardSGD()`
  * `StandardSGD(`_`stepSize, batchSize`_`)`
- * `StandardSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, exactObjective`_`)`
+ * `StandardSGD(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, updatePolicy, decayPolicy, resetPolicy, exactObjective`_`)`
 
 Note that `StandardSGD` is based on the templated type
 `SGD<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
@@ -1779,14 +1785,14 @@ VanillaUpdate` and _`DecayPolicyType`_` = NoDecay`.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ExactObjective()`, `UpdatePolicy()`, `DecayPolicy()`, and
-`ResetPolicy()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and
+`ExactObjective()`.
 
 #### Examples
 
@@ -1884,8 +1890,8 @@ new warm-started run/restart once a number of epochs are performed.
 
  * `SGDR<`_`UpdatePolicyType`_`>()`
  * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize`_`)`
- * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, exactObjective,  updatePolicy`_`)`
- * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, exactObjective,  updatePolicy, resetPolicy`_`)`
+ * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, updatePolicy`_`)`
+ * `SGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, updatePolicy, resetPolicy, exactObjective`_`)`
 
 The _`UpdatePolicyType`_ template parameter controls the update policy used
 during the iterative update process.  The `MomentumUpdate` class is available
@@ -1907,14 +1913,14 @@ so the shorter type `SGDR<>` can be used instead of the equivalent
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer can also be modified via the member methods
 `EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ExactObjective()`, `UpdatePolicy()`, and
-`ResetPolicy()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `ResetPolicy()`, and
+`ExactObjective()`.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.
@@ -1946,8 +1952,8 @@ are performed using the Snapshot Ensembles technique.
 
  * `SnapshotSGDR<`_`UpdatePolicyType`_`>()`
  * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize`_`)`
- * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, exactObjective, snapshots, accumulate, updatePolicy`_`)`
- * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, exactObjective, snapshots, accumulate, updatePolicy, resetPolicy`_`)`
+ * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, snapshots, accumulate, updatePolicy`_`)`
+ * `SnapshotSGDR<`_`UpdatePolicyType`_`>(`_`epochRestart, multFactor, batchSize, stepSize, maxIterations, tolerance, shuffle, snapshots, accumulate, updatePolicy, resetPolicy, exactObjective`_`)`
 
 The _`UpdatePolicyType`_ template parameter controls the update policy used
 during the iterative update process.  The `MomentumUpdate` class is available
@@ -1969,16 +1975,16 @@ so the shorter type `SnapshotSGDR<>` can be used instead of the equivalent
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `size_t` | **`snapshots`** | Maximum number of snapshots. | `5` |
 | `bool` | **`accumulate`** | Accumulate the snapshot parameter. | `true` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer can also be modified via the member methods
 `EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ExactObjective()`, `Snapshots()`, `Accumulate()`,
-`UpdatePolicy()`, and `ResetPolicy()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `Snapshots()`, `Accumulate()`,
+`UpdatePolicy()`, `ResetPolicy()`, and `ExactObjective()`.
 
 The `Snapshots()` function returns a `std::vector<arma::mat>&` (a vector of
 snapshots of the parameters), not a `size_t` representing the maximum number of
@@ -2017,7 +2023,7 @@ parameter space.
  * `SMORMS3()`
  * `SMORMS3(`_`stepSize, batchSize`_`)`
  * `SMORMS3(`_`stepSize, batchSize, epsilon, maxIterations, tolerance`_`)`
- * `SMORMS3(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ * `SMORMS3(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -2029,12 +2035,12 @@ parameter space.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer can also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
-`Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples:
 
@@ -2065,7 +2071,7 @@ strongly convex problems.
  * `SVRGType<`_`UpdatePolicyType, DecayPolicyType`_`>()`
  * `SVRGType<`_`UpdatePolicyType, DecayPolicyType`_`>(`_`stepSize`_`)`
  * `SVRGType<`_`UpdatePolicyType, DecayPolicyType`_`>(`_`stepSize, batchSize, maxIterations, innerIterations`_`)`
- * `SVRGType<`_`UpdatePolicyType, DecayPolicyType`_`>(`_`stepSize, batchSize, maxIterations, innerIterations, tolerance, shuffle, exactObjective, updatePolicy, decayPolicy, resetPolicy`_`)`
+ * `SVRGType<`_`UpdatePolicyType, DecayPolicyType`_`>(`_`stepSize, batchSize, maxIterations, innerIterations, tolerance, shuffle, updatePolicy, decayPolicy, resetPolicy, exactObjective`_`)`
 
 The _`UpdatePolicyType`_ template parameter controls the update step used by
 SVRG during the optimization.  The `SVRGUpdate` class is available for use and
@@ -2092,15 +2098,15 @@ For convenience the following typedefs have been defined:
 | `size_t` | **`innerIterations`** | The number of inner iterations allowed (0 means n / batchSize). Note that the full gradient is only calculated in the outer iteration. | `0` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the batch order is shuffled; otherwise, each batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `MaxIterations()`, `InnerIterations()`,
-`Tolerance()`, `Shuffle()`, `ExactObjective()`, `UpdatePolicy()`, `DecayPolicy()`, and
-`ResetPolicy()`.
+`Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and
+`ExactObjective()`.
 
 Note that the default values for the `updatePolicy` and `decayPolicy` parameters
 are simply the default constructors of the _`UpdatePolicyType`_ and
@@ -2143,7 +2149,7 @@ the system back on track.
  * `SPALeRASGD<`_`DecayPolicyType`_`>()`
  * `SPALeRASGD<`_`DecayPolicyType`_`>(`_`stepSize, batchSize`_`)`
  * `SPALeRASGD<`_`DecayPolicyType`_`>(`_`stepSize, batchSize, maxIterations, tolerance`_`)`
- * `SPALeRASGD<`_`DecayPolicyType`_`>(`_`stepSize, batchSize, maxIterations, tolerance, lambda, alpha, epsilon, adaptRate, shuffle, exactObjective, decayPolicy, resetPolicy`_`)`
+ * `SPALeRASGD<`_`DecayPolicyType`_`>(`_`stepSize, batchSize, maxIterations, tolerance, lambda, alpha, epsilon, adaptRate, shuffle, decayPolicy, resetPolicy, exactObjective`_`)`
 
 The _`DecayPolicyType`_ template parameter controls the decay in the step size
 during the course of the optimization.  The `NoDecay` class is available for
@@ -2166,14 +2172,13 @@ By default, _`DecayPolicyType`_ is set to `NoDecay`, so the shorter type
 | `double` | **`epsilon`** | Numerical stability parameter. | `1e-6` |
 | `double` | **`adaptRate`** | Agnostic learning rate update rate. | `3.10e-8` |
 | `bool` | **`shuffle`** | If true, the batch order is shuffled; otherwise, each batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Lambda()`,
-`Alpha()`, `Epsilon()`, `AdaptRate()`, `Shuffle()`, `ExactObjective()`, `DecayPolicy()`, and
-`ResetPolicy()`.
+`Alpha()`, `Epsilon()`, `AdaptRate()`, `Shuffle()`, `DecayPolicy()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples
 
@@ -2205,7 +2210,7 @@ the projection of Adam steps on the gradient subspace.
  * `SWATS()`
  * `SWATS(`_`stepSize, batchSize`_`)`
  * `SWATS(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance`_`)`
- * `SWATS(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, exactObjective`_`)`
+ * `SWATS(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -2219,12 +2224,12 @@ the projection of Adam steps on the gradient subspace.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer can also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and  `ExactObjective()`.
 
 #### Examples:
 
@@ -2256,7 +2261,7 @@ near-optimal convergence rates in both the batch and stochastic settings.
  * `WNGrad()`
  * `WNGrad(`_`stepSize, batchSize`_`)`
  * `WNGrad(`_`stepSize, batchSize, maxIterations, tolerance, shuffle`_`)`
- * `WNGrad(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, exactObjective, resetPolicy`_`)`
+ * `WNGrad(`_`stepSize, batchSize, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -2267,12 +2272,12 @@ near-optimal convergence rates in both the batch and stochastic settings.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the batch order is shuffled; otherwise, each batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ExactObjective()`, and
-`ResetPolicy()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
 
 #### Examples
 
