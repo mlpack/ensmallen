@@ -35,6 +35,8 @@ ENS_HAS_EXACT_METHOD_FORM(EndOptimization, HasEndOptimization)
 ENS_HAS_EXACT_METHOD_FORM(BeginEpoch, HasBeginEpoch)
 //! Detect an EndEpoch() method.
 ENS_HAS_EXACT_METHOD_FORM(EndEpoch, HasEndEpoch)
+//! Detect an StepTaken() method.
+ENS_HAS_EXACT_METHOD_FORM(StepTaken, HasStepTaken)
 
 template<typename OptimizerType,
          typename FunctionType,
@@ -173,6 +175,20 @@ struct TypedForms
                             const MatType&,
                             const size_t,
                             const double);
+
+  //! This is the form of a bool StepTaken() callback method.
+  template<typename CallbackType>
+  using StepTakenBoolForm =
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            MatType&);
+
+  //! This is the form of a void StepTaken() callback method.
+  template<typename CallbackType>
+  using StepTakenVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            MatType&);
 };
 
 //! Utility struct, check if either void BeginOptimization() or
@@ -321,6 +337,32 @@ struct HasEndEpochSignature
           FunctionType, MatType>::template EndEpochBoolForm>::value &&
       !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EndEpochVoidForm>::value;
+};
+
+//! Utility struct, check if either void StepTaken() or bool StepTaken() exists.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename MatType>
+struct HasStepTakenSignature
+{
+  const static bool hasBool =
+      HasStepTaken<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template StepTakenBoolForm>::value &&
+      !HasStepTaken<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template StepTakenVoidForm>::value;
+
+  const static bool hasVoid =
+      !HasStepTaken<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template StepTakenBoolForm>::value &&
+      HasStepTaken<CallbackType, TypedForms<OptimizerType,
+         FunctionType, MatType>::template StepTakenVoidForm>::value;
+
+  const static bool hasNone =
+      !HasStepTaken<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType>::template StepTakenBoolForm>::value &&
+      !HasStepTaken<CallbackType, TypedForms<OptimizerType,
+         FunctionType, MatType>::template StepTakenVoidForm>::value;
 };
 
 } // namespace traits

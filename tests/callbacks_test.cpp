@@ -19,7 +19,7 @@ using namespace ens::callbacks::traits;
 /**
  * Utility class with Evaluate(), Gradient(), BeginEpoch(), EndEpoch(),
  * BeginOptimization(), EndOptimization(), EvaluateConstraint(),
- * GradientConstraint().
+ * GradientConstraint(), StepTaken.
  */
 class CompleteCallbackTestFunction
 {
@@ -32,7 +32,8 @@ class CompleteCallbackTestFunction
       calledBeginOptimization(false),
       calledEndOptimization(false),
       calledEvaluateConstraint(false),
-      calledGradientConstraint(false)
+      calledGradientConstraint(false),
+      calledStepTaken(false)
   { }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
@@ -99,6 +100,12 @@ class CompleteCallbackTestFunction
                           GradType& /* gradient */)
   { calledGradientConstraint = true; }
 
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void StepTaken(OptimizerType& /* optimizer */,
+                 FunctionType& /* function */,
+                 MatType& /* coordinates */)
+  { calledStepTaken = true; }
+
   bool calledEvaluate;
   bool calledGradient;
   bool calledBeginEpoch;
@@ -107,6 +114,7 @@ class CompleteCallbackTestFunction
   bool calledEndOptimization;
   bool calledEvaluateConstraint;
   bool calledGradientConstraint;
+  bool calledStepTaken;
 };
 
 template<typename OptimizerType>
@@ -118,7 +126,8 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
                                bool calledBeginOptimization,
                                bool calledEndOptimization,
                                bool calledEvaluateConstraint,
-                               bool calledGradientConstraint)
+                               bool calledGradientConstraint,
+                               bool calledStepTaken)
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -140,6 +149,7 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
   REQUIRE(cb.calledEndOptimization == calledEndOptimization);
   REQUIRE(cb.calledEvaluateConstraint == calledEvaluateConstraint);
   REQUIRE(cb.calledGradientConstraint == calledGradientConstraint);
+  REQUIRE(cb.calledStepTaken == calledStepTaken);
 }
 
 /**
@@ -149,7 +159,7 @@ TEST_CASE("AdaDeltaCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 3, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -159,7 +169,7 @@ TEST_CASE("AdaGradCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   AdaGrad optimizer(0.99, 1, 1e-8, 3, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -169,7 +179,7 @@ TEST_CASE("AdamCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 3, 1e-3, false);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -179,7 +189,7 @@ TEST_CASE("BigBatchSGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   BBS_BB optimizer(1, 0.01, 0.1, 4, 1e-4);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -189,7 +199,7 @@ TEST_CASE("CMAESCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   CMAES<> optimizer(0, -1, 1, 32, 3, 1e-3);
   CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -199,7 +209,7 @@ TEST_CASE("CNECallbacksFullFunctionTest", "[CallbacksTest]")
 {
   CNE optimizer(200, 6, 0.2, 0.2, 0.2, 1e-5);
   CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -209,7 +219,7 @@ TEST_CASE("DECallbacksFullFunctionTest", "[CallbacksTest]")
 {
   DE optimizer(200, 6, 0.6, 0.8, 1e-5);
   CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -219,7 +229,7 @@ TEST_CASE("EveCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 3, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -229,7 +239,7 @@ TEST_CASE("FTMLCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 3, 1e-5, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -239,7 +249,7 @@ TEST_CASE("GradientDescentCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   GradientDescent optimizer(0.001, 3, 1e-15);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -249,7 +259,7 @@ TEST_CASE("IQNCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   IQN optimizer(0.01, 1, 3, 1e-3);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -259,7 +269,7 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   Katyusha optimizer(1.0, 10.0, 1, 3, 0, 1e-10, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -269,7 +279,7 @@ TEST_CASE("SARAHCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SARAH optimizer(0.01, 2, 3, 0, 1e-5, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -279,7 +289,7 @@ TEST_CASE("SCDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SCD<> optimizer(0.4, 4);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -289,7 +299,7 @@ TEST_CASE("SGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   StandardSGD optimizer(0.0003, 1, 3, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -299,7 +309,7 @@ TEST_CASE("SGDRCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SGDR<> optimizer(50, 2.0, 1, 0.01, 4, 1e-3);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -309,7 +319,7 @@ TEST_CASE("SPALeRASGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SPALeRASGD<> optimizer(0.05, 2, 6, 1e-4);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -319,7 +329,7 @@ TEST_CASE("SPSACallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 10, 0);
   CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -329,7 +339,7 @@ TEST_CASE("SVRGCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SVRG optimizer(0.005, 2, 4, 0, 1e-5, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -340,7 +350,7 @@ TEST_CASE("ParallelSGDCallbacksFullFunctionTest", "[CallbacksTest]")
   ConstantStep decayPolicy(0.4);
   ParallelSGD<ConstantStep> optimizer(4, 2, 1e-5, true, decayPolicy);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -350,7 +360,7 @@ TEST_CASE("L_BFGSCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   L_BFGS optimizer(10, 4);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**
@@ -361,7 +371,7 @@ TEST_CASE("SACallbacksFullFunctionTest", "[CallbacksTest]")
   ExponentialSchedule schedule;
   SA<> optimizer(schedule, 10, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
   CallbacksFullFunctionTest(optimizer, true, false, true, true, true, true,
-      false, false);
+      false, false, false);
 }
 
 /**

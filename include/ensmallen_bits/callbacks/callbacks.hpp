@@ -16,6 +16,37 @@
 
 namespace ens {
 
+/**
+ * Callbacks are a set of functions that can be applied at given stages of the
+ * optimization process. The following callbacks are available:
+ *
+ * - Evaluate(optimizer, function, coordinates, objective):
+ *   called after any call to Evaluate().
+ *
+ * - StepTaken(optimizer, function, coordinates):
+ *   called after any step is taken.
+ *
+ * - Gradient(optimizer, function, coordinates, gradient):
+ *   called whenever the gradient is computed.
+ *
+ * - BeginEpoch(optimizer, function, coordinates, epoch, objective):
+ *   called at the beginning of a pass over the data. The objective may be
+ *   exact or an estimate depending on exactObjective's value.
+ *
+ * - EvaluateConstraint(optimizer, function, coordinates, constraint,
+ *                      constraintValue):
+ *   called after any call to EvaluateConstraint().
+ *
+ * - GradientConstraint(optimizer, function, coordinates, constraint,
+ *                      constraintGradient):
+ *   called after any call to GradientConstraint().
+ *
+ * - BeginOptimization(optimizer, function, coordinates):
+ *   called at the beginning of the optimization.
+ *
+ * - EndOptimization(optimizer, function, coordinates):
+ *   called at the end of the optimization.
+ */
 class Callback
 {
  public:
@@ -77,8 +108,8 @@ class Callback
   { return false; }
 
   /**
-   * Iterate over the callbacks and invoke the BeginOptimization callback if it
-   * exists.
+   * Iterate over the callbacks and invoke the BeginOptimization() callback if
+   * it exists.
    *
    * @param optimizer The optimizer used to update the function.
    * @param function Function to optimize.
@@ -140,7 +171,7 @@ class Callback
   { return false; }
 
   /**
-   * Iterate over the callbacks and invoke the EndOptimization callback if it
+   * Iterate over the callbacks and invoke the EndOptimization() callback if it
    * exists.
    *
    * @param optimizer The optimizer used to update the function.
@@ -644,6 +675,89 @@ class Callback
     (void)std::initializer_list<bool>{ result =
         result || Callback::EndEpochFunction(callbacks, optimizer, function,
         coordinates, epoch, objective)... };
+     return result;
+  }
+
+  /**
+   * Invoke the StepTaken() callback if it exists.
+   *
+   * @param callback The callback to call.
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   */
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      callbacks::traits::HasStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasBool,
+      bool>::type
+  StepTakenFunction(CallbackType& callback,
+                    OptimizerType& optimizer,
+                    FunctionType& function,
+                    MatType& coordinates)
+  {
+    return const_cast<CallbackType&>(callback).StepTaken(optimizer,
+        function, coordinates);
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      callbacks::traits::HasStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasVoid,
+      bool>::type
+  StepTakenFunction(CallbackType& callback,
+                    OptimizerType& optimizer,
+                    FunctionType& function,
+                    MatType& coordinates)
+  {
+    const_cast<CallbackType&>(callback).StepTaken(optimizer, function,
+        coordinates);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      callbacks::traits::HasStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasNone,
+      bool>::type
+  StepTakenFunction(CallbackType& /* callback */,
+                    OptimizerType& /* optimizer */,
+                    FunctionType& /* function */,
+                    MatType& /* coordinates */)
+  { return false; }
+
+  /**
+   * Iterate over the callbacks and invoke the StepTaken() callback if it
+   * exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool StepTaken(OptimizerType& optimizer,
+                        FunctionType& function,
+                        MatType& coordinates,
+                        CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::StepTakenFunction(callbacks, optimizer,
+            function, coordinates)... };
      return result;
   }
 };
