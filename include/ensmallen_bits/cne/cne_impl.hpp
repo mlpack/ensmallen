@@ -118,14 +118,13 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
       callbacks...);
   for (size_t gen = 1; gen <= maxGenerations && !terminate; gen++)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, gen,
-        lastBestFitness, callbacks...);
-
     // Calculating fitness values of all candidates.
     for (size_t i = 0; i < populationSize; i++)
     {
        // Select a candidate and insert the parameters in the function.
        iterate = population[i];
+       terminate |= Callback::StepTaken(*this, function, iterate,
+          callbacks...);
 
        // Find fitness of candidate.
        fitnessValues[i] = function.Evaluate(iterate);
@@ -150,9 +149,6 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 
     // Store the best fitness of present generation.
     lastBestFitness = fitnessValues.min();
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, gen,
-        lastBestFitness, callbacks...);
   }
 
   // Set the best candidate into the network parameters.

@@ -215,6 +215,7 @@ SARAHType<UpdatePolicyType>::Optimize(
         }
       }
 
+      terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
       currentFunction += effectiveBatchSize;
       f += effectiveBatchSize;
     }

@@ -72,9 +72,16 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
   BaseMatType iterateNew(iterate.n_rows, iterate.n_cols);
   double gap = 0;
 
-  for (size_t i = 1; i != maxIterations; ++i)
+  // Controls early termination of the optimization process.
+  bool terminate = false;
+
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     currentObjective = f.EvaluateWithGradient(iterate, gradient);
+
+    terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        currentObjective, gradient, callbacks...);
 
     // Output current objective function.
     Info << "FrankWolfe::Optimize(): iteration " << i << ", objective "
@@ -89,6 +96,8 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
     {
       Info << "FrankWolfe::Optimize(): minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, f, iterate, callbacks...);
       return currentObjective;
     }
 
@@ -97,10 +106,13 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
         iterate, s, iterateNew, i);
 
     iterate = std::move(iterateNew);
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
   Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
+
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return currentObjective;
 } // Optimize()
 

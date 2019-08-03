@@ -110,7 +110,13 @@ AugLagrangian::Optimize(
   // Then, calculate the current penalty.
   ElemType penalty = 0;
   for (size_t i = 0; i < function.NumConstraints(); i++)
-    penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
+  {
+    const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates), 2);
+    Callback::EvaluateConstraint(*this, function, coordinates, i, p,
+          callbacks...);
+
+    penalty += p;
+  }
 
   Info << "Penalty is " << penalty << " (threshold " << penaltyThreshold
       << ")." << std::endl;
@@ -122,9 +128,6 @@ AugLagrangian::Optimize(
       callbacks...);
   for (it = 0; it != (maxIterations - 1) && !terminate; it++)
   {
-    terminate |= Callback::BeginEpoch(*this, function, coordinates, it,
-        lastObjective, callbacks...);
-
     Info << "AugLagrangian on iteration " << it
         << ", starting with objective "  << lastObjective << "." << std::endl;
 
@@ -144,6 +147,8 @@ AugLagrangian::Optimize(
     {
       lambda = std::move(augfunc.Lambda());
       sigma = augfunc.Sigma();
+
+      Callback::EndOptimization(*this, function, coordinates, callbacks...);
       return true;
     }
 
@@ -159,7 +164,6 @@ AugLagrangian::Optimize(
     {
       const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates),
           2);
-
       Callback::EvaluateConstraint(*this, function, coordinates, i, p,
           callbacks...);
 
@@ -176,7 +180,6 @@ AugLagrangian::Optimize(
       for (size_t i = 0; i < function.NumConstraints(); i++)
       {
         const ElemType p = function.EvaluateConstraint(i, coordinates);
-
         Callback::EvaluateConstraint(*this, function, coordinates, i, p,
           callbacks...);
 
@@ -195,8 +198,8 @@ AugLagrangian::Optimize(
       Info << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
     }
 
-    terminate |= Callback::EndEpoch(*this, function, coordinates, it,
-        lastObjective, callbacks...);
+    terminate |= Callback::StepTaken(*this, function, coordinates,
+        callbacks...);
   }
 
   Callback::EndOptimization(*this, function, coordinates, callbacks...);

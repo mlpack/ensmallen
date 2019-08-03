@@ -92,9 +92,6 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
       callbacks...);
   for (size_t gen = 0; gen < maxGenerations && !terminate; gen++)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, gen,
-        lastBestFitness, callbacks...);
-
     // Generate new population based on /best/1/bin strategy.
     for (size_t member = 0; member < populationSize; member++)
     {
@@ -141,6 +138,9 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
       {
         iterate = mutant;
         iterateValue = mutantValue;
+
+        terminate |= Callback::StepTaken(*this, function, iterate,
+            callbacks...);
       }
 
       fitnessValues[member] = iterateValue;
@@ -165,9 +165,6 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
         break;
       }
     }
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, gen,
-        lastBestFitness, callbacks...);
   }
 
   iterate = bestElement;

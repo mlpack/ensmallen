@@ -60,18 +60,15 @@ GradientDescent::Optimize(FunctionType& function,
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
 
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
-  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, f, iterate, i, overallObjective,
-        callbacks...);
-
     overallObjective = f.EvaluateWithGradient(iterate, gradient);
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
@@ -105,9 +102,7 @@ GradientDescent::Optimize(FunctionType& function,
 
     // And update the iterate.
     iterate -= stepSize * gradient;
-
-    terminate |= Callback::EndEpoch(*this, f, iterate, i, overallObjective,
-        callbacks...);
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
   Info << "Gradient Descent: maximum iterations (" << maxIterations
