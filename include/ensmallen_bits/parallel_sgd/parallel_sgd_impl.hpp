@@ -187,6 +187,8 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
             UpdateLocation(iterate, row, i, stepSize * value);
           }
         }
+        terminate |= Callback::StepTaken(*this, function, iterate,
+            callbacks...);
       }
     }
 

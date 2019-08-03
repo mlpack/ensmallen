@@ -89,7 +89,7 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   ElemType lastObjective = DBL_MAX;
 
   // Controls early termination of the optimization process.
-  bool terminate = false;
+  bool terminate = Callback::BeginOptimization(*this, f, iterate, callbacks...);
 
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; i += batchSize)
@@ -126,7 +126,6 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate;
       /* incrementing done manually */)
   {
@@ -196,6 +195,7 @@ SPALeRASGD<DecayPolicyType>::Optimize(
       Callback::EndOptimization(*this, f, iterate, callbacks...);
       return overallObjective;
     }
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
     // Now update the learning rate if requested by the user.
     instDecayPolicy.As<InstDecayPolicyType>().Update(iterate, stepSize,

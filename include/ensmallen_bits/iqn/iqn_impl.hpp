@@ -162,6 +162,9 @@ IQN::Optimize(DecomposableFunctionType& functionIn,
 
         iterate = arma::reshape(stepSize * B.i() * (u.t() - arma::vectorise(g)),
             iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
+
+        terminate |= Callback::StepTaken(*this, function, iterate,
+            callbacks...);
       }
 
       f += effectiveBatchSize;
@@ -171,7 +174,8 @@ IQN::Optimize(DecomposableFunctionType& functionIn,
     for (size_t f = 0; f < numFunctions; f += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-      const ElemType objective = function.Evaluate(iterate, f, effectiveBatchSize);
+      const ElemType objective = function.Evaluate(iterate, f,
+          effectiveBatchSize);
       overallObjective += objective;
 
       Callback::Evaluate(*this, function, iterate, objective,

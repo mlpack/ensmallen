@@ -192,16 +192,17 @@ KatyushaType<Proximal>::Optimize(
       effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
       iterate = tau1 * z + tau2 * iterate0 + (1 - tau1 - tau2) * y;
 
+      terminate |= Callback::StepTaken(*this, function, iterate,
+            callbacks...);
+
       // Calculate variance reduced gradient.
       function.Gradient(iterate, currentFunction, gradient,
           effectiveBatchSize);
-
       terminate |= Callback::Gradient(*this, function, iterate, gradient,
           callbacks...);
 
       function.Gradient(iterate0, currentFunction, gradient0,
           effectiveBatchSize);
-
       terminate |= Callback::Gradient(*this, function, iterate0, gradient0,
           callbacks...);
 

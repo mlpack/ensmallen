@@ -395,9 +395,6 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
   for (size_t iteration = 1; iteration != maxIterations && !terminate;
       iteration++)
   {
-    terminate |= Callback::BeginEpoch(*this, sdp, coordinates, iteration,
-        primalObj, callbacks...);
-
     // Note: The Mehrotra PC algorithm works like this at a high level.
     // We first solve a KKT system with mu=0. Then, we use the results
     // of this KKT system to get a better estimate of mu and solve
@@ -543,6 +540,8 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
 
     // Iterate update
     coordinates += alpha * dX;
+    terminate |= Callback::StepTaken(*this, sdp, coordinates, callbacks...);
+
     math::Svec(coordinates, sx);
     if (dySparse.n_cols != 0)
       ySparse += beta * dySparse;
@@ -590,9 +589,6 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
     if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol &&
         dualInfeas <= dualInfeasTol)
       return primalObj;
-
-    terminate |= Callback::EndEpoch(*this, sdp, coordinates, iteration,
-        primalObj, callbacks...);
   }
 
   Warn << "PrimalDualSolver::Optimizer(): Did not converge after "

@@ -107,12 +107,9 @@ SnapshotSGDR<UpdatePolicyType>::Optimize(
       const typename MatType::elem_type objective = function.Evaluate(
           iterate, i, 1);
       overallObjective += objective;
-
-      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
     }
   }
 
-  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

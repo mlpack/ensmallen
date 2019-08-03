@@ -226,6 +226,7 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
 
     // Update the iterate.
     iterate -= stepSize * gradient;
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
     const ElemType objective = f.Evaluate(iterate, currentFunction,
         effectiveBatchSize);

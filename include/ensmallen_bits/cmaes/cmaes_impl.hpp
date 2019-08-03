@@ -151,9 +151,6 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       callbacks...);
   for (size_t i = 1; i < maxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
-
     // To keep track of where we are.
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
@@ -202,6 +199,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     {
       overallObjective = currentObjective;
       iterate = mPosition[idx1];
+
+      terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
     }
 
     // Update Step Size.
@@ -309,9 +308,6 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     }
 
     lastObjective = overallObjective;
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
   }
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);

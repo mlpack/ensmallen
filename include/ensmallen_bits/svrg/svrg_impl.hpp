@@ -214,6 +214,8 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
       instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, fullGradient,
           gradient, gradient0, effectiveBatchSize, stepSize);
 
+      terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
+
       currentFunction += effectiveBatchSize;
       f += effectiveBatchSize;
     }

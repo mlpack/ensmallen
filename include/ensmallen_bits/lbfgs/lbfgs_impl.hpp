@@ -385,9 +385,6 @@ L_BFGS::Optimize(FunctionType& function,
   for (size_t itNum = 0; (optimizeUntilConvergence || (itNum != maxIterations))
       && !terminate; ++itNum)
   {
-    terminate |= Callback::BeginEpoch(*this, f, iterate, itNum,
-        functionValue, callbacks...);
-
     prevFunctionValue = functionValue;
 
     // Break when the norm of the gradient becomes too small.
@@ -453,8 +450,7 @@ L_BFGS::Optimize(FunctionType& function,
     // Overwrite an old basis set.
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
 
-    terminate |= Callback::EndEpoch(*this, f, iterate, itNum, functionValue,
-        callbacks...);
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   } // End of the optimization loop.
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);

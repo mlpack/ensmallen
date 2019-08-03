@@ -66,9 +66,6 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
       callbacks...);
   for (size_t k = 0; k < maxIterations && !terminate; ++k)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, k,
-        overallObjective, callbacks...);
-
     // Output current objective function.
     Info << "SPSA: iteration " << k << ", objective " << overallObjective
         << "." << std::endl;
@@ -115,12 +112,11 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     gradient = (fPlus - fMinus) * (1 / (2 * ck * spVector));
     iterate -= akLocal * gradient;
 
+    terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
+
     overallObjective = function.Evaluate(iterate);
     Callback::Evaluate(*this, function, iterate, overallObjective,
         callbacks...);
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, k,
-        overallObjective, callbacks...);
   }
 
   // Calculate final objective.

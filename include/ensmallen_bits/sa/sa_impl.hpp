@@ -90,12 +90,10 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   // Iterating and cooling.
   for (size_t i = 0; i != maxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i, energy,
-        callbacks...);
-
     oldEnergy = energy;
     GenerateMove(function, iterate, accept, moveSize, energy, idx,
         sweepCounter, callbacks...);
+    terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
     temperature = coolingSchedule.NextTemperature(temperature, energy);
 
     // Determine if the optimization has entered (or continues to be in) a
@@ -115,9 +113,6 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       return energy;
     }
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i, energy,
-        callbacks...);
   }
 
   Warn << "SA: maximum iterations (" << maxIterations << ") reached; "

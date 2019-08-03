@@ -182,6 +182,8 @@ Eve::Optimize(DecomposableFunctionType& function,
     iterate -= stepSize / dt * (m / biasCorrection1) /
         (arma::sqrt(v / biasCorrection2) + epsilon);
 
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
+
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
 
