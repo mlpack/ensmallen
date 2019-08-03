@@ -55,6 +55,118 @@ optimizer.Optimize(f, coordinates, callback);
 std::cout << callback.BestObjective() << std::endl;
 ```
 
+## Built-in Callbacks
+
+### EarlyStopAtMinLoss
+
+Stops the optimization process if the loss stops decreasing or no improvement
+has been made.
+
+#### Constructors
+
+ * `EarlyStopAtMinLoss()`
+ * `EarlyStopAtMinLoss(`_`patience`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`patience`** | The number of epochs to wait after the minimum loss has been reached. | `10` |
+
+#### Examples:
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
+```
+
+### PrintLoss
+
+Callback that prints loss to stdout or a specified output stream.
+
+#### Constructors
+
+ * `PrintLoss()`
+ * `PrintLoss(`_`output`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `std::ostream` | **`output`** | Ostream which receives output from this object. | `stdout` |
+
+#### Examples:
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, PrintLoss());
+```
+
+### ProgressBar
+
+Callback that prints a progress bar to stdout or a specified output stream.
+
+#### Constructors
+
+ * `ProgressBar()`
+ * `ProgressBar(`_`width`_`)`
+ * `ProgressBar(`_`width, output`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`width`** | Width of the bar. | `70` |
+| `std::ostream` | **`output`** | Ostream which receives output from this object. | `stdout` |
+
+#### Examples:
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, ProgressBar());
+```
+
+### StoreBestCoordinates
+
+Callback that stores the model parameter after every epoch if the objective
+decreased.
+
+#### Constructors
+
+ * `StoreBestCoordinates<`_`ModelMatType`_`>()`
+
+The _`ModelMatType`_ template parameter refers to the matrix type of the model
+parameter.
+
+#### Attributes
+
+The stored model parameter can be accessed via the member method
+`BestCoordinates()` and the best objective via `BestObjective()`.
+
+#### Examples:
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+StoreBestCoordinates<arma::mat> cb;
+optimizer.Optimize(f, coordinates, cb);
+
+std::cout << "The optimized model found by AdaDelta has the "
+      << "parameters " << cb.BestCoordinatest();
+```
+
 ## Callback States
 
 Callbacks are called at different states during the optimization process:
@@ -174,7 +286,7 @@ an estimate depending on `exactObjective` value.
 | `size_t` | **`epoch`** | The index of the current epoch. |
 | `double` | **`objective`** | Objective value of the current point. |
 
-### BeginEpoch
+### EndEpoch
 
 Called at the end of a pass over the data. The objective may be exact or
 an estimate depending on `exactObjective` value.
@@ -191,123 +303,11 @@ an estimate depending on `exactObjective` value.
 | `size_t` | **`epoch`** | The index of the current epoch. |
 | `double` | **`objective`** | Objective value of the current point. |
 
-## Built-in Callbacks
-
-### EarlyStopAtMinLoss
-
-Stops the optimization process if the loss stops decreasing or no improvement
-has been made.
-
-#### Constructors
-
- * `EarlyStopAtMinLoss()`
- * `EarlyStopAtMinLoss(`_`patience`_`)`
-
-#### Attributes
-
-| **type** | **name** | **description** | **default** |
-|----------|----------|-----------------|-------------|
-| `size_t` | **`patience`** | The number of epochs to wait after the minimum loss has been reached. | `10` |
-
-#### Examples:
-
-```c++
-AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
-
-RosenbrockFunction f;
-arma::mat coordinates = f.GetInitialPoint();
-optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
-```
-
-### PrintLoss
-
-Callback that prints loss to stdout or a specified output stream.
-
-#### Constructors
-
- * `PrintLoss()`
- * `PrintLoss(`_`output`_`)`
-
-#### Attributes
-
-| **type** | **name** | **description** | **default** |
-|----------|----------|-----------------|-------------|
-| `ostream` | **`output`** | Ostream which receives output from this object. | `stdout` |
-
-#### Examples:
-
-```c++
-AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
-
-RosenbrockFunction f;
-arma::mat coordinates = f.GetInitialPoint();
-optimizer.Optimize(f, coordinates, PrintLoss());
-```
-
-### ProgressBar
-
-Callback that prints a progress bar to stdout or a specified output stream.
-
-#### Constructors
-
- * `ProgressBar()`
- * `ProgressBar(`_`width`_`)`
- * `ProgressBar(`_`width, output`_`)`
-
-#### Attributes
-
-| **type** | **name** | **description** | **default** |
-|----------|----------|-----------------|-------------|
-| `size_t` | **`width`** | Width of the bar. | `70` |
-| `ostream` | **`output`** | Ostream which receives output from this object. | `stdout` |
-
-#### Examples:
-
-```c++
-AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
-
-RosenbrockFunction f;
-arma::mat coordinates = f.GetInitialPoint();
-optimizer.Optimize(f, coordinates, ProgressBar());
-```
-
-### StoreBestCoordinates
-
-Callback that stores the model parameter after every epoch if the objective
-decreased.
-
-#### Constructors
-
- * `StoreBestCoordinates<`_`ModelMatType`_`>()`
-
-The _`ModelMatType`_ template parameter refers to the matrix type of the model
-parameter.
-
-#### Attributes
-
-The stored model parameter can be accessed via the member method
-`BestCoordinates()` and the best objective via `BestObjective()`.
-
-#### Examples:
-
-```c++
-AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
-
-RosenbrockFunction f;
-arma::mat coordinates = f.GetInitialPoint();
-
-StoreBestCoordinates<arma::mat> cb;
-optimizer.Optimize(f, coordinates, cb);
-
-std::cout << "The optimized model found by AdaDelta has the "
-      << "parameters " << cb.BestCoordinatest();
-```
-
-## Examples
+## Custom Callbacks
 
 ### Learning rate scheduling
 
-Setting the learning rate for crucially important when training because it
+Setting the learning rate is crucially important when training because it
 controls both the speed of convergence and the ultimate performance of the
 model. One of the simplest learning rate strategies is to have a fixed learning
 rate throughout the training process. Choosing a small learning rate allows the
@@ -335,7 +335,7 @@ class ExponentialDecay
                          FunctionType& /* function */,
                          MatType& /* coordinates */)
   {
-    // SAve the initial learning rate.
+    // Save the initial learning rate.
     learningRate = optimizer.StepSize();
   }
 
@@ -394,8 +394,8 @@ int main()
 ### Early stopping at minimum loss
 
 Early stopping is a technique for controlling overfitting in machine learning
-models, especially neural networks, by stopping training before the model
-parameter have converged.
+models, especially neural networks, by stopping the optimization process before
+the model has trained for the maximum number of iterations.
 
 Example code showing how to implement a custom callback to stop the optimization
 when the minimum of loss has been reached is given below.
@@ -480,5 +480,5 @@ int main()
 Note that we have simply passed an instantiation of `EarlyStop` the
 rest is handled inside the optimizer.
 
-ensmallen provides a more complete and general implementation of an early
-stopping at minimum loss callback function.
+ensmallen provides a more complete and general implementation of a
+[early stopping](#EarlyStopAtMinLoss) at minimum loss callback function.
