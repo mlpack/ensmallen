@@ -87,7 +87,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   // in a FIFO manner.
   for (size_t i = 0; i < horizonSize; i++)
   {
-    //TODO: Parallelize this.
+    //TODO: Parallelize this. This is the crux.
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; j < numParticles; j++)
     {
