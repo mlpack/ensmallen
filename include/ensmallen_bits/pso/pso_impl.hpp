@@ -63,6 +63,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
       numParticles,
       iterate);
 
+  //TODO: Parallelize this.
   // Calculate initial fitness of population.
   for (size_t i = 0; i < numParticles; i++)
   {
@@ -86,6 +87,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   // in a FIFO manner.
   for (size_t i = 0; i < horizonSize; i++)
   {
+    //TODO: Parallelize this.
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; j < numParticles; j++)
     {
@@ -107,6 +109,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     // In-place update of particle positions.
     particlePositions += particleVelocities;
 
+    //TODO: Think over this. Probably should not be parallelized.
     // Find the best particle.
     for (size_t j = 0; j < numParticles; j++)
     {
@@ -129,6 +132,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     if (performanceHorizon.front() - performanceHorizon.back() < impTolerance)
       break;
     
+    //TODO: Parallelize this.
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; j < numParticles; j++)
     {
@@ -150,6 +154,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     // In-place update of particle positions.
     particlePositions += particleVelocities;
 
+    //TODO: Think over this. Probably should not be parallelized.
     //Find the best particle.
     for (size_t j = 0; j < numParticles; j++)
     {

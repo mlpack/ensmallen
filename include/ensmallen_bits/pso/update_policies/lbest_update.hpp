@@ -111,6 +111,7 @@ class LBestUpdate
               arma::cube& particleBestPositions,
               arma::vec& particleBestFitnesses)
   {
+    //TODO: Parallelize this -- should be doable.
     // Velocity update logic.
     for (size_t i = 0; i < n; i++)
     {
@@ -122,6 +123,8 @@ class LBestUpdate
           right(i) : i;
     }
 
+
+    //TODO: This should probably not be parallelized.
     for (size_t i = 0; i < n; i++)
     {
       // Generate random numbers for current particle.

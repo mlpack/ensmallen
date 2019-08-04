@@ -78,6 +78,7 @@ class PSOType
    * @param impTolerance Improvement threshold for termination.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
+   * @param numThreads Number of OpenMP threads for parallelization.
    */
   PSOType(const size_t numParticles = 64,
           const arma::vec& lowerBound = arma::ones<arma::vec>(1),
@@ -87,6 +88,7 @@ class PSOType
           const double impTolerance = 1e-10,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
+	  const size_t numThreads = 4,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
@@ -98,6 +100,7 @@ class PSOType
           impTolerance(impTolerance),
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
+	  numThreads(numThreads),
           velocityUpdatePolicy(velocityUpdatePolicy),
           initPolicy(initPolicy) { /* Nothing to do. */ }
 
@@ -115,6 +118,7 @@ class PSOType
    * @param impTolerance Improvement threshold for termination.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
+   * @param numThreads Number of OpenMP threads for parallelization.
    */
   PSOType(const size_t numParticles,
           const double lowerBound,
@@ -124,6 +128,7 @@ class PSOType
           const double impTolerance = 1e-10,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
+	  const size_t numThreads = 4,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
@@ -135,6 +140,7 @@ class PSOType
           impTolerance(impTolerance),
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
+	  numThreads(numThreads),
           velocityUpdatePolicy(velocityUpdatePolicy),
           initPolicy(initPolicy) {/* Nothing to do. */ }
 
@@ -200,6 +206,12 @@ class PSOType
   //! Modify value of explorationFactor.
   double& ExplorationFactor() { return explorationFactor; }
 
+  //! Retrieve value of numThreads.
+  size_t NumThreads() const { return numThreads; }
+
+  //! Modify value of numThreads.
+  size_t& NumThreads() { return numThreads; }
+
  private:
 
   //! Number of particles in the swarm.
@@ -218,6 +230,8 @@ class PSOType
   double exploitationFactor;
   //! Exploration factor for lbest version.
   double explorationFactor;
+  //! Number of threads to be used.
+  size_t numThreads;
   //! Particle positions.
   arma::cube particlePositions;
   //! Particle velocities.

@@ -85,6 +85,7 @@ class DefaultInit
     assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
         "upperBound are not the same as the dimensions of iterate.");
     
+    //TODO: Parallelize this - I think that it is possible and should be okay.
     // Distribute particles in [lowerBound, upperBound].
     for (size_t i = 0; i < numParticles; i++)
     {
