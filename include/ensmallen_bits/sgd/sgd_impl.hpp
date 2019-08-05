@@ -177,6 +177,8 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, stepSize,
         gradient);
 
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
+
     // Now update the learning rate if requested by the user.
     instDecayPolicy.As<InstDecayPolicyType>().Update(iterate, stepSize,
         gradient);
