@@ -32,9 +32,9 @@ class FullSelection
            typename MatType,
            typename... CallbackTypes>
   double Select(DecomposableFunctionType& function,
-                      const size_t batchSize,
-                      const MatType& iterate,
-                      CallbackTypes&... callbacks)
+                const size_t batchSize,
+                const MatType& iterate,
+                CallbackTypes&... callbacks)
   {
     // Find the number of functions to use.
     const size_t numFunctions = function.NumFunctions();

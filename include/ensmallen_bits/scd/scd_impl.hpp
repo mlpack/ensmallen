@@ -71,9 +71,6 @@ SCD<DescentPolicyType>::Optimize(
       callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
-
     // Get the coordinate to descend on.
     size_t featureIdx = descentPolicy.template DescentFeature<
         ResolvableFunctionType, BaseMatType, BaseGradType>(i, iterate,
@@ -87,12 +84,12 @@ SCD<DescentPolicyType>::Optimize(
 
     // Update the decision variable with the partial gradient.
     iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);
+    terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
 
     // Check for convergence.
     if (i % updateInterval == 0)
     {
       overallObjective = function.Evaluate(iterate);
-
       terminate |= Callback::Evaluate(*this, function, iterate,
           overallObjective, callbacks...);
 
@@ -120,9 +117,6 @@ SCD<DescentPolicyType>::Optimize(
 
       lastObjective = overallObjective;
     }
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
   }
 
   Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
