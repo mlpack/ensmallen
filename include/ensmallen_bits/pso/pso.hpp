@@ -88,7 +88,7 @@ class PSOType
           const double impTolerance = 1e-10,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
-	  const size_t numThreads = 4,
+          const size_t numThreads = 4,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
@@ -128,7 +128,7 @@ class PSOType
           const double impTolerance = 1e-10,
           const double exploitationFactor = 2.05,
           const double explorationFactor = 2.05,
-	  const size_t numThreads = 4,
+          const size_t numThreads = 4,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :

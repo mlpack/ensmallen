@@ -12,9 +12,11 @@
  */
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include <chrono>
 
 using namespace ens;
 using namespace ens::test;
+using namespace std::chrono; 
 
 /**
  * Test the PSO optimizer on the Sphere Function.
@@ -58,6 +60,64 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
   REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
   REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-2));
 }
+
+/**
+ * Test the PSO optimizer on the Rosenbrock Function.
+ */
+
+TEST_CASE("LBestPSORosenbrockThreadTest1","[PSOTest]")
+{
+  RosenbrockFunction f;
+
+  // Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(50);
+  upperBound.fill(60);
+
+  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05, 1);
+  arma::vec coordinates = f.GetInitialPoint();
+
+  auto start = high_resolution_clock::now();
+  const double result = s.Optimize(f, coordinates);
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<microseconds>(stop - start); 
+  cout <<"Time of single thread rosenbrock function: "<<duration.count()<<'\n'; 
+
+  REQUIRE(result == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-2));
+}
+
+
+/**
+ * Test the PSO optimizer on the Rosenbrock Function.
+ */
+
+TEST_CASE("LBestPSORosenbrockThreadTest4","[PSOTest]")
+{
+  RosenbrockFunction f;
+
+  // Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(50);
+  upperBound.fill(60);
+
+  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05, 6);
+  arma::vec coordinates = f.GetInitialPoint();
+
+  auto start = high_resolution_clock::now(); 
+  const double result = s.Optimize(f, coordinates);
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<microseconds>(stop - start);
+  cout <<"Time of 4 thread rosenbrock function: "<<duration.count()<<'\n';  
+
+  REQUIRE(result == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-2));
+}
+
 
 /**
  * Test the PSO optimizer on the Rosenbrock function with lowerBound and
