@@ -56,7 +56,7 @@ namespace ens {
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
  *
- * @tparam UpdatePolicyType update policy used by SGD during the iterative
+ * @tparam UpdatePolicyType Update policy used by SGD during the iterative
  *     update process. By default vanilla update policy (see ens::VanillaUpdate)
  *     is used.
  * @tparam DecayPolicyType Decay policy used during the iterative update

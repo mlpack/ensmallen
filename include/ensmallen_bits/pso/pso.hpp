@@ -57,6 +57,11 @@ namespace ens {
  * the following function:
  *
  *    double Evaluate(const arma::mat& x);
+ *
+ * @tparam VelocityUpdatePolicy Velocity update policy. By default LBest update
+ *     policy (see ens::LBestUpdate) is used.
+ * @tparam InitPolicy Particle initialization policy. By default DefaultInit
+ *     policy (see ens::DefaultInit) is used.
  */
 template<typename VelocityUpdatePolicy = LBestUpdate,
          typename InitPolicy = DefaultInit>
@@ -77,6 +82,8 @@ class PSOType
    * @param impTolerance Improvement threshold for termination.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
+   * @param velocityUpdatePolicy Velocity update policy.
+   * @param initPolicy Particle initialization policy.
    */
   PSOType(const size_t numParticles = 64,
           const arma::vec& lowerBound = arma::ones<arma::vec>(1),
@@ -98,7 +105,8 @@ class PSOType
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy) { /* Nothing to do. */ }
+          initPolicy(initPolicy)
+  { /* Nothing to do. */ }
 
   /**
    * Construct the particle swarm optimizer with the given function and
@@ -135,7 +143,8 @@ class PSOType
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy) {/* Nothing to do. */ }
+          initPolicy(initPolicy)
+  { /* Nothing to do. */ }
 
   /**
    * Optimize the input function using PSO. The given variable that holds the

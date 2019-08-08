@@ -10,7 +10,6 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
 #define ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
 #include <assert.h>

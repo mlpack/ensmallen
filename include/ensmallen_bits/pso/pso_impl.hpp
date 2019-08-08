@@ -186,7 +186,7 @@ typename MatType::elem_type PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     // In-place update of particle positions.
     particlePositions += particleVelocities;
 
-    //Find the best particle.
+    // Find the best particle.
     for (size_t j = 0; j < numParticles; j++)
     {
       if (particleBestFitnesses(j) < bestFitness)
