@@ -22,8 +22,8 @@ TEST_CASE("NesterovMomentumSGDSpeedUpTestFunction", "[NesterovMomentumSGDTest]")
 {
   SGDTestFunction f;
   NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
-  NesterovMomentumSGD s(0.0003, 1, 2500000, 1e-9, true,
-                        nesterovMomentumUpdate);
+  NesterovMomentumSGD s(0.0003, 1, 2500000, 1e-9, true, nesterovMomentumUpdate,
+      NoDecay(), true, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
@@ -45,7 +45,8 @@ TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockTest", "[NesterovMomentumSGDT
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
     NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
-    NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate);
+    NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate,
+        NoDecay(), true, true);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);

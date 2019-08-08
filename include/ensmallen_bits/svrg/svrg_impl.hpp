@@ -27,13 +27,15 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
     const bool shuffle,
     const UpdatePolicyType& updatePolicy,
     const DecayPolicyType& decayPolicy,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),
     innerIterations(innerIterations),
     tolerance(tolerance),
     shuffle(shuffle),
+    exactObjective(exactObjective),
     updatePolicy(updatePolicy),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy)
@@ -159,12 +161,15 @@ double SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
   Info << "SVRG: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
-  // Calculate final objective.
-  overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; i += batchSize)
+  // Calculate final objective if exactObjective is set to true.
+  if (exactObjective)
   {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    overallObjective = 0;
+    for (size_t i = 0; i < numFunctions; i += batchSize)
+    {
+      const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+      overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    }
   }
   return overallObjective;
 }

@@ -96,6 +96,8 @@ class SPALeRASGD
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
    * @param resetPolicy Flag that determines whether update policy parameters
    *    are reset before every Optimize call.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SPALeRASGD(const double stepSize = 0.01,
              const size_t batchSize = 32,
@@ -107,7 +109,8 @@ class SPALeRASGD
              const double adaptRate = 3.10e-8,
              const bool shuffle = true,
              const DecayPolicyType& decayPolicy = DecayPolicyType(),
-             const bool resetPolicy = true);
+             const bool resetPolicy = true,
+             const bool exactObjective = false);
 
   /**
    * Optimize the given function using SPALeRA SGD.  The given starting point
@@ -157,6 +160,11 @@ class SPALeRASGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the actual objective is calculated.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify whether or not the actual objective is calculated.
+  bool& ExactObjective() { return exactObjective; }
+
   //! Get whether or not the update policy parameters
   //! are reset before Optimize call.
   bool ResetPolicy() const { return resetPolicy; }
@@ -193,6 +201,9 @@ class SPALeRASGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Controls whether or not the actual Objective value is calculated.
+  bool exactObjective;
 
   //! The update policy used to update the parameters in each iteration.
   SPALeRAStepsize updatePolicy;

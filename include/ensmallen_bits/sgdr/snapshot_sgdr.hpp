@@ -86,6 +86,8 @@ class SnapshotSGDR
    *        parameters.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SnapshotSGDR(const size_t epochRestart = 50,
                const double multFactor = 2.0,
@@ -97,7 +99,8 @@ class SnapshotSGDR
                const size_t snapshots = 5,
                const bool accumulate = true,
                const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
-               const bool resetPolicy = true);
+               const bool resetPolicy = true,
+               const bool exactObjective = false);
 
   /**
    * Optimize the given function using SGDR.  The given starting point
@@ -135,6 +138,11 @@ class SnapshotSGDR
   bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
+
+  //! Get whether or not the actual objective is calculated.
+  bool ExactObjective() const { return optimizer.ExactObjective(); }
+  //! Modify whether or not the actual objective is calculated.
+  bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get the snapshots.
   std::vector<arma::mat> Snapshots() const
@@ -176,6 +184,9 @@ class SnapshotSGDR
 
   //! Whether or not to accumulate the snapshots.
   bool accumulate;
+
+  //! Controls whether or not the actual Objective value is calculated.
+  bool exactObjective;
 
   //! Locally-stored optimizer instance.
   OptimizerType optimizer;

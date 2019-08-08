@@ -23,7 +23,8 @@ inline WNGrad::WNGrad(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
@@ -31,7 +32,8 @@ inline WNGrad::WNGrad(
               shuffle,
               WNGradUpdate(),
               NoDecay(),
-              resetPolicy)
+              resetPolicy,
+              exactObjective)
 { /* Nothing to do. */ }
 
 } // namespace ens

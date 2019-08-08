@@ -88,6 +88,8 @@ class SGD
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
    * @param resetPolicy Flag that determines whether update policy parameters
    *                    are reset before every Optimize call.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SGD(const double stepSize = 0.01,
       const size_t batchSize = 32,
@@ -96,7 +98,8 @@ class SGD
       const bool shuffle = true,
       const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
       const DecayPolicyType& decayPolicy = DecayPolicyType(),
-      const bool resetPolicy = true);
+      const bool resetPolicy = true,
+      const bool exactObjective = false);
 
   /**
    * Optimize the given function using stochastic gradient descent.  The given
@@ -137,6 +140,11 @@ class SGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the actual objective is calculated.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify whether or not the actual objective is calculated.
+  bool& ExactObjective() { return exactObjective; }
+
   //! Get whether or not the update policy parameters
   //! are reset before Optimize call.
   bool ResetPolicy() const { return resetPolicy; }
@@ -170,6 +178,9 @@ class SGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Controls whether or not the actual Objective value is calculated.
+  bool exactObjective;
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;

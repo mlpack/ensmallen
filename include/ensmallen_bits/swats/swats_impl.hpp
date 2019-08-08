@@ -26,7 +26,8 @@ inline SWATS::SWATS(
     const size_t maxIterations,
     const double tolerance,
     const bool shuffle,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     optimizer(stepSize,
               batchSize,
               maxIterations,
@@ -34,7 +35,8 @@ inline SWATS::SWATS(
               shuffle,
               SWATSUpdate(epsilon, beta1, beta2),
               NoDecay(),
-              resetPolicy)
+              resetPolicy,
+              exactObjective)
 { /* Nothing to do. */ }
 
 } // namespace ens
