@@ -1,15 +1,13 @@
-### ensmallen 1.1?.?
-###### ????-??-??
+### ensmallen 1.16.0
+###### 2019-08-09
   * Add option to avoid computing exact objective at the end of the optimization
-   (#109).
+    (#109).
 
-### ensmallen 1.15.2
-###### ????-??-??
   * Fix handling of curvature for BigBatchSGD (#118).
 
   * Reduce runtime of tests (#118).
 
-  * Introduce local-best particle swarm optimization, `LbestPSO`, for
+  * Introduce local-best particle swarm optimization, `LBestPSO`, for
     unconstrained optimization problems (#86).
 
 ### ensmallen 1.15.1
