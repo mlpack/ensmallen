@@ -23,44 +23,56 @@ inline HimmelblauFunction::HimmelblauFunction() { /* Nothing to do here */ }
 
 inline void HimmelblauFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double HimmelblauFunction::Evaluate(const arma::mat& coordinates,
-                                           const size_t /* begin */,
-                                           const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type HimmelblauFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = pow(x1 * x1 + x2  - 11 , 2) +
-                           pow(x1 + x2 * x2 - 7, 2);
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = pow(x1 * x1 + x2  - 11 , 2) +
+      pow(x1 + x2 * x2 - 7, 2);
   return objective;
 }
 
-inline double HimmelblauFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type HimmelblauFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void HimmelblauFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void HimmelblauFunction::Gradient(const MatType& coordinates,
                                          const size_t /* begin */,
-                                         arma::mat& gradient,
+                                         GradType& gradient,
                                          const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   // Aliases for different terms in the expression of the gradient
-  const double x1Sq = x1 * x1;
-  const double x2Sq = x2 * x2;
+  const ElemType x1Sq = x1 * x1;
+  const ElemType x2Sq = x2 * x2;
 
   gradient.set_size(2, 1);
   gradient(0) = (4 * x1 * (x1Sq + x2 - 11)) + (2 * (x1 + x2Sq - 7));
   gradient(1) = (2 * (x1Sq + x2 - 11)) + (4 * x2 * (x1 + x2Sq - 7));
 }
 
-inline void HimmelblauFunction::Gradient(const arma::mat& coordinates,
-                                         arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void HimmelblauFunction::Gradient(const MatType& coordinates,
+                                         GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }

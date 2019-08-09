@@ -49,7 +49,8 @@ class LevyFunctionN13
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("-10; 10"); }
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const { return MatType("-10; 10"); }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -58,16 +59,18 @@ class LevyFunctionN13
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
-  double Evaluate(const arma::mat& coordinates,
-                  const size_t begin,
-                  const size_t batchSize) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates,
+                                       const size_t begin,
+                                       const size_t batchSize) const;
 
   /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
-  double Evaluate(const arma::mat& coordinates) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
    * Evaluate the gradient of a function for a particular batch-size.
@@ -77,9 +80,10 @@ class LevyFunctionN13
    * @param gradient The function gradient.
    * @param batchSize Number of points to process.
    */
-  void Gradient(const arma::mat& coordinates,
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates,
                 const size_t begin,
-                arma::mat& gradient,
+                GradType& gradient,
                 const size_t batchSize) const;
 
   /**
@@ -88,7 +92,8 @@ class LevyFunctionN13
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient);
 };
 
 } // namespace test

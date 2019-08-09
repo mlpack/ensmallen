@@ -23,33 +23,44 @@ inline BukinFunction::BukinFunction(const double epsilon) : epsilon(epsilon)
 
 inline void BukinFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double BukinFunction::Evaluate(const arma::mat& coordinates,
-                                      const size_t /* begin */,
-                                      const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type BukinFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = 100 * std::sqrt(std::abs(x2 - 0.01 *
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = 100 * std::sqrt(std::abs(x2 - 0.01 *
       std::pow(x1, 2))) + 0.01 * std::abs(x1 + 10);
 
   return objective;
 }
 
-inline double BukinFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type BukinFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void BukinFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void BukinFunction::Gradient(const MatType& coordinates,
                                     const size_t /* begin */,
-                                    arma::mat& gradient,
+                                    GradType& gradient,
                                     const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
   gradient(0) = (0.01 * (x1 + 10.0)) / (std::abs(x1 + 10.0) + epsilon) -
@@ -59,8 +70,9 @@ inline void BukinFunction::Gradient(const arma::mat& coordinates,
       std::pow(std::abs(x2 - 0.01 * std::pow(x1, 2)), 1.5);
 }
 
-inline void BukinFunction::Gradient(const arma::mat& coordinates,
-                                    arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void BukinFunction::Gradient(const MatType& coordinates,
+                                    GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

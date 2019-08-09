@@ -23,52 +23,64 @@ inline SchafferFunctionN2::SchafferFunctionN2() { /* Nothing to do here */ }
 
 inline void SchafferFunctionN2::Shuffle() { /* Nothing to do here */ }
 
-inline double SchafferFunctionN2::Evaluate(const arma::mat& coordinates,
-                                           const size_t /* begin */,
-                                           const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type SchafferFunctionN2::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = 0.5 + (pow(sin(pow(x1, 2) - pow(x2, 2)), 2) - 0.5) /
-      pow(1 + 0.001 * (pow(x1, 2) + pow(x2, 2)), 2);
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = 0.5 + (pow(sin(pow(x1, 2) -
+      pow(x2, 2)), 2) - 0.5) / pow(1 + 0.001 * (pow(x1, 2) + pow(x2, 2)), 2);
 
   return objective;
 }
 
-inline double SchafferFunctionN2::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type SchafferFunctionN2::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void SchafferFunctionN2::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void SchafferFunctionN2::Gradient(const MatType& coordinates,
                                          const size_t /* begin */,
-                                         arma::mat& gradient,
+                                         GradType& gradient,
                                          const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   // Aliases for different terms in the expression of the gradient
-  const double x1Sq = x1 * x1;
-  const double x2Sq = x2 * x2;
-  const double sum1 = x1Sq - x2Sq;
-  const double sinSum1 = sin(sum1);
-  const double sum2 = 0.001 * (x1Sq + x2Sq) + 1;
-  const double trigExpression = 4 * sinSum1 * cos(sum1);
-  const double numerator1 = - 0.004 * (pow(sinSum1, 2) - 0.5);
-  const double expr1 = numerator1 / pow(sum2, 3);
-  const double expr2 = trigExpression / pow(sum2, 2);
+  const ElemType x1Sq = x1 * x1;
+  const ElemType x2Sq = x2 * x2;
+  const ElemType sum1 = x1Sq - x2Sq;
+  const ElemType sinSum1 = sin(sum1);
+  const ElemType sum2 = 0.001 * (x1Sq + x2Sq) + 1;
+  const ElemType trigExpression = 4 * sinSum1 * cos(sum1);
+  const ElemType numerator1 = - 0.004 * (pow(sinSum1, 2) - 0.5);
+  const ElemType expr1 = numerator1 / pow(sum2, 3);
+  const ElemType expr2 = trigExpression / pow(sum2, 2);
 
   gradient.set_size(2, 1);
   gradient(0) = x1 * (expr1 + expr2);
   gradient(1) = x2 * (expr1 - expr2);
 }
 
-inline void SchafferFunctionN2::Gradient(const arma::mat& coordinates,
-                                         arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void SchafferFunctionN2::Gradient(const MatType& coordinates,
+                                         GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }

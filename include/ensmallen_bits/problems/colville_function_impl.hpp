@@ -28,6 +28,7 @@ typename MatType::elem_type ColvilleFunction::Evaluate(
     const size_t /* begin */,
     const size_t /* batchSize */) const
 {
+  // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
 
   // For convenience; we assume these temporaries will be optimized out.
@@ -57,6 +58,7 @@ inline void ColvilleFunction::Gradient(const MatType& coordinates,
                                        GradType& gradient,
                                        const size_t /* batchSize */) const
 {
+  // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
 
   // For convenience; we assume these temporaries will be optimized out.

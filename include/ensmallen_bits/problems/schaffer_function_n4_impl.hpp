@@ -23,22 +23,28 @@ inline SchafferFunctionN4::SchafferFunctionN4() { /* Nothing to do here */ }
 
 inline void SchafferFunctionN4::Shuffle() { /* Nothing to do here */ }
 
-inline double SchafferFunctionN4::Evaluate(const arma::mat& coordinates,
-                                           const size_t /* begin */,
-                                           const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type SchafferFunctionN4::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = 0.5 + (pow(cos(sin(abs(pow(x1, 2) -
-      pow(x2, 2)))), 2) - 0.5) / pow(1 + 0.001 * (pow(x1, 2) +
-      pow(x2, 2)), 2);
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = 0.5 + (pow(cos(sin(abs(pow(x1, 2) -
+      pow(x2, 2)))), 2) - 0.5) / pow(1 + 0.001 * (pow(x1, 2) + pow(x2, 2)), 2);
 
   return objective;
 }
 
-inline double SchafferFunctionN4::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type SchafferFunctionN4::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }

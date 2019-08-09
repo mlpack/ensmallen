@@ -23,37 +23,48 @@ inline BealeFunction::BealeFunction() { /* Nothing to do here */ }
 
 inline void BealeFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double BealeFunction::Evaluate(const arma::mat& coordinates,
-                                      const size_t /* begin */,
-                                      const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type BealeFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = pow(1.5 - x1 + x1 * x2, 2) +
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = pow(1.5 - x1 + x1 * x2, 2) +
       pow(2.25 - x1 + x1 * x2 * x2, 2) +  pow(2.625 - x1 + x1 * pow(x2, 3), 2);
 
   return objective;
 }
 
-inline double BealeFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type BealeFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void BealeFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void BealeFunction::Gradient(const MatType& coordinates,
                                     const size_t /* begin */,
-                                    arma::mat& gradient,
+                                    GradType& gradient,
                                     const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  // Aliases for different terms in the expression of the gradient
-  const double x2Sq = x2 * x2;
-  const double x2Cub = pow(x2, 3);
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  // Aliases for different terms in the expression of the gradient.
+  const ElemType x2Sq = x2 * x2;
+  const ElemType x2Cub = pow(x2, 3);
 
   gradient.set_size(2, 1);
   gradient(0) = ((2 * x2 - 2) * (x1 * x2 - x1 + 1.5)) +
@@ -64,8 +75,9 @@ inline void BealeFunction::Gradient(const arma::mat& coordinates,
       (2 * x1 * (x1 * x2 - x1 + 1.5));
 }
 
-inline void BealeFunction::Gradient(const arma::mat& coordinates,
-                                    arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void BealeFunction::Gradient(const MatType& coordinates,
+                                    GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, 1);
 }
