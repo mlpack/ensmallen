@@ -22,34 +22,45 @@ inline EggholderFunction::EggholderFunction() { /* Nothing to do here */ }
 
 inline void EggholderFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double EggholderFunction::Evaluate(const arma::mat& coordinates,
-                                          const size_t /* begin */,
-                                          const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type EggholderFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = -1.0 * (x2 + 47) * std::sin(std::sqrt(
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = -1.0 * (x2 + 47) * std::sin(std::sqrt(
       std::abs(x2 + x1 / 2 + 47))) - x1 * std::sin(std::sqrt(
       std::abs(x1 - (x2 + 47))));
 
   return objective;
 }
 
-inline double EggholderFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type EggholderFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void EggholderFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void EggholderFunction::Gradient(const MatType& coordinates,
                                         const size_t /* begin */,
-                                        arma::mat& gradient,
+                                        GradType& gradient,
                                         const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
   gradient(0) = -1.0 * std::sin(std::sqrt(std::abs(x1 - x2 - 47))) -
@@ -67,8 +78,9 @@ inline void EggholderFunction::Gradient(const arma::mat& coordinates,
       (4 * std::pow(std::abs(x1 / 2 + x2  + 47), 1.5));
 }
 
-inline void EggholderFunction::Gradient(const arma::mat& coordinates,
-                                        arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void EggholderFunction::Gradient(const MatType& coordinates,
+                                        GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

@@ -51,9 +51,11 @@ inline void RosenbrockWoodFunction::Gradient(const MatType& coordinates,
                                              GradType& gradient,
                                              const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   gradient.set_size(4, 2);
 
-  typedef typename MatType::elem_type ElemType;
   arma::Col<ElemType> grf(4);
   arma::Col<ElemType> gwf(4);
 
