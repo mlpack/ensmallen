@@ -25,11 +25,11 @@ class EarlyStopAtMinLoss
    * Set up the early stop at min loss class, which keeps track of the minimum
    * loss and stops the optimization process if the loss stops decreasing.
    *
-   * @param patience The number of epochs to wait after the minimum loss has
+   * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss(const size_t patience = 10) :
-      patience(patience),
+  EarlyStopAtMinLoss(const size_t patienceIn = 10) :
+      patience(patienceIn),
       bestObjective(std::numeric_limits<double>::max()),
       steps(0)
   { /* Nothing to do here */ }

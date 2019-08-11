@@ -157,7 +157,7 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
  */
 TEST_CASE("AdaDeltaCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 3, 1e-9, true);
+  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 2000, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -167,7 +167,7 @@ TEST_CASE("AdaDeltaCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("AdaGradCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  AdaGrad optimizer(0.99, 1, 1e-8, 3, 1e-9, true);
+  AdaGrad optimizer(0.99, 1, 1e-8, 2000, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -177,7 +177,7 @@ TEST_CASE("AdaGradCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("AdamCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 3, 1e-3, false);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 2000, 1e-3, false);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -187,7 +187,7 @@ TEST_CASE("AdamCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("BigBatchSGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  BBS_BB optimizer(1, 0.01, 0.1, 4, 1e-4);
+  BBS_BB optimizer(1, 0.01, 0.1, 2000, 1e-4);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -227,7 +227,7 @@ TEST_CASE("DECallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("EveCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 3, 1e-9, true);
+  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 2000, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -237,7 +237,7 @@ TEST_CASE("EveCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("FTMLCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 3, 1e-5, true);
+  FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 2000, 1e-5, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -258,7 +258,7 @@ TEST_CASE("GradientDescentCallbacksFullFunctionTest", "[CallbacksTest]")
 TEST_CASE("IQNCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   IQN optimizer(0.01, 1, 3, 1e-3);
-  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+  CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
       false, false, true);
 }
 
@@ -268,7 +268,7 @@ TEST_CASE("IQNCallbacksFullFunctionTest", "[CallbacksTest]")
 TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   Katyusha optimizer(1.0, 10.0, 1, 3, 0, 1e-10, true);
-  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+  CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
       false, false, true);
 }
 
@@ -278,7 +278,7 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
 TEST_CASE("SARAHCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SARAH optimizer(0.01, 2, 3, 0, 1e-5, true);
-  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+  CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
       false, false, true);
 }
 
@@ -297,7 +297,7 @@ TEST_CASE("SCDCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("SGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  StandardSGD optimizer(0.0003, 1, 3, 1e-9, true);
+  StandardSGD optimizer(0.0003, 1, 2000, 1e-9, true);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -307,7 +307,7 @@ TEST_CASE("SGDCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("SGDRCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  SGDR<> optimizer(50, 2.0, 1, 0.01, 4, 1e-3);
+  SGDR<> optimizer(50, 2.0, 1, 0.01, 2000, 1e-3);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -317,7 +317,7 @@ TEST_CASE("SGDRCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("SPALeRASGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  SPALeRASGD<> optimizer(0.05, 2, 6, 1e-4);
+  SPALeRASGD<> optimizer(0.05, 30, 2000, 1e-4);
   CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
@@ -338,7 +338,7 @@ TEST_CASE("SPSACallbacksFullFunctionTest", "[CallbacksTest]")
 TEST_CASE("SVRGCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SVRG optimizer(0.005, 2, 4, 0, 1e-5, true);
-  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+  CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
       false, false, true);
 }
 
@@ -349,7 +349,17 @@ TEST_CASE("ParallelSGDCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   ConstantStep decayPolicy(0.4);
   ParallelSGD<ConstantStep> optimizer(4, 2, 1e-5, true, decayPolicy);
-  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+  CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
+      false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (LBestPSO).
+ */
+TEST_CASE("LBestPSOCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  LBestPSO optimizer;
+  CallbacksFullFunctionTest(optimizer, true, false, false, false, true, true,
       false, false, true);
 }
 

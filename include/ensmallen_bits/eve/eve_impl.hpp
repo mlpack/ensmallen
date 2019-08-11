@@ -76,6 +76,7 @@ Eve::Optimize(DecomposableFunctionType& function,
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
+  size_t epoch = 1;
   ElemType overallObjective = 0;
   ElemType lastOverallObjective = DBL_MAX;
 
@@ -102,43 +103,6 @@ Eve::Optimize(DecomposableFunctionType& function,
   for (size_t i = 0; i < actualMaxIterations && !terminate;
       /* incrementing done manually */)
   {
-    terminate |= Callback::BeginEpoch(*this, f, iterate, i, overallObjective,
-        callbacks...);
-
-    // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0 && i > 0)
-    {
-      // Output current objective function.
-      Info << "Eve: iteration " << i << ", objective " << overallObjective
-          << "." << std::endl;
-
-      if (std::isnan(overallObjective) || std::isinf(overallObjective))
-      {
-        Warn << "Eve: converged to " << overallObjective << "; terminating"
-            << " with failure.  Try a smaller step size?" << std::endl;
-
-        Callback::EndOptimization(*this, f, iterate, callbacks...);
-        return overallObjective;
-      }
-
-      if (std::abs(lastOverallObjective - overallObjective) < tolerance)
-      {
-        Info << "Eve: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
-
-        Callback::EndOptimization(*this, f, iterate, callbacks...);
-        return overallObjective;
-      }
-
-      // Reset the counter variables.
-      lastOverallObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
-
-      if (shuffle) // Determine order of visitation.
-        f.Shuffle();
-    }
-
     // Find the effective batch size; we have to take the minimum of three
     // things:
     // - the batch size can't be larger than the user-specified batch size;
@@ -187,8 +151,44 @@ Eve::Optimize(DecomposableFunctionType& function,
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
 
-    terminate |= Callback::EndEpoch(*this, f, iterate, i, overallObjective,
-        callbacks...);
+    // Is this iteration the start of a sequence?
+    if ((currentFunction % numFunctions) == 0)
+    {
+      terminate |= Callback::EndEpoch(*this, f, iterate, epoch++,
+          overallObjective / (ElemType) numFunctions, callbacks...);
+
+      // Output current objective function.
+      Info << "Eve: iteration " << i << ", objective " << overallObjective
+          << "." << std::endl;
+
+      if (std::isnan(overallObjective) || std::isinf(overallObjective))
+      {
+        Warn << "Eve: converged to " << overallObjective << "; terminating"
+            << " with failure.  Try a smaller step size?" << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
+        return overallObjective;
+      }
+
+      if (std::abs(lastOverallObjective - overallObjective) < tolerance ||
+          Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
+              callbacks...))
+      {
+        Info << "Eve: minimized within tolerance " << tolerance << "; "
+            << "terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
+        return overallObjective;
+      }
+
+      // Reset the counter variables.
+      lastOverallObjective = overallObjective;
+      overallObjective = 0;
+      currentFunction = 0;
+
+      if (shuffle) // Determine order of visitation.
+        f.Shuffle();
+    }
   }
 
   Info << "Eve: maximum iterations (" << maxIterations << ") reached; "

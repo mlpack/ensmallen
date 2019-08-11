@@ -59,6 +59,8 @@ typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
         - coordinates[p + 1]), 2) + std::pow(1 - coordinates[p], 2);
   }
 
+  // usleep(1000000);
+
   return objective;
 }
 
@@ -72,6 +74,8 @@ typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
     fval += 100 * std::pow(std::pow(coordinates[i], 2) -
         coordinates[i + 1], 2) + std::pow(1 - coordinates[i], 2);
   }
+
+  // usleep(1000000);
 
   return fval;
 }

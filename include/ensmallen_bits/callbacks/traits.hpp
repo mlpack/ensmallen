@@ -181,14 +181,14 @@ struct TypedForms
   using StepTakenBoolForm =
       bool(CallbackType::*)(OptimizerType&,
                             FunctionType&,
-                            MatType&);
+                            const MatType&);
 
   //! This is the form of a void StepTaken() callback method.
   template<typename CallbackType>
   using StepTakenVoidForm =
       void(CallbackType::*)(OptimizerType&,
                             FunctionType&,
-                            MatType&);
+                            const MatType&);
 };
 
 //! Utility struct, check if either void BeginOptimization() or
