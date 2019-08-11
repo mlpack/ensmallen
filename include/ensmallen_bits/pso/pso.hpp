@@ -86,8 +86,8 @@ class PSOType
    * @param initPolicy Particle initialization policy.
    */
   PSOType(const size_t numParticles = 64,
-          const arma::vec& lowerBound = arma::ones<arma::vec>(1),
-          const arma::vec& upperBound = arma::ones<arma::vec>(1),
+          const arma::mat& lowerBound = arma::ones(1, 1),
+          const arma::mat& upperBound = arma::ones(1, 1),
           const size_t maxIterations = 3000,
           const size_t horizonSize = 350,
           const double impTolerance = 1e-10,
@@ -135,8 +135,8 @@ class PSOType
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
-          lowerBound(lowerBound * arma::ones<arma::vec>(1)),
-          upperBound(upperBound * arma::ones<arma::vec>(1)),
+          lowerBound(lowerBound * arma::ones(1, 1)),
+          upperBound(upperBound * arma::ones(1, 1)),
           maxIterations(maxIterations),
           horizonSize(horizonSize),
           impTolerance(impTolerance),
@@ -173,14 +173,14 @@ class PSOType
   size_t& NumParticles() { return numParticles; }
 
   //! Retrieve value of lowerBound.
-  size_t LowerBound() const { return lowerBound; }
+  const arma::mat& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
-  size_t& LowerBound() { return lowerBound; }
+  arma::mat& LowerBound() { return lowerBound; }
 
   //! Retrieve value of upperBound.
-  size_t UpperBound() const { return upperBound; }
+  const arma::mat& UpperBound() const { return upperBound; }
   //! Modify value of upperBound.
-  size_t& UpperBound() { return upperBound; }
+  arma::mat& UpperBound() { return upperBound; }
 
   //! Retrieve value of maxIterations.
   size_t MaxIterations() const { return maxIterations; }
@@ -193,9 +193,9 @@ class PSOType
   size_t& HorizonSize() { return horizonSize; }
 
   //! Retrieve value of impTolerance.
-  size_t ImpTolerance() const { return impTolerance; }
+  double ImpTolerance() const { return impTolerance; }
   //! Modify value of impTolerance.
-  size_t& ImpTolerance() { return impTolerance; }
+  double& ImpTolerance() { return impTolerance; }
 
   //! Retrieve value of exploitationFactor.
   double ExploitationFactor() const { return exploitationFactor; }
@@ -227,10 +227,10 @@ class PSOType
   size_t numParticles;
 
   //! Lower bound of the initial swarm.
-  arma::vec lowerBound;
+  arma::mat lowerBound;
 
   //! Upper bound of the initial swarm.
-  arma::vec upperBound;
+  arma::mat upperBound;
 
   //! Maximum number of iterations for which the optimizer will run.
   size_t maxIterations;
