@@ -49,17 +49,24 @@ class DefaultInit
    * @param particleBestPositions Best positions attained by each particle.
    * @param particleBestFitnesses Best fitness values attained by each particle.
    */
-  template<typename ElemType>
-  void Initialize(const arma::Mat<ElemType>& iterate,
+  template<typename MatType,
+           typename BoundMatType,
+           typename VecType,
+           typename CubeType>
+  void Initialize(const MatType& iterate,
                   const size_t numParticles,
-                  arma::Col<ElemType>& lowerBound,
-                  arma::Col<ElemType>& upperBound,
-                  arma::Cube<ElemType>& particlePositions,
-                  arma::Cube<ElemType>& particleVelocities,
-                  arma::Mat<ElemType>& particleFitnesses,
-                  arma::Cube<ElemType>& particleBestPositions,
-                  arma::Mat<ElemType>& particleBestFitnesses)
+                  BoundMatType& lowerBound,
+                  BoundMatType& upperBound,
+                  CubeType& particlePositions,
+                  CubeType& particleVelocities,
+                  VecType& particleFitnesses,
+                  CubeType& particleBestPositions,
+                  VecType& particleBestFitnesses)
   {
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+    typedef typename CubeType::elem_type CubeElemType;
+
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
 
@@ -67,20 +74,17 @@ class DefaultInit
     arma::umat lbEquality = (lowerBound == upperBound);
     if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 1)
     {
-      lowerBound.set_size(iterate.n_rows);
+      lowerBound.set_size(iterate.n_rows, iterate.n_cols);
       lowerBound.fill(-1.0);
 
-      upperBound.set_size(iterate.n_rows);
+      upperBound.set_size(iterate.n_rows, iterate.n_cols);
       upperBound.fill(1.0);
     }
-
     // Check if lowerBound and upperBound are vectors of a single dimension.
     else if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 0)
     {
-      const ElemType lbScalar = lowerBound(0);
-      const ElemType ubScalar = upperBound(0);
-      lowerBound = -lbScalar * arma::ones<arma::Col<ElemType> >(iterate.n_rows);
-      upperBound = ubScalar * arma::ones<arma::Col<ElemType> >(iterate.n_rows);
+      lowerBound = -lowerBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
+      upperBound = upperBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
     }
 
     // Check the dimensions of lowerBound and upperBound.
@@ -93,7 +97,8 @@ class DefaultInit
     for (size_t i = 0; i < numParticles; i++)
     {
       particlePositions.slice(i) = particlePositions.slice(i) %
-          (upperBound - lowerBound) + lowerBound;
+          arma::conv_to<arma::Mat<CubeElemType> >::from(upperBound - lowerBound)
+          + arma::conv_to<arma::Mat<CubeElemType> >::from(lowerBound);
     }
 
     // Randomly initialize particle velocities.
