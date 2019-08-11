@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 1.16.1: "Loud Alarm Clock"
 ###### 2019-08-11
   * Update HISTORY.md to use Markdown links to the PR and add release names.
