@@ -102,9 +102,6 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
       callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
-
     // Calculate the overall objective.
     lastObjective = overallObjective;
 
@@ -191,9 +188,6 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
             callbacks...);
       }
     }
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
   }
 
   Info << "\nParallel SGD terminated with objective : " << overallObjective

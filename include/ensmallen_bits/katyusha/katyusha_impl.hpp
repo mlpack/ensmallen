@@ -114,9 +114,6 @@ KatyushaType<Proximal>::Optimize(
       callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
-
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
@@ -239,9 +236,6 @@ KatyushaType<Proximal>::Optimize(
       f += effectiveBatchSize;
     }
     iterate0 = normalizer * w;
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
   }
 
   Info << "Katyusha: maximum iterations (" << maxIterations << ") reached"

@@ -98,9 +98,6 @@ SARAHType<UpdatePolicyType>::Optimize(
       callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
-
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
@@ -219,9 +216,6 @@ SARAHType<UpdatePolicyType>::Optimize(
       currentFunction += effectiveBatchSize;
       f += effectiveBatchSize;
     }
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
   }
 
   Info << "SARAH: maximum iterations (" << maxIterations << ") reached; "

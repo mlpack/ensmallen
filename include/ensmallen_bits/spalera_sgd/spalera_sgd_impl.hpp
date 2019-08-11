@@ -85,6 +85,7 @@ SPALeRASGD<DecayPolicyType>::Optimize(
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
+  size_t epoch = 1;
   ElemType overallObjective = 0;
   ElemType lastObjective = DBL_MAX;
 
@@ -126,47 +127,11 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
+  Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
+      callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate;
       /* incrementing done manually */)
   {
-    terminate |= Callback::BeginEpoch(*this, f, iterate, i, overallObjective,
-        callbacks...);
-
-    // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0)
-    {
-      // Output current objective function.
-      Info << "SPALeRA SGD: iteration " << i << ", objective "
-          << overallObjective << "." << std::endl;
-
-      if (std::isnan(overallObjective) || std::isinf(overallObjective))
-      {
-        Warn << "SPALeRA SGD: converged to " << overallObjective
-            << "; terminating with failure.  Try a smaller step size?"
-            << std::endl;
-
-        Callback::EndOptimization(*this, f, iterate, callbacks...);
-        return overallObjective;
-      }
-
-      if (std::abs(lastObjective - overallObjective) < tolerance)
-      {
-        Info << "SPALeRA SGD: minimized within tolerance " << tolerance
-            << "; terminating optimization." << std::endl;
-
-        Callback::EndOptimization(*this, f, iterate, callbacks...);
-        return overallObjective;
-      }
-
-      // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
-
-      if (shuffle) // Determine order of visitation.
-        f.Shuffle();
-    }
-
     // Calculate gradient and objective.
     // Find the effective batch size; we have to take the minimum of three
     // things:
@@ -206,8 +171,45 @@ SPALeRASGD<DecayPolicyType>::Optimize(
     overallObjective += currentObjective;
     currentObjective /= effectiveBatchSize;
 
-    terminate |= Callback::EndEpoch(*this, f, iterate, i, overallObjective,
-        callbacks...);
+    // Is this iteration the start of a sequence?
+    if ((currentFunction % numFunctions) == 0)
+    {
+      terminate |= Callback::EndEpoch(*this, f, iterate, epoch++,
+          overallObjective / (ElemType) numFunctions, callbacks...);
+
+      // Output current objective function.
+      Info << "SPALeRA SGD: iteration " << i << ", objective "
+          << overallObjective << "." << std::endl;
+
+      if (std::isnan(overallObjective) || std::isinf(overallObjective))
+      {
+        Warn << "SPALeRA SGD: converged to " << overallObjective
+            << "; terminating with failure.  Try a smaller step size?"
+            << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
+        return overallObjective;
+      }
+
+      if (std::abs(lastObjective - overallObjective) < tolerance ||
+          Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
+              callbacks...))
+      {
+        Info << "SPALeRA SGD: minimized within tolerance " << tolerance
+            << "; terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
+        return overallObjective;
+      }
+
+      // Reset the counter variables.
+      lastObjective = overallObjective;
+      overallObjective = 0;
+      currentFunction = 0;
+
+      if (shuffle) // Determine order of visitation.
+        f.Shuffle();
+    }
   }
 
   Info << "SPALeRA SGD: maximum iterations (" << maxIterations

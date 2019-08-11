@@ -116,9 +116,6 @@ IQN::Optimize(DecomposableFunctionType& functionIn,
       callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
-
     for (size_t j = 0, f = 0; f < numFunctions; j++)
     {
       // Cyclicly iterating through the number of functions.
@@ -204,9 +201,6 @@ IQN::Optimize(DecomposableFunctionType& functionIn,
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
   }
 
   Info << "IQN: maximum iterations (" << maxIterations << ") reached; "

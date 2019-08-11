@@ -124,9 +124,6 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
       callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
-    terminate |= Callback::BeginEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
-
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
@@ -223,9 +220,6 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
     // Update the learning rate if requested by the user.
     instDecayPolicy.As<InstDecayPolicyType>().Update(iterate, iterate0,
         gradient, fullGradient, numBatches, stepSize);
-
-    terminate |= Callback::EndEpoch(*this, function, iterate, i,
-        overallObjective, callbacks...);
   }
 
   Info << "SVRG: maximum iterations (" << maxIterations << ") reached; "
