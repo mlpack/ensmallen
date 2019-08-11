@@ -1357,22 +1357,22 @@ PSO is an evolutionary approach to optimization that is inspired by flocks or bi
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`numParticles`** |  numParticles Number of particles in the swarm. | `64` |
-| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
-| `double`, `arma::vec` | **`upperBound`** |  Upper bound of the coordinates of the initial population. | `1` |
+| `double`, `arma::mat` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
+| `double`, `arma::mat` | **`upperBound`** |  Upper bound of the coordinates of the initial population. | `1` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed. | `3000` |
 | `size_t` | **`horizonSize`** | Size of the lookback-horizon for computing improvement. | `350` |
 | `double` | **`impTolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-5` |
 | `double` | **`exploitationFactor`** | Influence of the personal best of the particle. | `2.05` |
 | `double` | **`explorationFactor`** | Influence of the neighbours of the particle. | `2.05` |
 
-Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::vec` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as vectors of `arma::vec`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
+Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
 
 Attributes of the optimizer may also be changed via the member methods
 `NumParticles()`, `LowerBound()`, `UpperBound()`, `MaxIterations()`,
 `HorizonSize()`, `ImpTolerance()`,`ExploitationFactor()`, and
 `ExplorationFactor()`.
 
-At present, only the local-best variant of PSO is present in ensmallen. The optimizer may be initialized using the class type `LBestPSO`, which is an alias for `PSOType<LBestUpdate, DefaultInit>`. 
+At present, only the local-best variant of PSO is present in ensmallen. The optimizer may be initialized using the class type `LBestPSO`, which is an alias for `PSOType<LBestUpdate, DefaultInit>`.
 
 #### Examples:
 
