@@ -1,6 +1,9 @@
 ### ensmallen 1.16.1: "Loud Alarm Clock"
-###### 2019-??-??
+###### 2019-08-11
   * Update HISTORY.md to use Markdown links to the PR and add release names.
+
+  * Fix PSO return type bug
+    ([#124](https://github.com/mlpack/ensmallen/pull/124)).
 
 ### ensmallen 1.16.0: "Loud Alarm Clock"
 ###### 2019-08-09
