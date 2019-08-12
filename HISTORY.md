@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+  * Fix PSO return type bug
+    ([#126](https://github.com/mlpack/ensmallen/pull/126)).
 
 ### ensmallen 1.16.1: "Loud Alarm Clock"
 ###### 2019-08-11
