@@ -38,7 +38,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	arma::cube population = arma::randn(iterate.n_rows, iterate.n_cols, populationSize);
 	population.each_slice() += iterate;
 
-	// Evaluate initial population.
+	// Initialize helper variables.
 	std::vector<size_t> S;
 	arma::cube R, Q;
 	std::vector<std::vector<size_t>> fronts;
@@ -188,6 +188,20 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  population = nextPop;
 	}
 
+	// Evaluate final population.
+	arma::mat fitnessValues(function.NumObjectives(), population.n_slices);
+	for (size_t i = 0; i < R.n_slices; i++)
+	  fitnessValues.col(i) = function.Evaluate(population.slice(i));
+
+	// Find the fronts.
+	fronts.clear();
+	fronts = NonDominatedSorting(fitnessValues);
+
+	arma::cube bestFront(population.n_rows, population.n_slices, fronts[0].size());
+	for (size_t i = 0; i < fronts[0].size(); i++)
+	  bestFront.slice(i) = population.slice(fronts[0][i]);
+
+	return bestFront;
 }
 
 std::vector<std::vector<size_t>> NSGAIII::NonDominatedSorting
