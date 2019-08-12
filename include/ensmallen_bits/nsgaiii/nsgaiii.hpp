@@ -20,7 +20,8 @@ class NSGAIII
  public:
   NSGAIII(const size_t populationSize,
           const size_t maxGenerations,
-          const double crossoverProb);
+          const double crossoverProb,
+          const double distrIndex);
 
   template<typename MultiObjectiveFunctionType>
   arma::cube Optimize(MultiObjectiveFunctionType& function, arma::mat& iterate);
@@ -40,20 +41,32 @@ class NSGAIII
   //! Set the probability of crossover.
   double& CrossoverProb() { return crossoverProb; }
 
+  // Load reference set
+  arma::cube& ReferenceSet();
+
  private:
   void NonDominatedSorting(const arma::mat& fitnessValues,
-                           std::vector<std::vector<size_t>>& fronts;);
+                           std::vector<std::vector<size_t>>& fronts);
 
   arma::cube Mate(arma::cube& population);
 
-  // The number of members in a population.
+  //! The number of members in a population.
   size_t populationSize;
 
-  // The maximum number of generations.
+  //! The maximum number of generations.
   size_t maxGenerations;
 
-  // The probability of crossover.
+  //! The probability of crossover.
   double crossoverProb;
+
+  //! The distribution index for SBX crossover.
+  double distrIndex;
+
+  //! Reference set.
+  arma::cube referenceSet;
+
+  //! Boolean denoting whether or not the reference set is user defined.
+  bool userDefinedSet;
 };
 
 } // namespace ens

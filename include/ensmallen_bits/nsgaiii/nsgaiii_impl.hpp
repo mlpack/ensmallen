@@ -18,15 +18,14 @@
 namespace ens {
 
 inline NSGAIII::NSGAIII(const size_t populationSize,
-							          const size_t maxGenerations,
-							          const double mutationProb,
-							          const double mutationSize,
-							          const double crossoverProb) :
+					    const size_t maxGenerations,
+					    const double crossoverProb,
+					    const double distrIndex) :
 		populationSize(populationSize),
 		maxGenerations(maxGenerations),
-		mutationProb(mutationProb),
-		mutationSize(mutationSize),
-		crossoverProb(crossoverProb)
+		crossoverProb(crossoverProb),
+		distrIndex(distrIndex),
+		userDefinedSet(false)
 { /* Nothing to do here */ }
 
 template<typename MultiObjectiveFunctionType>
@@ -56,7 +55,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 
 	  // Find next population.
 	  fronts.clear();
-	  fronts = NonDominatedSorting(fitnessValues);
+	  NonDominatedSorting(fitnessValues, fronts);
 	  size_t l = 0, numMembers = 0;
 	  arma::cube nextPop = population;
 	  arma::mat newFitness(function.NumObjectives(), populationSize);
@@ -125,16 +124,16 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  fitnessValues.each_col() /= intercepts;
 
 	  // Association step.
-	  arma::mat perpDists(referenceSet.n_cols, numMembers);
+	  arma::mat perpDists(referenceSet.n_slices, numMembers);
 	  arma::vec associates(numMembers);
 	  for (size_t i = 0; i < numMembers; i++)
 	  {
 	  	double min = DBL_MAX;
 	  	size_t minIdx = 0;
-	  	for (size_t j = 0; j < referenceSet.n_cols; j++)
+	  	for (size_t j = 0; j < referenceSet.n_slices; j++)
 	  	{
 	  	  arma::mat s = nextPop.slice(i);
-	  	  arma::vec w = referenceSet.col(j);
+	  	  arma::mat w = referenceSet.slice(j);
 	  	  double wnorm = arma::norm(w, 2);
 	  	  perpDists(j, i) = arma::norm(s - (w.t() * s * w) / std::pow(wnorm, 2), 2);
 	  	  if (perpDists(j, i) < min)
@@ -147,7 +146,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  }
 
 	  // Compute niche count.
-	  arma::uvec nicheCount(referenceSet.n_cols);
+	  arma::uvec nicheCount(referenceSet.n_slices);
 	  for (size_t i = 0; i < associates.n_elem; i++)
 	  	nicheCount[i] = (arma::uword)arma::accu(arma::find(associates == i));
 
@@ -169,7 +168,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  	for (size_t i = 0; i < fronts[l].size(); i++)
 	  	{
 		  arma::mat s = nextPop.slice(i);
-		  arma::vec w = referenceSet.col(randIdx);
+		  arma::mat w = referenceSet.slice(randIdx);
 		  double wnorm = arma::norm(w, 2);
 		  double perpDist = arma::norm(s - (w.t() * s * w) / std::pow(wnorm, 2), 2);
 		  if (perpDist < distMin)
@@ -193,7 +192,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 
 	// Find the fronts.
 	fronts.clear();
-	fronts = NonDominatedSorting(fitnessValues);
+	NonDominatedSorting(fitnessValues, fronts);
 
 	arma::cube bestFront(population.n_rows, population.n_slices, fronts[0].size());
 	for (size_t i = 0; i < fronts[0].size(); i++)
@@ -275,9 +274,9 @@ arma::cube NSGAIII::Mate(arma::cube& population)
 		  double u = arma::randu();
 		  double beta = 0;
 		  if (u < 0.5)
-			beta = std::pow(u / 0.5, 1 / (n + 1));
+			beta = std::pow(u / 0.5, 1 / (distrIndex + 1));
 		  else
-			beta = std::pow(2 * (1 - u), -(n + 1));
+			beta = std::pow(2 * (1 - u), -(distrIndex + 1));
 		  double p1 = population(i, 0, selection[0]);
 		  double p2 = population(i, 0, selection[1]);
 
@@ -301,6 +300,12 @@ arma::cube NSGAIII::Mate(arma::cube& population)
   }
 
   return offspring;
+}
+
+arma::cube& NSGAIII::ReferenceSet()
+{
+  userDefinedSet = true;
+  return referenceSet;
 }
 	
 }
