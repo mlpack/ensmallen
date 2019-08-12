@@ -32,13 +32,13 @@ inline arma::vec DTLZ6::Evaluate(const arma::mat& coordinates) const
 
 	double g = 0;
 	for (size_t i = numVariables - k; i < numVariables; i++)
-		g += std::pow(coordinates[i][0], 0.1);
+		g += std::pow(coordinates(i, 0), 0.1);
 
 	double t = M_PI / (4 * (1 + g));
 	arma::vec theta(numObjectives - 1);
-	theta[0] = coordinates[0][0] * M_PI / 2;
+	theta[0] = coordinates(0, 0) * M_PI / 2;
 	for (size_t i = 0; i < numObjectives - 1; i++)
-		theta[i] = t * (1 + 2 * g * coordinates[i][0]);
+		theta[i] = t * (1 + 2 * g * coordinates(i, 0));
 
 	for (size_t i = 0; i < numObjectives; i++)
 	{

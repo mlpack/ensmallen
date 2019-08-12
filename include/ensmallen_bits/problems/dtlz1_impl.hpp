@@ -33,7 +33,7 @@ inline arma::vec DTLZ1::Evaluate(const arma::mat& coordinates) const
 	double g = 0;
 	for (size_t i = numVariables - k; i < numVariables; i++)
 	{
-		double x = coordinates[i][0]; 
+		double x = coordinates(i, 0);
 		g += (x - 0.5) * (x - 0.5) - std::cos(20 * M_PI * (x - 0.5));
 	}
 
@@ -42,9 +42,9 @@ inline arma::vec DTLZ1::Evaluate(const arma::mat& coordinates) const
 	{
 		f[i] = (1 + g) / 2;
 		for (size_t j = 0; j < numObjectives - (i + 1); j++)
-			f[i] *= coordinates[j][0];
+			f[i] *= coordinates(j, 0);
 		if (i != 0)
-			f[i] *= 1 - coordinates[numObjectives - (i + 1)][0];
+			f[i] *= 1 - coordinates(numObjectives - (i + 1), 0);
 	}
 
 	return f;

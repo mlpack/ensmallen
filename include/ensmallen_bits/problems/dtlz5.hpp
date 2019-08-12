@@ -39,7 +39,7 @@ class DTLZ5
  				const size_t numObjectives);
 
   //! Return the number of functions.
-  size_t numObjectives() const { return numObjectives; }
+  size_t NumObjectives() const { return numObjectives; }
 
   //! Return the number of variables.
   size_t NumVariables() const { return numVariables; }
@@ -47,7 +47,7 @@ class DTLZ5
   //! Get the starting point.
   arma::mat GetInitialPoint() const
   { 
-    return arma::fill::zeros<arma::mat>(numVariables, 1);
+    return arma::mat(numVariables, 1, arma::fill::zeros);
   }
 
   /*

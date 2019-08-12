@@ -31,7 +31,7 @@ class DTLZ1
   //! Get the starting point.
   arma::mat GetInitialPoint() const
   { 
-    return arma::fill::zeros<arma::mat>(numVariables, 1);
+    return arma::mat(numVariables, 1, arma::fill::zeros);
   }
 
   /**
