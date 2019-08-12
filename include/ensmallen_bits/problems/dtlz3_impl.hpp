@@ -20,34 +20,34 @@ namespace test {
 
 inline DTLZ3::DTLZ3(const size_t numVariables,
 										const size_t numObjectives) :
-		numVariables(numVariables),
-		numObjectives(numObjectives)
+    numVariables(numVariables),
+	numObjectives(numObjectives)
 { /* Nothing to do here */ }
 
 inline arma::vec DTLZ3::Evaluate(const arma::mat& coordinates) const
 {
-	arma::vec f(numObjectives);
+  arma::vec f(numObjectives);
 
-	size_t k = numVariables - numObjectives + 1;
+  size_t k = numVariables - numObjectives + 1;
 
-	double g = 0;
-	for (size_t i = numVariables - k; i < numVariables; i++)
-	{
-		double x = coordinates(i, 0); 
-		g += (x - 0.5) * (x - 0.5) - std::cos(20 * M_PI * (x - 0.5));
-	}
+  double g = 0;
+  for (size_t i = numVariables - k; i < numVariables; i++)
+  {
+	double x = coordinates(i, 0); 
+	g += (x - 0.5) * (x - 0.5) - std::cos(20 * M_PI * (x - 0.5));
+  }
 
-	g = 100 * (k + g);
-	for (size_t i = 0; i < numObjectives; i++)
-	{
-		f[i] = 1 + g;
-		for (size_t j = 0; j < numObjectives - (i + 1); j++)
-			f[i] *= std::cos(coordinates(j, 0) * 0.5 * M_PI);
-		if (i != 0)
-			f[i] *= std::sin(coordinates(numObjectives - (i + 1), 0) * M_PI / 2);
-	}
-	
-	return f;	
+  g = 100 * (k + g);
+  for (size_t i = 0; i < numObjectives; i++)
+  {
+	f[i] = 1 + g;
+	for (size_t j = 0; j < numObjectives - (i + 1); j++)
+	  f[i] *= std::cos(coordinates(j, 0) * 0.5 * M_PI);
+	if (i != 0)
+	  f[i] *= std::sin(coordinates(numObjectives - (i + 1), 0) * M_PI / 2);
+  }
+
+  return f;	
 }
 
 } // namespace test

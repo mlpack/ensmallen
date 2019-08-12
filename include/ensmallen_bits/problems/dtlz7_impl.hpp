@@ -19,37 +19,37 @@ namespace ens {
 namespace test {
 
 inline DTLZ7::DTLZ7(const size_t numVariables,
-										const size_t numObjectives) :
-		numVariables(numVariables),
-		numObjectives(numObjectives)
+					const size_t numObjectives) :
+	numVariables(numVariables),
+	numObjectives(numObjectives)
 { /* Nothing to do here */ }
 
 inline arma::vec DTLZ7::Evaluate(const arma::mat& coordinates) const
 {
-	arma::vec f(numObjectives);
+  arma::vec f(numObjectives);
 
-	size_t k = numVariables - numObjectives + 1;
+  size_t k = numVariables - numObjectives + 1;
 
-	double g = 0;
-	for (size_t i = numVariables - k; i < numVariables; i++)
-		g += coordinates(i, 0);
+  double g = 0;
+  for (size_t i = numVariables - k; i < numVariables; i++)
+	g += coordinates(i, 0);
 
-	g = 1 + (9 * g) / k;
+  g = 1 + (9 * g) / k;
 
-	for (size_t i = 0; i < numObjectives - 1; i++)
-		f[i] = coordinates(i, 0);
+  for (size_t i = 0; i < numObjectives - 1; i++)
+	f[i] = coordinates(i, 0);
 
-	double h = 0;
-	for (size_t i = 0; i < numObjectives - 1; i++)
-	{
-		f[i] = coordinates(i, 0);
-		h += (f[i] / (1.0 + g)) * (1 + std::sin(3.0 * M_PI * f[i]));
-	}
+  double h = 0;
+  for (size_t i = 0; i < numObjectives - 1; i++)
+  {
+	f[i] = coordinates(i, 0);
+	h += (f[i] / (1.0 + g)) * (1 + std::sin(3.0 * M_PI * f[i]));
+  }
 
-	h = numObjectives - h;
-	f[numObjectives - 1] = (1 + g) * h;
+  h = numObjectives - h;
+  f[numObjectives - 1] = (1 + g) * h;
 
-	return f;
+  return f;
 }
 
 } // namespace test

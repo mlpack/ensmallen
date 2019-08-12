@@ -19,36 +19,36 @@ namespace ens {
 namespace test {
 
 inline DTLZ5::DTLZ5(const size_t numVariables,
-										const size_t numObjectives) :
-		numVariables(numVariables),
-		numObjectives(numObjectives)
+					const size_t numObjectives) :
+	numVariables(numVariables),
+	numObjectives(numObjectives)
 { /* Nothing to do here */ }
 
 inline arma::vec DTLZ5::Evaluate(const arma::mat& coordinates) const
 {
-	arma::vec f(numObjectives);
+  arma::vec f(numObjectives);
 
-	size_t k = numVariables - numObjectives + 1;
+  size_t k = numVariables - numObjectives + 1;
 
-	double g = 0;
-	for (size_t i = numVariables - k; i < numVariables; i++)
-		g += (coordinates(i, 0) - 0.5) * (coordinates(i, 0) - 0.5);
+  double g = 0;
+  for (size_t i = numVariables - k; i < numVariables; i++)
+	g += (coordinates(i, 0) - 0.5) * (coordinates(i, 0) - 0.5);
 
-	double t = M_PI / (4 * (1 + g));
-	arma::vec theta(numObjectives - 1);
-	for (size_t i = 0; i < numObjectives - 1; i++)
-		theta[i] = t * (1 + 2 * g * coordinates(i, 0));
+  double t = M_PI / (4 * (1 + g));
+  arma::vec theta(numObjectives - 1);
+  for (size_t i = 0; i < numObjectives - 1; i++)
+	theta[i] = t * (1 + 2 * g * coordinates(i, 0));
 
-	for (size_t i = 0; i < numObjectives; i++)
-	{
-		f[i] = 1 + g;
-		for (size_t j = 0; j < numObjectives - (i + 1); j++)
-			f[i] *= std::cos(theta[j]);
-		if (i != 0)
-			f[i] *= std::sin(theta[numObjectives - i - 1]);
-	}
+  for (size_t i = 0; i < numObjectives; i++)
+  {
+	f[i] = 1 + g;
+	for (size_t j = 0; j < numObjectives - (i + 1); j++)
+	  f[i] *= std::cos(theta[j]);
+	if (i != 0)
+	  f[i] *= std::sin(theta[numObjectives - i - 1]);
+  }
 
-	return f;	
+  return f;	
 }
 
 } // namespace test
