@@ -21,14 +21,12 @@ inline NSGAIII::NSGAIII(const size_t populationSize,
 							          const size_t maxGenerations,
 							          const double mutationProb,
 							          const double mutationSize,
-							          const double crossoverProb,
-							          const double selectPercent) :
+							          const double crossoverProb) :
 		populationSize(populationSize),
 		maxGenerations(maxGenerations),
 		mutationProb(mutationProb),
 		mutationSize(mutationSize),
-		crossoverProb(crossoverProb),
-		selectPercent(selectPercent)
+		crossoverProb(crossoverProb)
 { /* Nothing to do here */ }
 
 template<typename MultiObjectiveFunctionType>
@@ -204,10 +202,9 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	return bestFront;
 }
 
-std::vector<std::vector<size_t>> NSGAIII::NonDominatedSorting
-	(const arma::mat& fitnessValues)
+void NSGAIII::NonDominatedSorting(const arma::mat& fitnessValues,
+								  std::vector<std::vector<size_t>>& fronts)
 {
-  std::vector<std::vector<size_t>> fronts;
   std::vector<std::vector<size_t>> dominatedSolutions(fitnessValues.n_cols);
   arma::vec n(fitnessValues.n_cols, arma::fill::zeros);
   arma::vec ranks(fitnessValues.n_cols, arma::fill::zeros);
@@ -253,8 +250,6 @@ std::vector<std::vector<size_t>> NSGAIII::NonDominatedSorting
 	  i++;
 	  fronts[i] = Q;
   }
-
-  return fronts;
 }
 
 arma::cube NSGAIII::Mate(arma::cube& population)

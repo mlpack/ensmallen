@@ -20,10 +20,7 @@ class NSGAIII
  public:
   NSGAIII(const size_t populationSize,
           const size_t maxGenerations,
-          const double mutationProb,
-          const double mutationSize,
-          const double crossoverProb,
-          const double selectPercent);
+          const double crossoverProb);
 
   template<typename MultiObjectiveFunctionType>
   arma::cube Optimize(MultiObjectiveFunctionType& function, arma::mat& iterate);
@@ -38,38 +35,25 @@ class NSGAIII
   //! Modify maximum number of generations.
   size_t& MaxGenerations() { return maxGenerations; }
 
-  //! Get the mutation probability.
-  double MutationProbability() const { return mutationProb; }
-  //! Modify the mutation probability.
-  double& MutationProbability() { return mutationProb; }
-
-  //! Get the mutation size.
-  double MutationSize() const { return mutationSize; }
-  //! Modify the mutation size.
-  double& MutationSize() { return mutationSize; }
-
-  //! Get the selection percentage.
-  double SelectionPercentage() const { return selectPercent; }
-  //! Modify the selection percentage.
-  double& SelectionPercentage() { return selectPercent; }
+  //! Get the probability of crossover.
+  double CrossoverProb() const { return crossoverProb; }
+  //! Set the probability of crossover.
+  double& CrossoverProb() { return crossoverProb; }
 
  private:
-  std::vector<std::vector<size_t>> NonDominatedSorting(const arma::mat& fitnessValues);
+  void NonDominatedSorting(const arma::mat& fitnessValues,
+                           std::vector<std::vector<size_t>>& fronts;);
 
   arma::cube Mate(arma::cube& population);
 
+  // The number of members in a population.
   size_t populationSize;
 
+  // The maximum number of generations.
   size_t maxGenerations;
 
-  double mutationProb;
-
-  double mutationSize;
-
+  // The probability of crossover.
   double crossoverProb;
-
-  double selectPercent;
-
 };
 
 } // namespace ens
