@@ -72,6 +72,7 @@
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
+#include "ensmallen_bits/nsgaiii/nsgaiii.hpp"
 
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
@@ -104,7 +105,5 @@
 #include "ensmallen_bits/svrg/svrg.hpp"
 #include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
-
-#include "ensmallen_bits/nsgaiii/nsgaiii.hpp"
 
 #endif

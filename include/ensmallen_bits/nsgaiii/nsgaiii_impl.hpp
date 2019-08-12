@@ -13,6 +13,7 @@
 #ifndef ENSMALLEN_NSGAIII_NSGAIII_IMPL_HPP
 #define ENSMALLEN_NSGAIII_NSGAIII_IMPL_HPP
 
+// In case it hasn't been included yet.
 #include "nsgaiii.hpp"
 
 namespace ens {
@@ -201,7 +202,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	return bestFront;
 }
 
-void NSGAIII::NonDominatedSorting(const arma::mat& fitnessValues,
+inline void NSGAIII::NonDominatedSorting(const arma::mat& fitnessValues,
 								  std::vector<std::vector<size_t>>& fronts)
 {
   std::vector<std::vector<size_t>> dominatedSolutions(fitnessValues.n_cols);
@@ -251,7 +252,7 @@ void NSGAIII::NonDominatedSorting(const arma::mat& fitnessValues,
   }
 }
 
-arma::cube NSGAIII::Mate(arma::cube& population)
+inline arma::cube NSGAIII::Mate(arma::cube& population)
 {
   arma::cube offspring = arma::cube(population.n_rows, population.n_cols,
 	  populationSize, arma::fill::zeros);
@@ -302,12 +303,12 @@ arma::cube NSGAIII::Mate(arma::cube& population)
   return offspring;
 }
 
-arma::cube& NSGAIII::ReferenceSet()
+inline arma::cube& NSGAIII::ReferenceSet()
 {
   userDefinedSet = true;
   return referenceSet;
 }
-	
-}
+
+} // namespace ens
 
 #endif
