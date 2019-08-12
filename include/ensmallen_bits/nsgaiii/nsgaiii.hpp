@@ -22,10 +22,11 @@ class NSGAIII
           const size_t maxGenerations,
           const double mutationProb,
           const double mutationSize,
+          const double crossoverProb,
           const double selectPercent);
 
   template<typename MultiObjectiveFunctionType>
-  double Optimize(MultiObjectiveFunctionType& function, arma::mat& iterate);
+  arma::cube Optimize(MultiObjectiveFunctionType& function, arma::mat& iterate);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -64,6 +65,8 @@ class NSGAIII
   double mutationProb;
 
   double mutationSize;
+
+  double crossoverProb;
 
   double selectPercent;
 
