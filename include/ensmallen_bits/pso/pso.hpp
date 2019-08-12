@@ -181,10 +181,10 @@ class PSOType
   size_t& HorizonSize() { return horizonSize; }
 
   //! Retrieve value of impTolerance.
-  size_t ImpTolerance() const { return impTolerance; }
+  double ImpTolerance() const { return impTolerance; }
 
   //! Modify value of impTolerance.
-  size_t& ImpTolerance() { return impTolerance; }
+  double& ImpTolerance() { return impTolerance; }
 
   //! Retrieve value of exploitationFactor.
   double ExploitationFactor() const { return exploitationFactor; }
