@@ -106,4 +106,6 @@
 #include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
 
+#include "ensmallen_bits/indicators/indicators.hpp"
+
 #endif
