@@ -29,16 +29,17 @@ class IGD
   	  	{
   	  	  double z = referenceFront(k, 0, i);
   	  	  double a = front(k, 0, j);
-  	  	  dist += std::pow(std::max(z - a, 0), 2);
+  	  	  dist += std::pow(std::max(z - a, 0.0), 2);
   	  	}
   	  	dist = std::sqrt(dist);
   	  	if (dist < min)
   	  	  min = dist;
   	  }
-  	  igd += std::pow(min, p);
+  	  igd += min;
   	}
-  	igd = std::pow(igd, 1 / p);
   	igd /= referenceFront.n_slices;
+
+  	return igd;
   }
 };
 
