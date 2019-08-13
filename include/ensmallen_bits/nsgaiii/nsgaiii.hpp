@@ -41,13 +41,22 @@ class NSGAIII
   //! Set the probability of crossover.
   double& CrossoverProb() { return crossoverProb; }
 
-  // Load reference set
+  //! Get the distribution index.
+  double DistIndex() const { return distrIndex; }
+  //! Set the distribution index.
+  double& DistrIndex() { return distrIndex; }
+
+  //! Get the referemce set.
+  arma::cube ReferenceSet() const { return referenceSet; }
+  // Load reference set.
   arma::cube& ReferenceSet();
 
  private:
+  // Sort the population into non-dominated fronts.
   void NonDominatedSorting(const arma::mat& fitnessValues,
                            std::vector<std::vector<size_t>>& fronts);
 
+  // Mate to create a new population.
   arma::cube Mate(arma::cube& population);
 
   //! The number of members in a population.
