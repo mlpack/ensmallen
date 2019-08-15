@@ -21,21 +21,28 @@ namespace ens {
 inline NSGAIII::NSGAIII(const size_t populationSize,
 					    const size_t maxGenerations,
 					    const double crossoverProb,
-					    const double distrIndex) :
+					    const double distrIndex,
+					    const size_t numPartitions) :
 		populationSize(populationSize),
 		maxGenerations(maxGenerations),
 		crossoverProb(crossoverProb),
 		distrIndex(distrIndex),
+		numPartitions(numPartitions),
 		userDefinedSet(false)
 { /* Nothing to do here */ }
 
 template<typename MultiObjectiveFunctionType>
 arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& iterate)
 {
-  // The user didn't define a reference set.
+  // The user didn't define a reference set. We need to define one ourselves.
   if (!userDefinedSet)
   {
-
+  	std::vector<arma::mat> referenceVec;
+  	arma::mat refPoint(function.NumObjectives(), 1);
+  	FindReferencePoints(referenceVec, refPoint, numPartitions, numPartitions, 0);
+  	referenceSet = arma::cube(iterate.n_rows, iterate.n_cols, referenceVec.size());
+  	for (size_t i = 0; i < referenceVec.size(); i++)
+ 	  referenceSet.slice(i) = referenceVec[i];
   }
 
   // Initialize initial population.
@@ -43,9 +50,9 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
   population.each_slice() += iterate;
 
   // Initialize helper variables.
-  std::vector<size_t> S;
   arma::cube R, Q;
   std::vector<std::vector<size_t>> fronts;
+  arma::mat fitnessValues(function.NumObjectives(), 2 * populationSize);
 
   for (size_t gen = 0; gen < maxGenerations; gen++)
   {
@@ -56,9 +63,8 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	R = arma::join_slices(population, Q);
 
 	// Evaluate R.
-	arma::mat fitnessValues(function.NumObjectives(), R.n_slices);
 	for (size_t i = 0; i < R.n_slices; i++)
-		fitnessValues.col(i) = function.Evaluate(R.slice(i));
+	  fitnessValues.col(i) = function.Evaluate(R.slice(i));
 
 	// Find next population.
 	fronts.clear();
@@ -85,14 +91,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	arma::mat asf(function.NumObjectives(), function.NumObjectives(),
 		arma::fill::eye);
 
-	for (size_t i = 0; i < asf.n_rows; i++)
-	{
-	  for (size_t j = 0; j < asf.n_cols; j++)
-	  {
-		if (asf(i, j) == 0)
-		  asf(i, j) = 1e6;
-	  }
-	}
+	asf.diag().fill(1e6);
 
 	arma::mat f(function.NumObjectives(), fronts[0].size());
 	for (size_t i = 0; i < f.n_cols; i++)
@@ -174,10 +173,10 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  size_t minIdx = 0;
 	  for (size_t i = 0; i < fronts[l].size(); i++)
 	  {
-		arma::mat s = nextPop.slice(i);
-		arma::mat w = referenceSet.slice(randIdx);
-		double wnorm = arma::norm(w, 2);
-		double perpDist = arma::norm(s - (w.t() * s * w) / std::pow(wnorm, 2), 2);
+		double wnorm = arma::norm(referenceSet.slice(randIdx), 2);
+		double perpDist = arma::norm(nextPop.slice(i) -
+			(referenceSet.slice(randIdx).t() * nextPop.slice(i) *
+			referenceSet.slice(randIdx)) / (wnorm * wnorm), 2);
 		if (perpDist < distMin)
 		{
 		  distMin = perpDist;
@@ -313,6 +312,28 @@ inline arma::cube& NSGAIII::ReferenceSet()
 {
   userDefinedSet = true;
   return referenceSet;
+}
+
+inline void NSGAIII::FindReferencePoints(std::vector<arma::mat>& referenceVec,
+										 arma::mat& refPoint,
+										 size_t numPartitions,
+										 size_t beta,
+										 size_t depth)
+{
+  if (depth == refPoint.n_elem - 1)
+  {
+  	refPoint(depth, 0) = beta / (numPartitions);
+  	referenceSet.push_back(refPoint);
+  }
+  else
+  {
+  	for (size_t i = 0; i <= beta; i++)
+  	{
+  	  refPoint(depth, 0) = i / numPartitions;
+  	  FindReferencePoints(referenceVec, refPoint, numPartitions, beta - i, depth
+  	      + 1);
+  	}
+  }
 }
 
 } // namespace ens

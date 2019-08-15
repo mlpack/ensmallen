@@ -21,7 +21,8 @@ class NSGAIII
   NSGAIII(const size_t populationSize,
           const size_t maxGenerations,
           const double crossoverProb,
-          const double distrIndex);
+          const double distrIndex,
+          const size_t numPartitions = 0);
 
   template<typename MultiObjectiveFunctionType>
   arma::cube Optimize(MultiObjectiveFunctionType& function, arma::mat& iterate);
@@ -70,6 +71,9 @@ class NSGAIII
 
   //! The distribution index for SBX crossover.
   double distrIndex;
+
+  //! The number of partitions.
+  size_t numPartitions;
 
   //! Reference set.
   arma::cube referenceSet;
