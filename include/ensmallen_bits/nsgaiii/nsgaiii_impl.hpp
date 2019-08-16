@@ -192,13 +192,13 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
   }
 
   // Evaluate final population.
-  arma::mat fitnessValues(function.NumObjectives(), population.n_slices);
+  arma::mat finalFitnessValues(function.NumObjectives(), population.n_slices);
   for (size_t i = 0; i < R.n_slices; i++)
-	fitnessValues.col(i) = function.Evaluate(population.slice(i));
+	finalFitnessValues.col(i) = function.Evaluate(population.slice(i));
 
   // Find the fronts.
   fronts.clear();
-  NonDominatedSorting(fitnessValues, fronts);
+  NonDominatedSorting(finalFitnessValues, fronts);
 
   arma::cube bestFront(population.n_rows, population.n_slices, fronts[0].size());
   for (size_t i = 0; i < fronts[0].size(); i++)
@@ -308,12 +308,6 @@ inline arma::cube NSGAIII::Mate(arma::cube& population)
   return offspring;
 }
 
-inline arma::cube& NSGAIII::ReferenceSet()
-{
-  userDefinedSet = true;
-  return referenceSet;
-}
-
 inline void NSGAIII::FindReferencePoints(std::vector<arma::mat>& referenceVec,
 										 arma::mat& refPoint,
 										 size_t numPartitions,
@@ -323,7 +317,7 @@ inline void NSGAIII::FindReferencePoints(std::vector<arma::mat>& referenceVec,
   if (depth == refPoint.n_elem - 1)
   {
   	refPoint(depth, 0) = beta / (numPartitions);
-  	referenceSet.push_back(refPoint);
+  	referenceVec.push_back(refPoint);
   }
   else
   {
@@ -334,6 +328,12 @@ inline void NSGAIII::FindReferencePoints(std::vector<arma::mat>& referenceVec,
   	      + 1);
   	}
   }
+}
+
+inline arma::cube& NSGAIII::ReferenceSet()
+{
+  userDefinedSet = true;
+  return referenceSet;
 }
 
 } // namespace ens

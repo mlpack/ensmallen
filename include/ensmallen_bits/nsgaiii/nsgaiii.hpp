@@ -60,6 +60,13 @@ class NSGAIII
   // Mate to create a new population.
   arma::cube Mate(arma::cube& population);
 
+  // Find reference points.
+  void FindReferencePoints(std::vector<arma::mat>& referenceVec,
+                           arma::mat& refPoint,
+                           size_t numPartitions,
+                           size_t beta,
+                           size_t depth);
+
   //! The number of members in a population.
   size_t populationSize;
 
