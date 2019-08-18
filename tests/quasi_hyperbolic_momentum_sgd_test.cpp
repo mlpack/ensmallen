@@ -56,7 +56,8 @@ TEST_CASE("QHSGDSpMatTestFunction", "[QHMomentumSGDTest]")
 {
   SGDTestFunction f;
   QHUpdate update(0.9, 0.9);
-  QHSGD s(0.002, 1, 2500000, 1e-9, true, update);
+  QHSGD s(0.002, 1, 2500000, 1e-15, true, update);
+  s.ExactObjective() = true;
 
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   double result = s.Optimize(f, coordinates);

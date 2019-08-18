@@ -394,7 +394,8 @@ TEST_CASE("EarlyStopAtMinLossCallbackTest", "[CallbacksTest]")
 
   // Instantiate the optimizer with a number of iterations that will take a
   // long time to finish.
-  StandardSGD s(0.0003, 1, 10000000000, -10, true);
+  StandardSGD s(0.0003, 1, 10000000000, -10);
+  s.ExactObjective() = true;
 
   // The optimization process should return in one second.
   const double result = s.Optimize(f, coordinates, EarlyStopAtMinLoss(100));

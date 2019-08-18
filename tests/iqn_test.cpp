@@ -32,7 +32,7 @@ TEST_CASE("IQNLogisticRegressionTest", "[IQNTest]")
   // Now run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
   {
-    IQN iqn(0.01, batchSize, 5000, 1e-3);
+    IQN iqn(0.01, batchSize, 5000, 0.01);
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::mat coordinates = lr.GetInitialPoint();
@@ -64,7 +64,7 @@ TEST_CASE("IQNLogisticRegressionFMatTest", "[IQNTest]")
   // Now run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
   {
-    IQN iqn(0.01, batchSize, 5000, 1e-3);
+    IQN iqn(0.001, batchSize, 5000, 0.01);
     LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
 
     arma::fmat coordinates = lr.GetInitialPoint();
