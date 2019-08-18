@@ -29,9 +29,11 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const size_t snapshots,
     const bool accumulate,
     const UpdatePolicyType& updatePolicy,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     batchSize(batchSize),
     accumulate(accumulate),
+    exactObjective(exactObjective),
     optimizer(OptimizerType(stepSize,
                             batchSize,
                             maxIterations,
@@ -44,7 +46,8 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
                                 stepSize,
                                 maxIterations,
                                 snapshots),
-                            resetPolicy))
+                            resetPolicy,
+                            exactObjective))
 {
   /* Nothing to do here */
 }
