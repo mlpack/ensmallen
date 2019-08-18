@@ -30,13 +30,15 @@ SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
                                         const double adaptRate,
                                         const bool shuffle,
                                         const DecayPolicyType& decayPolicy,
-                                        const bool resetPolicy) :
+                                        const bool resetPolicy,
+                                        const bool exactObjective) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     lambda(lambda),
     shuffle(shuffle),
+    exactObjective(exactObjective),
     updatePolicy(SPALeRAStepsize(alpha, epsilon, adaptRate)),
     decayPolicy(decayPolicy),
     resetPolicy(resetPolicy),
@@ -215,15 +217,18 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   Info << "SPALeRA SGD: maximum iterations (" << maxIterations
       << ") reached; terminating optimization." << std::endl;
 
-  // Calculate final objective.
-  overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; i += batchSize)
+  // Calculate final objective if exactObjective is set to true.
+  if (exactObjective)
   {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
-    overallObjective += objective;
+    overallObjective = 0;
+    for (size_t i = 0; i < numFunctions; i += batchSize)
+    {
+      const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+      const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
+      overallObjective += objective;
 
-    Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+    }
   }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);
