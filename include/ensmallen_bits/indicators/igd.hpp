@@ -13,10 +13,12 @@
 #ifndef ENSMALLEN_INDICATORS_IGD_HPP
 #define ENSMALLEN_INDICATORS_IGD_HPP
 
+namespace ens {
+
 class IGD
 {
   double Indicate(arma::cube& front,
-  				  arma::cube& referenceFront)
+  				        arma::cube& referenceFront)
   {
   	double igd = 0;
   	for (size_t i = 0; i < referenceFront.n_slices; i++)
@@ -42,5 +44,7 @@ class IGD
   	return igd;
   }
 };
+
+} // namespace ens
 
 #endif

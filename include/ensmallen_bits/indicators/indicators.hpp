@@ -8,5 +8,6 @@
 #define ENSMALLEN_INDICATORS_INDICATORS_HPP
 
 #include "igd.hpp"
+#include "epsilon.hpp"
 
 #endif
