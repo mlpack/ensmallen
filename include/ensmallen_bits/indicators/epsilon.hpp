@@ -2,7 +2,9 @@
  * @file epsilon.hpp
  * @author Rahul Ganesh Prabhu
  *
- * Implementation of the epsilon indicator.
+ * Epsilon indicator
+ * A binary quality indicator that is capable of detecting whether one
+ * approximation set is better than another.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -15,8 +17,41 @@
 
 namespace ens {
 
+/**
+ * The epsilon indicator is a binary quality indicator that was proposed by
+ * Zitzler et. al. in response to the observation that quality indicators could
+ * only give information that one approximation set is not worse than another.
+ * The binary epsilon indicator, however, is capable of detecting if an
+ * approximation is better than another.
+ *
+ * \f[ I_c(A,B) = \max_{z_2 \in B} \
+ *                \min_{z_1 \in A} \
+ *                \max_{1 \leq i \leq n} \ \frac{z_1}{z_2}\
+ *                \f]
+ *
+ * For more information, please see:
+ *
+ * @code
+ * @article{1197687,
+ *    author   = {E. Zitzler and L. Thiele and M. Laumanns and C. M. Fonseca and
+ *                V. G. da Fonseca},
+ *    title    = {Performance assessment of multiobjective optimizers: an
+ *                analysis and review},
+ *    journal  = {IEEE Transactions on Evolutionary Computation},
+ *    year     = {2003},
+ * }
+ * @endcode
+ */
 class Epsilon
 {
+  /**
+   * Find the epsilon value of the front with respect to the given reference
+   * front.
+   *
+   * @param front The given approximation front.
+   * @param referenceFront The given reference front.
+   * @return The epsilon value of the front.
+   */
   double Indicate(arma::cube& front,
   				        arma::cube& referenceFront)
   {
