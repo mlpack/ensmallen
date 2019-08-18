@@ -131,7 +131,10 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
     for (size_t f = 0; f < numFunctions; f += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-      overallObjective += function.Evaluate(iterate, f, effectiveBatchSize);
+      const ElemType objective = function.Evaluate(iterate, f,
+          effectiveBatchSize);
+      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+      overallObjective += objective;
     }
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
