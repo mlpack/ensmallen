@@ -24,7 +24,7 @@ using namespace ens::test;
 TEST_CASE("SimpleAdaDeltaTestFunction", "[AdaDeltaTest]")
 {
   SGDTestFunction f;
-  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 5000000, 1e-9, true);
+  AdaDelta optimizer(1.0, 1, 0.05, 1e-6, 5000000, 1e-15, true, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -66,7 +66,7 @@ TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDeltaTest]")
 TEST_CASE("SimpleAdaDeltaTestFunctionFMat", "[AdaDeltaTest]")
 {
   SGDTestFunction f;
-  AdaDelta optimizer(1.0, 1, 0.99, 1e-5, 5000000, 1e-9, true);
+  AdaDelta optimizer(1.0, 1, 0.05, 1e-6, 5000000, 1e-15, true, true);
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
