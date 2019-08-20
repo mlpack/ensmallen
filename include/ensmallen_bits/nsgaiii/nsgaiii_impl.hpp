@@ -40,7 +40,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
   	std::vector<arma::mat> referenceVec;
   	arma::mat refPoint(function.NumObjectives(), 1);
   	FindReferencePoints(referenceVec, refPoint, numPartitions, numPartitions, 0);
-  	referenceSet = arma::cube(iterate.n_rows, iterate.n_cols, referenceVec.size());
+  	referenceSet = arma::cube(function.NumObjectives(), 1, referenceVec.size());
   	for (size_t i = 0; i < referenceVec.size(); i++)
  	  referenceSet.slice(i) = referenceVec[i];
   }
@@ -64,7 +64,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 
 	// Evaluate R.
 	for (size_t i = 0; i < R.n_slices; i++)
-	  fitnessValues.col(i) = function.Evaluate(R.slice(i));
+	  fitnessValues.col(i) = function.Evaluate(R.slice(i));    
 
 	// Find next population.
 	fronts.clear();
@@ -79,11 +79,12 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  for (size_t i = 0; i < fronts[l].size(); i++)
 	  {
 		newFitness.col(numMembers) = fitnessValues.col(fronts[l][i]);
-		nextPop.slice(numMembers++) = population.slice(fronts[l][i]);
+		nextPop.slice(numMembers++) = R.slice(fronts[l][i]);
 	  }
 	  l++;
 	}
-	size_t K = population - numMembers;
+
+	size_t K = populationSize - numMembers;
 	if (K == 0)
 	  continue;
 
@@ -97,9 +98,15 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	for (size_t i = 0; i < f.n_cols; i++)
 	  f.col(i) = fitnessValues.col(fronts[0][i]);
 
+	f.print();
+	std::cout << "-----" << std::endl;
+
 	arma::vec zmin(function.NumObjectives());
 	for (size_t i = 0; i < function.NumObjectives(); i++)
 	  zmin[i] = f.row(i).min();
+
+	zmin.print();
+	std::cout << "-----" << std::endl;
 
   	for (size_t i = 0; i < fronts[0].size(); i++)
 	  f.col(i) -= zmin;
@@ -111,7 +118,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	arma::mat max(asf.n_rows, fronts[0].size());
 	for (size_t i = 0; i < asf.n_rows; i++)
 	{
-	  arma::mat f_asf = f.t() * asf.row(i);
+	  arma::mat f_asf = f.t() * asf.col(i);
 	  for (size_t j = 0; j < f_asf.n_rows; j++)
 		max(i, j) = f_asf.row(j).max();
 	}
@@ -125,7 +132,19 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  extremePoints.col(i) = f.col(mins[i]);
 
 	arma::mat b(extremePoints.n_rows, extremePoints.n_rows, arma::fill::ones);
-	arma::mat plane = arma::solve(extremePoints.t(), b);
+
+	extremePoints.t().print();
+	b.print();
+	arma::mat plane;
+	try
+	{
+	  arma::mat plane = arma::solve(extremePoints.t(), b,
+	      arma::solve_opts::no_approx);
+	}
+	catch (std::runtime_error err)
+	{
+
+	}
 	arma::mat intercepts = 1 / plane;
 	fitnessValues.each_col() /= intercepts;
 
@@ -236,7 +255,7 @@ inline void NSGAIII::NonDominatedSorting(const arma::mat& fitnessValues,
 	}
   }
 
-  size_t i = 1;
+  size_t i = 0;
   while (fronts[i].size() != 0)
   {
     std::vector<size_t> Q;
@@ -252,8 +271,8 @@ inline void NSGAIII::NonDominatedSorting(const arma::mat& fitnessValues,
 		}
 	  }
 	}
-	  i++;
-	  fronts[i] = Q;
+	i++;
+	fronts.push_back(Q);
   }
 }
 
@@ -316,14 +335,14 @@ inline void NSGAIII::FindReferencePoints(std::vector<arma::mat>& referenceVec,
 {
   if (depth == refPoint.n_elem - 1)
   {
-  	refPoint(depth, 0) = beta / (numPartitions);
+  	refPoint(depth, 0) = (double)beta / numPartitions;
   	referenceVec.push_back(refPoint);
   }
   else
   {
   	for (size_t i = 0; i <= beta; i++)
   	{
-  	  refPoint(depth, 0) = i / numPartitions;
+  	  refPoint(depth, 0) = (double)i / numPartitions;
   	  FindReferencePoints(referenceVec, refPoint, numPartitions, beta - i, depth
   	      + 1);
   	}
