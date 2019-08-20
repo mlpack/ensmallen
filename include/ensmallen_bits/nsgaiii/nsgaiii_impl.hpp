@@ -136,14 +136,14 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	extremePoints.t().print();
 	b.print();
 	arma::mat plane;
+
 	try
 	{
-	  arma::mat plane = arma::solve(extremePoints.t(), b,
-	      arma::solve_opts::no_approx);
+	  plane = arma::solve(extremePoints.t(), b, arma::solve_opts::no_approx);
 	}
 	catch (std::runtime_error err)
 	{
-
+	  plane =  
 	}
 	arma::mat intercepts = 1 / plane;
 	fitnessValues.each_col() /= intercepts;

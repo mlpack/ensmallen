@@ -21,6 +21,7 @@ set(ENSMALLEN_TESTS_SOURCES
     lrsdp_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp
+    nsgaiii_test.cpp
     parallel_sgd_test.cpp
     proximal_test.cpp
     quasi_hyperbolic_momentum_sgd_test.cpp
