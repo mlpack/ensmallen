@@ -65,7 +65,7 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
   lowerBound.fill(50);
   upperBound.fill(60);
 
-  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
+  LBestPSO s(250, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
   arma::vec coordinates = f.GetInitialPoint();
 
   const double result = s.Optimize(f, coordinates);
@@ -88,7 +88,7 @@ TEST_CASE("LBestPSORosenbrockFMatTest","[PSOTest]")
   lowerBound.fill(50);
   upperBound.fill(60);
 
-  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
+  LBestPSO s(250, lowerBound, upperBound, 5000, 600, 1e-30, 2.05, 2.05);
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
 
   const double result = s.Optimize(f, coordinates);
@@ -110,7 +110,7 @@ TEST_CASE("LBestPSORosenbrockDoubleTest","[PSOTest]")
   double lowerBound = 50;
   double upperBound = 60;
 
-  LBestPSO s(64, lowerBound, upperBound, 3000, 400, 1e-30, 2.05, 2.05);
+  LBestPSO s(250, lowerBound, upperBound, 5000, 400, 1e-30, 2.05, 2.05);
   arma::vec coordinates = f.GetInitialPoint();
 
   const double result = s.Optimize(f, coordinates);
@@ -130,10 +130,10 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
   // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
-  lowerBound.fill(8);
-  upperBound.fill(9);
+  lowerBound.fill(-1);
+  upperBound.fill(1);
 
-  LBestPSO s(500, lowerBound, upperBound);
+  LBestPSO s(500, lowerBound, upperBound, 6000, 400, 1e-30, 2.05, 2.05);
   arma::mat coordinates = arma::mat("10; 10");
   const double result = s.Optimize(f, coordinates);
 
