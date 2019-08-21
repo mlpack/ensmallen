@@ -42,7 +42,7 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
   	FindReferencePoints(referenceVec, refPoint, numPartitions, numPartitions, 0);
   	referenceSet = arma::cube(function.NumObjectives(), 1, referenceVec.size());
   	for (size_t i = 0; i < referenceVec.size(); i++)
- 	  referenceSet.slice(i) = referenceVec[i];
+ 	  	referenceSet.slice(i) = referenceVec[i];
   }
 
   // Initialize initial population.
@@ -78,8 +78,8 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	    break;
 	  for (size_t i = 0; i < fronts[l].size(); i++)
 	  {
-		newFitness.col(numMembers) = fitnessValues.col(fronts[l][i]);
-		nextPop.slice(numMembers++) = R.slice(fronts[l][i]);
+			newFitness.col(numMembers) = fitnessValues.col(fronts[l][i]);
+			nextPop.slice(numMembers++) = R.slice(fronts[l][i]);
 	  }
 	  l++;
 	}
@@ -98,17 +98,11 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	for (size_t i = 0; i < f.n_cols; i++)
 	  f.col(i) = fitnessValues.col(fronts[0][i]);
 
-	f.print();
-	std::cout << "-----" << std::endl;
-
 	arma::vec zmin(function.NumObjectives());
 	for (size_t i = 0; i < function.NumObjectives(); i++)
 	  zmin[i] = f.row(i).min();
 
-	zmin.print();
-	std::cout << "-----" << std::endl;
-
-  	for (size_t i = 0; i < fronts[0].size(); i++)
+	for (size_t i = 0; i < fronts[0].size(); i++)
 	  f.col(i) -= zmin;
 
 	for (auto it = fitnessValues.begin(); it != fitnessValues.end(); it++)
@@ -132,18 +126,26 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  extremePoints.col(i) = f.col(mins[i]);
 
 	arma::mat b(extremePoints.n_rows, extremePoints.n_rows, arma::fill::ones);
+	arma::mat worstOfFront(function.NumObjectives(), 1, arma::fill::zeros);
 
-	extremePoints.t().print();
-	b.print();
+	// Create the worst of front.
+	for (size_t i = 0; i < fronts[0].size(); i++)
+	{
+		for (size_t j = 0; j < function.NumObjectives(); j++)
+		{
+			if (fitnessValues(j, fronts[0][i]) > worstOfFront(j, 0))
+				worstOfFront(j, 0) = fitnessValues(j, fronts[0][i]);
+		}
+	}
+
 	arma::mat plane;
-
 	try
 	{
 	  plane = arma::solve(extremePoints.t(), b, arma::solve_opts::no_approx);
 	}
 	catch (std::runtime_error err)
 	{
-	  plane =  
+	  plane = worstOfFront;
 	}
 	arma::mat intercepts = 1 / plane;
 	fitnessValues.each_col() /= intercepts;
@@ -157,10 +159,10 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	  size_t minIdx = 0;
 	  for (size_t j = 0; j < referenceSet.n_slices; j++)
 	  {
-	  	arma::mat s = nextPop.slice(i);
+	  	arma::vec s = newFitness.col(i);
 	  	arma::mat w = referenceSet.slice(j);
 	  	double wnorm = arma::norm(w, 2);
-	  	perpDists(j, i) = arma::norm(s - (w.t() * s * w) / std::pow(wnorm, 2), 2);
+	  	perpDists(j, i) = arma::norm(s - (w * s.t() * w.t()) / std::pow(wnorm, 2), 2);
 	  	if (perpDists(j, i) < min)
 	  	{
 	  	  min = perpDists(j, i);
