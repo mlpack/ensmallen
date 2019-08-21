@@ -157,12 +157,15 @@ arma::cube NSGAIII::Optimize(MultiObjectiveFunctionType& function, arma::mat& it
 	{
 	  double min = DBL_MAX;
 	  size_t minIdx = 0;
+	  arma::vec s = newFitness.col(i);
 	  for (size_t j = 0; j < referenceSet.n_slices; j++)
 	  {
-	  	arma::vec s = newFitness.col(i);
 	  	arma::mat w = referenceSet.slice(j);
+	  	double dot = arma::norm_dot(s, w);
 	  	double wnorm = arma::norm(w, 2);
-	  	perpDists(j, i) = arma::norm(s - (w * s.t() * w.t()) / std::pow(wnorm, 2), 2);
+	  	
+	  	perpDists(j, i) = std::sqrt(arma::accu(arma::pow(dot * w - s, 2)));
+	  	
 	  	if (perpDists(j, i) < min)
 	  	{
 	  	  min = perpDists(j, i);
