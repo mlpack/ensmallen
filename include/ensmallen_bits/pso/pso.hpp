@@ -40,19 +40,17 @@ namespace ens {
  * For more information, refer to:
  *
  * @inproceedings{Kennedy,
- *    doi = {10.1109/icnn.1995.488968},
- *    url = {https://doi.org/10.1109/icnn.1995.488968},
- *    publisher = {{IEEE}},
- *    author = {J. Kennedy and R. Eberhart},
  *    title = {Particle swarm optimization},
- *    booktitle = {Proceedings of {ICNN}{\textquotesingle}95 - 
- *                 International Conference on Neural Networks}
+ *    author = {J. Kennedy and R. Eberhart},
+ *    booktitle = {Proceedings of {ICNN}{\textquotesingle}95 -
+ *                 International Conference on Neural Networks},
+ *    publisher = {{IEEE}}
  * }
  *
  * PSO can optimize arbitrary functions. For more details, see the documentation
  * on function types included with this distribution or on the ensmallen
  * website.
- * 
+ *
  * For PSO to work, the function being optimized must implement an
  * ArbitraryFunctionType template parameter. The respective class must implement
  * the following function:
@@ -163,16 +161,16 @@ class PSOType
   size_t& NumParticles() { return numParticles; }
 
   //! Retrieve value of lowerBound.
-  size_t LowerBound() const { return lowerBound; }
+  const arma::vec& LowerBound() const { return lowerBound; }
 
   //! Modify value of lowerBound.
-  size_t& LowerBound() { return lowerBound; }
+  arma::vec& LowerBound() { return lowerBound; }
 
   //! Retrieve value of upperBound.
-  size_t UpperBound() const { return upperBound; }
+  const arma::vec& UpperBound() const { return upperBound; }
 
   //! Modify value of upperBound.
-  size_t& UpperBound() { return upperBound; }
+  arma::vec& UpperBound() { return upperBound; }
 
   //! Retrieve value of maxIterations.
   size_t MaxIterations() const { return maxIterations; }
@@ -187,10 +185,10 @@ class PSOType
   size_t& HorizonSize() { return horizonSize; }
 
   //! Retrieve value of impTolerance.
-  size_t ImpTolerance() const { return impTolerance; }
+  double ImpTolerance() const { return impTolerance; }
 
   //! Modify value of impTolerance.
-  size_t& ImpTolerance() { return impTolerance; }
+  double& ImpTolerance() { return impTolerance; }
 
   //! Retrieve value of exploitationFactor.
   double ExploitationFactor() const { return exploitationFactor; }

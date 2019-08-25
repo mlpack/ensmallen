@@ -62,6 +62,8 @@ class SMORMS3
    *        function is visited in linear order.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SMORMS3(const double stepSize = 0.001,
           const size_t batchSize = 32,
@@ -69,7 +71,8 @@ class SMORMS3
           const size_t maxIterations = 100000,
           const double tolerance = 1e-5,
           const bool shuffle = true,
-          const bool resetPolicy = true);
+          const bool resetPolicy = true,
+          const bool exactObjective = false);
 
   /**
    * Optimize the given function using SMORMS3. The given starting point will
@@ -116,6 +119,11 @@ class SMORMS3
   bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
+
+  //! Get whether or not the actual objective is calculated.
+  bool ExactObjective() const { return optimizer.ExactObjective(); }
+  //! Modify whether or not the actual objective is calculated.
+  bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get whether or not the update policy parameters
   //! are reset before Optimize call.

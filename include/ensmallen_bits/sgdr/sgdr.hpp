@@ -71,6 +71,8 @@ class SGDR
    *        parameters.
    * @param resetPolicy If true, parameters are reset before every Optimize
    *        call; otherwise, their values are retained.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   SGDR(const size_t epochRestart = 50,
        const double multFactor = 2.0,
@@ -80,7 +82,8 @@ class SGDR
        const double tolerance = 1e-5,
        const bool shuffle = true,
        const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
-       const bool resetPolicy = true);
+       const bool resetPolicy = true,
+       const bool exactObjective = false);
 
   /**
    * Optimize the given function using SGDR.  The given starting point
@@ -119,6 +122,11 @@ class SGDR
   bool Shuffle() const { return optimizer.Shuffle(); }
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return optimizer.Shuffle(); }
+
+  //! Get whether or not the actual objective is calculated.
+  bool ExactObjective() const { return optimizer.ExactObjective(); }
+  //! Modify whether or not the actual objective is calculated.
+  bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get the update policy.
   const UpdatePolicyType& UpdatePolicy() const

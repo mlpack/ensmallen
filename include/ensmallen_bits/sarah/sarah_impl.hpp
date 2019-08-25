@@ -27,13 +27,15 @@ SARAHType<UpdatePolicyType>::SARAHType(
     const size_t innerIterations,
     const double tolerance,
     const bool shuffle,
-    const UpdatePolicyType& updatePolicy) :
+    const UpdatePolicyType& updatePolicy,
+    const bool exactObjective) :
     stepSize(stepSize),
     batchSize(batchSize),
     maxIterations(maxIterations),
     innerIterations(innerIterations),
     tolerance(tolerance),
     shuffle(shuffle),
+    exactObjective(exactObjective),
     updatePolicy(updatePolicy)
 { /* Nothing to do. */ }
 
@@ -177,12 +179,15 @@ double SARAHType<UpdatePolicyType>::Optimize(
       << "terminating optimization." << std::endl;
 
   // Calculate final objective.
-  overallObjective = 0;
-  for (size_t i = 0; i < numFunctions; i += batchSize)
+  if (exactObjective)
   {
-    const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-    overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
-  }
+    overallObjective = 0;
+    for (size_t i = 0; i < numFunctions; i += batchSize)
+    {
+      const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
+      overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+    }
+  }  
   return overallObjective;
 }
 

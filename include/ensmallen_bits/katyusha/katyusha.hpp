@@ -63,6 +63,8 @@ class KatyushaType
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param shuffle If true, the function order is shuffled; otherwise, each
    *    function is visited in linear order.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
    */
   KatyushaType(const double convexity = 1.0,
                const double lipschitz = 10.0,
@@ -70,7 +72,8 @@ class KatyushaType
                const size_t maxIterations = 1000,
                const size_t innerIterations = 0,
                const double tolerance = 1e-5,
-               const bool shuffle = true);
+               const bool shuffle = true,
+               const bool exactObjective = false);
 
   /**
    * Optimize the given function using Katyusha. The given starting point will
@@ -120,6 +123,11 @@ class KatyushaType
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  //! Get whether or not the actual objective is calculated.
+  bool ExactObjective() const { return exactObjective; }
+  //! Modify whether or not the actual objective is calculated.
+  bool& ExactObjective() { return exactObjective; }
+
  private:
   //! The convexity regularization term.
   double convexity;
@@ -142,6 +150,9 @@ class KatyushaType
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
+
+  //! Controls whether or not the actual Objective value is calculated.
+  bool exactObjective;
 };
 
 // Convenience typedefs.

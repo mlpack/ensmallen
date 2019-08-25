@@ -21,7 +21,9 @@ using namespace ens::test;
 TEST_CASE("SimpleSGDTestFunction","[SGDTest]")
 {
   SGDTestFunction f;
-  StandardSGD s(0.0003, 1, 5000000, 1e-9, true);
+  VanillaUpdate vanillaUpdate;
+  StandardSGD s(0.0003, 1, 5000000, 1e-9, true, vanillaUpdate, NoDecay(), true,
+      true);
 
   arma::mat coordinates = f.GetInitialPoint();
   double result = s.Optimize(f, coordinates);
@@ -40,7 +42,9 @@ TEST_CASE("GeneralizedRosenbrockTest","[SGDTest]")
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
-    StandardSGD s(0.001, 1, 0, 1e-15, true);
+    VanillaUpdate vanillaUpdate;
+    StandardSGD s(0.001, 1, 0, 1e-15, true, vanillaUpdate, NoDecay(), true,
+        true);
 
     arma::mat coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);

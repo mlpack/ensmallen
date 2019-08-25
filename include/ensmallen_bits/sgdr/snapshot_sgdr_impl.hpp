@@ -29,9 +29,11 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
     const size_t snapshots,
     const bool accumulate,
     const UpdatePolicyType& updatePolicy,
-    const bool resetPolicy) :
+    const bool resetPolicy,
+    const bool exactObjective) :
     batchSize(batchSize),
     accumulate(accumulate),
+    exactObjective(exactObjective),
     optimizer(OptimizerType(stepSize,
                             batchSize,
                             maxIterations,
@@ -44,7 +46,8 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
                                 stepSize,
                                 maxIterations,
                                 snapshots),
-                            resetPolicy))
+                            resetPolicy,
+                            exactObjective))
 {
   /* Nothing to do here */
 }
@@ -83,10 +86,13 @@ double SnapshotSGDR<UpdatePolicyType>::Optimize(
     }
     iterate /= (optimizer.DecayPolicy().Snapshots().size() + 1);
 
-    // Calculate final objective.
-    overallObjective = 0;
-    for (size_t i = 0; i < function.NumFunctions(); ++i)
-      overallObjective += function.Evaluate(iterate, i, 1);
+    // Calculate final objective if exactObjective is true.
+    if (exactObjective)
+    {
+      overallObjective = 0;
+      for (size_t i = 0; i < function.NumFunctions(); ++i)
+        overallObjective += function.Evaluate(iterate, i, 1);
+    }
   }
 
   return overallObjective;

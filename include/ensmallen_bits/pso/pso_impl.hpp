@@ -21,7 +21,7 @@
 namespace ens {
 /* After the velocity of each particle is updated at the end of each iteration
  * in PSO, the position of particle i (in iteration j) is updated as:
- * 
+ *
  * \f[
  *     p_{i, j + 1} = p_{i, j} + v_{i, j}
  * \f]
@@ -43,7 +43,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
    */
   typedef Function<FunctionType> ArbitraryFunctionType;
   ArbitraryFunctionType& f(static_cast<ArbitraryFunctionType&>(function));
-  
+
   // Make sure we have the methods that we need.
   traits::CheckEvaluate<ArbitraryFunctionType>();
 
@@ -73,14 +73,14 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     particleFitnesses(i) = f.Evaluate(particlePositions.slice(i));
     particleBestFitnesses(i) = particleFitnesses(i);
   }
-  
+
   // Declare queue to keep track of improvements over a number of iterations.
   queue <double> performanceHorizon;
   // Variable to store the position of the best particle.
   size_t bestParticle = 0;
   // Find the best fitness.
   double bestFitness = std::numeric_limits<double>::max();
-  
+
   // Run PSO for horizonSize number of iterations.
   // This will allow the performanceHorizon to be updated.
   // With some initial values in this, we may proceed with the remaining steps
