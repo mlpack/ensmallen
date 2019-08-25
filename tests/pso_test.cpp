@@ -18,6 +18,7 @@ using namespace ens;
 using namespace ens::test;
 using namespace std::chrono; 
 
+
 /**
  * Test the PSO optimizer on the Sphere Function.
  */
@@ -28,13 +29,19 @@ TEST_CASE("LBestPSOSphereFunctionTest", "[PSOTest]")
   LBestPSO s;
 
   arma::vec coords = f.GetInitialPoint();
+  auto start = high_resolution_clock::now();
   if (!s.Optimize(f, coords))
     FAIL("LBest PSO optimization reported failure for Sphere Function.");
-  
+
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<microseconds>(stop - start);
+
   double finalValue = f.Evaluate(coords);
+
   REQUIRE(finalValue <= 1e-5);
   for (size_t j = 0; j < 4; ++j)
     REQUIRE(coords[j] <= 1e-3);
+  cout <<"Time of thread rosenbrock function (SPHERE FUNCTION): "<<duration.count()<<'\n';
 }
 
 /**
@@ -75,14 +82,10 @@ TEST_CASE("LBestPSORosenbrockThreadTest1","[PSOTest]")
   lowerBound.fill(50);
   upperBound.fill(60);
 
-  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05, 1);
+  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
   arma::vec coordinates = f.GetInitialPoint();
 
-  auto start = high_resolution_clock::now();
   const double result = s.Optimize(f, coordinates);
-  auto stop = high_resolution_clock::now();
-  auto duration = duration_cast<microseconds>(stop - start); 
-  cout <<"Time of single thread rosenbrock function: "<<duration.count()<<'\n'; 
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
   REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
@@ -104,14 +107,10 @@ TEST_CASE("LBestPSORosenbrockThreadTest4","[PSOTest]")
   lowerBound.fill(50);
   upperBound.fill(60);
 
-  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05, 6);
+  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
   arma::vec coordinates = f.GetInitialPoint();
 
-  auto start = high_resolution_clock::now(); 
   const double result = s.Optimize(f, coordinates);
-  auto stop = high_resolution_clock::now();
-  auto duration = duration_cast<microseconds>(stop - start);
-  cout <<"Time of 4 thread rosenbrock function: "<<duration.count()<<'\n';  
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
   REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
@@ -338,8 +337,13 @@ TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
 
   LBestPSO s(500, lowerBound, upperBound);
   arma::mat coordinates = arma::mat("10; 10");
-  s.Optimize(f, coordinates);
-
+  
+  auto start = high_resolution_clock::now();
+  s.Optimize(f, coordinates);  
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<microseconds>(stop - start);
+  cout <<"Time of thread SFN2 function: "<<duration.count()<<'\n';
+  
   REQUIRE(coordinates[0] == Approx(0).margin(0.01));
   REQUIRE(coordinates[1] == Approx(0).margin(0.01));
 }

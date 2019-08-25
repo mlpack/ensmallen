@@ -87,6 +87,7 @@ class DefaultInit
     
     //TODO: Parallelize this - I think that it is possible and should be okay.
     // Distribute particles in [lowerBound, upperBound].
+    #pragma omp parallel for
     for (size_t i = 0; i < numParticles; i++)
     {
       particlePositions.slice(i) = particlePositions.slice(i) % 

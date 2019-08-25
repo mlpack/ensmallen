@@ -66,7 +66,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
 
   //TODO: Parallelize this.
   // Calculate initial fitness of population.
-  #pragma omp parallel for num_threads(numThreads)
+  #pragma omp parallel for
   for (size_t i = 0; i < numParticles; i++)
   {
     // Calculate fitness value.
@@ -91,7 +91,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   {
     //TODO: Parallelize this. This is the crux.
     // Calculate fitness and evaluate personal best.
-    #pragma omp parallel for num_threads(numThreads)
+    #pragma omp parallel for
     for (size_t j = 0; j < numParticles; j++)
     {
       particleFitnesses(j) = f.Evaluate(particlePositions.slice(j));
@@ -137,7 +137,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
     
     //TODO: Parallelize this.
     // Calculate fitness and evaluate personal best.
-    #pragma omp parallel for num_threads(numThreads)
+    #pragma omp parallel for
     for (size_t j = 0; j < numParticles; j++)
     {
       particleFitnesses(j) = f.Evaluate(particlePositions.slice(j));
@@ -160,7 +160,7 @@ double PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
 
     //TODO: Think over this. Probably should not be parallelized.
     //Find the best particle.
-    #pragma omp parallel for num_threads(numThreads)
+    #pragma omp parallel for
     for (size_t j = 0; j < numParticles; j++)
     {
       if (particleBestFitnesses(j) < bestFitness)

@@ -113,6 +113,7 @@ class LBestUpdate
   {
     //TODO: Parallelize this -- should be doable.
     // Velocity update logic.
+    #pragma omp parallel for
     for (size_t i = 0; i < n; i++)
     {
       localBestIndices(i) =
