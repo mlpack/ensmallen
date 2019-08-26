@@ -29,9 +29,9 @@ TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGDTest]")
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
+  for (size_t batchSize = 40; batchSize < 50; batchSize += 5)
   {
-    BBS_BB bbsgd(batchSize, 0.005, 0.1, 20000, 1e-6, true, true);
+    BBS_Armijo bbsgd(batchSize, 0.005, 0.1, 10000, 1e-6, true, true);
 
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
     arma::mat coordinates = lr.GetInitialPoint();
@@ -60,9 +60,9 @@ TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGDTest]")
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 40; batchSize += 1)
+  for (size_t batchSize = 40; batchSize < 50; batchSize += 1)
   {
-    BBS_Armijo bbsgd(batchSize, 0.005, 0.1, 20000, 1e-6, true, true);
+    BBS_Armijo bbsgd(batchSize, 0.005, 0.1, 10000, 1e-6, true, true);
 
     LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
     arma::mat coordinates = lr.GetInitialPoint();
@@ -91,9 +91,9 @@ TEST_CASE("BBSBBLogisticRegressionFMatTest", "[BigBatchSGDTest]")
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
+  for (size_t batchSize = 350; batchSize < 360; batchSize += 5)
   {
-    BBS_BB bbsgd(batchSize, 0.01, 0.1, 10000, 1e-6, true, true);
+    BBS_BB bbsgd(batchSize, 0.001, 0.1, 10000, 1e-8, true, true);
 
     LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
     arma::fmat coordinates = lr.GetInitialPoint();
@@ -122,7 +122,7 @@ TEST_CASE("BBSArmijoLogisticRegressionFMatTest", "[BigBatchSGDTest]")
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 40; batchSize += 1)
+  for (size_t batchSize = 40; batchSize < 50; batchSize += 1)
   {
     BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 10000, 1e-6, true, true);
 
@@ -156,9 +156,9 @@ TEST_CASE("BBSBBLogisticRegressionSpMatTest", "[BigBatchSGDTest]")
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 40; batchSize += 5)
+  for (size_t batchSize = 350; batchSize < 360; batchSize += 5)
   {
-    BBS_BB bbsgd(batchSize, 0.01, 0.1, 10000, 1e-6, true, true);
+    BBS_BB bbsgd(batchSize, 0.005, 0.5, 10000, 1e-8, true, true);
 
     LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
     arma::sp_mat coordinates = lr.GetInitialPoint();
@@ -187,9 +187,9 @@ TEST_CASE("BBSArmijoLogisticRegressionSpMatTest", "[BigBatchSGDTest]")
       responses, testResponses, shuffledResponses);
 
   // Now run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 40; batchSize += 1)
+  for (size_t batchSize = 40; batchSize < 50; batchSize += 1)
   {
-    BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 10000, 1e-6, true, true);
+    BBS_Armijo bbsgd(batchSize, 0.01, 0.001, 10000, 1e-6, true, true);
 
     LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
     arma::sp_mat coordinates = lr.GetInitialPoint();
