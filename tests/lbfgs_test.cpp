@@ -31,8 +31,8 @@ TEST_CASE("RosenbrockFunctionTest", "[LBFGSTest]")
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -50,8 +50,8 @@ TEST_CASE("RosenbrockFunctionFloatTest", "[LBFGSTest]")
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -70,8 +70,8 @@ TEST_CASE("RosenbrockFunctionSpGradTest", "[LBFGSTest]")
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -89,8 +89,8 @@ TEST_CASE("RosenbrockFunctionSpMatTest", "[LBFGSTest]")
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -105,8 +105,8 @@ TEST_CASE("ColvilleFunctionTest", "[LBFGSTest]")
   arma::vec coords = f.GetInitialPoint();
   lbfgs.Optimize(f, coords);
 
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -124,10 +124,10 @@ TEST_CASE("WoodFunctionTest", "[LBFGSTest]")
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[2] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[3] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(3) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -154,7 +154,7 @@ TEST_CASE("GeneralizedRosenbrockFunctionTest", "[LBFGSTest]")
     // Test the output to make sure it is correct.
     REQUIRE(finalValue == Approx(0.0).margin(1e-5));
     for (int j = 0; j < dim; j++)
-      REQUIRE(coords[j] == Approx(1.0).epsilon(1e-7));
+      REQUIRE(coords(j) == Approx(1.0).epsilon(1e-7));
   }
 }
 

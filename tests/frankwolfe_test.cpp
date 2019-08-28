@@ -41,9 +41,9 @@ TEST_CASE("FWOMPTest", "[FrankWolfeTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates[0] - 1 == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates[1] - 1 == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-10));
+  REQUIRE(coordinates(0) - 1 == Approx(0.0).margin(1e-10));
+  REQUIRE(coordinates(1) - 1 == Approx(0.0).margin(1e-10));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-10));
   for (int ii = 0; ii < k; ++ii)
   {
     REQUIRE(coordinates[ii + 3] == Approx(0.0).margin(1e-10));
@@ -150,9 +150,9 @@ TEST_CASE("ClassicFW", "[FrankWolfeTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[0] - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[1] - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[2] - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
 }
 
 /**
@@ -174,9 +174,9 @@ TEST_CASE("ClassicFWFMat", "[FrankWolfeTest]")
   float result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[0] - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[1] - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[2] - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
 }
 
 /**
@@ -198,9 +198,9 @@ TEST_CASE("FWLineSearch", "[FrankWolfeTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[0] - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[1] - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[2] - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
 }
 
 /**
@@ -223,7 +223,7 @@ TEST_CASE("FWLineSearchFMat", "[FrankWolfeTest]")
   float result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[0] - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[1] - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[2] - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
 }

@@ -33,9 +33,9 @@ TEST_CASE("FuncFWTest", "[LineSearchTest]")
   double result = s.Optimize(f, x1, x2);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
-  REQUIRE((x2[0] - 0.1) == Approx(0.0).margin(1e-10));
-  REQUIRE((x2[1] - 0.2) == Approx(0.0).margin(1e-10));
-  REQUIRE((x2[2] - 0.3) == Approx(0.0).margin(1e-10));
+  REQUIRE((x2(0) - 0.1) == Approx(0.0).margin(1e-10));
+  REQUIRE((x2(1) - 0.2) == Approx(0.0).margin(1e-10));
+  REQUIRE((x2(2) - 0.3) == Approx(0.0).margin(1e-10));
 }
 
 /**
@@ -54,7 +54,7 @@ TEST_CASE("FuncFWFMatTest", "[LineSearchTest]")
   float result = s.Optimize(f, x1, x2);
 
   REQUIRE(result == Approx(0.0).margin(1e-5));
-  REQUIRE((x2[0] - 0.1) == Approx(0.0).margin(1e-5));
-  REQUIRE((x2[1] - 0.2) == Approx(0.0).margin(1e-5));
-  REQUIRE((x2[2] - 0.3) == Approx(0.0).margin(1e-5));
+  REQUIRE((x2(0) - 0.1) == Approx(0.0).margin(1e-5));
+  REQUIRE((x2(1) - 0.2) == Approx(0.0).margin(1e-5));
+  REQUIRE((x2(2) - 0.3) == Approx(0.0).margin(1e-5));
 }

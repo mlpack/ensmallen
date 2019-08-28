@@ -53,8 +53,8 @@ TEST_CASE("WNGradSphereFunctionTest","[WNGradTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -68,8 +68,8 @@ TEST_CASE("WNGradStyblinskiTangFunctionTest","[WNGradTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
 }
 
 /**
@@ -83,8 +83,8 @@ TEST_CASE("WNGradStyblinskiTangFunctionFMatTest", "[WNGradTest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
 }
 
 /**
@@ -98,6 +98,6 @@ TEST_CASE("WNGradStyblinskiTangFunctionSpMatTest", "[WNGradTest]")
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
 }

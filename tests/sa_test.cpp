@@ -41,7 +41,7 @@ TEST_CASE("SAGeneralizedRosenbrockTest","[SATest]")
   // 0.1% tolerance for each coordinate.
   REQUIRE(result == Approx(0.0).margin(1e-6));
   for (size_t j = 0; j < dim; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(0.001));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(0.001));
 }
 
 // The Rosenbrock function is a simple function to optimize.
@@ -56,8 +56,8 @@ TEST_CASE("SARosenbrockTest", "[SATest]")
   const double result = sa.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-5));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-4));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-4));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-4));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-4));
 }
 
 // The Rosenbrock function is a simple function to optimize.  Use arma::fmat.
@@ -72,8 +72,8 @@ TEST_CASE("SARosenbrockFMatTest", "[SATest]")
   const float result = sa.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-2));
 }
 
 /**
@@ -99,8 +99,8 @@ TEST_CASE("RastrigrinFunctionTest", "[SATest]")
     const double result = sa.Optimize(f, coordinates);
 
     if ((std::abs(result) < 1e-3) &&
-        (std::abs(coordinates[0]) < 1e-3) &&
-        (std::abs(coordinates[1]) < 1e-3))
+        (std::abs(coordinates(0)) < 1e-3) &&
+        (std::abs(coordinates(1)) < 1e-3))
     {
       ++successes;
       break; // No need to continue.

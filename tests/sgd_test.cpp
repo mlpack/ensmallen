@@ -29,9 +29,9 @@ TEST_CASE("SimpleSGDTestFunction", "[SGDTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-7));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-7));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-7));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-7));
 }
 
 TEST_CASE("GeneralizedRosenbrockTest", "[SGDTest]")
@@ -51,7 +51,7 @@ TEST_CASE("GeneralizedRosenbrockTest", "[SGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-10));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
   }
 }
 
@@ -64,9 +64,9 @@ TEST_CASE("SimpleSGDTestFunctionFloat", "[SGDTest]")
   float result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-5));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-5));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-5));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-5));
 }
 
 TEST_CASE("GeneralizedRosenbrockTestFloat", "[SGDTest]")
@@ -84,6 +84,6 @@ TEST_CASE("GeneralizedRosenbrockTestFloat", "[SGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-5));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-3));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
   }
 }

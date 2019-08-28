@@ -30,9 +30,9 @@ TEST_CASE("NesterovMomentumSGDSpeedUpTestFunction", "[NesterovMomentumSGDTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0025));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(3e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(3e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-6));
 }
 
 /**
@@ -54,7 +54,7 @@ TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockTest", "[NesterovMomentumSGDT
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
   }
 }
 
@@ -84,7 +84,7 @@ TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockFMatTest",
 
     REQUIRE(result == Approx(0.0).margin(1e-2));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-2));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-2));
   }
 }
 
@@ -108,6 +108,6 @@ TEST_CASE("NesterovMomentumSGDGeneralizedRosenbrockSpMatTest",
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
   }
 }

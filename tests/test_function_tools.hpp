@@ -41,14 +41,14 @@ inline void LogisticRegressionTestData(MatType& data,
     // The first Gaussian is centered at (1, 1, 1) and has covariance I.
     data.col(i) = arma::randn<arma::Col<typename MatType::elem_type>>(3) +
         arma::Col<typename MatType::elem_type>("1.0 1.0 1.0");
-    responses[i] = 0;
+    responses(i) = 0;
   }
   for (size_t i = 500; i < 1000; ++i)
   {
     // The second Gaussian is centered at (9, 9, 9) and has covariance I.
     data.col(i) = arma::randn<arma::Col<typename MatType::elem_type>>(3) +
         arma::Col<typename MatType::elem_type>("9.0 9.0 9.0");
-    responses[i] = 1;
+    responses(i) = 1;
   }
 
   // Shuffle the dataset.
@@ -58,8 +58,8 @@ inline void LogisticRegressionTestData(MatType& data,
   shuffledResponses = arma::Row<size_t>(1000);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    shuffledData.col(i) = data.col(indices[i]);
-    shuffledResponses[i] = responses[indices[i]];
+    shuffledData.col(i) = data.col(indices(i));
+    shuffledResponses(i) = responses[indices(i)];
   }
 
   // Create a test set.
@@ -69,13 +69,13 @@ inline void LogisticRegressionTestData(MatType& data,
   {
     testData.col(i) = arma::randn<arma::Col<typename MatType::elem_type>>(3) +
         arma::Col<typename MatType::elem_type>("1.0 1.0 1.0");
-    testResponses[i] = 0;
+    testResponses(i) = 0;
   }
   for (size_t i = 500; i < 1000; ++i)
   {
     testData.col(i) = arma::randn<arma::Col<typename MatType::elem_type>>(3) +
         arma::Col<typename MatType::elem_type>("9.0 9.0 9.0");
-    testResponses[i] = 1;
+    testResponses(i) = 1;
   }
 }
 
@@ -90,10 +90,10 @@ inline void CheckMatrices(const MatType& a,
 
   for (size_t i = 0; i < a.n_elem; ++i)
   {
-    if (std::abs(a[i]) < tolerance / 2)
-      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2.0));
+    if (std::abs(a(i)) < tolerance / 2)
+      REQUIRE(b(i) == Approx(0.0).margin(tolerance / 2.0));
     else
-      REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance));
+      REQUIRE(a(i) == Approx(b(i)).epsilon(tolerance));
   }
 }
 

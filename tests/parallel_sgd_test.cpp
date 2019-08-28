@@ -56,10 +56,10 @@ TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
     REQUIRE(result == Approx(123.75).epsilon(0.0001));
 
     // The co-ordinates should be the vertices of the parabolas.
-    REQUIRE(coordinates[0] == Approx(2.0).epsilon(0.0002));
-    REQUIRE(coordinates[1] == Approx(1.0).epsilon(0.0002));
-    REQUIRE(coordinates[2] == Approx(1.5).epsilon(0.0002));
-    REQUIRE(coordinates[3] == Approx(4.0).epsilon(0.0002));
+    REQUIRE(coordinates(0) == Approx(2.0).epsilon(0.0002));
+    REQUIRE(coordinates(1) == Approx(1.0).epsilon(0.0002));
+    REQUIRE(coordinates(2) == Approx(1.5).epsilon(0.0002));
+    REQUIRE(coordinates(3) == Approx(4.0).epsilon(0.0002));
   }
 }
 
@@ -86,7 +86,7 @@ TEST_CASE("ParallelSGDGeneralizedRosenbrockTest", "[ParallelSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-8));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(0.0001));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(0.0001));
   }
 }
 
@@ -112,7 +112,7 @@ TEST_CASE("ParallelSGDGeneralizedRosenbrockFMatTest", "[ParallelSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-8));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(0.001));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(0.001));
   }
 }
 
@@ -138,7 +138,7 @@ TEST_CASE("ParallelSGDGeneralizedRosenbrockSpMatTest", "[ParallelSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-8));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(0.0001));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(0.0001));
   }
 }
 

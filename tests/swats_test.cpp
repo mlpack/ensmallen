@@ -53,8 +53,8 @@ TEST_CASE("SWATSSphereFunctionTest", "[SWATSTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -68,8 +68,8 @@ TEST_CASE("SWATSStyblinskiTangFunctionTest", "[SWATSTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
 }
 
 /**
@@ -83,8 +83,8 @@ TEST_CASE("SWATSStyblinskiTangFunctionFMatTest", "[SWATSTest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
 }
 
 #if ARMA_VERSION_MAJOR > 9 ||\
@@ -101,8 +101,8 @@ TEST_CASE("SWATSStyblinskiTangFunctionSpMatTest", "[SWATSTest]")
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
 }
 
 #endif

@@ -28,9 +28,9 @@ TEST_CASE("FTMLSGDFunction", "[FTMLTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -68,8 +68,8 @@ TEST_CASE("FTMLSphereFunctionTest", "[FTMLTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -83,8 +83,8 @@ TEST_CASE("FTMLStyblinskiTangFunctionTest", "[FTMLTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
 }
 
 /**
@@ -99,8 +99,8 @@ TEST_CASE("FTMLStyblinskiTangFunctionFMatTest", "[FTMLTest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
 }
 
 // A test with sp_mat is not done, because FTML uses some parts internally that

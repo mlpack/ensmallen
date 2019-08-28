@@ -37,8 +37,8 @@ TEST_CASE("AugLagrangianTestFunctionTest", "[AugLagrangianTest]")
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(70.0).epsilon(1e-7));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(4.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(4.0).epsilon(1e-7));
 }
 
 /**
@@ -58,9 +58,9 @@ TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
 
   // Higher tolerance for smaller values.
   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
-  REQUIRE(coords[0] == Approx(0.12288178).epsilon(1e-5));
-  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-7));
-  REQUIRE(coords[2] == Approx(0.015099932).epsilon(1e-5));
+  REQUIRE(coords(0) == Approx(0.12288178).epsilon(1e-5));
+  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
+  REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
 }
 
 /**
@@ -81,9 +81,9 @@ TEST_CASE("GockenbachFunctionFMatTest", "[AugLagrangianTest]")
 
   // Higher tolerance for smaller values.
   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
-  REQUIRE(coords[0] == Approx(0.12288178).epsilon(0.1));
-  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-3));
-  REQUIRE(coords[2] == Approx(0.015099932).epsilon(0.1));
+  REQUIRE(coords(0) == Approx(0.12288178).epsilon(0.1));
+  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-3));
+  REQUIRE(coords(2) == Approx(0.015099932).epsilon(0.1));
 }
 
 /**
@@ -104,7 +104,7 @@ TEST_CASE("GockenbachFunctionSpMatTest", "[AugLagrangianTest]")
 
   // Higher tolerance for smaller values.
   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
-  REQUIRE(coords[0] == Approx(0.12288178).epsilon(1e-5));
-  REQUIRE(coords[1] == Approx(-1.10778185).epsilon(1e-7));
-  REQUIRE(coords[2] == Approx(0.015099932).epsilon(1e-5));
+  REQUIRE(coords(0) == Approx(0.12288178).epsilon(1e-5));
+  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
+  REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
 }
