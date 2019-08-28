@@ -30,8 +30,8 @@ TEST_CASE("SPSASphereFunctionTest", "[SPSATest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -45,8 +45,8 @@ TEST_CASE("SPSASphereFunctionFMatTest", "[SPSATest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -60,8 +60,8 @@ TEST_CASE("SPSASphereFunctionSpMatTest", "[SPSATest]")
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -76,9 +76,9 @@ TEST_CASE("SPSAMatyasFunctionTest", "[SPSATest]")
   optimizer.Optimize(f, coordinates);
 
   // 3% error tolerance.
-  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) ==
+  REQUIRE((std::trunc(100.0 * coordinates(0)) / 100.0) ==
       Approx(0.0).epsilon(0.003));
-  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) ==
+  REQUIRE((std::trunc(100.0 * coordinates(1)) / 100.0) ==
       Approx(0.0).epsilon(0.003));
 }
 

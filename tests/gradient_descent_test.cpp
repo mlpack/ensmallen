@@ -25,9 +25,9 @@ TEST_CASE("SimpleGDTestFunction", "[GradientDescentTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(1e-2));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-2));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-2));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-2));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-2));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-2));
 }
 
 TEST_CASE("GDRosenbrockTest", "[GradientDescentTest]")
@@ -42,7 +42,7 @@ TEST_CASE("GDRosenbrockTest", "[GradientDescentTest]")
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
   for (size_t j = 0; j < 2; ++j)
-    REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+    REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
 }
 
 TEST_CASE("GDRosenbrockFMatTest", "[GradientDescentTest]")
@@ -57,5 +57,5 @@ TEST_CASE("GDRosenbrockFMatTest", "[GradientDescentTest]")
 
   REQUIRE(result == Approx(0.0).margin(1e-5));
   for (size_t j = 0; j < 2; ++j)
-    REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-3));
+    REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
 }

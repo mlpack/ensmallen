@@ -26,9 +26,9 @@ TEST_CASE("QHSGDTestFunction", "[QHMomentumSGDTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0025));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(3e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(3e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-6));
 }
 
 /**
@@ -44,9 +44,9 @@ TEST_CASE("QHSGDFMatTestFunction", "[QHMomentumSGDTest]")
   float result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.025));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(3e-2));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(3e-2));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-4));
 }
 
 /**
@@ -63,9 +63,9 @@ TEST_CASE("QHSGDSpMatTestFunction", "[QHMomentumSGDTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0025));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(3e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(3e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-6));
 }
 
 /**
@@ -85,6 +85,6 @@ TEST_CASE("QHSGDSGDGeneralizedRosenbrockTest", "[QHMomentumSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-4));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-4));
   }
 }

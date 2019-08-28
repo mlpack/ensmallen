@@ -27,9 +27,9 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0015));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.015));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.015));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-6));
 
   // Compare with SGD with vanilla update.
   SGDTestFunction f1;
@@ -42,9 +42,9 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
 
   // Result doesn't converge in 2500000 iterations.
   REQUIRE((result1 + 1.0) > 0.05);
-  REQUIRE(coordinates1[0] >= 0.015);
-  REQUIRE(coordinates1[1] == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates1[2] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates1(0) >= 0.015);
+  REQUIRE(coordinates1(1) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates1(2) == Approx(0.0).margin(1e-6));
 
   REQUIRE(result < result1);
 }
@@ -65,7 +65,7 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
   }
 }
 
@@ -85,7 +85,7 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockFMatTest", "[MomentumSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-2));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-3));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
   }
 }
 
@@ -105,6 +105,6 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockSpMatTest", "[MomentumSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
   }
 }

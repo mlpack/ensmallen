@@ -24,9 +24,9 @@ TEST_CASE("RMSPropSGDFunction", "[rmsprop]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(std::abs(coordinates[0]) <= 0.1);
-  REQUIRE(std::abs(coordinates[1]) <= 0.1);
-  REQUIRE(std::abs(coordinates[2]) <= 0.1);
+  REQUIRE(std::abs(coordinates(0)) <= 0.1);
+  REQUIRE(std::abs(coordinates(1)) <= 0.1);
+  REQUIRE(std::abs(coordinates(2)) <= 0.1);
 }
 
 /**

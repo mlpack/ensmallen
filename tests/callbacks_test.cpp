@@ -401,9 +401,9 @@ TEST_CASE("EarlyStopAtMinLossCallbackTest", "[CallbacksTest]")
   const double result = s.Optimize(f, coordinates, EarlyStopAtMinLoss(100));
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-7));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-7));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-7));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-7));
 }
 
 /**
@@ -456,8 +456,8 @@ TEST_CASE("StoreBestCoordinatesCallbackTest", "[CallbacksTest]")
 
   REQUIRE(cb.BestObjective() <= result);
   REQUIRE(cb.BestObjective() == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(cb.BestCoordinates()[0] == Approx(0.0).margin(1e-3));
-  REQUIRE(cb.BestCoordinates()[1] == Approx(0.0).margin(1e-7));
+  REQUIRE(cb.BestCoordinates()(0) == Approx(0.0).margin(1e-3));
+  REQUIRE(cb.BestCoordinates()(1) == Approx(0.0).margin(1e-7));
 }
 
 /**

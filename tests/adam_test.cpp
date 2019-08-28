@@ -31,8 +31,8 @@ TEST_CASE("AdamSphereFunctionTest", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -46,8 +46,8 @@ TEST_CASE("AdamSphereFunctionTestFMat", "[AdamTest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 #if ARMA_VERSION_MAJOR > 9 ||\
@@ -64,8 +64,8 @@ TEST_CASE("AdamSphereFunctionTestSpMat", "[AdamTest]")
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -80,8 +80,8 @@ TEST_CASE("AdamSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 #endif
@@ -97,8 +97,8 @@ TEST_CASE("AdamStyblinskiTangFunctionTest", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
 }
 
 /**
@@ -113,8 +113,8 @@ TEST_CASE("AdamMcCormickFunctionTest", "[AdamTest]")
   optimizer.Optimize(f, coordinates);
 
   // 3% error tolerance.
-  REQUIRE(coordinates[0] == Approx(-0.547).epsilon(0.03));
-  REQUIRE(coordinates[1] == Approx(-1.547).epsilon(0.03));
+  REQUIRE(coordinates(0) == Approx(-0.547).epsilon(0.03));
+  REQUIRE(coordinates(1) == Approx(-1.547).epsilon(0.03));
 }
 
 /**
@@ -129,9 +129,9 @@ TEST_CASE("AdamMatyasFunctionTest", "[AdamTest]")
   optimizer.Optimize(f, coordinates);
 
   // 3% error tolerance.
-  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) ==
+  REQUIRE((std::trunc(100.0 * coordinates(0)) / 100.0) ==
       Approx(0.0).epsilon(0.003));
-  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) ==
+  REQUIRE((std::trunc(100.0 * coordinates(1)) / 100.0) ==
       Approx(0.0).epsilon(0.003));
 }
 
@@ -147,9 +147,9 @@ TEST_CASE("AdamEasomFunctionTest", "[AdamTest]")
   optimizer.Optimize(f, coordinates);
 
   // 5% error tolerance.
-  REQUIRE((std::trunc(100.0 * coordinates[0]) / 100.0) ==
+  REQUIRE((std::trunc(100.0 * coordinates(0)) / 100.0) ==
       Approx(3.14).epsilon(0.005));
-  REQUIRE((std::trunc(100.0 * coordinates[1]) / 100.0) ==
+  REQUIRE((std::trunc(100.0 * coordinates(1)) / 100.0) ==
       Approx(3.14).epsilon(0.005));
 }
 
@@ -164,8 +164,8 @@ TEST_CASE("AdamBoothFunctionTest", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(0.002));
-  REQUIRE(coordinates[1] == Approx(3.0).epsilon(0.002));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(0.002));
+  REQUIRE(coordinates(1) == Approx(3.0).epsilon(0.002));
 }
 
 /**
@@ -179,9 +179,9 @@ TEST_CASE("SimpleAdamTestFunction", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.3));
 }
 
 /**
@@ -195,9 +195,9 @@ TEST_CASE("SimpleAdaMaxTestFunction", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.3));
 }
 
 /**
@@ -211,9 +211,9 @@ TEST_CASE("SimpleAMSGradTestFunction", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.3));
 }
 
 /**
@@ -227,8 +227,8 @@ TEST_CASE("AMSGradSphereFunctionTestFMat", "[AdamTest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 #if ARMA_VERSION_MAJOR > 9 || \
@@ -245,8 +245,8 @@ TEST_CASE("AMSGradSphereFunctionTestSpMat", "[AdamTest]")
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -261,8 +261,8 @@ TEST_CASE("AMSGradSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
   optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 #endif
@@ -353,9 +353,9 @@ TEST_CASE("SimpleNadamTestFunction", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.3));
 }
 
 /**
@@ -394,9 +394,9 @@ TEST_CASE("SimpleNadaMaxTestFunction", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.3));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.3));
 }
 
 /**
@@ -440,9 +440,9 @@ TEST_CASE("SimpleOptimisticAdamTestFunction", "[AdamTest]")
     arma::mat coordinates = f.GetInitialPoint();
     optimizer.Optimize(f, coordinates);
 
-    success = (coordinates[0] == Approx(0.0).margin(0.3)) &&
-              (coordinates[1] == Approx(0.0).margin(0.3)) &&
-              (coordinates[2] == Approx(0.0).margin(0.3));
+    success = (coordinates(0) == Approx(0.0).margin(0.3)) &&
+              (coordinates(1) == Approx(0.0).margin(0.3)) &&
+              (coordinates(2) == Approx(0.0).margin(0.3));
     if (success)
       break;
   }
@@ -491,9 +491,9 @@ TEST_CASE("SimplePadamTestFunction", "[AdamTest]")
     arma::mat coordinates = f.GetInitialPoint();
     optimizer.Optimize(f, coordinates);
 
-    success = (coordinates[0] == Approx(0.0).margin(0.3)) &&
-              (coordinates[1] == Approx(0.0).margin(0.3)) &&
-              (coordinates[2] == Approx(0.0).margin(0.3));
+    success = (coordinates(0) == Approx(0.0).margin(0.3)) &&
+              (coordinates(1) == Approx(0.0).margin(0.3)) &&
+              (coordinates(2) == Approx(0.0).margin(0.3));
     if (success)
       break;
   }
@@ -537,9 +537,9 @@ TEST_CASE("SimpleQHAdamTestFunction", "[AdamTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  bool success = (coordinates[0] == Approx(0.0).margin(0.3)) &&
-                 (coordinates[1] == Approx(0.0).margin(0.3)) &&
-                 (coordinates[2] == Approx(0.0).margin(0.3));
+  bool success = (coordinates(0) == Approx(0.0).margin(0.3)) &&
+                 (coordinates(1) == Approx(0.0).margin(0.3)) &&
+                 (coordinates(2) == Approx(0.0).margin(0.3));
   REQUIRE(success == true);
 }
 
@@ -638,8 +638,8 @@ TEST_CASE("AdamAckleyFunctionTest", "[AdamTest]")
   arma::mat coordinates = arma::mat("0.02; 0.02");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.001));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.001));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.001));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.001));
 }
 
 /**
@@ -655,8 +655,8 @@ TEST_CASE("AdamBealeFunctionTest", "[AdamTest]")
   arma::mat coordinates = arma::mat("2.8; 0.35");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3.0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(3.0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0.5).margin(0.01));
 }
 
 /**
@@ -672,8 +672,8 @@ TEST_CASE("AdamGoldsteinPriceFunctionTest", "[AdamTest]")
   arma::mat coordinates = arma::mat("0.2; -0.5");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(-1).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(-1).margin(0.01));
 }
 
 /**
@@ -689,8 +689,8 @@ TEST_CASE("AdamLevyFunctionTest", "[AdamTest]")
   arma::mat coordinates = arma::mat("0.9; 1.1");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(1).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(1).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(1).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(1).margin(0.01));
 }
 
 /**
@@ -706,8 +706,8 @@ TEST_CASE("AdamHimmelblauFunctionTest", "[AdamTest]")
   arma::mat coordinates = arma::mat("2.9; 1.9");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3.0).margin(0.05));
-  REQUIRE(coordinates[1] == Approx(2.0).margin(0.05));
+  REQUIRE(coordinates(0) == Approx(3.0).margin(0.05));
+  REQUIRE(coordinates(1) == Approx(2.0).margin(0.05));
 }
 
 /**
@@ -723,8 +723,8 @@ TEST_CASE("AdamThreeHumpCamelFunctionTest", "[AdamTest]")
   arma::mat coordinates = arma::mat("1; 1");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.01));
 }
 
 /**
@@ -740,6 +740,6 @@ TEST_CASE("AdamSchafferFunctionN2Test", "[AdamTest]")
   arma::mat coordinates = arma::mat("1; 1");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.01));
 }

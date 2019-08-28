@@ -28,9 +28,9 @@ TEST_CASE("SimpleTestFunction", "[CMAESTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.003));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.003));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.003));
 }
 
 /**

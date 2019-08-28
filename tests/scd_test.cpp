@@ -58,10 +58,10 @@ TEST_CASE("DisjointFeatureTest", "[SCDTest]")
   REQUIRE(result == Approx(123.75).epsilon(0.0001));
 
   // The co-ordinates should be the vertices of the parabolas.
-  REQUIRE(iterate[0] == Approx(2.0).epsilon(0.0002));
-  REQUIRE(iterate[1] == Approx(1.0).epsilon(0.0002));
-  REQUIRE(iterate[2] == Approx(1.5).epsilon(0.0002));
-  REQUIRE(iterate[3] == Approx(4.0).epsilon(0.0002));
+  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.0002));
+  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.0002));
+  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.0002));
+  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.0002));
 }
 
 /**
@@ -85,10 +85,10 @@ TEST_CASE("DisjointFeatureFMatTest", "[SCDTest]")
   REQUIRE(result == Approx(123.75).epsilon(0.01));
 
   // The co-ordinates should be the vertices of the parabolas.
-  REQUIRE(iterate[0] == Approx(2.0).epsilon(0.02));
-  REQUIRE(iterate[1] == Approx(1.0).epsilon(0.02));
-  REQUIRE(iterate[2] == Approx(1.5).epsilon(0.02));
-  REQUIRE(iterate[3] == Approx(4.0).epsilon(0.02));
+  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.02));
+  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.02));
+  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.02));
+  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.02));
 }
 
 /**
@@ -112,10 +112,10 @@ TEST_CASE("DisjointFeatureSpMatTest", "[SCDTest]")
   REQUIRE(result == Approx(123.75).epsilon(0.0001));
 
   // The co-ordinates should be the vertices of the parabolas.
-  REQUIRE(iterate[0] == Approx(2.0).epsilon(0.0002));
-  REQUIRE(iterate[1] == Approx(1.0).epsilon(0.0002));
-  REQUIRE(iterate[2] == Approx(1.5).epsilon(0.0002));
-  REQUIRE(iterate[3] == Approx(4.0).epsilon(0.0002));
+  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.0002));
+  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.0002));
+  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.0002));
+  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.0002));
 }
 
 /**
@@ -137,7 +137,7 @@ TEST_CASE("GreedyDescentTest", "[SCDTest]")
 
   // Changing the point under consideration, so that the maximum gradient is at
   // index 1.
-  point[1] = 10;
+  point(1) = 10;
 
   REQUIRE(descentPolicy.DescentFeature<SparseTestFunction,
                                        arma::mat,

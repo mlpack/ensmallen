@@ -81,8 +81,8 @@ TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
   arma::mat coordinates = arma::mat("0.8; 1.8");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.1));
-  REQUIRE(abs(coordinates[1]) == Approx(1.34941).margin(0.1));
+  REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(0.1));
+  REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(0.1));
 }
 
 /**
@@ -96,8 +96,8 @@ TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
   arma::mat coordinates = arma::mat("3; 3");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
 }
 
 /**
@@ -111,8 +111,8 @@ TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
   arma::mat coordinates = arma::mat("3; 3");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.5).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(3).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.5).margin(0.1));
 }
 
 /**
@@ -126,8 +126,8 @@ TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
   arma::mat coordinates = arma::mat("0.5; -0.5");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(-1).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(-1).margin(0.1));
 }
 
 /**
@@ -141,8 +141,8 @@ TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
   arma::mat coordinates = arma::mat("1.5; 0.5");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(1).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(1).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(1).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(1).margin(0.1));
 }
 
 /**
@@ -156,8 +156,8 @@ TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
   arma::mat coordinates = arma::mat("2; 1");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(2.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(3.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(2.0).margin(0.1));
 }
 
 /**
@@ -171,8 +171,8 @@ TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
   arma::mat coordinates = arma::mat("1; 1");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
 }
 
 // TODO: The CNE optimizer with the given parameter occasionally fails to find a
@@ -189,8 +189,8 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
   arma::mat coordinates = arma::mat("0.5; 2");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
 }
 
 /**
@@ -204,6 +204,6 @@ TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
   arma::mat coordinates = arma::mat("0.5; -0.5");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
 }

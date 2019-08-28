@@ -28,9 +28,9 @@ class SimpleCategoricalFunction
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& x)
   {
-    if (size_t(x[0]) == 0 &&
-        size_t(x[1]) == 2 &&
-        size_t(x[2]) == 1)
+    if (size_t(x(0)) == 0 &&
+        size_t(x(1)) == 2 &&
+        size_t(x(2)) == 1)
       return 0.0;
     else
       return 10.0;
@@ -65,9 +65,9 @@ TEST_CASE("GridSearchTest", "[GridSearchTest]")
   GridSearch gs;
   gs.Optimize(c, params, categoricalDimensions, numCategories);
 
-  REQUIRE(params[0] == 0);
-  REQUIRE(params[1] == 2);
-  REQUIRE(params[2] == 1);
+  REQUIRE(params(0) == 0);
+  REQUIRE(params(1) == 2);
+  REQUIRE(params(2) == 1);
 }
 
 TEST_CASE("GridSearchFMatTest", "[GridSearchTest]")
@@ -98,9 +98,9 @@ TEST_CASE("GridSearchFMatTest", "[GridSearchTest]")
   GridSearch gs;
   gs.Optimize(c, params, categoricalDimensions, numCategories);
 
-  REQUIRE(params[0] == 0);
-  REQUIRE(params[1] == 2);
-  REQUIRE(params[2] == 1);
+  REQUIRE(params(0) == 0);
+  REQUIRE(params(1) == 2);
+  REQUIRE(params(2) == 1);
 }
 
 TEST_CASE("GridSearchIMatTest", "[GridSearchTest]")
@@ -131,7 +131,7 @@ TEST_CASE("GridSearchIMatTest", "[GridSearchTest]")
   GridSearch gs;
   gs.Optimize(c, params, categoricalDimensions, numCategories);
 
-  REQUIRE(params[0] == 0);
-  REQUIRE(params[1] == 2);
-  REQUIRE(params[2] == 1);
+  REQUIRE(params(0) == 0);
+  REQUIRE(params(1) == 2);
+  REQUIRE(params(2) == 1);
 }

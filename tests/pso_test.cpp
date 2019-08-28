@@ -31,7 +31,7 @@ TEST_CASE("LBestPSOSphereFunctionTest", "[PSOTest]")
   double finalValue = f.Evaluate(coords);
   REQUIRE(finalValue <= 1e-5);
   for (size_t j = 0; j < 4; ++j)
-    REQUIRE(coords[j] <= 1e-3);
+    REQUIRE(coords(j) <= 1e-3);
 }
 
 /**
@@ -49,7 +49,7 @@ TEST_CASE("LBestPSOSphereFunctionFMatTest", "[PSOTest]")
   double finalValue = f.Evaluate(coords);
   REQUIRE(finalValue <= 1e-5);
   for (size_t j = 0; j < 4; ++j)
-    REQUIRE(coords[j] <= 1e-3);
+    REQUIRE(coords(j) <= 1e-3);
 }
 
 /**
@@ -71,8 +71,8 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-2));
 }
 
 /**
@@ -94,8 +94,8 @@ TEST_CASE("LBestPSORosenbrockFMatTest","[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-2));
 }
 
 /**
@@ -116,8 +116,8 @@ TEST_CASE("LBestPSORosenbrockDoubleTest","[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-3));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-3));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-3));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-3));
 }
 
 /**
@@ -138,8 +138,8 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-2.06261).margin(0.01));
-  REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.01));
-  REQUIRE(abs(coordinates[1]) == Approx(1.34941).margin(0.01));
+  REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(0.01));
+  REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(0.01));
 }
 
 /**
@@ -160,8 +160,8 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0).margin(0.01));
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
 
 /**
@@ -183,8 +183,8 @@ TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0).margin(0.01));
-  REQUIRE(coordinates[0] == Approx(3).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(3).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0.5).margin(0.01));
 }
 
 /**
@@ -205,8 +205,8 @@ TEST_CASE("LBestPSOGoldsteinPriceFunctionTest", "[PSOTest]")
   arma::mat coordinates = arma::mat("1; 0");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(-1).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(-1).margin(0.01));
 }
 
 /**
@@ -227,8 +227,8 @@ TEST_CASE("LBestPSOLevyFunctionN13Test", "[PSOTest]")
   arma::mat coordinates = arma::mat("3; 3");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(1).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(1).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(1).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(1).margin(0.01));
 }
 
 /**
@@ -249,8 +249,8 @@ TEST_CASE("LBestPSOHimmelblauFunctionTest", "[PSOTest]")
   arma::mat coordinates = arma::mat("2; 1");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3.0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(2.0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(3.0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(2.0).margin(0.01));
 }
 
 /**
@@ -271,8 +271,8 @@ TEST_CASE("LBestPSOThreeHumpCamelFunctionTest", "[PSOTest]")
   arma::mat coordinates = arma::mat("2; 2");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
 
 /**
@@ -292,8 +292,8 @@ TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
   arma::mat coordinates = arma::mat("10; 10");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
 
 // TODO: With future improvements in metaheuristic optimisers in ensmallen,
@@ -317,7 +317,7 @@ TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.292579).margin(0.1));
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
 }
 */

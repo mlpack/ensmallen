@@ -28,9 +28,9 @@ TEST_CASE("SimpleSMORMS3TestFunction","[SMORMS3Test]")
   arma::mat coordinates = f.GetInitialPoint();
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.1));
 }
 
 /**
