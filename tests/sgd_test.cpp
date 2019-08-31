@@ -59,6 +59,7 @@ TEST_CASE("SimpleSGDTestFunctionFloat", "[SGDTest]")
 {
   SGDTestFunction f;
   StandardSGD s(0.0003, 1, 5000000, 1e-9, true);
+  s.ExactObjective() = true;
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   float result = s.Optimize(f, coordinates);
