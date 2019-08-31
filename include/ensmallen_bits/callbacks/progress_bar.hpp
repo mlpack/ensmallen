@@ -15,8 +15,8 @@
 namespace ens {
 
 /**
- * A simple progress bar, based on the maximum number of optimizer iterations
- * and the EndEpoch callback function.
+ * A simple progress bar, based on the maximum number of optimizer iterations,
+ * batch-size, number of functions and the StepTaken callback function.
  */
 class ProgressBar
 {
@@ -54,6 +54,27 @@ class ProgressBar
                          FunctionType& function,
                          MatType& /* coordinates */)
   {
+    static_assert(callbacks::traits::HasBatchSizeSignature<
+      OptimizerType>::value,
+      "The OptimizerType does not have a correct definition of BatchSize(). "
+      "Please check that the OptimizerType fully satisfies the requirements "
+      "of the ProgressBar API; see the callbacks documentation for more "
+      "details.");
+
+    static_assert(callbacks::traits::HasMaxIterationsSignature<
+      OptimizerType>::value,
+      "The OptimizerType does not have a correct definition of MaxIterations()."
+      " Please check that the OptimizerType fully satisfies the requirements "
+      "of the ProgressBar API; see the callbacks documentation for more "
+      "details.");
+
+    static_assert(callbacks::traits::HasNumFunctionsSignature<
+      FunctionType>::value,
+      "The OptimizerType does not have a correct definition of NumFunctions(). "
+      "Please check that the OptimizerType fully satisfies the requirements "
+      "of the ProgressBar API; see the callbacks documentation for more "
+      "details.");
+
     epochSize = function.NumFunctions() / optimizer.BatchSize();
     if (function.NumFunctions() % optimizer.BatchSize() > 0)
       epochSize++;
