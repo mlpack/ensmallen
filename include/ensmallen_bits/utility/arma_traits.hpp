@@ -119,6 +119,13 @@ struct IsArmaType<arma::Cube<eT> >
   const static bool value = true;
 };
 
+// template<>
+template<typename eT>
+struct IsArmaType<arma::subview_cube<eT> >
+{
+  const static bool value = true;
+};
+
 
 template <int N, typename... T>
 struct tuple_element;
