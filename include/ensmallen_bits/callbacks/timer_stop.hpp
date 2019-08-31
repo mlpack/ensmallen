@@ -24,9 +24,9 @@ class TimerStop
   /**
    * Set up the print loss callback class with the width and output stream.
    *
-   * @param duration The duration of the timer in seconds.
+   * @param durationIn The duration of the timer in seconds.
    */
-  TimerStop(const double duration) : localDuration(duration)
+  TimerStop(const double durationIn) : duration(durationIn)
   { /* Nothing to do here. */ }
 
   /**
@@ -61,7 +61,7 @@ class TimerStop
                 const size_t /* epoch */,
                 const double /* objective */)
   {
-    if (timer.toc() > localDuration)
+    if (timer.toc() > duration)
     {
       Info << "Timer timeout reached; terminate optimization." << std::endl;
       return true;
@@ -72,7 +72,7 @@ class TimerStop
 
  private:
   //! The duration in seconds.
-  double localDuration;
+  double duration;
 
   //! Locally-stored timer object.
   arma::wall_clock timer;

@@ -101,15 +101,13 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
       size_t l = 0, m = 0;
       do
       {
-        l = arma::as_scalar(arma::randi<arma::uvec>(
-            1, arma::distr_param(0, populationSize - 1)));
+        l = arma::randi<arma::uword>(arma::distr_param(0, populationSize - 1));
       }
       while (l == member);
 
       do
       {
-        m = arma::as_scalar(arma::randi<arma::uvec>(
-            1, arma::distr_param(0, populationSize - 1)));
+        m = arma::randi<arma::uword>(arma::distr_param(0, populationSize - 1));
       }
       while (m == member && m == l);
 
