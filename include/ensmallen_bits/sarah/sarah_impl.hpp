@@ -41,28 +41,53 @@ SARAHType<UpdatePolicyType>::SARAHType(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
-double SARAHType<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SARAHType<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& functionIn,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
+  FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
+
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+      BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
 
   // To keep track of where we are and how things are going.
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Set epoch length to n / b if the user asked for.
   if (innerIterations == 0)
     innerIterations = numFunctions;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat v(iterate.n_rows, iterate.n_cols);
-  arma::mat gradient0(iterate.n_rows, iterate.n_cols);
-  arma::mat iterate0;
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType v(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient0(iterate.n_rows, iterate.n_cols);
+  BaseMatType iterate0;
 
   // Find the number of batches.
   size_t numBatches = numFunctions / batchSize;
@@ -71,14 +96,20 @@ double SARAHType<UpdatePolicyType>::Optimize(
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-      overallObjective += function.Evaluate(iterate, f, effectiveBatchSize);
+      const ElemType objective = function.Evaluate(iterate, f,
+          effectiveBatchSize);
+      overallObjective += objective;
+
+      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
     }
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
@@ -86,6 +117,8 @@ double SARAHType<UpdatePolicyType>::Optimize(
       Warn << "SARAH: converged to " << overallObjective
           << "; terminating  with failure.  Try a smaller step size?"
           << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -93,6 +126,8 @@ double SARAHType<UpdatePolicyType>::Optimize(
     {
       Info << "SARAH: minimized within tolerance " << tolerance
           << "; terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -101,6 +136,9 @@ double SARAHType<UpdatePolicyType>::Optimize(
     // Compute the full gradient.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
     function.Gradient(iterate, 0, v, effectiveBatchSize);
+
+    terminate |= Callback::Gradient(*this, function, iterate, v, callbacks...);
+
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)
     {
@@ -117,7 +155,7 @@ double SARAHType<UpdatePolicyType>::Optimize(
     // Update iterate with full gradient (v).
     iterate -= stepSize * v;
 
-    const double vNorm = arma::norm(v);
+    const ElemType vNorm = arma::norm(v);
 
     for (size_t f = 0, currentFunction = 0; f < innerIterations;
         /* incrementing done manually */)
@@ -139,11 +177,17 @@ double SARAHType<UpdatePolicyType>::Optimize(
       function.Gradient(iterate, currentFunction, gradient,
           effectiveBatchSize);
 
+      terminate |= Callback::Gradient(*this, function, iterate, gradient,
+          callbacks...);
+
       // Avoid an unnecessary copy on the first iteration.
       if (f > 0)
       {
         function.Gradient(iterate0, currentFunction, gradient0,
             effectiveBatchSize);
+
+        terminate |= Callback::Gradient(*this, function, iterate0, gradient0,
+            callbacks...);
 
         // Store current parameter for the calculation of the variance reduced
         // gradient.
@@ -170,6 +214,7 @@ double SARAHType<UpdatePolicyType>::Optimize(
         }
       }
 
+      terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
       currentFunction += effectiveBatchSize;
       f += effectiveBatchSize;
     }
@@ -185,9 +230,14 @@ double SARAHType<UpdatePolicyType>::Optimize(
     for (size_t i = 0; i < numFunctions; i += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-      overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+      const ElemType objective = function.Evaluate(iterate, i, effectiveBatchSize);
+      overallObjective += objective;
+
+      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
     }
-  }  
+  }
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

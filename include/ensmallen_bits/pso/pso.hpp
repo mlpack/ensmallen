@@ -5,9 +5,9 @@
  *
  * Particle swarm optimization.
  *
- * ensmallen is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef ENSMALLEN_PSO_PSO_HPP
@@ -39,12 +39,13 @@ namespace ens {
  *
  * For more information, refer to:
  *
- * @inproceedings{Kennedy,
- *    title = {Particle swarm optimization},
- *    author = {J. Kennedy and R. Eberhart},
- *    booktitle = {Proceedings of {ICNN}{\textquotesingle}95 -
- *                 International Conference on Neural Networks},
- *    publisher = {{IEEE}}
+ * @inproceedings{Kennedy1995,
+ *   author    = {Kennedy, James and Eberhart, Russell C.},
+ *   booktitle = {Proceedings of the IEEE International Conference on
+ *                Neural Networks},
+ *   pages     = {1942--1948},
+ *   title     = {Particle swarm optimization},
+ *   year      = 1995
  * }
  *
  * PSO can optimize arbitrary functions. For more details, see the documentation
@@ -56,6 +57,11 @@ namespace ens {
  * the following function:
  *
  *    double Evaluate(const arma::mat& x);
+ *
+ * @tparam VelocityUpdatePolicy Velocity update policy. By default LBest update
+ *     policy (see ens::LBestUpdate) is used.
+ * @tparam InitPolicy Particle initialization policy. By default DefaultInit
+ *     policy (see ens::DefaultInit) is used.
  */
 template<typename VelocityUpdatePolicy = LBestUpdate,
          typename InitPolicy = DefaultInit>
@@ -76,10 +82,12 @@ class PSOType
    * @param impTolerance Improvement threshold for termination.
    * @param exploitationFactor Influence of the personal best of the particle.
    * @param explorationFactor Influence of the neighbours of the particle.
+   * @param velocityUpdatePolicy Velocity update policy.
+   * @param initPolicy Particle initialization policy.
    */
   PSOType(const size_t numParticles = 64,
-          const arma::vec& lowerBound = arma::ones<arma::vec>(1),
-          const arma::vec& upperBound = arma::ones<arma::vec>(1),
+          const arma::mat& lowerBound = arma::ones(1, 1),
+          const arma::mat& upperBound = arma::ones(1, 1),
           const size_t maxIterations = 3000,
           const size_t horizonSize = 350,
           const double impTolerance = 1e-10,
@@ -97,7 +105,8 @@ class PSOType
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy) { /* Nothing to do. */ }
+          initPolicy(initPolicy)
+  { /* Nothing to do. */ }
 
   /**
    * Construct the particle swarm optimizer with the given function and
@@ -126,15 +135,16 @@ class PSOType
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
-          lowerBound(lowerBound * arma::ones<arma::vec>(1)),
-          upperBound(upperBound * arma::ones<arma::vec>(1)),
+          lowerBound(lowerBound * arma::ones(1, 1)),
+          upperBound(upperBound * arma::ones(1, 1)),
           maxIterations(maxIterations),
           horizonSize(horizonSize),
           impTolerance(impTolerance),
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy) {/* Nothing to do. */ }
+          initPolicy(initPolicy)
+  { /* Nothing to do. */ }
 
   /**
    * Optimize the input function using PSO. The given variable that holds the
@@ -142,94 +152,108 @@ class PSOType
    * point where the PSO method stops, and the final objective value is
    * returned.
    *
-   * @param FunctionType Type of the function to be optimized.
+   * @tparam ArbitraryFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to be optimized.
    * @param iterate Initial point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename FunctionType>
-  double Optimize(FunctionType& function, arma::mat& iterate);
+  template<typename ArbitraryFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Retrieve value of numParticles.
   size_t NumParticles() const { return numParticles; }
-
   //! Modify value of numParticles.
   size_t& NumParticles() { return numParticles; }
 
   //! Retrieve value of lowerBound.
-  const arma::vec& LowerBound() const { return lowerBound; }
-
+  const arma::mat& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
-  arma::vec& LowerBound() { return lowerBound; }
+  arma::mat& LowerBound() { return lowerBound; }
 
   //! Retrieve value of upperBound.
-  const arma::vec& UpperBound() const { return upperBound; }
-
+  const arma::mat& UpperBound() const { return upperBound; }
   //! Modify value of upperBound.
-  arma::vec& UpperBound() { return upperBound; }
+  arma::mat& UpperBound() { return upperBound; }
 
   //! Retrieve value of maxIterations.
   size_t MaxIterations() const { return maxIterations; }
-
   //! Modify value of maxIterations.
   size_t& MaxIterations() { return maxIterations; }
 
   //! Retrieve value of horizonSize.
   size_t HorizonSize() const { return horizonSize; }
-
   //! Modify value of horizonSize.
   size_t& HorizonSize() { return horizonSize; }
 
   //! Retrieve value of impTolerance.
   double ImpTolerance() const { return impTolerance; }
-
   //! Modify value of impTolerance.
   double& ImpTolerance() { return impTolerance; }
 
   //! Retrieve value of exploitationFactor.
   double ExploitationFactor() const { return exploitationFactor; }
-
   //! Modify value of exploitationFactor.
   double& ExploitationFactor() { return exploitationFactor; }
 
   //! Retrieve value of explorationFactor.
   double ExplorationFactor() const { return explorationFactor; }
-
   //! Modify value of explorationFactor.
   double& ExplorationFactor() { return explorationFactor; }
 
- private:
+  //! Get the update policy.
+  const VelocityUpdatePolicy& UpdatePolicy() const
+  {
+    return velocityUpdatePolicy;
+  }
+  //! Modify the update policy.
+  VelocityUpdatePolicy& UpdatePolicy() { return velocityUpdatePolicy; }
 
+  //! Get the instantiated update policy type.  Be sure to check its type with
+  //! Has() before using!
+  const Any& InstUpdatePolicy() const { return instUpdatePolicy; }
+  //! Modify the instantiated update policy type.  Be sure to check its type
+  //! with Has() before using!
+  Any& InstUpdatePolicy() { return instUpdatePolicy; }
+
+ private:
   //! Number of particles in the swarm.
   size_t numParticles;
+
   //! Lower bound of the initial swarm.
-  arma::vec lowerBound;
+  arma::mat lowerBound;
+
   //! Upper bound of the initial swarm.
-  arma::vec upperBound;
+  arma::mat upperBound;
+
   //! Maximum number of iterations for which the optimizer will run.
   size_t maxIterations;
+
   //! The number of iterations looked back at for improvement analysis.
   size_t horizonSize;
+
   //! The tolerance for improvement over the horizon.
   double impTolerance;
+
   //! Exploitation factor for lbest version.
   double exploitationFactor;
+
   //! Exploration factor for lbest version.
   double explorationFactor;
-  //! Particle positions.
-  arma::cube particlePositions;
-  //! Particle velocities.
-  arma::cube particleVelocities;
-  //! Particle fitness values.
-  arma::vec particleFitnesses;
-  //! Best fitness attained by particle so far.
-  arma::vec particleBestFitnesses;
-  //! Position corresponding to the best fitness of particle.
-  arma::cube particleBestPositions;
+
   //! Velocity update policy used.
   VelocityUpdatePolicy velocityUpdatePolicy;
   //! Particle initialization policy used.
   InitPolicy initPolicy;
+
+  //! The initialized update policy.
+  Any instUpdatePolicy;
 };
 
 using LBestPSO = PSOType<LBestUpdate>;

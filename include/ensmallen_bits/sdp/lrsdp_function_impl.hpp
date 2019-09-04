@@ -19,8 +19,9 @@
 namespace ens {
 
 template <typename SDPType>
-LRSDPFunction<SDPType>::LRSDPFunction(const SDPType& sdp,
-                                      const arma::mat& initialPoint):
+LRSDPFunction<SDPType>::LRSDPFunction(
+    const SDPType& sdp,
+    const arma::Mat<typename SDPType::ElemType>& initialPoint):
     sdp(sdp),
     initialPoint(initialPoint)
 {
@@ -30,15 +31,13 @@ LRSDPFunction<SDPType>::LRSDPFunction(const SDPType& sdp,
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
   }
-
-  // Initialize R*R^T matrix.
-  rrt = initialPoint * trans(initialPoint);
 }
 
-template <typename SDPType>
-LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
-                                      const size_t numDenseConstraints,
-                                      const arma::mat& initialPoint):
+template<typename SDPType>
+LRSDPFunction<SDPType>::LRSDPFunction(
+    const size_t numSparseConstraints,
+    const size_t numDenseConstraints,
+    const arma::Mat<typename SDPType::ElemType>& initialPoint):
     sdp(initialPoint.n_rows, numSparseConstraints, numDenseConstraints),
     initialPoint(initialPoint)
 {
@@ -48,33 +47,33 @@ LRSDPFunction<SDPType>::LRSDPFunction(const size_t numSparseConstraints,
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
   }
-
-  // Initialize R*R^T matrix.
-  rrt = initialPoint * trans(initialPoint);
 }
 
-template <typename SDPType>
-double LRSDPFunction<SDPType>::Evaluate(const arma::mat& /* coordinates */)
-                                        const
+template<typename SDPType>
+template<typename MatType>
+typename MatType::elem_type LRSDPFunction<SDPType>::Evaluate(
+    const MatType& /* coordinates */) const
 {
   // Note: We don't require to update the R*R^T matrix here as the current
   // function is only used by AugLagrangian, which do not update the coordinates
   // matrix.
-  return accu(SDP().C() % rrt);
+  return arma::accu(SDP().C() % rrt.As<MatType>());
 }
 
-template <typename SDPType>
-void LRSDPFunction<SDPType>::Gradient(const arma::mat& /* coordinates */,
-                                      arma::mat& /* gradient */) const
+template<typename SDPType>
+template<typename MatType, typename GradType>
+void LRSDPFunction<SDPType>::Gradient(const MatType& /* coordinates */,
+                                      GradType& /* gradient */) const
 {
   throw std::logic_error("LRSDPFunction::Gradient() not implemented for "
          "arbitrary optimizers!");
 }
 
-template <typename SDPType>
-double LRSDPFunction<SDPType>::EvaluateConstraint(
+template<typename SDPType>
+template<typename MatType>
+typename MatType::elem_type LRSDPFunction<SDPType>::EvaluateConstraint(
     const size_t index,
-    const arma::mat& coordinates) const
+    const MatType& coordinates) const
 {
   // Note: We don't require to update the R*R^T matrix here as the current
   // function is only used by AugLagrangian, which do not update the coordinates
@@ -82,7 +81,10 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
 
   // Using cached R*R^T gives better optimization for sparse matrices.
   if (index < SDP().NumSparseConstraints())
-    return accu(SDP().SparseA()[index] % rrt) - SDP().SparseB()[index];
+  {
+    return accu(SDP().SparseA()[index] % rrt.As<MatType>()) -
+        SDP().SparseB()[index];
+  }
   const size_t index1 = index - SDP().NumSparseConstraints();
 
   // For computation optimization we will be taking R^T * A first.
@@ -90,11 +92,12 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(
                  - SDP().DenseB()[index1];
 }
 
-template <typename SDPType>
+template<typename SDPType>
+template<typename MatType, typename GradType>
 void LRSDPFunction<SDPType>::GradientConstraint(
     const size_t /* index */,
-    const arma::mat& /* coordinates */,
-    arma::mat& /* gradient */) const
+    const MatType& /* coordinates */,
+    GradType& /* gradient */) const
 {
   throw std::logic_error("LRSDPFunction::GradientConstraint() not implemented "
          "for arbitrary optimizers!");
@@ -104,21 +107,21 @@ void LRSDPFunction<SDPType>::GradientConstraint(
 //! Note: Caching R*R^T provide significant computation optimization
 //! by reducing redundant R*R^T calculations in case of functions are not used
 //! updating coordinates matrix, hence leaving R*R^T unchanged.
-template <typename SDPType>
+template<typename SDPType, typename MatType>
 void UpdateRRT(LRSDPFunction<SDPType>& function,
-               const arma::mat& newrrt)
+               MatType&& newrrt)
 {
-  function.RRT() = newrrt;
+  function.template RRT<MatType>() = std::move(newrrt);
 }
 
 //! Utility function for calculating part of the objective when AugLagrangian is
 //! used with an LRSDPFunction.
-template <typename MatrixType>
+template <typename MatrixType, typename VecType, typename MatType>
 static inline void
-UpdateObjective(double& objective,
-                const arma::mat& rrt,
+UpdateObjective(typename MatType::elem_type& objective,
+                const MatType& rrt,
                 const std::vector<MatrixType>& ais,
-                const arma::vec& bis,
+                const VecType& bis,
                 const arma::vec& lambda,
                 const size_t lambdaOffset,
                 const double sigma)
@@ -129,7 +132,7 @@ UpdateObjective(double& objective,
     // Here taking R^T * A first is not recommended as we are already
     // using pre-computed R * R^T. Taking R^T * A first will result in increase
     // in number of computations.
-    const double constraint = accu(ais[i] % rrt) - bis[i];
+    const double constraint = arma::accu(ais[i] % rrt) - bis[i];
     objective -= (lambda[lambdaOffset + i] * constraint);
     objective += (sigma / 2.) * constraint * constraint;
   }
@@ -137,12 +140,12 @@ UpdateObjective(double& objective,
 
 //! Utility function for calculating part of the gradient when AugLagrangian is
 //! used with an LRSDPFunction.
-template <typename MatrixType>
+template <typename MatrixType, typename VecType, typename MatType>
 static inline void
-UpdateGradient(arma::mat& s,
-               const arma::mat& rrt,
+UpdateGradient(MatType& s,
+               const MatType& rrt,
                const std::vector<MatrixType>& ais,
-               const arma::vec& bis,
+               const VecType& bis,
                const arma::vec& lambda,
                const size_t lambdaOffset,
                const double sigma)
@@ -152,16 +155,16 @@ UpdateGradient(arma::mat& s,
     // Here taking R^T * A first is not recommended as we are already
     // using pre-computed R * R^T. Taking R^T * A first will result in increase
     // in number of computations.
-    const double constraint = accu(ais[i] % rrt) - bis[i];
+    const double constraint = arma::accu(ais[i] % rrt) - bis[i];
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
   }
 }
 
-template <typename SDPType>
+template<typename SDPType, typename MatType>
 static inline double
 EvaluateImpl(LRSDPFunction<SDPType>& function,
-             const arma::mat& coordinates,
+             const MatType& coordinates,
              const arma::vec& lambda,
              const double sigma)
 {
@@ -184,7 +187,7 @@ EvaluateImpl(LRSDPFunction<SDPType>& function,
   // Objective function = Tr((R^T * C) * R)
 
   // Calculate R*R^T for updating cache.
-  const arma::mat rrt = coordinates * trans(coordinates);
+  MatType rrt = coordinates * trans(coordinates);
 
   // Update R*R^T matrix.
   // Note that we can only use this optimization in case of L-BFGS optimizer
@@ -198,26 +201,26 @@ EvaluateImpl(LRSDPFunction<SDPType>& function,
   UpdateRRT(function, rrt);
 
   // Optimized objective function.
-  double objective = trace((trans(coordinates) * function.SDP().C())
-                         * coordinates);
+  typename MatType::elem_type objective =
+      trace((trans(coordinates) * function.SDP().C()) * coordinates);
 
   // Now each constraint.
-  UpdateObjective(objective, rrt, function.SDP().SparseA(),
-      function.SDP().SparseB(), lambda, 0, sigma);
-  UpdateObjective(objective, rrt, function.SDP().DenseA(),
-      function.SDP().DenseB(), lambda, function.SDP().NumSparseConstraints(),
-      sigma);
+  UpdateObjective(objective, function.template RRT<MatType>(),
+      function.SDP().SparseA(), function.SDP().SparseB(), lambda, 0, sigma);
+  UpdateObjective(objective, function.template RRT<MatType>(),
+      function.SDP().DenseA(), function.SDP().DenseB(), lambda,
+      function.SDP().NumSparseConstraints(), sigma);
 
   return objective;
 }
 
-template <typename SDPType>
+template<typename SDPType, typename MatType, typename GradType>
 static inline void
 GradientImpl(const LRSDPFunction<SDPType>& function,
-             const arma::mat& coordinates,
+             const MatType& coordinates,
              const arma::vec& lambda,
              const double sigma,
-             arma::mat& gradient)
+             GradType& gradient)
 {
   // We can calculate the gradient in a smart way.
   // L'(R, y, s) = 2 * S' * R
@@ -225,9 +228,9 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
   // S' = C - sum_{i = 1}^{m} y'_i A_i
   // y'_i = y_i - sigma * (Trace(A_i * (R R^T)) - b_i)
 
-  // Directly reterive R*R^T from cache.
-  const arma::mat rrt = function.RRT();
-  arma::mat s(function.SDP().C());
+  // Directly retrieve R*R^T from cache.
+  const MatType& rrt = function.template RRT<MatType>();
+  MatType s(function.SDP().C());
 
   UpdateGradient(
       s, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
@@ -242,32 +245,74 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
 // Template specializations for function and gradient evaluation.
 // Note that C++ does not allow partial specialization of class members,
 // so we have to go about this in a somewhat round-about way.
-template <>
-inline double AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Evaluate(
-    const arma::mat& coordinates) const
+template<>
+template<typename MatType>
+inline typename MatType::elem_type
+AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Evaluate(
+    const MatType& coordinates) const
 {
   return EvaluateImpl(function, coordinates, lambda, sigma);
 }
 
-template <>
-inline double AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Evaluate(
-    const arma::mat& coordinates) const
+template<>
+template<typename MatType>
+inline typename MatType::elem_type
+AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Evaluate(
+    const MatType& coordinates) const
 {
   return EvaluateImpl(function, coordinates, lambda, sigma);
 }
 
-template <>
+template<>
+template<typename MatType, typename GradType>
 inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const
+    const MatType& coordinates,
+    GradType& gradient) const
 {
   GradientImpl(function, coordinates, lambda, sigma, gradient);
 }
 
-template <>
+template<>
+template<typename MatType, typename GradType>
 inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const
+    const MatType& coordinates,
+    GradType& gradient) const
+{
+  GradientImpl(function, coordinates, lambda, sigma, gradient);
+}
+
+template<>
+template<typename MatType>
+inline typename MatType::elem_type
+AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>>::Evaluate(
+    const MatType& coordinates) const
+{
+  return EvaluateImpl(function, coordinates, lambda, sigma);
+}
+
+template<>
+template<typename MatType>
+inline typename MatType::elem_type
+AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>>::Evaluate(
+    const MatType& coordinates) const
+{
+  return EvaluateImpl(function, coordinates, lambda, sigma);
+}
+
+template<>
+template<typename MatType, typename GradType>
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>>::Gradient(
+    const MatType& coordinates,
+    GradType& gradient) const
+{
+  GradientImpl(function, coordinates, lambda, sigma, gradient);
+}
+
+template<>
+template<typename MatType, typename GradType>
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>>::Gradient(
+    const MatType& coordinates,
+    GradType& gradient) const
 {
   GradientImpl(function, coordinates, lambda, sigma, gradient);
 }

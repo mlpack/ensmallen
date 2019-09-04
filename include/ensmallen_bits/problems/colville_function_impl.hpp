@@ -22,17 +22,22 @@ inline ColvilleFunction::ColvilleFunction() { /* Nothing to do here */ }
 
 inline void ColvilleFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double ColvilleFunction::Evaluate(const arma::mat& coordinates,
-                                         const size_t /* begin */,
-                                         const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type ColvilleFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
-  const double x3 = coordinates(2);
-  const double x4 = coordinates(3);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = 100 * std::pow(std::pow(x1, 2) - x2, 2) +
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+  const ElemType x3 = coordinates(2);
+  const ElemType x4 = coordinates(3);
+
+  const ElemType objective = 100 * std::pow(std::pow(x1, 2) - x2, 2) +
       std::pow(x1 - 1, 2) + std::pow(x3 - 1, 2) + 90 *
       std::pow(std::pow(x3, 2) - x4, 2) + 10.1 * (std::pow(x2 - 1, 2) +
       std::pow(x4 - 1, 2)) + 19.8 * (x2 - 1) * (x4 - 1);
@@ -40,21 +45,27 @@ inline double ColvilleFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-inline double ColvilleFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type ColvilleFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void ColvilleFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void ColvilleFunction::Gradient(const MatType& coordinates,
                                        const size_t /* begin */,
-                                       arma::mat& gradient,
+                                       GradType& gradient,
                                        const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
-  const double x3 = coordinates(2);
-  const double x4 = coordinates(3);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+  const ElemType x3 = coordinates(2);
+  const ElemType x4 = coordinates(3);
 
   gradient.set_size(4, 1);
   gradient(0) = 2 * (200 * x1 * (std::pow(x1, 2) - x2) + x1 - 1);
@@ -63,8 +74,9 @@ inline void ColvilleFunction::Gradient(const arma::mat& coordinates,
   gradient(3) = 200.2 * x4 + 19.8 * x2 - 180 * std::pow(x3, 2) - 40;
 }
 
-inline void ColvilleFunction::Gradient(const arma::mat& coordinates,
-                                       arma::mat& gradient) const
+template<typename MatType, typename GradType>
+inline void ColvilleFunction::Gradient(const MatType& coordinates,
+                                       GradType& gradient) const
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

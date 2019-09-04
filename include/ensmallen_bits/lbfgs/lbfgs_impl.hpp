@@ -55,7 +55,8 @@ inline L_BFGS::L_BFGS(const size_t numBasis,
     factr(factr),
     maxLineSearchTrials(maxLineSearchTrials),
     minStep(minStep),
-    maxStep(maxStep)
+    maxStep(maxStep),
+    terminate(false)
 {
   // Nothing to do.
 }
@@ -70,18 +71,21 @@ inline L_BFGS::L_BFGS(const size_t numBasis,
  * @param s Differences between the iterate and old iterate matrix.
  * @param y Differences between the gradient and the old gradient matrix.
  */
-inline double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
-                                          const arma::mat& gradient,
-                                          const arma::cube& s,
-                                          const arma::cube& y)
+template<typename MatType, typename CubeType>
+double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
+                                   const MatType& gradient,
+                                   const CubeType& s,
+                                   const CubeType& y)
 {
+  typedef typename CubeType::elem_type CubeElemType;
+
   double scalingFactor = 1.0;
   if (iterationNum > 0)
   {
     int previousPos = (iterationNum - 1) % numBasis;
     // Get s and y matrices once instead of multiple times.
-    const arma::mat& sMat = s.slice(previousPos);
-    const arma::mat& yMat = y.slice(previousPos);
+    const arma::Mat<CubeElemType>& sMat = s.slice(previousPos);
+    const arma::Mat<CubeElemType>& yMat = y.slice(previousPos);
     scalingFactor = dot(sMat, yMat) / dot(yMat, yMat);
   }
   else
@@ -102,22 +106,24 @@ inline double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
  * @param y Differences between the gradient and the old gradient matrix.
  * @param searchDirection Vector to store search direction in.
  */
-inline void L_BFGS::SearchDirection(const arma::mat& gradient,
-                                    const size_t iterationNum,
-                                    const double scalingFactor,
-                                    const arma::cube& s,
-                                    const arma::cube& y,
-                                    arma::mat& searchDirection)
+template<typename MatType, typename CubeType>
+void L_BFGS::SearchDirection(const MatType& gradient,
+                             const size_t iterationNum,
+                             const double scalingFactor,
+                             const CubeType& s,
+                             const CubeType& y,
+                             MatType& searchDirection)
 {
   // Start from this point.
   searchDirection = gradient;
 
   // See "A Recursive Formula to Compute H * g" in "Updating quasi-Newton
   // matrices with limited storage" (Nocedal, 1980).
+  typedef typename CubeType::elem_type CubeElemType;
 
   // Temporary variables.
-  arma::vec rho(numBasis);
-  arma::vec alpha(numBasis);
+  arma::Col<CubeElemType> rho(numBasis);
+  arma::Col<CubeElemType> alpha(numBasis);
 
   size_t limit = (numBasis > iterationNum) ? 0 : (iterationNum - numBasis);
   for (size_t i = iterationNum; i != limit; i--)
@@ -158,13 +164,14 @@ inline void L_BFGS::SearchDirection(const arma::mat& gradient,
  * @param s Differences between the iterate and old iterate matrix.
  * @param y Differences between the gradient and the old gradient matrix.
  */
-inline void L_BFGS::UpdateBasisSet(const size_t iterationNum,
-                                   const arma::mat& iterate,
-                                   const arma::mat& oldIterate,
-                                   const arma::mat& gradient,
-                                   const arma::mat& oldGradient,
-                                   arma::cube& s,
-                                   arma::cube& y)
+template<typename MatType, typename GradType, typename CubeType>
+void L_BFGS::UpdateBasisSet(const size_t iterationNum,
+                            const MatType& iterate,
+                            const MatType& oldIterate,
+                            const GradType& gradient,
+                            const GradType& oldGradient,
+                            CubeType& s,
+                            CubeType& y)
 {
   // Overwrite a certain position instead of pushing everything in the vector
   // back one position.
@@ -182,24 +189,32 @@ inline void L_BFGS::UpdateBasisSet(const size_t iterationNum,
  * @param iterate The initial point to begin the line search from.
  * @param gradient The gradient at the initial point.
  * @param searchDirection A vector specifying the search direction.
- * @param stepSize Variable the calculated step size will be stored in.
+ * @param finalStepSize The resulting step size used.
+ * @param callbacks Callback functions.
  *
  * @return false if no step size is suitable, true otherwise.
  */
-template<typename FunctionType>
+template<typename FunctionType,
+         typename ElemType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
 bool L_BFGS::LineSearch(FunctionType& function,
-                        double& functionValue,
-                        arma::mat& iterate,
-                        arma::mat& gradient,
-                        arma::mat& newIterateTmp,
-                        const arma::mat& searchDirection)
+                        ElemType& functionValue,
+                        MatType& iterate,
+                        GradType& gradient,
+                        MatType& newIterateTmp,
+                        const GradType& searchDirection,
+                        double& finalStepSize,
+                        CallbackTypes&... callbacks)
 {
   // Default first step size of 1.0.
   double stepSize = 1.0;
+  finalStepSize = 0.0; // Set only when we take the step.
 
   // The initial linear term approximation in the direction of the
   // search direction.
-  double initialSearchDirectionDotGradient =
+  ElemType initialSearchDirectionDotGradient =
       arma::dot(gradient, searchDirection);
 
   // If it is not a descent direction, just report failure.
@@ -211,10 +226,10 @@ bool L_BFGS::LineSearch(FunctionType& function,
   }
 
   // Save the initial function value.
-  double initialFunctionValue = functionValue;
+  ElemType initialFunctionValue = functionValue;
 
   // Unit linear approximation to the decrease in function value.
-  double linearApproxFunctionValueDecrease = armijoConstant *
+  ElemType linearApproxFunctionValueDecrease = armijoConstant *
       initialSearchDirectionDotGradient;
 
   // The number of iteration in the search.
@@ -225,7 +240,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   const double dec = 0.5;
   double width = 0;
   double bestStepSize = 1.0;
-  double bestObjective = std::numeric_limits<double>::max();
+  ElemType bestObjective = std::numeric_limits<ElemType>::max();
 
   while (true)
   {
@@ -234,6 +249,10 @@ bool L_BFGS::LineSearch(FunctionType& function,
     newIterateTmp = iterate;
     newIterateTmp += stepSize * searchDirection;
     functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
+
+    terminate |= Callback::EvaluateWithGradient(*this, function, newIterateTmp,
+        functionValue, gradient, callbacks...);
+
     if (functionValue < bestObjective)
     {
       bestStepSize = stepSize;
@@ -249,7 +268,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
     else
     {
       // Check Wolfe's condition.
-      double searchDirectionDotGradient = arma::dot(gradient, searchDirection);
+      ElemType searchDirectionDotGradient = arma::dot(gradient,
+          searchDirection);
 
       if (searchDirectionDotGradient < wolfe *
           initialSearchDirectionDotGradient)
@@ -284,6 +304,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
 
   // Move to the new iterate.
   iterate += bestStepSize * searchDirection;
+  finalStepSize = bestStepSize;
   return true;
 }
 
@@ -295,48 +316,74 @@ bool L_BFGS::LineSearch(FunctionType& function,
  *
  * @param numIterations Maximum number of iterations to perform
  * @param iterate Starting point (will be modified)
+ * @param callbacks Callback functions.
  */
-template<typename FunctionType>
-double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+L_BFGS::Optimize(FunctionType& function,
+                 MatType& iterateIn,
+                 CallbackTypes&&... callbacks)
 {
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
   // Use the Function<> wrapper to ensure the function has all of the functions
   // that we need.
-  typedef Function<FunctionType> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.
-  traits::CheckFunctionTypeAPI<FullFunctionType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Ensure that the cubes holding past iterations' information are the right
   // size.  Also set the current best point value to the maximum.
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;
 
-  arma::mat newIterateTmp(rows, cols);
-  arma::cube s(rows, cols, numBasis);
-  arma::cube y(rows, cols, numBasis);
+  BaseMatType newIterateTmp(rows, cols);
+  arma::Cube<ElemType> s(rows, cols, numBasis);
+  arma::Cube<ElemType> y(rows, cols, numBasis);
 
   // The old iterate to be saved.
-  arma::mat oldIterate;
-  oldIterate.zeros(iterate.n_rows, iterate.n_cols);
+  BaseMatType oldIterate(iterate.n_rows, iterate.n_cols);
+  oldIterate.zeros();
 
   // Whether to optimize until convergence.
   bool optimizeUntilConvergence = (maxIterations == 0);
 
   // The gradient: the current and the old.
-  arma::mat gradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
-  arma::mat oldGradient(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  gradient.zeros();
+  BaseGradType oldGradient(iterate.n_rows, iterate.n_cols);
+  oldGradient.zeros();
 
   // The search direction.
-  arma::mat searchDirection(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
+  BaseGradType searchDirection(iterate.n_rows, iterate.n_cols);
+  searchDirection.zeros();
 
   // The initial function value and gradient.
-  double functionValue = f.EvaluateWithGradient(iterate, gradient);
-  double prevFunctionValue = functionValue;
+  ElemType functionValue = f.EvaluateWithGradient(iterate, gradient);
+
+  terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        functionValue, gradient, callbacks...);
+
+  ElemType prevFunctionValue = functionValue;
 
   // The main optimization loop.
-  for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
-       ++itNum)
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t itNum = 0; (optimizeUntilConvergence || (itNum != maxIterations))
+      && !terminate; ++itNum)
   {
     prevFunctionValue = functionValue;
 
@@ -346,7 +393,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     // least one descent step.
     if (itNum > 0 && (arma::norm(gradient, 2) < minGradientNorm))
     {
-      Warn << "L-BFGS gradient norm too small (terminating successfully)."
+      Info << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
       break;
     }
@@ -371,8 +418,9 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     oldIterate = iterate;
     oldGradient = gradient;
 
+    double stepSize; // Set by LineSearch().
     if (!LineSearch(f, functionValue, iterate, gradient, newIterateTmp,
-        searchDirection))
+        searchDirection, stepSize, callbacks...))
     {
       Warn << "Line search failed.  Stopping optimization." << std::endl;
       break; // The line search failed; nothing else to try.
@@ -380,7 +428,7 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
 
     // It is possible that the difference between the two coordinates is zero.
     // In this case we terminate successfully.
-    if (accu(iterate != oldIterate) == 0)
+    if (stepSize == 0.0)
     {
       Info << "L-BFGS step size of 0 (terminating successfully)."
           << std::endl;
@@ -390,7 +438,8 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
     // If we can't make progress on the gradient, then we'll also accept
     // a stable function value.
     const double denom = std::max(
-        std::max(fabs(prevFunctionValue), fabs(functionValue)), 1.0);
+        std::max(std::abs(prevFunctionValue), std::abs(functionValue)),
+        (ElemType) 1.0);
     if ((prevFunctionValue - functionValue) / denom <= factr)
     {
       Info << "L-BFGS function value stable (terminating successfully)."
@@ -400,8 +449,11 @@ double L_BFGS::Optimize(FunctionType& function, arma::mat& iterate)
 
     // Overwrite an old basis set.
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient, s, y);
+
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   } // End of the optimization loop.
 
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return functionValue;
 }
 

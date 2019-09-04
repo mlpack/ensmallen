@@ -79,36 +79,42 @@ class ConstrLpBallSolver
    * @param v Input local gradient.
    * @param s Output optimal solution in the constrained domain (lp ball).
    */
-  void Optimize(const arma::mat& v,
-                arma::mat& s)
+  template<typename MatType>
+  void Optimize(const MatType& v,
+                MatType& s)
   {
+    typedef typename MatType::elem_type ElemType;
+
     if (p == std::numeric_limits<double>::infinity())
     {
       // l-inf ball.
-      s = -sign(v);
+      s = -arma::sign(v);
       if (regFlag)
-        s = s / lambda;   // element-wise division.
+      {
+        // Do element-wise division.
+        s /= arma::conv_to<arma::Col<ElemType>>::from(lambda);
+      }
     }
     else if (p > 1.0)
     {
       // lp ball with 1<p<inf.
       if (regFlag)
-        s = v / lambda;
+        s = v / arma::conv_to<arma::Col<ElemType>>::from(lambda);
       else
         s = v;
 
       double q = 1 / (1.0 - 1.0 / p);
-      s = - sign(v) % pow(abs(s), q - 1);  // element-wise multiplication.
+      s = -arma::sign(v) % arma::pow(arma::abs(s), q - 1);
       s = arma::normalise(s, p);
 
       if (regFlag)
-        s = s / lambda;
+        s = s / arma::conv_to<arma::Col<ElemType>>::from(lambda);
     }
     else if (p == 1.0)
     {
       // l1 ball, also used in OMP.
       if (regFlag)
-        s = arma::abs(v / lambda);
+        s = arma::abs(v / arma::conv_to<arma::Col<ElemType>>::from(lambda));
       else
         s = arma::abs(v);
 
@@ -119,7 +125,7 @@ class ConstrLpBallSolver
       s(k) = -((0.0 < v(k)) - (v(k) < 0.0));
 
       if (regFlag)
-        s = s / lambda;
+        s = s / arma::conv_to<arma::Col<ElemType>>::from(lambda);
     }
     else
     {
@@ -135,14 +141,14 @@ class ConstrLpBallSolver
   double& P() { return p;}
 
   //! Get regularization flag.
-  bool RegFlag() const {return regFlag;}
+  bool RegFlag() const { return regFlag; }
   //! Modify regularization flag.
-  bool& RegFlag() {return regFlag;}
+  bool& RegFlag() { return regFlag; }
 
   //! Get the regularization parameter.
-  arma::vec Lambda() const {return lambda;}
+  arma::vec Lambda() const { return lambda; }
   //! Modify the regularization parameter.
-  arma::vec& Lambda() {return lambda;}
+  arma::vec& Lambda() { return lambda; }
 
  private:
   //! lp norm, 1<=p<=inf;

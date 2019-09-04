@@ -59,6 +59,17 @@
 #include "ensmallen_bits/ens_version.hpp"
 #include "ensmallen_bits/log.hpp" // TODO: should move to another place
 
+#include "ensmallen_bits/utility/any.hpp"
+#include "ensmallen_bits/utility/arma_traits.hpp"
+
+// Callbacks.
+#include "ensmallen_bits/callbacks/callbacks.hpp"
+#include "ensmallen_bits/callbacks/early_stop_at_min_loss.hpp"
+#include "ensmallen_bits/callbacks/print_loss.hpp"
+#include "ensmallen_bits/callbacks/progress_bar.hpp"
+#include "ensmallen_bits/callbacks/store_best_coordinates.hpp"
+#include "ensmallen_bits/callbacks/timer_stop.hpp"
+
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"

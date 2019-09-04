@@ -25,13 +25,16 @@ namespace traits {
  *
  * This is required by the FunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckEvaluate
 {
   const static bool value =
-      HasEvaluate<FunctionType, EvaluateForm>::value ||
-      HasEvaluate<FunctionType, EvaluateConstForm>::value ||
-      HasEvaluate<FunctionType, EvaluateStaticForm>::value;
+      HasEvaluate<FunctionType,
+          TypedForms<MatType, GradType>::template EvaluateForm>::value ||
+      HasEvaluate<FunctionType,
+          TypedForms<MatType, GradType>::template EvaluateConstForm>::value ||
+      HasEvaluate<FunctionType,
+          TypedForms<MatType, GradType>::template EvaluateStaticForm>::value;
 };
 
 /**
@@ -39,13 +42,16 @@ struct CheckEvaluate
  *
  * This is required by the FunctionType API.
  */
-template <typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckGradient
 {
   const static bool value =
-      HasGradient<FunctionType, GradientForm>::value ||
-      HasGradient<FunctionType, GradientConstForm>::value ||
-      HasGradient<FunctionType, GradientStaticForm>::value;
+      HasGradient<FunctionType,
+          TypedForms<MatType, GradType>::template GradientForm>::value ||
+      HasGradient<FunctionType,
+          TypedForms<MatType, GradType>::template GradientConstForm>::value ||
+      HasGradient<FunctionType,
+          TypedForms<MatType, GradType>::template GradientStaticForm>::value;
 };
 
 /**
@@ -53,13 +59,16 @@ struct CheckGradient
  *
  * This is required by the DecomposableFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckNumFunctions
 {
   const static bool value =
-      HasNumFunctions<FunctionType, NumFunctionsForm>::value ||
-      HasNumFunctions<FunctionType, NumFunctionsConstForm>::value ||
-      HasNumFunctions<FunctionType, NumFunctionsStaticForm>::value;
+      HasNumFunctions<FunctionType, TypedForms<MatType, GradType>::template
+          NumFunctionsForm>::value ||
+      HasNumFunctions<FunctionType, TypedForms<MatType, GradType>::template
+          NumFunctionsConstForm>::value ||
+      HasNumFunctions<FunctionType, TypedForms<MatType, GradType>::template
+          NumFunctionsStaticForm>::value;
 };
 
 /**
@@ -67,13 +76,16 @@ struct CheckNumFunctions
  *
  * This is required by the DecomposableFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckShuffle
 {
   const static bool value =
-      HasShuffle<FunctionType, ShuffleForm>::value ||
-      HasShuffle<FunctionType, ShuffleConstForm>::value ||
-      HasShuffle<FunctionType, ShuffleStaticForm>::value;
+      HasShuffle<FunctionType, TypedForms<MatType, GradType>::template
+          ShuffleForm>::value ||
+      HasShuffle<FunctionType, TypedForms<MatType, GradType>::template
+          ShuffleConstForm>::value ||
+      HasShuffle<FunctionType, TypedForms<MatType, GradType>::template
+          ShuffleStaticForm>::value;
 };
 
 /**
@@ -81,13 +93,16 @@ struct CheckShuffle
  *
  * This is required by the DecomposableFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckDecomposableEvaluate
 {
   const static bool value =
-      HasEvaluate<FunctionType, DecomposableEvaluateForm>::value ||
-      HasEvaluate<FunctionType, DecomposableEvaluateConstForm>::value ||
-      HasEvaluate<FunctionType, DecomposableEvaluateStaticForm>::value;
+      HasEvaluate<FunctionType, TypedForms<MatType, GradType>::template
+          DecomposableEvaluateForm>::value ||
+      HasEvaluate<FunctionType, TypedForms<MatType, GradType>::template
+          DecomposableEvaluateConstForm>::value ||
+      HasEvaluate<FunctionType, TypedForms<MatType, GradType>::template
+          DecomposableEvaluateStaticForm>::value;
 };
 
 /**
@@ -95,13 +110,16 @@ struct CheckDecomposableEvaluate
  *
  * This is required by the DecomposableFunctionType API.
  */
-template <typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckDecomposableGradient
 {
   const static bool value =
-      HasGradient<FunctionType, DecomposableGradientForm>::value ||
-      HasGradient<FunctionType, DecomposableGradientConstForm>::value ||
-      HasGradient<FunctionType, DecomposableGradientStaticForm>::value;
+      HasGradient<FunctionType, TypedForms<MatType, GradType>::template
+          DecomposableGradientForm>::value ||
+      HasGradient<FunctionType, TypedForms<MatType, GradType>::template
+          DecomposableGradientConstForm>::value ||
+      HasGradient<FunctionType, TypedForms<MatType, GradType>::template
+          DecomposableGradientStaticForm>::value;
 };
 
 /**
@@ -109,13 +127,16 @@ struct CheckDecomposableGradient
  *
  * This is required by the ConstrainedFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckNumConstraints
 {
   const static bool value =
-      HasNumConstraints<FunctionType, NumConstraintsForm>::value ||
-      HasNumConstraints<FunctionType, NumConstraintsConstForm>::value ||
-      HasNumConstraints<FunctionType, NumConstraintsStaticForm>::value;
+      HasNumConstraints<FunctionType, TypedForms<MatType, GradType>::template
+          NumConstraintsForm>::value ||
+      HasNumConstraints<FunctionType, TypedForms<MatType, GradType>::template
+          NumConstraintsConstForm>::value ||
+      HasNumConstraints<FunctionType, TypedForms<MatType, GradType>::template
+          NumConstraintsStaticForm>::value;
 };
 
 /**
@@ -123,13 +144,19 @@ struct CheckNumConstraints
  *
  * This is required by the ConstrainedFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckEvaluateConstraint
 {
   const static bool value =
-      HasEvaluateConstraint<FunctionType, EvaluateConstraintForm>::value ||
-      HasEvaluateConstraint<FunctionType, EvaluateConstraintConstForm>::value ||
-      HasEvaluateConstraint<FunctionType, EvaluateConstraintStaticForm>::value;
+      HasEvaluateConstraint<FunctionType,
+          TypedForms<MatType, GradType>::template
+              EvaluateConstraintForm>::value ||
+      HasEvaluateConstraint<FunctionType,
+          TypedForms<MatType, GradType>::template
+              EvaluateConstraintConstForm>::value ||
+      HasEvaluateConstraint<FunctionType,
+          TypedForms<MatType, GradType>::template
+              EvaluateConstraintStaticForm>::value;
 };
 
 /**
@@ -137,13 +164,19 @@ struct CheckEvaluateConstraint
  *
  * This is required by the ConstrainedFunctionType API.
  */
-template <typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckGradientConstraint
 {
   const static bool value =
-      HasGradientConstraint<FunctionType, GradientConstraintForm>::value ||
-      HasGradientConstraint<FunctionType, GradientConstraintConstForm>::value ||
-      HasGradientConstraint<FunctionType, GradientConstraintStaticForm>::value;
+      HasGradientConstraint<FunctionType,
+          TypedForms<MatType, GradType>::template
+              GradientConstraintForm>::value ||
+      HasGradientConstraint<FunctionType,
+          TypedForms<MatType, GradType>::template
+              GradientConstraintConstForm>::value ||
+      HasGradientConstraint<FunctionType,
+          TypedForms<MatType, GradType>::template
+              GradientConstraintStaticForm>::value;
 };
 
 /**
@@ -152,13 +185,16 @@ struct CheckGradientConstraint
  *
  * This is required by the SparseFunctionType API.
  */
-template <typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckSparseGradient
 {
   const static bool value =
-      HasGradient<FunctionType, SparseGradientForm>::value ||
-      HasGradient<FunctionType, SparseGradientConstForm>::value ||
-      HasGradient<FunctionType, SparseGradientStaticForm>::value;
+      HasGradient<FunctionType, TypedForms<MatType, GradType>::template
+          SparseGradientForm>::value ||
+      HasGradient<FunctionType, TypedForms<MatType, GradType>::template
+          SparseGradientConstForm>::value ||
+      HasGradient<FunctionType, TypedForms<MatType, GradType>::template
+          SparseGradientStaticForm>::value;
 };
 
 /**
@@ -166,13 +202,16 @@ struct CheckSparseGradient
  *
  * This is required by the ResolvableFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckNumFeatures
 {
   const static bool value =
-      HasNumFeatures<FunctionType, NumFeaturesForm>::value ||
-      HasNumFeatures<FunctionType, NumFeaturesConstForm>::value ||
-      HasNumFeatures<FunctionType, NumFeaturesStaticForm>::value;
+      HasNumFeatures<FunctionType, TypedForms<MatType, GradType>::template
+          NumFeaturesForm>::value ||
+      HasNumFeatures<FunctionType, TypedForms<MatType, GradType>::template
+          NumFeaturesConstForm>::value ||
+      HasNumFeatures<FunctionType, TypedForms<MatType, GradType>::template
+          NumFeaturesStaticForm>::value;
 };
 
 /**
@@ -180,13 +219,16 @@ struct CheckNumFeatures
  *
  * This is required by the ResolvableFunctionType API.
  */
-template <typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckPartialGradient
 {
   const static bool value =
-      HasPartialGradient<FunctionType, PartialGradientForm>::value ||
-      HasPartialGradient<FunctionType, PartialGradientConstForm>::value ||
-      HasPartialGradient<FunctionType, PartialGradientStaticForm>::value;
+      HasPartialGradient<FunctionType, TypedForms<MatType, GradType>::template
+          PartialGradientForm>::value ||
+      HasPartialGradient<FunctionType, TypedForms<MatType, GradType>::template
+          PartialGradientConstForm>::value ||
+      HasPartialGradient<FunctionType, TypedForms<MatType, GradType>::template
+          PartialGradientStaticForm>::value;
 };
 
 /**
@@ -194,15 +236,19 @@ struct CheckPartialGradient
  *
  * This is required by the FunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckEvaluateWithGradient
 {
   const static bool value =
-      HasEvaluateWithGradient<FunctionType, EvaluateWithGradientForm>::value ||
       HasEvaluateWithGradient<FunctionType,
-          EvaluateWithGradientConstForm>::value ||
+          TypedForms<MatType, GradType>::template
+              EvaluateWithGradientForm>::value ||
       HasEvaluateWithGradient<FunctionType,
-          EvaluateWithGradientStaticForm>::value;
+          TypedForms<MatType, GradType>::template
+              EvaluateWithGradientConstForm>::value ||
+      HasEvaluateWithGradient<FunctionType,
+          TypedForms<MatType, GradType>::template
+              EvaluateWithGradientStaticForm>::value;
 };
 
 /**
@@ -211,190 +257,218 @@ struct CheckEvaluateWithGradient
  *
  * This is required by the FunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 struct CheckDecomposableEvaluateWithGradient
 {
   const static bool value =
       HasEvaluateWithGradient<FunctionType,
-          DecomposableEvaluateWithGradientForm>::value ||
+          TypedForms<MatType, GradType>::template
+              DecomposableEvaluateWithGradientForm>::value ||
       HasEvaluateWithGradient<FunctionType,
-          DecomposableEvaluateWithGradientConstForm>::value ||
+          TypedForms<MatType, GradType>::template
+              DecomposableEvaluateWithGradientConstForm>::value ||
       HasEvaluateWithGradient<FunctionType,
-          DecomposableEvaluateWithGradientStaticForm>::value;
+          TypedForms<MatType, GradType>::template
+              DecomposableEvaluateWithGradientStaticForm>::value;
 };
 
 /**
  * Perform checks for the regular FunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckFunctionTypeAPI()
 {
-  static_assert(CheckEvaluate<FunctionType>::value,
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckEvaluate<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the FunctionType API; see the optimizer tutorial for details.");
 
-  static_assert(CheckGradient<FunctionType>::value,
+  static_assert(CheckGradient<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Gradient(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the FunctionType API; see the optimizer tutorial for details.");
 
-  static_assert(CheckEvaluateWithGradient<FunctionType>::value,
+  static_assert(
+      CheckEvaluateWithGradient<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of "
       "EvaluateWithGradient().  Please check that the FunctionType fully "
       "satisfies the requirements of the FunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 /**
  * Perform checks for the DecomposableFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckDecomposableFunctionTypeAPI()
 {
-  static_assert(CheckDecomposableEvaluate<FunctionType>::value,
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckDecomposableEvaluate<FunctionType,
+                                          MatType,
+                                          GradType>::value,
       "The FunctionType does not have a correct definition of a decomposable "
       "Evaluate() method.  Please check that the FunctionType fully satisfies"
       " the requirements of the DecomposableFunctionType API; see the optimizer"
       " tutorial for more details.");
 
-  static_assert(CheckDecomposableGradient<FunctionType>::value,
+  static_assert(CheckDecomposableGradient<FunctionType,
+                                          MatType,
+                                          GradType>::value,
       "The FunctionType does not have a correct definition of a decomposable "
       "Gradient() method.  Please check that the FunctionType fully satisfies"
       " the requirements of the DecomposableFunctionType API; see the optimizer"
       " tutorial for more details.");
 
-  static_assert(CheckDecomposableEvaluateWithGradient<FunctionType>::value,
+  static_assert(CheckDecomposableEvaluateWithGradient<FunctionType,
+                                                      MatType,
+                                                      GradType>::value,
       "The FunctionType does not have a correct definition of a decomposable "
       "EvaluateWithGradient() method.  Please check that the FunctionType "
       "fully satisfies the requirements of the DecomposableFunctionType API; "
       "see the optimizer tutorial for more details.");
 
-  static_assert(CheckNumFunctions<FunctionType>::value,
+  static_assert(CheckNumFunctions<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of NumFunctions(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the DecomposableFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckShuffle<FunctionType>::value,
+  static_assert(CheckShuffle<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Shuffle(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the DecomposableFunctionType API; see the optimizer tutorial for more "
       "details.");
+#endif
 }
 
 /**
  * Perform checks for the SparseFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckSparseFunctionTypeAPI()
 {
-  static_assert(CheckNumFunctions<FunctionType>::value,
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckNumFunctions<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of NumFunctions(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the SparseFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckDecomposableEvaluate<FunctionType>::value,
+  static_assert(CheckDecomposableEvaluate<FunctionType,
+                                          MatType,
+                                          GradType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the SparseFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckSparseGradient<FunctionType>::value,
+  static_assert(CheckSparseGradient<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of a sparse "
       "Gradient() method. Please check that the FunctionType fully satisfies "
       "the requirements of the SparseFunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 /**
  * Perform checks for the NonDifferentiableFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType>
 inline void CheckNonDifferentiableFunctionTypeAPI()
 {
-  static_assert(CheckEvaluate<FunctionType>::value,
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the NonDifferentiableFunctionType API; see the optimizer tutorial for "
       "more details.");
+#endif
 }
 
 /**
  * Perform checks for the ResolvableFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckResolvableFunctionTypeAPI()
 {
-  static_assert(CheckNumFeatures<FunctionType>::value,
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckNumFeatures<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of NumFeatures(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the ResolvableFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckEvaluate<FunctionType>::value,
+  static_assert(CheckEvaluate<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the ResolvableFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckPartialGradient<FunctionType>::value,
+  static_assert(CheckPartialGradient<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of a partial "
       "Gradient() function. Please check that the FunctionType fully satisfies "
       "the requirements of the ResolvableFunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 /**
  * Perform checks for the ConstrainedFunctionType API.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 inline void CheckConstrainedFunctionTypeAPI()
 {
-  static_assert(CheckEvaluate<FunctionType>::value,
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckEvaluate<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the ConstrainedFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckGradient<FunctionType>::value,
+  static_assert(CheckGradient<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Gradient(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the ConstrainedFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckNumConstraints<FunctionType>::value,
+  static_assert(CheckNumConstraints<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of NumConstraints()."
       " Please check that the FunctionType fully satisfies the requirements of "
       "the ConstrainedFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckEvaluateConstraint<FunctionType>::value,
+  static_assert(CheckEvaluateConstraint<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of "
       "EvaluateConstraint(). Please check that the FunctionType fully satisfies"
       " the ConstrainedFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckGradientConstraint<FunctionType>::value,
+  static_assert(CheckGradientConstraint<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of "
       "GradientConstraint(). Please check that the FunctionType fully satisfies"
       " the ConstrainedFunctionType API; see the optimizer tutorial for more "
       "details.");
+#endif
 }
 
 /**
  * Perform checks for the NonDifferentiableDecomposableFunctionType API.  (I
  * know, it is a long name...)
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType>
 inline void CheckNonDifferentiableDecomposableFunctionTypeAPI()
 {
-  static_assert(CheckDecomposableEvaluate<FunctionType>::value,
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckDecomposableEvaluate<FunctionType,
+                                          MatType,
+                                          MatType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
       "the NonDifferentiableDecomposableFunctionType API; see the optimizer "
       "tutorial for more details.");
+#endif
 }
 
 } // namespace traits

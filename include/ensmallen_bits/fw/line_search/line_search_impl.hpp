@@ -19,24 +19,28 @@
 
 namespace ens {
 
-template<typename FunctionType>
-double LineSearch::Optimize(FunctionType& function,
-                            const arma::mat& x1,
-                            arma::mat& x2)
+template<typename FunctionType, typename MatType, typename GradType>
+typename MatType::elem_type LineSearch::Optimize(FunctionType& function,
+                                                 const MatType& x1,
+                                                 MatType& x2)
 {
-  typedef Function<FunctionType> FullFunctionType;
+  typedef typename MatType::elem_type ElemType;
+
+  typedef Function<FunctionType, MatType, GradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Check that we have all the functions we will need.
-  traits::CheckFunctionTypeAPI<FullFunctionType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, MatType, GradType>();
 
   // Set up the search line, that is,
   // find the zero of der(gamma) = Derivative(gamma).
-  arma::mat deltaX = x2 - x1;
-  double gamma = 0;
-  double derivative = Derivative(f, x1, deltaX, 0);
-  double derivativeNew = Derivative(f, x1, deltaX, 1);
-  double secant = derivativeNew - derivative;
+  MatType deltaX = x2 - x1;
+  ElemType gamma = 0;
+  ElemType derivative = Derivative<FunctionType, MatType, GradType>(f, x1,
+      deltaX, 0);
+  ElemType derivativeNew = Derivative<FunctionType, MatType, GradType>(f, x1,
+      deltaX, 1);
+  ElemType secant = derivativeNew - derivative;
 
   if (derivative >= 0.0) // Optimal solution at left endpoint.
   {
@@ -65,12 +69,13 @@ double LineSearch::Optimize(FunctionType& function,
     }
 
     // Solve new gamma.
-    double gammaNew = gamma - derivative / secant;
-    gammaNew = std::max(gammaNew, 0.0);
-    gammaNew = std::min(gammaNew, 1.0);
+    ElemType gammaNew = gamma - derivative / secant;
+    gammaNew = std::max(gammaNew, ElemType(0.0));
+    gammaNew = std::min(gammaNew, ElemType(1.0));
 
-    // Update secant, gamma and derivative
-    derivativeNew = Derivative(function, x1, deltaX, gammaNew);
+    // Update secant, gamma and derivative.
+    derivativeNew = Derivative<FunctionType, MatType, GradType>(function, x1,
+        deltaX, gammaNew);
     secant = (derivativeNew - derivative) / (gammaNew - gamma);
     gamma = gammaNew;
     derivative = derivativeNew;
@@ -93,17 +98,17 @@ double LineSearch::Optimize(FunctionType& function,
 
 
 //! Derivative of the function along the search line.
-template<typename FunctionType>
-double LineSearch::Derivative(FunctionType& function,
-                              const arma::mat& x0,
-                              const arma::mat& deltaX,
-                              const double gamma)
+template<typename FunctionType, typename MatType, typename GradType>
+typename MatType::elem_type LineSearch::Derivative(FunctionType& function,
+                                                   const MatType& x0,
+                                                   const MatType& deltaX,
+                                                   const double gamma)
 {
-  arma::mat gradient(x0.n_rows, x0.n_cols);
+  GradType gradient(x0.n_rows, x0.n_cols);
   function.Gradient(x0 + gamma * deltaX, gradient);
   return arma::dot(gradient, deltaX);
 }
 
-
 } // namespace ens
+
 #endif

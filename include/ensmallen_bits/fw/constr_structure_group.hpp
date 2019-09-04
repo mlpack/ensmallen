@@ -73,7 +73,7 @@ class ConstrStructGroupSolver
    *                       group, and compute norm in each group.
    */
   ConstrStructGroupSolver(GroupType& groupExtractor) :
-    groupExtractor(groupExtractor)
+      groupExtractor(groupExtractor)
   { /* Nothing to do */ }
 
   /**
@@ -82,18 +82,21 @@ class ConstrStructGroupSolver
    * @param v Input local gradient.
    * @param s Output optimal solution in the constrained atom domain.
    */
-  void Optimize(const arma::mat& v, arma::mat& s)
+  template<typename MatType>
+  void Optimize(const MatType& v, MatType& s)
   {
+    typedef typename MatType::elem_type ElemType;
+
     size_t nGroups = groupExtractor.NumGroups();
-    double dualNorm = 0;
+    ElemType dualNorm = 0;
     size_t optimalGroup = 1;
 
     // Find the optimal group.
     for (size_t i = 1; i <= nGroups; ++i)
     {
-      arma::vec y;
+      MatType y;
       groupExtractor.ProjectToGroup(v, i, y);
-      double newNorm = groupExtractor.DualNorm(y, i);
+      ElemType newNorm = groupExtractor.DualNorm(y, i);
 
       // Find the group with largest dual norm.
       if (newNorm > dualNorm)
@@ -142,11 +145,12 @@ class GroupLpBall
    * @param groupId input ID number of the group, start from 1.
    * @param y output projection of the vector to specific group.
    */
-  void ProjectToGroup(const arma::mat& v, const size_t groupId, arma::vec& y)
+  template<typename MatType>
+  void ProjectToGroup(const MatType& v, const size_t groupId, MatType& y)
   {
     arma::uvec& indList = groupIndicesList[groupId - 1];
     size_t dim = indList.n_elem;
-    y.set_size(dim);
+    y.set_size(dim, 1);
 
     for (size_t i = 0; i < dim; ++i)
       y(i) = v(indList(i));
@@ -160,14 +164,15 @@ class GroupLpBall
    * @param groupId optimal atom belongs to this group.
    * @param s output optimal atom.
    */
-  void OptimalFromGroup(const arma::mat& v, const size_t groupId, arma::mat& s)
+  template<typename MatType>
+  void OptimalFromGroup(const MatType& v, const size_t groupId, MatType& s)
   {
     // Project v to group.
-    arma::vec yk;
+    MatType yk;
     ProjectToGroup(v, groupId, yk);
 
     // Optimize in this group.
-    arma::vec sProj(yk.n_elem);
+    MatType sProj(yk.n_elem, 1);
     lpBallSolver.Optimize(yk, sProj);
 
     // Recover s to the original dimension.
@@ -190,7 +195,8 @@ class GroupLpBall
    * @param yk compute the q-norm of yk.
    * @param groupId group ID number.
    */
-  double DualNorm(const arma::vec& yk, const int groupId)
+  template<typename MatType>
+  typename MatType::elem_type DualNorm(const MatType& yk, const int groupId)
   {
     if (p == std::numeric_limits<double>::infinity())
     {
@@ -200,8 +206,8 @@ class GroupLpBall
     else if (p > 1.0)
     {
       // p norm, return q-norm
-      double q = 1.0 / (1.0 - 1.0/p);
-      return  arma::norm(yk, q);
+      double q = 1.0 / (1.0 - 1.0 / p);
+      return arma::norm(yk, q);
     }
     else if (p == 1.0)
     {
@@ -233,9 +239,6 @@ class GroupLpBall
   ConstrLpBallSolver lpBallSolver;
 };
 
-
 } // namespace ens
-
-
 
 #endif

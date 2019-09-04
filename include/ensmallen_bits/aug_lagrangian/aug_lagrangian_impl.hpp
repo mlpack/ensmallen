@@ -26,15 +26,21 @@ inline AugLagrangian::AugLagrangian(const size_t maxIterations,
     maxIterations(maxIterations),
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
-    lbfgs(lbfgs)
+    lbfgs(lbfgs),
+    terminate(false)
 {
 }
 
-template<typename LagrangianFunctionType>
-bool AugLagrangian::Optimize(LagrangianFunctionType& function,
-                             arma::mat& coordinates,
-                             const arma::vec& initLambda,
-                             const double initSigma)
+template<typename LagrangianFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+AugLagrangian::Optimize(LagrangianFunctionType& function,
+                        MatType& coordinates,
+                        const arma::vec& initLambda,
+                        const double initSigma,
+                        CallbackTypes&&... callbacks)
 {
   lambda = initLambda;
   sigma = initSigma;
@@ -42,46 +48,75 @@ bool AugLagrangian::Optimize(LagrangianFunctionType& function,
   AugLagrangianFunction<LagrangianFunctionType> augfunc(function,
       lambda, sigma);
 
-  return Optimize(augfunc, coordinates);
+  return Optimize(augfunc, coordinates, callbacks...);
 }
 
-template<typename LagrangianFunctionType>
-bool AugLagrangian::Optimize(LagrangianFunctionType& function,
-                             arma::mat& coordinates)
+template<typename LagrangianFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+AugLagrangian::Optimize(LagrangianFunctionType& function,
+                        MatType& coordinates,
+                        CallbackTypes&&... callbacks)
 {
   // If the user did not specify the right size for sigma and lambda, we will
   // use defaults.
   if (!lambda.is_empty())
   {
-    AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda, sigma);
-    return Optimize(augfunc, coordinates);
+    AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda,
+        sigma);
+    return Optimize(augfunc, coordinates, callbacks...);
   }
   else
   {
     AugLagrangianFunction<LagrangianFunctionType> augfunc(function);
-    return Optimize(augfunc, coordinates);
+    return Optimize(augfunc, coordinates, callbacks...);
   }
 }
 
-template<typename LagrangianFunctionType>
-bool AugLagrangian::Optimize(
+template<typename LagrangianFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+AugLagrangian::Optimize(
     AugLagrangianFunction<LagrangianFunctionType>& augfunc,
-    arma::mat& coordinates)
+    MatType& coordinatesIn,
+    CallbackTypes&&... callbacks)
 {
-  traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType>();
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  BaseMatType& coordinates = (BaseMatType&) coordinatesIn;
+
+  // Check that the types satisfy our needs.
+  traits::CheckConstrainedFunctionTypeAPI<LagrangianFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
   LagrangianFunctionType& function = augfunc.Function();
 
   // Ensure that we update lambda immediately.
-  double penaltyThreshold = DBL_MAX;
+  ElemType penaltyThreshold = std::numeric_limits<ElemType>::max();
 
   // Track the last objective to compare for convergence.
-  double lastObjective = function.Evaluate(coordinates);
+  ElemType lastObjective = function.Evaluate(coordinates);
 
   // Then, calculate the current penalty.
-  double penalty = 0;
+  ElemType penalty = 0;
   for (size_t i = 0; i < function.NumConstraints(); i++)
-    penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
+  {
+    const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates), 2);
+    Callback::EvaluateConstraint(*this, function, coordinates, i, p,
+          callbacks...);
+
+    penalty += p;
+  }
 
   Info << "Penalty is " << penalty << " (threshold " << penaltyThreshold
       << ")." << std::endl;
@@ -89,36 +124,50 @@ bool AugLagrangian::Optimize(
   // The odd comparison allows user to pass maxIterations = 0 (i.e. no limit on
   // number of iterations).
   size_t it;
-  for (it = 0; it != (maxIterations - 1); it++)
+  terminate |= Callback::BeginOptimization(*this, function, coordinates,
+      callbacks...);
+  for (it = 0; it != (maxIterations - 1) && !terminate; it++)
   {
     Info << "AugLagrangian on iteration " << it
         << ", starting with objective "  << lastObjective << "." << std::endl;
 
-    if (!lbfgs.Optimize(augfunc, coordinates))
+    if (!lbfgs.Optimize(augfunc, coordinates, callbacks...))
       Info << "L-BFGS reported an error during optimization."
           << std::endl;
 
+    const ElemType objective = function.Evaluate(coordinates);
+
+    Callback::Evaluate(*this, function, coordinates, objective,
+        callbacks...);
+
     // Check if we are done with the entire optimization (the threshold we are
     // comparing with is arbitrary).
-    if (std::abs(lastObjective - function.Evaluate(coordinates)) < 1e-10 &&
+    if (std::abs(lastObjective - objective) < 1e-10 &&
         augfunc.Sigma() > 500000)
     {
       lambda = std::move(augfunc.Lambda());
       sigma = augfunc.Sigma();
+
+      Callback::EndOptimization(*this, function, coordinates, callbacks...);
       return true;
     }
 
-    lastObjective = function.Evaluate(coordinates);
+    lastObjective = objective;
 
     // Assuming that the optimization has converged to a new set of coordinates,
     // we now update either lambda or sigma.  We update sigma if the penalty
     // term is too high, and we update lambda otherwise.
 
     // First, calculate the current penalty.
-    double penalty = 0;
+    ElemType penalty = 0;
     for (size_t i = 0; i < function.NumConstraints(); i++)
     {
-      penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
+      const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates),
+          2);
+      Callback::EvaluateConstraint(*this, function, coordinates, i, p,
+          callbacks...);
+
+      penalty += p;
     }
 
     Info << "Penalty is " << penalty << " (threshold "
@@ -129,8 +178,13 @@ bool AugLagrangian::Optimize(
       // We use the update: lambda_{k + 1} = lambda_k - sigma * c(coordinates),
       // but we have to write a loop to do this for each constraint.
       for (size_t i = 0; i < function.NumConstraints(); i++)
-        augfunc.Lambda()[i] -= augfunc.Sigma() *
-            function.EvaluateConstraint(i, coordinates);
+      {
+        const ElemType p = function.EvaluateConstraint(i, coordinates);
+        Callback::EvaluateConstraint(*this, function, coordinates, i, p,
+          callbacks...);
+
+        augfunc.Lambda()[i] -= augfunc.Sigma() * p;
+      }
 
       // We also update the penalty threshold to be a factor of the current
       // penalty.
@@ -143,8 +197,12 @@ bool AugLagrangian::Optimize(
       augfunc.Sigma() *= sigmaUpdateFactor;
       Info << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
     }
+
+    terminate |= Callback::StepTaken(*this, function, coordinates,
+        callbacks...);
   }
 
+  Callback::EndOptimization(*this, function, coordinates, callbacks...);
   return false;
 }
 

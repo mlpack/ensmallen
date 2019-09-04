@@ -55,12 +55,34 @@ class AugLagrangian
    *
    * @tparam LagrangianFunctionType Function which can be optimized by this
    *     class.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
+   * @param callbacks Callback functions.
    */
-  template<typename LagrangianFunctionType>
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+  Optimize(LagrangianFunctionType& function,
+           MatType& coordinates,
+           CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
   bool Optimize(LagrangianFunctionType& function,
-                arma::mat& coordinates);
+                MatType& coordinates,
+                CallbackTypes&&... callbacks)
+  {
+    return Optimize<LagrangianFunctionType, MatType, MatType,
+        CallbackTypes...>(function, coordinates,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   /**
    * Optimize the function, giving initial estimates for the Lagrange
@@ -69,17 +91,41 @@ class AugLagrangian
    *
    * @tparam LagrangianFunctionType Function which can be optimized by this
    *      class.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
    * @param initLambda Vector of initial Lagrange multipliers.  Should have
    *     length equal to the number of constraints.
    * @param initSigma Initial penalty parameter.
+   * @param callbacks Callback functions.
    */
-  template<typename LagrangianFunctionType>
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+  Optimize(LagrangianFunctionType& function,
+           MatType& coordinates,
+           const arma::vec& initLambda,
+           const double initSigma,
+           CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
   bool Optimize(LagrangianFunctionType& function,
-                arma::mat& coordinates,
+                MatType& coordinates,
                 const arma::vec& initLambda,
-                const double initSigma);
+                const double initSigma,
+                CallbackTypes&&... callbacks)
+  {
+    return Optimize<LagrangianFunctionType, MatType, MatType,
+        CallbackTypes...>(function, coordinates, initLambda, initSigma,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the L-BFGS object used for the actual optimization.
   const L_BFGS& LBFGS() const { return lbfgs; }
@@ -124,8 +170,12 @@ class AugLagrangian
   //! The L-BFGS optimizer that we will use.
   L_BFGS lbfgs;
 
+  //! Controls early termination of the optimization process.
+  bool terminate;
+
   //! Lagrange multipliers.
   arma::vec lambda;
+
   //! Penalty parameter.
   double sigma;
 
@@ -133,9 +183,27 @@ class AugLagrangian
    * Internal optimization function: given an initialized AugLagrangianFunction,
    * perform the optimization itself.
    */
-  template<typename LagrangianFunctionType>
-  bool Optimize(AugLagrangianFunction<LagrangianFunctionType>& augfunc,
-                arma::mat& coordinates);
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+  Optimize(AugLagrangianFunction<LagrangianFunctionType>& augfunc,
+           MatType& coordinates,
+           CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  bool Optimize(AugLagrangianFunction<LagrangianFunctionType>& function,
+                MatType& coordinates,
+                CallbackTypes&&... callbacks)
+  {
+    return Optimize<LagrangianFunctionType, MatType, MatType,
+        CallbackTypes...>(function, coordinates,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 };
 
 } // namespace ens

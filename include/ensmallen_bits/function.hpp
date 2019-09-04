@@ -15,7 +15,7 @@
 
 namespace ens {
 
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 class Function;
 
 } // namespace ens
@@ -54,26 +54,28 @@ namespace ens {
  * addition, this class does not (to the best of my knowledge) rely on any
  * undefined behavior.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 class Function :
-    public AddDecomposableEvaluateWithGradientStatic<FunctionType>,
-    public AddDecomposableEvaluateWithGradientConst<FunctionType>,
-    public AddDecomposableEvaluateWithGradient<FunctionType>,
-    public AddDecomposableGradientStatic<FunctionType>,
-    public AddDecomposableGradientConst<FunctionType>,
-    public AddDecomposableGradient<FunctionType>,
-    public AddDecomposableEvaluateStatic<FunctionType>,
-    public AddDecomposableEvaluateConst<FunctionType>,
-    public AddDecomposableEvaluate<FunctionType>,
-    public AddEvaluateWithGradientStatic<FunctionType>,
-    public AddEvaluateWithGradientConst<FunctionType>,
-    public AddEvaluateWithGradient<FunctionType>,
-    public AddGradientStatic<FunctionType>,
-    public AddGradientConst<FunctionType>,
-    public AddGradient<FunctionType>,
-    public AddEvaluateStatic<FunctionType>,
-    public AddEvaluateConst<FunctionType>,
-    public AddEvaluate<FunctionType>,
+    public AddDecomposableEvaluateWithGradientStatic<FunctionType, MatType,
+        GradType>,
+    public AddDecomposableEvaluateWithGradientConst<FunctionType, MatType,
+        GradType>,
+    public AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType>,
+    public AddDecomposableGradientStatic<FunctionType, MatType, GradType>,
+    public AddDecomposableGradientConst<FunctionType, MatType, GradType>,
+    public AddDecomposableGradient<FunctionType, MatType, GradType>,
+    public AddDecomposableEvaluateStatic<FunctionType, MatType, GradType>,
+    public AddDecomposableEvaluateConst<FunctionType, MatType, GradType>,
+    public AddDecomposableEvaluate<FunctionType, MatType, GradType>,
+    public AddEvaluateWithGradientStatic<FunctionType, MatType, GradType>,
+    public AddEvaluateWithGradientConst<FunctionType, MatType, GradType>,
+    public AddEvaluateWithGradient<FunctionType, MatType, GradType>,
+    public AddGradientStatic<FunctionType, MatType, GradType>,
+    public AddGradientConst<FunctionType, MatType, GradType>,
+    public AddGradient<FunctionType, MatType, GradType>,
+    public AddEvaluateStatic<FunctionType, MatType, GradType>,
+    public AddEvaluateConst<FunctionType, MatType, GradType>,
+    public AddEvaluate<FunctionType, MatType, GradType>,
     public FunctionType
 {
  public:
@@ -82,25 +84,28 @@ class Function :
   // declarations here to ensure that they are all accessible.  Since we don't
   // know what FunctionType has, we can't use any using declarations there.
   using AddDecomposableEvaluateWithGradientStatic<
-      FunctionType>::EvaluateWithGradient;
+      FunctionType, MatType, GradType>::EvaluateWithGradient;
   using AddDecomposableEvaluateWithGradientConst<
-      FunctionType>::EvaluateWithGradient;
-  using AddDecomposableEvaluateWithGradient<FunctionType>::EvaluateWithGradient;
-  using AddDecomposableGradientStatic<FunctionType>::Gradient;
-  using AddDecomposableGradientConst<FunctionType>::Gradient;
-  using AddDecomposableGradient<FunctionType>::Gradient;
-  using AddDecomposableEvaluateStatic<FunctionType>::Evaluate;
-  using AddDecomposableEvaluateConst<FunctionType>::Evaluate;
-  using AddDecomposableEvaluate<FunctionType>::Evaluate;
-  using AddEvaluateWithGradientStatic<FunctionType>::EvaluateWithGradient;
-  using AddEvaluateWithGradientConst<FunctionType>::EvaluateWithGradient;
-  using AddEvaluateWithGradient<FunctionType>::EvaluateWithGradient;
-  using AddGradientStatic<FunctionType>::Gradient;
-  using AddGradientConst<FunctionType>::Gradient;
-  using AddGradient<FunctionType>::Gradient;
-  using AddEvaluateStatic<FunctionType>::Evaluate;
-  using AddEvaluateConst<FunctionType>::Evaluate;
-  using AddEvaluate<FunctionType>::Evaluate;
+      FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddDecomposableEvaluateWithGradient<
+      FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddDecomposableGradientStatic<
+      FunctionType, MatType, GradType>::Gradient;
+  using AddDecomposableGradientConst<FunctionType, MatType, GradType>::Gradient;
+  using AddDecomposableGradient<FunctionType, MatType, GradType>::Gradient;
+  using AddDecomposableEvaluateStatic<
+      FunctionType, MatType, GradType>::Evaluate;
+  using AddDecomposableEvaluateConst<FunctionType, MatType, GradType>::Evaluate;
+  using AddDecomposableEvaluate<FunctionType, MatType, GradType>::Evaluate;
+  using AddEvaluateWithGradientStatic<FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddEvaluateWithGradientConst<FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddEvaluateWithGradient<FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddGradientStatic<FunctionType, MatType, GradType>::Gradient;
+  using AddGradientConst<FunctionType, MatType, GradType>::Gradient;
+  using AddGradient<FunctionType, MatType, GradType>::Gradient;
+  using AddEvaluateStatic<FunctionType, MatType, GradType>::Evaluate;
+  using AddEvaluateConst<FunctionType, MatType, GradType>::Evaluate;
+  using AddEvaluate<FunctionType, MatType, GradType>::Evaluate;
 };
 
 } // namespace ens

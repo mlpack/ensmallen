@@ -53,10 +53,16 @@ SnapshotSGDR<UpdatePolicyType>::SnapshotSGDR(
 }
 
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
-double SnapshotSGDR<UpdatePolicyType>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SnapshotSGDR<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate,
+    CallbackTypes&&... callbacks)
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do here.
@@ -75,23 +81,35 @@ double SnapshotSGDR<UpdatePolicyType>::Optimize(
     batchSize = optimizer.BatchSize();
   }
 
-  double overallObjective = optimizer.Optimize(function, iterate);
+  typename MatType::elem_type overallObjective = optimizer.Optimize(function,
+      iterate, callbacks...);
+
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef SnapshotEnsembles::Policy<BaseMatType, BaseGradType>
+      InstDecayPolicyType;
 
   // Accumulate snapshots.
   if (accumulate)
   {
-    for (size_t i = 0; i < optimizer.DecayPolicy().Snapshots().size(); ++i)
-    {
-      iterate += optimizer.DecayPolicy().Snapshots()[i];
-    }
-    iterate /= (optimizer.DecayPolicy().Snapshots().size() + 1);
+    Any& instDecayPolicy = optimizer.InstDecayPolicy();
+    size_t numSnapshots =
+        instDecayPolicy.As<InstDecayPolicyType>().Snapshots().size();
 
-    // Calculate final objective if exactObjective is true.
-    if (exactObjective)
+    for (size_t i = 0; i < numSnapshots; ++i)
     {
-      overallObjective = 0;
-      for (size_t i = 0; i < function.NumFunctions(); ++i)
-        overallObjective += function.Evaluate(iterate, i, 1);
+      iterate += instDecayPolicy.As<InstDecayPolicyType>().Snapshots()[i];
+    }
+    iterate /= (numSnapshots + 1);
+
+    // Calculate final objective.
+    overallObjective = 0;
+    for (size_t i = 0; i < function.NumFunctions(); ++i)
+    {
+      const typename MatType::elem_type objective = function.Evaluate(
+          iterate, i, 1);
+      overallObjective += objective;
     }
   }
 

@@ -68,7 +68,7 @@ class UndirectedGraph
     // data::Load(edgesFilename, g.edges, true, transposeEdges);
     if (g.edges.load(edgesFilename) == false)  { FAIL("couldn't load data"); }
     if (transposeEdges)  { g.edges = g.edges.t(); }
-    
+
     if (g.edges.n_rows != 2)
       FAIL("Invalid datafile");
     
@@ -234,39 +234,34 @@ static bool CheckKKT(const SDPType& sdp,
 
 static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
 {
-  arma::mat X0, Z0;
-  arma::vec ysparse0, ydense0;
-  ydense0.set_size(0);
+  arma::mat X, Z;
+  arma::mat ysparse, ydense;
+  ydense.set_size(0);
 
   // strictly feasible starting point
-  X0.eye(sdp.N(), sdp.N());
-  ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.C()), 0).t());
-  Z0 = -arma::diagmat(ysparse0) + sdp.C();
+  X.eye(sdp.N(), sdp.N());
+  ysparse = -1.1 * arma::vec(arma::sum(arma::abs(sdp.C()), 0).t());
+  Z = -arma::diagmat(ysparse) + sdp.C();
 
-  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp, X0, ysparse0, ydense0, Z0);
+  PrimalDualSolver<> solver;
 
-  arma::mat X, Z;
-  arma::vec ysparse, ydense;
-  solver.Optimize(X, ysparse, ydense, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
 static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
 {
-  arma::mat X0, Z0;
-  arma::vec ysparse0, ydense0;
-  ydense0.set_size(0);
+  arma::mat X, Z;
+  arma::mat ysparse, ydense;
+  ydense.set_size(0);
 
   // infeasible, but positive starting point
-  X0 = arma::eye<arma::mat>(sdp.N(), sdp.N());
-  ysparse0 = arma::randu<arma::vec>(sdp.NumSparseConstraints());
-  Z0.eye(sdp.N(), sdp.N());
+  X = arma::eye<arma::mat>(sdp.N(), sdp.N());
+  ysparse = arma::randu<arma::vec>(sdp.NumSparseConstraints());
+  Z.eye(sdp.N(), sdp.N());
 
-  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp, X0, ysparse0, ydense0, Z0);
-
-  arma::mat X, Z;
-  arma::vec ysparse, ydense;
-  solver.Optimize(X, ysparse, ydense, Z);
+  PrimalDualSolver<> solver;
+  solver.Optimize(sdp, X, ysparse, ydense, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
@@ -287,17 +282,33 @@ TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
   SolveMaxCutPositiveSDP(sdp);
 }
 
-TEST_CASE("SmallLovaszThetaSdp","[SdpPrimalDualTest]")
+// This test is deprecated and can be removed in ensmallen 2.10.0.
+TEST_CASE("DeprecatedSmallLovaszThetaSdp", "[SdpPrimalDualTest]")
 {
   UndirectedGraph g;
   UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
   auto sdp = ConstructLovaszThetaSDPFromGraph(g);
 
-  PrimalDualSolver<SDP<arma::mat>> solver(sdp);
+  PrimalDualSolver<> solver;
 
   arma::mat X, Z;
-  arma::vec ysparse, ydense;
-  solver.Optimize(X, ysparse, ydense, Z);
+  arma::mat ysparse, ydense;
+  sdp.GetInitialPoints(X, ysparse, ydense, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, Z);
+  CheckKKT(sdp, X, ysparse, ydense, Z);
+}
+
+TEST_CASE("SmallLovaszThetaSdp", "[SdpPrimalDualTest]")
+{
+  UndirectedGraph g;
+  UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
+  auto sdp = ConstructLovaszThetaSDPFromGraph(g);
+
+  PrimalDualSolver<> solver;
+
+  arma::mat X, Z, ysparse, ydense;
+  sdp.GetInitialPoints(X, ysparse, ydense, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
@@ -428,10 +439,11 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
     const arma::mat A0 = RandomFullRowRankMatrix(p0, k0);
     const arma::vec b0 = arma::randu<arma::vec>(p0);
     const auto sdp0 = ConstructLogChebychevApproxSdp(A0, b0);
-    PrimalDualSolver<SDP<arma::sp_mat>> solver0(sdp0);
+    PrimalDualSolver<> solver0;
     arma::mat X0, Z0;
-    arma::vec ysparse0, ydense0;
-    solver0.Optimize(X0, ysparse0, ydense0, Z0);
+    arma::mat ysparse0, ydense0;
+    sdp0.GetInitialPoints(X0, ysparse0, ydense0, Z0);
+    solver0.Optimize(sdp0, X0, ysparse0, ydense0, Z0);
     success = CheckKKT(sdp0, X0, ysparse0, ydense0, Z0);
     if (success)
       break;
@@ -447,10 +459,11 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
     const arma::mat A1 = RandomFullRowRankMatrix(p1, k1);
     const arma::vec b1 = arma::randu<arma::vec>(p1);
     const auto sdp1 = ConstructLogChebychevApproxSdp(A1, b1);
-    PrimalDualSolver<SDP<arma::sp_mat>> solver1(sdp1);
+    PrimalDualSolver<> solver1;
     arma::mat X1, Z1;
-    arma::vec ysparse1, ydense1;
-    solver1.Optimize(X1, ysparse1, ydense1, Z1);
+    arma::mat ysparse1, ydense1;
+    sdp1.GetInitialPoints(X1, ysparse1, ydense1, Z1);
+    solver1.Optimize(sdp1, X1, ysparse1, ydense1, Z1);
     success = CheckKKT(sdp1, X1, ysparse1, ydense1, Z1);
     if (success)
       break;
@@ -560,10 +573,11 @@ TEST_CASE("CorrelationCoeffToySdp","[SdpPrimalDualTest]")
   sdp.C().zeros();
   sdp.C()(0, 2) = sdp.C()(2, 0) = 1.;
 
-  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
+  PrimalDualSolver<> solver;
   arma::mat X, Z;
-  arma::vec ysparse, ydense;
-  const double obj = solver.Optimize(X, ysparse, ydense, Z);
+  arma::mat ysparse, ydense;
+  sdp.GetInitialPoints(X, ysparse, ydense, Z);
+  const double obj = solver.Optimize(sdp, X, ysparse, ydense, Z);
   bool success = CheckKKT(sdp, X, ysparse, ydense, Z);
   REQUIRE(success == true);
   REQUIRE(obj == Approx(2 * (-0.978)).epsilon(1e-5));

@@ -37,42 +37,11 @@ class GradientClipping
   GradientClipping(const double minGradient,
                    const double maxGradient,
                    UpdatePolicyType& updatePolicy) :
-    minGradient(minGradient),
-    maxGradient(maxGradient),
-    updatePolicy(updatePolicy)
+      minGradient(minGradient),
+      maxGradient(maxGradient),
+      updatePolicy(updatePolicy)
   {
-    // Nothing to do here
-  }
-
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process. Here we just do whatever initialization
-   * is needed for the actual update policy.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    updatePolicy.Initialize(rows, cols);
-  }
-
-  /**
-   * Update step. First, the gradient is clipped, and then the actual update
-   * policy does whatever update it needs to do.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    // First, clip the gradient.
-    arma::mat clippedGradient = arma::clamp(gradient, minGradient, maxGradient);
-    // And only then do the update.
-    updatePolicy.Update(iterate, stepSize, clippedGradient);
+    // Nothing to do here.
   }
 
   //! Get the update policy.
@@ -89,6 +58,63 @@ class GradientClipping
   double MaxGradient() const { return maxGradient; }
   //! Modify the maximum gradient value.
   double& MaxGradient() { return maxGradient; }
+
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This is called by the optimizer method before the start of the iteration
+     * update process.
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(const GradientClipping<UpdatePolicyType>& parent,
+           const size_t rows,
+           const size_t cols) :
+        parent(parent),
+        instPolicy(parent.UpdatePolicy(), rows, cols)
+    {
+      // Nothing to do.
+    }
+
+    /**
+     * Update step. First, the gradient is clipped, and then the actual update
+     * policy does whatever update it needs to do.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      typedef typename GradType::elem_type GradElemType;
+
+      // First, clip the gradient.
+      GradType clippedGradient = arma::clamp(gradient,
+          GradElemType(parent.minGradient),
+          GradElemType(parent.maxGradient));
+
+      // And only then do the update.
+      instPolicy.Update(iterate, stepSize, clippedGradient);
+    }
+
+   private:
+    // The instantiated parent class.
+    const GradientClipping<UpdatePolicyType>& parent;
+    // The instantiated update policy we will use.
+    typename UpdatePolicyType::template Policy<MatType, GradType> instPolicy;
+  };
 
  private:
   //! Minimum possible value of gradient element.

@@ -22,30 +22,44 @@ namespace ens {
  * FunctionType has EvaluateWithGradient(), or nothing otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientForm>::value,
+                 traits::TypedForms<MatType, GradType>::template
+                     EvaluateWithGradientForm
+              >::value,
          bool HasEvaluate =
-             traits::HasEvaluate<FunctionType, traits::EvaluateForm>::value>
+             traits::HasEvaluate<FunctionType,
+                  traits::TypedForms<MatType, GradType>::template
+                     EvaluateForm>::value>
 class AddEvaluate
 {
  public:
   // Provide a dummy overload so the name 'Evaluate' exists for this object.
-  double Evaluate(traits::UnconstructableType&);
+  typename MatType::elem_type Evaluate(traits::UnconstructableType&);
 };
 
 /**
  * Reflect the existing Evaluate().
  */
-template<typename FunctionType, bool HasEvaluateWithGradient>
-class AddEvaluate<FunctionType, HasEvaluateWithGradient, true>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasEvaluateWithGradient>
+class AddEvaluate<FunctionType,
+                  MatType,
+                  GradType,
+                  HasEvaluateWithGradient,
+                  true>
 {
  public:
   // Reflect the existing Evaluate().
-  double Evaluate(const arma::mat& coordinates)
+  typename MatType::elem_type Evaluate(const MatType& coordinates)
   {
-    return static_cast<FunctionType*>(static_cast<Function<FunctionType>*>(
-        this))->Evaluate(coordinates);
+    return static_cast<FunctionType*>(
+        static_cast<Function<FunctionType,
+                             MatType, GradType>*>(this))->Evaluate(coordinates);
   }
 };
 
@@ -53,8 +67,8 @@ class AddEvaluate<FunctionType, HasEvaluateWithGradient, true>
  * If we have EvaluateWithGradient() but no existing Evaluate(), add an
  * Evaluate() method.
  */
-template<typename FunctionType>
-class AddEvaluate<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddEvaluate<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -62,10 +76,12 @@ class AddEvaluate<FunctionType, true, false>
    *
    * @param coordinates Coordinates to evaluate the function at.
    */
-  double Evaluate(const arma::mat& coordinates)
+  typename MatType::elem_type Evaluate(const MatType& coordinates)
   {
-    arma::mat gradient; // This will be ignored.
-    return static_cast<Function<FunctionType>*>(this)->EvaluateWithGradient(
+    GradType gradient; // This will be ignored.
+    return static_cast<Function<FunctionType,
+                                MatType,
+                                GradType>*>(this)->EvaluateWithGradient(
         coordinates, gradient);
   }
 };
@@ -76,32 +92,47 @@ class AddEvaluate<FunctionType, true, false>
  * otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientConstForm>::value,
+                 traits::TypedForms<MatType,
+                                    GradType>::template
+                     EvaluateWithGradientConstForm
+             >::value,
          bool HasEvaluate =
              traits::HasEvaluate<FunctionType,
-                 traits::EvaluateConstForm>::value>
+                 traits::TypedForms<MatType, GradType>::template
+                     EvaluateConstForm
+             >::value>
 class AddEvaluateConst
 {
  public:
   // Provide a dummy overload so the name 'Evaluate' exists for this object.
-  double Evaluate(traits::UnconstructableType&) const;
+  typename MatType::elem_type Evaluate(traits::UnconstructableType&) const;
 };
 
 /**
  * Reflect the existing Evaluate().
  */
-template<typename FunctionType, bool HasEvaluateWithGradient>
-class AddEvaluateConst<FunctionType, HasEvaluateWithGradient, true>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasEvaluateWithGradient>
+class AddEvaluateConst<FunctionType,
+                       MatType,
+                       GradType,
+                       HasEvaluateWithGradient,
+                       true>
 {
  public:
   // Reflect the existing Evaluate().
-  double Evaluate(const arma::mat& coordinates) const
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const
   {
-    return static_cast<const FunctionType*>(static_cast<const
-Function<FunctionType>*>(this))->Evaluate(
-        coordinates);
+    return static_cast<const FunctionType*>(
+        static_cast<const Function<FunctionType,
+                                   MatType,
+                                   GradType>*>(this))->Evaluate(coordinates);
   }
 };
 
@@ -109,8 +140,8 @@ Function<FunctionType>*>(this))->Evaluate(
  * If we have EvaluateWithGradient() but no existing Evaluate(), add an
  * Evaluate() without a using directive to make the base Evaluate() accessible.
  */
-template<typename FunctionType>
-class AddEvaluateConst<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddEvaluateConst<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -118,12 +149,14 @@ class AddEvaluateConst<FunctionType, true, false>
    *
    * @param coordinates Coordinates to evaluate the function at.
    */
-  double Evaluate(const arma::mat& coordinates) const
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const
   {
-    arma::mat gradient; // This will be ignored.
+    GradType gradient; // This will be ignored.
     return static_cast<
-        const Function<FunctionType>*>(this)->EvaluateWithGradient(coordinates,
-        gradient);
+        const Function<FunctionType,
+                       MatType,
+                       GradType>*>(this)->EvaluateWithGradient(coordinates,
+                                                               gradient);
   }
 };
 
@@ -133,28 +166,43 @@ class AddEvaluateConst<FunctionType, true, false>
  * otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientStaticForm>::value,
+                 traits::TypedForms<MatType,
+                                    GradType>::template
+                 EvaluateWithGradientStaticForm
+             >::value,
          bool HasEvaluate =
              traits::HasEvaluate<FunctionType,
-                 traits::EvaluateStaticForm>::value>
+                 traits::TypedForms<MatType, GradType>::template
+                 EvaluateStaticForm
+             >::value>
 class AddEvaluateStatic
 {
  public:
   // Provide a dummy overload so the name 'Evaluate' exists for this object.
-  static double Evaluate(traits::UnconstructableType&);
+  static typename MatType::elem_type Evaluate(traits::UnconstructableType&);
 };
 
 /**
  * Reflect the existing Evaluate().
  */
-template<typename FunctionType, bool HasEvaluateWithGradient>
-class AddEvaluateStatic<FunctionType, HasEvaluateWithGradient, true>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasEvaluateWithGradient>
+class AddEvaluateStatic<FunctionType,
+                        MatType,
+                        GradType,
+                        HasEvaluateWithGradient,
+                        true>
 {
  public:
   // Reflect the existing Evaluate().
-  static double Evaluate(const arma::mat& coordinates)
+  static typename MatType::elem_type Evaluate(
+      const MatType& coordinates)
   {
     return FunctionType::Evaluate(coordinates);
   }
@@ -164,8 +212,8 @@ class AddEvaluateStatic<FunctionType, HasEvaluateWithGradient, true>
  * If we have EvaluateWithGradient() but no existing Evaluate(), add an
  * Evaluate() without a using directive to make the base Evaluate() accessible.
  */
-template<typename FunctionType>
-class AddEvaluateStatic<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddEvaluateStatic<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -173,9 +221,9 @@ class AddEvaluateStatic<FunctionType, true, false>
    *
    * @param coordinates Coordinates to evaluate the function at.
    */
-  static double Evaluate(const arma::mat& coordinates)
+  static typename MatType::elem_type Evaluate(const MatType& coordinates)
   {
-    arma::mat gradient; // This will be ignored.
+    GradType gradient; // This will be ignored.
     return FunctionType::EvaluateWithGradient(coordinates, gradient);
   }
 };

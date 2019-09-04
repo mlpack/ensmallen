@@ -29,31 +29,43 @@ class VanillaUpdate
 {
  public:
   /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.  The vanilla update doesn't initialize
-   * anything.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization.
    */
-  void Initialize(const size_t /* rows */, const size_t /* cols */)
-  { /* Do nothing. */ }
-
- /**
-  * Update step for SGD.  The function parameters are updated in the negative
-  * direction of the gradient.
-  *
-  * @param iterate Parameters that minimize the function.
-  * @param stepSize Step size to be used for the given iteration.
-  * @param gradient The gradient matrix.
-  */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  template<typename MatType, typename GradType>
+  class Policy
   {
-    // Perform the vanilla SGD update.
-    iterate -= stepSize * gradient;
-  }
+   public:
+    /**
+     * This is called by the optimizer method before the start of the iteration
+     * update process.  The vanilla update doesn't initialize anything.
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(const VanillaUpdate& /* parent */,
+           const size_t /* rows */,
+           const size_t /* cols */)
+    { /* Do nothing. */ }
+
+   /**
+    * Update step for SGD.  The function parameters are updated in the negative
+    * direction of the gradient.
+    *
+    * @param iterate Parameters that minimize the function.
+    * @param stepSize Step size to be used for the given iteration.
+    * @param gradient The gradient matrix.
+    */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      // Perform the vanilla SGD update.
+      iterate -= stepSize * gradient;
+    }
+  };
 };
 
 } // namespace ens

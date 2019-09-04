@@ -72,12 +72,37 @@ class ParallelSGD
    * returned.
    *
    * @tparam SparseFunctionType Type of function to be optimized.
+   * @tparam MatType Type of the objective function.
+   * @tparam GradType Type of gradient (it is strongly suggested that this be a
+   *     sparse matrix of some sort!).
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to be optimized(minimized).
    * @param iterate Starting point(will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value at the final point.
    */
-  template <typename SparseFunctionType>
-  double Optimize(SparseFunctionType& function, arma::mat& iterate);
+  template <typename SparseFunctionType,
+            typename MatType,
+            typename GradType,
+            typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(SparseFunctionType& function,
+           MatType& iterate,
+           CallbackTypes&&... callbacks);
+
+  //! Forward arma::SpMat<typename MatType::elem_type> as GradType.
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<DecomposableFunctionType, MatType,
+        arma::SpMat<typename MatType::elem_type>, CallbackTypes...>(
+        function, iterate, std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the maximum number of iterations (0 indicates no limits).
   size_t MaxIterations() const { return maxIterations; }

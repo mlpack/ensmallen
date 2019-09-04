@@ -114,13 +114,36 @@ class FrankWolfe
    *   void Gradient(const arma::mat& coordinates,
    *                 arma::mat& gradient);
    *
+   * @tparam FunctionType Type of function to be optimized.
+   * @tparam MatType Type of objective matrix.
+   * @tparam GradType Type of gradient matrix (default is MatType).
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to be optimized.
    * @param iterate Input with starting point, and will be modified to save
    *                the output optimial solution coordinates.
+   * @param callbacks Callback functions.
    * @return Objective value at the final solution.
    */
-  template<typename FunctionType>
-  double Optimize(FunctionType& function, arma::mat& iterate);
+  template<typename FunctionType, typename MatType, typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(FunctionType& function,
+           MatType& iterate,
+           CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(FunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<FunctionType, MatType, MatType,
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the linear constrained solver.
   const LinearConstrSolverType& LinearConstrSolver()

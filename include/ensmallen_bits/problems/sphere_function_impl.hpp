@@ -21,7 +21,6 @@ namespace test {
 inline SphereFunction::SphereFunction(const size_t n) :
     n(n),
     visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
-
 {
   initialPoint.set_size(n, 1);
 
@@ -40,11 +39,13 @@ inline void SphereFunction::Shuffle()
       arma::linspace<arma::Row<size_t> >(0, n - 1, n));
 }
 
-inline double SphereFunction::Evaluate(const arma::mat& coordinates,
-                                       const size_t begin,
-                                       const size_t batchSize) const
+template<typename MatType>
+typename MatType::elem_type SphereFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t begin,
+    const size_t batchSize) const
 {
-  double objective = 0.0;
+  typename MatType::elem_type objective = 0.0;
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
@@ -54,15 +55,18 @@ inline double SphereFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-inline double SphereFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type SphereFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void SphereFunction::Gradient(const arma::mat& coordinates,
-                                     const size_t begin,
-                                     arma::mat& gradient,
-                                     const size_t batchSize) const
+template<typename MatType, typename GradType>
+void SphereFunction::Gradient(const MatType& coordinates,
+                              const size_t begin,
+                              GradType& gradient,
+                              const size_t batchSize) const
 {
   gradient.zeros(n, 1);
 
@@ -73,8 +77,9 @@ inline void SphereFunction::Gradient(const arma::mat& coordinates,
   }
 }
 
-inline void SphereFunction::Gradient(const arma::mat& coordinates,
-                                     arma::mat& gradient)
+template<typename MatType, typename GradType>
+void SphereFunction::Gradient(const MatType& coordinates,
+                              GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

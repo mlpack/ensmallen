@@ -17,21 +17,27 @@
 
 namespace ens {
 
-template <typename SDPType>
+template<typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
                       const size_t numDenseConstraints,
-                      const arma::mat& initialPoint,
+                      const arma::Mat<typename SDPType::ElemType>& initialPoint,
                       const size_t maxIterations) :
     function(numSparseConstraints, numDenseConstraints, initialPoint),
     maxIterations(maxIterations)
 { }
 
-template <typename SDPType>
-double LRSDP<SDPType>::Optimize(arma::mat& coordinates)
+template<typename SDPType>
+template<typename MatType, typename... CallbackTypes>
+typename MatType::elem_type LRSDP<SDPType>::Optimize(
+    MatType& coordinates, CallbackTypes&&... callbacks)
 {
+  function.RRTAny().Clean();
+  function.RRTAny().template Set<MatType>(
+      new MatType(coordinates * coordinates.t()));
+
   augLag.Sigma() = 10;
   augLag.MaxIterations() = maxIterations;
-  augLag.Optimize(function, coordinates);
+  augLag.Optimize(function, coordinates, callbacks...);
 
   return function.Evaluate(coordinates);
 }

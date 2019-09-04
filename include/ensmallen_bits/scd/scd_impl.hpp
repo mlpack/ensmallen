@@ -35,34 +35,63 @@ SCD<DescentPolicyType>::SCD(
 
 //! Optimize the function (minimize).
 template <typename DescentPolicyType>
-template <typename ResolvableFunctionType>
-double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
-                                        arma::mat& iterate)
+template <typename ResolvableFunctionType,
+          typename MatType,
+          typename GradType,
+          typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SCD<DescentPolicyType>::Optimize(
+    ResolvableFunctionType& function,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
   // Make sure we have the methods that we need.
-  traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType>();
+  traits::CheckResolvableFunctionTypeAPI<ResolvableFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
 
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
-  arma::sp_mat gradient;
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+  BaseGradType gradient;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Start iterating.
-  for (size_t i = 1; i != maxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // Get the coordinate to descend on.
-    size_t featureIdx = descentPolicy.DescentFeature(i, iterate, function);
+    size_t featureIdx = descentPolicy.template DescentFeature<
+        ResolvableFunctionType, BaseMatType, BaseGradType>(i, iterate,
+        function);
 
     // Get the partial gradient with respect to this feature.
     function.PartialGradient(iterate, featureIdx, gradient);
 
+    terminate |= Callback::Gradient(*this, function, iterate, overallObjective,
+        gradient, callbacks...);
+
     // Update the decision variable with the partial gradient.
     iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);
+    terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
 
     // Check for convergence.
     if (i % updateInterval == 0)
     {
       overallObjective = function.Evaluate(iterate);
+      terminate |= Callback::Evaluate(*this, function, iterate,
+          overallObjective, callbacks...);
 
       // Output current objective function.
       Info << "SCD: iteration " << i << ", objective " << overallObjective
@@ -72,6 +101,8 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
       {
         Warn << "SCD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
+
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -79,6 +110,8 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
       {
         Info << "SCD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
         return overallObjective;
       }
 
@@ -90,7 +123,11 @@ double SCD<DescentPolicyType>::Optimize(ResolvableFunctionType& function,
       << "terminating optimization." << std::endl;
 
   // Calculate and return final objective.
-  return function.Evaluate(iterate);
+  const ElemType objective = function.Evaluate(iterate);
+  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
+  return objective;
 }
 
 } // namespace ens

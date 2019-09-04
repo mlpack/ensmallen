@@ -95,7 +95,9 @@ inline GockenbachFunction::GockenbachFunction(const arma::mat& initialPoint) :
   // Nothing to do.
 }
 
-inline double GockenbachFunction::Evaluate(const arma::mat& coordinates)
+template<typename MatType>
+inline typename MatType::elem_type GockenbachFunction::Evaluate(
+    const MatType& coordinates)
 {
   // f(x) = (x_1 - 1)^2 + 2 (x_2 + 2)^2 + 3(x_3 + 3)^2
   return ((std::pow(coordinates[0] - 1, 2)) +
@@ -103,8 +105,9 @@ inline double GockenbachFunction::Evaluate(const arma::mat& coordinates)
           (3 * std::pow(coordinates[2] + 3, 2)));
 }
 
-inline void GockenbachFunction::Gradient(const arma::mat& coordinates,
-                                         arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void GockenbachFunction::Gradient(const MatType& coordinates,
+                                         GradType& gradient)
 {
   // f'_x1(x) = 2 (x_1 - 1)
   // f'_x2(x) = 4 (x_2 + 2)
@@ -116,10 +119,12 @@ inline void GockenbachFunction::Gradient(const arma::mat& coordinates,
   gradient[2] = 6 * (coordinates[2] + 3);
 }
 
-inline double GockenbachFunction::EvaluateConstraint(const size_t index,
-    const arma::mat& coordinates)
+template<typename MatType>
+inline typename MatType::elem_type GockenbachFunction::EvaluateConstraint(
+    const size_t index,
+    const MatType& coordinates)
 {
-  double constraint = 0;
+  typename MatType::elem_type constraint = 0;
 
   switch (index)
   {
@@ -139,9 +144,10 @@ inline double GockenbachFunction::EvaluateConstraint(const size_t index,
   return constraint;
 }
 
+template<typename MatType, typename GradType>
 inline void GockenbachFunction::GradientConstraint(const size_t index,
-                                                   const arma::mat& coordinates,
-                                                   arma::mat& gradient)
+                                                   const MatType& coordinates,
+                                                   GradType& gradient)
 {
   gradient.zeros(3, 1);
 

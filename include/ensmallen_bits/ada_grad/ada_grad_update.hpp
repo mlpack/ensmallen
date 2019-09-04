@@ -49,49 +49,67 @@ class AdaGradUpdate
     // Nothing to do.
   }
 
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process. In AdaGrad update policy, squared
-   * gradient matrix is initialized to the zeros matrix with the same size as
-   * gradient matrix (see ens::SGD<>).
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    // Initialize an empty matrix for sum of squares of parameter gradient.
-    squaredGradient = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for SGD. The AdaGrad update adapts the learning rate by
-   * performing larger updates for more sparse parameters and smaller updates
-   * for less sparse parameters .
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    squaredGradient += (gradient % gradient);
-    iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) + epsilon);
-  }
-
   //! Get the value used to initialise the squared gradient parameter.
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the squared gradient parameter.
   double& Epsilon() { return epsilon; }
 
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This constructor is called by the SGD optimizer before the start of the
+     * iteration update process. In AdaGrad update policy, squared gradient
+     * matrix is initialized to the zeros matrix with the same size as gradient
+     * matrix (see ens::SGD<>).
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(AdaGradUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent),
+        squaredGradient(rows, cols)
+    {
+      // Initialize an empty matrix for sum of squares of parameter gradient.
+      squaredGradient.zeros();
+    }
+
+    /**
+     * Update step for SGD. The AdaGrad update adapts the learning rate by
+     * performing larger updates for more sparse parameters and smaller updates
+     * for less sparse parameters.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      squaredGradient += (gradient % gradient);
+      iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) +
+          parent.epsilon);
+    }
+
+   private:
+    // Instantiated parent class.
+    AdaGradUpdate& parent;
+    // The squared gradient matrix.
+    GradType squaredGradient;
+  };
+
  private:
   // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
-
-  // The squared gradient matrix.
-  arma::mat squaredGradient;
 };
 
 } // namespace ens

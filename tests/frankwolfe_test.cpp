@@ -37,13 +37,13 @@ TEST_CASE("FWOMPTest", "[FrankWolfeTest]")
 
   OMP s(linearConstrSolver, updateRule);
 
-  vec coordinates = zeros<vec>(k + 3);
+  mat coordinates = zeros<mat>(k + 3, 1);
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates[0] - 1 == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates[1] - 1 == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-10));
+  REQUIRE(coordinates(0) - 1 == Approx(0.0).margin(1e-10));
+  REQUIRE(coordinates(1) - 1 == Approx(0.0).margin(1e-10));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-10));
   for (int ii = 0; ii < k; ++ii)
   {
     REQUIRE(coordinates[ii + 3] == Approx(0.0).margin(1e-10));
@@ -72,7 +72,7 @@ TEST_CASE("FWRegularizedOMP", "[FrankWolfeTest]")
 
   OMP s(linearConstrSolver, updateRule);
 
-  vec coordinates = zeros<vec>(2 * k);
+  mat coordinates = zeros<mat>(2 * k, 1);
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
@@ -100,7 +100,7 @@ TEST_CASE("FWPruneSupportOMP", "[FrankWolfeTest]")
 
   OMP s(linearConstrSolver, updateRule);
 
-  vec coordinates = zeros<vec>(k + 3);
+  mat coordinates = zeros<mat>(k + 3, 1);
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
@@ -125,7 +125,7 @@ TEST_CASE("FWAtomNormConstraint", "[FrankWolfeTest]")
   FrankWolfe<ConstrLpBallSolver, UpdateFullCorrection>
     s(linearConstrSolver, updateRule);
 
-  vec coordinates = zeros<vec>(k + 3);
+  mat coordinates = zeros<mat>(k + 3, 1);
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));
@@ -138,7 +138,7 @@ TEST_CASE("FWAtomNormConstraint", "[FrankWolfeTest]")
  */
 TEST_CASE("ClassicFW", "[FrankWolfeTest]")
 {
-  TestFuncFW f;
+  TestFuncFW<> f;
   double p = 2;   // Constraint set is unit lp ball.
   ConstrLpBallSolver linearConstrSolver(p);
   UpdateClassic updateRule;
@@ -146,13 +146,37 @@ TEST_CASE("ClassicFW", "[FrankWolfeTest]")
   FrankWolfe<ConstrLpBallSolver, UpdateClassic>
       s(linearConstrSolver, updateRule);
 
-  vec coordinates = randu<vec>(3);
+  mat coordinates = randu<mat>(3, 1);
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[0] - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[1] - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[2] - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
+}
+
+/**
+ * A very simple test of classic Frank-Wolfe algorithm.
+ * The constrained domain used is unit lp ball.
+ * Use arma::fmat.
+ */
+TEST_CASE("ClassicFWFMat", "[FrankWolfeTest]")
+{
+  TestFuncFW<arma::fmat> f;
+  double p = 2;   // Constraint set is unit lp ball.
+  ConstrLpBallSolver linearConstrSolver(p);
+  UpdateClassic updateRule;
+
+  FrankWolfe<ConstrLpBallSolver, UpdateClassic>
+      s(linearConstrSolver, updateRule);
+
+  fmat coordinates = randu<fmat>(3, 1);
+  float result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
 }
 
 /**
@@ -162,7 +186,7 @@ TEST_CASE("ClassicFW", "[FrankWolfeTest]")
  */
 TEST_CASE("FWLineSearch", "[FrankWolfeTest]")
 {
-  TestFuncFW f;
+  TestFuncFW<> f;
   double p = 2;   // Constraint set is unit lp ball.
   ConstrLpBallSolver linearConstrSolver(p);
   UpdateLineSearch updateRule;
@@ -170,11 +194,36 @@ TEST_CASE("FWLineSearch", "[FrankWolfeTest]")
   FrankWolfe<ConstrLpBallSolver, UpdateLineSearch>
       s(linearConstrSolver, updateRule);
 
-  vec coordinates = randu<vec>(3);
+  mat coordinates = randu<mat>(3);
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[0] - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[1] - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates[2] - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
+}
+
+/**
+ * Exactly the same problem with ClassicFW.
+ * The update step performs a line search now.
+ * It converges much faster.
+ * Use arma::fmat.
+ */
+TEST_CASE("FWLineSearchFMat", "[FrankWolfeTest]")
+{
+  TestFuncFW<arma::fmat> f;
+  double p = 2;   // Constraint set is unit lp ball.
+  ConstrLpBallSolver linearConstrSolver(p);
+  UpdateLineSearch updateRule;
+
+  FrankWolfe<ConstrLpBallSolver, UpdateLineSearch>
+      s(linearConstrSolver, updateRule);
+
+  fmat coordinates = randu<fmat>(3);
+  float result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
 }

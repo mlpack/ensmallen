@@ -56,8 +56,10 @@ namespace ens {
  * The whole process then repeats for multiple generation until at least one of
  * the termination criteria is met:
  *
- * 1) The final value of the objective function (Not considered if not provided).
- * 2) The maximum number of generation reached (optional but highly recommended).
+ * 1) The final value of the objective function (Not considered if not
+ *    provided).
+ * 2) The maximum number of generation reached (optional but highly
+ *    recommended).
  * 3) Minimum change in best fitness values between two consecutive generations
  *    should be greater than a threshold value (Not considered if not provided).
  *
@@ -100,13 +102,20 @@ class CNE
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam ArbitraryFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  template<typename ArbitraryFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -140,10 +149,14 @@ class CNE
 
  private:
   //! Reproduce candidates to create the next generation.
-  void Reproduce();
+  template<typename MatType>
+  void Reproduce(std::vector<MatType>& population,
+                 const MatType& fitnessValues,
+                 arma::uvec& index);
 
   //! Modify weights with some noise for the evolution of next generation.
-  void Mutate();
+  template<typename MatType>
+  void Mutate(std::vector<MatType>& population, arma::uvec& index);
 
   /**
    * Crossover parents and create new childs. Two parents create two new childs.
@@ -157,19 +170,12 @@ class CNE
    *                 generation and place a child over there for the
    *                 next generation.
    */
-  void Crossover(const size_t mom,
+  template<typename MatType>
+  void Crossover(std::vector<MatType>& population,
+                 const size_t mom,
                  const size_t dad,
                  const size_t dropout1,
                  const size_t dropout2);
-
-  //! Population matrix. Each column is a candidate.
-  arma::cube population;
-
-  //! Vector of fintness values corresponding to each candidate.
-  arma::vec fitnessValues;
-
-  //! Index of sorted fitness values.
-  arma::uvec index;
 
   //! The number of candidates in the population.
   size_t populationSize;

@@ -22,38 +22,50 @@ class SVRGUpdate
 {
  public:
   /**
-   * The Initialize method is called by SVRG Optimizer method before the start
-   * of the iteration update process. The vanilla update doesn't initialize
-   * anything.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization.
    */
-  void Initialize(const size_t /* rows */, const size_t /* cols */)
-  { /* Do nothing. */ }
-
-  /**
-   * Update step for SVRG. The function parameters are updated in the negative
-   * direction of the gradient.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param fullGradient The computed full gradient.
-   * @param gradient The current gradient matrix at time t.
-   * @param gradient0 The old gradient matrix at time t - 1.
-   * @param batchSize Batch size to be used for the given iteration.
-   * @param stepSize Step size to be used for the given iteration.
-   */
-  void Update(arma::mat& iterate,
-              const arma::mat& fullGradient,
-              const arma::mat& gradient,
-              const arma::mat& gradient0,
-              const size_t batchSize,
-              const double stepSize)
+  template<typename MatType, typename GradType>
+  class Policy
   {
-    // Perform the vanilla SVRG update.
-    iterate -= stepSize * (fullGradient + (gradient - gradient0) /
-        (double) batchSize);
-  }
+   public:
+    /**
+     * This is called by the optimizer method before the start of the iteration
+     * update process.
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(SVRGUpdate& /* parent */,
+           const size_t /* rows */,
+           const size_t /* cols */)
+    { /* Do nothing. */ }
+
+    /**
+     * Update step for SVRG. The function parameters are updated in the negative
+     * direction of the gradient.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param fullGradient The computed full gradient.
+     * @param gradient The current gradient matrix at time t.
+     * @param gradient0 The old gradient matrix at time t - 1.
+     * @param batchSize Batch size to be used for the given iteration.
+     * @param stepSize Step size to be used for the given iteration.
+     */
+    void Update(MatType& iterate,
+                const GradType& fullGradient,
+                const GradType& gradient,
+                const GradType& gradient0,
+                const size_t batchSize,
+                const double stepSize)
+    {
+      // Perform the vanilla SVRG update.
+      iterate -= stepSize * (fullGradient + (gradient - gradient0) /
+          (double) batchSize);
+    }
+  };
 };
 
 } // namespace ens

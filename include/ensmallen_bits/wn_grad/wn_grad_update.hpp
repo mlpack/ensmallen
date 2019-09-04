@@ -42,32 +42,56 @@ class WNGradUpdate
     // Nothing to do here.
   }
 
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t /* rows */, const size_t /* cols */)
-  {
-    // Nothing to do here.
-  }
+  //! Get the learning rate adjustment.
+  double B() const { return b; }
+  //! Modify the learning rate adjustment.
+  double& B() { return b; }
 
   /**
-   * Update step for WNGrad.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  template<typename MatType, typename GradType>
+  class Policy
   {
-    b += std::pow(stepSize, 2.0) / b * std::pow(arma::norm(gradient), 2);
-    iterate -= stepSize * gradient / b;
-  }
+   public:
+    /**
+     * This is called by the optimizer method before the start of the iteration
+     * update process.
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(WNGradUpdate& parent,
+           const size_t /* rows */,
+           const size_t /* cols */) :
+        parent(parent)
+    {
+      /* Nothing to do. */
+    }
+
+    /**
+     * Update step for WNGrad.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      parent.b += std::pow(stepSize, 2.0) / parent.b *
+          std::pow(arma::norm(gradient), 2);
+      iterate -= stepSize * gradient / parent.b;
+    }
+
+   private:
+    //! Reference to the instantiated parent object.
+    WNGradUpdate& parent;
+  };
 
  private:
   //! Learning rate adjustment.

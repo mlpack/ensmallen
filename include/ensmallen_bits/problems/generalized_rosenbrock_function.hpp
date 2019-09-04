@@ -62,7 +62,11 @@ class GeneralizedRosenbrockFunction
   size_t NumFunctions() const { return n - 1; }
 
   //! Get the starting point.
-  const arma::mat& GetInitialPoint() const { return initialPoint;}
+  template<typename MatType = arma::mat>
+  const MatType GetInitialPoint() const
+  {
+    return arma::conv_to<MatType>::from(initialPoint);
+  }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -71,16 +75,18 @@ class GeneralizedRosenbrockFunction
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
-  double Evaluate(const arma::mat& coordinates,
-                  const size_t begin,
-                  const size_t batchSize = 1) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates,
+                                       const size_t begin,
+                                       const size_t batchSize = 1) const;
 
   /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
-  double Evaluate(const arma::mat& coordinates) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
    * Evaluate the gradient of a function for a particular batch-size.
@@ -90,22 +96,11 @@ class GeneralizedRosenbrockFunction
    * @param gradient The function gradient.
    * @param batchSize Number of points to process.
    */
-  void Gradient(const arma::mat& coordinates,
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates,
                 const size_t begin,
-                arma::mat& gradient,
+                GradType& gradient,
                 const size_t batchSize = 1) const;
-
-  /**
-   * Evaluate the gradient of a function for a particular batch-size.
-   *
-   * @param coordinates The function coordinates.
-   * @param begin The first function.
-   * @param gradient The function gradient.
-   */
-  void Gradient(const arma::mat& coordinates,
-                const size_t begin,
-                arma::sp_mat& gradient,
-                const size_t count) const;
 
   /**
    * Evaluate the gradient of a function with the given coordinates.
@@ -113,7 +108,8 @@ class GeneralizedRosenbrockFunction
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const;
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient) const;
 
  private:
   //! Locally-stored Initial point.

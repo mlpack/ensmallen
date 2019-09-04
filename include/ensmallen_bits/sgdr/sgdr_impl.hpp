@@ -47,10 +47,14 @@ SGDR<UpdatePolicyType>::SGDR(
 }
 
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
-double SGDR<UpdatePolicyType>::Optimize(
+template<typename DecomposableFunctionType, typename MatType, typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+SGDR<UpdatePolicyType>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterate,
+    CallbackTypes&&... callbacks)
 {
   // If a user changed the step size he hasn't update the step size of the
   // cyclical decay instantiation, so we have to do it here.
@@ -69,7 +73,7 @@ double SGDR<UpdatePolicyType>::Optimize(
     batchSize = optimizer.BatchSize();
   }
 
-  return optimizer.Optimize(function, iterate);
+  return optimizer.Optimize(function, iterate, callbacks...);
 }
 
 } // namespace ens

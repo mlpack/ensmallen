@@ -43,10 +43,11 @@ class SARAHPlusUpdate
    * @param stepSize Step size to be used for the given iteration.
    * @param vNorm The norm of the full gradient.
    */
-  bool Update(arma::mat& iterate,
-              arma::mat& v,
-              const arma::mat& gradient,
-              const arma::mat& gradient0,
+  template<typename MatType, typename GradType>
+  bool Update(MatType& iterate,
+              GradType& v,
+              const GradType& gradient,
+              const GradType& gradient0,
               const size_t batchSize,
               const double stepSize,
               const double vNorm)

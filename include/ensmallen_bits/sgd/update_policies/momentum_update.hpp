@@ -69,43 +69,63 @@ class MomentumUpdate
   MomentumUpdate(const double momentum = 0.5) : momentum(momentum)
   { /* Do nothing. */ };
 
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.  In the momentum update policy the velocity
-   * matrix is initialized to the zeros matrix with the same size as the
-   * gradient matrix (see ens::SGD<>).
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    // Initialize am empty velocity matrix.
-    velocity = arma::zeros<arma::mat>(rows, cols);
-  }
+  //! Access the momentum.
+  double Momentum() const { return momentum; }
+  //! Modify the momentum.
+  double& Momentum() { return momentum; }
 
   /**
-   * Update step for SGD.  The momentum term makes the convergence faster on the
-   * way as momentum term increases for dimensions pointing in the same and
-   * reduces updates for dimensions whose gradients change directions.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
    */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
+  template<typename MatType, typename GradType>
+  class Policy
   {
-    velocity = momentum * velocity - stepSize * gradient;
-    iterate += velocity;
-  }
+   public:
+    /**
+     * This is called by the optimizer method before the start of the iteration
+     * update process.
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(const MomentumUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent),
+        velocity(arma::zeros<MatType>(rows, cols))
+    {
+      // Nothing to do.
+    }
+
+    /**
+     * Update step for SGD.  The momentum term makes the convergence faster on
+     * the way as momentum term increases for dimensions pointing in the same
+     * and reduces updates for dimensions whose gradients change directions.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      velocity = parent.momentum * velocity - stepSize * gradient;
+      iterate += velocity;
+    }
+
+   private:
+    // The instantiated parent class.
+    const MomentumUpdate& parent;
+    // The velocity matrix.
+    MatType velocity;
+  };
 
  private:
-  // The momentum hyperparamter
+  // The momentum hyperparameter.
   double momentum;
-  // The velocity matrix.
-  arma::mat velocity;
 };
 
 } // namespace ens
