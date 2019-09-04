@@ -22,11 +22,16 @@ namespace ens {
  * FunctionType has EvaluateWithGradient(), or nothing otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientForm>::value,
+                 traits::TypedForms<MatType, GradType>::template
+                     EvaluateWithGradientForm
+             >::value,
          bool HasGradient = traits::HasGradient<FunctionType,
-             traits::GradientForm>::value>
+             traits::TypedForms<MatType, GradType>::template 
+                     GradientForm>::value>
 class AddGradient
 {
  public:
@@ -37,15 +42,25 @@ class AddGradient
 /**
  * Reflect the existing Gradient().
  */
-template<typename FunctionType, bool HasEvaluateWithGradient>
-class AddGradient<FunctionType, HasEvaluateWithGradient, true>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasEvaluateWithGradient>
+class AddGradient<FunctionType,
+                  MatType,
+                  GradType,
+                  HasEvaluateWithGradient,
+                  true>
 {
  public:
   // Reflect the existing Gradient().
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  void Gradient(const MatType& coordinates, GradType& gradient)
   {
-    static_cast<FunctionType*>(static_cast<Function<FunctionType>*>(
-        this))->Gradient(coordinates, gradient);
+    static_cast<FunctionType*>(
+        static_cast<Function<FunctionType,
+                             MatType,
+                             GradType>*>(this))->Gradient(coordinates,
+                                                          gradient);
   }
 };
 
@@ -53,8 +68,8 @@ class AddGradient<FunctionType, HasEvaluateWithGradient, true>
  * If we have EvaluateWithGradient() but no existing Gradient(), add an
  * Gradient() without a using directive to make the base Gradient() accessible.
  */
-template<typename FunctionType>
-class AddGradient<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddGradient<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -63,10 +78,12 @@ class AddGradient<FunctionType, true, false>
    * @param coordinates Coordinates to evaluate the function at.
    * @param gradient Matrix to store the gradient into.
    */
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  void Gradient(const MatType& coordinates, GradType& gradient)
   {
     // The returned objective value will be ignored.
-    (void) static_cast<Function<FunctionType>*>(this)->EvaluateWithGradient(
+    (void) static_cast<Function<FunctionType,
+                                MatType,
+                                GradType>*>(this)->EvaluateWithGradient(
         coordinates, gradient);
   }
 };
@@ -76,11 +93,17 @@ class AddGradient<FunctionType, true, false>
  * given FunctionType has EvaluateWithGradient() const, or nothing otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientConstForm>::value,
+                 traits::TypedForms<MatType,
+                                    GradType>::template
+                     EvaluateWithGradientConstForm
+             >::value,
          bool HasGradient = traits::HasGradient<FunctionType,
-             traits::GradientConstForm>::value>
+             traits::TypedForms<MatType, GradType>::template GradientConstForm
+         >::value>
 class AddGradientConst
 {
  public:
@@ -91,16 +114,25 @@ class AddGradientConst
 /**
  * Reflect the existing Gradient().
  */
-template<typename FunctionType, bool HasEvaluateWithGradient>
-class AddGradientConst<FunctionType, HasEvaluateWithGradient, true>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasEvaluateWithGradient>
+class AddGradientConst<FunctionType,
+                       MatType,
+                       GradType,
+                       HasEvaluateWithGradient,
+                       true>
 {
  public:
   // Reflect the existing Gradient().
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const
+  void Gradient(const MatType& coordinates, GradType& gradient) const
   {
-    static_cast<const FunctionType*>(static_cast<const
-Function<FunctionType>*>(this))->Gradient(coordinates,
-        gradient);
+    static_cast<const FunctionType*>(
+        static_cast<const Function<FunctionType,
+                                   MatType,
+                                   GradType>*>(this))->Gradient(coordinates,
+                                                                gradient);
   }
 };
 
@@ -108,8 +140,8 @@ Function<FunctionType>*>(this))->Gradient(coordinates,
  * If we have EvaluateWithGradient() but no existing Gradient(), add a
  * Gradient() without a using directive to make the base Gradient() accessible.
  */
-template<typename FunctionType>
-class AddGradientConst<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddGradientConst<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -118,12 +150,14 @@ class AddGradientConst<FunctionType, true, false>
    * @param coordinates Coordinates to evaluate the function at.
    * @param gradient Matrix to store the gradient into.
    */
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const
+  void Gradient(const MatType& coordinates, GradType& gradient) const
   {
     // The returned objective value will be ignored.
     (void) static_cast<
-        const Function<FunctionType>*>(this)->EvaluateWithGradient(coordinates,
-        gradient);
+        const Function<FunctionType,
+                       MatType,
+                       GradType>*>(this)->EvaluateWithGradient(coordinates,
+                                                               gradient);
   }
 };
 
@@ -132,11 +166,17 @@ class AddGradientConst<FunctionType, true, false>
  * given FunctionType has static EvaluateWithGradient(), or nothing otherwise.
  */
 template<typename FunctionType,
+         typename MatType,
+         typename GradType,
          bool HasEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
-                 traits::EvaluateWithGradientStaticForm>::value,
+                 traits::TypedForms<MatType,
+                                    GradType>::template
+                     EvaluateWithGradientStaticForm
+             >::value,
          bool HasGradient = traits::HasGradient<FunctionType,
-             traits::GradientStaticForm>::value>
+             traits::TypedForms<MatType, GradType>::template GradientStaticForm
+         >::value>
 class AddGradientStatic
 {
  public:
@@ -147,12 +187,19 @@ class AddGradientStatic
 /**
  * Reflect the existing Gradient().
  */
-template<typename FunctionType, bool HasEvaluateWithGradient>
-class AddGradientStatic<FunctionType, HasEvaluateWithGradient, true>
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         bool HasEvaluateWithGradient>
+class AddGradientStatic<FunctionType,
+                        MatType,
+                        GradType,
+                        HasEvaluateWithGradient,
+                        true>
 {
  public:
   // Reflect the existing Gradient().
-  static void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  static void Gradient(const MatType& coordinates, GradType& gradient)
   {
     FunctionType::Gradient(coordinates, gradient);
   }
@@ -162,8 +209,8 @@ class AddGradientStatic<FunctionType, HasEvaluateWithGradient, true>
  * If we have EvaluateWithGradient() but no existing Gradient(), add a
  * Gradient() without a using directive to make the base Gradient() accessible.
  */
-template<typename FunctionType>
-class AddGradientStatic<FunctionType, true, false>
+template<typename FunctionType, typename MatType, typename GradType>
+class AddGradientStatic<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
@@ -172,7 +219,7 @@ class AddGradientStatic<FunctionType, true, false>
    * @param coordinates Coordinates to evaluate the function at.
    * @param gradient Matrix to store the gradient into.
    */
-  static void Gradient(const arma::mat& coordinates, arma::mat& gradient)
+  static void Gradient(const MatType& coordinates, GradType& gradient)
   {
     // The returned objective value will be ignored.
     (void) FunctionType::EvaluateWithGradient(coordinates, gradient);

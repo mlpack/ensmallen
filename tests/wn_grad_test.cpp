@@ -53,12 +53,12 @@ TEST_CASE("WNGradSphereFunctionTest","[WNGradTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
- * Test the WNGrad optimizer on the Wood function.
+ * Test the WNGrad optimizer on the StyblinskiTangFunction.
  */
 TEST_CASE("WNGradStyblinskiTangFunctionTest","[WNGradTest]")
 {
@@ -68,6 +68,36 @@ TEST_CASE("WNGradStyblinskiTangFunctionTest","[WNGradTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates[1] == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+}
+
+/**
+ * Test the WNGrad optimizer on the StyblinskiTangFunction.  Use arma::fmat.
+ */
+TEST_CASE("WNGradStyblinskiTangFunctionFMatTest", "[WNGradTest]")
+{
+  StyblinskiTangFunction f(2);
+  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
+
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+}
+
+/**
+ * Test the WNGrad optimizer on the StyblinskiTangFunction.  Use arma::sp_mat.
+ */
+TEST_CASE("WNGradStyblinskiTangFunctionSpMatTest", "[WNGradTest]")
+{
+  StyblinskiTangFunction f(2);
+  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
 }

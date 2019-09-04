@@ -17,10 +17,10 @@
 
 namespace ens {
 
-template<typename FunctionType>
-double GridSearch::Optimize(
+template<typename FunctionType, typename MatType>
+typename MatType::elem_type GridSearch::Optimize(
     FunctionType& function,
-    arma::mat& bestParameters,
+    MatType& bestParameters,
     const std::vector<bool>& categoricalDimensions,
     const arma::Row<size_t>& numCategories)
 {
@@ -35,9 +35,12 @@ double GridSearch::Optimize(
     }
   }
 
-  double bestObjective = std::numeric_limits<double>::max();
-  bestParameters = arma::mat(categoricalDimensions.size(), 1);
-  arma::vec currentParameters = arma::vec(categoricalDimensions.size());
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType bestObjective = std::numeric_limits<ElemType>::max();
+  bestParameters.set_size(categoricalDimensions.size(), 1);
+  MatType currentParameters(categoricalDimensions.size(), 1);
 
   /* Initialize best parameters for the case (very unlikely though) when no set
    * of parameters gives an objective value better than
@@ -51,18 +54,23 @@ double GridSearch::Optimize(
   return bestObjective;
 }
 
-template<typename FunctionType>
+template<typename FunctionType, typename MatType>
 void GridSearch::Optimize(
     FunctionType& function,
-    double& bestObjective,
-    arma::mat& bestParameters,
-    arma::vec& currentParameters,
+    typename MatType::elem_type& bestObjective,
+    MatType& bestParameters,
+    MatType& currentParameters,
     const std::vector<bool>& categoricalDimensions,
     const arma::Row<size_t>& numCategories,
     size_t i)
 {
-  // Make sure we have the methods that we need.
-  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  // Make sure we have the methods that we need.  No restrictions on the matrix
+  // type are needed.
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, BaseMatType>();
 
   if (i < categoricalDimensions.size())
   {
@@ -75,7 +83,7 @@ void GridSearch::Optimize(
   }
   else
   {
-    double objective = function.Evaluate(currentParameters);
+    ElemType objective = function.Evaluate((BaseMatType&) currentParameters);
     if (objective < bestObjective)
     {
       bestObjective = objective;

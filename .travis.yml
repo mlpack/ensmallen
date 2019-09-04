@@ -8,12 +8,12 @@ env:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++
+  - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
   - if [ $ARMADILLO == "latest" ]; then
       curl https://ftp.fau.de/macports/distfiles/armadillo/`curl https://ftp.fau.de/macports/distfiles/armadillo/ -- | grep '.tar.xz' | sed 's/^.*<a href="\(armadillo-[0-9]*.[0-9]*.[0-9]*.tar.xz\)".*$/\1/' | tail -1` | tar xvJ && cd armadillo*;
     fi
   - if [ $ARMADILLO == "minimum" ]; then
-      curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-6.500.5.tar.gz | tar xvz && cd armadillo*;
+      curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*;
     fi
   - cmake . && make && sudo make install && cd ..
 

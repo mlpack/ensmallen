@@ -25,15 +25,72 @@ TEST_CASE("RosenbrockFunctionTest", "[LBFGSTest]")
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
 
-  arma::vec coords = f.GetInitialPoint();
-  if (!lbfgs.Optimize(f, coords))
-    FAIL("L-BFGS optimization reported failure.");
+  arma::mat coords = f.GetInitialPoint();
+  lbfgs.Optimize(f, coords);
 
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+}
+
+/**
+ * Test the L-BFGS optimizer using an arma::fmat with the Rosenbrock function.
+ */
+TEST_CASE("RosenbrockFunctionFloatTest", "[LBFGSTest]")
+{
+  RosenbrockFunction f;
+  L_BFGS lbfgs;
+  lbfgs.MaxIterations() = 10000;
+
+  arma::fmat coords = f.GetInitialPoint<arma::fvec>();
+  lbfgs.Optimize(f, coords);
+
+  double finalValue = f.Evaluate(coords);
+
+  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+}
+
+/**
+ * Test the L-BFGS optimizer using an arma::mat with the Rosenbrock function and
+ * a sparse gradient.
+ */
+TEST_CASE("RosenbrockFunctionSpGradTest", "[LBFGSTest]")
+{
+  RosenbrockFunction f;
+  L_BFGS lbfgs;
+  lbfgs.MaxIterations() = 10000;
+
+  arma::mat coords = f.GetInitialPoint<arma::vec>();
+  lbfgs.Optimize<RosenbrockFunction, arma::mat, arma::sp_mat>(f, coords);
+
+  double finalValue = f.Evaluate(coords);
+
+  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+}
+
+/**
+ * Test the L-BFGS optimizer using an arma::sp_mat with the Rosenbrock function.
+ */
+TEST_CASE("RosenbrockFunctionSpMatTest", "[LBFGSTest]")
+{
+  RosenbrockFunction f;
+  L_BFGS lbfgs;
+  lbfgs.MaxIterations() = 10000;
+
+  arma::sp_mat coords = f.GetInitialPoint<arma::sp_vec>();
+  lbfgs.Optimize(f, coords);
+
+  double finalValue = f.Evaluate(coords);
+
+  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -46,11 +103,10 @@ TEST_CASE("ColvilleFunctionTest", "[LBFGSTest]")
   lbfgs.MaxIterations() = 10000;
 
   arma::vec coords = f.GetInitialPoint();
-  if (!lbfgs.Optimize(f, coords))
-    FAIL("L-BFGS optimization reported failure.");
+  lbfgs.Optimize(f, coords);
 
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -63,16 +119,15 @@ TEST_CASE("WoodFunctionTest", "[LBFGSTest]")
   lbfgs.MaxIterations() = 10000;
 
   arma::vec coords = f.GetInitialPoint();
-  if (!lbfgs.Optimize(f, coords))
-    FAIL("L-BFGS optimization reported failure.");
+  lbfgs.Optimize(f, coords);
 
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords[0] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[1] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[2] == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords[3] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(coords(3) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -92,15 +147,14 @@ TEST_CASE("GeneralizedRosenbrockFunctionTest", "[LBFGSTest]")
     lbfgs.MaxIterations() = 10000;
 
     arma::vec coords = f.GetInitialPoint();
-    if (!lbfgs.Optimize(f, coords))
-      FAIL("L-BFGS optimization reported failure.");
+    lbfgs.Optimize(f, coords);
 
     double finalValue = f.Evaluate(coords);
 
     // Test the output to make sure it is correct.
     REQUIRE(finalValue == Approx(0.0).margin(1e-5));
     for (int j = 0; j < dim; j++)
-      REQUIRE(coords[j] == Approx(1.0).epsilon(1e-7));
+      REQUIRE(coords(j) == Approx(1.0).epsilon(1e-7));
   }
 }
 
@@ -115,8 +169,7 @@ TEST_CASE("RosenbrockWoodFunctionTest", "[LBFGSTest]")
   lbfgs.MaxIterations() = 10000;
 
   arma::mat coords = f.GetInitialPoint();
-  if (!lbfgs.Optimize(f, coords))
-    FAIL("L-BFGS optimization reported failure.");
+  lbfgs.Optimize(f, coords);
 
   double finalValue = f.Evaluate(coords);
 

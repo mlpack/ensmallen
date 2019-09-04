@@ -46,19 +46,22 @@ AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
 
 // Evaluate the AugLagrangianFunction at the given coordinates.
 template<typename LagrangianFunction>
-double AugLagrangianFunction<LagrangianFunction>::Evaluate(
-    const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type AugLagrangianFunction<LagrangianFunction>::Evaluate(
+    const MatType& coordinates) const
 {
   // The augmented Lagrangian is evaluated as
   //    f(x) + {-lambda_i * c_i(x) + (sigma / 2) c_i(x)^2} for all constraints
 
+  typedef typename MatType::elem_type ElemType;
+
   // First get the function's objective value.
-  double objective = function.Evaluate(coordinates);
+  ElemType objective = function.Evaluate(coordinates);
 
   // Now loop for each constraint.
   for (size_t i = 0; i < function.NumConstraints(); ++i)
   {
-    double constraint = function.EvaluateConstraint(i, coordinates);
+    ElemType constraint = function.EvaluateConstraint(i, coordinates);
 
     objective += (-lambda[i] * constraint) +
         sigma * std::pow(constraint, 2) / 2;
@@ -69,22 +72,23 @@ double AugLagrangianFunction<LagrangianFunction>::Evaluate(
 
 // Evaluate the gradient of the AugLagrangianFunction at the given coordinates.
 template<typename LagrangianFunction>
+template<typename MatType, typename GradType>
 void AugLagrangianFunction<LagrangianFunction>::Gradient(
-    const arma::mat& coordinates,
-    arma::mat& gradient) const
+    const MatType& coordinates,
+    GradType& gradient) const
 {
   // The augmented Lagrangian's gradient is evaluted as
   // f'(x) + {(-lambda_i + sigma * c_i(x)) * c'_i(x)} for all constraints
   gradient.zeros();
   function.Gradient(coordinates, gradient);
 
-  arma::mat constraintGradient; // Temporary for constraint gradients.
+  GradType constraintGradient; // Temporary for constraint gradients.
   for (size_t i = 0; i < function.NumConstraints(); i++)
   {
     function.GradientConstraint(i, coordinates, constraintGradient);
 
     // Now calculate scaling factor and add to existing gradient.
-    arma::mat tmpGradient;
+    GradType tmpGradient;
     tmpGradient = (-lambda[i] + sigma *
         function.EvaluateConstraint(i, coordinates)) * constraintGradient;
     gradient += tmpGradient;
@@ -93,10 +97,11 @@ void AugLagrangianFunction<LagrangianFunction>::Gradient(
 
 // Get the initial point.
 template<typename LagrangianFunction>
-const arma::mat& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
+template<typename MatType>
+const MatType& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
     const
 {
-  return function.GetInitialPoint();
+  return function.template GetInitialPoint<MatType>();
 }
 
 } // namespace ens

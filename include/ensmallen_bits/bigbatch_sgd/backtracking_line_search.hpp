@@ -51,53 +51,74 @@ class BacktrackingLineSearch
       searchParameter(searchParameter)
   { /* Nothing to do here. */ }
 
-  /**
-   * This function is called in each iteration.
-   *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
-   * @param function Function to be optimized (minimized).
-   * @param stepSize Step size to be used for the given iteration.
-   * @param iterate Parameters that minimize the function.
-   * @param gradient The gradient matrix.
-   * @param gradientNorm The gradient norm to be used for the given iteration.
-   * @param offset The batch offset to be used for the given iteration.
-   * @param batchSize Batch size to be used for the given iteration.
-   * @param backtrackingBatchSize Backtracking batch size to be used for the
-   *        given iteration.
-   * @param reset Reset the step size decay parameter.
-   */
-  template<typename DecomposableFunctionType>
-  void Update(DecomposableFunctionType& function,
-              double& stepSize,
-              arma::mat& iterate,
-              const arma::mat& gradient,
-              const double gradientNorm,
-              const double /* sampleVariance */,
-              const size_t offset,
-              const size_t /* batchSize */,
-              const size_t backtrackingBatchSize,
-              const bool reset)
+  //! Get the search parameter.
+  double SearchParameter() const { return searchParameter; }
+  //! Modify the search parameter.
+  double& SearchParameter() { return searchParameter; }
+
+  template<typename MatType>
+  class Policy
   {
-    if (reset)
-      stepSize *= 2;
+   public:
+    // Instantiate the policy with the given parent.
+    Policy(BacktrackingLineSearch& parent) : parent(parent) { }
 
-    double overallObjective = function.Evaluate(iterate, offset,
-        backtrackingBatchSize);
-
-    arma::mat iterateUpdate = iterate - (stepSize * gradient);
-    double overallObjectiveUpdate = function.Evaluate(iterateUpdate,
-        offset, backtrackingBatchSize);
-
-    while (overallObjectiveUpdate >
-        (overallObjective - searchParameter * stepSize * gradientNorm))
+    /**
+     * This function is called in each iteration.
+     *
+     * @tparam DecomposableFunctionType Type of the function to be optimized.
+     * @param function Function to be optimized (minimized).
+     * @param stepSize Step size to be used for the given iteration.
+     * @param iterate Parameters that minimize the function.
+     * @param gradient The gradient matrix.
+     * @param gradientNorm The gradient norm to be used for the given iteration.
+     * @param offset The batch offset to be used for the given iteration.
+     * @param batchSize Batch size to be used for the given iteration.
+     * @param backtrackingBatchSize Backtracking batch size to be used for the
+     *        given iteration.
+     * @param reset Reset the step size decay parameter.
+     */
+    template<typename DecomposableFunctionType,
+             typename GradType>
+    void Update(DecomposableFunctionType& function,
+                double& stepSize,
+                MatType& iterate,
+                GradType& gradient,
+                double& gradientNorm,
+                double& /* sampleVariance */,
+                const size_t offset,
+                const size_t /* batchSize */,
+                const size_t backtrackingBatchSize,
+                const bool reset)
     {
-      stepSize /= 2;
+      if (reset)
+        stepSize *= 2;
 
-      iterateUpdate = iterate - (stepSize * gradient);
-      overallObjectiveUpdate = function.Evaluate(iterateUpdate,
-        offset, backtrackingBatchSize);
+      typedef typename MatType::elem_type ElemType;
+
+      ElemType overallObjective = function.Evaluate(iterate, offset,
+          backtrackingBatchSize);
+
+      MatType iterateUpdate = iterate - (stepSize * gradient);
+      ElemType overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
+          backtrackingBatchSize);
+
+      while (overallObjectiveUpdate >
+          (overallObjective - parent.searchParameter * stepSize *
+           gradientNorm))
+      {
+        stepSize /= 2;
+
+        iterateUpdate = iterate - (stepSize * gradient);
+        overallObjectiveUpdate = function.Evaluate(iterateUpdate,
+          offset, backtrackingBatchSize);
+      }
     }
-  }
+
+   private:
+    //! Reference to instantiated parent object.
+    BacktrackingLineSearch& parent;
+  };
 
  private:
   //! The search parameter for each iteration.

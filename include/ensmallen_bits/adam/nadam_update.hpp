@@ -51,77 +51,15 @@ class NadamUpdate
       beta1(beta1),
       beta2(beta2),
       scheduleDecay(scheduleDecay),
-      iteration(0),
-      cumBeta1(1)
+      iteration(0)
   {
     // Nothing to do.
-  }
-
-  /**
-   * The Initialize() method is called by the optimizer before the start of the
-   * iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for Nadam.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    // Increment the iteration counter variable.
-    ++iteration;
-
-    // And update the iterate.
-    m *= beta1;
-    m += (1 - beta1) * gradient;
-
-    v *= beta2;
-    v += (1 - beta2) * gradient % gradient;
-
-    double beta1T = beta1 * (1 - (0.5 *
-        std::pow(0.96, iteration * scheduleDecay)));
-
-    double beta1T1 = beta1 * (1 - (0.5 *
-        std::pow(0.96, (iteration + 1) * scheduleDecay)));
-
-    cumBeta1 *= beta1T;
-
-    const double biasCorrection1 = 1.0 - cumBeta1;
-
-    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
-
-    const double biasCorrection3 = 1.0 - (cumBeta1 * beta1T1);
-
-    /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated
-     * as arma::sqrt(v) + epsilon
-     */
-    iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
-        + (beta1T1 / biasCorrection3) * m) * sqrt(biasCorrection2))
-        / (arma::sqrt(v) + epsilon);
   }
 
   //! Get the value used to initialise the squared gradient parameter.
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the squared gradient parameter.
   double& Epsilon() { return epsilon; }
-
-  //! Get the value of the cumulative product of decay coefficients
-  double CumBeta1() const { return cumBeta1; }
-  //! Modify the value of the cumulative product of decay coefficients
-  double& CumBeta1() { return cumBeta1; }
 
   //! Get the smoothing parameter.
   double Beta1() const { return beta1; }
@@ -138,6 +76,95 @@ class NadamUpdate
   //! Modify the decay parameter for decay coefficients
   double& ScheduleDecay() { return scheduleDecay; }
 
+  //! Get the current iteration number.
+  size_t Iteration() const { return iteration; }
+  //! Modify the current iteration number.
+  size_t& Iteration() { return iteration; }
+
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This constructor is called by the optimizer before the start of the
+     * iteration update process.
+     *
+     * @param parent Instantiated NadamUpdate parent object.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(NadamUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent),
+        cumBeta1(1)
+    {
+      m.zeros(rows, cols);
+      v.zeros(rows, cols);
+    }
+
+    /**
+     * Update step for Nadam.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      // Increment the iteration counter variable.
+      ++parent.iteration;
+
+      // And update the iterate.
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
+
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * gradient % gradient;
+
+      double beta1T = parent.beta1 * (1 - (0.5 *
+          std::pow(0.96, parent.iteration * parent.scheduleDecay)));
+
+      double beta1T1 = parent.beta1 * (1 - (0.5 *
+          std::pow(0.96, (parent.iteration + 1) * parent.scheduleDecay)));
+
+      cumBeta1 *= beta1T;
+
+      const double biasCorrection1 = 1.0 - cumBeta1;
+
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
+
+      const double biasCorrection3 = 1.0 - (cumBeta1 * beta1T1);
+
+      /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated
+       * as arma::sqrt(v) + epsilon
+       */
+      iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
+          + (beta1T1 / biasCorrection3) * m) * sqrt(biasCorrection2))
+          / (arma::sqrt(v) + parent.epsilon);
+    }
+
+   private:
+    // Instantiated parent object.
+    NadamUpdate& parent;
+
+    // The exponential moving average of gradient values.
+    GradType m;
+
+    // The exponential moving average of squared gradient values.
+    GradType v;
+
+    // The cumulative product of decay coefficients.
+    double cumBeta1;
+  };
+
  private:
   // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
@@ -148,20 +175,11 @@ class NadamUpdate
   // The second moment coefficient.
   double beta2;
 
-  // The exponential moving average of gradient values.
-  arma::mat m;
-
-  // The exponential moving average of squared gradient values.
-  arma::mat v;
-
-  // The decay parameter for decay coefficients
+  // The decay parameter for decay coefficients.
   double scheduleDecay;
 
   // The number of iterations.
-  double iteration;
-
-  // The cumulative product of decay coefficients
-  double cumBeta1;
+  size_t iteration;
 };
 
 } // namespace ens

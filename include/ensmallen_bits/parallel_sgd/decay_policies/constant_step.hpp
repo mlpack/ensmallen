@@ -41,8 +41,9 @@ class ConstantStep
   {
     return step;
   }
+
  private:
-  //! The initial stepsize, which remains unchanged
+  //! The initial stepsize, which remains unchanged.
   double step;
 };
 

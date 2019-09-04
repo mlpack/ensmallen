@@ -56,51 +56,6 @@ class PadamUpdate
     // Nothing to do.
   }
 
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
-    vImproved = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for Padam.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    // Increment the iteration counter variable.
-    ++iteration;
-
-    // And update the iterate.
-    m *= beta1;
-    m += (1 - beta1) * gradient;
-
-    v *= beta2;
-    v += (1 - beta2) * (gradient % gradient);
-
-    const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
-
-    // Element wise maximum of past and present squared gradients.
-    vImproved = arma::max(vImproved, v);
-
-    iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-        m / arma::pow(vImproved + epsilon, partial);
-  }
-
   //! Get the value used to initialise the squared gradient parameter.
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the squared gradient parameter.
@@ -121,6 +76,84 @@ class PadamUpdate
   //! Modify the partial adaptive parameter.
   double& Partial() { return partial; }
 
+  //! Get the current iteration number.
+  size_t Iteration() const { return iteration; }
+  //! Modify the current iteration number.
+  size_t& Iteration() { return iteration; }
+
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This constructor is called by the SGD Optimize() method before the start
+     * of the iteration update process.
+     *
+     * @param parent Instantiated PadamUpdate parent object.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(PadamUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent)
+    {
+      m.zeros(rows, cols);
+      v.zeros(rows, cols);
+      vImproved.zeros(rows, cols);
+    }
+
+    /**
+     * Update step for Padam.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      // Increment the iteration counter variable.
+      ++parent.iteration;
+
+      // And update the iterate.
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
+
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * (gradient % gradient);
+
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+          parent.iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
+
+      // Element wise maximum of past and present squared gradients.
+      vImproved = arma::max(vImproved, v);
+
+      iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
+          m / arma::pow(vImproved + parent.epsilon, parent.partial);
+    }
+
+   private:
+    //! Instantiated parent object.
+    PadamUpdate& parent;
+
+    //! The exponential moving average of gradient values.
+    GradType m;
+
+    //! The exponential moving average of squared gradient values.
+    GradType v;
+
+    //! The optimal sqaured gradient value.
+    GradType vImproved;
+  };
+
  private:
   //! The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
@@ -134,17 +167,8 @@ class PadamUpdate
   //! Partial adaptive parameter.
   double partial;
 
-  //! The exponential moving average of gradient values.
-  arma::mat m;
-
-  //! The exponential moving average of squared gradient values.
-  arma::mat v;
-
-  //! The optimal sqaured gradient value.
-  arma::mat vImproved;
-
   //! The number of iterations.
-  double iteration;
+  size_t iteration;
 };
 
 } // namespace ens

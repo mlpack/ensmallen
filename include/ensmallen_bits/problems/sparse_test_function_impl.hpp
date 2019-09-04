@@ -25,12 +25,13 @@ inline SparseTestFunction::SparseTestFunction()
 }
 
 //! Evaluate a function.
-inline double SparseTestFunction::Evaluate(
-    const arma::mat& coordinates,
+template<typename MatType>
+inline typename MatType::elem_type SparseTestFunction::Evaluate(
+    const MatType& coordinates,
     const size_t i,
     const size_t batchSize) const
 {
-  double result = 0.0;
+  typename MatType::elem_type result = 0.0;
   for (size_t j = i; j < i + batchSize; ++j)
   {
     result += coordinates[j] * coordinates[j] + bi[j] * coordinates[j] +
@@ -41,9 +42,11 @@ inline double SparseTestFunction::Evaluate(
 }
 
 //! Evaluate all the functions.
-inline double SparseTestFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+inline typename MatType::elem_type SparseTestFunction::Evaluate(
+    const MatType& coordinates) const
 {
-  double objective = 0.0;
+  typename MatType::elem_type objective = 0.0;
   for (size_t i = 0; i < NumFunctions(); ++i)
   {
     objective += coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
@@ -54,9 +57,10 @@ inline double SparseTestFunction::Evaluate(const arma::mat& coordinates) const
 }
 
 //! Evaluate the gradient of a function.
-inline void SparseTestFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void SparseTestFunction::Gradient(const MatType& coordinates,
                                          const size_t i,
-                                         arma::sp_mat& gradient,
+                                         GradType& gradient,
                                          const size_t batchSize) const
 {
   gradient.zeros(arma::size(coordinates));
@@ -65,9 +69,10 @@ inline void SparseTestFunction::Gradient(const arma::mat& coordinates,
 }
 
 //! Evaluate the gradient of a feature function.
-inline void SparseTestFunction::PartialGradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void SparseTestFunction::PartialGradient(const MatType& coordinates,
                                                 const size_t j,
-                                                arma::sp_mat& gradient) const
+                                                GradType& gradient) const
 {
   gradient.zeros(arma::size(coordinates));
   gradient[j] = 2 * coordinates[j] + bi[j];

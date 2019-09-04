@@ -30,6 +30,8 @@ class GridSearch
    * possible combinations of values for the parameters specified in
    * datasetInfo.
    *
+   * @tparam FunctionType Type of function to optimize.
+   * @tparam MatType Type of matrix to optimize with.
    * @param function Function to optimize.
    * @param bestParameters Variable for storing results.
    * @param categoricalDimensions Set of dimension types.  If a value is true,
@@ -37,10 +39,10 @@ class GridSearch
    * @param numCategories Number of categories in each categorical dimension.
    * @return Objective value of the final point.
    */
-  template<typename FunctionType>
-  double Optimize(
+  template<typename FunctionType, typename MatType>
+  typename MatType::elem_type Optimize(
       FunctionType& function,
-      arma::mat& bestParameters,
+      MatType& bestParameters,
       const std::vector<bool>& categoricalDimensions,
       const arma::Row<size_t>& numCategories);
 
@@ -52,12 +54,12 @@ class GridSearch
    * (parameters) are specified in the first i rows of the currentParameters
    * argument.
    */
-  template<typename FunctionType>
+  template<typename FunctionType, typename MatType>
   void Optimize(
       FunctionType& function,
-      double& bestObjective,
-      arma::mat& bestParameters,
-      arma::vec& currentParameters,
+      typename MatType::elem_type& bestObjective,
+      MatType& bestParameters,
+      MatType& currentParameters,
       const std::vector<bool>& categoricalDimensions,
       const arma::Row<size_t>& numCategories,
       size_t i);

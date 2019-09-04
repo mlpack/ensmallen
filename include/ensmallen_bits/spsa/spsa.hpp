@@ -62,8 +62,26 @@ class SPSA
        const size_t maxIterations = 100000,
        const double tolerance = 1e-5);
 
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function, arma::mat& iterate);
+  /**
+   * Optimize the given function, starting from the coordinates given in the
+   * 'iterate' matrix.  The final best set of coordinates is stored in the
+   * 'iterate' matrix, and the best objective is returned.
+   *
+   * @tparam ArbitraryFunctionType Type of function to optimize.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam CallbackTypes Types of callback functions.
+   * @param function Function to optimize.
+   * @param iterate Initial coordinates to start from (this matrix will also be
+   *     used to store final coordinates).
+   * @param callbacks Callback functions.
+   * @return Objective value of the final point.
+   */
+  template<typename ArbitraryFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the scaling exponent for the step size.
   double Alpha() const { return alpha; }

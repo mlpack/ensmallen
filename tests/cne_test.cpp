@@ -20,7 +20,7 @@ using namespace ens::test;
 using namespace std;
 
 /**
- * Train and test a logistic regression function using CNE optimizer
+ * Train and test a logistic regression function using CNE optimizer.
  */
 TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
 {
@@ -31,8 +31,34 @@ TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  CNE opt(200, 1000, 0.2, 0.2, 0.2, 1e-5);
+  CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
   arma::mat coordinates = lr.GetInitialPoint();
+  opt.Optimize(lr, coordinates);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+      coordinates);
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+}
+
+/**
+ * Train and test a logistic regression function using CNE optimizer.  Use
+ * arma::fmat.
+ */
+TEST_CASE("CNELogisticRegressionFMatTest", "[CNETest]")
+{
+  arma::fmat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+  LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
+
+  CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
+  arma::fmat coordinates = lr.GetInitialPoint();
   opt.Optimize(lr, coordinates);
 
   // Ensure that the error is close to zero.
@@ -50,13 +76,13 @@ TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
 TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
 {
   CrossInTrayFunction f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
 
-  arma::mat coordinates = arma::mat("3; 3");
+  arma::mat coordinates = arma::mat("0.8; 1.8");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.1));
-  REQUIRE(abs(coordinates[1]) == Approx(1.34941).margin(0.1));
+  REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(0.1));
+  REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(0.1));
 }
 
 /**
@@ -65,13 +91,13 @@ TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
 TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
 {
   AckleyFunction f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
 
   arma::mat coordinates = arma::mat("3; 3");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
 }
 
 /**
@@ -80,13 +106,13 @@ TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
 TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
 {
   BealeFunction f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
 
   arma::mat coordinates = arma::mat("3; 3");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0.5).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(3).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.5).margin(0.1));
 }
 
 /**
@@ -95,13 +121,13 @@ TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
 TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
 {
   GoldsteinPriceFunction f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(450, 1500, 0.3, 0.3, 0.1, -1);
 
-  arma::mat coordinates = arma::mat("1; 0");
+  arma::mat coordinates = arma::mat("0.5; -0.5");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(-1).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(-1).margin(0.1));
 }
 
 /**
@@ -110,13 +136,13 @@ TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
 TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
 {
   LevyFunctionN13 f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(450, 1500, 0.3, 0.3, 0.02, -1);
 
-  arma::mat coordinates = arma::mat("3; 3");
+  arma::mat coordinates = arma::mat("1.5; 0.5");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(1).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(1).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(1).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(1).margin(0.1));
 }
 
 /**
@@ -125,13 +151,13 @@ TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
 TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
 {
   HimmelblauFunction f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(450, 1500, 0.3, 0.3, 0.3, 1e-7);
 
   arma::mat coordinates = arma::mat("2; 1");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3.0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(2.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(3.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(2.0).margin(0.1));
 }
 
 /**
@@ -140,48 +166,44 @@ TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
 TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
 {
   ThreeHumpCamelFunction f;
-  CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
 
-  arma::mat coordinates = arma::mat("2; 2");
+  arma::mat coordinates = arma::mat("1; 1");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
 }
 
 // TODO: The CNE optimizer with the given parameter occasionally fails to find a
 // solution for the Schaffer N4 function, so the function should be tested
 // against another optimizer (PSO).
-// /**
-//  * Test the CNE optimizer on Schaffer function N.4.
-//  */
-// TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
-// {
-//   SchafferFunctionN4 f;
-//   CNE optimizer(1000, 3000, 0.8, 0.7, 0.4, 1e-9);
+/**
+ * Test the CNE optimizer on Schaffer function N.4.
+ */
+TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
+{
+  SchafferFunctionN4 f;
+  CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
 
-//   arma::mat coordinates = arma::mat("0; 10");
-//   optimizer.Optimize(f, coordinates);
+  arma::mat coordinates = arma::mat("0.5; 2");
+  optimizer.Optimize(f, coordinates);
 
-//   REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-//   REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.1));
-// }
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
+}
 
-// TODO: The CNE optimizer with the given parameter occasionally fails to find a
-// solution for the Schaffer N2 function, so the function should be tested
-// against another optimizer (PSO).
-// /**
-//  * Test the CNE optimizer on Schaffer Function N.2.
-//  */
-// TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
-// {
-//   SchafferFunctionN2 f;
-//   CNE optimizer(500, 2000, 0.3, 0.3, 0.3, 1e-12);
+/**
+ * Test the CNE optimizer on Schaffer Function N.2.
+ */
+TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
+{
+  SchafferFunctionN2 f;
+  CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
 
-//   arma::mat coordinates = arma::mat("10; 10");
-//   optimizer.Optimize(f, coordinates);
+  arma::mat coordinates = arma::mat("0.5; -0.5");
+  optimizer.Optimize(f, coordinates);
 
-//   REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-//   REQUIRE(coordinates[1] == Approx(0).margin(0.1));
-// }
-
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
+}

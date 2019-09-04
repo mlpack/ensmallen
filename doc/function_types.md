@@ -32,7 +32,7 @@ Each of these optimizers has an `Optimize()` function that is called as
 `Optimize()` is called, `x` will hold the final result of the optimization
 (that is, the best `x` found that minimizes `f(x)`).
 
-#### Example: Linear Regression
+#### Example: squared function optimization
 
 An example program that implements the objective function f(x) = 2 |x|^2 is
 shown below, using the simulated annealing optimizer.
@@ -950,3 +950,93 @@ int main()
   std::cout << "SDP optimized with objective " << obj << "." << std::endl;
 }
 ```
+
+## Alternate matrix types
+
+All of the examples above (and throughout the rest of the documentation)
+generally assume that the matrix being optimized has type `arma::mat`.  But
+ensmallen's optimizers are capable of optimizing more types than just dense
+Armadillo matrices.  In fact, the full signature of each optimizer's
+`Optimize()` method is this:
+
+```
+template<typename FunctionType, typename MatType>
+typename MatType::elem_type Optimize(FunctionType& function,
+                                     MatType& coordinates);
+```
+
+The return type, `typename MatType::elem_type`, is just the numeric type held by
+the given matrix type.  So, for `arma::mat`, the return type is just `double`.
+In addition, optimizers for differentiable functions have a third template
+parameter, `GradType`, which specifies the type of the gradient.  `GradType` can
+be manually specified in the situation where, e.g., a sparse gradient is
+desired.
+
+It is easy to write a function to optimize, e.g., an `arma::fmat`.  Here is an
+example, adapted from the `SquaredFunction` example from the
+[arbitrary function documentation](#example__squared_function_optimization).
+
+```c++
+#include <ensmallen.hpp>
+
+class SquaredFunction
+{
+ public:
+  // This returns f(x) = 2 |x|^2.
+  float Evaluate(const arma::fmat& x)
+  {
+    return 2 * std::pow(arma::norm(x), 2.0);
+  }
+
+  void Gradient(const arma::fmat& x, arma::fmat& gradient)
+  {
+    gradient = 4 * x;
+  }
+};
+
+int main()
+{
+  // The minimum is at x = [0 0 0].  Our initial point is chosen to be 
+  // [1.0, -1.0, 1.0].
+  arma::fmat x("1.0 -1.0 1.0");
+
+  // Create simulated annealing optimizer with default options.
+  // The ens::SA<> type can be replaced with any suitable ensmallen optimizer
+  // that is able to handle arbitrary functions.
+  ens::L_BFGS<> optimizer;
+  SquaredFunction f; // Create function to be optimized.
+  optimizer.Optimize(f, x); // The optimizer will infer arma::fmat!
+
+  std::cout << "Minimum of squared function found with simulated annealing is "
+      << x;
+}
+```
+
+Note that we have simply changed the `SquaredFunction` to accept `arma::fmat`
+instead of `arma::mat` as parameters to `Evaluate()`, and the return type has
+accordingly been changed to `float` from `double`.  It would even be possible to
+optimize functions with sparse coordinates by having `Evaluate()` take a sparse
+matrix (i.e. `arma::sp_mat`).
+
+If it were desired to represent the gradient as a sparse type, the `Gradient()`
+function would need to be modified to take a sparse matrix (i.e. `arma::sp_mat`
+or similar), and then you could call `optimizer.Optimize<SquaredFunction,
+arma::mat, arma::sp_mat>(f, x);` to perform the optimization while using sparse
+matrix types to represent the gradient.  Using sparse `MatType` or `GradType`
+should *only* be done when it is known that the objective matrix and/or
+gradients will be sparse; otherwise the code may run very slow!
+
+ensmallen will automatically infer `MatType` from the call to `Optimize()`, and
+check that the given `FunctionType` has all of the necessary functions for the
+given `MatType`, throwing a `static_assert` error if not.  If you would like to
+disable these checks, define the macro `ENS_DISABLE_TYPE_CHECKS` before
+including ensmallen:
+
+```
+#define ENS_DISABLE_TYPE_CHECKS
+#include <ensmallen.hpp>
+```
+
+This can be useful for situations where you know that the checks should be
+ignored.  However, be aware that the code may fail to compile and give more
+confusing and difficult error messages!

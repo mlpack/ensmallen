@@ -41,12 +41,32 @@ KatyushaType<Proximal>::KatyushaType(
 
 //! Optimize the function (minimize).
 template<bool Proximal>
-template<typename DecomposableFunctionType>
-double KatyushaType<Proximal>::Optimize(
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+KatyushaType<Proximal>::Optimize(
     DecomposableFunctionType& function,
-    arma::mat& iterate)
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType>();
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+      BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
@@ -76,29 +96,36 @@ double KatyushaType<Proximal>::Optimize(
   normalizer = 1.0 / normalizer;
 
   // To keep track of where we are and how things are going.
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat fullGradient(iterate.n_rows, iterate.n_cols);
-  arma::mat gradient0(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType fullGradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient0(iterate.n_rows, iterate.n_cols);
 
-  arma::mat iterate0 = iterate;
-  arma::mat y = iterate;
-  arma::mat z = iterate;
-  arma::mat w = arma::zeros<arma::mat>(iterate.n_rows, iterate.n_cols);
+  BaseMatType iterate0 = iterate;
+  BaseMatType y = iterate;
+  BaseMatType z = iterate;
+  BaseMatType w(iterate.n_rows, iterate.n_cols);
+  w.zeros();
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
     // Calculate the objective function.
     overallObjective = 0;
     for (size_t f = 0; f < numFunctions; f += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-      overallObjective += function.Evaluate(iterate0, f, effectiveBatchSize);
+      const ElemType objective = function.Evaluate(iterate0, f,
+          effectiveBatchSize);
+      overallObjective += objective;
+
+      Callback::Evaluate(*this, function, iterate0, objective, callbacks...);
     }
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
@@ -106,6 +133,8 @@ double KatyushaType<Proximal>::Optimize(
       Warn << "Katyusha: converged to " << overallObjective
           << "; terminating  with failure.  Try a smaller step size?"
           << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -113,6 +142,8 @@ double KatyushaType<Proximal>::Optimize(
     {
       Info << "Katyusha: minimized within tolerance " << tolerance
           << "; terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -121,6 +152,8 @@ double KatyushaType<Proximal>::Optimize(
     // Compute the full gradient.
     size_t effectiveBatchSize = std::min(batchSize, numFunctions);
     function.Gradient(iterate, 0, fullGradient, effectiveBatchSize);
+    terminate |= Callback::Gradient(*this, function, iterate, fullGradient,
+          callbacks...);
     for (size_t f = effectiveBatchSize; f < numFunctions;
         /* incrementing done manually */)
     {
@@ -129,6 +162,9 @@ double KatyushaType<Proximal>::Optimize(
 
       function.Gradient(iterate0, f, gradient, effectiveBatchSize);
       fullGradient += gradient;
+
+      terminate |= Callback::Gradient(*this, function, iterate0, gradient,
+          callbacks...);
 
       f += effectiveBatchSize;
     }
@@ -155,15 +191,23 @@ double KatyushaType<Proximal>::Optimize(
       effectiveBatchSize = std::min(batchSize, numFunctions - currentFunction);
       iterate = tau1 * z + tau2 * iterate0 + (1 - tau1 - tau2) * y;
 
+      terminate |= Callback::StepTaken(*this, function, iterate,
+            callbacks...);
+
       // Calculate variance reduced gradient.
       function.Gradient(iterate, currentFunction, gradient,
           effectiveBatchSize);
+      terminate |= Callback::Gradient(*this, function, iterate, gradient,
+          callbacks...);
+
       function.Gradient(iterate0, currentFunction, gradient0,
           effectiveBatchSize);
+      terminate |= Callback::Gradient(*this, function, iterate0, gradient0,
+          callbacks...);
 
       // By the minimality definition of z_{k + 1}, we have that:
       // z_{k+1} − z_k + \alpha * \sigma_{k+1} + \alpha g = 0.
-      arma::mat zNew = z - alpha * (fullGradient + (gradient - gradient0) /
+      BaseMatType zNew = z - alpha * (fullGradient + (gradient - gradient0) /
           (double) batchSize);
 
       // Proximal update, choose between Option I and Option II. Shift relative
@@ -206,9 +250,15 @@ double KatyushaType<Proximal>::Optimize(
     for (size_t i = 0; i < numFunctions; i += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-      overallObjective += function.Evaluate(iterate, i, effectiveBatchSize);
+      const ElemType objective = function.Evaluate(iterate, i,
+          effectiveBatchSize);
+      overallObjective += objective;
+
+      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
     }
   }
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
 

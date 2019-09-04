@@ -46,7 +46,26 @@
 #if defined(ENS_USE_OPENMP)
   #define ENS_PRAGMA_OMP_PARALLEL _Pragma("omp parallel")
   #define ENS_PRAGMA_OMP_ATOMIC   _Pragma("omp atomic")
+  #define ENS_PRAGMA_OMP_CRITICAL _Pragma("omp critical")
 #else
   #define ENS_PRAGMA_OMP_PARALLEL
   #define ENS_PRAGMA_OMP_ATOMIC
+  #define ENS_PRAGMA_OMP_CRITICAL
+#endif
+
+
+// Define ens_deprecated for deprecated functionality.
+// This is adapted from Armadillo's implementation.
+#if defined(_MSC_VER)
+  #define ens_deprecated __declspec(deprecated)
+#elif defined(__GNUG__) && (!defined(__clang__))
+  #define ens_deprecated __attribute__((__deprecated__))
+#elif defined(__clang__)
+  #if __has_attribute(__deprecated__)
+    #define ens_deprecated __attribute__((__deprecated__))
+  #else
+    #define ens_deprecated
+  #endif
+#else
+  #define ens_deprecated
 #endif

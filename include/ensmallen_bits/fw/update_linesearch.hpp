@@ -40,7 +40,6 @@ class UpdateLineSearch
       tolerance(tolerance), maxIterations(maxIterations)
   {/* Do nothing */}
 
-
   /**
    * Update rule for FrankWolfe, optimize with line search using secant method.
    *
@@ -64,18 +63,19 @@ class UpdateLineSearch
    * @param newCoords output new solution coords.
    * @param numIter current iteration number, not used here.
    */
-  template<typename FunctionType>
+  template<typename FunctionType, typename MatType, typename GradType>
   void Update(FunctionType& function,
-              const arma::mat& oldCoords,
-              const arma::mat& s,
-              arma::mat& newCoords,
+              const MatType& oldCoords,
+              const MatType& s,
+              MatType& newCoords,
               const size_t /* numIter */)
 
   {
     LineSearch solver(maxIterations, tolerance);
 
     newCoords = s;
-    solver.Optimize(function, oldCoords, newCoords);
+    solver.Optimize<FunctionType, MatType, GradType>(function, oldCoords,
+        newCoords);
   }
 
   //! Get the tolerance for termination.

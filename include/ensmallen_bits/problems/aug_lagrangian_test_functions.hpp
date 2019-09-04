@@ -60,19 +60,31 @@ class GockenbachFunction
 {
  public:
   GockenbachFunction();
-  GockenbachFunction(const arma::mat& initial_point);
+  GockenbachFunction(const arma::mat& initialPoint);
 
-  double Evaluate(const arma::mat& coordinates);
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates);
+
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient);
 
   size_t NumConstraints() const { return 2; }
 
-  double EvaluateConstraint(const size_t index, const arma::mat& coordinates);
-  void GradientConstraint(const size_t index,
-                          const arma::mat& coordinates,
-                          arma::mat& gradient);
+  template<typename MatType>
+  typename MatType::elem_type EvaluateConstraint(
+      const size_t index,
+      const MatType& coordinates);
 
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
+  template<typename MatType, typename GradType>
+  void GradientConstraint(const size_t index,
+                          const MatType& coordinates,
+                          GradType& gradient);
+
+  template<typename MatType>
+  MatType GetInitialPoint() const
+  {
+    return arma::conv_to<MatType>::from(initialPoint);
+  }
 
  private:
   arma::mat initialPoint;

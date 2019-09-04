@@ -5,9 +5,9 @@
  *
  * The default initialization policy used by the PSO optimizer.
  *
- * ensmallen is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
@@ -49,16 +49,24 @@ class DefaultInit
    * @param particleBestPositions Best positions attained by each particle.
    * @param particleBestFitnesses Best fitness values attained by each particle.
    */
-  void Initialize(const arma::mat& iterate,
+  template<typename MatType,
+           typename BoundMatType,
+           typename VecType,
+           typename CubeType>
+  void Initialize(const MatType& iterate,
                   const size_t numParticles,
-                  arma::vec& lowerBound,
-                  arma::vec& upperBound,
-                  arma::cube& particlePositions,
-                  arma::cube& particleVelocities,
-                  arma::mat& particleFitnesses,
-                  arma::cube& particleBestPositions,
-                  arma::mat& particleBestFitnesses)
+                  BoundMatType& lowerBound,
+                  BoundMatType& upperBound,
+                  CubeType& particlePositions,
+                  CubeType& particleVelocities,
+                  VecType& particleFitnesses,
+                  CubeType& particleBestPositions,
+                  VecType& particleBestFitnesses)
   {
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+    typedef typename CubeType::elem_type CubeElemType;
+
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
 
@@ -66,17 +74,17 @@ class DefaultInit
     arma::umat lbEquality = (lowerBound == upperBound);
     if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 1)
     {
-      lowerBound = -arma::ones<arma::vec>(iterate.n_rows);
-      upperBound = arma::ones<arma::vec>(iterate.n_rows);
-    }
+      lowerBound.set_size(iterate.n_rows, iterate.n_cols);
+      lowerBound.fill(-1.0);
 
+      upperBound.set_size(iterate.n_rows, iterate.n_cols);
+      upperBound.fill(1.0);
+    }
     // Check if lowerBound and upperBound are vectors of a single dimension.
     else if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 0)
     {
-      const double lbScalar = lowerBound(0);
-      const double ubScalar = upperBound(0);
-      lowerBound = -lbScalar * arma::ones<arma::vec>(iterate.n_rows);
-      upperBound = ubScalar * arma::ones<arma::vec>(iterate.n_rows);
+      lowerBound = -lowerBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
+      upperBound = upperBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
     }
 
     // Check the dimensions of lowerBound and upperBound.
@@ -84,12 +92,13 @@ class DefaultInit
         "lowerBound are not the same as the dimensions of iterate.");
     assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
         "upperBound are not the same as the dimensions of iterate.");
-    
+
     // Distribute particles in [lowerBound, upperBound].
     for (size_t i = 0; i < numParticles; i++)
     {
-      particlePositions.slice(i) = particlePositions.slice(i) % 
-          (upperBound - lowerBound) + lowerBound;
+      particlePositions.slice(i) = particlePositions.slice(i) %
+          arma::conv_to<arma::Mat<CubeElemType> >::from(upperBound - lowerBound)
+          + arma::conv_to<arma::Mat<CubeElemType> >::from(lowerBound);
     }
 
     // Randomly initialize particle velocities.
@@ -97,13 +106,13 @@ class DefaultInit
 
     // Initialize current fitness values to infinity.
     particleFitnesses.set_size(numParticles);
-    particleFitnesses.fill(std::numeric_limits<double>::max());
+    particleFitnesses.fill(std::numeric_limits<ElemType>::max());
 
     // Copy to personal best values for first iteration.
     particleBestPositions = particlePositions;
     // Initialize personal best fitness values to infinity.
     particleBestFitnesses.set_size(numParticles);
-    particleBestFitnesses.fill(std::numeric_limits<double>::max());
+    particleBestFitnesses.fill(std::numeric_limits<ElemType>::max());
   }
 
 };

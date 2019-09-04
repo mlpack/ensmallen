@@ -57,51 +57,6 @@ class OptimisticAdamUpdate
     // Nothing to do.
   }
 
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
-    g = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for OptimisticAdam.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    // Increment the iteration counter variable.
-    ++iteration;
-
-    // And update the iterate.
-    m *= beta1;
-    m += (1 - beta1) * gradient;
-
-    v *= beta2;
-    v += (1 - beta2) * arma::square(gradient);
-
-    arma::mat mCorrected = m / (1.0 - std::pow(beta1, iteration));
-    arma::mat vCorrected = v / (1.0 - std::pow(beta2, iteration));
-
-    arma::mat update = mCorrected / (arma::sqrt(vCorrected) + epsilon);
-
-    iterate -= (2 * stepSize * update - stepSize * g);
-
-    g = std::move(update);
-  }
-
   //! Get the value used to initialize the squared gradient parameter.
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialize the squared gradient parameter.
@@ -117,6 +72,85 @@ class OptimisticAdamUpdate
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
 
+  //! Get the current iteration number.
+  size_t Iteration() const { return iteration; }
+  //! Modify the current iteration number.
+  size_t& Iteration() { return iteration; }
+
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This constructor is called by the SGD Optimize() method before the start
+     * of the iteration update process.
+     *
+     * @param parent Instantiated OptimisticAdamUpdate parent object.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(OptimisticAdamUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent)
+    {
+      m.zeros(rows, cols);
+      v.zeros(rows, cols);
+      g.zeros(rows, cols);
+    }
+
+    /**
+     * Update step for OptimisticAdam.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      // Increment the iteration counter variable.
+      ++parent.iteration;
+
+      // And update the iterate.
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
+
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * arma::square(gradient);
+
+      GradType mCorrected = m / (1.0 - std::pow(parent.beta1,
+          parent.iteration));
+      GradType vCorrected = v / (1.0 - std::pow(parent.beta2,
+          parent.iteration));
+
+      GradType update = mCorrected /
+          (arma::sqrt(vCorrected) + parent.epsilon);
+
+      iterate -= (2 * stepSize * update - stepSize * g);
+
+      g = std::move(update);
+    }
+
+   private:
+    // Instantiated parent object.
+    OptimisticAdamUpdate& parent;
+
+    // The exponential moving average of gradient values.
+    GradType m;
+
+    // The exponential moving average of squared gradient values.
+    GradType v;
+
+    // The previous update.
+    GradType g;
+  };
+
  private:
   // The epsilon value used to initialize the squared gradient parameter.
   double epsilon;
@@ -127,16 +161,8 @@ class OptimisticAdamUpdate
   // The second moment coefficient.
   double beta2;
 
-  // The exponential moving average of gradient values.
-  arma::mat m;
-
-  // The exponential moving average of squared gradient values.
-  arma::mat v;
-  // The previous update.
-  arma::mat g;
-
   // The number of iterations.
-  double iteration;
+  size_t iteration;
 };
 
 } // namespace ens

@@ -31,11 +31,26 @@ namespace ens {
  *
  * @tparam ObjectiveMatrixType Should be either arma::mat or arma::sp_mat.
  */
-template <typename ObjectiveMatrixType>
+template<typename ObjectiveMatrixType,
+         typename DenseConstraintMatrixType =
+             arma::Mat<typename ObjectiveMatrixType::elem_type>,
+         typename SparseConstraintMatrixType =
+             arma::SpMat<typename ObjectiveMatrixType::elem_type>,
+         typename BVectorType =
+             arma::Col<typename ObjectiveMatrixType::elem_type>>
 class SDP
 {
  public:
-  typedef ObjectiveMatrixType objective_matrix_type;
+  //! Type of objective matrix.
+  typedef ObjectiveMatrixType ObjectiveType;
+  //! Type of element held by the SDP.
+  typedef typename ObjectiveMatrixType::elem_type ElemType;
+  //! Type of dense constraints.
+  typedef DenseConstraintMatrixType DenseConstraintType;
+  //! Type of sparse constraints.
+  typedef SparseConstraintMatrixType SparseConstraintType;
+  //! Type of B values.
+  typedef BVectorType BType;
 
   /**
    * Initialize this SDP to an empty state.  To add constraints, you will have
@@ -84,29 +99,31 @@ class SDP
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   //! constraints).
-  const std::vector<arma::sp_mat>& SparseA() const { return sparseA; }
+  const std::vector<SparseConstraintMatrixType>& SparseA() const
+  { return sparseA; }
 
   //! Modify the vector of sparse A matrices (which correspond to the sparse
   //! constraints).
-  std::vector<arma::sp_mat>& SparseA() { return sparseA; }
+  std::vector<SparseConstraintMatrixType>& SparseA() { return sparseA; }
 
   //! Return the vector of dense A matrices (which correspond to the dense
   //! constraints).
-  const std::vector<arma::mat>& DenseA() const { return denseA; }
+  const std::vector<DenseConstraintMatrixType>& DenseA() const
+  { return denseA; }
 
   //! Modify the vector of dense A matrices (which correspond to the dense
   //! constraints).
-  std::vector<arma::mat>& DenseA() { return denseA; }
+  std::vector<DenseConstraintMatrixType>& DenseA() { return denseA; }
 
   //! Return the vector of sparse B values.
-  const arma::vec& SparseB() const { return sparseB; }
+  const BVectorType& SparseB() const { return sparseB; }
   //! Modify the vector of sparse B values.
-  arma::vec& SparseB() { return sparseB; }
+  BVectorType& SparseB() { return sparseB; }
 
   //! Return the vector of dense B values.
-  const arma::vec& DenseB() const { return denseB; }
+  const BVectorType& DenseB() const { return denseB; }
   //! Modify the vector of dense B values.
-  arma::vec& DenseB() { return denseB; }
+  BVectorType& DenseB() { return denseB; }
 
   /**
    * Check whether or not the constraint matrices are linearly independent.
@@ -115,19 +132,30 @@ class SDP
    */
   bool HasLinearlyIndependentConstraints() const;
 
+  //! Get an initial point for the primal coordinates.
+  template<typename MatType>
+  MatType GetInitialPoint() const;
+
+  //! Get initial points for the primal and dual coordinates.
+  template<typename MatType>
+  void GetInitialPoints(MatType& coordinates,
+                        MatType& ySparse,
+                        MatType& yDense,
+                        MatType& dualCoordinates) const;
+
  private:
   //! Objective function matrix c.
   ObjectiveMatrixType c;
 
   //! A_i for each sparse constraint.
-  std::vector<arma::sp_mat> sparseA;
+  std::vector<SparseConstraintMatrixType> sparseA;
   //! b_i for each sparse constraint.
-  arma::vec sparseB;
+  BVectorType sparseB;
 
   //! A_i for each dense constraint.
-  std::vector<arma::mat> denseA;
+  std::vector<DenseConstraintMatrixType> denseA;
   //! b_i for each dense constraint.
-  arma::vec denseB;
+  BVectorType denseB;
 };
 
 } // namespace ens

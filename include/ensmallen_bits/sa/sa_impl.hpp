@@ -44,38 +44,56 @@ SA<CoolingScheduleType>::SA(
 
 //! Optimize the function (minimize).
 template<typename CoolingScheduleType>
-template<typename FunctionType>
-double SA<CoolingScheduleType>::Optimize(FunctionType& function,
-                                         arma::mat& iterate)
+template<typename FunctionType, typename MatType, typename... CallbackTypes>
+typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
+    FunctionType& function,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
   // Make sure we have the methods that we need.
-  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType>();
+  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, BaseMatType>();
+  RequireFloatingPointType<BaseMatType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   const size_t rows = iterate.n_rows;
   const size_t cols = iterate.n_cols;
 
+  // Controls early termination of the optimization process.
+  bool terminate = false;
+
   size_t frozenCount = 0;
-  double energy = function.Evaluate(iterate);
-  double oldEnergy = energy;
+  ElemType energy = function.Evaluate(iterate);
+  Callback::Evaluate(*this, function, iterate, energy, callbacks...);
+
+  ElemType oldEnergy = energy;
 
   size_t idx = 0;
   size_t sweepCounter = 0;
 
-  arma::mat accept(rows, cols, arma::fill::zeros);
-  arma::mat moveSize(rows, cols);
+  BaseMatType accept(rows, cols, arma::fill::zeros);
+  BaseMatType moveSize(rows, cols);
   moveSize.fill(initMoveCoef);
+
+  terminate |= Callback::BeginOptimization(*this, function, iterate,
+      callbacks...);
 
   // Initial moves to get rid of dependency of initial states.
   for (size_t i = 0; i < initMoves; ++i)
     GenerateMove(function, iterate, accept, moveSize, energy, idx,
-        sweepCounter);
+        sweepCounter, callbacks...);
 
   // Iterating and cooling.
-  for (size_t i = 0; i != maxIterations; ++i)
+  for (size_t i = 0; i != maxIterations && !terminate; ++i)
   {
     oldEnergy = energy;
     GenerateMove(function, iterate, accept, moveSize, energy, idx,
-        sweepCounter);
+        sweepCounter, callbacks...);
+    terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
     temperature = coolingSchedule.NextTemperature(temperature, energy);
 
     // Determine if the optimization has entered (or continues to be in) a
@@ -91,12 +109,16 @@ double SA<CoolingScheduleType>::Optimize(FunctionType& function,
       Info << "SA: minimized within tolerance " << tolerance << " for "
           << maxToleranceSweep << " sweeps after " << i << " iterations; "
           << "terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
       return energy;
     }
   }
 
   Warn << "SA: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
+
+  Callback::EndOptimization(*this, function, iterate, callbacks...);
   return energy;
 }
 
@@ -109,18 +131,21 @@ double SA<CoolingScheduleType>::Optimize(FunctionType& function,
  * moveCtrlSweep, it performs moveControl and resets sweepCounter.
  */
 template<typename CoolingScheduleType>
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename... CallbackTypes>
 void SA<CoolingScheduleType>::GenerateMove(
     FunctionType& function,
-    arma::mat& iterate,
-    arma::mat& accept,
-    arma::mat& moveSize,
-    double& energy,
+    MatType& iterate,
+    MatType& accept,
+    MatType& moveSize,
+    typename MatType::elem_type& energy,
     size_t& idx,
-    size_t& sweepCounter)
+    size_t& sweepCounter,
+    CallbackTypes&... callbacks)
 {
-  const double prevEnergy = energy;
-  const double prevValue = iterate(idx);
+  typedef typename MatType::elem_type ElemType;
+
+  const ElemType prevEnergy = energy;
+  const ElemType prevValue = iterate(idx);
 
   // It is possible to use a non-Laplace distribution here, but it is difficult
   // because the acceptance ratio should be as close to 0.44 as possible, and
@@ -128,11 +153,14 @@ void SA<CoolingScheduleType>::GenerateMove(
 
   // Sample from a Laplace distribution with scale parameter moveSize(idx).
   const double unif = 2.0 * arma::randu() - 1.0;
-  const double move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
+  const ElemType move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
       (-moveSize(idx) * std::log(1 - unif));
 
   iterate(idx) += move;
   energy = function.Evaluate(iterate);
+
+  Callback::Evaluate(*this, function, iterate, energy, callbacks...);
+
   // According to the Metropolis criterion, accept the move with probability
   // min{1, exp(-(E_new - E_old) / T)}.
   const double xi = arma::randu();
@@ -140,7 +168,7 @@ void SA<CoolingScheduleType>::GenerateMove(
   const double criterion = std::exp(-delta / temperature);
   if (delta <= 0. || criterion > xi)
   {
-    accept(idx) += 1.;
+    accept(idx) += ElemType(1.);
   }
   else // Reject the move; restore previous state.
   {
@@ -177,11 +205,12 @@ void SA<CoolingScheduleType>::GenerateMove(
  * Technical Report 8816, Yale University, 1988.
  */
 template<typename CoolingScheduleType>
+template<typename MatType>
 inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
-                                                 arma::mat& accept,
-                                                 arma::mat& moveSize)
+                                                 MatType& accept,
+                                                 MatType& moveSize)
 {
-  arma::mat target;
+  MatType target;
   target.copy_size(accept);
   target.fill(0.44);
   moveSize = arma::log(moveSize);

@@ -23,41 +23,53 @@ inline WoodFunction::WoodFunction() { /* Nothing to do here */ }
 
 inline void WoodFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double WoodFunction::Evaluate(const arma::mat& coordinates,
-                                     const size_t /* begin */,
-                                     const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type WoodFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
-  const double x3 = coordinates(2);
-  const double x4 = coordinates(3);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = /* f1(x) */ 100 * std::pow(x2 - std::pow(x1, 2), 2) +
-                           /* f2(x) */ std::pow(1 - x1, 2) +
-                           /* f3(x) */ 90 * std::pow(x4 - std::pow(x3, 2), 2) +
-                           /* f4(x) */ std::pow(1 - x3, 2) +
-                           /* f5(x) */ 10 * std::pow(x2 + x4 - 2, 2) +
-                           /* f6(x) */ (1.0 / 10.0) * std::pow(x2 - x4, 2);
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+  const ElemType x3 = coordinates(2);
+  const ElemType x4 = coordinates(3);
+
+  const ElemType objective =
+      /* f1(x) */ 100 * std::pow(x2 - std::pow(x1, 2), 2) +
+      /* f2(x) */ std::pow(1 - x1, 2) +
+      /* f3(x) */ 90 * std::pow(x4 - std::pow(x3, 2), 2) +
+      /* f4(x) */ std::pow(1 - x3, 2) +
+      /* f5(x) */ 10 * std::pow(x2 + x4 - 2, 2) +
+      /* f6(x) */ (1.0 / 10.0) * std::pow(x2 - x4, 2);
 
   return objective;
 }
 
-inline double WoodFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type WoodFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void WoodFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void WoodFunction::Gradient(const MatType& coordinates,
                                    const size_t /* begin */,
-                                   arma::mat& gradient,
+                                   GradType& gradient,
                                    const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
-  const double x3 = coordinates(2);
-  const double x4 = coordinates(3);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+  const ElemType x3 = coordinates(2);
+  const ElemType x4 = coordinates(3);
 
   gradient.set_size(4, 1);
   gradient(0) = 400 * (std::pow(x1, 3) - x2 * x1) - 2 * (1 - x1);
@@ -68,8 +80,9 @@ inline void WoodFunction::Gradient(const arma::mat& coordinates,
       (1.0 / 5.0) * (x2 - x4);
 }
 
-inline void WoodFunction::Gradient(const arma::mat& coordinates,
-                                   arma::mat& gradient) const
+template<typename MatType, typename GradType>
+inline void WoodFunction::Gradient(const MatType& coordinates,
+                                   GradType& gradient) const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

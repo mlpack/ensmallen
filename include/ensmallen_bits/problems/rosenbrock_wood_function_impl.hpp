@@ -29,32 +29,35 @@ inline RosenbrockWoodFunction::RosenbrockWoodFunction() : rf(4), wf()
 
 inline void RosenbrockWoodFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates,
-                                               const size_t /* begin */,
-                                               const size_t /* batchSize */)
-    const
+template<typename MatType>
+typename MatType::elem_type RosenbrockWoodFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  const double objective = rf.Evaluate(coordinates.col(0)) +
-      wf.Evaluate(coordinates.col(1));
-
-  return objective;
+  return rf.Evaluate(coordinates.col(0)) + wf.Evaluate(coordinates.col(1));
 }
 
-inline double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates)
-    const
+template<typename MatType>
+typename MatType::elem_type RosenbrockWoodFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void RosenbrockWoodFunction::Gradient(const MatType& coordinates,
                                              const size_t /* begin */,
-                                             arma::mat& gradient,
+                                             GradType& gradient,
                                              const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   gradient.set_size(4, 2);
 
-  arma::vec grf(4);
-  arma::vec gwf(4);
+  arma::Col<ElemType> grf(4);
+  arma::Col<ElemType> gwf(4);
 
   rf.Gradient(coordinates.col(0), grf);
   wf.Gradient(coordinates.col(1), gwf);
@@ -63,8 +66,9 @@ inline void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
   gradient.col(1) = gwf;
 }
 
-inline void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
-                                             arma::mat& gradient) const
+template<typename MatType, typename GradType>
+inline void RosenbrockWoodFunction::Gradient(const MatType& coordinates,
+                                             GradType& gradient) const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

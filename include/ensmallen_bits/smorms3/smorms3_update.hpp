@@ -43,62 +43,82 @@ class SMORMS3Update
   SMORMS3Update(const double epsilon = 1e-16) : epsilon(epsilon)
   { /* Do nothing. */ }
 
-  /**
-   * The Initialize method is called by SGD::Optimize method with UpdatePolicy
-   * SMORMS3Update before the start of the iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    // Initialise the parameters mem, g and g2.
-    mem = arma::ones<arma::mat>(rows, cols);
-    g = arma::zeros<arma::mat>(rows, cols);
-    g2 = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for SMORMS3.
-   *
-   * @param iterate Parameter that minimizes the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    // Update the iterate.
-    arma::mat r = 1 / (mem + 1);
-
-    g = (1 - r) % g;
-    g += r % gradient;
-
-    g2 = (1 - r) % g2;
-    g2 += r % (gradient % gradient);
-
-    arma::mat x = (g % g) / (g2 + epsilon);
-
-    x.transform( [stepSize](double &v) { return std::min(v, stepSize); } );
-
-    iterate -= gradient % x / (arma::sqrt(g2) + epsilon);
-
-    mem %= (1 - x);
-    mem += 1;
-  }
-
   //! Get the value used to initialise the mean squared gradient parameter.
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the mean squared gradient parameter.
   double& Epsilon() { return epsilon; }
 
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This is called by the optimizer method before the start of the iteration
+     * update process.
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(SMORMS3Update& parent, const size_t rows, const size_t cols) :
+        parent(parent)
+    {
+      // Initialise the parameters mem, g and g2.
+      mem.ones(rows, cols);
+      g.zeros(rows, cols);
+      g2.zeros(rows, cols);
+    }
+
+    /**
+     * Update step for SMORMS3.
+     *
+     * @param iterate Parameter that minimizes the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      // Update the iterate.
+      MatType r = 1 / (mem + 1);
+
+      g = (1 - r) % g;
+      g += r % gradient;
+
+      g2 = (1 - r) % g2;
+      g2 += r % (gradient % gradient);
+
+      MatType x = (g % g) / (g2 + parent.epsilon);
+
+      x.transform( [stepSize](typename MatType::elem_type &v)
+          { return std::min(v, (typename MatType::elem_type) stepSize); } );
+
+      iterate -= gradient % x / (arma::sqrt(g2) + parent.epsilon);
+
+      mem %= (1 - x);
+      mem += 1;
+    }
+
+   private:
+    // Instantiated parent object.
+    SMORMS3Update& parent;
+    // Memory parameter.
+    MatType mem;
+    // Gradient estimate parameter.
+    GradType g;
+    // Squared gradient estimate parameter.
+    GradType g2;
+  };
+
  private:
   //! The value used to initialise the mean squared gradient parameter.
   double epsilon;
-
-  // The parameters mem, g and g2.
-  arma::mat mem, g, g2;
 };
 
 } // namespace ens

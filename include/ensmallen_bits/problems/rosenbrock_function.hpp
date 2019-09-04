@@ -56,7 +56,14 @@ class RosenbrockFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("-1.2; 1"); }
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const
+  {
+    MatType m(2, 1);
+    m[0] = -1.2;
+    m[1] = 1.0;
+    return m;
+  }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -65,16 +72,18 @@ class RosenbrockFunction
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
-  double Evaluate(const arma::mat& coordinates,
-                  const size_t begin,
-                  const size_t batchSize) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates,
+                                       const size_t begin,
+                                       const size_t batchSize) const;
 
   /**
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
-  double Evaluate(const arma::mat& coordinates) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
    * Evaluate the gradient of a function for a particular batch-size.
@@ -84,9 +93,10 @@ class RosenbrockFunction
    * @param gradient The function gradient.
    * @param batchSize Number of points to process.
    */
-  void Gradient(const arma::mat& coordinates,
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates,
                 const size_t begin,
-                arma::mat& gradient,
+                GradType& gradient,
                 const size_t batchSize) const;
 
   /**
@@ -95,7 +105,15 @@ class RosenbrockFunction
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const;
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient) const;
+
+  /**
+   * Evaluate the function and gradient at the given coordinates.
+   */
+  template<typename MatType, typename GradType>
+  typename MatType::elem_type EvaluateWithGradient(const MatType& coordinates,
+                                                   GradType& gradient) const;
 };
 
 } // namespace test

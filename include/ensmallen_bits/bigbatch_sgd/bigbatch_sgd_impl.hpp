@@ -40,64 +40,68 @@ BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType>
-double BigBatchSGD<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function, arma::mat& iterate)
+template<typename DecomposableFunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+BigBatchSGD<UpdatePolicyType>::Optimize(
+    DecomposableFunctionType& function,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
-  typedef Function<DecomposableFunctionType> FullFunctionType;
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+      FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType>();
+  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+      BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  typedef typename UpdatePolicyType::template Policy<BaseMatType>
+      InstUpdatePolicyType;
+
+  if (!instUpdatePolicy.Has<InstUpdatePolicyType>())
+  {
+    instUpdatePolicy.Clean();
+    instUpdatePolicy.Set<InstUpdatePolicyType>(
+        new InstUpdatePolicyType(updatePolicy));
+  }
 
   // Find the number of functions to use.
   const size_t numFunctions = f.NumFunctions();
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
-  double overallObjective = 0;
-  double lastObjective = DBL_MAX;
+  size_t epoch = 1;
+  ElemType overallObjective = 0;
+  ElemType lastObjective = DBL_MAX;
   bool reset = false;
-  arma::mat delta0, delta1;
+  BaseGradType delta0, delta1;
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat functionGradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseGradType functionGradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  for (size_t i = 0; i < actualMaxIterations; /* incrementing done manually */)
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t i = 0; i < actualMaxIterations && !terminate;
+      /* incrementing done manually */)
   {
-    // Is this iteration the start of a sequence?
-    if ((currentFunction % numFunctions) == 0 && i > 0)
-    {
-      // Output current objective function.
-      Info << "Big-batch SGD: iteration " << i << ", objective "
-          << overallObjective << "." << std::endl;
-
-      if (std::isnan(overallObjective) || std::isinf(overallObjective))
-      {
-        Warn << "Big-batch SGD: converged to " << overallObjective
-            << "; terminating with failure.  Try a smaller step size?"
-            << std::endl;
-        return overallObjective;
-      }
-
-      if (std::abs(lastObjective - overallObjective) < tolerance)
-      {
-        Info << "Big-batch SGD: minimized within tolerance " << tolerance
-            << "; terminating optimization." << std::endl;
-        return overallObjective;
-      }
-
-      // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
-
-      if (shuffle) // Determine order of visitation.
-        f.Shuffle();
-    }
-
     // Find the effective batch size; we have to take the minimum of three
     // things:
     // - the batch size can't be larger than the user-specified batch size;
@@ -114,10 +118,16 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
     // Compute the stochastic gradient estimation.
     f.Gradient(iterate, currentFunction, gradient, 1);
 
+    terminate |= Callback::Gradient(*this, f, iterate, gradient, callbacks...);
+
     delta1 = gradient;
     for (size_t j = 1; j < effectiveBatchSize; ++j, ++k)
     {
       f.Gradient(iterate, currentFunction + j, functionGradient, 1);
+
+      terminate |= Callback::Gradient(*this, f, iterate, functionGradient,
+          callbacks...);
+
       delta0 = delta1 + (functionGradient - delta1) / k;
 
       // Compute sample variance.
@@ -152,6 +162,9 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
         for (size_t j = 0; j < batchOffset; ++j, ++k)
         {
           f.Gradient(iterate, batchStart + j, functionGradient, 1);
+          terminate |= Callback::Gradient(*this, f, iterate,
+              functionGradient, callbacks...);
+
           delta0 = delta1 + (functionGradient - delta1) / (k + 1);
 
           // Compute sample variance.
@@ -172,17 +185,63 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
       }
     }
 
-    updatePolicy.Update(f, stepSize, iterate, gradient, gB, vB,
-        currentFunction, batchSize, effectiveBatchSize, reset);
+    instUpdatePolicy.As<InstUpdatePolicyType>().Update(f, stepSize, iterate,
+        gradient, gB, vB, currentFunction, batchSize, effectiveBatchSize,
+        reset);
 
     // Update the iterate.
     iterate -= stepSize * gradient;
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
-    overallObjective += f.Evaluate(iterate, currentFunction,
+    const ElemType objective = f.Evaluate(iterate, currentFunction,
         effectiveBatchSize);
+    overallObjective += objective;
+
+    terminate |= Callback::Evaluate(*this, f, iterate, objective,
+        callbacks...);
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
+
+    // Is this iteration the start of a sequence?
+    if ((currentFunction % numFunctions) == 0)
+    {
+      terminate |= Callback::EndEpoch(*this, f, iterate, epoch++,
+          overallObjective / (ElemType) numFunctions, callbacks...);
+
+      // Output current objective function.
+      Info << "Big-batch SGD: iteration " << i << ", objective "
+          << overallObjective << "." << std::endl;
+
+      if (std::isnan(overallObjective) || std::isinf(overallObjective))
+      {
+        Warn << "Big-batch SGD: converged to " << overallObjective
+            << "; terminating with failure.  Try a smaller step size?"
+            << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
+        return overallObjective;
+      }
+
+      if (std::abs(lastObjective - overallObjective) < tolerance ||
+          Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
+              callbacks...))
+      {
+        Info << "Big-batch SGD: minimized within tolerance " << tolerance
+            << "; terminating optimization." << std::endl;
+
+        Callback::EndOptimization(*this, f, iterate, callbacks...);
+        return overallObjective;
+      }
+
+      // Reset the counter variables.
+      lastObjective = overallObjective;
+      overallObjective = 0;
+      currentFunction = 0;
+
+      if (shuffle) // Determine order of visitation.
+        f.Shuffle();
+    }
   }
 
   Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
@@ -195,9 +254,14 @@ double BigBatchSGD<UpdatePolicyType>::Optimize(
     for (size_t i = 0; i < numFunctions; i += batchSize)
     {
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - i);
-      overallObjective += f.Evaluate(iterate, i, effectiveBatchSize);
+      const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
+      overallObjective += objective;
+
+      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
   }
+
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;
 }
 

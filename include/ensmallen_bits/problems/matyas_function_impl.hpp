@@ -22,13 +22,18 @@ inline MatyasFunction::MatyasFunction() { /* Nothing to do here */ }
 
 inline void MatyasFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double MatyasFunction::Evaluate(const arma::mat& coordinates,
-                                       const size_t /* begin */,
-                                       const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type MatyasFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   const double objective = 0.26 * (pow(x1, 2) + std::pow(x2, 2)) -
       0.48 * x1 * x2;
@@ -36,27 +41,34 @@ inline double MatyasFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-inline double MatyasFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type MatyasFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void MatyasFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void MatyasFunction::Gradient(const MatType& coordinates,
                                      const size_t /* begin */,
-                                     arma::mat& gradient,
+                                     GradType& gradient,
                                      const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
   gradient(0) = 0.52 * x1 - 48 * x2;
   gradient(1) = 0.52 * x2 - 0.48 * x1;
 }
 
-inline void MatyasFunction::Gradient(const arma::mat& coordinates,
-                                     arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void MatyasFunction::Gradient(const MatType& coordinates,
+                                     GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

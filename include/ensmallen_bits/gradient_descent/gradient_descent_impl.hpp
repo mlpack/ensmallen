@@ -30,26 +30,49 @@ inline GradientDescent::GradientDescent(
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename FunctionType>
-double GradientDescent::Optimize(
-    FunctionType& function, arma::mat& iterate)
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+GradientDescent::Optimize(FunctionType& function,
+                          MatType& iterateIn,
+                          CallbackTypes&&... callbacks)
 {
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
   // Use the Function<> wrapper type to provide additional functionality.
-  typedef Function<FunctionType> FullFunctionType;
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have the methods that we need.
-  traits::CheckFunctionTypeAPI<FullFunctionType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
   // To keep track of where we are and how things are going.
-  double overallObjective = std::numeric_limits<double>::max();
-  double lastObjective = std::numeric_limits<double>::max();
+  ElemType overallObjective = std::numeric_limits<ElemType>::max();
+  ElemType lastObjective = std::numeric_limits<ElemType>::max();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
 
   // Now iterate!
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  for (size_t i = 1; i != maxIterations; ++i)
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     overallObjective = f.EvaluateWithGradient(iterate, gradient);
+
+    terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        overallObjective, gradient, callbacks...);
 
     // Output current objective function.
     Info << "Gradient Descent: iteration " << i << ", objective "
@@ -60,6 +83,8 @@ double GradientDescent::Optimize(
       Warn << "Gradient Descent: converged to " << overallObjective
           << "; terminating" << " with failure.  Try a smaller step size?"
           << std::endl;
+
+      Callback::EndOptimization(*this, f, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -67,6 +92,8 @@ double GradientDescent::Optimize(
     {
       Info << "Gradient Descent: minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, f, iterate, callbacks...);
       return overallObjective;
     }
 
@@ -75,19 +102,28 @@ double GradientDescent::Optimize(
 
     // And update the iterate.
     iterate -= stepSize * gradient;
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
   Info << "Gradient Descent: maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
+
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;
 }
 
-template<typename FunctionType>
-double GradientDescent::Optimize(
+template<typename FunctionType,
+         typename MatType,
+         typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+GradientDescent::Optimize(
     FunctionType& function,
-    arma::mat& iterate,
+    MatType& iterate,
     const std::vector<bool>& categoricalDimensions,
-    const arma::Row<size_t>& numCategories)
+    const arma::Row<size_t>& numCategories,
+    CallbackTypes&&... callbacks)
 {
   if (categoricalDimensions.size() != iterate.n_rows)
   {
@@ -118,7 +154,7 @@ double GradientDescent::Optimize(
     }
   }
 
-  return Optimize(function, iterate);
+  return Optimize(function, iterate, callbacks...);
 }
 
 } // namespace ens

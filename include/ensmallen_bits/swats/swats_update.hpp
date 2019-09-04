@@ -58,74 +58,6 @@ class SWATSUpdate
     // Nothing to do.
   }
 
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
-
-    sgdV = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for SWATS.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    // Increment the iteration counter variable.
-    ++iteration;
-
-    if (phaseSGD)
-    {
-      // Note we reuse the exponential moving average parameter here instead of
-      // introducing a new parameter (sgdV) as done in the paper.
-      v *= beta1;
-      v += gradient;
-
-      iterate -= (1 - beta1) * sgdRate * v;
-      return;
-    }
-
-    m *= beta1;
-    m += (1 - beta1) * gradient;
-
-    v *= beta2;
-    v += (1 - beta2) * (gradient % gradient);
-
-    const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
-
-    arma::mat delta = stepSize * m / biasCorrection1 /
-        (arma::sqrt(v / biasCorrection2) + epsilon);
-    iterate -= delta;
-
-    const double deltaGradient = arma::dot(delta, gradient);
-    if (deltaGradient != 0)
-    {
-      const double rate = arma::dot(delta, delta) / deltaGradient;
-      sgdLambda = beta2 * sgdLambda + (1 - beta2) * rate;
-      sgdRate = sgdLambda / biasCorrection2;
-
-      if (std::abs(sgdRate - rate) < epsilon && iteration > 1)
-      {
-        phaseSGD = true;
-        v.zeros();
-      }
-    }
-  }
-
   //! Get the value used to initialise the squared gradient parameter.
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the squared gradient parameter.
@@ -141,6 +73,123 @@ class SWATSUpdate
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
 
+  //! Get the current iteration number.
+  size_t Iteration() const { return iteration; }
+  //! Modify the current iteration number.
+  size_t& Iteration() { return iteration; }
+
+  //! Get whether the current phase is SGD.
+  bool PhaseSGD() const { return phaseSGD; }
+  //! Modify whether the current phase is SGD.
+  bool& PhaseSGD() { return phaseSGD; }
+
+  //! Get the SGD scaling parameter.
+  double SGDRate() const { return sgdRate; }
+  //! Modify the SGD scaling parameter.
+  double& SGDRate() { return sgdRate; }
+
+  //! Get the SGD step size.
+  double SGDLambda() const { return sgdLambda; }
+  //! Modify the SGD step size.
+  double& SGDLambda() { return sgdLambda; }
+
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This is called by the optimizer method before the start of the iteration
+     * update process.
+     *
+     * @param parent Instantiated parent class.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(SWATSUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent)
+    {
+      m.zeros(rows, cols);
+      v.zeros(rows, cols);
+
+      sgdV.zeros(rows, cols);
+    }
+
+    /**
+     * Update step for SWATS.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      // Increment the iteration counter variable.
+      ++parent.iteration;
+
+      if (parent.phaseSGD)
+      {
+        // Note we reuse the exponential moving average parameter here instead
+        // of introducing a new parameter (sgdV) as done in the paper.
+        v *= parent.beta1;
+        v += gradient;
+
+        iterate -= (1 - parent.beta1) * parent.sgdRate * v;
+        return;
+      }
+
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
+
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * (gradient % gradient);
+
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+          parent.iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
+
+      GradType delta = stepSize * m / biasCorrection1 /
+          (arma::sqrt(v / biasCorrection2) + parent.epsilon);
+      iterate -= delta;
+
+      const double deltaGradient = arma::dot(delta, gradient);
+      if (deltaGradient != 0)
+      {
+        const double rate = arma::dot(delta, delta) / deltaGradient;
+        parent.sgdLambda = parent.beta2 * parent.sgdLambda +
+            (1 - parent.beta2) * rate;
+        parent.sgdRate = parent.sgdLambda / biasCorrection2;
+
+        if (std::abs(parent.sgdRate - rate) < parent.epsilon &&
+            parent.iteration > 1)
+        {
+          parent.phaseSGD = true;
+          v.zeros();
+        }
+      }
+    }
+
+   private:
+    //! Reference to instantiated parent object.
+    SWATSUpdate& parent;
+
+    //! The exponential moving average of gradient values.
+    GradType m;
+
+    //! The exponential moving average of squared gradient values (Adam).
+    GradType v;
+
+    //! The exponential moving average of squared gradient values (SGD).
+    GradType sgdV;
+  };
+
  private:
   //! The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
@@ -151,20 +200,11 @@ class SWATSUpdate
   //! The second moment coefficient.
   double beta2;
 
-  //! The exponential moving average of gradient values.
-  arma::mat m;
-
-  //! The exponential moving average of squared gradient values (Adam).
-  arma::mat v;
-
   //! The number of iterations.
-  double iteration;
+  size_t iteration;
 
   //! Wether to use the SGD or Adam update rule.
   bool phaseSGD;
-
-  //! The exponential moving average of squared gradient values (SGD).
-  arma::mat sgdV;
 
   //! SGD scaling parameter.
   double sgdRate;

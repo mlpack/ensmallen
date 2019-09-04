@@ -56,7 +56,7 @@ namespace ens {
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
  *
- * @tparam UpdatePolicyType update policy used by SGD during the iterative
+ * @tparam UpdatePolicyType Update policy used by SGD during the iterative
  *     update process. By default vanilla update policy (see ens::VanillaUpdate)
  *     is used.
  * @tparam DecayPolicyType Decay policy used during the iterative update
@@ -107,13 +107,36 @@ class SGD
    * algorithm, and the final objective value is returned.
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam v Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate);
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(DecomposableFunctionType& function,
+           MatType& iterate,
+           CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename DecomposableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<DecomposableFunctionType, MatType, MatType,
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the step size.
   double StepSize() const { return stepSize; }
@@ -157,10 +180,24 @@ class SGD
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
+  //! Get the instantiated update policy type.  Be sure to check its type with
+  //! Has() before using!
+  const Any& InstUpdatePolicy() const { return instUpdatePolicy; }
+  //! Modify the instantiated update policy type.  Be sure to check its type
+  //! with Has() before using!
+  Any& InstUpdatePolicy() { return instUpdatePolicy; }
+
   //! Get the step size decay policy.
   const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
   //! Modify the step size decay policy.
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
+
+  //! Get the instantiated decay policy type.  Be sure to check its type with
+  //! Has() before using!
+  const Any& InstDecayPolicy() const { return instDecayPolicy; }
+  //! Modify the instantiated decay policy type.  Be sure to check its type with
+  //! Has() before using!
+  Any& InstDecayPolicy() { return instDecayPolicy; }
 
  private:
   //! The step size for each example.
@@ -195,6 +232,11 @@ class SGD
   //! Flag indicating whether the update policy
   //! parameters have been initialized.
   bool isInitialized;
+
+  //! The initialized update policy.
+  Any instUpdatePolicy;
+  //! The initialized decay policy.
+  Any instDecayPolicy;
 };
 
 using StandardSGD = SGD<VanillaUpdate>;
