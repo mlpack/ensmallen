@@ -57,7 +57,7 @@ class UpdateSpan
 
     // Reoptimize the solution in the current space.
     arma::vec b = function.Vectorb();
-    atoms.CurrentCoeffs() = solve(function.MatrixA() * atoms.CurrentAtoms(), b);
+    atoms.CurrentCoeffs() = solve(function.MatrixA() * atoms.CurrentAtoms(), b, arma::solve_opts::fast);
 
     // x has coords of only the current atoms, recover the solution
     // to the original size.
