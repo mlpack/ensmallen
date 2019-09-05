@@ -197,8 +197,7 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   if (aDense.n_rows)
     rhs(arma::span(aSparse.n_rows, numConstraints - 1), 0) += aDense * eInvFrdRc;
 
-  // TODO(stephentu): use a more efficient method (e.g. LU decomposition)
-  if (!arma::solve(dy, m, rhs))
+  if (!arma::solve(dy, m, rhs, arma::solve_opts::fast))
   {
     throw std::logic_error("PrimalDualSolver::SolveKKTSystem(): Could not "
         "solve KKT system.");
