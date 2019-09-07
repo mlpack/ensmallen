@@ -1,3 +1,7 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+  * Add release script to rel/ for maintainers.
+
 ### ensmallen 2.10.0: "Fried Chicken"
 ###### 2019-09-07
   * All `Optimize()` functions now take any matrix type; so, e.g., `arma::fmat`
