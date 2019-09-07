@@ -114,7 +114,7 @@ class Atoms
       // add an atom norm constraint, you could use projected gradient method,
       // see the implementaton of ProjectedGradientEnhancement().
       arma::vec newCoeffs =
-          solve(function.MatrixA() * newAtoms, function.Vectorb());
+          solve(function.MatrixA() * newAtoms, function.Vectorb(), arma::solve_opts::fast);
 
       // Evaluate the function again.
       double Fnew = function.Evaluate(newAtoms * newCoeffs);
