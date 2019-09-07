@@ -1,5 +1,17 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.10.0: "Fried Chicken"
+###### 2019-09-07
+  * All `Optimize()` functions now take any matrix type; so, e.g., `arma::fmat`
+    or `arma::sp_mat` can be used for optimization.  See the documentation for
+    more details ([#113](https://github.com/mlpack/ensmallen/pull/113),
+    [#119](https://github.com/mlpack/ensmallen/pull/119)).
+
+  * Introduce callback support.  Callbacks can be appended as the last arguments
+    of an `Optimize()` call, and can perform custom behavior at different points
+    during the optimization.  See the documentation for more details
+    ([#119](https://github.com/mlpack/ensmallen/pull/119)).
+
+  * Slight speedups for `FrankWolfe` optimizer
+    ([#127](https://github.com/mlpack/ensmallen/pull/127)).
 
 ### ensmallen 1.16.2: "Loud Alarm Clock"
 ###### 2019-08-12
