@@ -1,4 +1,4 @@
-Callbacks in mlpack are methods that are called at various states during the
+Callbacks in ensmallen are methods that are called at various states during the
 optimization process, which can be used to implement and control behaviors such
 as:
 
