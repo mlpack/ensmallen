@@ -30,7 +30,7 @@ struct MatTypeTraits<arma::Col<eT>>
 template<typename eT>
 struct MatTypeTraits<arma::Row<eT>>
 {
-  typedef arma::Row<eT> BaseMatType;
+  typedef arma::Mat<eT> BaseMatType;
 };
 
 template<typename eT>
