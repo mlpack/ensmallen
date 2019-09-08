@@ -94,9 +94,10 @@ class LRSDPFunction
 
   //! Get the initial point of the LRSDP.
   template<typename MatType>
-  const MatType& GetInitialPoint() const
+  MatType GetInitialPoint() const
   {
-    return arma::conv_to<MatType>::from(initialPoint);
+    MatType result = arma::conv_to<MatType>::from(initialPoint);
+    return result;
   }
 
   //! Return the SDP object representing the problem.
