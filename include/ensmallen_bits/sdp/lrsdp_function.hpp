@@ -93,7 +93,7 @@ class LRSDPFunction
   size_t NumConstraints() const { return sdp.NumConstraints(); }
 
   //! Get the initial point of the LRSDP.
-  template<typename MatType>
+  template<typename MatType = arma::mat>
   MatType GetInitialPoint() const
   {
     MatType result = arma::conv_to<MatType>::from(initialPoint);
