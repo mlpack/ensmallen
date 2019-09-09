@@ -133,11 +133,11 @@ class SDP
   bool HasLinearlyIndependentConstraints() const;
 
   //! Get an initial point for the primal coordinates.
-  template<typename MatType>
+  template<typename MatType = arma::mat>
   MatType GetInitialPoint() const;
 
   //! Get initial points for the primal and dual coordinates.
-  template<typename MatType>
+  template<typename MatType = arma::mat>
   void GetInitialPoints(MatType& coordinates,
                         MatType& ySparse,
                         MatType& yDense,
