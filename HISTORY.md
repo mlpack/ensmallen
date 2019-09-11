@@ -1,6 +1,10 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
-  * Add release script to rel/ for maintainers.
+### ensmallen 2.10.2: "Fried Chicken"
+###### 2019-09-11
+  * Add release script to rel/ for maintainers
+    ([#128](https://github.com/mlpack/ensmallen/pull/128)).
+
+  * Fix Armadillo version check
+    ([#133](https://github.com/mlpack/ensmallen/pull/133)).
 
 ### ensmallen 2.10.1: "Fried Chicken"
 ###### 2019-09-10
