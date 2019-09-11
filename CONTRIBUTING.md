@@ -43,3 +43,29 @@ uncommenting the code that sets a random seed in `tests/main.cpp` and running
 your test many times.
 
 Information on how to build and run the tests is in the main README.md file.
+
+## Release process
+
+New releases of ensmallen can be performed almost-automatically with the
+`rel/ensmallen-release.sh` script.  Releases can only be performed by
+contributors with push permissions to the repository.  Before making a release,
+make sure that all the tests are passing and the release number satisfies the
+versioning guidelines in `UPDATING.md`.
+
+The script should be run, e.g.,
+
+```
+$ rel/ensmallen-release.sh 2 10 0 "Fried Chicken"
+```
+
+If the version is a new minor version (or major version), choose a name for the
+release.  Previous release names have generally been entirely arbitrary.
+
+Then, after running the script, a release needs to be done on the Github
+website:
+
+https://github.com/mlpack/ensmallen/releases/new
+
+The format for the release notes is just the release date at the top (e.g.,
+`Released Sept. 7th, 2019`), followed by the Markdown-formatted HISTORY.md
+updates for that release.

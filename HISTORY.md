@@ -1,3 +1,7 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+  * Add release script to rel/ for maintainers.
+
 ### ensmallen 2.10.1: "Fried Chicken"
 ###### 2019-09-10
   * Documentation fix for callbacks
