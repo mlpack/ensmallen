@@ -50,7 +50,8 @@ New releases of ensmallen can be performed almost-automatically with the
 `rel/ensmallen-release.sh` script.  Releases can only be performed by
 contributors with push permissions to the repository.  Before making a release,
 make sure that all the tests are passing and the release number satisfies the
-versioning guidelines in `UPDATING.md`.
+versioning guidelines in `UPDATING.md` and make sure that `HISTORY.md` is
+up-to-date with the new release's release notes (and date).
 
 The script should be run, e.g.,
 
