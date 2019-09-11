@@ -1,3 +1,11 @@
+### ensmallen 2.10.1: "Fried Chicken"
+###### 2019-09-10
+  * Documentation fix for callbacks
+    ([#129](https://github.com/mlpack/ensmallen/pull/129).
+
+  * Compatibility fixes for ensmallen 1.x
+    ([#131](https://github.com/mlpack/ensmallen/pull/131)).
+
 ### ensmallen 2.10.0: "Fried Chicken"
 ###### 2019-09-07
   * All `Optimize()` functions now take any matrix type; so, e.g., `arma::fmat`
