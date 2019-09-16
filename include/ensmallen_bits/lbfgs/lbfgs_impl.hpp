@@ -409,6 +409,12 @@ L_BFGS::Optimize(FunctionType& function,
 
     // Choose the scaling factor.
     double scalingFactor = ChooseScalingFactor(itNum, gradient, s, y);
+    if (scalingFactor == 0.0)
+    {
+      Info << "L-BFGS scaling factor computed as 0 (terminating successfully)."
+          << std::endl;
+      break;
+    }
 
     // Build an approximation to the Hessian and choose the search
     // direction for the current iteration.
