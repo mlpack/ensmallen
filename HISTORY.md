@@ -1,3 +1,8 @@
+### ensmallen ?.??.?
+###### ????-??-??
+  * Add additional L-BFGS convergence check
+    ([#136](https://github.com/mlpack/ensmallen/pull/136)).
+
 ### ensmallen 2.10.2: "Fried Chicken"
 ###### 2019-09-11
   * Add release script to rel/ for maintainers
