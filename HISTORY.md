@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?
 ###### ????-??-??
+  * Add additional L-BFGS convergence check
+    ([#136](https://github.com/mlpack/ensmallen/pull/136)).
+
   * Add AdaBound and AMSBound
     ([#137](https://github.com/mlpack/ensmallen/pull/137)).
 
