@@ -160,9 +160,6 @@ class Lookahead
   //! The step size for each example.
   double stepSize;
 
-  //! The batch size for processing.
-  size_t batchSize;
-
   //! Synchronization period.
   size_t k;
 

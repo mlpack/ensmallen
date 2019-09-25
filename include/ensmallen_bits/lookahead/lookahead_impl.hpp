@@ -28,9 +28,9 @@ inline Lookahead<BaseOptimizerType, DecayPolicyType>::Lookahead(
     const double tolerance,
     const DecayPolicyType& decayPolicy,
     const bool exactObjective) :
+    baseOptimizer(baseOptimizer),
     stepSize(stepSize),
     k(k),
-    baseOptimizer(baseOptimizer),
     maxIterations(maxIterations),
     tolerance(tolerance),
     decayPolicy(decayPolicy),
