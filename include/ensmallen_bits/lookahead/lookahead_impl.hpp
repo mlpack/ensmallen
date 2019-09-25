@@ -164,6 +164,12 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   // Calculate final objective if exactObjective is set to true.
   if (exactObjective)
   {
+    size_t batchSize = 1;
+    // Check if the optimizer implements the SatchSize() method and use the
+    // parameter for the objective calculation.
+    if (callbacks::traits::HasBatchSizeSignature<BaseOptimizerType>::value)
+      batchSize = baseOptimizer.BatchSize();
+
     overallObjective = 0;
     for (size_t i = 0; i < numFunctions; i += batchSize)
     {
