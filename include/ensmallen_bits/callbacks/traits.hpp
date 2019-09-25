@@ -43,6 +43,8 @@ ENS_HAS_EXACT_METHOD_FORM(BatchSize, HasBatchSize)
 ENS_HAS_EXACT_METHOD_FORM(MaxIterations, HasMaxIterations)
 //! Detect an NumFunctions() method.
 ENS_HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions)
+//! Detect an NumFunctions() method.
+ENS_HAS_EXACT_METHOD_FORM(ResetPolicy, HasResetPolicy)
 
 template<typename OptimizerType,
          typename FunctionType,
@@ -407,6 +409,17 @@ struct HasNumFunctionsSignature
   const static bool value =
       HasNumFunctions<OptimizerType, NumFunctionsForm>::value ||
       HasNumFunctions<OptimizerType, NumFunctionsConstForm>::value;
+};
+
+//! Utility struct, check if bool ResetPolicy() exists.
+template<typename OptimizerType>
+struct HasResetPolicySignature
+{
+  template<typename C>
+  using HasResetPolicyForm = bool&(C::*)(void);
+
+  const static bool value =
+      HasResetPolicy<OptimizerType, HasResetPolicyForm>::value;
 };
 
 } // namespace traits
