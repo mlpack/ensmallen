@@ -373,15 +373,20 @@ struct HasStepTakenSignature
          FunctionType, MatType>::template StepTakenVoidForm>::value;
 };
 
-//! Utility struct, check if size_t BatchSize() const exists.
+//! Utility struct, check if size_t BatchSize() const or size_t BatchSize()
+//! exists.
 template<typename OptimizerType>
 struct HasBatchSizeSignature
 {
   template<typename C>
-  using BatchSizeForm = size_t(C::*)(void) const;
+  using BatchSizeConstForm = size_t(C::*)(void) const;
+
+  template<typename C>
+  using BatchSizeForm = size_t(C::*)(void);
 
   const static bool value =
-      HasBatchSize<OptimizerType, BatchSizeForm>::value;
+      HasBatchSize<OptimizerType, BatchSizeForm>::value ||
+      HasBatchSize<OptimizerType, BatchSizeConstForm>::value;
 };
 
 //! Utility struct, check if size_t MaxIterations() const exists.
