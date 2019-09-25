@@ -88,9 +88,9 @@ class Eve
       const bool exactObjective = false);
 
   /**
-   * Optimize the given function using stochastic gradient descent.  The given
-   * starting point will be modified to store the finishing point of the
-   * algorithm, and the final objective value is returned.
+   * Optimize the given function using Eve. The given starting point will be
+   * modified to store the finishing point of the algorithm, and the final
+   * objective value is returned.
    *
    * @tparam DecomposableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of the parameters matrix.
