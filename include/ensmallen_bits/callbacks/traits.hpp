@@ -43,7 +43,7 @@ ENS_HAS_EXACT_METHOD_FORM(BatchSize, HasBatchSize)
 ENS_HAS_EXACT_METHOD_FORM(MaxIterations, HasMaxIterations)
 //! Detect an NumFunctions() method.
 ENS_HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions)
-//! Detect an NumFunctions() method.
+//! Detect an ResetPolicy() method.
 ENS_HAS_EXACT_METHOD_FORM(ResetPolicy, HasResetPolicy)
 
 template<typename OptimizerType,
