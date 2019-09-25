@@ -1,3 +1,8 @@
+### ensmallen ?.??.?
+###### ????-??-??
+  * Fix ParallelSGD runtime bug.
+    ([#135](https://github.com/mlpack/ensmallen/pull/135)).
+
 ### ensmallen 2.10.2: "Fried Chicken"
 ###### 2019-09-11
   * Add release script to rel/ for maintainers
