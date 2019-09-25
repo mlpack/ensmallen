@@ -986,6 +986,62 @@ optimizer.Optimize(f, coordinates);
  * [Limited-memory BFGS in Wikipedia](https://en.wikipedia.org/wiki/Limited-memory_BFGS)
  * [Differentiable functions](#differentiable-functions)
 
+## Lookahead
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Lookahead is a stochastic gradient based optimization method which chooses a
+search direction by looking ahead at the sequence of "fast weights" generated
+by another optimizer.
+
+#### Constructors
+
+ * `Lookahead(`_`baseOptimizer`_`)`
+ * `Lookahead(`_`baseOptimizer, stepSize`_`)`
+ * `Lookahead(`_`baseOptimizer, stepSize, k`_`)`
+ * `Lookahead(`_`baseOptimizer, stepSize, k, maxIterations, tolerance, decayPolicy, exactObjective`_`)`
+
+Note that `Lookahead` is based on the templated type
+`Lookahead<`_`BaseOptimizerType, DecayPolicyType`_`>` with _`DecayPolicyType`_` = NoDecay`.
+
+Any optimizer that implements the differentiable separable functions interface
+can be paired with the `Lookahead` optimizer.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | **n/a** |
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`k`** | The synchronization period. | `5` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`BaseOptimizer()`, `StepSize()`, `K()`, `MaxIterations()`,
+`Tolerance()`, `DecayPolicy()` and `ExactObjective()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+Adam adam(0.01, 2, 0.7, 0.999, 1e-8, 5, 1e-3, false);
+Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-5);
+
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## LRSDP (low-rank SDP solver)
 
 *An optimizer for [semidefinite programs](#semidefinite-programs).*
