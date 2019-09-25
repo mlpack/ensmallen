@@ -6,6 +6,7 @@
 #   $ ensmallen-release.sh <major> <minor> <patch> [<name>]
 #
 # This should be run from the root of the repository.
+set -e
 
 if [ "$#" -lt 3 ]; then
   echo "At least three arguments required!";
