@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?
 ###### ????-??-??
+  * Fix ParallelSGD runtime bug.
+    ([#135](https://github.com/mlpack/ensmallen/pull/135)).
+
   * Add additional L-BFGS convergence check
     ([#136](https://github.com/mlpack/ensmallen/pull/136)).
 
