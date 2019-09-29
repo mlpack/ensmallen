@@ -67,7 +67,7 @@ class Lookahead
    *        final objective obtained on the last pass over the data).
    */
   Lookahead(const BaseOptimizerType& baseOptimizer = BaseOptimizerType(),
-            const double stepSize = 0.001,
+            const double stepSize = 0.5,
             const size_t k = 5,
             const size_t maxIterations = 100000,
             const double tolerance = 1e-5,

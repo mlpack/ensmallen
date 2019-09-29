@@ -1012,7 +1012,7 @@ can be paired with the `Lookahead` optimizer.
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | **n/a** |
-| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `double` | **`stepSize`** | Step size for each iteration. | `0.5` |
 | `size_t` | **`k`** | The synchronization period. | `5` |
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
