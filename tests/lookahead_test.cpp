@@ -39,8 +39,8 @@ TEST_CASE("LookaheadAdamSimpleSGDTestFunction", "[LookaheadTest]")
 {
   SGDTestFunction f;
 
-  Adam adam(1e-3, 1, 0.7, 0.999, 1e-8, 5, 1e-3, true);
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-8, NoDecay(), true);
+  Adam adam(1e-3, 1, 0.9, 0.999, 1e-8, 5, 1e-19, true);
+  Lookahead<Adam> optimizer(adam, 0.5, 5, 1000000, 1e-19, NoDecay(), true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -51,11 +51,11 @@ TEST_CASE("LookaheadAdamSimpleSGDTestFunction", "[LookaheadTest]")
 }
 
 /**
- * Test the Lookahead - AdaGrad optimizer on the SGDTest function.
+ * Test the Lookahead - AdaGrad optimizer on the SphereFunction function.
  */
-TEST_CASE("LookaheadAdaGradSimpleSGDTestFunction", "[LookaheadTest]")
+TEST_CASE("LookaheadAdaGradSphereFunction", "[LookaheadTest]")
 {
-  SGDTestFunction f;
+  SphereFunction f(2);
 
   AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-19, true);
   Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000, 1e-19, NoDecay(), true);
@@ -63,9 +63,8 @@ TEST_CASE("LookaheadAdaGradSimpleSGDTestFunction", "[LookaheadTest]")
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
 /**
@@ -81,8 +80,8 @@ TEST_CASE("LookaheadAdamLogisticRegressionTest","[LookaheadTest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  Adam adam(0.001, 1, 0.9, 0.999, 1e-8, 5, 1e-9);
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 500000, 1e-9, NoDecay(), true);
+  Adam adam(0.001, 32, 0.9, 0.999, 1e-8, 5, 1e-15);
+  Lookahead<Adam> optimizer(adam, 0.5, 20, 100000, 1e-15, NoDecay(), true);
 
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);

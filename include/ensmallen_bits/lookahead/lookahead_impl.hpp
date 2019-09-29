@@ -120,12 +120,8 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   {
     BaseMatType iterateModel = iterate;
 
-    overallObjective = baseOptimizer.Optimize(function, iterateModel,
+    overallObjective = baseOptimizer.Optimize(f, iterateModel,
         callbacks...);
-
-    iterate += stepSize * (iterateModel - iterate);
-
-    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
     // Now update the learning rate if requested by the user, note we pass the
     // latest inner model coordinates instead of the gradient.
@@ -138,6 +134,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
           << "; terminating with failure.  Try a smaller step size?"
           << std::endl;
 
+      iterate = iterateModel;
       Callback::EndOptimization(*this, f, iterate, callbacks...);
       return overallObjective;
     }
@@ -147,9 +144,13 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
       Info << "Lookahead: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
+      iterate = iterateModel;
       Callback::EndOptimization(*this, f, iterate, callbacks...);
       return overallObjective;
     }
+
+    iterate += stepSize * (iterateModel - iterate);
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
     // Save the current objective.
     lastOverallObjective = overallObjective;
@@ -158,12 +159,12 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   Info << "Lookahead: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
-  // Find the number of functions to use.
-  const size_t numFunctions = f.NumFunctions();
-
   // Calculate final objective if exactObjective is set to true.
   if (exactObjective)
   {
+    // Find the number of functions to use.
+    const size_t numFunctions = f.NumFunctions();
+
     size_t batchSize = 1;
     // Check if the optimizer implements the SatchSize() method and use the
     // parameter for the objective calculation.
