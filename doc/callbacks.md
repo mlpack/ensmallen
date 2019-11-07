@@ -8,72 +8,69 @@ as:
 
 Callbacks can be passed as an argument to the `Optimize()` function:
 
-<details>
-<summary>Click to check out the example</summary>
-<p>
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  RosenbrockFunction f;
-  arma::mat coordinates = f.GetInitialPoint();
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
 
-  MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
+MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 
-  // Pass the built-in *PrintLoss* callback as the last argument to the
-  // *Optimize()* function.
-  optimizer.Optimize(f, coordinates, PrintLoss());
+// Pass the built-in *PrintLoss* callback as the last argument to the
+// *Optimize()* function.
+optimizer.Optimize(f, coordinates, PrintLoss());
 ```
 
-</p>
 </details>  
 
 Passing multiple callbacks is just the same as passing a single callback:
 
-<details>
-<summary>Click to check out the example</summary>
-<p>
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  RosenbrockFunction f;
-  arma::mat coordinates = f.GetInitialPoint();
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
 
-  MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
+MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 
-  // Pass the built-in *PrintLoss* and *EarlyStopAtMinLoss* callback as the last
-  // argument to the *Optimize()* function.
-  optimizer.Optimize(f, coordinates, PrintLoss(), EarlyStopAtMinLoss());
+// Pass the built-in *PrintLoss* and *EarlyStopAtMinLoss* callback as the last
+// argument to the *Optimize()* function.
+optimizer.Optimize(f, coordinates, PrintLoss(), EarlyStopAtMinLoss());
 ```
 
-</p>
 </details>  
 
 It is also possible to pass a callback instantiation that allows accessing of
 internal callback parameters at a later state:
 
-<details>
-<summary>Click to check out the example</summary>
-<p>
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  RosenbrockFunction f;
-  arma::mat coordinates = f.GetInitialPoint();
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
 
-  MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
+MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 
-  // Create an instantiation of the built-in *StoreBestCoordinates* callback,
-  // which will store the best objective and the corresponding model parameter
-  // that can be accessed later.
-  StoreBestCoordinates<> callback;
+// Create an instantiation of the built-in *StoreBestCoordinates* callback,
+// which will store the best objective and the corresponding model parameter
+// that can be accessed later.
+StoreBestCoordinates<> callback;
 
-  // Pass an instantiation of the built-in *StoreBestCoordinates* callback as the
-  // last argument to the *Optimize()* function.
-  optimizer.Optimize(f, coordinates, callback);
+// Pass an instantiation of the built-in *StoreBestCoordinates* callback as the
+// last argument to the *Optimize()* function.
+optimizer.Optimize(f, coordinates, callback);
 
-  // Print the minimum objective that is stored inside the *StoreBestCoordinates*
-  // callback that was passed to the *Optimize()* call.
-  std::cout << callback.BestObjective() << std::endl;
+// Print the minimum objective that is stored inside the *StoreBestCoordinates*
+// callback that was passed to the *Optimize()* call.
+std::cout << callback.BestObjective() << std::endl;
 ```
 
-</p>
 </details>
 
 ## Built-in Callbacks
@@ -96,19 +93,18 @@ has been made.
 
 #### Examples:
 
-<details>
-<summary>Click to check out the example</summary>
-<p>
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
-  RosenbrockFunction f;
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
 ```
 
-</p>
 </details>
 
 ### PrintLoss
@@ -128,19 +124,18 @@ Callback that prints loss to stdout or a specified output stream.
 
 #### Examples:
 
-<details>
-<summary>Click to check out the example</summary>
-<p>
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
-  RosenbrockFunction f;
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates, PrintLoss());
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, PrintLoss());
 ```
 
-</p>
 </details>
 
 ### ProgressBar
@@ -162,9 +157,9 @@ Callback that prints a progress bar to stdout or a specified output stream.
 
 #### Examples:
 
-<details>
-<summary>Click to check out the example</summary>
-<p>
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
@@ -174,7 +169,6 @@ arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, ProgressBar());
 ```
 
-</p>
 </details>
 
 ### StoreBestCoordinates
@@ -197,24 +191,23 @@ The stored model parameter can be accessed via the member method
 #### Examples:
 
 
-<details>
-<summary>Click to check out the example</summary>
-<p>
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
-  RosenbrockFunction f;
-  arma::mat coordinates = f.GetInitialPoint();
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
 
-  StoreBestCoordinates<arma::mat> cb;
-  optimizer.Optimize(f, coordinates, cb);
+StoreBestCoordinates<arma::mat> cb;
+optimizer.Optimize(f, coordinates, cb);
 
-  std::cout << "The optimized model found by AdaDelta has the "
-        << "parameters " << cb.BestCoordinatest();
+std::cout << "The optimized model found by AdaDelta has the "
+      << "parameters " << cb.BestCoordinatest();
 ```
 
-</p>
 </details>
 
 ## Callback States
@@ -371,81 +364,80 @@ Example code showing how to implement a custom callback to change the learning
 rate is given below.
 
 <details>
-<summary>Click to check out the example</summary>
-<p>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  class ExponentialDecay
+class ExponentialDecay
+{
+  // Set up the exponential decay learning rate scheduler with the user
+  // specified decay value.
+  ExponentialDecay(const double decay) : decay(decay), learningRate(0) { }
+
+
+  // Callback function called at the start of the optimization process.
+  // In this example we will use this to save the initial learning rate.
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void BeginOptimization(OptimizerType& /* optimizer */,
+                         FunctionType& /* function */,
+                         MatType& /* coordinates */)
   {
-    // Set up the exponential decay learning rate scheduler with the user
-    // specified decay value.
-    ExponentialDecay(const double decay) : decay(decay), learningRate(0) { }
-
-
-    // Callback function called at the start of the optimization process.
-    // In this example we will use this to save the initial learning rate.
-    template<typename OptimizerType, typename FunctionType, typename MatType>
-    void BeginOptimization(OptimizerType& /* optimizer */,
-                           FunctionType& /* function */,
-                           MatType& /* coordinates */)
-    {
-      // Save the initial learning rate.
-      learningRate = optimizer.StepSize();
-    }
-
-    // Callback function called at the end of a pass over the data. We are only
-    // interested in the current epoch and the optimizer, we ignore the rest.
-    template<typename OptimizerType, typename FunctionType, typename MatType>
-    void EndEpoch(OptimizerType& optimizer,
-                  FunctionType& /* function */,
-                  const MatType& /* coordinates */,
-                  const size_t epoch,
-                  const double objective)
-    {
-      // Update the learning rate.
-      optimizer.StepSize() = learningRate * (1.0 - std::pow(decay,
-          (double) epoch));
-    }
-
-    double learningRate;
-  };
-
-  int main()
-  {
-    // First, generate some random data, with 10000 points and 10 dimensions.
-    // This data has no pattern and as such will make a model that's not very
-    // useful---but the purpose here is just demonstration. :)
-    //
-    // For a more "real world" situation, load a dataset from file using X.load()
-    // and y.load() (but make sure the matrix is column-major, so that each
-    // observation/data point corresponds to a *column*, *not* a row.
-    arma::mat data(10, 10000, arma::fill::randn);
-    arma::rowvec responses(10000, arma::fill::randn);
-
-    // Create a starting point for our optimization randomly.  The model has 10
-    // parameters, so the shape is 10x1.
-    arma::mat startingPoint(10, 1, arma::fill::randn);
-
-    // Construct the objective function.
-    LinearRegressionFunction lrf(data, responses);
-    arma::mat lrfParams(startingPoint);
-
-    // Create the StandardSGD optimizer with specified parameters.
-    // The ens::StandardSGD type can be replaced with any ensmallen optimizer
-    //that can handle differentiable functions.
-    StandardSGD optimizer(0.001, 1, 0, 1e-15, true);
-
-    // Use the StandardSGD optimizer with specified parameters to minimize the
-    // LinearRegressionFunction and pass the *exponential decay*
-    // callback function from above.
-    optimizer.Optimize(lrf, lrfParams, ExponentialDecay(0.01));
-
-    // Print the trained model parameter.
-    std::cout << lrfParams.t();
+    // Save the initial learning rate.
+    learningRate = optimizer.StepSize();
   }
+
+  // Callback function called at the end of a pass over the data. We are only
+  // interested in the current epoch and the optimizer, we ignore the rest.
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EndEpoch(OptimizerType& optimizer,
+                FunctionType& /* function */,
+                const MatType& /* coordinates */,
+                const size_t epoch,
+                const double objective)
+  {
+    // Update the learning rate.
+    optimizer.StepSize() = learningRate * (1.0 - std::pow(decay,
+        (double) epoch));
+  }
+
+  double learningRate;
+};
+
+int main()
+{
+  // First, generate some random data, with 10000 points and 10 dimensions.
+  // This data has no pattern and as such will make a model that's not very
+  // useful---but the purpose here is just demonstration. :)
+  //
+  // For a more "real world" situation, load a dataset from file using X.load()
+  // and y.load() (but make sure the matrix is column-major, so that each
+  // observation/data point corresponds to a *column*, *not* a row.
+  arma::mat data(10, 10000, arma::fill::randn);
+  arma::rowvec responses(10000, arma::fill::randn);
+
+  // Create a starting point for our optimization randomly.  The model has 10
+  // parameters, so the shape is 10x1.
+  arma::mat startingPoint(10, 1, arma::fill::randn);
+
+  // Construct the objective function.
+  LinearRegressionFunction lrf(data, responses);
+  arma::mat lrfParams(startingPoint);
+
+  // Create the StandardSGD optimizer with specified parameters.
+  // The ens::StandardSGD type can be replaced with any ensmallen optimizer
+  //that can handle differentiable functions.
+  StandardSGD optimizer(0.001, 1, 0, 1e-15, true);
+
+  // Use the StandardSGD optimizer with specified parameters to minimize the
+  // LinearRegressionFunction and pass the *exponential decay*
+  // callback function from above.
+  optimizer.Optimize(lrf, lrfParams, ExponentialDecay(0.01));
+
+  // Print the trained model parameter.
+  std::cout << lrfParams.t();
+}
 ```
 
-</p>
 </details>
 
 ### Early stopping at minimum loss
@@ -458,87 +450,86 @@ Example code showing how to implement a custom callback to stop the optimization
 when the minimum of loss has been reached is given below.
 
 <details>
-<summary>Click to check out the example</summary>
-<p>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
-  #include <ensmallen.hpp>
+#include <ensmallen.hpp>
 
-  // This class implements early stopping at minimum loss callback function to
-  // terminate the optimization process early if the loss stops decreasing.
-  class EarlyStop
+// This class implements early stopping at minimum loss callback function to
+// terminate the optimization process early if the loss stops decreasing.
+class EarlyStop
+{
+ public:
+  // Set up the early stop at min loss class, which keeps track of the minimum
+  // loss.
+  EarlyStop() : bestObjective(std::numeric_limits<double>::max()) { }
+
+  // Callback function called at the end of a pass over the data, which provides
+  // the current objective. We are only interested in the objective and ignore
+  // the rest.
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EndEpoch(OptimizerType& /* optimizer */,
+                FunctionType& /* function */,
+                const MatType& /* coordinates */,
+                const size_t /* epoch */,
+                const double objective)
   {
-   public:
-    // Set up the early stop at min loss class, which keeps track of the minimum
-    // loss.
-    EarlyStop() : bestObjective(std::numeric_limits<double>::max()) { }
-
-    // Callback function called at the end of a pass over the data, which provides
-    // the current objective. We are only interested in the objective and ignore
-    // the rest.
-    template<typename OptimizerType, typename FunctionType, typename MatType>
-    void EndEpoch(OptimizerType& /* optimizer */,
-                  FunctionType& /* function */,
-                  const MatType& /* coordinates */,
-                  const size_t /* epoch */,
-                  const double objective)
+    // Check if the given objective is lower as the previous objective.
+    if (objective < bestObjective)
     {
-      // Check if the given objective is lower as the previous objective.
-      if (objective < bestObjective)
-      {
-        // Update the local objective.
-        bestObjective = objective;
-      }
-      else
-      {
-        // Stop the optimization process.
-        return true;
-      }
-
-      // Do not stop the optimization process.
-      return false;
+      // Update the local objective.
+      bestObjective = objective;
+    }
+    else
+    {
+      // Stop the optimization process.
+      return true;
     }
 
-    // Locally-stored best objective.
-    double bestObjective;
-  };
-
-  int main()
-  {
-    // First, generate some random data, with 10000 points and 10 dimensions.
-    // This data has no pattern and as such will make a model that's not very
-    // useful---but the purpose here is just demonstration. :)
-    //
-    // For a more "real world" situation, load a dataset from file using X.load()
-    // and y.load() (but make sure the matrix is column-major, so that each
-    // observation/data point corresponds to a *column*, *not* a row.
-    arma::mat data(10, 10000, arma::fill::randn);
-    arma::rowvec responses(10000, arma::fill::randn);
-
-    // Create a starting point for our optimization randomly.  The model has 10
-    // parameters, so the shape is 10x1.
-    arma::mat startingPoint(10, 1, arma::fill::randn);
-
-    // Construct the objective function.
-    LinearRegressionFunction lrf(data, responses);
-    arma::mat lrfParams(startingPoint);
-
-    // Create the L_BFGS optimizer with default parameters.
-    // The ens::L_BFGS type can be replaced with any ensmallen optimizer that can
-    // handle differentiable functions.
-    ens::L_BFGS lbfgs;
-
-    // Use the L_BFGS optimizer with default parameters to minimize the
-    // LinearRegressionFunction and pass the *early stopping at minimum loss*
-    // callback function from above.
-    lbfgs.Optimize(lrf, lrfParams, EarlyStop());
-
-    // Print the trained model parameter.
-    std::cout << lrfParams.t();
+    // Do not stop the optimization process.
+    return false;
   }
+
+  // Locally-stored best objective.
+  double bestObjective;
+};
+
+int main()
+{
+  // First, generate some random data, with 10000 points and 10 dimensions.
+  // This data has no pattern and as such will make a model that's not very
+  // useful---but the purpose here is just demonstration. :)
+  //
+  // For a more "real world" situation, load a dataset from file using X.load()
+  // and y.load() (but make sure the matrix is column-major, so that each
+  // observation/data point corresponds to a *column*, *not* a row.
+  arma::mat data(10, 10000, arma::fill::randn);
+  arma::rowvec responses(10000, arma::fill::randn);
+
+  // Create a starting point for our optimization randomly.  The model has 10
+  // parameters, so the shape is 10x1.
+  arma::mat startingPoint(10, 1, arma::fill::randn);
+
+  // Construct the objective function.
+  LinearRegressionFunction lrf(data, responses);
+  arma::mat lrfParams(startingPoint);
+
+  // Create the L_BFGS optimizer with default parameters.
+  // The ens::L_BFGS type can be replaced with any ensmallen optimizer that can
+  // handle differentiable functions.
+  ens::L_BFGS lbfgs;
+
+  // Use the L_BFGS optimizer with default parameters to minimize the
+  // LinearRegressionFunction and pass the *early stopping at minimum loss*
+  // callback function from above.
+  lbfgs.Optimize(lrf, lrfParams, EarlyStop());
+
+  // Print the trained model parameter.
+  std::cout << lrfParams.t();
+}
 ```
 
-</p>
 </details>
 
 Note that we have simply passed an instantiation of `EarlyStop` the
