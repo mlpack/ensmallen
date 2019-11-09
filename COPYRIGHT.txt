@@ -36,6 +36,7 @@ Copyright:
   Copyright 2018, Conrad Sanderson
   Copyright 2018, Dan Timson
   Copyright 2019, Rahul Ganesh Prabhu
+  Copyright 2019, Roberto Hueso <robertohueso96@gmail.com>
   
 License: BSD-3-clause
   All rights reserved.

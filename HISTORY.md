@@ -1,3 +1,8 @@
+### ensmallen ?.??.?
+###### ????-??-??
+  * Add optional tests building.
+    ([#141](https://github.com/mlpack/ensmallen/pull/141)).
+
 ### ensmallen 2.10.3: "Fried Chicken"
 ###### 2019-09-26
   * Fix ParallelSGD runtime bug.
