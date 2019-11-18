@@ -1366,7 +1366,7 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
 NesterovMomentumSGD optimizer(0.01, 32, 100000, 1e-5, true,
-  MomentumUpdate(0.5));
+    MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates);
 ```
 
