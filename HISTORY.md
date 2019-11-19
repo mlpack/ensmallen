@@ -3,6 +3,9 @@
   * Add optional tests building.
     ([#141](https://github.com/mlpack/ensmallen/pull/141)).
 
+  * Make code samples collapsible in the documentation.
+    ([#140](https://github.com/mlpack/ensmallen/pull/140)).
+
 ### ensmallen 2.10.3: "Fried Chicken"
 ###### 2019-09-26
   * Fix ParallelSGD runtime bug.
