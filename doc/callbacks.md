@@ -8,6 +8,10 @@ as:
 
 Callbacks can be passed as an argument to the `Optimize()` function:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -19,7 +23,13 @@ MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates, PrintLoss());
 ```
 
+</details>  
+
 Passing multiple callbacks is just the same as passing a single callback:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 RosenbrockFunction f;
@@ -32,8 +42,14 @@ MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates, PrintLoss(), EarlyStopAtMinLoss());
 ```
 
+</details>  
+
 It is also possible to pass a callback instantiation that allows accessing of
 internal callback parameters at a later state:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 RosenbrockFunction f;
@@ -55,6 +71,8 @@ optimizer.Optimize(f, coordinates, callback);
 std::cout << callback.BestObjective() << std::endl;
 ```
 
+</details>
+
 ## Built-in Callbacks
 
 ### EarlyStopAtMinLoss
@@ -75,6 +93,10 @@ has been made.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
@@ -82,6 +104,8 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
 ```
+
+</details>
 
 ### PrintLoss
 
@@ -100,6 +124,10 @@ Callback that prints loss to stdout or a specified output stream.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
@@ -107,6 +135,8 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, PrintLoss());
 ```
+
+</details>
 
 ### ProgressBar
 
@@ -127,6 +157,10 @@ Callback that prints a progress bar to stdout or a specified output stream.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
@@ -134,6 +168,8 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, ProgressBar());
 ```
+
+</details>
 
 ### StoreBestCoordinates
 
@@ -154,6 +190,11 @@ The stored model parameter can be accessed via the member method
 
 #### Examples:
 
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
@@ -166,6 +207,8 @@ optimizer.Optimize(f, coordinates, cb);
 std::cout << "The optimized model found by AdaDelta has the "
       << "parameters " << cb.BestCoordinatest();
 ```
+
+</details>
 
 ## Callback States
 
@@ -320,6 +363,10 @@ can be used to update the variables.
 Example code showing how to implement a custom callback to change the learning
 rate is given below.
 
+<details>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 class ExponentialDecay
 {
@@ -391,6 +438,8 @@ int main()
 }
 ```
 
+</details>
+
 ### Early stopping at minimum loss
 
 Early stopping is a technique for controlling overfitting in machine learning
@@ -399,6 +448,10 @@ the model has trained for the maximum number of iterations.
 
 Example code showing how to implement a custom callback to stop the optimization
 when the minimum of loss has been reached is given below.
+
+<details>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 #include <ensmallen.hpp>
@@ -476,6 +529,8 @@ int main()
   std::cout << lrfParams.t();
 }
 ```
+
+</details>
 
 Note that we have simply passed an instantiation of `EarlyStop` the
 rest is handled inside the optimizer.
