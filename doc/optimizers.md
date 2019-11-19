@@ -36,6 +36,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
@@ -43,6 +47,8 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -86,6 +92,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaGrad optimizer(1.0, 1, 1e-8, 1000, 1e-9, true);
 
@@ -93,6 +103,8 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -140,6 +152,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -147,6 +163,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Adam optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -192,6 +210,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -199,6 +221,8 @@ arma::mat coordinates = f.GetInitialPoint();
 AdaMax optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -244,6 +268,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -251,6 +279,8 @@ arma::mat coordinates = f.GetInitialPoint();
 AMSGrad optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -283,6 +313,10 @@ optimizer uses [L-BFGS](#l-bfgs).
 
 The attributes of the optimizer may also be modified via the member methods
 `MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `L_BFGS()`.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 /**
@@ -319,7 +353,13 @@ bool Optimize(LagrangianFunctionType& function,
               const double initSigma);
 ```
 
+</details>
+
 #### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 GockenbachFunction f;
@@ -328,6 +368,8 @@ arma::mat coordinates = f.GetInitialPoint();
 AugLagrangian optimizer;
 optimizer.Optimize(f, coords);
 ```
+
+</details>
 
 #### See also:
 
@@ -379,6 +421,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -391,6 +437,8 @@ optimizer.Optimize(f, coordinates);
 BBS_Armijo optimizer2(batchSize, 0.01, 0.1, 8000, 1e-4);
 optimizer2.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -448,6 +496,10 @@ estimate the objective function.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -460,6 +512,8 @@ optimizer.Optimize(f, coordinates);
 ApproxCMAES<> approxOptimizer(batchSize, 0.01, 0.1, 8000, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -497,6 +551,10 @@ and `Tolerance()`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -504,6 +562,8 @@ arma::mat coordinates = f.GetInitialPoint();
 CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -540,6 +600,10 @@ and `Tolerance()`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -547,6 +611,8 @@ arma::mat coordinates = f.GetInitialPoint();
 DE optimizer(200, 1000, 0.6, 0.8, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -588,6 +654,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -595,6 +665,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Eve optimizer(0.001, 32, 0.9, 0.999, 0.999, 10, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -691,6 +763,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -698,6 +774,8 @@ arma::mat coordinates = f.GetInitialPoint();
 FTML optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
  * [Follow the Moving Leader in Deep Learning](http://proceedings.mlr.press/v70/zheng17a/zheng17a.pdf)
@@ -732,6 +810,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -739,6 +821,8 @@ arma::mat coordinates = f.GetInitialPoint();
 GradientDescent optimizer(0.001, 0, 1e-15);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -816,6 +900,10 @@ Note that the default value for `decayPolicy` is the default constructor for the
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 GeneralizedRosenbrockFunction f(50); // 50-dimensional Rosenbrock function.
 arma::mat coordinates = f.GetInitialPoint();
@@ -823,6 +911,8 @@ arma::mat coordinates = f.GetInitialPoint();
 ParallelSGD<> optimizer(100000, f.NumFunctions(), 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -860,6 +950,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -867,6 +961,8 @@ arma::mat coordinates = f.GetInitialPoint();
 IQN optimizer(0.01, 1, 5000, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -918,6 +1014,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -930,6 +1030,8 @@ optimizer.Optimize(f, coordinates);
 KatyushaProximal proximalOptimizer(1.0, 10.0, 1, 100, 0, 1e-10, true);
 proximalOptimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -971,6 +1073,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -978,6 +1084,8 @@ arma::mat coordinates = f.GetInitialPoint();
 L_BFGS optimizer(20);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1069,6 +1177,10 @@ Note that the `MomentumUpdate` class has the constructor
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1076,6 +1188,8 @@ arma::mat coordinates = f.GetInitialPoint();
 MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1121,6 +1235,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1128,6 +1246,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Nadam optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1173,6 +1293,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1180,6 +1304,8 @@ arma::mat coordinates = f.GetInitialPoint();
 NadaMax optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1231,6 +1357,10 @@ Note that the `NesterovMomentumUpdate` class has the constructor
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1239,6 +1369,8 @@ NesterovMomentumSGD optimizer(0.01, 32, 100000, 1e-5, true,
     MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1289,6 +1421,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1296,6 +1432,8 @@ arma::mat coordinates = f.GetInitialPoint();
 OptimisticAdam optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1338,6 +1476,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1345,6 +1487,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Padam optimizer(0.001, 32, 0.9, 0.999, 0.25, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
  * [Closing the Generalization Gap of Adaptive Gradient Methods in Training Deep Neural Networks](https://arxiv.org/abs/1806.06763)
@@ -1393,6 +1537,10 @@ At present, only the local-best variant of PSO is present in ensmallen. The opti
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 SphereFunction f(4);
 arma::vec coordinates = f.GetInitialPoint();
@@ -1400,6 +1548,12 @@ arma::vec coordinates = f.GetInitialPoint();
 LBestPSO s;
 const double result = s.Optimize(f, coordinates)
 ```
+
+</details>
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 RosenbrockFunction f;
@@ -1413,6 +1567,12 @@ LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
 const double result = s.Optimize(f, coordinates)
 ```
 
+</details>
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::vec coordinates = f.GetInitialPoint();
@@ -1424,6 +1584,8 @@ double upperBound = 60;
 LBestPSO s(64, lowerBound, upperBound, 3000, 400, 1e-30, 2.05, 2.05);
 const double result = s.Optimize(f, coordinates)
 ```
+
+</details>
 
 #### See also:
 
@@ -1461,6 +1623,10 @@ as member methods.
 The `PrimalDualSolver<>` class offers two overloads of `Optimize()` that
 optionally return the converged values for the dual variables.
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 /**
  * Invoke the optimization procedure, returning the converged values for the
@@ -1479,6 +1645,8 @@ double Optimize(SDPType& s,
 template<typename SDPType>
 double Optimize(SDPType& s, arma::mat& X);
 ```
+
+</details>
 
 The _`SDPType`_ template parameter specifies the type of SDP to solve.  The
 `SDP<arma::mat>` and `SDP<arma::sp_mat>` classes are available for use; these
@@ -1533,13 +1701,19 @@ and `0.999` for the momentum term.
 
 #### Examples
 
- ```c++
- RosenbrockFunction f;
- arma::mat coordinates = f.GetInitialPoint();
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
- QHSGD optimizer(0.01, 32, 100000, 1e-5, true);
- optimizer.Optimize(f, coordinates);
- ```
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+QHSGD optimizer(0.01, 32, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
 
 #### See also:
 
@@ -1647,6 +1821,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1654,6 +1832,8 @@ arma::mat coordinates = f.GetInitialPoint();
 RMSProp optimizer(1e-3, 1, 0.99, 1e-8, 5000000, 1e-9, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1684,11 +1864,17 @@ constructor `ExponentialSchedule(`_`lambda`_`)` where _`lambda`_ is the cooling
 speed (default `0.001`).  Custom schedules may be created by implementing a
 class with at least the single member method below:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 // Return the next temperature given the current system status.
 double NextTemperature(const double currentTemperature,
                        const double currentEnergy);
 ```
+
+</details>
 
 For convenience, the default cooling schedule is `ExponentialSchedule`, so the
 shorter type `SA<>` may be used instead of the equivalent
@@ -1716,6 +1902,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1724,6 +1914,8 @@ SA<> optimizer(ExponentialSchedule(), 1000000, 1000., 1000, 100, 1e-10, 3, 1.5,
     0.5, 0.3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1757,6 +1949,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 SphereFunction f(2);
 arma::mat coordinates = f.GetInitialPoint();
@@ -1764,6 +1960,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1820,6 +2018,10 @@ the `UpdatePolicyType`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1832,6 +2034,8 @@ optimizer.Optimize(f, coordinates);
 SARAH_Plus optimizerPlus(0.01, 1, 5000, 0, 1e-5, true);
 optimizerPlus.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1878,6 +2082,10 @@ Attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1885,6 +2093,8 @@ arma::mat coordinates = f.GetInitialPoint();
 StandardSGD optimizer(0.01, 32, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1940,6 +2150,10 @@ _`DescentPolicyType`_.
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 SparseTestFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1953,6 +2167,8 @@ greedyscd.Optimize(f, coordinates);
 CyclicSCD cyclicscd(0.01, 100000, 1e-5, 1e3);
 cyclicscd.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2009,6 +2225,10 @@ the `UpdatePolicyType`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2016,6 +2236,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SGDR<> optimizer(50, 2.0, 1, 0.01, 10000, 1e-3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2077,6 +2299,10 @@ the `UpdatePolicyType`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2084,6 +2310,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SnapshotSGDR<> optimizer(50, 2.0, 1, 0.01, 10000, 1e-3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2126,6 +2354,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2133,6 +2365,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SMORMS3 optimizer(0.001, 1, 1e-16, 5000000, 1e-9, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2196,6 +2430,10 @@ _`DecayPolicyType`_ classes.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2209,6 +2447,8 @@ SVRG_BB bbOptimizer(0.005, batchSize, 300, 0, 1e-10, true, SVRGUpdate(),
     BarzilaiBorweinDecay(0.1));
 bbOptimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2264,6 +2504,10 @@ Attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2271,6 +2515,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SPALeRASGD<> optimizer(0.05, 1, 10000, 1e-4);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2315,6 +2561,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2322,6 +2572,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SWATS optimizer(0.001, 1, 0.9, 0.999, 1e-16, 5000000, 1e-9, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2363,6 +2615,10 @@ Attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2370,6 +2626,8 @@ arma::mat coordinates = f.GetInitialPoint();
 WNGrad<> optimizer(0.562, 1, 10000, 1e-4);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
