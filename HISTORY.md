@@ -1,5 +1,5 @@
-### ensmallen ?.??.?
-###### ????-??-??
+### ensmallen 2.10.4: "Fried Chicken"
+###### 2019-11-18
   * Add optional tests building.
     ([#141](https://github.com/mlpack/ensmallen/pull/141)).
 
