@@ -70,7 +70,7 @@ void GridSearch::Optimize(
 
   // Make sure we have the methods that we need.  No restrictions on the matrix
   // type are needed.
-  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, BaseMatType>();
+  traits::CheckArbitraryFunctionTypeAPI<FunctionType, BaseMatType>();
 
   if (i < categoricalDimensions.size())
   {

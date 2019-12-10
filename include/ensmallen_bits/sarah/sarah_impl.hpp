@@ -41,14 +41,14 @@ SARAHType<UpdatePolicyType>::SARAHType(
 
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType,
+template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
 SARAHType<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& functionIn,
+    SeparableFunctionType& functionIn,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
@@ -57,11 +57,11 @@ SARAHType<UpdatePolicyType>::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+  typedef Function<SeparableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
   FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
 
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+  traits::CheckSeparableFunctionTypeAPI<SeparableFunctionType,
       BaseMatType, BaseGradType>();
   RequireFloatingPointType<BaseMatType>();
   RequireFloatingPointType<BaseGradType>();

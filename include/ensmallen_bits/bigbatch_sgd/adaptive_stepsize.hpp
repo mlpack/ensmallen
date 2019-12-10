@@ -75,7 +75,7 @@ class AdaptiveStepsize
     /**
      * This function is called in each iteration.
      *
-     * @tparam DecomposableFunctionType Type of the function to be optimized.
+     * @tparam SeparableFunctionType Type of the function to be optimized.
      * @param function Function to be optimized (minimized).
      * @param stepSize Step size to be used for the given iteration.
      * @param iterate Parameters that minimize the function.
@@ -87,9 +87,9 @@ class AdaptiveStepsize
      *        given iteration.
      * @param reset Reset the step size decay parameter.
      */
-    template<typename DecomposableFunctionType,
+    template<typename SeparableFunctionType,
              typename GradType>
-    void Update(DecomposableFunctionType& function,
+    void Update(SeparableFunctionType& function,
                 double& stepSize,
                 MatType& iterate,
                 GradType& gradient,
@@ -186,7 +186,7 @@ class AdaptiveStepsize
      * Armijo–Goldstein condition to determine the maximum amount to move along
      * the given search direction.
      *
-     * @tparam DecomposableFunctionType Type of the function to be optimized.
+     * @tparam SeparableFunctionType Type of the function to be optimized.
      * @param function Function to be optimized (minimized).
      * @param stepSize Step size to be used for the given iteration.
      * @param iterate Parameters that minimize the function.
@@ -195,9 +195,9 @@ class AdaptiveStepsize
      * @param offset The batch offset to be used for the given iteration.
      * @param backtrackingBatchSize The backtracking batch size.
      */
-    template<typename DecomposableFunctionType,
+    template<typename SeparableFunctionType,
              typename GradType>
-    void Backtracking(DecomposableFunctionType& function,
+    void Backtracking(SeparableFunctionType& function,
                       double& stepSize,
                       const MatType& iterate,
                       const GradType& gradient,
