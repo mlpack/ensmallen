@@ -3,6 +3,9 @@
   * SGD callback test 32-bit safety (big number).
     ([#143](https://github.com/mlpack/ensmallen/pull/143)).
 
+  * Remove 'using namespace std' from problems/ files.
+    ([#147](https://github.com/mlpack/ensmallen/pull/147)).
+
 ### ensmallen 2.10.4: "Fried Chicken"
 ###### 2019-11-18
   * Add optional tests building.
