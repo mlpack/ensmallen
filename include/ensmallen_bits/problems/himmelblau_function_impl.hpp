@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "himmelblau_function.hpp"
-using namespace std;
 
 namespace ens {
 namespace test {
@@ -36,8 +35,8 @@ typename MatType::elem_type HimmelblauFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = pow(x1 * x1 + x2  - 11 , 2) +
-      pow(x1 + x2 * x2 - 7, 2);
+  const ElemType objective = std::pow(x1 * x1 + x2  - 11 , 2) +
+      std::pow(x1 + x2 * x2 - 7, 2);
   return objective;
 }
 
