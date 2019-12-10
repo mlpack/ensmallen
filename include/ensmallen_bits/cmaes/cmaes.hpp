@@ -82,7 +82,7 @@ class CMAES
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam SeparableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize.
    * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
@@ -90,10 +90,10 @@ class CMAES
    * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks);
 

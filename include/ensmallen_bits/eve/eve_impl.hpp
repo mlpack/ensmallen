@@ -45,13 +45,13 @@ inline Eve::Eve(const double stepSize,
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType,
+template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
-Eve::Optimize(DecomposableFunctionType& function,
+Eve::Optimize(SeparableFunctionType& function,
               MatType& iterateIn,
               CallbackTypes&&... callbacks)
 {
@@ -60,12 +60,12 @@ Eve::Optimize(DecomposableFunctionType& function,
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+  typedef Function<SeparableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+  traits::CheckSeparableFunctionTypeAPI<FullFunctionType, BaseMatType,
       BaseGradType>();
   RequireFloatingPointType<BaseMatType>();
   RequireFloatingPointType<BaseGradType>();

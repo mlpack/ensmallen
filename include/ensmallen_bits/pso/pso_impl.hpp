@@ -51,7 +51,7 @@ typename MatType::elem_type PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
       InstUpdatePolicyType;
 
   // Make sure that we have the methods that we need.  Long name...
-  traits::CheckNonDifferentiableFunctionTypeAPI<ArbitraryFunctionType,
+  traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
       BaseMatType>();
   RequireDenseFloatingPointType<BaseMatType>();
 

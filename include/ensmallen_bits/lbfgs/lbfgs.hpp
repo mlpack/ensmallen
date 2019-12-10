@@ -87,14 +87,14 @@ class L_BFGS
            CallbackTypes&&... callbacks);
 
   //! Forward the MatType as GradType.
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks)
   {
-    return Optimize<DecomposableFunctionType, MatType, MatType,
+    return Optimize<SeparableFunctionType, MatType, MatType,
         CallbackTypes...>(function, iterate,
         std::forward<CallbackTypes>(callbacks)...);
   }
