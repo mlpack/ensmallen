@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "cross_in_tray_function.hpp"
-using namespace std;
 
 namespace ens {
 namespace test {
@@ -36,9 +35,9 @@ typename MatType::elem_type CrossInTrayFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = -0.0001 * pow(abs(sin(x1) * sin(x2) *
-      exp(abs(100 - (sqrt(pow(x1, 2) + pow(x2, 2)) /
-      arma::datum::pi))) + 1), 0.1);
+  const ElemType objective = -0.0001 * std::pow(std::abs(std::sin(x1) *
+      std::sin(x2) * std::exp(std::abs(100 - (std::sqrt(std::pow(x1, 2) +
+      std::pow(x2, 2)) / arma::datum::pi))) + 1), 0.1);
   return objective;
 }
 

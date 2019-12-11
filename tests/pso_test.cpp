@@ -15,6 +15,7 @@
 
 using namespace ens;
 using namespace ens::test;
+using namespace std;
 
 /**
  * Test the PSO optimizer on the Sphere Function.  Use arma::mat.

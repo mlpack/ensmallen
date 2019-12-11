@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "ackley_function.hpp"
-using namespace std;
 
 namespace ens {
 namespace test {
@@ -38,8 +37,9 @@ typename MatType::elem_type AckleyFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = -20 * exp(-0.2 * sqrt(0.5 * (x1 * x1 + x2 * x2))) -
-      exp(0.5 * (cos(c * x1) + cos(c * x2))) + exp(1) + 20;
+  const ElemType objective = -20 * std::exp(
+      -0.2 * std::sqrt(0.5 * (x1 * x1 + x2 * x2))) -
+      std::exp(0.5 * (std::cos(c * x1) + std::cos(c * x2))) + std::exp(1) + 20;
 
   return objective;
 }
@@ -65,13 +65,14 @@ inline void AckleyFunction::Gradient(const MatType& coordinates,
   const ElemType x2 = coordinates(1);
 
   // Aliases for different terms in the expression of the gradient.
-  const ElemType t0 = sqrt(0.5 * (x1 * x1 + x2 * x2));
-  const ElemType t1 = 2.0 * exp(- 0.2 * t0) / (t0 + epsilon);
-  const ElemType t2 = 0.5 * c * exp(0.5 * (cos(c * x1) + cos(c * x2)));
+  const ElemType t0 = std::sqrt(0.5 * (x1 * x1 + x2 * x2));
+  const ElemType t1 = 2.0 * std::exp(- 0.2 * t0) / (t0 + epsilon);
+  const ElemType t2 = 0.5 * c *
+      std::exp(0.5 * (std::cos(c * x1) + std::cos(c * x2)));
 
   gradient.set_size(2, 1);
-  gradient(0) = (x1 * t1) + (t2 * sin(c * x1));
-  gradient(1) = (x2 * t1) + (t2 * sin(c * x2));
+  gradient(0) = (x1 * t1) + (t2 * std::sin(c * x1));
+  gradient(1) = (x2 * t1) + (t2 * std::sin(c * x2));
 }
 
 template<typename MatType, typename GradType>
