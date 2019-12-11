@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "beale_function.hpp"
-using namespace std;
 
 namespace ens {
 namespace test {
@@ -36,8 +35,9 @@ typename MatType::elem_type BealeFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = pow(1.5 - x1 + x1 * x2, 2) +
-      pow(2.25 - x1 + x1 * x2 * x2, 2) +  pow(2.625 - x1 + x1 * pow(x2, 3), 2);
+  const ElemType objective = std::pow(1.5 - x1 + x1 * x2, 2) +
+      std::pow(2.25 - x1 + x1 * x2 * x2, 2) +
+      std::pow(2.625 - x1 + x1 * pow(x2, 3), 2);
 
   return objective;
 }
