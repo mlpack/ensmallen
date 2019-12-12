@@ -192,7 +192,7 @@ class AdaBoundType
   //! are reset before Optimize call.
   bool& ResetPolicy() { return optimizer.ResetPolicy(); }
 
-  private:
+ private:
   //! The Stochastic Gradient Descent object with QHAdam policy.
   SGD<UpdatePolicyType, DecayPolicyType> optimizer;
 };
