@@ -48,7 +48,7 @@ class AdaBoundType
  public:
   /**
    * Construct the AdaBoundType optimizer with the given function and
-   * parameters. AdaBoundType is sensitive to its paramters and hence a good
+   * parameters. AdaBoundType is sensitive to its parameters and hence a good
    * hyper paramater selection is necessary as its default may not fit every
    * case.
    *
