@@ -8,8 +8,8 @@ AdaBound is a variant of Adam which employs dynamic bounds on learning rates.
 
  * `AdaBound()`
  * `AdaBound(`_`stepSize, batchSize`_`)`
- * `AdaBound(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `AdaBound(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+ * `AdaBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AdaBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 Note that the `AdaBound` class is based on the `AdaBoundType<`_`UpdateRule`_`>`
 class with _`UpdateRule`_` = AdaBoundUpdate`.
@@ -18,13 +18,13 @@ class with _`UpdateRule`_` = AdaBoundUpdate`.
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
-| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
+| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
-| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -271,10 +271,10 @@ AMSBound is a variant of Adam which employs dynamic bounds on learning rates.
 
 #### Constructors
 
- * `AdaBound()`
- * `AdaBound(`_`stepSize, batchSize`_`)`
- * `AdaBound(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `AdaBound(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+ * `AMSBound()`
+ * `AMSBound(`_`stepSize, batchSize`_`)`
+ * `AMSBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AMSBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 Note that the `AMSBound` class is based on the `AdaBoundType<`_`UpdateRule`_`>`
 class with _`UpdateRule`_` = AdaBoundUpdate`.
@@ -283,13 +283,13 @@ class with _`UpdateRule`_` = AdaBoundUpdate`.
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
-| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
+| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
-| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
