@@ -25,7 +25,7 @@ namespace test {
  * This should optimize to f(x) = 0, at x = [1, 1, 1, 1, ...].
  *
  * This function can also be used for stochastic gradient descent (SGD) as a
- * decomposable function (DecomposableFunctionType), so there are other
+ * decomposable function (SeparableFunctionType), so there are other
  * overloads of Evaluate() and Gradient() implemented, as well as
  * NumFunctions().
  *

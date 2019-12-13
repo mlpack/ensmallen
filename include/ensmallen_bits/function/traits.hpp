@@ -115,60 +115,60 @@ struct TypedForms
   template<typename FunctionType>
   using ShuffleStaticForm = void(*)();
 
-  //! This is the form of a decomposable Evaluate() method.
+  //! This is the form of a separable Evaluate() method.
   template<typename FunctionType>
-  using DecomposableEvaluateForm =
+  using SeparableEvaluateForm =
       typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
                                                        const size_t,
                                                        const size_t);
 
-  //! This is the form of a decomposable const Evaluate() method.
+  //! This is the form of a separable const Evaluate() method.
   template<typename FunctionType>
-  using DecomposableEvaluateConstForm =
+  using SeparableEvaluateConstForm =
       typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
                                                        const size_t,
                                                        const size_t) const;
 
-  //! This is the form of a decomposable static Evaluate() method.
+  //! This is the form of a separable static Evaluate() method.
   template<typename FunctionType>
-  using DecomposableEvaluateStaticForm = typename BaseMatType::elem_type(*)(
+  using SeparableEvaluateStaticForm = typename BaseMatType::elem_type(*)(
         const BaseMatType&, const size_t, const size_t);
 
-  //! This is the form of a decomposable non-const Gradient() method.
+  //! This is the form of a separable non-const Gradient() method.
   template<typename FunctionType>
-  using DecomposableGradientForm = void(FunctionType::*)(
+  using SeparableGradientForm = void(FunctionType::*)(
       const BaseMatType&, const size_t, BaseGradType&, const size_t);
 
-  //! This the form of a decomposable const Gradient() method.
+  //! This the form of a separable const Gradient() method.
   template<typename FunctionType>
-  using DecomposableGradientConstForm = void(FunctionType::*)(
+  using SeparableGradientConstForm = void(FunctionType::*)(
       const BaseMatType&, const size_t, BaseGradType&, const size_t) const;
 
-  //! This is the form of a decomposable static Gradient() method.
+  //! This is the form of a separable static Gradient() method.
   template<typename FunctionType>
-  using DecomposableGradientStaticForm = void(*)(
+  using SeparableGradientStaticForm = void(*)(
       const BaseMatType&, const size_t, BaseGradType&, const size_t);
 
-  //! This is the form of a decomposable non-const EvaluateWithGradient()
+  //! This is the form of a separable non-const EvaluateWithGradient()
   //! method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientForm =
+  using SeparableEvaluateWithGradientForm =
       typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
                                                        const size_t,
                                                        BaseGradType&,
                                                        const size_t);
 
-  //! This is the form of a decomposable const EvaluateWithGradient() method.
+  //! This is the form of a separable const EvaluateWithGradient() method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientConstForm =
+  using SeparableEvaluateWithGradientConstForm =
       typename BaseMatType::elem_type(FunctionType::*)(const BaseMatType&,
                                                        const size_t,
                                                        BaseGradType&,
                                                        const size_t) const;
 
-  //! This is the form of a decomposable static EvaluateWithGradient() method.
+  //! This is the form of a separable static EvaluateWithGradient() method.
   template<typename FunctionType>
-  using DecomposableEvaluateWithGradientStaticForm =
+  using SeparableEvaluateWithGradientStaticForm =
       typename BaseMatType::elem_type(*)(const BaseMatType&,
                                          const size_t,
                                          BaseGradType&,

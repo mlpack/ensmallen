@@ -1,8 +1,8 @@
 /**
- * @file add_decomposable_evaluate.hpp
+ * @file add_separable_evaluate.hpp
  * @author Ryan Curtin
  *
- * Adds a decomposable Evaluate() function if a decomposable
+ * Adds a separable Evaluate() function if a separable
  * EvaluateWithGradient() function exists.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -18,23 +18,23 @@
 namespace ens {
 
 /**
- * The AddDecomposableEvaluate mixin class will add a decomposable Evaluate()
- * method if a decomposable EvaluateWithGradient() function exists, or nothing
+ * The AddSeparableEvaluate mixin class will add a separable Evaluate()
+ * method if a separable EvaluateWithGradient() function exists, or nothing
  * otherwise.
  */
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient =
+         bool HasSeparableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateWithGradientForm
+                     SeparableEvaluateWithGradientForm
              >::value,
-         bool HasDecomposableEvaluate =
+         bool HasSeparableEvaluate =
              traits::HasEvaluate<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                      DecomposableEvaluateForm>::value>
-class AddDecomposableEvaluate
+                      SeparableEvaluateForm>::value>
+class AddSeparableEvaluate
 {
  public:
   // Provide a dummy overload so the name 'Evaluate' exists for this object.
@@ -49,9 +49,9 @@ class AddDecomposableEvaluate
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient>
-class AddDecomposableEvaluate<FunctionType, MatType, GradType,
-    HasDecomposableEvaluateWithGradient, true>
+         bool HasSeparableEvaluateWithGradient>
+class AddSeparableEvaluate<FunctionType, MatType, GradType,
+    HasSeparableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
@@ -69,16 +69,16 @@ class AddDecomposableEvaluate<FunctionType, MatType, GradType,
 };
 
 /**
- * If we have a decomposable EvaluateWithGradient() but not a decomposable
- * Evaluate(), add a decomposable Evaluate() method.
+ * If we have a separable EvaluateWithGradient() but not a separable
+ * Evaluate(), add a separable Evaluate() method.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-class AddDecomposableEvaluate<FunctionType, MatType, GradType, true, false>
+class AddSeparableEvaluate<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
    * Return the objective function for the given coordinates, starting at the
-   * given decomposable function using the given batch size.
+   * given separable function using the given batch size.
    *
    * @param coordinates Coordinates to evaluate the function at.
    * @param begin Index of first function to evaluate.
@@ -97,22 +97,22 @@ class AddDecomposableEvaluate<FunctionType, MatType, GradType, true, false>
 };
 
 /**
- * The AddDecomposableEvaluateConst mixin class will add a decomposable const
- * Evaluate() method if a decomposable const EvaluateWithGradient() function
+ * The AddSeparableEvaluateConst mixin class will add a separable const
+ * Evaluate() method if a separable const EvaluateWithGradient() function
  * exists, or nothing otherwise.
  */
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient =
+         bool HasSeparableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateWithGradientConstForm>::value,
-         bool HasDecomposableEvaluate =
+                     SeparableEvaluateWithGradientConstForm>::value,
+         bool HasSeparableEvaluate =
              traits::HasEvaluate<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateConstForm>::value>
-class AddDecomposableEvaluateConst
+                     SeparableEvaluateConstForm>::value>
+class AddSeparableEvaluateConst
 {
  public:
   // Provide a dummy overload so the name 'Evaluate' exists for this object.
@@ -127,9 +127,9 @@ class AddDecomposableEvaluateConst
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient>
-class AddDecomposableEvaluateConst<FunctionType, MatType, GradType,
-    HasDecomposableEvaluateWithGradient, true>
+         bool HasSeparableEvaluateWithGradient>
+class AddSeparableEvaluateConst<FunctionType, MatType, GradType,
+    HasSeparableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
@@ -147,16 +147,16 @@ class AddDecomposableEvaluateConst<FunctionType, MatType, GradType,
 };
 
 /**
- * If we have a decomposable const EvaluateWithGradient() but not a decomposable
- * const Evaluate(), add a decomposable const Evaluate() method.
+ * If we have a separable const EvaluateWithGradient() but not a separable
+ * const Evaluate(), add a separable const Evaluate() method.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-class AddDecomposableEvaluateConst<FunctionType, MatType, GradType, true, false>
+class AddSeparableEvaluateConst<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
    * Return the objective function for the given coordinates, starting at the
-   * given decomposable function using the given batch size.
+   * given separable function using the given batch size.
    *
    * @param coordinates Coordinates to evaluate the function at.
    * @param begin Index of first function to evaluate.
@@ -175,22 +175,22 @@ class AddDecomposableEvaluateConst<FunctionType, MatType, GradType, true, false>
 };
 
 /**
- * The AddDecomposableEvaluateStatic mixin class will add a decomposable static
- * Evaluate() method if a decomposable static EvaluateWithGradient() function
+ * The AddSeparableEvaluateStatic mixin class will add a separable static
+ * Evaluate() method if a separable static EvaluateWithGradient() function
  * exists, or nothing otherwise.
  */
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient =
+         bool HasSeparableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateWithGradientStaticForm>::value,
-         bool HasDecomposableEvaluate =
+                     SeparableEvaluateWithGradientStaticForm>::value,
+         bool HasSeparableEvaluate =
              traits::HasEvaluate<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateStaticForm>::value>
-class AddDecomposableEvaluateStatic
+                     SeparableEvaluateStaticForm>::value>
+class AddSeparableEvaluateStatic
 {
  public:
   // Provide a dummy overload so the name 'Evaluate' exists for this object.
@@ -205,9 +205,9 @@ class AddDecomposableEvaluateStatic
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient>
-class AddDecomposableEvaluateStatic<FunctionType, MatType, GradType,
-    HasDecomposableEvaluateWithGradient, true>
+         bool HasSeparableEvaluateWithGradient>
+class AddSeparableEvaluateStatic<FunctionType, MatType, GradType,
+    HasSeparableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Evaluate().
@@ -220,17 +220,17 @@ class AddDecomposableEvaluateStatic<FunctionType, MatType, GradType,
 };
 
 /**
- * If we have a decomposable EvaluateWithGradient() but not a decomposable
- * Evaluate(), add a decomposable Evaluate() method.
+ * If we have a separable EvaluateWithGradient() but not a separable
+ * Evaluate(), add a separable Evaluate() method.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-class AddDecomposableEvaluateStatic<FunctionType, MatType, GradType, true,
+class AddSeparableEvaluateStatic<FunctionType, MatType, GradType, true,
     false>
 {
  public:
   /**
    * Return the objective function for the given coordinates, starting at the
-   * given decomposable function using the given batch size.
+   * given separable function using the given batch size.
    *
    * @param coordinates Coordinates to evaluate the function at.
    * @param begin Index of first function to evaluate.

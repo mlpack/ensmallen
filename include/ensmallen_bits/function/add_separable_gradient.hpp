@@ -1,8 +1,8 @@
 /**
- * @file add_decomposable_gradient.hpp
+ * @file add_separable_gradient.hpp
  * @author Ryan Curtin
  *
- * Adds a decomposable Gradient() function if a decomposable
+ * Adds a separable Gradient() function if a separable
  * EvaluateWithGradient() function exists.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -18,22 +18,22 @@
 namespace ens {
 
 /**
- * The AddDecomposableGradient mixin class will add a decomposable Gradient()
- * method if a decomposable EvaluateWithGradient() function exists, or nothing
+ * The AddSeparableGradient mixin class will add a separable Gradient()
+ * method if a separable EvaluateWithGradient() function exists, or nothing
  * otherwise.
  */
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient =
+         bool HasSeparableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateWithGradientForm>::value,
-         bool HasDecomposableGradient =
+                     SeparableEvaluateWithGradientForm>::value,
+         bool HasSeparableGradient =
              traits::HasGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableGradientForm>::value>
-class AddDecomposableGradient
+                     SeparableGradientForm>::value>
+class AddSeparableGradient
 {
  public:
   // Provide a dummy overload so the name 'Gradient' exists for this object.
@@ -46,9 +46,9 @@ class AddDecomposableGradient
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient>
-class AddDecomposableGradient<FunctionType, MatType, GradType,
-    HasDecomposableEvaluateWithGradient, true>
+         bool HasSeparableEvaluateWithGradient>
+class AddSeparableGradient<FunctionType, MatType, GradType,
+    HasSeparableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Gradient().
@@ -66,21 +66,21 @@ class AddDecomposableGradient<FunctionType, MatType, GradType,
 };
 
 /**
- * If we have a decomposable EvaluateWithGradient() but not a decomposable
- * Gradient(), add a decomposable Evaluate() method.
+ * If we have a separable EvaluateWithGradient() but not a separable
+ * Gradient(), add a separable Evaluate() method.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-class AddDecomposableGradient<FunctionType, MatType, GradType, true, false>
+class AddSeparableGradient<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
    * Calculate the gradient and store it in the given matrix, starting at the
-   * given decomposable function index and using the given batch size.
+   * given separable function index and using the given batch size.
    *
    * @param coordinates Coordinates to evaluate the function at.
-   * @param begin Index of decomposable function to start at.
+   * @param begin Index of separable function to start at.
    * @param gradient Matrix to store the gradient into.
-   * @param batchSize Number of decomposable functions to calculate for.
+   * @param batchSize Number of separable functions to calculate for.
    */
   void Gradient(const MatType& coordinates,
                 const size_t begin,
@@ -96,22 +96,22 @@ class AddDecomposableGradient<FunctionType, MatType, GradType, true, false>
 };
 
 /**
- * The AddDecomposableGradientConst mixin class will add a decomposable const
- * Gradient() method if a decomposable const EvaluateWithGradient() function
+ * The AddSeparableGradientConst mixin class will add a separable const
+ * Gradient() method if a separable const EvaluateWithGradient() function
  * exists, or nothing otherwise.
  */
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient =
+         bool HasSeparableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateWithGradientConstForm>::value,
-         bool HasDecomposableGradient =
+                     SeparableEvaluateWithGradientConstForm>::value,
+         bool HasSeparableGradient =
              traits::HasGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableGradientConstForm>::value>
-class AddDecomposableGradientConst
+                     SeparableGradientConstForm>::value>
+class AddSeparableGradientConst
 {
  public:
   // Provide a dummy overload so the name 'Gradient' exists for this object.
@@ -124,9 +124,9 @@ class AddDecomposableGradientConst
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient>
-class AddDecomposableGradientConst<FunctionType, MatType, GradType,
-    HasDecomposableEvaluateWithGradient, true>
+         bool HasSeparableEvaluateWithGradient>
+class AddSeparableGradientConst<FunctionType, MatType, GradType,
+    HasSeparableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Gradient().
@@ -144,21 +144,21 @@ class AddDecomposableGradientConst<FunctionType, MatType, GradType,
 };
 
 /**
- * If we have a decomposable const EvaluateWithGradient() but not a decomposable
- * const Gradient(), add a decomposable const Gradient() method.
+ * If we have a separable const EvaluateWithGradient() but not a separable
+ * const Gradient(), add a separable const Gradient() method.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-class AddDecomposableGradientConst<FunctionType, MatType, GradType, true, false>
+class AddSeparableGradientConst<FunctionType, MatType, GradType, true, false>
 {
  public:
   /**
    * Calculate the gradient and store it in the given matrix, starting at the
-   * given decomposable function index and using the given batch size.
+   * given separable function index and using the given batch size.
    *
    * @param coordinates Coordinates to evaluate the function at.
-   * @param begin Index of decomposable function to start at.
+   * @param begin Index of separable function to start at.
    * @param gradient Matrix to store the gradient into.
-   * @param batchSize Number of decomposable functions to calculate for.
+   * @param batchSize Number of separable functions to calculate for.
    */
   void Gradient(const MatType& coordinates,
                 const size_t begin,
@@ -175,22 +175,22 @@ class AddDecomposableGradientConst<FunctionType, MatType, GradType, true, false>
 };
 
 /**
- * The AddDecomposableEvaluateStatic mixin class will add a decomposable static
- * Gradient() method if a decomposable static EvaluateWithGradient() function
+ * The AddSeparableEvaluateStatic mixin class will add a separable static
+ * Gradient() method if a separable static EvaluateWithGradient() function
  * exists, or nothing otherwise.
  */
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient =
+         bool HasSeparableEvaluateWithGradient =
              traits::HasEvaluateWithGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableEvaluateWithGradientStaticForm>::value,
-         bool HasDecomposableGradient =
+                     SeparableEvaluateWithGradientStaticForm>::value,
+         bool HasSeparableGradient =
              traits::HasGradient<FunctionType,
                  traits::TypedForms<MatType, GradType>::template
-                     DecomposableGradientStaticForm>::value>
-class AddDecomposableGradientStatic
+                     SeparableGradientStaticForm>::value>
+class AddSeparableGradientStatic
 {
  public:
   // Provide a dummy overload so the name 'Gradient' exists for this object.
@@ -205,9 +205,9 @@ class AddDecomposableGradientStatic
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         bool HasDecomposableEvaluateWithGradient>
-class AddDecomposableGradientStatic<FunctionType, MatType, GradType,
-    HasDecomposableEvaluateWithGradient, true>
+         bool HasSeparableEvaluateWithGradient>
+class AddSeparableGradientStatic<FunctionType, MatType, GradType,
+    HasSeparableEvaluateWithGradient, true>
 {
  public:
   // Reflect the existing Gradient().
@@ -221,22 +221,22 @@ class AddDecomposableGradientStatic<FunctionType, MatType, GradType,
 };
 
 /**
- * If we have a decomposable EvaluateWithGradient() but not a decomposable
- * Gradient(), add a decomposable Gradient() method.
+ * If we have a separable EvaluateWithGradient() but not a separable
+ * Gradient(), add a separable Gradient() method.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-class AddDecomposableGradientStatic<FunctionType, MatType, GradType, true,
+class AddSeparableGradientStatic<FunctionType, MatType, GradType, true,
     false>
 {
  public:
   /**
    * Calculate the gradient and store it in the given matrix, starting at the
-   * given decomposable function index and using the given batch size.
+   * given separable function index and using the given batch size.
    *
    * @param coordinates Coordinates to evaluate the function at.
-   * @param begin Index of decomposable function to start at.
+   * @param begin Index of separable function to start at.
    * @param gradient Matrix to store the gradient into.
-   * @param batchSize Number of decomposable functions to calculate for.
+   * @param batchSize Number of separable functions to calculate for.
    */
   static void Gradient(const MatType& coordinates,
                        const size_t begin,
