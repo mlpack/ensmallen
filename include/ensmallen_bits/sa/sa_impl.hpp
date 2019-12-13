@@ -55,7 +55,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
 
   // Make sure we have the methods that we need.
-  traits::CheckNonDifferentiableFunctionTypeAPI<FunctionType, BaseMatType>();
+  traits::CheckArbitraryFunctionTypeAPI<FunctionType, BaseMatType>();
   RequireFloatingPointType<BaseMatType>();
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;

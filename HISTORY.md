@@ -3,6 +3,9 @@
   * SGD callback test 32-bit safety (big number).
     ([#143](https://github.com/mlpack/ensmallen/pull/143)).
 
+  * Use "arbitrary" and "separable" terms in static function type checks
+    ([#145](https://github.com/mlpack/ensmallen/pull/145)).
+
   * Remove 'using namespace std' from problems/ files.
     ([#147](https://github.com/mlpack/ensmallen/pull/147)).
 

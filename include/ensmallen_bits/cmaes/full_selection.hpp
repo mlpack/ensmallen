@@ -23,15 +23,15 @@ class FullSelection
   /**
    * Select the full dataset to calculate the objective function.
    *
-   * @tparam DecomposableFunctionType Type of the function to be evaluated.
+   * @tparam SeparableFunctionType Type of the function to be evaluated.
    * @param function Function to optimize.
    * @param batchSize Batch size to use for each step.
    * @param iterate starting point.
    */
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  double Select(DecomposableFunctionType& function,
+  double Select(SeparableFunctionType& function,
                 const size_t batchSize,
                 const MatType& iterate,
                 CallbackTypes&... callbacks)

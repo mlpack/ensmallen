@@ -32,13 +32,13 @@ inline IQN::IQN(const double stepSize,
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename DecomposableFunctionType,
+template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
-IQN::Optimize(DecomposableFunctionType& functionIn,
+IQN::Optimize(SeparableFunctionType& functionIn,
               MatType& iterateIn,
               CallbackTypes&&... callbacks)
 {
@@ -47,18 +47,18 @@ IQN::Optimize(DecomposableFunctionType& functionIn,
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+  typedef Function<SeparableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
   FullFunctionType& function(static_cast<FullFunctionType&>(functionIn));
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+  traits::CheckSeparableFunctionTypeAPI<FullFunctionType, BaseMatType,
       BaseGradType>();
   RequireDenseFloatingPointType<BaseMatType>();
   RequireDenseFloatingPointType<BaseGradType>();
   RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+  traits::CheckSeparableFunctionTypeAPI<SeparableFunctionType,
       BaseMatType, BaseGradType>();
 
   // Find the number of functions.
