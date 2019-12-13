@@ -38,6 +38,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 SphereFunction f(2);
 arma::mat coordinates = f.GetInitialPoint();
@@ -45,6 +49,8 @@ arma::mat coordinates = f.GetInitialPoint();
 AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000, 1e-3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -327,6 +333,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 SphereFunction f(2);
 arma::mat coordinates = f.GetInitialPoint();
@@ -334,6 +344,16 @@ arma::mat coordinates = f.GetInitialPoint();
 AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000, 1e-3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+ * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## AMSGrad
 
