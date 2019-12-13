@@ -57,7 +57,7 @@ struct CheckGradient
 /**
  * Check if a suitable overload of NumFunctions() is available.
  *
- * This is required by the DecomposableFunctionType API.
+ * This is required by the SeparableFunctionType API.
  */
 template<typename FunctionType, typename MatType, typename GradType>
 struct CheckNumFunctions
@@ -74,7 +74,7 @@ struct CheckNumFunctions
 /**
  * Check if a suitable overload of Shuffle() is available.
  *
- * This is required by the DecomposableFunctionType API.
+ * This is required by the SeparableFunctionType API.
  */
 template<typename FunctionType, typename MatType, typename GradType>
 struct CheckShuffle
@@ -89,37 +89,37 @@ struct CheckShuffle
 };
 
 /**
- * Check if a suitable decomposable overload of Evaluate() is available.
+ * Check if a suitable separable overload of Evaluate() is available.
  *
- * This is required by the DecomposableFunctionType API.
+ * This is required by the SeparableFunctionType API.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-struct CheckDecomposableEvaluate
+struct CheckSeparableEvaluate
 {
   const static bool value =
       HasEvaluate<FunctionType, TypedForms<MatType, GradType>::template
-          DecomposableEvaluateForm>::value ||
+          SeparableEvaluateForm>::value ||
       HasEvaluate<FunctionType, TypedForms<MatType, GradType>::template
-          DecomposableEvaluateConstForm>::value ||
+          SeparableEvaluateConstForm>::value ||
       HasEvaluate<FunctionType, TypedForms<MatType, GradType>::template
-          DecomposableEvaluateStaticForm>::value;
+          SeparableEvaluateStaticForm>::value;
 };
 
 /**
- * Check if a suitable decomposable overload of Gradient() is available.
+ * Check if a suitable separable overload of Gradient() is available.
  *
- * This is required by the DecomposableFunctionType API.
+ * This is required by the SeparableFunctionType API.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-struct CheckDecomposableGradient
+struct CheckSeparableGradient
 {
   const static bool value =
       HasGradient<FunctionType, TypedForms<MatType, GradType>::template
-          DecomposableGradientForm>::value ||
+          SeparableGradientForm>::value ||
       HasGradient<FunctionType, TypedForms<MatType, GradType>::template
-          DecomposableGradientConstForm>::value ||
+          SeparableGradientConstForm>::value ||
       HasGradient<FunctionType, TypedForms<MatType, GradType>::template
-          DecomposableGradientStaticForm>::value;
+          SeparableGradientStaticForm>::value;
 };
 
 /**
@@ -252,24 +252,24 @@ struct CheckEvaluateWithGradient
 };
 
 /**
- * Check if a suitable decomposable overload of EvaluateWithGradient() is
+ * Check if a suitable separable overload of EvaluateWithGradient() is
  * available.
  *
  * This is required by the FunctionType API.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-struct CheckDecomposableEvaluateWithGradient
+struct CheckSeparableEvaluateWithGradient
 {
   const static bool value =
       HasEvaluateWithGradient<FunctionType,
           TypedForms<MatType, GradType>::template
-              DecomposableEvaluateWithGradientForm>::value ||
+              SeparableEvaluateWithGradientForm>::value ||
       HasEvaluateWithGradient<FunctionType,
           TypedForms<MatType, GradType>::template
-              DecomposableEvaluateWithGradientConstForm>::value ||
+              SeparableEvaluateWithGradientConstForm>::value ||
       HasEvaluateWithGradient<FunctionType,
           TypedForms<MatType, GradType>::template
-              DecomposableEvaluateWithGradientStaticForm>::value;
+              SeparableEvaluateWithGradientStaticForm>::value;
 };
 
 /**
@@ -299,46 +299,46 @@ inline void CheckFunctionTypeAPI()
 }
 
 /**
- * Perform checks for the DecomposableFunctionType API.
+ * Perform checks for the SeparableFunctionType API.
  */
 template<typename FunctionType, typename MatType, typename GradType>
-inline void CheckDecomposableFunctionTypeAPI()
+inline void CheckSeparableFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
-  static_assert(CheckDecomposableEvaluate<FunctionType,
-                                          MatType,
-                                          GradType>::value,
-      "The FunctionType does not have a correct definition of a decomposable "
+  static_assert(CheckSeparableEvaluate<FunctionType,
+                                       MatType,
+                                       GradType>::value,
+      "The FunctionType does not have a correct definition of a separable "
       "Evaluate() method.  Please check that the FunctionType fully satisfies"
-      " the requirements of the DecomposableFunctionType API; see the optimizer"
+      " the requirements of the SeparableFunctionType API; see the optimizer"
       " tutorial for more details.");
 
-  static_assert(CheckDecomposableGradient<FunctionType,
-                                          MatType,
-                                          GradType>::value,
-      "The FunctionType does not have a correct definition of a decomposable "
+  static_assert(CheckSeparableGradient<FunctionType,
+                                       MatType,
+                                       GradType>::value,
+      "The FunctionType does not have a correct definition of a separable "
       "Gradient() method.  Please check that the FunctionType fully satisfies"
-      " the requirements of the DecomposableFunctionType API; see the optimizer"
+      " the requirements of the SeparableFunctionType API; see the optimizer"
       " tutorial for more details.");
 
-  static_assert(CheckDecomposableEvaluateWithGradient<FunctionType,
-                                                      MatType,
-                                                      GradType>::value,
-      "The FunctionType does not have a correct definition of a decomposable "
+  static_assert(CheckSeparableEvaluateWithGradient<FunctionType,
+                                                   MatType,
+                                                   GradType>::value,
+      "The FunctionType does not have a correct definition of a separable "
       "EvaluateWithGradient() method.  Please check that the FunctionType "
-      "fully satisfies the requirements of the DecomposableFunctionType API; "
+      "fully satisfies the requirements of the SeparableFunctionType API; "
       "see the optimizer tutorial for more details.");
 
   static_assert(CheckNumFunctions<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of NumFunctions(). "
       "Please check that the FunctionType fully satisfies the requirements of "
-      "the DecomposableFunctionType API; see the optimizer tutorial for more "
+      "the SeparableFunctionType API; see the optimizer tutorial for more "
       "details.");
 
   static_assert(CheckShuffle<FunctionType, MatType, GradType>::value,
       "The FunctionType does not have a correct definition of Shuffle(). "
       "Please check that the FunctionType fully satisfies the requirements of "
-      "the DecomposableFunctionType API; see the optimizer tutorial for more "
+      "the SeparableFunctionType API; see the optimizer tutorial for more "
       "details.");
 #endif
 }
@@ -356,7 +356,7 @@ inline void CheckSparseFunctionTypeAPI()
       "the SparseFunctionType API; see the optimizer tutorial for more "
       "details.");
 
-  static_assert(CheckDecomposableEvaluate<FunctionType,
+  static_assert(CheckSeparableEvaluate<FunctionType,
                                           MatType,
                                           GradType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
@@ -373,16 +373,16 @@ inline void CheckSparseFunctionTypeAPI()
 }
 
 /**
- * Perform checks for the NonDifferentiableFunctionType API.
+ * Perform checks for the ArbitraryFunctionType API.
  */
 template<typename FunctionType, typename MatType>
-inline void CheckNonDifferentiableFunctionTypeAPI()
+inline void CheckArbitraryFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
-      "the NonDifferentiableFunctionType API; see the optimizer tutorial for "
+      "the ArbitraryFunctionType API; see the optimizer tutorial for "
       "more details.");
 #endif
 }
@@ -454,19 +454,19 @@ inline void CheckConstrainedFunctionTypeAPI()
 }
 
 /**
- * Perform checks for the NonDifferentiableDecomposableFunctionType API.  (I
+ * Perform checks for the ArbitrarySeparableFunctionType API.  (I
  * know, it is a long name...)
  */
 template<typename FunctionType, typename MatType>
-inline void CheckNonDifferentiableDecomposableFunctionTypeAPI()
+inline void CheckArbitrarySeparableFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
-  static_assert(CheckDecomposableEvaluate<FunctionType,
+  static_assert(CheckSeparableEvaluate<FunctionType,
                                           MatType,
                                           MatType>::value,
       "The FunctionType does not have a correct definition of Evaluate(). "
       "Please check that the FunctionType fully satisfies the requirements of "
-      "the NonDifferentiableDecomposableFunctionType API; see the optimizer "
+      "the ArbitrarySeparableFunctionType API; see the optimizer "
       "tutorial for more details.");
 #endif
 }

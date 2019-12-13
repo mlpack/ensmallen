@@ -63,3 +63,4 @@ the library.
 * Conrad Sanderson
 * Dan Timson
 * N Rajiv Vaidyanathan
+* Roberto Hueso

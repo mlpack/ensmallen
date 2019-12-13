@@ -4,6 +4,10 @@ The least restrictive type of function that can be implemented in ensmallen is
 a function for which only the objective can be evaluated.  For this, a class
 with the following API must be implemented:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 class ArbitraryFunctionType
 {
@@ -12,6 +16,8 @@ class ArbitraryFunctionType
   double Evaluate(const arma::mat& x);
 };
 ```
+
+</details>
 
 For this type of function, we assume that the gradient `f'(x)` is not
 computable.  If it is, see [differentiable functions](#differentiable-functions).
@@ -36,6 +42,10 @@ Each of these optimizers has an `Optimize()` function that is called as
 
 An example program that implements the objective function f(x) = 2 |x|^2 is
 shown below, using the simulated annealing optimizer.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 #include <ensmallen.hpp>
@@ -68,12 +78,18 @@ int main()
 }
 ```
 
+</details>
+
 ## Differentiable functions
 
 Probably the most common type of function that can be optimized with ensmallen
 is a differentiable function, where both f(x) and f'(x) can be calculated.  To
 optimize a differentiable function with ensmallen, a class must be implemented
 that follows the API below:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 class DifferentiableFunctionType
@@ -98,6 +114,8 @@ class DifferentiableFunctionType
   double EvaluateWithGradient(const arma::mat& x, arma::mat& g);
 };
 ```
+
+</details>
 
 Note that you may implement *either* `Evaluate()` and `Gradient()` *or*
 `EvaluateWithGradient()`, but it is not mandatory to implement both.  (Of
@@ -135,6 +153,10 @@ where $x$ is a vector of parameters.  This gives the objective function $f(x) =
 In the example program, we optimize this objective function and compare the
 runtime of an implementation that uses `Evaluate()` and `Gradient()`, and the
 runtime of an implementation that uses `EvaluateWithGradient()`.
+
+<details>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 #include <ensmallen.hpp>
@@ -248,6 +270,8 @@ int main()
 }
 ```
 
+</details>
+
 ### Partially differentiable functions
 
 Some differentiable functions have the additional property that the gradient
@@ -261,6 +285,10 @@ useful for coordinate descent type algorithms.
 To use ensmallen optimizers to minimize these types of functions, only two
 functions needs to be added to the differentiable function type:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 // Compute the partial gradient f'_j(x) with respect to data coordinate j and
 // store it in the sparse matrix g.
@@ -269,6 +297,8 @@ void Gradient(const arma::mat& x, const size_t j, arma::sp_mat& g);
 // Get the number of features that f(x) can be partially differentiated with.
 size_t NumFeatures();
 ```
+
+</details>
 
 **Note**: many partially differentiable function optimizers do not require a
 regular implementation of the `Gradient()`, so that function may be omitted.
@@ -295,6 +325,10 @@ function taken across many data points.  Implementing an arbitrary separable
 function type in ensmallen is similar to implementing an arbitrary objective
 function, but with a few extra utility methods:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 class ArbitrarySeparableFunctionType
 {
@@ -315,6 +349,8 @@ class ArbitrarySeparableFunctionType
   size_t NumFunctions();
 };
 ```
+
+</details>
 
 Each of the implemented methods is allowed to have additional cv-modifiers
 (`static`, `const`, etc.).
@@ -348,6 +384,10 @@ $$ f_i(x) = (\operatorname{responses}(i) - x' * \operatorname{data}(i))^2 $$
 
 where $\operatorname{data}(i)$ represents the data point indexed by $i$ and
 $\operatorname{responses}(i)$ represents the observed response indexed by $i$.
+
+<details>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 #include <ensmallen.hpp>
@@ -425,6 +465,8 @@ int main()
 }
 ```
 
+</details>
+
 ## Differentiable separable functions
 
 Likely the most important type of function to be optimized in machine learning
@@ -446,6 +488,10 @@ For machine learning tasks, the objective function may be, e.g., the sum of a
 function taken across many data points.  Implementing a differentiable
 separable function type in ensmallen is similar to implementing an ordinary
 differentiable function, but with a few extra utility methods:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 class ArbitrarySeparableFunctionType
@@ -493,6 +539,8 @@ class ArbitrarySeparableFunctionType
                               const size_t batchSize);
 };
 ```
+
+</details>
 
 Note that you may implement *either* `Evaluate()` and `Gradient()` *or*
 `EvaluateWithGradient()`, but it is not mandatory to implement both.  (Of
@@ -543,6 +591,10 @@ where `data(i)` represents the data point indexed by `i` and `responses(i)`
 represents the observed response indexed by `i`.  This example implementation
 only implements `EvaluateWithGradient()` in order to avoid redundant
 calculations.
+
+<details>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 #include <ensmallen.hpp>
@@ -627,11 +679,17 @@ int main()
 }
 ```
 
+</details>
+
 ### Sparse differentiable separable functions
 
 Some differentiable separable functions have the additional property that
 the gradient `f'_i(x)` is sparse.  When this is true, one additional method can
 be implemented as part of the class to be optimized:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 // Add this definition to use sparse differentiable separable function
@@ -643,8 +701,14 @@ void Gradient(const arma::mat& x,
               const size_t batchSize);
 ```
 
+</details>
+
 It's also possible to instead use templates to provide only one `Gradient()`
 function for both sparse and non-sparse optimizers:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 // This provides Gradient() for both sparse and non-sparse optimizers.
@@ -654,6 +718,8 @@ void Gradient(const arma::mat& x,
               GradType& g,
               const size_t batchSize);
 ```
+
+</details>
 
 If either of these methods are available, then any ensmallen optimizer that
 optimizes sparse separable differentiable functions may be used.  This
@@ -672,6 +738,10 @@ an `ArbitraryFunctionType`---but for any categorical dimension `x_i` in `x`, the
 value will be in the range [0, c_i - 1] where `c_i` is the number of categories
 in dimension `x_i`.
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 class CategoricalFunction
 {
@@ -680,6 +750,8 @@ class CategoricalFunction
   double Evaluate(const arma::mat& x);
 };
 ```
+
+</details>
 
 However, when an optimizer's Optimize() method is called, two additional
 parameters must be specified, in addition to the function to optimize and the
@@ -699,6 +771,10 @@ The following optimizers can be used in this way to optimize a categorical funct
  - [Grid Search](#grid-search) (all parameters must be categorical)
 
 An example program showing usage of categorical optimization is shown below.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 #include <ensmallen.hpp>
@@ -755,6 +831,8 @@ int main()
 }
 ```
 
+</details>
+
 ## Constrained functions
 
 A constrained function is an objective function `f(x)` that is also subject to
@@ -775,6 +853,10 @@ allows us to handle "soft" constraints also.
 
 In order to optimize a constrained function with ensmallen, a class
 implementing the API below is required.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 class ConstrainedFunctionType
@@ -804,6 +886,8 @@ class ConstrainedFunctionType
   void GradientConstraint(const size_t i, const arma::mat& x, arma::mat& g);
 };
 ```
+
+</details>
 
 A constrained function can be optimized with the following optimizers:
 
@@ -846,6 +930,10 @@ solver.  The list of SDP solvers is below:
  - [Low-rank accelerated SDP solver (LRSDP)](#lrsdp-low-rank-sdp-solver)
 
 Example code showing how to solve an SDP is given below.
+
+<details>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 int main()
@@ -951,6 +1039,8 @@ int main()
 }
 ```
 
+</details>
+
 ## Alternate matrix types
 
 All of the examples above (and throughout the rest of the documentation)
@@ -975,6 +1065,10 @@ desired.
 It is easy to write a function to optimize, e.g., an `arma::fmat`.  Here is an
 example, adapted from the `SquaredFunction` example from the
 [arbitrary function documentation](#example__squared_function_optimization).
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 #include <ensmallen.hpp>
@@ -1011,6 +1105,8 @@ int main()
       << x;
 }
 ```
+
+</details>
 
 Note that we have simply changed the `SquaredFunction` to accept `arma::fmat`
 instead of `arma::mat` as parameters to `Evaluate()`, and the return type has

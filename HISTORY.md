@@ -1,5 +1,30 @@
 ### ensmallen ?.??.?
 ###### ????-??-??
+
+### ensmallen 2.10.5
+###### 2019-12-13
+  * SGD callback test 32-bit safety (big number)
+    ([#143](https://github.com/mlpack/ensmallen/pull/143)).
+
+  * Use "arbitrary" and "separable" terms in static function type checks
+    ([#145](https://github.com/mlpack/ensmallen/pull/145)).
+
+  * Remove 'using namespace std' from `problems/` files
+    ([#147](https://github.com/mlpack/ensmallen/pull/147)).
+
+### ensmallen 2.10.4: "Fried Chicken"
+###### 2019-11-18
+  * Add optional tests building.
+    ([#141](https://github.com/mlpack/ensmallen/pull/141)).
+
+  * Make code samples collapsible in the documentation.
+    ([#140](https://github.com/mlpack/ensmallen/pull/140)).
+
+### ensmallen 2.10.3: "Fried Chicken"
+###### 2019-09-26
+  * Fix ParallelSGD runtime bug.
+    ([#135](https://github.com/mlpack/ensmallen/pull/135)).
+
   * Add additional L-BFGS convergence check
     ([#136](https://github.com/mlpack/ensmallen/pull/136)).
 
