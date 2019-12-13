@@ -366,20 +366,20 @@ TEST_CASE("SDPTest", "[FunctionTest]")
 /**
  * Make sure that an empty class doesn't have any methods added to it.
  */
-TEST_CASE("AddDecomposableEvaluateWithGradientEmptyTest", "[FunctionTest]")
+TEST_CASE("AddSeparableEvaluateWithGradientEmptyTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<
       Function<EmptyTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateForm>::value;
+          SeparableEvaluateForm>::value;
   const bool hasGradient = HasGradient<
       Function<EmptyTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableGradientForm>::value;
+          SeparableGradientForm>::value;
   const bool hasEvaluateWithGradient = HasEvaluateWithGradient<
       Function<EmptyTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateWithGradientForm>::value;
+          SeparableEvaluateWithGradientForm>::value;
 
   REQUIRE(hasEvaluate == false);
   REQUIRE(hasGradient == false);
@@ -389,21 +389,21 @@ TEST_CASE("AddDecomposableEvaluateWithGradientEmptyTest", "[FunctionTest]")
 /**
  * Make sure we don't add any functions if we only have Evaluate().
  */
-TEST_CASE("AddDecomposableEvaluateWithGradientEvaluateOnlyTest",
+TEST_CASE("AddSeparableEvaluateWithGradientEvaluateOnlyTest",
           "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<
       Function<EvaluateTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateForm>::value;
+          SeparableEvaluateForm>::value;
   const bool hasGradient = HasGradient<
       Function<EvaluateTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableGradientForm>::value;
+          SeparableGradientForm>::value;
   const bool hasEvaluateWithGradient = HasEvaluateWithGradient<
       Function<EvaluateTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateWithGradientForm>::value;
+          SeparableEvaluateWithGradientForm>::value;
 
   REQUIRE(hasEvaluate == true);
   REQUIRE(hasGradient == false);
@@ -413,21 +413,21 @@ TEST_CASE("AddDecomposableEvaluateWithGradientEvaluateOnlyTest",
 /**
  * Make sure we don't add any functions if we only have Gradient().
  */
-TEST_CASE("AddDecomposableEvaluateWithGradientGradientOnlyTest",
+TEST_CASE("AddSeparableEvaluateWithGradientGradientOnlyTest",
           "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<
       Function<GradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateForm>::value;
+          SeparableEvaluateForm>::value;
   const bool hasGradient = HasGradient<
       Function<GradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableGradientForm>::value;
+          SeparableGradientForm>::value;
   const bool hasEvaluateWithGradient = HasEvaluateWithGradient<
       Function<GradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateWithGradientForm>::value;
+          SeparableEvaluateWithGradientForm>::value;
 
   REQUIRE(hasEvaluate == false);
   REQUIRE(hasGradient == true);
@@ -438,20 +438,20 @@ TEST_CASE("AddDecomposableEvaluateWithGradientGradientOnlyTest",
  * Make sure we add EvaluateWithGradient() when we have both Evaluate() and
  * Gradient().
  */
-TEST_CASE("AddDecomposableEvaluateWithGradientBothTest", "[FunctionTest]")
+TEST_CASE("AddSeparableEvaluateWithGradientBothTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<
       Function<EvaluateGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateForm>::value;
+          SeparableEvaluateForm>::value;
   const bool hasGradient = HasGradient<
       Function<EvaluateGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableGradientForm>::value;
+          SeparableGradientForm>::value;
   const bool hasEvaluateWithGradient = HasEvaluateWithGradient<
       Function<EvaluateGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateWithGradientForm>::value;
+          SeparableEvaluateWithGradientForm>::value;
 
   REQUIRE(hasEvaluate == true);
   REQUIRE(hasGradient == true);
@@ -462,21 +462,21 @@ TEST_CASE("AddDecomposableEvaluateWithGradientBothTest", "[FunctionTest]")
  * Make sure we add Evaluate() and Gradient() when we have only
  * EvaluateWithGradient().
  */
-TEST_CASE("AddDecomposableEvaluateWGradientEvaluateWithGradientTest",
+TEST_CASE("AddSeparableEvaluateWGradientEvaluateWithGradientTest",
           "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<
       Function<EvaluateWithGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateForm>::value;
+          SeparableEvaluateForm>::value;
   const bool hasGradient = HasGradient<
       Function<EvaluateWithGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableGradientForm>::value;
+          SeparableGradientForm>::value;
   const bool hasEvaluateWithGradient = HasEvaluateWithGradient<
       Function<EvaluateWithGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateWithGradientForm>::value;
+          SeparableEvaluateWithGradientForm>::value;
 
   Function<EvaluateWithGradientTestFunction, arma::mat, arma::mat> f;
   arma::mat coordinates(10, 10, arma::fill::ones);
@@ -491,20 +491,20 @@ TEST_CASE("AddDecomposableEvaluateWGradientEvaluateWithGradientTest",
 /**
  * Make sure we add no methods when we already have all three.
  */
-TEST_CASE("AddDecomposableEvaluateWithGradientAllThreeTest", "[FunctionTest]")
+TEST_CASE("AddSeparableEvaluateWithGradientAllThreeTest", "[FunctionTest]")
 {
   const bool hasEvaluate = HasEvaluate<
       Function<EvaluateAndWithGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateForm>::value;
+          SeparableEvaluateForm>::value;
   const bool hasGradient = HasGradient<
       Function<EvaluateAndWithGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableGradientForm>::value;
+          SeparableGradientForm>::value;
   const bool hasEvaluateWithGradient = HasEvaluateWithGradient<
       Function<EvaluateAndWithGradientTestFunction, arma::mat, arma::mat>,
       TypedForms<arma::mat, arma::mat>::template
-          DecomposableEvaluateWithGradientForm>::value;
+          SeparableEvaluateWithGradientForm>::value;
 
   REQUIRE(hasEvaluate == true);
   REQUIRE(hasGradient == true);
@@ -600,9 +600,9 @@ class D
 
 
 /**
- * Test the correctness of the static check for DecomposableFunctionType API.
+ * Test the correctness of the static check for SeparableFunctionType API.
  */
-TEST_CASE("DecomposableFunctionTypeCheckTest", "[FunctionTest]")
+TEST_CASE("SeparableFunctionTypeCheckTest", "[FunctionTest]")
 {
   static_assert(CheckNumFunctions<A, arma::mat, arma::mat>::value,
       "CheckNumFunctions static check failed.");
@@ -613,23 +613,23 @@ TEST_CASE("DecomposableFunctionTypeCheckTest", "[FunctionTest]")
   static_assert(!CheckNumFunctions<D, arma::mat, arma::mat>::value,
       "CheckNumFunctions static check failed.");
 
-  static_assert(CheckDecomposableEvaluate<A, arma::mat, arma::mat>::value,
-      "CheckDecomposableEvaluate static check failed.");
-  static_assert(CheckDecomposableEvaluate<B, arma::mat, arma::mat>::value,
-      "CheckDecomposableEvaluate static check failed.");
-  static_assert(!CheckDecomposableEvaluate<C, arma::mat, arma::mat>::value,
-      "CheckDecomposableEvaluate static check failed.");
-  static_assert(!CheckDecomposableEvaluate<D, arma::mat, arma::mat>::value,
-      "CheckDecomposableEvaluate static check failed.");
+  static_assert(CheckSeparableEvaluate<A, arma::mat, arma::mat>::value,
+      "CheckSeparableEvaluate static check failed.");
+  static_assert(CheckSeparableEvaluate<B, arma::mat, arma::mat>::value,
+      "CheckSeparableEvaluate static check failed.");
+  static_assert(!CheckSeparableEvaluate<C, arma::mat, arma::mat>::value,
+      "CheckSeparableEvaluate static check failed.");
+  static_assert(!CheckSeparableEvaluate<D, arma::mat, arma::mat>::value,
+      "CheckSeparableEvaluate static check failed.");
 
-  static_assert(CheckDecomposableGradient<A, arma::mat, arma::mat>::value,
-      "CheckDecomposableGradient static check failed.");
-  static_assert(CheckDecomposableGradient<B, arma::mat, arma::mat>::value,
-      "CheckDecomposableGradient static check failed.");
-  static_assert(!CheckDecomposableGradient<C, arma::mat, arma::mat>::value,
-      "CheckDecomposableGradient static check failed.");
-  static_assert(!CheckDecomposableGradient<D, arma::mat, arma::mat>::value,
-      "CheckDecomposableGradient static check failed.");
+  static_assert(CheckSeparableGradient<A, arma::mat, arma::mat>::value,
+      "CheckSeparableGradient static check failed.");
+  static_assert(CheckSeparableGradient<B, arma::mat, arma::mat>::value,
+      "CheckSeparableGradient static check failed.");
+  static_assert(!CheckSeparableGradient<C, arma::mat, arma::mat>::value,
+      "CheckSeparableGradient static check failed.");
+  static_assert(!CheckSeparableGradient<D, arma::mat, arma::mat>::value,
+      "CheckSeparableGradient static check failed.");
 }
 
 /**

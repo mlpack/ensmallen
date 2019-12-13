@@ -47,12 +47,12 @@ SGDR<UpdatePolicyType>::SGDR(
 }
 
 template<typename UpdatePolicyType>
-template<typename DecomposableFunctionType, typename MatType, typename GradType,
+template<typename SeparableFunctionType, typename MatType, typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
 SGDR<UpdatePolicyType>::Optimize(
-    DecomposableFunctionType& function,
+    SeparableFunctionType& function,
     MatType& iterate,
     CallbackTypes&&... callbacks)
 {

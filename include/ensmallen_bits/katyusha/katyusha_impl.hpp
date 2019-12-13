@@ -41,14 +41,14 @@ KatyushaType<Proximal>::KatyushaType(
 
 //! Optimize the function (minimize).
 template<bool Proximal>
-template<typename DecomposableFunctionType,
+template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
 KatyushaType<Proximal>::Optimize(
-    DecomposableFunctionType& function,
+    SeparableFunctionType& function,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
@@ -57,7 +57,7 @@ KatyushaType<Proximal>::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  traits::CheckDecomposableFunctionTypeAPI<DecomposableFunctionType,
+  traits::CheckSeparableFunctionTypeAPI<SeparableFunctionType,
       BaseMatType, BaseGradType>();
   RequireFloatingPointType<BaseMatType>();
   RequireFloatingPointType<BaseGradType>();

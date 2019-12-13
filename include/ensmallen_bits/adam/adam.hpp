@@ -107,7 +107,7 @@ class AdamType
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam SeparableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of matrix to optimize with.
    * @tparam GradType Type of matrix to use to represent function gradients.
    * @tparam CallbackTypes Types of callback functions.
@@ -116,30 +116,30 @@ class AdamType
    * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
   typename std::enable_if<IsArmaType<GradType>::value,
       typename MatType::elem_type>::type
-  Optimize(DecomposableFunctionType& function,
+  Optimize(SeparableFunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks)
   {
     return optimizer.template Optimize<
-        DecomposableFunctionType, MatType, GradType, CallbackTypes...>(
+        SeparableFunctionType, MatType, GradType, CallbackTypes...>(
         function, iterate, callbacks...);
   }
 
   //! Forward the MatType as GradType.
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks)
   {
-    return Optimize<DecomposableFunctionType, MatType, MatType,
+    return Optimize<SeparableFunctionType, MatType, MatType,
         CallbackTypes...>(function, iterate,
         std::forward<CallbackTypes>(callbacks)...);
   }

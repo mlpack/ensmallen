@@ -30,10 +30,10 @@ inline DE::DE(const size_t populationSize ,
 { /* Nothing to do here. */ }
 
 //!Optimize the function
-template<typename DecomposableFunctionType,
+template<typename FunctionType,
          typename MatType,
          typename... CallbackTypes>
-typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
+typename MatType::elem_type DE::Optimize(FunctionType& function,
                                          MatType& iterateIn,
                                          CallbackTypes&&... callbacks)
 {
@@ -50,8 +50,8 @@ typename MatType::elem_type DE::Optimize(DecomposableFunctionType& function,
   arma::Col<ElemType> fitnessValues;
 
   // Make sure that we have the methods that we need.  Long name...
-  traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
-      DecomposableFunctionType, BaseMatType>();
+  traits::CheckArbitraryFunctionTypeAPI<
+      FunctionType, BaseMatType>();
   RequireDenseFloatingPointType<BaseMatType>();
 
   // Population Size must be at least 3 for DE to work.
