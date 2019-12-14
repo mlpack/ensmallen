@@ -198,7 +198,7 @@ class AdaBoundType
 };
 
 using AdaBound = AdaBoundType<AdaBoundUpdate>;
-using AMSBound = AdaBoundType<AdaBoundUpdate>;
+using AMSBound = AdaBoundType<AMSBoundUpdate>;
 
 } // namespace ens
 
