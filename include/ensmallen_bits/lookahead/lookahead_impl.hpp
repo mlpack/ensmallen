@@ -166,7 +166,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
     const size_t numFunctions = f.NumFunctions();
 
     size_t batchSize = 1;
-    // Check if the optimizer implements the SatchSize() method and use the
+    // Check if the optimizer implements the BatchSize() method and use the
     // parameter for the objective calculation.
     if (callbacks::traits::HasBatchSizeSignature<BaseOptimizerType>::value)
       batchSize = baseOptimizer.BatchSize();
