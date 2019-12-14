@@ -561,6 +561,7 @@ The following optimizers can be used with differentiable functions:
  - [Big Batch SGD](#big-batch-sgd)
  - [IQN](#iqn)
  - [Katyusha](#katyusha)
+ - [Lookahead](#lookahead)
  - [Momentum SGD](#momentum-sgd)
  - [Nadam](#nadam)
  - [NadaMax](#nadamax)
