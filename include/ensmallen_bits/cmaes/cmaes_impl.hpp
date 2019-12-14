@@ -41,11 +41,11 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
 
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType>
-template<typename DecomposableFunctionType,
+template<typename SeparableFunctionType,
          typename MatType,
          typename... CallbackTypes>
 typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
-    DecomposableFunctionType& function,
+    SeparableFunctionType& function,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
@@ -54,8 +54,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
 
   // Make sure that we have the methods that we need.  Long name...
-  traits::CheckNonDifferentiableDecomposableFunctionTypeAPI<
-      DecomposableFunctionType, BaseMatType>();
+  traits::CheckArbitrarySeparableFunctionTypeAPI<
+      SeparableFunctionType, BaseMatType>();
   RequireDenseFloatingPointType<BaseMatType>();
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;

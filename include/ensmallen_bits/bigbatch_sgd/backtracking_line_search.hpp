@@ -66,7 +66,7 @@ class BacktrackingLineSearch
     /**
      * This function is called in each iteration.
      *
-     * @tparam DecomposableFunctionType Type of the function to be optimized.
+     * @tparam SeparableFunctionType Type of the function to be optimized.
      * @param function Function to be optimized (minimized).
      * @param stepSize Step size to be used for the given iteration.
      * @param iterate Parameters that minimize the function.
@@ -78,9 +78,9 @@ class BacktrackingLineSearch
      *        given iteration.
      * @param reset Reset the step size decay parameter.
      */
-    template<typename DecomposableFunctionType,
+    template<typename SeparableFunctionType,
              typename GradType>
-    void Update(DecomposableFunctionType& function,
+    void Update(SeparableFunctionType& function,
                 double& stepSize,
                 MatType& iterate,
                 GradType& gradient,

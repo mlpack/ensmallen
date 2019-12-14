@@ -32,7 +32,7 @@ namespace ens {
  *   url     = {http://arxiv.org/abs/1611.01505}
  * }
  *
- * For Eve to work, a DecomposableFunctionType template parameter is required.
+ * For Eve to work, a SeparableFunctionType template parameter is required.
  * This class must implement the following function:
  *
  *   size_t NumFunctions();
@@ -92,7 +92,7 @@ class Eve
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam SeparableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of the parameters matrix.
    * @tparam GradType Type of the gradient matrix.
    * @tparam CallbackTypes Types of callback functions.
@@ -101,25 +101,25 @@ class Eve
    * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
   typename std::enable_if<IsArmaType<GradType>::value,
       typename MatType::elem_type>::type
-  Optimize(DecomposableFunctionType& function,
+  Optimize(SeparableFunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);
 
   //! Forward the MatType as GradType.
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks)
   {
-    return Optimize<DecomposableFunctionType, MatType, MatType,
+    return Optimize<SeparableFunctionType, MatType, MatType,
         CallbackTypes...>(function, iterate,
         std::forward<CallbackTypes>(callbacks)...);
   }

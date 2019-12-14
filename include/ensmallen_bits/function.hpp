@@ -25,9 +25,9 @@ class Function;
 #include "function/add_evaluate.hpp"
 #include "function/add_gradient.hpp"
 #include "function/add_evaluate_with_gradient.hpp"
-#include "function/add_decomposable_evaluate.hpp"
-#include "function/add_decomposable_gradient.hpp"
-#include "function/add_decomposable_evaluate_with_gradient.hpp"
+#include "function/add_separable_evaluate.hpp"
+#include "function/add_separable_gradient.hpp"
+#include "function/add_separable_evaluate_with_gradient.hpp"
 
 namespace ens {
 
@@ -56,17 +56,17 @@ namespace ens {
  */
 template<typename FunctionType, typename MatType, typename GradType>
 class Function :
-    public AddDecomposableEvaluateWithGradientStatic<FunctionType, MatType,
+    public AddSeparableEvaluateWithGradientStatic<FunctionType, MatType,
         GradType>,
-    public AddDecomposableEvaluateWithGradientConst<FunctionType, MatType,
+    public AddSeparableEvaluateWithGradientConst<FunctionType, MatType,
         GradType>,
-    public AddDecomposableEvaluateWithGradient<FunctionType, MatType, GradType>,
-    public AddDecomposableGradientStatic<FunctionType, MatType, GradType>,
-    public AddDecomposableGradientConst<FunctionType, MatType, GradType>,
-    public AddDecomposableGradient<FunctionType, MatType, GradType>,
-    public AddDecomposableEvaluateStatic<FunctionType, MatType, GradType>,
-    public AddDecomposableEvaluateConst<FunctionType, MatType, GradType>,
-    public AddDecomposableEvaluate<FunctionType, MatType, GradType>,
+    public AddSeparableEvaluateWithGradient<FunctionType, MatType, GradType>,
+    public AddSeparableGradientStatic<FunctionType, MatType, GradType>,
+    public AddSeparableGradientConst<FunctionType, MatType, GradType>,
+    public AddSeparableGradient<FunctionType, MatType, GradType>,
+    public AddSeparableEvaluateStatic<FunctionType, MatType, GradType>,
+    public AddSeparableEvaluateConst<FunctionType, MatType, GradType>,
+    public AddSeparableEvaluate<FunctionType, MatType, GradType>,
     public AddEvaluateWithGradientStatic<FunctionType, MatType, GradType>,
     public AddEvaluateWithGradientConst<FunctionType, MatType, GradType>,
     public AddEvaluateWithGradient<FunctionType, MatType, GradType>,
@@ -83,20 +83,20 @@ class Function :
   // an unconstructable overload with the same name, so we can use using
   // declarations here to ensure that they are all accessible.  Since we don't
   // know what FunctionType has, we can't use any using declarations there.
-  using AddDecomposableEvaluateWithGradientStatic<
+  using AddSeparableEvaluateWithGradientStatic<
       FunctionType, MatType, GradType>::EvaluateWithGradient;
-  using AddDecomposableEvaluateWithGradientConst<
+  using AddSeparableEvaluateWithGradientConst<
       FunctionType, MatType, GradType>::EvaluateWithGradient;
-  using AddDecomposableEvaluateWithGradient<
+  using AddSeparableEvaluateWithGradient<
       FunctionType, MatType, GradType>::EvaluateWithGradient;
-  using AddDecomposableGradientStatic<
+  using AddSeparableGradientStatic<
       FunctionType, MatType, GradType>::Gradient;
-  using AddDecomposableGradientConst<FunctionType, MatType, GradType>::Gradient;
-  using AddDecomposableGradient<FunctionType, MatType, GradType>::Gradient;
-  using AddDecomposableEvaluateStatic<
+  using AddSeparableGradientConst<FunctionType, MatType, GradType>::Gradient;
+  using AddSeparableGradient<FunctionType, MatType, GradType>::Gradient;
+  using AddSeparableEvaluateStatic<
       FunctionType, MatType, GradType>::Evaluate;
-  using AddDecomposableEvaluateConst<FunctionType, MatType, GradType>::Evaluate;
-  using AddDecomposableEvaluate<FunctionType, MatType, GradType>::Evaluate;
+  using AddSeparableEvaluateConst<FunctionType, MatType, GradType>::Evaluate;
+  using AddSeparableEvaluate<FunctionType, MatType, GradType>::Evaluate;
   using AddEvaluateWithGradientStatic<FunctionType, MatType, GradType>::EvaluateWithGradient;
   using AddEvaluateWithGradientConst<FunctionType, MatType, GradType>::EvaluateWithGradient;
   using AddEvaluateWithGradient<FunctionType, MatType, GradType>::EvaluateWithGradient;

@@ -101,14 +101,14 @@ class SCD
            CallbackTypes&&... callbacks);
 
   //! Forward arma::SpMat<typename MatType::elem_type> as GradType.
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks)
   {
-    return Optimize<DecomposableFunctionType, MatType,
+    return Optimize<SeparableFunctionType, MatType,
         arma::SpMat<typename MatType::elem_type>, CallbackTypes...>(
         function, iterate, std::forward<CallbackTypes>(callbacks)...);
   }

@@ -49,7 +49,7 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
 
   // Make sure that we have the methods that we need.  Long name...
-  traits::CheckNonDifferentiableFunctionTypeAPI<ArbitraryFunctionType,
+  traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
       BaseMatType>();
   RequireDenseFloatingPointType<BaseMatType>();
 

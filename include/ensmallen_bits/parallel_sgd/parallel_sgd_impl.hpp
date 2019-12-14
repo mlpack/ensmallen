@@ -39,7 +39,7 @@ inline void UpdateLocation(arma::SpMat<eT>& iterate,
                            const size_t col,
                            const eT value)
 {
-  ENS_PRAGMA_OMP_CRITICAL
+  ENS_PRAGMA_OMP_CRITICAL_NAMED
   {
     iterate(row, col) -= value;
   }

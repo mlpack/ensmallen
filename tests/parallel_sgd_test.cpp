@@ -70,14 +70,14 @@ TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
 TEST_CASE("ParallelSGDGeneralizedRosenbrockTest", "[ParallelSGDTest]")
 {
   // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
+  for (size_t i = 10; i < 30; i += 5)
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
     ConstantStep decayPolicy(0.001);
 
-    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, true, decayPolicy);
+    ParallelSGD<ConstantStep> s(100000, f.NumFunctions(), 1e-12, true, decayPolicy);
 
     arma::mat coordinates = f.GetInitialPoint();
 
@@ -96,14 +96,14 @@ TEST_CASE("ParallelSGDGeneralizedRosenbrockTest", "[ParallelSGDTest]")
 TEST_CASE("ParallelSGDGeneralizedRosenbrockFMatTest", "[ParallelSGDTest]")
 {
   // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
+  for (size_t i = 10; i < 30; i += 5)
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
     ConstantStep decayPolicy(0.001);
 
-    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, true, decayPolicy);
+    ParallelSGD<ConstantStep> s(100000, f.NumFunctions(), 1e-12, true, decayPolicy);
 
     arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
 
@@ -122,14 +122,14 @@ TEST_CASE("ParallelSGDGeneralizedRosenbrockFMatTest", "[ParallelSGDTest]")
 TEST_CASE("ParallelSGDGeneralizedRosenbrockSpMatTest", "[ParallelSGDTest]")
 {
   // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
+  for (size_t i = 10; i < 30; i += 5)
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
     ConstantStep decayPolicy(0.001);
 
-    ParallelSGD<ConstantStep> s(0, f.NumFunctions(), 1e-12, true, decayPolicy);
+    ParallelSGD<ConstantStep> s(100000, f.NumFunctions(), 1e-12, true, decayPolicy);
 
     arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
 

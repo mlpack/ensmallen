@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.8.10)
 project(ensmallen C CXX)
 
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
+option(BUILD_TESTS "Build tests." ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
@@ -66,4 +67,6 @@ install(FILES ${CMAKE_SOURCE_DIR}/include/ensmallen.hpp
 
 enable_testing()
 
-add_subdirectory(tests)
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif()
