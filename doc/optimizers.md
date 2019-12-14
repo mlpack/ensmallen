@@ -1133,6 +1133,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1142,6 +1146,8 @@ Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-5);
 
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
