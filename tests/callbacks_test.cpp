@@ -394,7 +394,7 @@ TEST_CASE("EarlyStopAtMinLossCallbackTest", "[CallbacksTest]")
 
   // Instantiate the optimizer with a number of iterations that will take a
   // long time to finish.
-  StandardSGD s(0.0003, 1, 10000000000, -10);
+  StandardSGD s(0.0003, 1, 2000000000, -10);
   s.ExactObjective() = true;
 
   // The optimization process should return in one second.
@@ -470,7 +470,7 @@ TEST_CASE("TimerStopCallbackTest", "[CallbacksTest]")
 
   // Instantiate the optimizer with a number of iterations that will take a
   // long time to finish.
-  StandardSGD s(0.0003, 1, 10000000000, -100, true);
+  StandardSGD s(0.0003, 1, 2000000000, -100, true);
 
   arma::wall_clock timer;
   timer.tic();

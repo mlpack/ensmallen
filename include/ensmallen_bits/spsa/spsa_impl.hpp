@@ -48,7 +48,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
 
   // Make sure that we have the methods that we need.
-  traits::CheckNonDifferentiableFunctionTypeAPI<ArbitraryFunctionType,
+  traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
       MatType>();
   RequireFloatingPointType<MatType>();
 
