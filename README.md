@@ -15,6 +15,96 @@ gradient-free optimizers, and constrained optimization.
 * Armadillo: http://arma.sourceforge.net
 * OpenBLAS or Intel MKL or LAPACK (see Armadillo site for details)
 
+### Install Dependencies
+
+<details open>
+<summary>Linux</summary>
+
+Use your distributions' package manager to install the required dependencies. The commands shown below are for Ubuntu.
+
+```bash
+$ sudo apt-get update
+$ sudo apt-get install -y g++
+$ sudo apt-get install -y libopenblas-dev liblapack-dev xz-utils
+$ sudo apt-get install -y libarmadillo-dev
+```
+</details>
+
+<details open>
+<summary>MacOS</summary>
+
+Use a package manager like [Homebrew](https://brew.sh) to get the necessary dependencies.
+
+````bash
+$ brew install openblas lapack armadillo
+````
+</details>
+
+<details open>
+<summary>Windows</summary>
+
+You can install **ensmallen** directly by using [vcpkg](https://github.com/microsoft/vcpkg).
+
+```
+vcpkg install ensmallen:x64-windows
+```
+</details>
+
+### Build and Test
+
+This section describes how to build and test the **ensmallen** library from source. **ensmallen** uses CMake as its build system.
+
+First, clone the source code from Github and change into the cloned directory. Or alternatively, you can download the latest relese from the [website](http://ensmallen.org) and extract it.
+
+```bash
+$ git clone https://github.com/mlpack/ensmallen
+$ cd ensmallen
+
+# - or -
+
+$ wget http://ensmallen.org/files/ensmallen-latest.tar.gz
+$ tar -xvzpf ensmallen-latest.tar.gz
+$ cd ensmallen-latest
+```
+
+Next, make a build directory and change into that directory.
+
+```bash
+$ mkdir build
+$ cd build
+```
+
+Then, run the cmake command followed by the make command in the build directory. If the cmake command fails, you probably have missing dependencies.
+
+```bash
+$ cmake ..
+# or with -w flag to inhibit all warning messages
+# $ cmake -DCMAKE_CXX_FLAGS="-w" -DCMAKE_C_FLAGS="-w" .. #
+$ make -j4
+```
+
+Now, you can either run all of the test or an individual test case with:
+
+```bash
+$ ./ensmallen_tests
+$ ./ensmallen_tests <test name>
+```
+
+Ensmallen uses [Catch2](https://github.com/catchorg/Catch2) as the unit test framework.
+You can list all tests with:
+
+```bash
+$ ./ensmallen-tests -l
+
+ensmallen version: 2.10.5 (Fried Chicken)
+armadillo version: 9.800.3 (Horizon Scraper)
+All available test cases:
+  SimpleAdaDeltaTestFunction
+      [AdaDeltaTest]
+...
+262 test cases
+```
+
 
 ### License
 
@@ -31,8 +121,8 @@ Please cite the following paper if you use ensmallen in your research and/or
 software. Citations are useful for the continued development and maintenance of
 the library.
 
-* S. Bhardwaj, R. Curtin, M. Edel, Y. Mentekidis, C. Sanderson.  
-  [ensmallen: a flexible C++ library for efficient function optimization](http://www.ensmallen.org/files/ensmallen_2018.pdf).  
+* S. Bhardwaj, R. Curtin, M. Edel, Y. Mentekidis, C. Sanderson.
+  [ensmallen: a flexible C++ library for efficient function optimization](http://www.ensmallen.org/files/ensmallen_2018.pdf).
   Workshop on Systems for ML and Open Source Software at NIPS 2018.
 
 
