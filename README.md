@@ -24,7 +24,7 @@ Use your distributions' package manager to install the required dependencies. Th
 
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install -y g++
+$ sudo apt-get install -y g++ cmake
 $ sudo apt-get install -y libopenblas-dev liblapack-dev xz-utils
 $ sudo apt-get install -y libarmadillo-dev
 ```
@@ -36,7 +36,7 @@ $ sudo apt-get install -y libarmadillo-dev
 Use a package manager like [Homebrew](https://brew.sh) to get the necessary dependencies.
 
 ````bash
-$ brew install openblas lapack armadillo
+$ brew install cmake openblas lapack armadillo
 ````
 </details>
 
