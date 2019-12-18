@@ -47,11 +47,10 @@ your test many times.
 <details open>
 <summary>Linux</summary>
 
-Use your distributions' package manager to install the required dependencies. The commands shown below are for Ubuntu.
+Use your distributions' package manager to install the required dependencies. The commands shown below are for Ubuntu/Debian.
 
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install liblapack-dev
 $ sudo apt-get install libarmadillo-dev
 ```
 </details>
@@ -62,7 +61,7 @@ $ sudo apt-get install libarmadillo-dev
 Use a package manager like [Homebrew](https://brew.sh) to get the necessary dependencies.
 
 ````bash
-$ brew install lapack armadillo
+$ brew install armadillo
 ````
 </details>
 
@@ -78,7 +77,7 @@ vcpkg install ensmallen:x64-windows
 
 ### Build and Test
 
-This section describes how to build and test the **ensmallen** library from source. **ensmallen** uses CMake as its build system.
+This section describes how to build the **ensmallen** tests from source. **ensmallen** uses CMake as its build system and [Catch2](https://github.com/catchorg/Catch2) as the unit test framework.
 
 First, clone the source code from Github and change into the cloned directory. Or alternatively, you can download the latest relese from the [website](http://ensmallen.org) and extract it.
 
@@ -88,8 +87,8 @@ $ cd ensmallen
 
 # - or -
 
-$ wget http://ensmallen.org/files/ensmallen-latest.tar.gz
-$ tar -xvzpf ensmallen-latest.tar.gz
+$ wget http://ensmallen.org/files/ensmallen-x.x.x.tar.gz
+$ tar -xvzpf ensmallen-x.x.x.tar.gz
 $ cd ensmallen-latest
 ```
 
@@ -106,17 +105,18 @@ Then, run the cmake command followed by the make command in the build directory.
 $ cmake ..
 # or with -w flag to inhibit all warning messages
 # $ cmake -DCMAKE_CXX_FLAGS="-w" -DCMAKE_C_FLAGS="-w" .. #
-$ make -j4
+$ make
+# or alternately make with the -jN flag to run parallel jobs
+# $ make -j4
 ```
 
-Now, you can either run all of the test or an individual test case with:
+Now, you can either run all of the tests or an individual test case with:
 
 ```bash
 $ ./ensmallen_tests
 $ ./ensmallen_tests <test name>
 ```
 
-Ensmallen uses [Catch2](https://github.com/catchorg/Catch2) as the unit test framework.
 You can list all tests with:
 
 ```bash
