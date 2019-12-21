@@ -64,3 +64,4 @@ the library.
 * Dan Timson
 * N Rajiv Vaidyanathan
 * Roberto Hueso
+* Sayan Goswami
