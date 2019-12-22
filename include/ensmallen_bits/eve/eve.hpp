@@ -31,6 +31,7 @@ namespace ens {
  *   year    = {2016},
  *   url     = {http://arxiv.org/abs/1611.01505}
  * }
+ * @endcode
  *
  * For Eve to work, a SeparableFunctionType template parameter is required.
  * This class must implement the following function:

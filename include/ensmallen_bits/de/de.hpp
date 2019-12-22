@@ -43,12 +43,14 @@ namespace ens {
  *
  * For more information, see the following:
  *
+ * @code
  * @techreport{storn1995,
  *   title    = {Differential Evolution—a simple and efficient adaptive scheme
  *               for global optimization over continuous spaces},
  *   author   = {Storn, Rainer and Price, Kenneth},
  *   year     = 1995
  * }
+ * @endcode
  *
  * DE can optimize arbitrary functions.  For more details, see the
  * documentation on function types included with this distribution or on the

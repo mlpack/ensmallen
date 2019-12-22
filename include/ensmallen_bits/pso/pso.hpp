@@ -39,6 +39,7 @@ namespace ens {
  *
  * For more information, refer to:
  *
+ * @code
  * @inproceedings{Kennedy1995,
  *   author    = {Kennedy, James and Eberhart, Russell C.},
  *   booktitle = {Proceedings of the IEEE International Conference on
@@ -47,6 +48,7 @@ namespace ens {
  *   title     = {Particle swarm optimization},
  *   year      = 1995
  * }
+ * @endcode
  *
  * PSO can optimize arbitrary functions. For more details, see the documentation
  * on function types included with this distribution or on the ensmallen
