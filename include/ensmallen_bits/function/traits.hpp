@@ -39,6 +39,12 @@ ENS_HAS_EXACT_METHOD_FORM(GradientConstraint, HasGradientConstraint)
 ENS_HAS_EXACT_METHOD_FORM(NumFeatures, HasNumFeatures)
 //! Detect a PartialGradient() method.
 ENS_HAS_EXACT_METHOD_FORM(PartialGradient, HasPartialGradient)
+//! Detect an MaxIterations() method.
+ENS_HAS_EXACT_METHOD_FORM(MaxIterations, HasMaxIterations)
+//! Detect an ResetPolicy() method.
+ENS_HAS_EXACT_METHOD_FORM(ResetPolicy, HasResetPolicy)
+//! Detect an BatchSize() method.
+ENS_HAS_EXACT_METHOD_FORM(BatchSize, HasBatchSize)
 
 template<typename MatType, typename GradType>
 struct TypedForms
@@ -367,6 +373,60 @@ struct HasConstSignatures
       CheckerB<ClassType, ConstSignatureB, 0>::value;
 
   const static bool value = HasEitherConstForm && HasAnyFormA && HasAnyFormB;
+};
+
+//! Utility struct, check if size_t BatchSize() const or size_t BatchSize()
+//! exists.
+template<typename OptimizerType>
+struct HasBatchSizeSignature
+{
+  template<typename C>
+  using BatchSizeConstForm = size_t(C::*)(void) const;
+
+  template<typename C>
+  using BatchSizeForm = size_t(C::*)(void);
+
+  const static bool value =
+      HasBatchSize<OptimizerType, BatchSizeForm>::value ||
+      HasBatchSize<OptimizerType, BatchSizeConstForm>::value;
+};
+
+//! Utility struct, check if size_t MaxIterations() const exists.
+template<typename OptimizerType>
+struct HasMaxIterationsSignature
+{
+  template<typename C>
+  using HasMaxIterationsForm = size_t(C::*)(void) const;
+
+  const static bool value =
+      HasMaxIterations<OptimizerType, HasMaxIterationsForm>::value;
+};
+
+//! Utility struct, check if size_t NumFunctions() const or
+//! size_t NumFunctions() exists.
+template<typename OptimizerType>
+struct HasNumFunctionsSignature
+{
+  template<typename C>
+  using NumFunctionsConstForm = size_t(C::*)(void) const;
+
+  template<typename C>
+  using NumFunctionsForm = size_t(C::*)(void);
+
+  const static bool value =
+      HasNumFunctions<OptimizerType, NumFunctionsForm>::value ||
+      HasNumFunctions<OptimizerType, NumFunctionsConstForm>::value;
+};
+
+//! Utility struct, check if bool ResetPolicy() exists.
+template<typename OptimizerType>
+struct HasResetPolicySignature
+{
+  template<typename C>
+  using HasResetPolicyForm = bool&(C::*)(void);
+
+  const static bool value =
+      HasResetPolicy<OptimizerType, HasResetPolicyForm>::value;
 };
 
 } // namespace traits

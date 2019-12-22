@@ -12,6 +12,8 @@
 #ifndef ENSMALLEN_CALLBACKS_PROGRESS_BAR_HPP
 #define ENSMALLEN_CALLBACKS_PROGRESS_BAR_HPP
 
+#include <ensmallen_bits/function.hpp>
+
 namespace ens {
 
 /**
@@ -54,21 +56,21 @@ class ProgressBar
                          FunctionType& function,
                          MatType& /* coordinates */)
   {
-    static_assert(callbacks::traits::HasBatchSizeSignature<
+    static_assert(traits::HasBatchSizeSignature<
       OptimizerType>::value,
       "The OptimizerType does not have a correct definition of BatchSize(). "
       "Please check that the OptimizerType fully satisfies the requirements "
       "of the ProgressBar API; see the callbacks documentation for more "
       "details.");
 
-    static_assert(callbacks::traits::HasMaxIterationsSignature<
+    static_assert(traits::HasMaxIterationsSignature<
       OptimizerType>::value,
       "The OptimizerType does not have a correct definition of MaxIterations()."
       " Please check that the OptimizerType fully satisfies the requirements "
       "of the ProgressBar API; see the callbacks documentation for more "
       "details.");
 
-    static_assert(callbacks::traits::HasNumFunctionsSignature<
+    static_assert(traits::HasNumFunctionsSignature<
       FunctionType>::value,
       "The OptimizerType does not have a correct definition of NumFunctions(). "
       "Please check that the OptimizerType fully satisfies the requirements "
