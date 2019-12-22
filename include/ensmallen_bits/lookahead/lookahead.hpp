@@ -34,6 +34,7 @@ namespace ens {
  *   year    = {2019},
  *   url     = {http://arxiv.org/abs/1907.08610}
  * }
+ * @endcode
  *
  * Lookahead can optimize differentiable separable functions.  For more details,
  * see the documentation on function types included with this distribution or on
@@ -63,6 +64,8 @@ class Lookahead
    *        limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param decayPolicy Instantiated decay policy used to adjust the step size.
+   * @param resetPolicy Flag that determines whether update policy parameters
+   *                    are reset before every outer Optimize call.
    * @param exactObjective Calculate the exact objective (Default: estimate the
    *        final objective obtained on the last pass over the data).
    */
@@ -72,6 +75,7 @@ class Lookahead
             const size_t maxIterations = 100000,
             const double tolerance = 1e-5,
             const DecayPolicyType& decayPolicy = DecayPolicyType(),
+            const bool resetPolicy = true,
             const bool exactObjective = false);
 
   /**
@@ -79,7 +83,7 @@ class Lookahead
    * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam SeparableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of the parameters matrix.
    * @tparam GradType Type of the gradient matrix.
    * @tparam CallbackTypes Types of callback functions.
@@ -88,25 +92,25 @@ class Lookahead
    * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
   typename std::enable_if<IsArmaType<GradType>::value,
       typename MatType::elem_type>::type
-  Optimize(DecomposableFunctionType& function,
+  Optimize(SeparableFunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);
 
   //! Forward the MatType as GradType.
-  template<typename DecomposableFunctionType,
+  template<typename SeparableFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(DecomposableFunctionType& function,
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks)
   {
-    return Optimize<DecomposableFunctionType, MatType, MatType,
+    return Optimize<SeparableFunctionType, MatType, MatType,
         CallbackTypes...>(function, iterate,
         std::forward<CallbackTypes>(callbacks)...);
   }
@@ -171,6 +175,10 @@ class Lookahead
 
   //! The decay policy used to update the step size.
   DecayPolicyType decayPolicy;
+
+  //! Flag indicating whether update policy
+  //! should be reset before running the outer optimization.
+  bool resetPolicy;
 
   //! Controls whether or not the actual Objective value is calculated.
   bool exactObjective;

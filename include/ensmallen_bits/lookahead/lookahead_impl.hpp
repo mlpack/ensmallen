@@ -27,6 +27,7 @@ inline Lookahead<BaseOptimizerType, DecayPolicyType>::Lookahead(
     const size_t maxIterations,
     const double tolerance,
     const DecayPolicyType& decayPolicy,
+    const bool resetPolicy,
     const bool exactObjective) :
     baseOptimizer(baseOptimizer),
     stepSize(stepSize),
@@ -34,20 +35,21 @@ inline Lookahead<BaseOptimizerType, DecayPolicyType>::Lookahead(
     maxIterations(maxIterations),
     tolerance(tolerance),
     decayPolicy(decayPolicy),
+    resetPolicy(resetPolicy),
     exactObjective(exactObjective),
     isInitialized(false)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
 template<typename BaseOptimizerType, typename DecayPolicyType>
-template<typename DecomposableFunctionType,
+template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
 Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
-    DecomposableFunctionType& function,
+    SeparableFunctionType& function,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
@@ -56,7 +58,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
 
-  typedef Function<DecomposableFunctionType, BaseMatType, BaseGradType>
+  typedef Function<SeparableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
 
@@ -66,7 +68,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
       InstDecayPolicyType;
 
   // Make sure we have all the methods that we need.
-  traits::CheckDecomposableFunctionTypeAPI<FullFunctionType, BaseMatType,
+  traits::CheckSeparableFunctionTypeAPI<FullFunctionType, BaseMatType,
       BaseGradType>();
   RequireFloatingPointType<BaseMatType>();
   RequireFloatingPointType<BaseGradType>();
@@ -76,7 +78,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
 
   // Check if the optimizer implements HasMaxIterations() and override the
   // parameter with k.
-  if (callbacks::traits::HasMaxIterationsSignature<BaseOptimizerType>::value)
+  if (traits::HasMaxIterationsSignature<BaseOptimizerType>::value)
   {
     baseOptimizer.MaxIterations() = k;
   }
@@ -87,13 +89,14 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   }
 
   // Check if the optimizer implements ResetPolicy() and override the reset
-  // policy setting if true.
-  if (callbacks::traits::HasResetPolicySignature<BaseOptimizerType>::value &&
+  // policy setting if true and the user asked for.
+  if (resetPolicy &&
+      traits::HasResetPolicySignature<BaseOptimizerType>::value &&
       baseOptimizer.ResetPolicy())
   {
     Warn << "Parameters are reset before every Optimize call; set "
         << "ResetPolicy() to false.";
-    baseOptimizer.ResetPolicy() = false;
+    baseOptimizer.ResetPolicy() = resetPolicy;
   }
 
   // To keep track of where we are and how things are going.
@@ -168,7 +171,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
     size_t batchSize = 1;
     // Check if the optimizer implements the BatchSize() method and use the
     // parameter for the objective calculation.
-    if (callbacks::traits::HasBatchSizeSignature<BaseOptimizerType>::value)
+    if (traits::HasBatchSizeSignature<BaseOptimizerType>::value)
       batchSize = baseOptimizer.BatchSize();
 
     overallObjective = 0;
