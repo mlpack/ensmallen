@@ -44,6 +44,7 @@ sed -i "s/ensmallen-[0-9]*\.[0-9]*\.[0-9]*/ensmallen-$MAJOR.$MINOR.$PATCH/g" CON
 
 git pull
 git add include/ensmallen_bits/ens_version.hpp;
+git add CONTRIBUTING.md
 git commit -m "Update and release version $MAJOR.$MINOR.$PATCH.";
 git tag $MAJOR.$MINOR.$PATCH;
 git push origin $MAJOR.$MINOR.$PATCH;
