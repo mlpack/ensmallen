@@ -47,22 +47,36 @@ your test many times.
 <details open>
 <summary>Linux</summary>
 
-Use your distributions' package manager to install the required dependencies. The commands shown below are for Ubuntu/Debian.
+Use your distributions' package manager to install the required dependencies. For Ubuntu/Debian, the commands are as shown below.
 
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install libarmadillo-dev
+$ sudo apt-get install libarmadillo-dev cmake
 ```
+
+To install the dependencies on Fedora/RHEL/CentOS, you can use:
+
+```bash
+$ yum install armadillo-devel cmake
+```
+
+
 </details>
 
 <details open>
 <summary>MacOS</summary>
 
-Use a package manager like [Homebrew](https://brew.sh) to get the necessary dependencies.
+You can install **ensmallen** directyl using [Homebrew](https://brew.sh).
 
-````bash
-$ brew install armadillo
-````
+```bash
+$ brew install ensmallen
+```
+
+If you want to build **ensmallen** from source, use a package manager like [Homebrew](https://brew.sh) to get the necessary dependencies.
+
+```bash
+$ brew install armadillo cmake
+```
 </details>
 
 <details open>
