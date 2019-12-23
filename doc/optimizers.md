@@ -1103,14 +1103,14 @@ search direction by looking ahead at the sequence of "fast weights" generated
 by another optimizer.
 
 #### Constructors
+ * `Lookahead<>()`
+ * `Lookahead<>(`_`stepSize`_`)`
+ * `Lookahead<>(`_`stepSize, k`_`)`
+ * `Lookahead<>(`_`stepSize, k, maxIterations, tolerance, decayPolicy, exactObjective`_`)`
+ * `Lookahead<>(`_`baseOptimizer, stepSize, k, maxIterations, tolerance, decayPolicy, exactObjective`_`)`
 
- * `Lookahead(`_`baseOptimizer`_`)`
- * `Lookahead(`_`baseOptimizer, stepSize`_`)`
- * `Lookahead(`_`baseOptimizer, stepSize, k`_`)`
- * `Lookahead(`_`baseOptimizer, stepSize, k, maxIterations, tolerance, decayPolicy, exactObjective`_`)`
-
-Note that `Lookahead` is based on the templated type
-`Lookahead<`_`BaseOptimizerType, DecayPolicyType`_`>` with _`DecayPolicyType`_` = NoDecay`.
+Note that `Lookahead<>` is based on the templated type
+`LookaheadType<`_`BaseOptimizerType, DecayPolicyType`_`>` with _`BaseOptimizerType`_` = Adam` and _`DecayPolicyType`_` = NoDecay`.
 
 Any optimizer that implements the differentiable separable functions interface
 can be paired with the `Lookahead` optimizer.
@@ -1119,7 +1119,7 @@ can be paired with the `Lookahead` optimizer.
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | **n/a** |
+| `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | Adam |
 | `double` | **`stepSize`** | Step size for each iteration. | `0.5` |
 | `size_t` | **`k`** | The synchronization period. | `5` |
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
@@ -1141,9 +1141,7 @@ The attributes of the optimizer may also be modified via the member methods
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-Adam adam(0.01, 2, 0.7, 0.999, 1e-8, 5, 1e-3, false);
-Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-5);
-
+Lookahead<> optimizer(0.5, 5, 100000, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
 
