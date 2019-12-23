@@ -22,8 +22,10 @@ TEST_CASE("LookaheadAdamSphereFunctionTest", "[LookaheadTest]")
 {
   SphereFunction f(2);
 
-  Adam adam(0.01, 2, 0.7, 0.999, 1e-8, 5, 1e-3, false);
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-5, NoDecay(), true);
+  Lookahead<> optimizer(0.5, 5, 100000, 1e-5, NoDecay(), false, true);
+  optimizer.BaseOptimizer().BatchSize() = 2;
+  optimizer.BaseOptimizer().StepSize() = 0.01;
+  optimizer.BaseOptimizer().Beta1() = 0.7;
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -40,7 +42,8 @@ TEST_CASE("LookaheadAdamSimpleSGDTestFunction", "[LookaheadTest]")
   SGDTestFunction f;
 
   Adam adam(1e-3, 1, 0.9, 0.999, 1e-8, 5, 1e-19, true);
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 1000000, 1e-19, NoDecay(), true);
+  Lookahead<Adam> optimizer(adam, 0.5, 5, 1000000, 1e-19, NoDecay(),
+      false, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -58,7 +61,8 @@ TEST_CASE("LookaheadAdaGradSphereFunction", "[LookaheadTest]")
   SphereFunction f(2);
 
   AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-19, true);
-  Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000, 1e-19, NoDecay(), true);
+  Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000, 1e-19, NoDecay(),
+      false, true);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -81,7 +85,8 @@ TEST_CASE("LookaheadAdamLogisticRegressionTest","[LookaheadTest]")
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
   Adam adam(0.001, 32, 0.9, 0.999, 1e-8, 5, 1e-15);
-  Lookahead<Adam> optimizer(adam, 0.5, 20, 100000, 1e-15, NoDecay(), true);
+  Lookahead<Adam> optimizer(adam, 0.5, 20, 100000, 1e-15, NoDecay(),
+      false, true);
 
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);
@@ -103,7 +108,8 @@ TEST_CASE("LookaheadAdamSimpleSGDTestFunctionFloat", "[LookaheadTest]")
   SGDTestFunction f;
 
   Adam adam(1e-3, 1, 0.9, 0.999, 1e-8, 5, 1e-19, true);
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 1000000, 1e-19, NoDecay(), true);
+  Lookahead<Adam> optimizer(adam, 0.5, 5, 1000000, 1e-19, NoDecay(),
+      false, true);
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);

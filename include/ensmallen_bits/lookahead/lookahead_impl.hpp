@@ -21,6 +21,26 @@ namespace ens {
 
 template<typename BaseOptimizerType, typename DecayPolicyType>
 inline Lookahead<BaseOptimizerType, DecayPolicyType>::Lookahead(
+    const double stepSize,
+    const size_t k,
+    const size_t maxIterations,
+    const double tolerance,
+    const DecayPolicyType& decayPolicy,
+    const bool resetPolicy,
+    const bool exactObjective) :
+    baseOptimizer(BaseOptimizerType()),
+    stepSize(stepSize),
+    k(k),
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    decayPolicy(decayPolicy),
+    resetPolicy(resetPolicy),
+    exactObjective(exactObjective),
+    isInitialized(false)
+{ /* Nothing to do. */ }
+
+template<typename BaseOptimizerType, typename DecayPolicyType>
+inline Lookahead<BaseOptimizerType, DecayPolicyType>::Lookahead(
     const BaseOptimizerType& baseOptimizer,
     const double stepSize,
     const size_t k,
@@ -89,9 +109,8 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   }
 
   // Check if the optimizer implements ResetPolicy() and override the reset
-  // policy setting if true and the user asked for.
-  if (resetPolicy &&
-      traits::HasResetPolicySignature<BaseOptimizerType>::value &&
+  // policy.
+  if (traits::HasResetPolicySignature<BaseOptimizerType>::value &&
       baseOptimizer.ResetPolicy())
   {
     Warn << "Parameters are reset before every Optimize call; set "

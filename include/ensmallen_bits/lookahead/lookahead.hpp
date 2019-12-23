@@ -14,6 +14,7 @@
 #ifndef ENSMALLEN_LOOKAHEAD_LOOKAHEAD_HPP
 #define ENSMALLEN_LOOKAHEAD_LOOKAHEAD_HPP
 
+#include <ensmallen_bits/adam/adam.hpp>
 #include <ensmallen_bits/sgd/decay_policies/no_decay.hpp>
 
 namespace ens {
@@ -40,15 +41,44 @@ namespace ens {
  * see the documentation on function types included with this distribution or on
  * the ensmallen website.
  *
- * @tparam BaseOptimizerType Optimizer type for the forward step.
+ * @tparam BaseOptimizerType Optimizer type for the forward step. By default the
+ *     Adam optimizer is used.
  * @tparam DecayPolicyType Decay policy used during the iterative update
  *     process to adjust the step size. By default the step size isn't going to
  *     be adjusted (i.e. NoDecay is used).
  */
-template<typename BaseOptimizerType, typename DecayPolicyType = NoDecay>
+template<typename BaseOptimizerType = Adam, typename DecayPolicyType = NoDecay>
 class Lookahead
 {
  public:
+  /**
+   * Construct the Lookahead optimizer with the given function, parameters
+   * and the default Adam optimizer for the forward step. The defaults here are
+   * not necessarily good for the given problem, so it is suggested that the
+   * values used be tailored to the task at hand.  The maximum number of
+   * iterations refers to the maximum number of points that are processed
+   * (i.e., one iteration equals one point; one iteration does not equal
+   * one pass over the dataset).
+   *
+   * @param stepSize Step size for each iteration.
+   * @param k The synchronization period.
+   * @param maxIterations Maximum number of iterations allowed (0 means no
+   *        limit).
+   * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param decayPolicy Instantiated decay policy used to adjust the step size.
+   * @param resetPolicy Flag that determines whether update policy parameters
+   *                    are reset before every outer Optimize call.
+   * @param exactObjective Calculate the exact objective (Default: estimate the
+   *        final objective obtained on the last pass over the data).
+   */
+  Lookahead(const double stepSize = 0.5,
+            const size_t k = 5,
+            const size_t maxIterations = 100000,
+            const double tolerance = 1e-5,
+            const DecayPolicyType& decayPolicy = DecayPolicyType(),
+            const bool resetPolicy = false,
+            const bool exactObjective = false);
+
   /**
    * Construct the Lookahead optimizer with the given function and parameters.
    * The defaults here are not necessarily good for the given problem, so it is
@@ -69,13 +99,13 @@ class Lookahead
    * @param exactObjective Calculate the exact objective (Default: estimate the
    *        final objective obtained on the last pass over the data).
    */
-  Lookahead(const BaseOptimizerType& baseOptimizer = BaseOptimizerType(),
+  Lookahead(const BaseOptimizerType& baseOptimizer,
             const double stepSize = 0.5,
             const size_t k = 5,
             const size_t maxIterations = 100000,
             const double tolerance = 1e-5,
             const DecayPolicyType& decayPolicy = DecayPolicyType(),
-            const bool resetPolicy = true,
+            const bool resetPolicy = false,
             const bool exactObjective = false);
 
   /**
