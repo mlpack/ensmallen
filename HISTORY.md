@@ -3,6 +3,9 @@
   * Add Lookahead
     ([#138](https://github.com/mlpack/ensmallen/pull/138)).
 
+  * Add AdaBound and AMSBound
+    ([#137](https://github.com/mlpack/ensmallen/pull/137)).
+
 ### ensmallen 2.10.5
 ###### 2019-12-13
   * SGD callback test 32-bit safety (big number)
