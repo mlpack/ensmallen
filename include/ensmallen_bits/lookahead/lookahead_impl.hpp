@@ -104,8 +104,9 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   }
   else
   {
-    Warn << "The BaseOptimizerType does not have a definition of "
-        << "MaxIterations(), don't override the number of iteration.";
+    Warn << "The base optimizer does not have a definition of "
+        << "MaxIterations(), the base optimizer will have its configuration "
+        << "unchanged.";
   }
 
   // Check if the optimizer implements ResetPolicy() and override the reset
