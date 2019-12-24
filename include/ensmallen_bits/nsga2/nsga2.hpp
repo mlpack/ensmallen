@@ -12,6 +12,7 @@
 #define ENSMALLEN_NSGA2_NSGA2_HPP
 
 #include <vector>
+#include <map>
 
 namespace ens {
 
@@ -53,6 +54,22 @@ class NSGA2 {
 
   template<typename MatType>
   void Mutate(std::vector<MatType>& population);
+
+  template<typename MatType>
+  void FastNonDominatedSort(std::vector<MatType>& population,
+                            std::vector<std::vector<int> >& fronts,
+                            std::vector<int>& ranks,
+                            std::vector<std::vector<double> > calculatedObjectives);
+
+  bool Dominates(std::vector<std::vector<double> > calculatedObjectives,
+                 int candidateP,
+                 int candidateQ);
+
+  template<typename MatType>
+  void CrowdingDistanceAssignment(std::vector<MatType>& population);
+
+  template<typename MatType>
+  void CrowdingOperatorSort(std::vector<MatType>& population);
 
   size_t populationSize;
   size_t maxGenerations;
