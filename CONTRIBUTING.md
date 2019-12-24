@@ -60,19 +60,26 @@ To install the dependencies on Fedora/RHEL/CentOS, you can use:
 $ yum install armadillo-devel cmake
 ```
 
+You can install **ensmallen** on Arch from AUR using:
+
+```bash
+$ git clone https://aur.archlinux.org/ensmallen.git
+$ cd ensmallen
+$ makepkg -si
+```
 
 </details>
 
 <details open>
-<summary>MacOS</summary>
+<summary>macOS</summary>
 
-You can install **ensmallen** directyl using [Homebrew](https://brew.sh).
+You can install **ensmallen** directly with [Homebrew](https://brew.sh).
 
 ```bash
 $ brew install ensmallen
 ```
 
-If you want to build **ensmallen** from source, use a package manager like [Homebrew](https://brew.sh) to get the necessary dependencies.
+If you want to build **ensmallen** tests from source, use a package manager like [Homebrew](https://brew.sh) to get the necessary dependencies.
 
 ```bash
 $ brew install armadillo cmake
