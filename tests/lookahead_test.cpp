@@ -42,8 +42,8 @@ TEST_CASE("LookaheadAdamSimpleSGDTestFunction", "[LookaheadTest]")
 {
   SGDTestFunction f;
 
-  Adam adam(0.003, 1, 0.9, 0.999, 1e-8, 5, 1e-19, false);
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 1000000, 1e-15, NoDecay(),
+  Adam adam(0.001, 1, 0.9, 0.999, 1e-8, 5, 1e-19, false, true);
+  Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-15, NoDecay(),
       false, true);
 
   arma::mat coordinates = f.GetInitialPoint();
@@ -108,8 +108,8 @@ TEST_CASE("LookaheadAdamSimpleSGDTestFunctionFloat", "[LookaheadTest]")
 {
   SGDTestFunction f;
 
-  Adam adam(0.003, 1, 0.9, 0.999, 1e-8, 5, 1e-19, false);
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 1000000, 1e-15, NoDecay(),
+  Adam adam(0.001, 1, 0.9, 0.999, 1e-8, 5, 1e-19, false, true);
+  Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-15, NoDecay(),
       false, true);
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
