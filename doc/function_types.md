@@ -553,10 +553,12 @@ Each of the implemented methods is allowed to have additional cv-modifiers
 
 The following optimizers can be used with differentiable functions:
 
+ - [AdaBound](#adabound)
  - [AdaDelta](#adadelta)
  - [AdaGrad](#adagrad)
  - [Adam](#adam)
  - [AdaMax](#adamax)
+ - [AMSBound](#amsbound)
  - [AMSGrad](#amsgrad)
  - [Big Batch SGD](#big-batch-sgd)
  - [IQN](#iqn)
