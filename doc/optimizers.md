@@ -1,3 +1,65 @@
+## AdaBound
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaBound is a variant of Adam which employs dynamic bounds on learning rates.
+
+#### Constructors
+
+ * `AdaBound()`
+ * `AdaBound(`_`stepSize, batchSize`_`)`
+ * `AdaBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AdaBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+Note that the `AdaBound` class is based on the `AdaBoundType<`_`UpdateRule`_`>`
+class with _`UpdateRule`_` = AdaBoundUpdate`.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
+| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`FinalLr()`, `Gamma()`, `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`,
+`Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SphereFunction f(2);
+arma::mat coordinates = f.GetInitialPoint();
+
+AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000, 1e-3);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## AdaDelta
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -229,6 +291,68 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
  * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980) (see section 7)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## AMSBound
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AMSBound is a variant of Adam which employs dynamic bounds on learning rates.
+
+#### Constructors
+
+ * `AMSBound()`
+ * `AMSBound(`_`stepSize, batchSize`_`)`
+ * `AMSBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AMSBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+Note that the `AMSBound` class is based on the `AdaBoundType<`_`UpdateRule`_`>`
+class with _`UpdateRule`_` = AdaBoundUpdate`.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
+| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`FinalLr()`, `Gamma()`, `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`,
+`Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SphereFunction f(2);
+arma::mat coordinates = f.GetInitialPoint();
+
+AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000, 1e-3);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## AMSGrad
