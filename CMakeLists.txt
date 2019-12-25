@@ -3,7 +3,7 @@
 # test program.
 cmake_minimum_required(VERSION 3.3.2)
 project(ensmallen 
-        VERSION 2.11.0
+        VERSION 2.10.5
         LANGUAGES C CXX)
 
 # Configurable options for CMake
