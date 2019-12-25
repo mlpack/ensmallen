@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?
 ###### ????-??-??
+  * Add Lookahead
+    ([#138](https://github.com/mlpack/ensmallen/pull/138)).
+
   * Add AdaBound and AMSBound
     ([#137](https://github.com/mlpack/ensmallen/pull/137)).
 

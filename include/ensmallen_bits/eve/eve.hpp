@@ -31,6 +31,7 @@ namespace ens {
  *   year    = {2016},
  *   url     = {http://arxiv.org/abs/1611.01505}
  * }
+ * @endcode
  *
  * For Eve to work, a SeparableFunctionType template parameter is required.
  * This class must implement the following function:
@@ -88,9 +89,9 @@ class Eve
       const bool exactObjective = false);
 
   /**
-   * Optimize the given function using stochastic gradient descent.  The given
-   * starting point will be modified to store the finishing point of the
-   * algorithm, and the final objective value is returned.
+   * Optimize the given function using Eve. The given starting point will be
+   * modified to store the finishing point of the algorithm, and the final
+   * objective value is returned.
    *
    * @tparam SeparableFunctionType Type of the function to be optimized.
    * @tparam MatType Type of the parameters matrix.
