@@ -1,5 +1,3 @@
-project(ensmallen_tests CXX)
-
 set(ENSMALLEN_TESTS_SOURCES
     main.cpp
     ada_bound_test.cpp
@@ -46,12 +44,11 @@ set(ENSMALLEN_TESTS_SOURCES
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-add_executable(${PROJECT_NAME} ${ENSMALLEN_TESTS_SOURCES})
-
-target_link_libraries(${PROJECT_NAME} ${ARMADILLO_LIBRARIES})
+add_executable(ensmallen_tests ${ENSMALLEN_TESTS_SOURCES})
+target_link_libraries(ensmallen_tests PUBLIC ensmallen)
 
 # Copy test data into place.
-add_custom_command(TARGET ${PROJECT_NAME}
+add_custom_command(TARGET ensmallen_tests
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
       ${CMAKE_BINARY_DIR}/data/
