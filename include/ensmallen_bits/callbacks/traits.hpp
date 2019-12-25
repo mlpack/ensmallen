@@ -37,12 +37,6 @@ ENS_HAS_EXACT_METHOD_FORM(BeginEpoch, HasBeginEpoch)
 ENS_HAS_EXACT_METHOD_FORM(EndEpoch, HasEndEpoch)
 //! Detect an StepTaken() method.
 ENS_HAS_EXACT_METHOD_FORM(StepTaken, HasStepTaken)
-//! Detect an BatchSize() method.
-ENS_HAS_EXACT_METHOD_FORM(BatchSize, HasBatchSize)
-//! Detect an MaxIterations() method.
-ENS_HAS_EXACT_METHOD_FORM(MaxIterations, HasMaxIterations)
-//! Detect an NumFunctions() method.
-ENS_HAS_EXACT_METHOD_FORM(NumFunctions, HasNumFunctions)
 
 template<typename OptimizerType,
          typename FunctionType,
@@ -369,44 +363,6 @@ struct HasStepTakenSignature
           FunctionType, MatType>::template StepTakenBoolForm>::value &&
       !HasStepTaken<CallbackType, TypedForms<OptimizerType,
          FunctionType, MatType>::template StepTakenVoidForm>::value;
-};
-
-//! Utility struct, check if size_t BatchSize() const exists.
-template<typename OptimizerType>
-struct HasBatchSizeSignature
-{
-  template<typename C>
-  using BatchSizeForm = size_t(C::*)(void) const;
-
-  const static bool value =
-      HasBatchSize<OptimizerType, BatchSizeForm>::value;
-};
-
-//! Utility struct, check if size_t MaxIterations() const exists.
-template<typename OptimizerType>
-struct HasMaxIterationsSignature
-{
-  template<typename C>
-  using HasMaxIterationsForm = size_t(C::*)(void) const;
-
-  const static bool value =
-      HasMaxIterations<OptimizerType, HasMaxIterationsForm>::value;
-};
-
-//! Utility struct, check if size_t NumFunctions() const or
-//! size_t NumFunctions() exists.
-template<typename OptimizerType>
-struct HasNumFunctionsSignature
-{
-  template<typename C>
-  using NumFunctionsConstForm = size_t(C::*)(void) const;
-
-  template<typename C>
-  using NumFunctionsForm = size_t(C::*)(void);
-
-  const static bool value =
-      HasNumFunctions<OptimizerType, NumFunctionsForm>::value ||
-      HasNumFunctions<OptimizerType, NumFunctionsConstForm>::value;
 };
 
 } // namespace traits
