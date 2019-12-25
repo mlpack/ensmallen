@@ -6,8 +6,7 @@ project(ensmallen
         VERSION 2.11.0
         LANGUAGES C CXX)
 
-enable_testing()
-
+# Configurable options for CMake
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 option(BUILD_TESTS "Build tests." ON)
 
@@ -23,20 +22,21 @@ target_include_directories(ensmallen INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
+# Find OpenMP and link it.
 if(USE_OPENMP)
   if(NOT TARGET OpenMP::OpenMP_CXX)
-  find_package(Threads REQUIRED)
-  add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
-  set_property(TARGET OpenMP::OpenMP_CXX
-              PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
-  # Only works if the same flag is passed to the linker; use CMake 3.9+ otherwise (Intel, AppleClang)
-  set_property(TARGET OpenMP::OpenMP_CXX
-              PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
-
+    find_package(Threads REQUIRED)
+    add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
+    set_property(TARGET OpenMP::OpenMP_CXX
+        PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
+    # Only works if the same flag is passed to the linker; use CMake 3.9+ otherwise (Intel, AppleClang)
+    set_property(TARGET OpenMP::OpenMP_CXX
+        PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
   endif()
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
+# Find Armadillo and link it.
 find_package(Armadillo 8.400.0 REQUIRED)
 target_link_libraries(ensmallen INTERFACE Armadillo::Armadillo)
 
