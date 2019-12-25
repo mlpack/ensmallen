@@ -1,5 +1,5 @@
-### ensmallen ?.??.?
-###### ????-??-??
+### ensmallen 2.11.0
+###### 2019-12-24
   * Add Lookahead
     ([#138](https://github.com/mlpack/ensmallen/pull/138)).
 
