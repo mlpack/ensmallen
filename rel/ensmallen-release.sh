@@ -6,6 +6,8 @@
 #   $ ensmallen-release.sh <major> <minor> <patch> [<name>]
 #
 # This should be run from the root of the repository.
+#
+# Make sure to update HISTORY.md manually first!
 set -e
 
 if [ "$#" -lt 3 ]; then
@@ -62,3 +64,5 @@ git add files/ensmallen-latest.tar.gz;
 git commit -m "Release version $MAJOR.$MINOR.$PATCH.";
 git push origin;
 cd -
+
+rm -rf /tmp/ensmallen.org;
