@@ -67,9 +67,7 @@ class NSGA2 {
   template<typename MatType>
   void Mutate(MatType& child);
 
-  template<typename MatType>
-  void FastNonDominatedSort(std::vector<MatType>& population,
-                            std::vector<std::vector<size_t> >& fronts,
+  void FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
                             std::vector<size_t>& ranks,
                             std::vector<std::vector<double> > calculatedObjectives);
 
