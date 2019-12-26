@@ -21,14 +21,16 @@ class NSGA2 {
   NSGA2(const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
+        const double mutationProb = 0.3,
+        const double mutationStrength = 1e-3,
         const double epsilon = 1e-6);
 
-  template<typename ArbitraryFunctionType,
+  template<typename MultiobjectiveFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(std::vector<ArbitraryFunctionType>& objectives,
-                                       MatType& iterate,
-                                       CallbackTypes&&... callbacks);
+  MatType Optimize(MultiobjectiveFunctionType& objectives,
+                   MatType& iterate,
+                   CallbackTypes&&... callbacks);
 
   size_t PopulationSize() const { return populationSize; }
   size_t& PopulationSize() { return populationSize; }
@@ -39,41 +41,62 @@ class NSGA2 {
   double CrossoverProb() const { return crossoverProb; }
   double& CrossoverProb() { return crossoverProb; }
 
+  double MutationProb() const { return mutationProb; }
+  double& MutationProb() { return mutationProb; }
+
+  double MutationStrength() const { return mutationStrength; }
+  double& MutationStrength() { return mutationStrength; }
+
   double Epsilon() const { return epsilon; }
   double& Epsilon() { return epsilon; }
 
 
  private:
+  template<typename MultiobjectiveFunctionType,
+           typename MatType>
+  void EvaluateObjectives(std::vector<MatType> population,
+                          MultiobjectiveFunctionType objectives,
+                          std::vector<std::vector<double> >& calculatedObjectives);
+
   template<typename MatType>
   void BinaryTournamentSelection(std::vector<MatType>& population);
 
   template<typename MatType>
-  void Crossover(std::vector<MatType>& population,
-                 const size_t parentA,
-                 const size_t parentB);
+  void Crossover(MatType& childA,
+                 MatType& childB,
+                 MatType parentA,
+                 MatType parentB);
 
   template<typename MatType>
-  void Mutate(std::vector<MatType>& population);
+  void Mutate(MatType& child);
 
   template<typename MatType>
   void FastNonDominatedSort(std::vector<MatType>& population,
-                            std::vector<std::vector<int> >& fronts,
-                            std::vector<int>& ranks,
+                            std::vector<std::vector<size_t> >& fronts,
+                            std::vector<size_t>& ranks,
                             std::vector<std::vector<double> > calculatedObjectives);
 
   bool Dominates(std::vector<std::vector<double> > calculatedObjectives,
-                 int candidateP,
-                 int candidateQ);
+                 size_t candidateP,
+                 size_t candidateQ);
+
+  template<typename MultiobjectiveFunctionType>
+  void CrowdingDistanceAssignment(std::vector<size_t> front,
+                                  MultiobjectiveFunctionType objectives,
+                                  std::vector<double>& crowdingDistance);
 
   template<typename MatType>
-  void CrowdingDistanceAssignment(std::vector<MatType>& population);
-
-  template<typename MatType>
-  void CrowdingOperatorSort(std::vector<MatType>& population);
+  bool CrowdingOperator(MatType candidateP,
+                        MatType candidateQ,
+                        std::map<MatType, size_t> indices,
+                        std::vector<size_t> ranks,
+                        std::vector<double> crowdingDistance);
 
   size_t populationSize;
   size_t maxGenerations;
   double crossoverProb;
+  double mutationProb;
+  double mutationStrength;
   double epsilon;
 };
 
