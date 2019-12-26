@@ -36,7 +36,7 @@ inline NSGA2::NSGA2(const size_t populationSize,
 template<typename MultiobjectiveFunctionType,
          typename MatType,
          typename... CallbackTypes>
-MatType NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
+std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
                         MatType& iterate,
                         CallbackTypes&&... callbacks)
 {
@@ -58,50 +58,60 @@ MatType NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
   EvaluateObjectives(population, objectives, calculatedObjectives);
 
   for (size_t generation = 1; generation <= maxGenerations; generation++) {
+    Info << "NSGA2::Optimize() Generation: " << generation << std::endl;
     // have P_t, generate G_t using P_t
+    Info << "NSGA2::Optimize() BinaryTournamentSelection" << std::endl;
     BinaryTournamentSelection(population);
 
     // evaluate objectives
+    Info << "NSGA2::Optimize() EvaluateObjectives" << std::endl;
     calculatedObjectives.resize(population.size());
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // perform fast non dominated sort on $$ P_t \cup G_t $$
+    Info << "NSGA2::Optimize() FastNonDominatedSort" << std::endl;
     ranks.resize(population.size());
     FastNonDominatedSort(population, fronts, ranks, calculatedObjectives);
 
     // perform crowding distance assignment
+    Info << "NSGA2::Optimize() CrowdingDistanceAssignment" << std::endl;
     crowdingDistance.resize(population.size());
     for (size_t fNum = 0; fNum < fronts.size(); fNum++) {
       CrowdingDistanceAssignment(fronts[fNum], objectives, crowdingDistance);
     }
 
     // sort based on crowding distance
-    std::map<MatType, size_t> indices;
-    for(size_t i = 0; i < population.size(); i++) {
-      indices[population[i]] = i;
-    }
-
+    Info << "NSGA2::Optimize() Sort(Crowding Distance)" << std::endl;
     std::sort(population.begin(),
               population.end(),
-              [this, indices, ranks, crowdingDistance](MatType candidateP, MatType candidateQ){
-                return CrowdingOperator(candidateP,
-                                        candidateQ,
-                                        indices,
+              [this, ranks, crowdingDistance, population](MatType& candidateP,
+                                                          MatType& candidateQ){
+                size_t idxP, idxQ;
+                for(int i = 0; i < population.size(); i++) {
+                  if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon)) {
+                    idxP = i;
+                  }
+                  if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon)) {
+                    idxQ = i;
+                  }
+                }
+
+                return CrowdingOperator(idxP,
+                                        idxQ,
                                         ranks,
                                         crowdingDistance);
-                                        }
+              }
     );
 
     // yeild new population P_{t+1}
+    Info << "NSGA2::Optimize() Get P(t+1)" << std::endl;
     population.resize(populationSize);
   }
 
-  MatType bestFront;
+  std::vector<MatType> bestFront;
 
-  size_t i = 0;
   for(size_t f: fronts[0]) {
-    bestFront(i) = population[f];
-    i++;
+    bestFront.push_back(population[f]);
   }
 
   return bestFront;
@@ -139,11 +149,14 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population)
     MatType parentA = population[indexA];
     MatType parentB = population[indexB];
 
-    MatType childA, childB;
+    MatType childA = parentA, childB = parentB;
 
+    Info << "NSGA2::BinaryTournamentSelection() Crossover" << std::endl;
     Crossover(childA, childB, parentA, parentB);
 
+    Info << "NSGA2::BinaryTournamentSelection() Mutate(A)" << std::endl;
     Mutate(childA);
+    Info << "NSGA2::BinaryTournamentSelection() Mutate(B)" << std::endl;
     Mutate(childB);
 
     children.push_back(childA);
@@ -161,7 +174,7 @@ inline void NSGA2::Crossover(MatType& childA,
                 MatType parentB)
 {
   // crossover indices
-  MatType idx = arma::randu<typename MatType::elem_type>(childA.n_rows, childA.n_cols) < crossoverProb;
+  auto idx = arma::randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
 
   childA = parentA % idx + parentB % (1 - idx);
   childB = parentA % (1 - idx) + parentA % idx;
@@ -170,10 +183,8 @@ inline void NSGA2::Crossover(MatType& childA,
 template<typename MatType>
 inline void NSGA2::Mutate(MatType& child)
 {
-  // indices getting mutated
-  MatType idx = arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb;
-  MatType mutation = mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols);
-  child += mutation % idx;
+  child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
+           (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 }
 
 template<typename MatType>
@@ -253,7 +264,7 @@ inline bool NSGA2::Dominates(std::vector<std::vector<double> > calculatedObjecti
 }
 
 template<typename MultiobjectiveFunctionType>
-void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
+inline void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
                                        MultiobjectiveFunctionType objectives,
                                        std::vector<double>& crowdingDistance)
 {
@@ -269,22 +280,17 @@ void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
       crowdingDistance[front[fSize - 1]] = objectives.GetMaximum(m);
 
       for(size_t i = 1; i < fSize - 1 ; i++) {
-        crowdingDistance[front[i]] += (crowdingDistance[front[i-1]] - crowdingDistance[front[i+1]])/(objectives.GetMaximum() - objectives.GetMinimum(m));
+        crowdingDistance[front[i]] += (crowdingDistance[front[i-1]] - crowdingDistance[front[i+1]])/(objectives.GetMaximum(m) - objectives.GetMinimum(m));
       }
     }
   }
 }
 
-template<typename MatType>
-bool CrowdingOperator(MatType candidateP,
-                      MatType candidateQ,
-                      std::map<MatType, size_t> indices,
-                      std::vector<size_t> ranks,
-                      std::vector<double> crowdingDistance)
+inline bool NSGA2::CrowdingOperator(size_t idxP,
+                             size_t idxQ,
+                             std::vector<size_t> ranks,
+                             std::vector<double> crowdingDistance)
 {
-  size_t idxP = indices[candidateP];
-  size_t idxQ = indices[candidateQ];
-
   if (ranks[idxP] < ranks[idxQ]) {
     return true;
   }
