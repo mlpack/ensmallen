@@ -32,7 +32,7 @@ class SchafferFunctionN1 {
   }
 
   MatType GetInitialPoint() {
-    return arma::vec(numVariables, 1, arma::fill::zeros);
+    return arma::vec(numVariables, 1, arma::fill::randn);
   }
 
   size_t NumObjectives() const { return numObjectives; }

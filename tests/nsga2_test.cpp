@@ -19,7 +19,7 @@ using namespace std;
 
 TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]") {
   SchafferFunctionN1<arma::mat> SCH;
-  NSGA2 opt(100, 10, 0.6, 0.3, 1e-3, 1e-6);
+  NSGA2 opt(20, 1000, 0.6, 0.3, 0.01, 1e-6);
 
   arma::mat coords = SCH.GetInitialPoint();
   Info << "NSGA2:: Begin Optimzation\n";
@@ -28,6 +28,7 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]") {
   bool all_in_range = true;
 
   for(arma::mat solution: bestFront) {
+    solution.print();
     double val = arma::as_scalar(solution);
     if (val > 2.0 || val < 0.0) {
       all_in_range = false;
