@@ -40,8 +40,6 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
                         MatType& iterate,
                         CallbackTypes&&... callbacks)
 {
-  typedef typename MatType::elem_type ElemType;
-
   std::vector<std::vector<double> > calculatedObjectives;
   calculatedObjectives.resize(populationSize);
 
