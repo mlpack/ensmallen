@@ -56,5 +56,5 @@ add_custom_command(TARGET ensmallen_tests
 )
 
 enable_testing()
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME}
+add_test(NAME ensmallen_tests COMMAND ensmallen_tests
 WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
