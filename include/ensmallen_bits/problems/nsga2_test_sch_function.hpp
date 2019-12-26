@@ -20,11 +20,11 @@ class NSGA2TestFuncSCH {
   NSGA2TestFuncSCH() : numObjectives(2), numVariables(1)
   {/* Nothing to do here. */}
 
-  std::vector<double> Evaluate(const MatType& coords) {
-    std::vector<double> objectives(numObjectives);
+  arma::vec Evaluate(const MatType& coords) {
+    arma::vec objectives(numObjectives);
 
-    objectives[0] = std::pow(coords[0], 2);
-    objectives[1] = std::pow(coords[0] - 2, 2);
+    objectives(0) = std::pow(coords[0], 2);
+    objectives(1) = std::pow(coords[0] - 2, 2);
 
     return objectives;
   }

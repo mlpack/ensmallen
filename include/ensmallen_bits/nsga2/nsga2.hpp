@@ -53,7 +53,7 @@ class NSGA2 {
            typename MatType>
   void EvaluateObjectives(std::vector<MatType> population,
                           MultiobjectiveFunctionType objectives,
-                          std::vector<std::vector<double> >& calculatedObjectives);
+                          std::vector<arma::vec>& calculatedObjectives);
 
   template<typename MatType>
   void BinaryTournamentSelection(std::vector<MatType>& population);
@@ -69,9 +69,9 @@ class NSGA2 {
 
   void FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
                             std::vector<size_t>& ranks,
-                            std::vector<std::vector<double> > calculatedObjectives);
+                            std::vector<arma::vec> calculatedObjectives);
 
-  bool Dominates(std::vector<std::vector<double> > calculatedObjectives,
+  bool Dominates(std::vector<arma::vec> calculatedObjectives,
                  size_t candidateP,
                  size_t candidateQ);
 
