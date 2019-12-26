@@ -17,8 +17,8 @@ using namespace ens::test;
 using namespace std;
 
 
-TEST_CASE("NSGA2SCHTest", "[NSGA2Test]") {
-  NSGA2TestFuncSCH<arma::mat> SCH;
+TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]") {
+  SchafferFunctionN1<arma::mat> SCH;
   NSGA2 opt(100, 10, 0.6, 0.3, 1e-3, 1e-6);
 
   arma::mat coords = SCH.GetInitialPoint();

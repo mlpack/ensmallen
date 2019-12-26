@@ -1,6 +1,8 @@
 /**
- * @file nsga2_test_sch_function.hpp
+ * @file schaffer_function_n1.hpp
  * @author Sayan Goswami
+ *
+ * Implementation of Schaffer function N.1.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -8,16 +10,16 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_PROBLEMS_NSGA2_TEST_SCH_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_NSGA2_TEST_SCH_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_SCHAFFER_FUNCTION_N1_HPP
+#define ENSMALLEN_PROBLEMS_SCHAFFER_FUNCTION_N1_HPP
 
 namespace ens {
 namespace test {
 
 template<typename MatType = arma::mat>
-class NSGA2TestFuncSCH {
+class SchafferFunctionN1 {
  public:
-  NSGA2TestFuncSCH() : numObjectives(2), numVariables(1)
+  SchafferFunctionN1() : numObjectives(2), numVariables(1)
   {/* Nothing to do here. */}
 
   arma::vec Evaluate(const MatType& coords) {
@@ -37,7 +39,7 @@ class NSGA2TestFuncSCH {
 
   double GetMaximum(size_t objectiveNumber) {
     if (objectiveNumber != 0 && objectiveNumber != 1) {
-      throw std::logic_error("NSGA2TestFuncSCH::GetMaximum() objectiveNumber must"
+      throw std::logic_error("SchafferFunctionN1::GetMaximum() objectiveNumber must"
           " be either 0 or 1");
     }
     return 1000;
@@ -45,8 +47,8 @@ class NSGA2TestFuncSCH {
 
   double GetMinimum(size_t objectiveNumber) {
     if (objectiveNumber != 0 && objectiveNumber != 1) {
-      throw std::logic_error("NSGA2TestFuncSCH::GetMinimum() objectiveNumber must"
-          "be either 0 or 1");
+      throw std::logic_error("SchafferFunctionN1::GetMinimum() objectiveNumber must"
+          " be either 0 or 1");
     }
     return -1000;
   }
