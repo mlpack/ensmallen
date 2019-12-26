@@ -5,7 +5,7 @@
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ * http://www.opensource.org/licenses/BSD-3-Clause for more Information.
  */
 
 
@@ -40,7 +40,7 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
                         MatType& iterate,
                         CallbackTypes&&... callbacks)
 {
-  std::vector<std::vector<double> > calculatedObjectives;
+  std::vector<arma::vec> calculatedObjectives;
   calculatedObjectives.resize(populationSize);
 
   std::vector<MatType> population;
@@ -126,7 +126,7 @@ template<typename MultiobjectiveFunctionType,
          typename MatType>
 inline void NSGA2::EvaluateObjectives(std::vector<MatType> population,
                                       MultiobjectiveFunctionType objectives,
-                                      std::vector<std::vector<double> >& calculatedObjectives)
+                                      std::vector<arma::vec>& calculatedObjectives)
 {
   for (size_t i = 0; i < populationSize; i++) {
     calculatedObjectives[i] = objectives.Evaluate(population[i]);
@@ -194,7 +194,7 @@ inline void NSGA2::Mutate(MatType& child)
 
 inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
                                         std::vector<size_t>& ranks,
-                                        std::vector<std::vector<double> > calculatedObjectives)
+                                        std::vector<arma::vec> calculatedObjectives)
 {
   std::map<size_t, size_t> dominationCount;
   std::map<size_t, std::set<size_t> > dominated;
@@ -243,21 +243,23 @@ inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& front
   }
 }
 
-inline bool NSGA2::Dominates(std::vector<std::vector<double> > calculatedObjectives,
-               size_t candidateP,
-               size_t candidateQ)
+inline bool NSGA2::Dominates(std::vector<arma::vec> calculatedObjectives,
+                             size_t candidateP,
+                             size_t candidateQ)
 {
+  Info << "NSGA2::NSGA2::Dominates()" << std::endl;
+
   bool all_better_or_equal = true;
   bool atleast_one_better = false;
-  size_t n_objectives = calculatedObjectives.size();
+  size_t n_objectives = calculatedObjectives[0].n_elem;
 
   for (size_t i = 0; i < n_objectives; i++) {
-    if (calculatedObjectives[candidateP][i] > calculatedObjectives[candidateQ][i]) {
+    if (calculatedObjectives[candidateP](i) > calculatedObjectives[candidateQ](i)) {
       // p.i is worse than q.i for the i-th objective function
       all_better_or_equal = false;
     }
 
-    if (calculatedObjectives[candidateP][i] < calculatedObjectives[candidateQ][i]) {
+    if (calculatedObjectives[candidateP](i) < calculatedObjectives[candidateQ](i)) {
       // p.i is better than q.i for the i-th objective function
       atleast_one_better = true;
     }
