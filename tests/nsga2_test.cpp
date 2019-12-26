@@ -19,10 +19,21 @@ using namespace std;
 
 TEST_CASE("NSGA2SCHTest", "[NSGA2Test]") {
   NSGA2TestFuncSCH<arma::mat> SCH;
-  NSGA2 opt(100, 2000, 0.6, 0.3, 1e-3, 1e-3);
+  NSGA2 opt(100, 10, 0.6, 0.3, 1e-3, 1e-6);
 
   arma::mat coords = SCH.GetInitialPoint();
-  std::cout << "NSGA2::Optimzation\n";
-  arma::mat bestFront = opt.Optimize(SCH, coords);
-  bestFront.print();
+  Info << "NSGA2:: Begin Optimzation\n";
+  std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
+
+  bool all_in_range = true;
+
+  for(arma::mat solution: bestFront) {
+    double val = arma::as_scalar(solution);
+    if (val > 2.0 || val < 0.0) {
+      all_in_range = false;
+      break;
+    }
+  }
+
+  REQUIRE(all_in_range);
 }

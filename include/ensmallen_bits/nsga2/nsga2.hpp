@@ -11,9 +11,6 @@
 #ifndef ENSMALLEN_NSGA2_NSGA2_HPP
 #define ENSMALLEN_NSGA2_NSGA2_HPP
 
-#include <vector>
-#include <map>
-
 namespace ens {
 
 class NSGA2 {
@@ -28,7 +25,7 @@ class NSGA2 {
   template<typename MultiobjectiveFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  MatType Optimize(MultiobjectiveFunctionType& objectives,
+  std::vector<MatType> Optimize(MultiobjectiveFunctionType& objectives,
                    MatType& iterate,
                    CallbackTypes&&... callbacks);
 
@@ -85,10 +82,8 @@ class NSGA2 {
                                   MultiobjectiveFunctionType objectives,
                                   std::vector<double>& crowdingDistance);
 
-  template<typename MatType>
-  bool CrowdingOperator(MatType candidateP,
-                        MatType candidateQ,
-                        std::map<MatType, size_t> indices,
+  bool CrowdingOperator(size_t idxP,
+                        size_t idxQ,
                         std::vector<size_t> ranks,
                         std::vector<double> crowdingDistance);
 
