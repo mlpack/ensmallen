@@ -36,15 +36,15 @@ class NSGA2TestFuncSCH {
   size_t NumObjectives() const { return numObjectives; }
 
   double GetMaximum(size_t objectiveNumber) {
-    if (objectiveNumber != 0 || objectiveNumber != 1) {
+    if (objectiveNumber != 0 && objectiveNumber != 1) {
       throw std::logic_error("NSGA2TestFuncSCH::GetMaximum() objectiveNumber must"
-          "be either 0 or 1");
+          " be either 0 or 1");
     }
     return 1000;
   }
 
   double GetMinimum(size_t objectiveNumber) {
-    if (objectiveNumber != 0 || objectiveNumber != 1) {
+    if (objectiveNumber != 0 && objectiveNumber != 1) {
       throw std::logic_error("NSGA2TestFuncSCH::GetMinimum() objectiveNumber must"
           "be either 0 or 1");
     }
