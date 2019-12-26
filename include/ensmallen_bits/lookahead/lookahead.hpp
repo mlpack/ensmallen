@@ -156,9 +156,9 @@ class Lookahead
   double& StepSize() { return stepSize; }
 
   //! Get the synchronization period.
-  double K() const { return k; }
+  size_t K() const { return k; }
   //! Modify the synchronization period.
-  double& K() { return k; }
+  size_t& K() { return k; }
 
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return maxIterations; }
