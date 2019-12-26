@@ -56,7 +56,6 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
   }
 
   EvaluateObjectives(population, objectives, calculatedObjectives);
-  Callback::Evaluate(*this, objectives, iterate, calculatedObjectives, callbacks...);
 
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
@@ -72,7 +71,6 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
     Info << "NSGA2::Optimize() EvaluateObjectives" << std::endl;
     calculatedObjectives.resize(population.size());
     EvaluateObjectives(population, objectives, calculatedObjectives);
-    Callback::Evaluate(*this, objectives, iterate, calculatedObjectives, callbacks...);
 
     // perform fast non dominated sort on $$ P_t \cup G_t $$
     Info << "NSGA2::Optimize() FastNonDominatedSort" << std::endl;
