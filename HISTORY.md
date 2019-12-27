@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?
 ###### ????-??-??
+  * Fix Lookahead Synchronization period type
+    ([#153](https://github.com/mlpack/ensmallen/pull/138)).
 
 ### ensmallen 2.11.0: "The Poster Session Is Full"
 ###### 2019-12-24
