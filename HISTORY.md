@@ -1,3 +1,6 @@
+### ensmallen ?.??.?
+###### ????-??-??
+
 ### ensmallen 2.11.1: "The Poster Session Is Full"
 ###### 2019-12-28
   * Fix Lookahead Synchronization period type
