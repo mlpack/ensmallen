@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?
 ###### ????-??-??
+  * Allow callback instantiation for SGD based optimizer 
+    ([#138](https://github.com/mlpack/ensmallen/pull/155)).
 
 ### ensmallen 2.11.0: "The Poster Session Is Full"
 ###### 2019-12-24
