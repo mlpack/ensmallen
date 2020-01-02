@@ -27,7 +27,7 @@ string(REGEX REPLACE ".*#define ENS_VERSION_MAJOR ([0-9]+).*" "\\1" ENSMALLEN_VE
 string(REGEX REPLACE ".*#define ENS_VERSION_MINOR ([0-9]+).*" "\\1" ENSMALLEN_VERSION_MINOR "${ENSMALLEN_VERSION_FILE_CONTENTS}")
 string(REGEX REPLACE ".*#define ENS_VERSION_PATCH ([0-9]+).*" "\\1" ENSMALLEN_VERSION_PATCH "${ENSMALLEN_VERSION_FILE_CONTENTS}")
 
-message(STATUS "Configuring Ensmallen ${ENSMALLEN_VERSION_MAJOR}.${ENSMALLEN_VERSION_MINOR}.${ENSMALLEN_VERSION_PATCH}")
+message(STATUS "Configuring ensmallen ${ENSMALLEN_VERSION_MAJOR}.${ENSMALLEN_VERSION_MINOR}.${ENSMALLEN_VERSION_PATCH}")
 set(VERSION "${ENSMALLEN_VERSION_MAJOR}.${ENSMALLEN_VERSION_MINOR}.${ENSMALLEN_VERSION_PATCH}")
 
 # Create library target.
@@ -65,28 +65,29 @@ target_link_libraries(ensmallen INTERFACE Armadillo::Armadillo)
 include(CMakePackageConfigHelpers)
 set(ENSMALLEN_CMAKE_DIR "lib/cmake/ensmallen" CACHE STRING
       "Installation directory for cmake files, relative to ${CMAKE_INSTALL_PREFIX}.")
-set(version_config "${PROJECT_BINARY_DIR}/ensmallen-config-version.cmake")
-set(project_config "${PROJECT_BINARY_DIR}/ensmallen-config.cmake")
-set(targets_export_name ensmallen-targets)
+set(VERSION_CONFIG "${PROJECT_BINARY_DIR}/ensmallen-config-version.cmake")
+set(PROJECT_CONFIG "${PROJECT_BINARY_DIR}/ensmallen-config.cmake")
+set(TARGETS_EXPORT_NAME ensmallen-targets)
 
 # Generate the version, config and target files into the build directory.
-write_basic_package_version_file(${version_config}
+write_basic_package_version_file(${VERSION_CONFIG}
     VERSION ${VERSION}
-    COMPATIBILITY AnyNewerVersion)
+    COMPATIBILITY AnyNewerVersion
+    ARCH_INDEPENDENT)
 configure_package_config_file(${PROJECT_SOURCE_DIR}/CMake/ensmallen-config.cmake.in
-    ${project_config}
+    ${PROJECT_CONFIG}
     INSTALL_DESTINATION ${ENSMALLEN_CMAKE_DIR})
 export(TARGETS ensmallen NAMESPACE ensmallen::
-    FILE ${PROJECT_BINARY_DIR}/${targets_export_name}.cmake)
+    FILE ${PROJECT_BINARY_DIR}/${TARGETS_EXPORT_NAME}.cmake)
 
 # Install version, config and target files.
-install(FILES ${project_config} ${version_config}
+install(FILES ${PROJECT_CONFIG} ${VERSION_CONFIG}
     DESTINATION ${ENSMALLEN_CMAKE_DIR})
-install(EXPORT ${targets_export_name} DESTINATION ${ENSMALLEN_CMAKE_DIR}
+install(EXPORT ${TARGETS_EXPORT_NAME} DESTINATION ${ENSMALLEN_CMAKE_DIR}
     NAMESPACE ensmallen::)
 
 # Export the targets and install the header files.
-install(TARGETS ensmallen EXPORT ${targets_export_name} DESTINATION lib)
+install(TARGETS ensmallen EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/ensmallen_bits"
         DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
         PATTERN "*~" EXCLUDE
