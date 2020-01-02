@@ -2,6 +2,7 @@ project(ensmallen_tests CXX)
 
 set(ENSMALLEN_TESTS_SOURCES
     main.cpp
+    ada_bound_test.cpp
     ada_delta_test.cpp
     ada_grad_test.cpp
     adam_test.cpp
@@ -21,6 +22,7 @@ set(ENSMALLEN_TESTS_SOURCES
     katyusha_test.cpp
     lbfgs_test.cpp
     line_search_test.cpp
+    lookahead_test.cpp
     lrsdp_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp

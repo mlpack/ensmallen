@@ -30,6 +30,7 @@ The following optimizers can be used to optimize an arbitrary function:
  - [Simulated Annealing](#simulated-annealing-sa)
  - [CNE](#cne)
  - [DE](#de)
+ - [PSO](#pso)
  - [SPSA](#simultaneous-perturbation-stochastic-approximation-spsa)
 
 Each of these optimizers has an `Optimize()` function that is called as
@@ -551,16 +552,21 @@ and f'(x) compute some of the same intermediate quantities.
 Each of the implemented methods is allowed to have additional cv-modifiers
 (`static`, `const`, etc.).
 
-The following optimizers can be used with differentiable functions:
+The following optimizers can be used with differentiable separable functions:
 
+ - [AdaBound](#adabound)
  - [AdaDelta](#adadelta)
  - [AdaGrad](#adagrad)
  - [Adam](#adam)
  - [AdaMax](#adamax)
+ - [AMSBound](#amsbound)
  - [AMSGrad](#amsgrad)
  - [Big Batch SGD](#big-batch-sgd)
+ - [Eve](#eve)
+ - [FTML](#ftml-follow-the-moving-leader)
  - [IQN](#iqn)
  - [Katyusha](#katyusha)
+ - [Lookahead](#lookahead)
  - [Momentum SGD](#momentum-sgd)
  - [Nadam](#nadam)
  - [NadaMax](#nadamax)
@@ -574,8 +580,10 @@ The following optimizers can be used with differentiable functions:
  - [Stochastic Gradient Descent with Restarts (SGDR)](#stochastic-gradient-descent-with-restarts-sgdr)
  - [Snapshot SGDR](#snapshot-stochastic-gradient-descent-with-restarts)
  - [SMORMS3](#smorms3)
- - [SVRG](#standard-stochastic-variance-reduced-gradient-svrg)
  - [SPALeRA](#spalera-stochastic-gradient-descent-spalerasgd)
+ - [SWATS](#swats)
+ - [SVRG](#standard-stochastic-variance-reduced-gradient-svrg)
+ - [WNGrad](#wngrad)
 
 The example program below demonstrates the implementation and use of an
 arbitrary separable function.  The function used is the linear regression
