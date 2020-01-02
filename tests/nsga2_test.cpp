@@ -25,8 +25,6 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]") {
   Info << "NSGA2:: Begin Optimzation\n";
   std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
 
-  bool all_in_range = true;
-
   for(arma::mat solution: bestFront) {
     solution.print();
   }
