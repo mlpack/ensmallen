@@ -26,23 +26,23 @@ class NSGA2 {
            typename MatType,
            typename... CallbackTypes>
   std::vector<MatType> Optimize(MultiobjectiveFunctionType& objectives,
-                   MatType& iterate,
-                   CallbackTypes&&... callbacks);
+                                MatType& iterate,
+                                CallbackTypes&&... callbacks);
 
   size_t PopulationSize() const { return populationSize; }
   size_t& PopulationSize() { return populationSize; }
 
-  size_t MaxGenerationSize() const { return maxGenerations; }
-  size_t& MaxGenerationSize() { return maxGenerations; }
+  size_t MaxGenerations() const { return maxGenerations; }
+  size_t& MaxGenerations() { return maxGenerations; }
 
-  double CrossoverProb() const { return crossoverProb; }
-  double& CrossoverProb() { return crossoverProb; }
+  double CrossoverRate() const { return crossoverProb; }
+  double& CrossoverRate() { return crossoverProb; }
 
-  double MutationProb() const { return mutationProb; }
-  double& MutationProb() { return mutationProb; }
+  double MutationProbability() const { return mutationProb; }
+  double& MutationProbability() { return mutationProb; }
 
-  double MutationStrength() const { return mutationStrength; }
-  double& MutationStrength() { return mutationStrength; }
+  double MutationSize() const { return mutationStrength; }
+  double& MutationSize() { return mutationStrength; }
 
   double Epsilon() const { return epsilon; }
   double& Epsilon() { return epsilon; }

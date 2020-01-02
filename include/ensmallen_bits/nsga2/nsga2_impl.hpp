@@ -37,8 +37,8 @@ template<typename MultiobjectiveFunctionType,
          typename MatType,
          typename... CallbackTypes>
 std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
-                        MatType& iterate,
-                        CallbackTypes&&... callbacks)
+                                     MatType& iterate,
+                                     CallbackTypes&&... callbacks)
 {
   std::vector<arma::vec> calculatedObjectives;
   calculatedObjectives.resize(populationSize);
@@ -270,8 +270,8 @@ inline bool NSGA2::Dominates(std::vector<arma::vec> calculatedObjectives,
 
 template<typename MultiobjectiveFunctionType>
 inline void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
-                                       MultiobjectiveFunctionType objectives,
-                                       std::vector<double>& crowdingDistance)
+                                              MultiobjectiveFunctionType objectives,
+                                              std::vector<double>& crowdingDistance)
 {
   if (front.size() > 0) {
     for(size_t elem: front) {
@@ -292,9 +292,9 @@ inline void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
 }
 
 inline bool NSGA2::CrowdingOperator(size_t idxP,
-                             size_t idxQ,
-                             std::vector<size_t> ranks,
-                             std::vector<double> crowdingDistance)
+                                    size_t idxQ,
+                                    std::vector<size_t> ranks,
+                                    std::vector<double> crowdingDistance)
 {
   if (ranks[idxP] < ranks[idxQ]) {
     return true;
