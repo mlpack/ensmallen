@@ -2,7 +2,7 @@
  * @file optimisticadam_update.hpp
  * @author Moksh Jain
  *
- * OptmisticAdam optimizer. Implements Optimistic Adam, an algorithm which 
+ * OptmisticAdam optimizer. Implements Optimistic Adam, an algorithm which
  * uses Optimistic Mirror Descent with the Adam optimizer.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -16,18 +16,18 @@
 namespace ens {
 
 /**
- * OptimisticAdam is an optimizer which implements the Optimistic Adam 
+ * OptimisticAdam is an optimizer which implements the Optimistic Adam
  * algorithm which uses Optmistic Mirror Descent with the Adam Optimizer.
  * It addresses the problem of limit cycling while training GANs. It uses
- * OMD to achieve faster regret rates in solving the zero sum game of 
- * training a GAN. It consistently achieves a smaller KL divergnce with 
+ * OMD to achieve faster regret rates in solving the zero sum game of
+ * training a GAN. It consistently achieves a smaller KL divergnce with
  * respect to the true underlying data distribution.
  *
  * For more information, see the following.
  *
  * @code
  * @article{
- *   author  = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis, 
+ *   author  = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
  *              Haoyang Zeng},
  *   title   = {Training GANs with Optimism},
  *   year    = {2017},
