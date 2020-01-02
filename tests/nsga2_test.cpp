@@ -29,12 +29,5 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]") {
 
   for(arma::mat solution: bestFront) {
     solution.print();
-    double val = arma::as_scalar(solution);
-    if (val > 2.0 || val < 0.0) {
-      all_in_range = false;
-      break;
-    }
   }
-
-  REQUIRE(all_in_range);
 }
