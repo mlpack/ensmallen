@@ -83,7 +83,6 @@
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
-#include "ensmallen_bits/nsga2/nsga2.hpp"
 
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
@@ -93,6 +92,7 @@
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
+#include "ensmallen_bits/nsga2/nsga2.hpp"
 #include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
 #include "ensmallen_bits/pso/pso.hpp"
