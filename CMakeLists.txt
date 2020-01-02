@@ -72,8 +72,7 @@ set(TARGETS_EXPORT_NAME ensmallen-targets)
 # Generate the version, config and target files into the build directory.
 write_basic_package_version_file(${VERSION_CONFIG}
     VERSION ${VERSION}
-    COMPATIBILITY AnyNewerVersion
-    ARCH_INDEPENDENT)
+    COMPATIBILITY AnyNewerVersion)
 configure_package_config_file(${PROJECT_SOURCE_DIR}/CMake/ensmallen-config.cmake.in
     ${PROJECT_CONFIG}
     INSTALL_DESTINATION ${ENSMALLEN_CMAKE_DIR})
