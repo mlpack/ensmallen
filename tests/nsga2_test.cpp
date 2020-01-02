@@ -17,7 +17,8 @@ using namespace ens::test;
 using namespace std;
 
 
-TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]") {
+TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
+{
   SchafferFunctionN1<arma::mat> SCH;
   NSGA2 opt(20, 1000, 0.6, 0.3, 0.01, 1e-6);
 
@@ -25,7 +26,8 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]") {
   Info << "NSGA2:: Begin Optimzation\n";
   std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
 
-  for(arma::mat solution: bestFront) {
+  for(arma::mat solution: bestFront)
+  {
     solution.print();
   }
 }

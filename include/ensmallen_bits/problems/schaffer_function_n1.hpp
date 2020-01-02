@@ -17,7 +17,8 @@ namespace ens {
 namespace test {
 
 template<typename MatType = arma::mat>
-class SchafferFunctionN1 {
+class SchafferFunctionN1
+{
  public:
   SchafferFunctionN1() : numObjectives(2), numVariables(1)
   {/* Nothing to do here. */}
@@ -31,14 +32,17 @@ class SchafferFunctionN1 {
     return objectives;
   }
 
-  MatType GetInitialPoint() {
+  MatType GetInitialPoint()
+  {
     return arma::vec(numVariables, 1, arma::fill::randn);
   }
 
   size_t NumObjectives() const { return numObjectives; }
 
-  double GetMaximum(size_t objectiveNumber) {
-    if (objectiveNumber != 0 && objectiveNumber != 1) {
+  double GetMaximum(size_t objectiveNumber)
+  {
+    if (objectiveNumber != 0 && objectiveNumber != 1)
+    {
       throw std::logic_error("SchafferFunctionN1::GetMaximum() objectiveNumber must"
           " be either 0 or 1");
     }
@@ -46,7 +50,8 @@ class SchafferFunctionN1 {
   }
 
   double GetMinimum(size_t objectiveNumber) {
-    if (objectiveNumber != 0 && objectiveNumber != 1) {
+    if (objectiveNumber != 0 && objectiveNumber != 1)
+    {
       throw std::logic_error("SchafferFunctionN1::GetMinimum() objectiveNumber must"
           " be either 0 or 1");
     }
