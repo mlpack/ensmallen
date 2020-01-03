@@ -23,8 +23,12 @@ class SchafferFunctionN1
   SchafferFunctionN1() : numObjectives(2), numVariables(1)
   {/* Nothing to do here. */}
 
-  arma::vec Evaluate(const MatType& coords) {
-    arma::vec objectives(numObjectives);
+  arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+  {
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+
+    arma::Col<ElemType> objectives(numObjectives);
 
     objectives(0) = std::pow(coords[0], 2);
     objectives(1) = std::pow(coords[0] - 2, 2);

@@ -2,6 +2,11 @@
  * @file nsga2.hpp
  * @author Sayan Goswami
  *
+ * NSGA-II is a multi-objective optimzation algorithm, widely used in
+ * many real-world applications. NSGA-II genererates offsprings using
+ * crossover and mutation and then selects the next generation according
+ * to nondominated-sorting and crowding distance comparison.
+ *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
@@ -12,6 +17,7 @@
 #define ENSMALLEN_NSGA2_NSGA2_HPP
 
 namespace ens {
+
 
 class NSGA2 {
  public:
@@ -82,8 +88,8 @@ class NSGA2 {
 
   bool CrowdingOperator(size_t idxP,
                         size_t idxQ,
-                        std::vector<size_t> ranks,
-                        std::vector<double> crowdingDistance);
+                        const std::vector<size_t>& ranks,
+                        const std::vector<double>& crowdingDistance);
 
   size_t populationSize;
   size_t maxGenerations;
