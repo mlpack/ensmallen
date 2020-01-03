@@ -41,7 +41,7 @@ namespace test {
 class SchafferFunctionN2
 {
  public:
-  //! Initialize the SchafferFunctionN4.
+  //! Initialize the SchafferFunctionN2.
   SchafferFunctionN2();
 
   /**
