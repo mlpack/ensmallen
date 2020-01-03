@@ -17,6 +17,9 @@ using namespace ens::test;
 using namespace std;
 
 
+/**
+ * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
+ */
 TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 {
   SchafferFunctionN1<arma::mat> SCH;
