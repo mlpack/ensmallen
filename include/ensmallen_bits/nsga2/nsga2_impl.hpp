@@ -2,6 +2,9 @@
  * @file nsga2_impl.hpp
  * @author Sayan Goswami
  *
+ * Implementation of the NSGA-II algorithm. Used for multi-objevtive
+ * optimisation problems on arbitrary functions.
+ *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
@@ -44,6 +47,7 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
   calculatedObjectives.resize(populationSize);
 
   std::vector<MatType> population;
+  population.reserve(2 * populationSize + 1);
   std::vector<std::vector<size_t> > fronts;
   std::vector<double> crowdingDistance;
   std::vector<size_t> ranks;
@@ -82,10 +86,9 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
     // perform crowding distance assignment
     Info << "NSGA2::Optimize() CrowdingDistanceAssignment" << std::endl;
     crowdingDistance.resize(population.size());
+
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
-    {
       CrowdingDistanceAssignment(fronts[fNum], objectives, crowdingDistance);
-    }
 
     // sort based on crowding distance
     Info << "NSGA2::Optimize() Sort(Crowding Distance)" << std::endl;
@@ -95,16 +98,19 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
                                                           MatType candidateQ)
               {
                 size_t idxP, idxQ;
-                for(int i = 0; i < population.size(); i++)
+                for (int i = 0; i < population.size(); i++)
                 {
-                  if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
-                  {
+                  if (arma::approx_equal(population[i],
+                                         candidateP,
+                                         "absdiff",
+                                         epsilon))
                     idxP = i;
-                  }
-                  if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
-                  {
+
+                  if (arma::approx_equal(population[i],
+                                         candidateQ,
+                                         "absdiff",
+                                         epsilon))
                     idxQ = i;
-                  }
                 }
 
                 return CrowdingOperator(idxP,
@@ -121,10 +127,8 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
 
   std::vector<MatType> bestFront;
 
-  for(size_t f: fronts[0])
-  {
+  for (size_t f: fronts[0])
     bestFront.push_back(population[f]);
-  }
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
   return bestFront;
@@ -160,13 +164,10 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population)
         indexB--;
     }
 
-    MatType parentA = population[indexA];
-    MatType parentB = population[indexB];
-
-    MatType childA = parentA, childB = parentB;
+    MatType childA = population[indexA], childB = population[indexB];
 
     Info << "NSGA2::BinaryTournamentSelection() Crossover" << std::endl;
-    Crossover(childA, childB, parentA, parentB);
+    Crossover(childA, childB, population[indexA], population[indexB]);
 
     Info << "NSGA2::BinaryTournamentSelection() Mutate(A)" << std::endl;
     Mutate(childA);
@@ -177,18 +178,17 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population)
     children.push_back(childB);
   }
 
-  population.reserve(population.size() + children.size());
   population.insert(std::end(population), std::begin(children), std::end(children));
 }
 
 template<typename MatType>
 inline void NSGA2::Crossover(MatType& childA,
-                MatType& childB,
-                MatType parentA,
-                MatType parentB)
+                             MatType& childB,
+                             MatType parentA,
+                             MatType parentB)
 {
   // crossover indices
-  auto idx = arma::randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
+  arma::umat idx = arma::randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
 
   childA = parentA % idx + parentB % (1 - idx);
   childB = parentA % (1 - idx) + parentA % idx;
@@ -198,7 +198,7 @@ template<typename MatType>
 inline void NSGA2::Mutate(MatType& child)
 {
   child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
-           (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
+      (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 }
 
 inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
@@ -217,7 +217,7 @@ inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& front
     dominated[p] = std::set<size_t>();
     dominationCount[p] = 0;
 
-    for(size_t q=0; q < populationSize; q++)
+    for (size_t q=0; q < populationSize; q++)
     {
       if (Dominates(calculatedObjectives, p, q))
       {
@@ -296,21 +296,23 @@ inline void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
 {
   if (front.size() > 0)
   {
-    for(size_t elem: front)
+    for (size_t elem: front)
     {
       crowdingDistance[elem] = 0;
     }
 
     size_t fSize = front.size();
 
-    for(size_t m = 0; m < objectives.NumObjectives(); m++)
+    for (size_t m = 0; m < objectives.NumObjectives(); m++)
     {
       crowdingDistance[front[0]] = objectives.GetMaximum(m);
       crowdingDistance[front[fSize - 1]] = objectives.GetMaximum(m);
 
-      for(size_t i = 1; i < fSize - 1 ; i++)
+      for (size_t i = 1; i < fSize - 1 ; i++)
       {
-        crowdingDistance[front[i]] += (crowdingDistance[front[i-1]] - crowdingDistance[front[i+1]])/(objectives.GetMaximum(m) - objectives.GetMinimum(m));
+        crowdingDistance[front[i]] += (crowdingDistance[front[i-1]] -
+            crowdingDistance[front[i+1]]) /
+            (objectives.GetMaximum(m) - objectives.GetMinimum(m));
       }
     }
   }
@@ -318,14 +320,14 @@ inline void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
 
 inline bool NSGA2::CrowdingOperator(size_t idxP,
                                     size_t idxQ,
-                                    std::vector<size_t> ranks,
-                                    std::vector<double> crowdingDistance)
+                                    const std::vector<size_t>& ranks,
+                                    const std::vector<double>& crowdingDistance)
 {
   if (ranks[idxP] < ranks[idxQ])
   {
     return true;
   }
-  else if (ranks[idxP] < ranks[idxQ] && crowdingDistance[idxP] > crowdingDistance[idxQ])
+  else if (ranks[idxP] == ranks[idxQ] && crowdingDistance[idxP] > crowdingDistance[idxQ])
   {
     return true;
   }
