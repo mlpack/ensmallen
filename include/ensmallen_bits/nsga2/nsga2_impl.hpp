@@ -2,7 +2,7 @@
  * @file nsga2_impl.hpp
  * @author Sayan Goswami
  *
- * Implementation of the NSGA-II algorithm. Used for multi-objevtive
+ * Implementation of the NSGA-II algorithm. Used for multi-objective
  * optimisation problems on arbitrary functions.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -56,12 +56,12 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
   // Pre-allocate space for the calculated objectives.
   calculatedObjectives.resize(populationSize);
 
-  // Population size reserved to 2 * populationSize + 1 to accomodate
+  // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size  of intermediate candidate population.
   std::vector<MatType> population;
   population.reserve(2 * populationSize + 1);
 
-  // Parteo fronts, initialized during non-dominated sorting.
+  // Pareto fronts, initialized during non-dominated sorting.
   std::vector<std::vector<size_t> > fronts;
   // Initialised in CrowdingDistanceAssignment.
   std::vector<double> crowdingDistance;
@@ -142,7 +142,7 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
               }
     );
 
-    // Yeild a new population P_{t+1} of size populationSize
+    // Yield a new population P_{t+1} of size populationSize
     Info << "NSGA2::Optimize() Get P(t+1)" << std::endl;
     population.resize(populationSize);
   }
@@ -178,7 +178,7 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population)
 
   while (children.size() < population.size())
   {
-    // Choose two random parents for reproduction from the elite popsulation
+    // Choose two random parents for reproduction from the elite population.
     size_t indexA = arma::randi<size_t>(arma::distr_param(0, populationSize - 1));
     size_t indexB = arma::randi<size_t>(arma::distr_param(0, populationSize - 1));
 
@@ -235,7 +235,7 @@ inline void NSGA2::Mutate(MatType& child)
       (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 }
 
-//! Sort population into pareto fronts.
+//! Sort population into Pareto fronts.
 inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
                                         std::vector<size_t>& ranks,
                                         std::vector<arma::vec> calculatedObjectives)
@@ -243,7 +243,7 @@ inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& front
   std::map<size_t, size_t> dominationCount;
   std::map<size_t, std::set<size_t> > dominated;
 
-  // reset and intialize fronts
+  // reset and initialize fronts
   fronts.clear();
   fronts.push_back(std::vector<size_t>());
 
@@ -296,7 +296,7 @@ inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& front
   }
 }
 
-//! Check if a candidate pareto dominates another candidate
+//! Check if a candidate Pareto dominates another candidate
 inline bool NSGA2::Dominates(std::vector<arma::vec> calculatedObjectives,
                              size_t candidateP,
                              size_t candidateQ)
