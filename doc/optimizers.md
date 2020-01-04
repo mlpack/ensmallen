@@ -1167,7 +1167,7 @@ proximalOptimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable functions](#differentiable-functions)*
 
-L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm using a limited amount of computer memory.  
+L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm using a limited amount of computer memory.
 
 #### Constructors
 
@@ -1562,6 +1562,54 @@ optimizer.Optimize(f, coordinates);
  * [Momentum SGD](#momentum-sgd)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
+
+## NSGA2
+
+*An optimizer for aribitrary multi-objective functions.*
+
+NSGA2 (Non-dominated Sorting Genetic Algorithm - II) is a multi-objective optimization algorithm. The algorithm works by generating a candidate population from a fixed starting point. At each stage of optimization, a new population of children is generated. This new population alongwith its predecessor is sorted using non-domination as the metric. Following this, the population is further segregated in fronts. A new population is generated from these fronts having size equal to that of the starting population.
+
+#### Constructors
+
+ * `NSGA2()`
+ * `NSGA2(`_`populationSize, maxGenerations`_`)`
+ * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength`_`)`
+ * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, epsilon`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 4 in size and a multiple of 4. | `100` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for NSGA2. | `2000` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
+| `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
+| `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
+| `double` | **`epsilon`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-6` |
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()` and `Epsilon()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SchafferFunctionN1<arma::mat> SCH;
+arma::mat coords = SCH.GetInitialPoint();
+
+NSGA2 optimizer(20, 1000, 0.6, 0.3, 0.01, 1e-6);
+std::vector<arma::mat> bestFront = optimizer.Optimize(SCH, coords);
+```
+
+</details>
+
+#### See also:
+
+ * [NSGA-II Algorithm](https://www.iitk.ac.in/kangal/Deb_NSGA-II.pdf)
+ * [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
 
 ## OptimisticAdam
 
