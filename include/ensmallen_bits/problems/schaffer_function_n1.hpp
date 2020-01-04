@@ -87,7 +87,8 @@ class SchafferFunctionN1
    * @param objectiveNumber The objective for which to get the bound for.
    * @return double
    */
-  double GetMinimum(size_t objectiveNumber) {
+  double GetMinimum(size_t objectiveNumber)
+  {
     if (objectiveNumber != 0 && objectiveNumber != 1)
     {
       throw std::logic_error("SchafferFunctionN1::GetMinimum() objectiveNumber must"
