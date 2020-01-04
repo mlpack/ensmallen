@@ -136,9 +136,9 @@ class NSGA2 {
    */
   template<typename MultiobjectiveFunctionType,
            typename MatType>
-  void EvaluateObjectives(std::vector<MatType> population,
-                          MultiobjectiveFunctionType objectives,
-                          std::vector<arma::vec>& calculatedObjectives);
+  void EvaluateObjectives(std::vector<MatType>& population,
+                          MultiobjectiveFunctionType& objectives,
+                          std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -162,8 +162,8 @@ class NSGA2 {
   template<typename MatType>
   void Crossover(MatType& childA,
                  MatType& childB,
-                 MatType parentA,
-                 MatType parentB);
+                 const MatType& parentA,
+                 const MatType& parentB);
 
   /**
    * Mutate the coordinates for a candidate.
@@ -177,14 +177,16 @@ class NSGA2 {
    * Sort the candidate population using their domination count and the set of
    * dominated nodes.
    *
+   * @tparam MatType Type of matrix to optimize.
    * @param fronts The population is sorted into these Pareto fronts. The first
    *     front is the best, the second worse and so on.
    * @param ranks The assigned ranks, used for crowding distance based sorting.
    * @param calculatedObjectives The previously calculated objectives.
    */
+  template<typename MatType>
   void FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
                             std::vector<size_t>& ranks,
-                            std::vector<arma::vec> calculatedObjectives);
+                            std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -193,13 +195,14 @@ class NSGA2 {
    * other candidate for all the objectives and there exists at least one
    * objective for which it is strictly better than the other candidate.
    *
+   * @tparam MatType Type of matrix to optimize.
    * @param calculatedObjectives The previously calculated objectives.
    * @param candidateP The candidate being compared from the elite population.
    * @param candidateQ The candidate being compared against.
-   * @return true candidateP Pareto dominates candidateQ
-   * @return false candidateQ is not Pareto-dominated by candidateP
+   * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
    */
-  bool Dominates(std::vector<arma::vec> calculatedObjectives,
+  template<typename MatType>
+  bool Dominates(std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                  size_t candidateP,
                  size_t candidateQ);
 
@@ -212,8 +215,8 @@ class NSGA2 {
    * @param crowdingDistance The previously calculated objectives.
    */
   template<typename MultiobjectiveFunctionType>
-  void CrowdingDistanceAssignment(std::vector<size_t> front,
-                                  MultiobjectiveFunctionType objectives,
+  void CrowdingDistanceAssignment(const std::vector<size_t>& front,
+                                  MultiobjectiveFunctionType& objectives,
                                   std::vector<double>& crowdingDistance);
 
   /**
@@ -229,8 +232,7 @@ class NSGA2 {
    *     being sorted.
    * @param ranks The previously calculated ranks.
    * @param crowdingDistance The previously calculated objectives.
-   * @return true The first candidate is preferred.
-   * @return false The second candidate is preferred.
+   * @return true if the first candidate is preferred, otherwise, false.
    */
   bool CrowdingOperator(size_t idxP,
                         size_t idxQ,

@@ -51,8 +51,11 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
         " least 4!");
   }
 
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // Cache calculated objectives.
-  std::vector<arma::vec> calculatedObjectives;
+  std::vector<arma::Col<ElemType> > calculatedObjectives;
   // Pre-allocate space for the calculated objectives.
   calculatedObjectives.resize(populationSize);
 
@@ -103,7 +106,7 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
     // Perform fast non dominated sort on P_t ∪ G_t
     Info << "NSGA2::Optimize() FastNonDominatedSort" << std::endl;
     ranks.resize(population.size());
-    FastNonDominatedSort(fronts, ranks, calculatedObjectives);
+    FastNonDominatedSort<MatType>(fronts, ranks, calculatedObjectives);
 
     // Perform crowding distance assignment
     Info << "NSGA2::Optimize() CrowdingDistanceAssignment" << std::endl;
@@ -160,9 +163,9 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
 //! Evaluate the objectives for the entire population.
 template<typename MultiobjectiveFunctionType,
          typename MatType>
-inline void NSGA2::EvaluateObjectives(std::vector<MatType> population,
-                                      MultiobjectiveFunctionType objectives,
-                                      std::vector<arma::vec>& calculatedObjectives)
+inline void NSGA2::EvaluateObjectives(std::vector<MatType>& population,
+                                      MultiobjectiveFunctionType& objectives,
+                                      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
 {
   for (size_t i = 0; i < populationSize; i++)
   {
@@ -215,8 +218,8 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population)
 template<typename MatType>
 inline void NSGA2::Crossover(MatType& childA,
                              MatType& childB,
-                             MatType parentA,
-                             MatType parentB)
+                             const MatType& parentA,
+                             const MatType& parentB)
 {
   // Indices at which crossover is to occur.
   arma::umat idx = arma::randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
@@ -236,9 +239,10 @@ inline void NSGA2::Mutate(MatType& child)
 }
 
 //! Sort population into Pareto fronts.
+template<typename MatType>
 inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
                                         std::vector<size_t>& ranks,
-                                        std::vector<arma::vec> calculatedObjectives)
+                                        std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
 {
   std::map<size_t, size_t> dominationCount;
   std::map<size_t, std::set<size_t> > dominated;
@@ -254,11 +258,11 @@ inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& front
 
     for (size_t q=0; q < populationSize; q++)
     {
-      if (Dominates(calculatedObjectives, p, q))
+      if (Dominates<MatType>(calculatedObjectives, p, q))
       {
         dominated[p].insert(q);
       }
-      else if (Dominates(calculatedObjectives, q, p))
+      else if (Dominates<MatType>(calculatedObjectives, q, p))
       {
         dominationCount[p] += 1;
       }
@@ -297,7 +301,8 @@ inline void NSGA2::FastNonDominatedSort(std::vector<std::vector<size_t> >& front
 }
 
 //! Check if a candidate Pareto dominates another candidate
-inline bool NSGA2::Dominates(std::vector<arma::vec> calculatedObjectives,
+template<typename MatType>
+inline bool NSGA2::Dominates(std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                              size_t candidateP,
                              size_t candidateQ)
 {
@@ -327,8 +332,8 @@ inline bool NSGA2::Dominates(std::vector<arma::vec> calculatedObjectives,
 
 //! Assign crowding distance to the population.
 template<typename MultiobjectiveFunctionType>
-inline void NSGA2::CrowdingDistanceAssignment(std::vector<size_t> front,
-                                              MultiobjectiveFunctionType objectives,
+inline void NSGA2::CrowdingDistanceAssignment(const std::vector<size_t>& front,
+                                              MultiobjectiveFunctionType& objectives,
                                               std::vector<double>& crowdingDistance)
 {
   if (front.size() > 0)
