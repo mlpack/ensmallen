@@ -45,8 +45,8 @@ TEST_CASE("SPSASphereFunctionFMatTest", "[SPSATest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0.0f).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0f).margin(0.1));
 }
 
 /**
