@@ -114,10 +114,10 @@ class NSGA2 {
   //! Modify the mutation probability.
   double& MutationProbability() { return mutationProb; }
 
-  //! Get the mutation size.
-  double MutationSize() const { return mutationStrength; }
-  //! Modify the mutation size.
-  double& MutationSize() { return mutationStrength; }
+  //! Get the mutation strength.
+  double MutationStrength() const { return mutationStrength; }
+  //! Modify the mutation strength.
+  double& MutationStrength() { return mutationStrength; }
 
   //! Get the tolerance.
   double Epsilon() const { return epsilon; }
