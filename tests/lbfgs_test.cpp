@@ -47,11 +47,11 @@ TEST_CASE("RosenbrockFunctionFloatTest", "[LBFGSTest]")
   arma::fmat coords = f.GetInitialPoint<arma::fvec>();
   lbfgs.Optimize(f, coords);
 
-  double finalValue = f.Evaluate(coords);
+  float finalValue = f.Evaluate(coords);
 
-  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(finalValue == Approx(0.0f).margin(1e-3));
+  REQUIRE(coords(0) == Approx(1.0f).epsilon(1e-4));
+  REQUIRE(coords(1) == Approx(1.0f).epsilon(1e-4));
 }
 
 /**
