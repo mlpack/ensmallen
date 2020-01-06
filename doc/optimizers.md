@@ -1567,7 +1567,7 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for aribitrary multi-objective functions.*
 
-NSGA2 (Non-dominated Sorting Genetic Algorithm - II) is a multi-objective optimization algorithm. The algorithm works by generating a candidate population from a fixed starting point. At each stage of optimization, a new population of children is generated. This new population alongwith its predecessor is sorted using non-domination as the metric. Following this, the population is further segregated in fronts. A new population is generated from these fronts having size equal to that of the starting population.
+NSGA2 (Non-dominated Sorting Genetic Algorithm - II) is a multi-objective optimization algorithm. The algorithm works by generating a candidate population from a fixed starting point. At each stage of optimization, a new population of children is generated. This new population along with its predecessor is sorted using non-domination as the metric. Following this, the population is further segregated into fronts. A new population is generated from these fronts having size equal to that of the starting population.
 
 #### Constructors
 
