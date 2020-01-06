@@ -26,14 +26,12 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
   NSGA2 opt(20, 1000, 0.6, 0.3, 0.01, 1e-6);
 
   arma::mat coords = SCH.GetInitialPoint();
-  Info << "NSGA2:: Begin Optimization\n";
   std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
 
   bool all_in_range = true;
 
   for (arma::mat solution: bestFront)
   {
-    solution.print();
     double val = arma::as_scalar(solution);
 
     if (val < 0.0 || val > 2.0)

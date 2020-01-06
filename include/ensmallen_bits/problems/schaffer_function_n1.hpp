@@ -75,8 +75,8 @@ class SchafferFunctionN1
   {
     if (objectiveNumber != 0 && objectiveNumber != 1)
     {
-      throw std::logic_error("SchafferFunctionN1::GetMaximum() objectiveNumber must"
-          " be either 0 or 1");
+      throw std::logic_error("SchafferFunctionN1::GetMaximum() objectiveNumber"
+          " must be either 0 or 1");
     }
     return 1000;
   }
@@ -91,8 +91,8 @@ class SchafferFunctionN1
   {
     if (objectiveNumber != 0 && objectiveNumber != 1)
     {
-      throw std::logic_error("SchafferFunctionN1::GetMinimum() objectiveNumber must"
-          " be either 0 or 1");
+      throw std::logic_error("SchafferFunctionN1::GetMinimum() objectiveNumber"
+          " must be either 0 or 1");
     }
     return -1000;
   }

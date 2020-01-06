@@ -3,7 +3,7 @@
  * @author Sayan Goswami
  *
  * NSGA-II is a multi-objective optimization algorithm, widely used in
- * many real-world applications. NSGA-II genererates offsprings using
+ * many real-world applications. NSGA-II generates offsprings using
  * crossover and mutation and then selects the next generation according
  * to nondominated-sorting and crowding distance comparison.
  *
@@ -24,7 +24,7 @@ namespace ens {
  *
  * The algorithm works by generating a candidate population from a fixed
  * starting point. At each stage of optimization, a new population of children
- * is generated. This new population alongwith its predecessor is sorted using
+ * is generated. This new population along with its predecessor is sorted using
  * non-domination as the metric. Following this, the population is further
  * segregated in fronts. A new population is generated from these fronts having
  * size equal to that of the starting population.
@@ -46,14 +46,14 @@ namespace ens {
  *   journal = {Trans. Evol. Comp}}
  * @endcode
  *
- * NSGA-II can optimize arbitrary multi-objective functions.  For more details,
+ * NSGA-II can optimize arbitrary multi-objective functions. For more details,
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
 class NSGA2 {
  public:
   /**
-   * Constructor for the NSGA2 optimizer
+   * Constructor for the NSGA2 optimizer.
    *
    * The default values provided over here are not necessarily suitable for a
    * given function. Therefore it is highly recommended to adjust the
@@ -61,7 +61,7 @@ class NSGA2 {
    *
    * @param populationSize The number of candidates in the population.
    *     This should be atleast 4 in size and a multiple of 4.
-   * @param maxGenerations The maximum number of generations allowed for NSGA-II
+   * @param maxGenerations The maximum number of generations allowed for NSGA-II.
    * @param crossoverProb The probability that a crossover will occur.
    * @param mutationProb The probability that a mutation will occur.
    * @param mutationStrength The strength of the mutation.
@@ -136,9 +136,10 @@ class NSGA2 {
    */
   template<typename MultiobjectiveFunctionType,
            typename MatType>
-  void EvaluateObjectives(std::vector<MatType>& population,
-                          MultiobjectiveFunctionType& objectives,
-                          std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+  void EvaluateObjectives(
+      std::vector<MatType>& population,
+      MultiobjectiveFunctionType& objectives,
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -184,9 +185,10 @@ class NSGA2 {
    * @param calculatedObjectives The previously calculated objectives.
    */
   template<typename MatType>
-  void FastNonDominatedSort(std::vector<std::vector<size_t> >& fronts,
-                            std::vector<size_t>& ranks,
-                            std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+  void FastNonDominatedSort(
+      std::vector<std::vector<size_t> >& fronts,
+      std::vector<size_t>& ranks,
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -202,9 +204,10 @@ class NSGA2 {
    * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
    */
   template<typename MatType>
-  bool Dominates(std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                 size_t candidateP,
-                 size_t candidateQ);
+  bool Dominates(
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+      size_t candidateP,
+      size_t candidateQ);
 
   /**
    * Assigns crowding distance metric for sorting.
