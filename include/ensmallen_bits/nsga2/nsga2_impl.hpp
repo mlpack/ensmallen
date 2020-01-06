@@ -310,7 +310,7 @@ inline bool NSGA2::Dominates(
       all_better_or_equal = false;
 
     // p.i is better than q.i for the i-th objective function
-    if (calculatedObjectives[candidateP](i) < calculatedObjectives[candidateQ](i))
+    else if (calculatedObjectives[candidateP](i) < calculatedObjectives[candidateQ](i))
       atleast_one_better = true;
   }
 
@@ -350,17 +350,13 @@ inline bool NSGA2::CrowdingOperator(size_t idxP,
                                     const std::vector<double>& crowdingDistance)
 {
   if (ranks[idxP] < ranks[idxQ])
-  {
     return true;
-  }
   else if (ranks[idxP] == ranks[idxQ] && crowdingDistance[idxP] > crowdingDistance[idxQ])
-  {
     return true;
-  }
 
   return false;
 }
 
-}
+} // namespace ens
 
 #endif
