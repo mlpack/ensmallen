@@ -1,8 +1,8 @@
 /**
- * @file schaffer_function_n1.hpp
+ * @file fonseca_flemming_function_n1.hpp
  * @author Sayan Goswami
  *
- * Implementation of Schaffer function N.1.
+ * Implementation of Fonseca Flemming function.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -10,31 +10,30 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_PROBLEMS_SCHAFFER_FUNCTION_N1_HPP
-#define ENSMALLEN_PROBLEMS_SCHAFFER_FUNCTION_N1_HPP
+#ifndef ENSMALLEN_PROBLEMS_FONSECA_FLEEMING_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_FONSECA_FLEEMING_FUNCTION_HPP
 
 namespace ens {
 namespace test {
 
 /**
- * The Schaffer function N.1 is defined by
+ * The Fonseca Flemming function N.1 is defined by
  *
  * \f[
- * f_1(x) = x^2
- * f_2(x) = (x-2)^2
+ * f_1(x) = 1 - \exp(\sum_1^3{(x_i - \frac{1}{\sqrt3})^2})
+ * f_2(x) = 1 - \exp(\sum_1^3{(x_i + \frac{1}{\sqrt3})^2})
  * \f]
  *
  * The optimal solutions to this multi-objective function lie in the
- * range [0, 2].
+ * range [-1/sqrt(3), 1/sqrt(3)].
  *
  * @tparam arma::mat Type of matrix to optimize.
  */
 template<typename MatType = arma::mat>
-class SchafferFunctionN1
+class FonsecaFlemmingFunction
 {
  public:
- //! Initialize the SchafferFunctionN1
-  SchafferFunctionN1() : numObjectives(2), numVariables(1)
+  FonsecaFlemmingFunction() : numObjectives(2), numVariables(3)
   {/* Nothing to do here. */}
 
   /**
@@ -50,8 +49,10 @@ class SchafferFunctionN1
 
     arma::Col<ElemType> objectives(numObjectives);
 
-    objectives(0) = std::pow(coords[0], 2);
-    objectives(1) = std::pow(coords[0] - 2, 2);
+    objectives(0) = 1.0f - exp(- pow(coords[0] - 1.0f/sqrt(3), 2) -
+        - pow(coords[1] - 1.0f/sqrt(3), 2) - pow(coords[0] - 1.0f/sqrt(3), 2));
+    objectives(1) = 1.0f - exp(- pow(coords[0] + 1.0f/sqrt(3), 2) -
+        - pow(coords[1] + 1.0f/sqrt(3), 2) - pow(coords[0] + 1.0f/sqrt(3), 2));
 
     return objectives;
   }
@@ -78,7 +79,7 @@ class SchafferFunctionN1
       throw std::logic_error("SchafferFunctionN1::GetMaximum() objectiveNumber"
           " must be either 0 or 1");
     }
-    return 1000;
+    return 4;
   }
 
   /**
@@ -94,7 +95,7 @@ class SchafferFunctionN1
       throw std::logic_error("SchafferFunctionN1::GetMinimum() objectiveNumber"
           " must be either 0 or 1");
     }
-    return -1000;
+    return -4;
   }
 
  private:
