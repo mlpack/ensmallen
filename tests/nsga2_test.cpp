@@ -23,7 +23,7 @@ using namespace std;
 TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 {
   SchafferFunctionN1<arma::mat> SCH;
-  NSGA2 opt(20, 1000, 0.6, 0.3, 0.01, 1e-6);
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6);
 
   arma::mat coords = SCH.GetInitialPoint();
   std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
@@ -36,6 +36,36 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 
     if (val < 0.0 || val > 2.0)
     {
+      all_in_range = false;
+      break;
+    }
+  }
+  REQUIRE(all_in_range);
+}
+
+/**
+ * Optimize for the Fonseca Flemming function using NSGA-II optimizer.
+ */
+TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
+{
+  FonsecaFlemmingFunction<arma::mat> FON;
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6);
+
+  arma::mat coords = FON.GetInitialPoint();
+  std::vector<arma::mat> bestFront = opt.Optimize(FON, coords);
+
+  bool all_in_range = true;
+
+  for(arma::mat solution: bestFront) {
+    solution.print();
+    cout << endl;
+
+    double valX = arma::as_scalar(solution(0));
+    double valY = arma::as_scalar(solution(1));
+    double valZ = arma::as_scalar(solution(2));
+
+    if (valX < -1.0f/sqrt(3) || valX > 1.0f/sqrt(3) || valY < -1.0f/sqrt(3) ||
+        valY > 1.0f/sqrt(3) || valZ < -1.0f/sqrt(3) || valZ > 1.0f/sqrt(3)) {
       all_in_range = false;
       break;
     }
