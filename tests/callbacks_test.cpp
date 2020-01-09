@@ -152,6 +152,18 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
   REQUIRE(cb.calledStepTaken == calledStepTaken);
 }
 
+
+/**
+ * Make sure we invoke all callbacks (AdaBound).
+ */
+TEST_CASE("AdaBoundCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 1000,
+      1e-3, false);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false, true);
+}
+
 /**
  * Make sure we invoke all callbacks (AdaDelta).
  */
@@ -273,6 +285,47 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
 }
 
 /**
+ * Make sure we invoke all callbacks (Lookahead).
+ */
+TEST_CASE("LookaheadCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  Adam adam(0.001, 1, 0.9, 0.999, 1e-8, 100, 1e-10, false, true);
+  Lookahead<Adam> optimizer(adam, 0.5, 1000, 10, -10, NoDecay(),
+      false, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (Padam).
+ */
+TEST_CASE("PadamCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  Padam optimizer(1e-2, 1, 0.9, 0.99, 0.25, 1e-5, 1000);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (QHAdam).
+ */
+TEST_CASE("QHAdamCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  QHAdam optimizer(0.02, 2, 0.6, 0.9, 0.9, 0.999, 1e-8, 1000, 1e-7, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (RMSProp).
+ */
+TEST_CASE("RMSPropCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  RMSProp optimizer(1e-3, 1, 0.99, 1e-8, 1000, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false, true);
+}
+/**
  * Make sure we invoke all callbacks (SARAH).
  */
 TEST_CASE("SARAHCallbacksFullFunctionTest", "[CallbacksTest]")
@@ -313,6 +366,16 @@ TEST_CASE("SGDRCallbacksFullFunctionTest", "[CallbacksTest]")
 }
 
 /**
+ * Make sure we invoke all callbacks (SMORMS3).
+ */
+TEST_CASE("SMORMS3CallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SMORMS3 optimizer(0.001, 1, 1e-16, 1000, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false, true);
+}
+
+/**
  * Make sure we invoke all callbacks (SPALeRASGD).
  */
 TEST_CASE("SPALeRASGDCallbacksFullFunctionTest", "[CallbacksTest]")
@@ -339,6 +402,26 @@ TEST_CASE("SVRGCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   SVRG optimizer(0.005, 2, 4, 0, 1e-5, true);
   CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
+      false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (SWATS).
+ */
+TEST_CASE("SWATSCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  SWATS optimizer(0.01, 10, 0.9, 0.999, 1e-6, 1000, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
+      false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (WNGrad).
+ */
+TEST_CASE("WNGradCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  WNGrad optimizer(0.56, 1, 1000, 1e-9, true);
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
 
@@ -467,17 +550,15 @@ TEST_CASE("TimerStopCallbackTest", "[CallbacksTest]")
 {
   SGDTestFunction f;
   arma::mat coordinates = f.GetInitialPoint();
-
+  
   // Instantiate the optimizer with a number of iterations that will take a
   // long time to finish.
-  StandardSGD s(0.0003, 1, 2000000000, -100, true);
-
+  Adam opt(0.5, 2, 0.7, 0.999, 1e-8, 2000000000, -100, false);
   arma::wall_clock timer;
+  
   timer.tic();
-
   // The optimization process should return in one second.
-  s.Optimize(f, coordinates, TimerStop(0.5));
-
+  opt.Optimize(f, coordinates, TimerStop(0.5));
   // Add some time to account for the function to return.
   REQUIRE(timer.toc() < 2);
 }
