@@ -1,0 +1,53 @@
+environment:
+  ARMADILLO_DOWNLOAD: "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
+  ARMADILLO_LIBRARY: "C:/projects/mlpack/armadillo-8.400.0/build/Debug/armadillo.lib"
+  BLAS_LIBRARY: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a"
+
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VSVER: Visual Studio 14 2015 Win64
+      MSBUILD: C:\Program Files (x86)\MSBuild\14.0\bin\MSBuild.exe
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      VSVER: Visual Studio 15 2017 Win64
+      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      VSVER: Visual Studio 16 2019
+      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
+
+configuration: Release
+
+install:
+  - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
+
+build_script:
+  # First, download and build Armadillo.
+  - appveyor DownloadFile %ARMADILLO_DOWNLOAD% -FileName armadillo.tar.xz
+  - 7z x armadillo.tar.xz -so -txz | 7z x -si -ttar > nul
+  - >
+    cmake -G "%VSVER%"
+    -DBLAS_LIBRARY:FILEPATH=%BLAS_LIBRARY%
+    -DLAPACK_LIBRARY:FILEPATH=%BLAS_LIBRARY%
+    -DCMAKE_PREFIX:FILEPATH="%APPVEYOR_BUILD_FOLDER%/armadillo"
+    -DBUILD_SHARED_LIBS=OFF
+    -DCMAKE_BUILD_TYPE=Release ..
+  - >
+    "%MSBUILD%" "C:\projects\mlpack\armadillo-8.400.0\build\armadillo.sln"
+    /m /verbosity:quiet /p:Configuration=Release;Platform=x64
+
+  # Now build ensmallen.
+  - cd C:\projects\ensmallen && mkdir build && cd build
+  - >
+    cmake -G "%VSVER%"
+          -D ARMADILLO_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/armadillo-8.400.0/include/
+          -D ARMADILLO_LIBRARIES=%BLAS_LIBRARY%
+          -D ARMADILLO_LIBRARY=%ARMADILLO_LIBRARY%
+          -DCMAKE_BUILD_TYPE=Release ..
+  - >
+    "%MSBUILD%" "C:\projects\ensmallen\build\ensmallen.sln"
+    /m /verbosity:minimal /nologo /p:BuildInParallel=true
+
+  # Run tests.
+  - ctest .
+
