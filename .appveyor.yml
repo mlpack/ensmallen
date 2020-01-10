@@ -34,7 +34,7 @@ build_script:
     -DBUILD_SHARED_LIBS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
-    "%MSBUILD%" "C:\projects\mlpack\armadillo-8.400.0\build\armadillo.sln"
+    "%MSBUILD%" "armadillo.sln"
     /m /verbosity:quiet /p:Configuration=Release;Platform=x64
   - cd ..
 
@@ -46,7 +46,9 @@ build_script:
           -D ARMADILLO_LIBRARIES=%BLAS_LIBRARY%
           -D ARMADILLO_LIBRARY=%ARMADILLO_LIBRARY%
           -DCMAKE_BUILD_TYPE=Release ..
-  - "%MSBUILD%" "ensmallen.sln" /m /verbosity:minimal /nologo /p:BuildInParallel=true
+  - >
+    "%MSBUILD%" "ensmallen.sln"
+    /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
   # Run tests.
   - ctest .
