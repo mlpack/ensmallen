@@ -146,10 +146,14 @@ class NSGA2 {
    * population.
    *
    * @tparam MatType Type of matrix to optimize.
+   * @tparam MultiobjectiveFunctionType A generic multi-objective function.
    * @param population The elite population.
+   * @param objectives The set of objectives.
    */
-  template<typename MatType>
-  void BinaryTournamentSelection(std::vector<MatType>& population);
+  template<typename MatType,
+           typename MultiobjectiveFunctionType>
+  void BinaryTournamentSelection(std::vector<MatType>& population,
+                                 MultiobjectiveFunctionType& objectives);
 
   /**
    * Crossover two parents to create a pair of new children.
@@ -169,10 +173,13 @@ class NSGA2 {
   /**
    * Mutate the coordinates for a candidate.
    * @tparam MatType Type of matrix to optimize.
+   * @tparam MultiobjectiveFunctionType A generic multi-objective function.
    * @param child The candidate whose coordinates are being modified.
+   * @param objectives The set of objectives.
    */
-  template<typename MatType>
-  void Mutate(MatType& child);
+  template<typename MatType,
+           typename MultiobjectiveFunctionType>
+  void Mutate(MatType& child, MultiobjectiveFunctionType& objectives);
 
   /**
    * Sort the candidate population using their domination count and the set of

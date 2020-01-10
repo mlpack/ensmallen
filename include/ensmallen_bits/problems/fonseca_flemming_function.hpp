@@ -76,7 +76,7 @@ class FonsecaFlemmingFunction
   {
     if (objectiveNumber != 0 && objectiveNumber != 1)
     {
-      throw std::logic_error("SchafferFunctionN1::GetMaximum() objectiveNumber"
+      throw std::logic_error("FonsecaFlemmingFunction::GetMaximum() objectiveNumber"
           " must be either 0 or 1");
     }
     return 4;
@@ -92,7 +92,7 @@ class FonsecaFlemmingFunction
   {
     if (objectiveNumber != 0 && objectiveNumber != 1)
     {
-      throw std::logic_error("SchafferFunctionN1::GetMinimum() objectiveNumber"
+      throw std::logic_error("FonsecaFlemmingFunction::GetMinimum() objectiveNumber"
           " must be either 0 or 1");
     }
     return -4;
