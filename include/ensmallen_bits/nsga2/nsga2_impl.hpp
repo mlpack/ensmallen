@@ -97,7 +97,7 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
 
     // Create new population of candidate from the present elite population
     // Have P_t, generate G_t using P_t
-    BinaryTournamentSelection(population);
+    BinaryTournamentSelection(population, objectives);
 
     // Evaluate the objectives for the new population
     calculatedObjectives.resize(population.size());
@@ -169,8 +169,10 @@ inline void NSGA2::EvaluateObjectives(
 }
 
 //! Reproduce and generate new candidates
-template<typename MatType>
-inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population)
+template<typename MatType,
+         typename MultiobjectiveFunctionType>
+inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
+                                             MultiobjectiveFunctionType& objectives)
 {
   std::vector<MatType> children;
 
@@ -196,9 +198,9 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population)
     Crossover(childA, childB, population[indexA], population[indexB]);
 
     Info << "NSGA2::BinaryTournamentSelection() Mutate(A)" << std::endl;
-    Mutate(childA);
+    Mutate(childA, objectives);
     Info << "NSGA2::BinaryTournamentSelection() Mutate(B)" << std::endl;
-    Mutate(childB);
+    Mutate(childB, objectives);
 
     // Add the children to the candidate population.
     children.push_back(childA);
@@ -226,11 +228,22 @@ inline void NSGA2::Crossover(MatType& childA,
 }
 
 //! Perform mutation of the candidates weights with some noise.
-template<typename MatType>
-inline void NSGA2::Mutate(MatType& child)
+template<typename MatType,
+         typename MultiobjectiveFunctionType>
+inline void NSGA2::Mutate(MatType& child,
+                          MultiobjectiveFunctionType& objectives)
 {
   child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
       (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
+
+  // constrain all genes to be between bounds
+  for (size_t idx = 0; idx < objectives.NumObjectives(); idx++)
+  {
+    if (child[idx] < objectives.GetMinimum(idx))
+      child[idx] = objectives.GetMinimum(idx);
+    else if (child[idx] > objectives.GetMaximum(idx))
+      child[idx] = objectives.GetMaximum(idx);
+  }
 }
 
 //! Sort population into Pareto fronts.
