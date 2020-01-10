@@ -25,6 +25,7 @@ build_script:
   # First, download and build Armadillo.
   - appveyor DownloadFile %ARMADILLO_DOWNLOAD% -FileName armadillo.tar.xz
   - 7z x armadillo.tar.xz -so -txz | 7z x -si -ttar > nul
+  - cd armadillo && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
     -DBLAS_LIBRARY:FILEPATH=%BLAS_LIBRARY%
@@ -35,9 +36,10 @@ build_script:
   - >
     "%MSBUILD%" "C:\projects\mlpack\armadillo-8.400.0\build\armadillo.sln"
     /m /verbosity:quiet /p:Configuration=Release;Platform=x64
+  - cd ..
 
   # Now build ensmallen.
-  - cd C:\projects\ensmallen && mkdir build && cd build
+  - cd ensmallen && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
           -D ARMADILLO_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/armadillo-8.400.0/include/
@@ -47,7 +49,6 @@ build_script:
   - >
     "%MSBUILD%" "C:\projects\ensmallen\build\ensmallen.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
-
 
   # Run tests.
   - ctest .
