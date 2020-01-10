@@ -48,6 +48,7 @@ build_script:
     "%MSBUILD%" "C:\projects\ensmallen\build\ensmallen.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
+
   # Run tests.
   - ctest .
 
