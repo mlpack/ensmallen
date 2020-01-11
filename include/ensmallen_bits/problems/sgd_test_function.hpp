@@ -38,17 +38,20 @@ class SGDTestFunction
   size_t NumFunctions() const { return 3; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("6; -45.6; 6.2"); }
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const { return MatType("6; -45.6; 6.2"); }
 
   //! Evaluate a function for a particular batch-size.
-  double Evaluate(const arma::mat& coordinates,
-                  const size_t begin,
-                  const size_t batchSize) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates,
+                                       const size_t begin,
+                                       const size_t batchSize) const;
 
   //! Evaluate the gradient of a function for a particular batch-size
-  void Gradient(const arma::mat& coordinates,
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates,
                 const size_t begin,
-                arma::mat& gradient,
+                GradType& gradient,
                 const size_t batchSize) const;
 };
 

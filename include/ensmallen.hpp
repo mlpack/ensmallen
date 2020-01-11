@@ -29,8 +29,8 @@
   #error "please enable C++11/C++14 mode in your compiler"
 #endif
 
-#if ((ARMA_VERSION_MAJOR < 6) || ((ARMA_VERSION_MAJOR == 6) && (ARMA_VERSION_MINOR < 500)))
-  #error "need Armadillo version 6.500 or later"
+#if ((ARMA_VERSION_MAJOR < 8) || ((ARMA_VERSION_MAJOR == 8) && (ARMA_VERSION_MINOR < 400)))
+  #error "need Armadillo version 8.400 or later"
 #endif
 
 #include <cmath>
@@ -59,8 +59,20 @@
 #include "ensmallen_bits/ens_version.hpp"
 #include "ensmallen_bits/log.hpp" // TODO: should move to another place
 
+#include "ensmallen_bits/utility/any.hpp"
+#include "ensmallen_bits/utility/arma_traits.hpp"
+
+// Callbacks.
+#include "ensmallen_bits/callbacks/callbacks.hpp"
+#include "ensmallen_bits/callbacks/early_stop_at_min_loss.hpp"
+#include "ensmallen_bits/callbacks/print_loss.hpp"
+#include "ensmallen_bits/callbacks/progress_bar.hpp"
+#include "ensmallen_bits/callbacks/store_best_coordinates.hpp"
+#include "ensmallen_bits/callbacks/timer_stop.hpp"
+
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
+#include "ensmallen_bits/ada_bound/ada_bound.hpp"
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
@@ -81,6 +93,7 @@
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
+#include "ensmallen_bits/lookahead/lookahead.hpp"
 #include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
 #include "ensmallen_bits/pso/pso.hpp"

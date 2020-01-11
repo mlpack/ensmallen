@@ -1,3 +1,65 @@
+## AdaBound
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaBound is a variant of Adam which employs dynamic bounds on learning rates.
+
+#### Constructors
+
+ * `AdaBound()`
+ * `AdaBound(`_`stepSize, batchSize`_`)`
+ * `AdaBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AdaBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+Note that the `AdaBound` class is based on the `AdaBoundType<`_`UpdateRule`_`>`
+class with _`UpdateRule`_` = AdaBoundUpdate`.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
+| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`FinalLr()`, `Gamma()`, `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`,
+`Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SphereFunction f(2);
+arma::mat coordinates = f.GetInitialPoint();
+
+AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000, 1e-3);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## AdaDelta
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -36,6 +98,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 
@@ -43,6 +109,8 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -86,6 +154,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 AdaGrad optimizer(1.0, 1, 1e-8, 1000, 1e-9, true);
 
@@ -93,6 +165,8 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -140,6 +214,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -147,6 +225,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Adam optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -192,6 +272,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -200,11 +284,75 @@ AdaMax optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
 
+</details>
+
 #### See also:
 
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
  * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980) (see section 7)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## AMSBound
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AMSBound is a variant of Adam which employs dynamic bounds on learning rates.
+
+#### Constructors
+
+ * `AMSBound()`
+ * `AMSBound(`_`stepSize, batchSize`_`)`
+ * `AMSBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AMSBound(`_`stepSize, batchSize, finalLr, gamma, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+Note that the `AMSBound` class is based on the `AdaBoundType<`_`UpdateRule`_`>`
+class with _`UpdateRule`_` = AdaBoundUpdate`.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`finalLr`** | The final (SGD) learning rate. | `0.1` |
+| `double` | **`gamma`** | The convergence speed of the bound functions. | `0.001` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`FinalLr()`, `Gamma()`, `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`,
+`Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SphereFunction f(2);
+arma::mat coordinates = f.GetInitialPoint();
+
+AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000, 1e-3);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## AMSGrad
@@ -244,6 +392,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -251,6 +403,8 @@ arma::mat coordinates = f.GetInitialPoint();
 AMSGrad optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -283,6 +437,10 @@ optimizer uses [L-BFGS](#l-bfgs).
 
 The attributes of the optimizer may also be modified via the member methods
 `MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `L_BFGS()`.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 /**
@@ -319,7 +477,13 @@ bool Optimize(LagrangianFunctionType& function,
               const double initSigma);
 ```
 
+</details>
+
 #### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 GockenbachFunction f;
@@ -328,6 +492,8 @@ arma::mat coordinates = f.GetInitialPoint();
 AugLagrangian optimizer;
 optimizer.Optimize(f, coords);
 ```
+
+</details>
 
 #### See also:
 
@@ -379,6 +545,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -391,6 +561,8 @@ optimizer.Optimize(f, coordinates);
 BBS_Armijo optimizer2(batchSize, 0.01, 0.1, 8000, 1e-4);
 optimizer2.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -448,6 +620,10 @@ estimate the objective function.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -460,6 +636,8 @@ optimizer.Optimize(f, coordinates);
 ApproxCMAES<> approxOptimizer(batchSize, 0.01, 0.1, 8000, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -497,6 +675,10 @@ and `Tolerance()`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -504,6 +686,8 @@ arma::mat coordinates = f.GetInitialPoint();
 CNE optimizer(200, 10000, 0.2, 0.2, 0.3, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -540,6 +724,10 @@ and `Tolerance()`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -547,6 +735,8 @@ arma::mat coordinates = f.GetInitialPoint();
 DE optimizer(200, 1000, 0.6, 0.8, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -588,6 +778,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -595,6 +789,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Eve optimizer(0.001, 32, 0.9, 0.999, 0.999, 10, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -691,6 +887,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -698,6 +898,8 @@ arma::mat coordinates = f.GetInitialPoint();
 FTML optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
  * [Follow the Moving Leader in Deep Learning](http://proceedings.mlr.press/v70/zheng17a/zheng17a.pdf)
@@ -732,6 +934,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -739,6 +945,8 @@ arma::mat coordinates = f.GetInitialPoint();
 GradientDescent optimizer(0.001, 0, 1e-15);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -816,6 +1024,10 @@ Note that the default value for `decayPolicy` is the default constructor for the
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 GeneralizedRosenbrockFunction f(50); // 50-dimensional Rosenbrock function.
 arma::mat coordinates = f.GetInitialPoint();
@@ -823,6 +1035,8 @@ arma::mat coordinates = f.GetInitialPoint();
 ParallelSGD<> optimizer(100000, f.NumFunctions(), 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -860,6 +1074,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -867,6 +1085,8 @@ arma::mat coordinates = f.GetInitialPoint();
 IQN optimizer(0.01, 1, 5000, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -918,6 +1138,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -930,6 +1154,8 @@ optimizer.Optimize(f, coordinates);
 KatyushaProximal proximalOptimizer(1.0, 10.0, 1, 100, 0, 1e-10, true);
 proximalOptimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -971,6 +1197,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -979,12 +1209,74 @@ L_BFGS optimizer(20);
 optimizer.Optimize(f, coordinates);
 ```
 
+</details>
+
 #### See also:
 
  * [The solution of non linear finite element equations](https://onlinelibrary.wiley.com/doi/full/10.1002/nme.1620141104)
  * [Updating Quasi-Newton Matrices with Limited Storage](https://www.jstor.org/stable/2006193)
  * [Limited-memory BFGS in Wikipedia](https://en.wikipedia.org/wiki/Limited-memory_BFGS)
  * [Differentiable functions](#differentiable-functions)
+
+## Lookahead
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Lookahead is a stochastic gradient based optimization method which chooses a
+search direction by looking ahead at the sequence of "fast weights" generated
+by another optimizer.
+
+#### Constructors
+ * `Lookahead<>()`
+ * `Lookahead<>(`_`stepSize`_`)`
+ * `Lookahead<>(`_`stepSize, k`_`)`
+ * `Lookahead<>(`_`stepSize, k, maxIterations, tolerance, decayPolicy, exactObjective`_`)`
+ * `Lookahead<>(`_`baseOptimizer, stepSize, k, maxIterations, tolerance, decayPolicy, exactObjective`_`)`
+
+Note that `Lookahead<>` is based on the templated type
+`LookaheadType<`_`BaseOptimizerType, DecayPolicyType`_`>` with _`BaseOptimizerType`_` = Adam` and _`DecayPolicyType`_` = NoDecay`.
+
+Any optimizer that implements the differentiable separable functions interface
+can be paired with the `Lookahead` optimizer.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | Adam |
+| `double` | **`stepSize`** | Step size for each iteration. | `0.5` |
+| `size_t` | **`k`** | The synchronization period. | `5` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`BaseOptimizer()`, `StepSize()`, `K()`, `MaxIterations()`,
+`Tolerance()`, `DecayPolicy()` and `ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+Lookahead<> optimizer(0.5, 5, 100000, 1e-5);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610)
+ * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## LRSDP (low-rank SDP solver)
 
@@ -1069,6 +1361,10 @@ Note that the `MomentumUpdate` class has the constructor
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1076,6 +1372,8 @@ arma::mat coordinates = f.GetInitialPoint();
 MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1121,6 +1419,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1128,6 +1430,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Nadam optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1173,6 +1477,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1180,6 +1488,8 @@ arma::mat coordinates = f.GetInitialPoint();
 NadaMax optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1231,6 +1541,10 @@ Note that the `NesterovMomentumUpdate` class has the constructor
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1239,6 +1553,8 @@ NesterovMomentumSGD optimizer(0.01, 32, 100000, 1e-5, true,
     MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1289,6 +1605,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1296,6 +1616,8 @@ arma::mat coordinates = f.GetInitialPoint();
 OptimisticAdam optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1338,6 +1660,10 @@ The attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1345,6 +1671,8 @@ arma::mat coordinates = f.GetInitialPoint();
 Padam optimizer(0.001, 32, 0.9, 0.999, 0.25, 1e-8, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
  * [Closing the Generalization Gap of Adaptive Gradient Methods in Training Deep Neural Networks](https://arxiv.org/abs/1806.06763)
@@ -1374,24 +1702,28 @@ PSO is an evolutionary approach to optimization that is inspired by flocks or bi
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`numParticles`** |  numParticles Number of particles in the swarm. | `64` |
-| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
-| `double`, `arma::vec` | **`upperBound`** |  Upper bound of the coordinates of the initial population. | `1` |
+| `double`, `arma::mat` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
+| `double`, `arma::mat` | **`upperBound`** |  Upper bound of the coordinates of the initial population. | `1` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed. | `3000` |
 | `size_t` | **`horizonSize`** | Size of the lookback-horizon for computing improvement. | `350` |
 | `double` | **`impTolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-5` |
 | `double` | **`exploitationFactor`** | Influence of the personal best of the particle. | `2.05` |
 | `double` | **`explorationFactor`** | Influence of the neighbours of the particle. | `2.05` |
 
-Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::vec` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as vectors of `arma::vec`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
+Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
 
 Attributes of the optimizer may also be changed via the member methods
 `NumParticles()`, `LowerBound()`, `UpperBound()`, `MaxIterations()`,
 `HorizonSize()`, `ImpTolerance()`,`ExploitationFactor()`, and
 `ExplorationFactor()`.
 
-At present, only the local-best variant of PSO is present in ensmallen. The optimizer may be initialized using the class type `LBestPSO`, which is an alias for `PSOType<LBestUpdate, DefaultInit>`. 
+At present, only the local-best variant of PSO is present in ensmallen. The optimizer may be initialized using the class type `LBestPSO`, which is an alias for `PSOType<LBestUpdate, DefaultInit>`.
 
 #### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 SphereFunction f(4);
@@ -1400,6 +1732,12 @@ arma::vec coordinates = f.GetInitialPoint();
 LBestPSO s;
 const double result = s.Optimize(f, coordinates)
 ```
+
+</details>
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
 ```c++
 RosenbrockFunction f;
@@ -1413,6 +1751,12 @@ LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
 const double result = s.Optimize(f, coordinates)
 ```
 
+</details>
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::vec coordinates = f.GetInitialPoint();
@@ -1424,6 +1768,8 @@ double upperBound = 60;
 LBestPSO s(64, lowerBound, upperBound, 3000, 400, 1e-30, 2.05, 2.05);
 const double result = s.Optimize(f, coordinates)
 ```
+
+</details>
 
 #### See also:
 
@@ -1440,14 +1786,8 @@ programs.
 
 #### Constructors
 
- * `PrimalDualSolver<`_`SDPType`_`>(`_`sdp`_`)`
- * `PrimalDualSolver<`_`SDPType`_`>(`_`sdp, initialX, initialYSparse, initialYDense, initialZ`_`)`
-
-The _`SDPType`_ template parameter specifies the type of SDP to solve.  The
-`SDP<arma::mat>` and `SDP<arma::sp_mat>` classes are available for use; these
-represent SDPs with dense and sparse `C` matrices, respectively.  The `SDP<>`
-class is detailed in the [semidefinite program
-documentation](#semidefinite-programs).
+ * `PrimalDualSolver<>(`_`maxIterations`_`)`
+ * `PrimalDualSolver<>(`_`maxIterations, tau, normXzTol, primalInfeasTol, dualInfeasTol`_`)`
 
 #### Attributes
 
@@ -1467,12 +1807,18 @@ as member methods.
 The `PrimalDualSolver<>` class offers two overloads of `Optimize()` that
 optionally return the converged values for the dual variables.
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 /**
  * Invoke the optimization procedure, returning the converged values for the
  * primal and dual variables.
  */
-double Optimize(arma::mat& X,
+template<typename SDPType>
+double Optimize(SDPType& s,
+                arma::mat& X,
                 arma::vec& ySparse,
                 arma::vec& yDense,
                 arma::mat& Z);
@@ -1480,8 +1826,18 @@ double Optimize(arma::mat& X,
 /**
  * Invoke the optimization procedure, and only return the primal variable.
  */
-double Optimize(arma::mat& X);
+template<typename SDPType>
+double Optimize(SDPType& s, arma::mat& X);
 ```
+
+</details>
+
+The _`SDPType`_ template parameter specifies the type of SDP to solve.  The
+`SDP<arma::mat>` and `SDP<arma::sp_mat>` classes are available for use; these
+represent SDPs with dense and sparse `C` matrices, respectively.  The `SDP<>`
+class is detailed in the [semidefinite program
+documentation](#semidefinite-programs).  _`SDPType`_ is automatically inferred
+when `Optimize()` is called with an SDP.
 
 #### See also:
 
@@ -1529,13 +1885,19 @@ and `0.999` for the momentum term.
 
 #### Examples
 
- ```c++
- RosenbrockFunction f;
- arma::mat coordinates = f.GetInitialPoint();
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
 
- QHSGD optimizer(0.01, 32, 100000, 1e-5, true);
- optimizer.Optimize(f, coordinates);
- ```
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+QHSGD optimizer(0.01, 32, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
 
 #### See also:
 
@@ -1643,6 +2005,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1650,6 +2016,8 @@ arma::mat coordinates = f.GetInitialPoint();
 RMSProp optimizer(1e-3, 1, 0.99, 1e-8, 5000000, 1e-9, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1680,11 +2048,17 @@ constructor `ExponentialSchedule(`_`lambda`_`)` where _`lambda`_ is the cooling
 speed (default `0.001`).  Custom schedules may be created by implementing a
 class with at least the single member method below:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 // Return the next temperature given the current system status.
 double NextTemperature(const double currentTemperature,
                        const double currentEnergy);
 ```
+
+</details>
 
 For convenience, the default cooling schedule is `ExponentialSchedule`, so the
 shorter type `SA<>` may be used instead of the equivalent
@@ -1712,6 +2086,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1720,6 +2098,8 @@ SA<> optimizer(ExponentialSchedule(), 1000000, 1000., 1000, 100, 1e-10, 3, 1.5,
     0.5, 0.3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1753,6 +2133,10 @@ Attributes of the optimizer may also be changed via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 SphereFunction f(2);
 arma::mat coordinates = f.GetInitialPoint();
@@ -1760,6 +2144,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 1e-5);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1816,6 +2202,10 @@ the `UpdatePolicyType`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1828,6 +2218,8 @@ optimizer.Optimize(f, coordinates);
 SARAH_Plus optimizerPlus(0.01, 1, 5000, 0, 1e-5, true);
 optimizerPlus.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1874,6 +2266,10 @@ Attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1881,6 +2277,8 @@ arma::mat coordinates = f.GetInitialPoint();
 StandardSGD optimizer(0.01, 32, 100000, 1e-5, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -1936,6 +2334,10 @@ _`DescentPolicyType`_.
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 SparseTestFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -1949,6 +2351,8 @@ greedyscd.Optimize(f, coordinates);
 CyclicSCD cyclicscd(0.01, 100000, 1e-5, 1e3);
 cyclicscd.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2005,6 +2409,10 @@ the `UpdatePolicyType`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2012,6 +2420,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SGDR<> optimizer(50, 2.0, 1, 0.01, 10000, 1e-3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2073,6 +2483,10 @@ the `UpdatePolicyType`.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2080,6 +2494,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SnapshotSGDR<> optimizer(50, 2.0, 1, 0.01, 10000, 1e-3);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2122,6 +2538,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2129,6 +2549,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SMORMS3 optimizer(0.001, 1, 1e-16, 5000000, 1e-9, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2192,6 +2614,10 @@ _`DecayPolicyType`_ classes.
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2205,6 +2631,8 @@ SVRG_BB bbOptimizer(0.005, batchSize, 300, 0, 1e-10, true, SVRGUpdate(),
     BarzilaiBorweinDecay(0.1));
 bbOptimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2260,6 +2688,10 @@ Attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2267,6 +2699,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SPALeRASGD<> optimizer(0.05, 1, 10000, 1e-4);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2311,6 +2745,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 #### Examples:
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2318,6 +2756,8 @@ arma::mat coordinates = f.GetInitialPoint();
 SWATS optimizer(0.001, 1, 0.9, 0.999, 1e-16, 5000000, 1e-9, true);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 
@@ -2359,6 +2799,10 @@ Attributes of the optimizer may also be modified via the member methods
 
 #### Examples
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
 ```c++
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
@@ -2366,6 +2810,8 @@ arma::mat coordinates = f.GetInitialPoint();
 WNGrad<> optimizer(0.562, 1, 10000, 1e-4);
 optimizer.Optimize(f, coordinates);
 ```
+
+</details>
 
 #### See also:
 

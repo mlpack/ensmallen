@@ -60,52 +60,6 @@ class QHAdamUpdate
     // Nothing to do.
   }
 
-  /**
-   * The Initialize method is called by SGD Optimizer method before the start of
-   * the iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t rows, const size_t cols)
-  {
-    m = arma::zeros<arma::mat>(rows, cols);
-    v = arma::zeros<arma::mat>(rows, cols);
-  }
-
-  /**
-   * Update step for QHAdam.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param stepSize Step size to be used for the given iteration.
-   * @param gradient The gradient matrix.
-   */
-  void Update(arma::mat& iterate,
-              const double stepSize,
-              const arma::mat& gradient)
-  {
-    // Increment the iteration counter variable.
-    ++iteration;
-
-    // And update the iterate.
-    m *= beta1;
-    m += (1 - beta1) * gradient;
-
-    v *= beta2;
-    v += (1 - beta2) * (gradient % gradient);
-
-    const double biasCorrection1 = 1.0 - std::pow(beta1, iteration);
-    const double biasCorrection2 = 1.0 - std::pow(beta2, iteration);
-
-    arma::mat mDash = m / biasCorrection1;
-    arma::mat vDash = v / biasCorrection2;
-
-    // QHAdam recovers Adam when v2 = v1 = 1.
-    iterate -= stepSize * ((((1 - v1) * gradient) + v1 * mDash) /
-               (arma::sqrt(((1 - v2) * (gradient % gradient)) +
-               v2 * vDash) + epsilon));
-  }
-
   //! Get the value used to initialise the squared gradient parameter.
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the squared gradient parameter.
@@ -121,6 +75,11 @@ class QHAdamUpdate
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
 
+  //! Get the current iteration number.
+  size_t Iteration() const { return iteration; }
+  //! Modify the current iteration number.
+  size_t& Iteration() { return iteration; }
+
   //! Get the first quasi-hyperbolic term.
   double V1() const { return v1; }
   //! Modify the first quasi-hyperbolic term.
@@ -130,6 +89,78 @@ class QHAdamUpdate
   double V2() const { return v2; }
   //! Modify the second quasi-hyperbolic term.
   double& V2() { return v2; }
+
+  /**
+   * The UpdatePolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * instantiated at the start of the optimization, and holds parameters
+   * specific to an individual optimization.
+   */
+  template<typename MatType, typename GradType>
+  class Policy
+  {
+   public:
+    /**
+     * This constructor is called by the SGD Optimize() method before the start
+     * of the iteration update process.
+     *
+     * @param parent AdamUpdate object.
+     * @param rows Number of rows in the gradient matrix.
+     * @param cols Number of columns in the gradient matrix.
+     */
+    Policy(QHAdamUpdate& parent, const size_t rows, const size_t cols) :
+        parent(parent)
+    {
+      m.zeros(rows, cols);
+      v.zeros(rows, cols);
+    }
+
+    /**
+     * Update step for QHAdam.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& iterate,
+                const double stepSize,
+                const GradType& gradient)
+    {
+      // Increment the iteration counter variable.
+      ++parent.iteration;
+
+      // And update the iterate.
+      m *= parent.beta1;
+      m += (1 - parent.beta1) * gradient;
+
+      v *= parent.beta2;
+      v += (1 - parent.beta2) * (gradient % gradient);
+
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+          parent.iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+          parent.iteration);
+
+      GradType mDash = m / biasCorrection1;
+      GradType vDash = v / biasCorrection2;
+
+      // QHAdam recovers Adam when v2 = v1 = 1.
+      iterate -= stepSize *
+          ((((1 - parent.v1) * gradient) + parent.v1 * mDash) /
+           (arma::sqrt(((1 - parent.v2) * (gradient % gradient)) +
+            parent.v2 * vDash) + parent.epsilon));
+    }
+
+   private:
+    //! Instantiated parent object.
+    QHAdamUpdate& parent;
+
+    //! The exponential moving average of gradient values.
+    GradType m;
+
+    // The exponential moving average of squared gradient values.
+    GradType v;
+  };
 
  private:
   // The epsilon value used to initialise the squared gradient parameter.
@@ -141,20 +172,14 @@ class QHAdamUpdate
   // The second moment coefficient.
   double beta2;
 
-  // The exponential moving average of gradient values.
-  arma::mat m;
-
-  // The exponential moving average of squared gradient values.
-  arma::mat v;
-
   // The first quasi-hyperbolic term.
   double v1;
 
   // The second quasi-hyperbolic term.
   double v2;
-  
+
   // The number of iterations.
-  double iteration;
+  size_t iteration;
 };
 
 } // namespace ens

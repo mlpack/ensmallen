@@ -58,7 +58,8 @@ class CrossInTrayFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("0; 0"); }
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const { return MatType("0; 0"); }
 
   /*
    * Evaluate a function for a particular batch-size.
@@ -67,16 +68,18 @@ class CrossInTrayFunction
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
-  double Evaluate(const arma::mat& coordinates,
-                  const size_t begin,
-                  const size_t batchSize) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates,
+                                       const size_t begin,
+                                       const size_t batchSize) const;
 
   /*
    * Evaluate a function with the given coordinates.
    *
    * @param coordinates The function coordinates.
    */
-  double Evaluate(const arma::mat& coordinates) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 };
 
 } // namespace test

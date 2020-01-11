@@ -22,6 +22,8 @@ namespace ens {
  * HOGWILD! approach.
  *
  * For more information, see the following.
+ *
+ * @code
  * @misc{1106.5730,
  *   Author = {Feng Niu and Benjamin Recht and Christopher Re and Stephen J.
  *             Wright},
@@ -30,6 +32,7 @@ namespace ens {
  *   Year   = {2011},
  *   Eprint = {arXiv:1106.5730},
  * }
+ * @endcode
  *
  * ParallelSGD can optimize sparse differentiable separable functions.  For more
  * details, see the documentation on function types included with this
@@ -72,12 +75,37 @@ class ParallelSGD
    * returned.
    *
    * @tparam SparseFunctionType Type of function to be optimized.
+   * @tparam MatType Type of the objective function.
+   * @tparam GradType Type of gradient (it is strongly suggested that this be a
+   *     sparse matrix of some sort!).
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to be optimized(minimized).
    * @param iterate Starting point(will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value at the final point.
    */
-  template <typename SparseFunctionType>
-  double Optimize(SparseFunctionType& function, arma::mat& iterate);
+  template <typename SparseFunctionType,
+            typename MatType,
+            typename GradType,
+            typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(SparseFunctionType& function,
+           MatType& iterate,
+           CallbackTypes&&... callbacks);
+
+  //! Forward arma::SpMat<typename MatType::elem_type> as GradType.
+  template<typename SeparableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<SeparableFunctionType, MatType,
+        arma::SpMat<typename MatType::elem_type>, CallbackTypes...>(
+        function, iterate, std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the maximum number of iterations (0 indicates no limits).
   size_t MaxIterations() const { return maxIterations; }

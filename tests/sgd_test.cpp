@@ -18,7 +18,7 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEST_CASE("SimpleSGDTestFunction","[SGDTest]")
+TEST_CASE("SimpleSGDTestFunction", "[SGDTest]")
 {
   SGDTestFunction f;
   VanillaUpdate vanillaUpdate;
@@ -29,12 +29,12 @@ TEST_CASE("SimpleSGDTestFunction","[SGDTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-7));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-7));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-7));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-7));
 }
 
-TEST_CASE("GeneralizedRosenbrockTest","[SGDTest]")
+TEST_CASE("GeneralizedRosenbrockTest", "[SGDTest]")
 {
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
@@ -51,6 +51,40 @@ TEST_CASE("GeneralizedRosenbrockTest","[SGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-10));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
+  }
+}
+
+TEST_CASE("SimpleSGDTestFunctionFloat", "[SGDTest]")
+{
+  SGDTestFunction f;
+  StandardSGD s(0.0003, 1, 5000000, 1e-9, true);
+  s.ExactObjective() = true;
+
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+  float result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(-1.0).epsilon(0.0005));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-5));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-5));
+}
+
+TEST_CASE("GeneralizedRosenbrockTestFloat", "[SGDTest]")
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+
+    StandardSGD s(0.001, 1, 0, 1e-15, true);
+
+    arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+    float result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-5));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
   }
 }

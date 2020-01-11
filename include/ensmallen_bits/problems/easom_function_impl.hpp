@@ -22,34 +22,45 @@ inline EasomFunction::EasomFunction() { /* Nothing to do here */ }
 
 inline void EasomFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double EasomFunction::Evaluate(const arma::mat& coordinates,
-                                      const size_t /* begin */,
-                                      const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type EasomFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = -std::cos(x1) * std::cos(x2) *
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = -std::cos(x1) * std::cos(x2) *
       std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
                       std::pow(x2 - arma::datum::pi, 2));
 
   return objective;
 }
 
-inline double EasomFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type EasomFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-inline void EasomFunction::Gradient(const arma::mat& coordinates,
+template<typename MatType, typename GradType>
+inline void EasomFunction::Gradient(const MatType& coordinates,
                                     const size_t /* begin */,
-                                    arma::mat& gradient,
+                                    GradType& gradient,
                                     const size_t /* batchSize */) const
 {
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
   gradient(0) = 2 * (x1 - arma::datum::pi) *
@@ -69,8 +80,9 @@ inline void EasomFunction::Gradient(const arma::mat& coordinates,
       std::cos(x1) * std::sin(x2);
 }
 
-inline void EasomFunction::Gradient(const arma::mat& coordinates,
-                                    arma::mat& gradient)
+template<typename MatType, typename GradType>
+inline void EasomFunction::Gradient(const MatType& coordinates,
+                                    GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

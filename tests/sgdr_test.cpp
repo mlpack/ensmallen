@@ -33,6 +33,7 @@ TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
       double epochStepSize = stepSize;
 
       CyclicalDecay cyclicalDecay(restart, double(mult), stepSize);
+      CyclicalDecay::Policy<arma::mat, arma::mat> p(cyclicalDecay);
       cyclicalDecay.EpochBatches() = (double) 1000 / 10;
 
       // Create all restart epochs.
@@ -43,7 +44,7 @@ TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
 
       for (size_t i = 0; i < 1000; ++i)
       {
-        cyclicalDecay.Update(iterate, epochStepSize, iterate);
+        p.Update(iterate, epochStepSize, iterate);
         if (i <= restart || arma::accu(arma::find(nextRestart == i)) > 0)
         {
           REQUIRE(epochStepSize == stepSize);
@@ -82,3 +83,70 @@ TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
     REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
+
+/**
+ * Run SGDR on logistic regression and make sure the results are acceptable.
+ * Use arma::fmat.
+ */
+TEST_CASE("SGDRLogisticRegressionFMatTest","[SGDRTest]")
+{
+  arma::fmat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run SGDR with a couple of batch sizes.
+  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  {
+    SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
+
+    arma::fmat coordinates = lr.GetInitialPoint();
+    sgdr.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}
+
+#if ARMA_VERSION_MAJOR > 9 ||\
+    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
+
+/**
+ * Run SGDR on logistic regression and make sure the results are acceptable.
+ * Use arma::sp_mat.
+ */
+TEST_CASE("SGDRLogisticRegressionSpMatTest","[SGDRTest]")
+{
+  arma::sp_mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run SGDR with a couple of batch sizes.
+  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  {
+    SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
+
+    arma::sp_mat coordinates = lr.GetInitialPoint();
+    sgdr.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}
+
+#endif

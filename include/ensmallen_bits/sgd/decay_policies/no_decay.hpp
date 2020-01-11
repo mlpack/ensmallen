@@ -29,37 +29,54 @@ class NoDecay
   NoDecay() { }
 
   /**
-   * This function is called in each iteration after the policy update.
-   *
-  * @param iterate Parameters that minimize the function.
-  * @param stepSize Step size to be used for the given iteration.
-  * @param gradient The gradient matrix.
-  */
-  void Update(arma::mat& /* iterate */,
-              double& /* stepSize */,
-              const arma::mat& /* gradient */)
-  {
-    // Nothing to do here.
-  }
-
-  /**
-   * This function is called in each iteration after the SVRG update step.
-   *
-   * @param iterate Parameters that minimize the function.
-   * @param iterate0 The last function parameters at time t - 1.
-   * @param gradient The current gradient matrix at time t.
-   * @param fullGradient The computed full gradient.
-   * @param stepSize Step size to be used for the given iteration.
+   * The DecayPolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * initialized at the start of the optimization, and holds parameters specific
+   * to an individual optimization.
    */
-  void Update(const arma::mat& /* iterate */,
-              const arma::mat& /*iterate0 */,
-              const arma::mat& /* gradient */,
-              const arma::mat& /* fullGradient */,
-              const size_t /* numBatches */,
-              double& /* stepSize */)
+  template<typename MatType, typename GradType>
+  class Policy
   {
-    // Nothing to do here.
-  }
+   public:
+    /**
+     * This constructor is called by the SGD Optimize() method before the start
+     * of the iteration update process.
+     */
+    Policy(NoDecay& /* parent */) { }
+
+    /**
+     * This function is called in each iteration after the policy update.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param stepSize Step size to be used for the given iteration.
+     * @param gradient The gradient matrix.
+     */
+    void Update(MatType& /* iterate */,
+                double& /* stepSize */,
+                const GradType& /* gradient */)
+    {
+      // Nothing to do here.
+    }
+
+    /**
+     * This function is called in each iteration after the SVRG update step.
+     *
+     * @param iterate Parameters that minimize the function.
+     * @param iterate0 The last function parameters at time t - 1.
+     * @param gradient The current gradient matrix at time t.
+     * @param fullGradient The computed full gradient.
+     * @param stepSize Step size to be used for the given iteration.
+     */
+    void Update(const MatType& /* iterate */,
+                const MatType& /* iterate0 */,
+                const GradType& /* gradient */,
+                const GradType& /* fullGradient */,
+                const size_t /* numBatches */,
+                double& /* stepSize */)
+    {
+      // Nothing to do here.
+    }
+  };
 };
 
 } // namespace ens

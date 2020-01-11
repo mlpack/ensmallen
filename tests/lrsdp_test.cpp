@@ -20,8 +20,9 @@ using namespace ens::test;
 /**
  * Create a Lovasz-Theta initial point.
  */
-void CreateLovaszThetaInitialPoint(const arma::mat& edges,
-                                   arma::mat& coordinates)
+template<typename MatType>
+void CreateLovaszThetaInitialPoint(const MatType& edges,
+                                   MatType& coordinates)
 {
   // Get the number of vertices in the problem.
   const size_t vertices = max(max(edges)) + 1;
@@ -53,8 +54,9 @@ void CreateLovaszThetaInitialPoint(const arma::mat& edges,
  * is all that is necessary to set up the problem.  A matrix which will contain
  * initial point coordinates should be given also.
  */
-void SetupLovaszTheta(const arma::mat& edges,
-                      LRSDP<SDP<arma::mat>>& lovasz)
+template<typename MatType>
+void SetupLovaszTheta(const MatType& edges,
+                      LRSDP<SDP<MatType>>& lovasz)
 {
   // Get the number of vertices in the problem.
   const size_t vertices = max(max(edges)) + 1;
@@ -81,7 +83,7 @@ void SetupLovaszTheta(const arma::mat& edges,
   // Set the Lagrange multipliers right.
   lovasz.AugLag().Lambda().ones(edges.n_cols + 1);
   lovasz.AugLag().Lambda() *= -1;
-  lovasz.AugLag().Lambda()[0] = -double(vertices);
+  lovasz.AugLag().Lambda()[0] = -((typename MatType::elem_type) vertices);
 }
 
 /**
@@ -92,15 +94,15 @@ TEST_CASE("Johnson844LovaszThetaSDP", "[LRSDPTest]")
 {
   // Load the edges.
   arma::mat edges;
-  
+
   if (edges.load("data/johnson8-4-4.csv", arma::csv_ascii) == false)
   {
     FAIL("couldn't load data");
     return;
   }
-  
+
   edges = edges.t();
-  
+
   // The LRSDP itself and the initial point.
   arma::mat coordinates;
 
@@ -126,6 +128,50 @@ TEST_CASE("Johnson844LovaszThetaSDP", "[LRSDPTest]")
     REQUIRE(rrt(edges(1, i), edges(0, i)) == Approx(0.0).margin(1e-5));
   }
 }
+
+/**
+ * johnson8-4-4.co test case for Lovasz-Theta LRSDP.
+ * See Monteiro and Burer 2004.  Uses arma::fmat.
+ */
+TEST_CASE("Johnson844LovaszThetaFMatSDP", "[LRSDPTest]")
+{
+  // Load the edges.
+  arma::fmat edges;
+
+  if (edges.load("data/johnson8-4-4.csv", arma::csv_ascii) == false)
+  {
+    FAIL("couldn't load data");
+    return;
+  }
+
+  edges = edges.t();
+
+  // The LRSDP itself and the initial point.
+  arma::fmat coordinates;
+
+  CreateLovaszThetaInitialPoint(edges, coordinates);
+
+  LRSDP<SDP<arma::fmat>> lovasz(edges.n_cols + 1, 0, coordinates);
+
+  SetupLovaszTheta(edges, lovasz);
+
+  float finalValue = lovasz.Optimize(coordinates);
+
+  // Final value taken from Monteiro + Burer 2004.
+  REQUIRE(finalValue == Approx(-14.0).epsilon(0.1));
+
+  // Now ensure that all the constraints are satisfied.
+  arma::fmat rrt = coordinates * trans(coordinates);
+  REQUIRE(trace(rrt) == Approx(1.0).epsilon(0.1));
+
+  // All those edge constraints...
+  for (size_t i = 0; i < edges.n_cols; ++i)
+  {
+    REQUIRE(rrt(edges(0, i), edges(1, i)) == Approx(0.0).margin(0.1));
+    REQUIRE(rrt(edges(1, i), edges(0, i)) == Approx(0.0).margin(0.1));
+  }
+}
+
 
 /**
  * Create an unweighted graph laplacian from the edges.
@@ -154,13 +200,13 @@ TEST_CASE("ErdosRenyiRandomGraphMaxCutSDP", "[LRSDPTest]")
 {
   // Load the edges.
   arma::mat edges;
-  
+
   if (edges.load("data/erdosrenyi-n100.csv", arma::csv_ascii) == false)
   {
     FAIL("couldn't load data");
     return;
   }
-  
+
   edges = edges.t();
 
   arma::sp_mat laplacian;
@@ -232,12 +278,12 @@ TEST_CASE("GaussianMatrixSensingSDP", "[LRSDPTest]")
   arma::mat Xorig, A;
 
   // read the unknown matrix X and the measurement matrices A_i in
-  
+
   if (Xorig.load("data/sensing_X.csv", arma::csv_ascii) == false)
   {
     FAIL("couldn't load data");
   }
-  
+
   if( A.load("data/sensing_A.csv", arma::csv_ascii) == false)
   {
     FAIL("couldn't load data");

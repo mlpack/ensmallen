@@ -21,6 +21,7 @@ namespace ens {
  *
  * \f$ f(x) = (x1 - 0.1)^2 + (x2 - 0.2)^2 + (x3 - 0.3)^2 \f$.
  */
+template<typename MatType = arma::mat, typename GradType = MatType>
 class TestFuncFW
 {
  public:
@@ -31,9 +32,9 @@ class TestFuncFW
    *
    * @param coords input vector x.
    */
-  double Evaluate(const arma::mat& coords)
+  typename MatType::elem_type Evaluate(const MatType& coords)
   {
-    double f = std::pow(coords[0] - 0.1, 2);
+    typename MatType::elem_type f = std::pow(coords[0] - 0.1, 2);
     f += std::pow(coords[1] - 0.2, 2);
     f += std::pow(coords[2] - 0.3, 2);
     return f;
@@ -45,7 +46,7 @@ class TestFuncFW
    * @param coords input vector x.
    * @param gradient output gradient vector.
    */
-  void Gradient(const arma::mat& coords, arma::mat& gradient)
+  void Gradient(const MatType& coords, GradType& gradient)
   {
     gradient.set_size(3, 1);
     gradient[0] = coords[0] - 0.1;

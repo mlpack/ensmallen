@@ -46,20 +46,22 @@ class GreedyDescent
    * @param function The function to be optimized.
    * @return The index of the coordinate to be descended.
    */
-  template <typename ResolvableFunctionType>
+  template<typename ResolvableFunctionType, typename MatType, typename GradType>
   static size_t DescentFeature(const size_t /* iteration */,
-                               const arma::mat& iterate,
+                               const MatType& iterate,
                                const ResolvableFunctionType& function)
   {
+    typedef typename MatType::elem_type ElemType;
+
     size_t bestFeature = 0;
-    double bestDescent = 0;
+    ElemType bestDescent = 0;
     for (size_t i = 0; i < function.NumFeatures(); ++i)
     {
-      arma::sp_mat fGrad;
+      GradType fGrad;
 
       function.PartialGradient(iterate, i, fGrad);
 
-      double descent = arma::accu(fGrad);
+      ElemType descent = arma::accu(fGrad);
       if (descent > bestDescent)
       {
         bestFeature = i;

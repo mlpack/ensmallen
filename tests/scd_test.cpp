@@ -23,7 +23,7 @@ using namespace ens::test;
  * Test the correctness of the SCD implementation by using a dataset with a
  * precalculated minima.
  */
-TEST_CASE("PreCalcSCDTest","[SCDTest]")
+TEST_CASE("PreCalcSCDTest", "[SCDTest]")
 {
   arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
   arma::Row<size_t> responses("1  1  0;");
@@ -40,16 +40,16 @@ TEST_CASE("PreCalcSCDTest","[SCDTest]")
 
 /**
  * Test the correctness of the SCD implemenation by using the sparse test
- * function, with dijoint features which optimize to a precalculated minima.
+ * function, with disjoint features which optimize to a precalculated minima.
  */
-TEST_CASE("DisjointFeatureTest","[SCDTest]")
+TEST_CASE("DisjointFeatureTest", "[SCDTest]")
 {
   // The test function for parallel SGD should work with SCD, as the gradients
   // of the individual functions are projections into the ith dimension.
   SparseTestFunction f;
   SCD<> s(0.4);
 
-  arma::mat iterate = f.GetInitialPoint();
+  arma::mat iterate = f.GetInitialPoint<arma::mat>();
 
   double result = s.Optimize(f, iterate);
 
@@ -58,16 +58,70 @@ TEST_CASE("DisjointFeatureTest","[SCDTest]")
   REQUIRE(result == Approx(123.75).epsilon(0.0001));
 
   // The co-ordinates should be the vertices of the parabolas.
-  REQUIRE(iterate[0] == Approx(2.0).epsilon(0.0002));
-  REQUIRE(iterate[1] == Approx(1.0).epsilon(0.0002));
-  REQUIRE(iterate[2] == Approx(1.5).epsilon(0.0002));
-  REQUIRE(iterate[3] == Approx(4.0).epsilon(0.0002));
+  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.0002));
+  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.0002));
+  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.0002));
+  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.0002));
+}
+
+/**
+ * Test the correctness of the SCD implemenation by using the sparse test
+ * function, with disjoint features which optimize to a precalculated minima.
+ * Use arma::fmat.
+ */
+TEST_CASE("DisjointFeatureFMatTest", "[SCDTest]")
+{
+  // The test function for parallel SGD should work with SCD, as the gradients
+  // of the individual functions are projections into the ith dimension.
+  SparseTestFunction f;
+  SCD<> s(0.4);
+
+  arma::fmat iterate = f.GetInitialPoint<arma::fmat>();
+
+  float result = s.Optimize(f, iterate);
+
+  // The final value of the objective function should be close to the optimal
+  // value, that is the sum of values at the vertices of the parabolas.
+  REQUIRE(result == Approx(123.75).epsilon(0.01));
+
+  // The co-ordinates should be the vertices of the parabolas.
+  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.02));
+  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.02));
+  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.02));
+  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.02));
+}
+
+/**
+ * Test the correctness of the SCD implemenation by using the sparse test
+ * function, with disjoint features which optimize to a precalculated minima.
+ * Use arma::sp_mat.
+ */
+TEST_CASE("DisjointFeatureSpMatTest", "[SCDTest]")
+{
+  // The test function for parallel SGD should work with SCD, as the gradients
+  // of the individual functions are projections into the ith dimension.
+  SparseTestFunction f;
+  SCD<> s(0.4);
+
+  arma::sp_mat iterate = f.GetInitialPoint<arma::sp_mat>();
+
+  double result = s.Optimize(f, iterate);
+
+  // The final value of the objective function should be close to the optimal
+  // value, that is the sum of values at the vertices of the parabolas.
+  REQUIRE(result == Approx(123.75).epsilon(0.0001));
+
+  // The co-ordinates should be the vertices of the parabolas.
+  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.0002));
+  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.0002));
+  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.0002));
+  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.0002));
 }
 
 /**
  * Test the greedy descent policy.
  */
-TEST_CASE("GreedyDescentTest","[SCDTest]")
+TEST_CASE("GreedyDescentTest", "[SCDTest]")
 {
   // In the sparse test function, the given point has the maximum gradient at
   // the feature with index 2.
@@ -77,19 +131,23 @@ TEST_CASE("GreedyDescentTest","[SCDTest]")
 
   GreedyDescent descentPolicy;
 
-  REQUIRE(descentPolicy.DescentFeature(0, point, f) == 2);
+  REQUIRE(descentPolicy.DescentFeature<SparseTestFunction,
+                                       arma::mat,
+                                       arma::mat>(0, point, f) == 2);
 
   // Changing the point under consideration, so that the maximum gradient is at
   // index 1.
-  point[1] = 10;
+  point(1) = 10;
 
-  REQUIRE(descentPolicy.DescentFeature(0, point, f) == 1);
+  REQUIRE(descentPolicy.DescentFeature<SparseTestFunction,
+                                       arma::mat,
+                                       arma::mat>(0, point, f) == 1);
 }
 
 /**
  * Test the cyclic descent policy.
  */
-TEST_CASE("CyclicDescentTest","[SCDTest]")
+TEST_CASE("CyclicDescentTest", "[SCDTest]")
 {
   const size_t features = 10;
   struct DummyFunction
@@ -106,14 +164,15 @@ TEST_CASE("CyclicDescentTest","[SCDTest]")
 
   for (size_t i = 0; i < 15; ++i)
   {
-    REQUIRE(descentPolicy.DescentFeature(i, arma::mat(), dummy) == (i % features));
+    REQUIRE(descentPolicy.DescentFeature<DummyFunction, arma::mat, arma::mat>(
+        i, arma::mat(), dummy) == (i % features));
   }
 }
 
 /**
  * Test the random descent policy.
  */
-TEST_CASE("RandomDescentTest","[SCDTest]")
+TEST_CASE("RandomDescentTest", "[SCDTest]")
 {
   const size_t features = 10;
   struct DummyFunction
@@ -130,7 +189,9 @@ TEST_CASE("RandomDescentTest","[SCDTest]")
 
   for (size_t i = 0; i < 100; ++i)
   {
-    size_t j = descentPolicy.DescentFeature(i, arma::mat(), dummy);
+    size_t j = descentPolicy.DescentFeature<DummyFunction,
+                                            arma::mat,
+                                            arma::mat>(i, arma::mat(), dummy);
     REQUIRE(j < features);
     REQUIRE(j >= 0);
   }
@@ -139,7 +200,7 @@ TEST_CASE("RandomDescentTest","[SCDTest]")
 /**
  * Test that LogisticRegressionFunction::PartialGradient() works as expected.
  */
-TEST_CASE("LogisticRegressionFunctionPartialGradientTest","[SCDTest]")
+TEST_CASE("LogisticRegressionFunctionPartialGradientTest", "[SCDTest]")
 {
   // Evaluate the gradient and feature gradient and equate.
   arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
@@ -158,14 +219,14 @@ TEST_CASE("LogisticRegressionFunctionPartialGradientTest","[SCDTest]")
     arma::sp_mat fGrad;
     f.PartialGradient(testPoint, i, fGrad);
 
-    CheckMatrices(testGradient.col(i), arma::mat(fGrad.col(i)));
+    CheckMatrices(arma::mat(testGradient.col(i)), arma::mat(fGrad.col(i)));
   }
 }
 
 /**
  * Test that SoftmaxRegressionFunction::PartialGradient() works as expected.
  */
-TEST_CASE("SoftmaxRegressionFunctionPartialGradientTest","[SCDTest]")
+TEST_CASE("SoftmaxRegressionFunctionPartialGradientTest", "[SCDTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 10;
@@ -199,6 +260,6 @@ TEST_CASE("SoftmaxRegressionFunctionPartialGradientTest","[SCDTest]")
 
     srf.PartialGradient(parameters, j, fGrad);
 
-    CheckMatrices(gradient.col(j), arma::mat(fGrad.col(j)));
+    CheckMatrices(arma::mat(gradient.col(j)), arma::mat(fGrad.col(j)));
   }
 }

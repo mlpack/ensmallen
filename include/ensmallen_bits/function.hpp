@@ -15,7 +15,7 @@
 
 namespace ens {
 
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 class Function;
 
 } // namespace ens
@@ -25,9 +25,9 @@ class Function;
 #include "function/add_evaluate.hpp"
 #include "function/add_gradient.hpp"
 #include "function/add_evaluate_with_gradient.hpp"
-#include "function/add_decomposable_evaluate.hpp"
-#include "function/add_decomposable_gradient.hpp"
-#include "function/add_decomposable_evaluate_with_gradient.hpp"
+#include "function/add_separable_evaluate.hpp"
+#include "function/add_separable_gradient.hpp"
+#include "function/add_separable_evaluate_with_gradient.hpp"
 
 namespace ens {
 
@@ -54,26 +54,28 @@ namespace ens {
  * addition, this class does not (to the best of my knowledge) rely on any
  * undefined behavior.
  */
-template<typename FunctionType>
+template<typename FunctionType, typename MatType, typename GradType>
 class Function :
-    public AddDecomposableEvaluateWithGradientStatic<FunctionType>,
-    public AddDecomposableEvaluateWithGradientConst<FunctionType>,
-    public AddDecomposableEvaluateWithGradient<FunctionType>,
-    public AddDecomposableGradientStatic<FunctionType>,
-    public AddDecomposableGradientConst<FunctionType>,
-    public AddDecomposableGradient<FunctionType>,
-    public AddDecomposableEvaluateStatic<FunctionType>,
-    public AddDecomposableEvaluateConst<FunctionType>,
-    public AddDecomposableEvaluate<FunctionType>,
-    public AddEvaluateWithGradientStatic<FunctionType>,
-    public AddEvaluateWithGradientConst<FunctionType>,
-    public AddEvaluateWithGradient<FunctionType>,
-    public AddGradientStatic<FunctionType>,
-    public AddGradientConst<FunctionType>,
-    public AddGradient<FunctionType>,
-    public AddEvaluateStatic<FunctionType>,
-    public AddEvaluateConst<FunctionType>,
-    public AddEvaluate<FunctionType>,
+    public AddSeparableEvaluateWithGradientStatic<FunctionType, MatType,
+        GradType>,
+    public AddSeparableEvaluateWithGradientConst<FunctionType, MatType,
+        GradType>,
+    public AddSeparableEvaluateWithGradient<FunctionType, MatType, GradType>,
+    public AddSeparableGradientStatic<FunctionType, MatType, GradType>,
+    public AddSeparableGradientConst<FunctionType, MatType, GradType>,
+    public AddSeparableGradient<FunctionType, MatType, GradType>,
+    public AddSeparableEvaluateStatic<FunctionType, MatType, GradType>,
+    public AddSeparableEvaluateConst<FunctionType, MatType, GradType>,
+    public AddSeparableEvaluate<FunctionType, MatType, GradType>,
+    public AddEvaluateWithGradientStatic<FunctionType, MatType, GradType>,
+    public AddEvaluateWithGradientConst<FunctionType, MatType, GradType>,
+    public AddEvaluateWithGradient<FunctionType, MatType, GradType>,
+    public AddGradientStatic<FunctionType, MatType, GradType>,
+    public AddGradientConst<FunctionType, MatType, GradType>,
+    public AddGradient<FunctionType, MatType, GradType>,
+    public AddEvaluateStatic<FunctionType, MatType, GradType>,
+    public AddEvaluateConst<FunctionType, MatType, GradType>,
+    public AddEvaluate<FunctionType, MatType, GradType>,
     public FunctionType
 {
  public:
@@ -81,26 +83,29 @@ class Function :
   // an unconstructable overload with the same name, so we can use using
   // declarations here to ensure that they are all accessible.  Since we don't
   // know what FunctionType has, we can't use any using declarations there.
-  using AddDecomposableEvaluateWithGradientStatic<
-      FunctionType>::EvaluateWithGradient;
-  using AddDecomposableEvaluateWithGradientConst<
-      FunctionType>::EvaluateWithGradient;
-  using AddDecomposableEvaluateWithGradient<FunctionType>::EvaluateWithGradient;
-  using AddDecomposableGradientStatic<FunctionType>::Gradient;
-  using AddDecomposableGradientConst<FunctionType>::Gradient;
-  using AddDecomposableGradient<FunctionType>::Gradient;
-  using AddDecomposableEvaluateStatic<FunctionType>::Evaluate;
-  using AddDecomposableEvaluateConst<FunctionType>::Evaluate;
-  using AddDecomposableEvaluate<FunctionType>::Evaluate;
-  using AddEvaluateWithGradientStatic<FunctionType>::EvaluateWithGradient;
-  using AddEvaluateWithGradientConst<FunctionType>::EvaluateWithGradient;
-  using AddEvaluateWithGradient<FunctionType>::EvaluateWithGradient;
-  using AddGradientStatic<FunctionType>::Gradient;
-  using AddGradientConst<FunctionType>::Gradient;
-  using AddGradient<FunctionType>::Gradient;
-  using AddEvaluateStatic<FunctionType>::Evaluate;
-  using AddEvaluateConst<FunctionType>::Evaluate;
-  using AddEvaluate<FunctionType>::Evaluate;
+  using AddSeparableEvaluateWithGradientStatic<
+      FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddSeparableEvaluateWithGradientConst<
+      FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddSeparableEvaluateWithGradient<
+      FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddSeparableGradientStatic<
+      FunctionType, MatType, GradType>::Gradient;
+  using AddSeparableGradientConst<FunctionType, MatType, GradType>::Gradient;
+  using AddSeparableGradient<FunctionType, MatType, GradType>::Gradient;
+  using AddSeparableEvaluateStatic<
+      FunctionType, MatType, GradType>::Evaluate;
+  using AddSeparableEvaluateConst<FunctionType, MatType, GradType>::Evaluate;
+  using AddSeparableEvaluate<FunctionType, MatType, GradType>::Evaluate;
+  using AddEvaluateWithGradientStatic<FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddEvaluateWithGradientConst<FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddEvaluateWithGradient<FunctionType, MatType, GradType>::EvaluateWithGradient;
+  using AddGradientStatic<FunctionType, MatType, GradType>::Gradient;
+  using AddGradientConst<FunctionType, MatType, GradType>::Gradient;
+  using AddGradient<FunctionType, MatType, GradType>::Gradient;
+  using AddEvaluateStatic<FunctionType, MatType, GradType>::Evaluate;
+  using AddEvaluateConst<FunctionType, MatType, GradType>::Evaluate;
+  using AddEvaluate<FunctionType, MatType, GradType>::Evaluate;
 };
 
 } // namespace ens

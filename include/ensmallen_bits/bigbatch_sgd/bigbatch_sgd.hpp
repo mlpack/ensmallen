@@ -58,7 +58,7 @@ namespace ens {
  *   title   = {Big Batch {SGD:} Automated Inference using Adaptive Batch
  *              Sizes},
  *   author  = {Soham De and Abhay Kumar Yadav and David W. Jacobs and
-                Tom Goldstein},
+ *              Tom Goldstein},
  *   journal = {CoRR},
  *   year    = {2017},
  *   url     = {http://arxiv.org/abs/1610.05792},
@@ -106,14 +106,37 @@ class BigBatchSGD
    * will be modified to store the finishing point of the algorithm, and the
    * final objective value is returned.
    *
-   * @tparam DecomposableFunctionType Type of the function to be optimized.
+   * @tparam SeparableFunctionType Type of the function to be optimized.
+   * @tparam MatType Type of matrix to optimize with.
+   * @tparam GradType Type of matrix to use to represent function gradients.
+   * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
+   * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
-  template<typename DecomposableFunctionType>
-  double Optimize(DecomposableFunctionType& function,
-                  arma::mat& iterate);
+  template<typename SeparableFunctionType,
+           typename MatType,
+           typename GradType,
+           typename... CallbackTypes>
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
+  Optimize(SeparableFunctionType& function,
+           MatType& iterate,
+           CallbackTypes&&... callbacks);
+
+  //! Forward the MatType as GradType.
+  template<typename SeparableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(SeparableFunctionType& function,
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks)
+  {
+    return Optimize<SeparableFunctionType, MatType, MatType,
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
 
   //! Get the batch size.
   size_t BatchSize() const { return batchSize; }
@@ -180,6 +203,9 @@ class BigBatchSGD
 
   //! The update policy used to update the parameters in each iteration.
   UpdatePolicyType updatePolicy;
+
+  //! Instantiated update policy.
+  Any instUpdatePolicy;
 };
 
 using BBS_Armijo = BigBatchSGD<BacktrackingLineSearch>;

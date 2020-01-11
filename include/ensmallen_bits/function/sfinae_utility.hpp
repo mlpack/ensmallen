@@ -105,6 +105,27 @@ struct MethodFormDetector<Class, MethodForm, 7>
 //! Utility struct for checking signatures.
 template<typename U, U> struct SigCheck : std::true_type {};
 
+template<typename... Args>
+struct pack {};
+
+template<typename Func>
+struct FunctionTypes {};
+
+template<typename R, typename... A>
+struct FunctionTypes<R(A...)>
+{
+  typedef R Ret;
+  using Args = pack<A...>;
+};
+
+template<typename R, typename C, typename... A>
+struct FunctionTypes<R(C::*)(A...)>
+{
+  typedef R Ret;
+  typedef C Class;
+  using Args = pack<A...>;
+};
+
 } // namespace sfinae
 } // namespace ens
 
@@ -133,7 +154,9 @@ struct NAME                                                                    \
 <                                                                              \
   T,                                                                           \
   sig,                                                                         \
-  std::integral_constant<bool, SigCheck<sig, &T::FUNC>::value>                 \
+  std::is_same<decltype(std::declval<T>().FUNC(std::declval<                   \
+      ens::sfinae::FunctionTypes<sig>::A...>()...)),                           \
+      ens::sfinae::FunctionTypes<sig>::Ret>::type>                             \
 > : std::true_type {};
 
 /**
@@ -257,9 +280,9 @@ struct NAME                                                                  \
     ENS_HAS_METHOD_FORM_BASE(ENS_SINGLE_ARG(METHOD), ENS_SINGLE_ARG(NAME), 7)
 
 /**
- * ENS_HAS_EXACT_METHOD_FORM generates a template that allows to check at compile
- * time whether a given class has a method of the requested form. For example,
- * for the following class
+ * ENS_HAS_EXACT_METHOD_FORM generates a template that allows to check at
+ * compile time whether a given class has a method of the requested form. For
+ * example, for the following class
  *
  * class A
  * {
@@ -290,38 +313,5 @@ struct NAME                                                                  \
 #undef  ENS_HAS_EXACT_METHOD_FORM
 #define ENS_HAS_EXACT_METHOD_FORM(METHOD, NAME) \
     ENS_HAS_METHOD_FORM_BASE(ENS_SINGLE_ARG(METHOD), ENS_SINGLE_ARG(NAME), 0)
-
-/**
- * A version of ENS_HAS_METHOD_FORM() where the maximum number of extra arguments is
- * set to the default of 7.
- *
- * ENS_HAS_METHOD_FORM generates a template that allows to check at compile time
- * whether a given class has a method of the requested form. For example, for
- * the following class
- *
- * class A
- * {
- *  public:
- *   ...
- *   Train(const arma::mat&, const arma::Row<size_t>&, double);
- *   ...
- * };
- *
- * and the following form of Train methods
- *
- * template<typename Class, typename...Ts>
- * using TrainForm =
- *     void(Class::*)(const arma::mat&, const arma::Row<size_t>&, Ts...);
- *
- * we can check whether the class A has a Train method of the specified form:
- *
- * ENS_HAS_METHOD_FORM(Train, HasTrain);
- * static_assert(HasTrain<A, TrainFrom>::value, "value should be true");
- *
- * The implementation is analogous to implementation of the macro ENS_HAS_MEM_FUNC.
- *
- * @param METHOD The name of the method to check for.
- * @param NAME The name of the struct to construct.
- */
 
 #endif

@@ -30,11 +30,13 @@ inline void SGDTestFunction::Shuffle()
       (NumFunctions() - 1), NumFunctions()));
 }
 
-inline double SGDTestFunction::Evaluate(const arma::mat& coordinates,
-                                        const size_t begin,
-                                        const size_t batchSize) const
+template<typename MatType>
+typename MatType::elem_type SGDTestFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t begin,
+    const size_t batchSize) const
 {
-  double objective = 0;
+  typename MatType::elem_type objective = 0;
 
   for (size_t i = begin; i < begin + batchSize; i++)
   {
@@ -58,10 +60,11 @@ inline double SGDTestFunction::Evaluate(const arma::mat& coordinates,
   return objective;
 }
 
-inline void SGDTestFunction::Gradient(const arma::mat& coordinates,
-                                      const size_t begin,
-                                      arma::mat& gradient,
-                                      const size_t batchSize) const
+template<typename MatType, typename GradType>
+void SGDTestFunction::Gradient(const MatType& coordinates,
+                               const size_t begin,
+                               GradType& gradient,
+                               const size_t batchSize) const
 {
   gradient.zeros(3);
 

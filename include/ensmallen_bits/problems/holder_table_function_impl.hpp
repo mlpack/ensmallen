@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "holder_table_function.hpp"
-using namespace std;
 
 namespace ens {
 namespace test {
@@ -23,21 +22,28 @@ inline HolderTableFunction::HolderTableFunction() { /* Nothing to do here */ }
 
 inline void HolderTableFunction::Shuffle() { /* Nothing to do here */ }
 
-inline double HolderTableFunction::Evaluate(const arma::mat& coordinates,
-                                            const size_t /* begin */,
-                                            const size_t /* batchSize */) const
+template<typename MatType>
+typename MatType::elem_type HolderTableFunction::Evaluate(
+    const MatType& coordinates,
+    const size_t /* begin */,
+    const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const double x1 = coordinates(0);
-  const double x2 = coordinates(1);
+  // Convenience typedef.
+  typedef typename MatType::elem_type ElemType;
 
-  const double objective = - abs(sin(x1) * cos(x2) * exp(abs(1 -
-      (sqrt(x1 * x1 + x2 * x2) / arma::datum::pi))));
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = -std::abs(std::sin(x1) * std::cos(x2) *
+      std::exp(std::abs(1 - (std::sqrt(x1 * x1 + x2 * x2) / arma::datum::pi))));
 
   return objective;
 }
 
-inline double HolderTableFunction::Evaluate(const arma::mat& coordinates) const
+template<typename MatType>
+typename MatType::elem_type HolderTableFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }

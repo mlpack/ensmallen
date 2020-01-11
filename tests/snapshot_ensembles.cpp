@@ -15,6 +15,7 @@
 
 using namespace ens;
 using namespace ens::test;
+
 /*
  * Test that the step size resets after a specified number of epochs.
  */
@@ -33,6 +34,7 @@ TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
 
       SnapshotEnsembles snapshotEnsembles(restart,
           double(mult), stepSize, 1000, 2);
+      SnapshotEnsembles::Policy<arma::mat, arma::mat> p(snapshotEnsembles);
 
       snapshotEnsembles.EpochBatches() = 10 / (double)1000;
       // Create all restart epochs.
@@ -43,14 +45,14 @@ TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
 
       for (size_t i = 0; i < 1000; ++i)
       {
-        snapshotEnsembles.Update(iterate, epochStepSize, iterate);
+        p.Update(iterate, epochStepSize, iterate);
         if (i <= restart || arma::accu(arma::find(nextRestart == i)) > 0)
         {
           REQUIRE(epochStepSize == stepSize);
         }
       }
 
-      REQUIRE(snapshotEnsembles.Snapshots().size() == 2);
+      REQUIRE(p.Snapshots().size() == 2);
     }
   }
 }
@@ -85,3 +87,71 @@ TEST_CASE("SnapshotEnsemblesLogisticRegressionTest","[SnapshotEnsemblesTest]")
     REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
   }
 }
+
+/**
+ * Run SGDR with snapshot ensembles on logistic regression and make sure the
+ * results are acceptable.  Use arma::fmat.
+ */
+TEST_CASE("SnapshotEnsemblesLogisticRegressionFMatTest","[SnapshotEnsemblesTest]")
+{
+  arma::fmat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run SGDR with snapshot ensembles on a couple of batch sizes.
+  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  {
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
+
+    arma::fmat coordinates = lr.GetInitialPoint();
+    sgdr.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}
+
+#if ARMA_VERSION_MAJOR > 9 ||\
+    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
+
+/**
+ * Run SGDR with snapshot ensembles on logistic regression and make sure the
+ * results are acceptable.  Use arma::sp_mat.
+ */
+TEST_CASE("SnapshotEnsemblesLogisticRegressionSpMatTest",
+          "[SnapshotEnsemblesTest]")
+{
+  arma::sp_mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+
+  // Now run SGDR with snapshot ensembles on a couple of batch sizes.
+  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  {
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
+
+    arma::sp_mat coordinates = lr.GetInitialPoint();
+    sgdr.Optimize(lr, coordinates);
+
+    // Ensure that the error is close to zero.
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  }
+}
+
+#endif

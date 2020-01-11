@@ -38,20 +38,23 @@ class RandomSelection
   /**
    * Randomly select dataset points to calculate the objective function.
    *
-   * @tparam DecomposableFunctionType Type of the function to be evaluated.
+   * @tparam SeparableFunctionType Type of the function to be evaluated.
    * @param function Function to optimize.
    * @param batchSize Batch size to use for each step.
    * @param iterate starting point.
    */
-  template<typename DecomposableFunctionType>
-  double Select(DecomposableFunctionType& function,
-                      const size_t batchSize,
-                      const arma::mat& iterate)
+  template<typename SeparableFunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  double Select(SeparableFunctionType& function,
+                const size_t batchSize,
+                const MatType& iterate,
+                CallbackTypes&... callbacks)
   {
     // Find the number of functions to use.
     const size_t numFunctions = function.NumFunctions();
 
-    double objective = 0;
+    typename MatType::elem_type objective = 0;
     for (size_t f = 0; f < std::floor(numFunctions * fraction); f += batchSize)
     {
       const size_t selection = arma::as_scalar(arma::randi<arma::uvec>(
@@ -60,6 +63,8 @@ class RandomSelection
           numFunctions - selection);
 
       objective += function.Evaluate(iterate, selection, effectiveBatchSize);
+
+      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
 
     return objective;

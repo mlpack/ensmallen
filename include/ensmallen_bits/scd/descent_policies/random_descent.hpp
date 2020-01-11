@@ -47,10 +47,10 @@ class RandomDescent
    * @param function The function to be optimized.
    * @return The index of the coordinate to be descended.
    */
-  template <typename ResolvableFunctionType>
+  template<typename ResolvableFunctionType, typename MatType, typename GradType>
   static size_t DescentFeature(const size_t /* iteration */,
-                        const arma::mat& /* iterate */,
-                        const ResolvableFunctionType& function)
+                               const MatType& /* iterate */,
+                               const ResolvableFunctionType& function)
   {
     return arma::as_scalar(arma::randi<arma::uvec>(
           1, arma::distr_param(0, function.NumFeatures() - 1)));

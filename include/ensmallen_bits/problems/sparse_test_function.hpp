@@ -33,26 +33,33 @@ class SparseTestFunction
   size_t NumFeatures() const { return 4; }
 
   //! Get the starting point.
-  arma::mat GetInitialPoint() const { return arma::mat("0 0 0 0;"); }
+  template<typename MatType>
+  MatType GetInitialPoint() const { return MatType("0 0 0 0;"); }
 
   //! Evaluate a function.
-  double Evaluate(const arma::mat& coordinates,
-                  const size_t i,
-                  const size_t batchSize = 1) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates,
+                                       const size_t i,
+                                       const size_t batchSize = 1) const;
 
   //! Evaluate all the functions.
-  double Evaluate(const arma::mat& coordinates) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   //! Evaluate the gradient of a function.
-  void Gradient(const arma::mat& coordinates,
+  template<typename MatType,
+           typename GradType = arma::SpMat<typename MatType::elem_type>>
+  void Gradient(const MatType& coordinates,
                 const size_t i,
-                arma::sp_mat& gradient,
+                GradType& gradient,
                 const size_t batchSize = 1) const;
 
   //! Evaluate the gradient of a feature function.
-  void PartialGradient(const arma::mat& coordinates,
+  template<typename MatType,
+           typename GradType = arma::SpMat<typename MatType::elem_type>>
+  void PartialGradient(const MatType& coordinates,
                        const size_t j,
-                       arma::sp_mat& gradient) const;
+                       GradType& gradient) const;
 
  private:
   // Each quadratic polynomial is monic. The intercept and coefficient of the

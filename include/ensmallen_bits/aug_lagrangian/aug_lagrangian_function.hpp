@@ -63,7 +63,8 @@ class AugLagrangianFunction
    * @param coordinates Coordinates to evaluate function at.
    * @return Objective function.
    */
-  double Evaluate(const arma::mat& coordinates) const;
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
    * Evaluate the gradient of the Augmented Lagrangian function.
@@ -71,7 +72,8 @@ class AugLagrangianFunction
    * @param coordinates Coordinates to evaluate gradient at.
    * @param gradient Matrix to store gradient into.
    */
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const;
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient) const;
 
   /**
    * Get the initial point of the optimization (supplied by the
@@ -79,7 +81,8 @@ class AugLagrangianFunction
    *
    * @return Initial point.
    */
-  const arma::mat& GetInitialPoint() const;
+  template<typename MatType = arma::mat>
+  const MatType& GetInitialPoint() const;
 
   //! Get the Lagrange multipliers.
   const arma::vec& Lambda() const { return lambda; }

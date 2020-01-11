@@ -45,22 +45,25 @@ class UpdateSpan
    * @param newCoords output new solution coords.
    * @param numIter current iteration number.
    */
+  template<typename FuncSqType, typename MatType, typename GradType>
   void Update(FuncSq& function,
-              const arma::mat& oldCoords,
-              const arma::mat& s,
-              arma::mat& newCoords,
+              const MatType& oldCoords,
+              const MatType& s,
+              MatType& newCoords,
               const size_t /* numIter */)
   {
     // Add new atom into soluton space.
-    atoms.AddAtom(s, function);
+    atoms.AddAtom(arma::mat(s), function);
 
     // Reoptimize the solution in the current space.
     arma::vec b = function.Vectorb();
-    atoms.CurrentCoeffs() = solve(function.MatrixA() * atoms.CurrentAtoms(), b);
+    atoms.CurrentCoeffs() = solve(function.MatrixA() * atoms.CurrentAtoms(), b, arma::solve_opts::fast);
 
     // x has coords of only the current atoms, recover the solution
     // to the original size.
-    atoms.RecoverVector(newCoords);
+    arma::mat tmp;
+    atoms.RecoverVector(tmp);
+    newCoords = arma::conv_to<MatType>::from(tmp);
 
     // Prune the support.
     if (isPrune)
@@ -68,7 +71,8 @@ class UpdateSpan
       double oldF = function.Evaluate(oldCoords);
       double F = 0.25 * oldF + 0.75 * function.Evaluate(newCoords);
       atoms.PruneSupport(F, function);
-      atoms.RecoverVector(newCoords);
+      atoms.RecoverVector(tmp);
+      newCoords = arma::conv_to<MatType>::from(tmp);
     }
   }
 

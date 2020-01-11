@@ -27,9 +27,9 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0015));
-  REQUIRE(coordinates[0] == Approx(0.0).margin(0.015));
-  REQUIRE(coordinates[1] == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates[2] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.015));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-6));
 
   // Compare with SGD with vanilla update.
   SGDTestFunction f1;
@@ -42,9 +42,9 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
 
   // Result doesn't converge in 2500000 iterations.
   REQUIRE((result1 + 1.0) > 0.05);
-  REQUIRE(coordinates1[0] >= 0.015);
-  REQUIRE(coordinates1[1] == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates1[2] == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates1(0) >= 0.015);
+  REQUIRE(coordinates1(1) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates1(2) == Approx(0.0).margin(1e-6));
 
   REQUIRE(result < result1);
 }
@@ -65,6 +65,46 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGDTest]")
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates[j] == Approx(1.0).epsilon(1e-5));
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
+  }
+}
+
+// Use arma::fmat.
+TEST_CASE("MomentumSGDGeneralizedRosenbrockFMatTest", "[MomentumSGDTest]")
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+    MomentumUpdate momentumUpdate(0.1);
+    MomentumSGD s(0.0002, 1, 10000000, 1e-15, true, momentumUpdate);
+
+    arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+    float result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-2));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
+  }
+}
+
+// Use arma::sp_mat.
+TEST_CASE("MomentumSGDGeneralizedRosenbrockSpMatTest", "[MomentumSGDTest]")
+{
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction f(i);
+    MomentumUpdate momentumUpdate(0.4);
+    MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate);
+
+    arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+    double result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-4));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
   }
 }

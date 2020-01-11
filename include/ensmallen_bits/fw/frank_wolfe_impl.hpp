@@ -39,34 +39,56 @@ FrankWolfe(const LinearConstrSolverType linearConstrSolver,
 template<
     typename LinearConstrSolverType,
     typename UpdateRuleType>
-template<typename FunctionType>
-double FrankWolfe<LinearConstrSolverType, UpdateRuleType>::
-Optimize(FunctionType& function, arma::mat& iterate)
+template<typename FunctionType, typename MatType, typename GradType,
+         typename... CallbackTypes>
+typename std::enable_if<IsArmaType<GradType>::value,
+typename MatType::elem_type>::type
+FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
+  FunctionType& function,
+  MatType& iterateIn,
+  CallbackTypes&&... callbacks)
 {
-  typedef Function<FunctionType> FullFunctionType;
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+
+  typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f = static_cast<FullFunctionType&>(function);
 
   // Make sure we have all necessary functions.
-  traits::CheckFunctionTypeAPI<FullFunctionType>();
+  traits::CheckFunctionTypeAPI<FullFunctionType, BaseMatType, BaseGradType>();
+  RequireFloatingPointType<BaseMatType>();
+  RequireFloatingPointType<BaseGradType>();
+  RequireSameInternalTypes<BaseMatType, BaseGradType>();
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // To keep track of the function value.
-  double currentObjective = DBL_MAX;
+  ElemType currentObjective = std::numeric_limits<ElemType>::max();
 
-  arma::mat gradient(iterate.n_rows, iterate.n_cols);
-  arma::mat s(iterate.n_rows, iterate.n_cols);
-  arma::mat iterateNew(iterate.n_rows, iterate.n_cols);
+  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
+  BaseMatType s(iterate.n_rows, iterate.n_cols);
+  BaseMatType iterateNew(iterate.n_rows, iterate.n_cols);
   double gap = 0;
 
-  for (size_t i = 1; i != maxIterations; ++i)
+  // Controls early termination of the optimization process.
+  bool terminate = false;
+
+  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     currentObjective = f.EvaluateWithGradient(iterate, gradient);
+
+    terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
+        currentObjective, gradient, callbacks...);
 
     // Output current objective function.
     Info << "FrankWolfe::Optimize(): iteration " << i << ", objective "
         << currentObjective << "." << std::endl;
 
     // Solve linear constrained problem, solution saved in s.
-    linearConstrSolver.Optimize(gradient, s);
+    linearConstrSolver.Optimize(gradient, s, callbacks...);
 
     // Check duality gap for return condition.
     gap = std::fabs(dot(iterate - s, gradient));
@@ -74,18 +96,23 @@ Optimize(FunctionType& function, arma::mat& iterate)
     {
       Info << "FrankWolfe::Optimize(): minimized within tolerance "
           << tolerance << "; " << "terminating optimization." << std::endl;
+
+      Callback::EndOptimization(*this, f, iterate, callbacks...);
       return currentObjective;
     }
 
-
     // Update solution, save in iterateNew.
-    updateRule.Update(f, iterate, s, iterateNew, i);
+    updateRule.template Update<FunctionType, BaseMatType, BaseGradType>(f,
+        iterate, s, iterateNew, i);
 
     iterate = std::move(iterateNew);
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
   Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
       << ") reached; " << "terminating optimization." << std::endl;
+
+  Callback::EndOptimization(*this, f, iterate, callbacks...);
   return currentObjective;
 } // Optimize()
 

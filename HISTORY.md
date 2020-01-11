@@ -1,5 +1,81 @@
-### ensmallen ?.??.?: "???"
+### ensmallen ?.??.?
 ###### ????-??-??
+  * Allow callback instantiation for SGD based optimizer 
+    ([#138](https://github.com/mlpack/ensmallen/pull/155)).
+
+  * Minor test stability fixes on i386
+    ([#156](https://github.com/mlpack/ensmallen/pull/156)).
+
+### ensmallen 2.11.1: "The Poster Session Is Full"
+###### 2019-12-28
+  * Fix Lookahead Synchronization period type
+    ([#153](https://github.com/mlpack/ensmallen/pull/153)).
+
+### ensmallen 2.11.0: "The Poster Session Is Full"
+###### 2019-12-24
+  * Add Lookahead
+    ([#138](https://github.com/mlpack/ensmallen/pull/138)).
+
+  * Add AdaBound and AMSBound
+    ([#137](https://github.com/mlpack/ensmallen/pull/137)).
+
+### ensmallen 2.10.5: "Fried Chicken"
+###### 2019-12-13
+  * SGD callback test 32-bit safety (big number)
+    ([#143](https://github.com/mlpack/ensmallen/pull/143)).
+
+  * Use "arbitrary" and "separable" terms in static function type checks
+    ([#145](https://github.com/mlpack/ensmallen/pull/145)).
+
+  * Remove 'using namespace std' from `problems/` files
+    ([#147](https://github.com/mlpack/ensmallen/pull/147)).
+
+### ensmallen 2.10.4: "Fried Chicken"
+###### 2019-11-18
+  * Add optional tests building.
+    ([#141](https://github.com/mlpack/ensmallen/pull/141)).
+
+  * Make code samples collapsible in the documentation.
+    ([#140](https://github.com/mlpack/ensmallen/pull/140)).
+
+### ensmallen 2.10.3: "Fried Chicken"
+###### 2019-09-26
+  * Fix ParallelSGD runtime bug.
+    ([#135](https://github.com/mlpack/ensmallen/pull/135)).
+
+  * Add additional L-BFGS convergence check
+    ([#136](https://github.com/mlpack/ensmallen/pull/136)).
+
+### ensmallen 2.10.2: "Fried Chicken"
+###### 2019-09-11
+  * Add release script to rel/ for maintainers
+    ([#128](https://github.com/mlpack/ensmallen/pull/128)).
+
+  * Fix Armadillo version check
+    ([#133](https://github.com/mlpack/ensmallen/pull/133)).
+
+### ensmallen 2.10.1: "Fried Chicken"
+###### 2019-09-10
+  * Documentation fix for callbacks
+    ([#129](https://github.com/mlpack/ensmallen/pull/129).
+
+  * Compatibility fixes for ensmallen 1.x
+    ([#131](https://github.com/mlpack/ensmallen/pull/131)).
+
+### ensmallen 2.10.0: "Fried Chicken"
+###### 2019-09-07
+  * All `Optimize()` functions now take any matrix type; so, e.g., `arma::fmat`
+    or `arma::sp_mat` can be used for optimization.  See the documentation for
+    more details ([#113](https://github.com/mlpack/ensmallen/pull/113),
+    [#119](https://github.com/mlpack/ensmallen/pull/119)).
+
+  * Introduce callback support.  Callbacks can be appended as the last arguments
+    of an `Optimize()` call, and can perform custom behavior at different points
+    during the optimization.  See the documentation for more details
+    ([#119](https://github.com/mlpack/ensmallen/pull/119)).
+
+  * Slight speedups for `FrankWolfe` optimizer
+    ([#127](https://github.com/mlpack/ensmallen/pull/127)).
 
 ### ensmallen 1.16.2: "Loud Alarm Clock"
 ###### 2019-08-12

@@ -18,7 +18,8 @@ namespace ens {
 
 /**
  * Class to hold the information and operations of current atoms in the
- * soluton space.
+ * soluton space.  This is not fully templatized, and may cost some extra
+ * operations for the conversion.
  */
 class Atoms
 {
@@ -31,7 +32,7 @@ class Atoms
    * @param v new atom to be added.
    * @param c coefficient of the new atom.
    */
-  void AddAtom(const arma::vec& v, FuncSq& function, const double c = 0)
+  void AddAtom(const arma::mat& v, FuncSq& function, const double c = 0)
   {
     if (currentAtoms.is_empty())
     {
@@ -113,7 +114,7 @@ class Atoms
       // add an atom norm constraint, you could use projected gradient method,
       // see the implementaton of ProjectedGradientEnhancement().
       arma::vec newCoeffs =
-          solve(function.MatrixA() * newAtoms, function.Vectorb());
+          solve(function.MatrixA() * newAtoms, function.Vectorb(), arma::solve_opts::fast);
 
       // Evaluate the function again.
       double Fnew = function.Evaluate(newAtoms * newCoeffs);

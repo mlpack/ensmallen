@@ -45,57 +45,77 @@ class BarzilaiBorweinDecay
    *    stability).
    */
   BarzilaiBorweinDecay(const double maxStepSize = DBL_MAX,
-                       const double eps = 1e-7) :
-      eps(eps),
+                       const double epsilon = 1e-7) :
+      epsilon(epsilon),
       maxStepSize(maxStepSize)
   { /* Nothing to do. */}
 
-  /**
-   * The Initialize method is called by SVRG Optimizer method before the start
-   * of the iteration update process.
-   *
-   * @param rows Number of rows in the gradient matrix.
-   * @param cols Number of columns in the gradient matrix.
-   */
-  void Initialize(const size_t /* rows */, const size_t /* cols */)
-  { /* Do nothing. */ }
+  //! Get the numerical stability parameter.
+  double Epsilon() const { return epsilon; }
+  //! Modify the numerical stability parameter.
+  double& Epsilon() { return epsilon; }
+
+  //! Get the maximum step size.
+  double MaxStepSize() const { return maxStepSize; }
+  //! Modify the maximum step size.
+  double& MaxStepSize() { return maxStepSize; }
 
   /**
-   * Barzilai-Borwein update step for SVRG.
-   *
-   * @param iterate The current function parameter at time t.
-   * @param iterate0 The last function parameters at time t - 1.
-   * @param gradient The current gradient matrix at time t.
-   * @param fullGradient The computed full gradient.
-   * @param numBatches The number of batches.
-   * @param stepSize Step size to be used for the given iteration.
+   * The DecayPolicyType policy classes must contain an internal 'Policy'
+   * template class with two template arguments: MatType and GradType.  This is
+   * initialized at the start of the optimization, and holds parameters specific
+   * to an individual optimization.
    */
-  void Update(const arma::mat& iterate,
-              const arma::mat& iterate0,
-              const arma::mat& /* gradient */,
-              const arma::mat& fullGradient,
-              const size_t numBatches,
-              double& stepSize)
+  template<typename MatType, typename GradType>
+  class Policy
   {
-    if (!fullGradient0.is_empty())
-    {
-      // Step size selection based on Barzilai-Borwein (BB).
-      stepSize = std::pow(arma::norm(iterate - iterate0), 2.0) /
-          (arma::dot(iterate - iterate0, fullGradient - fullGradient0) + eps) /
-          (double) numBatches;
+   public:
+    /**
+     * This constructor is called by the SGD Optimize() method before the start
+     * of the iteration update process.
+     */
+    Policy(BarzilaiBorweinDecay& parent) : parent(parent) { /* Do nothing. */ }
 
-      stepSize = std::min(stepSize, maxStepSize);
+    /**
+     * Barzilai-Borwein update step for SVRG.
+     *
+     * @param iterate The current function parameter at time t.
+     * @param iterate0 The last function parameters at time t - 1.
+     * @param gradient The current gradient matrix at time t.
+     * @param fullGradient The computed full gradient.
+     * @param numBatches The number of batches.
+     * @param stepSize Step size to be used for the given iteration.
+     */
+    void Update(const MatType& iterate,
+                const MatType& iterate0,
+                const GradType& /* gradient */,
+                const GradType& fullGradient,
+                const size_t numBatches,
+                double& stepSize)
+    {
+      if (!fullGradient0.is_empty())
+      {
+        // Step size selection based on Barzilai-Borwein (BB).
+        stepSize = std::pow(arma::norm(iterate - iterate0), 2.0) /
+            (arma::dot(iterate - iterate0, fullGradient - fullGradient0) +
+             parent.epsilon) / (double) numBatches;
+
+        stepSize = std::min(stepSize, parent.maxStepSize);
+      }
+
+      fullGradient0 = std::move(fullGradient);
     }
 
-    fullGradient0 = std::move(fullGradient);
-  }
+   private:
+    //! Reference to instantiated parent object.
+    BarzilaiBorweinDecay& parent;
 
- private:
-  //! Locally-stored full gradient.
-  arma::mat fullGradient0;
+    //! Locally-stored full gradient.
+    GradType fullGradient0;
+  };
 
   //! The value used for numerical stability.
-  double eps;
+  double epsilon;
 
   //! The maximum step size.
   double maxStepSize;

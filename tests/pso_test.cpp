@@ -16,38 +16,77 @@
 
 using namespace ens;
 using namespace ens::test;
+<<<<<<< HEAD
 using namespace std::chrono; 
 
+||||||| merged common ancestors
+=======
+using namespace std;
+>>>>>>> 4a35fd6e1b9aeb3b66499b218ec6958851beb93c
 
 /**
- * Test the PSO optimizer on the Sphere Function.
+ * Test the PSO optimizer on the Sphere Function.  Use arma::mat.
  */
-
 TEST_CASE("LBestPSOSphereFunctionTest", "[PSOTest]")
 {
   SphereFunction f(4);
   LBestPSO s;
 
+<<<<<<< HEAD
   arma::vec coords = f.GetInitialPoint();
   auto start = high_resolution_clock::now();
+||||||| merged common ancestors
+  arma::vec coords = f.GetInitialPoint();
+=======
+  arma::mat coords = f.GetInitialPoint<arma::mat>();
+>>>>>>> 4a35fd6e1b9aeb3b66499b218ec6958851beb93c
   if (!s.Optimize(f, coords))
     FAIL("LBest PSO optimization reported failure for Sphere Function.");
+<<<<<<< HEAD
 
   auto stop = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>(stop - start);
 
+||||||| merged common ancestors
+  
+=======
+
+>>>>>>> 4a35fd6e1b9aeb3b66499b218ec6958851beb93c
   double finalValue = f.Evaluate(coords);
 
   REQUIRE(finalValue <= 1e-5);
   for (size_t j = 0; j < 4; ++j)
+<<<<<<< HEAD
     REQUIRE(coords[j] <= 1e-3);
   cout <<"Time of thread rosenbrock function (SPHERE FUNCTION): "<<duration.count()<<'\n';
+||||||| merged common ancestors
+    REQUIRE(coords[j] <= 1e-3);
+=======
+    REQUIRE(coords(j) <= 1e-3);
+>>>>>>> 4a35fd6e1b9aeb3b66499b218ec6958851beb93c
 }
 
 /**
- * Test the PSO optimizer on the Rosenbrock Function.
+ * Test the PSO optimizer on the Sphere Function.  Use arma::fmat.
  */
+TEST_CASE("LBestPSOSphereFunctionFMatTest", "[PSOTest]")
+{
+  SphereFunction f(4);
+  LBestPSO s;
 
+  arma::fmat coords = f.GetInitialPoint<arma::fmat>();
+  if (!s.Optimize(f, coords))
+    FAIL("LBest PSO optimization reported failure for Sphere Function.");
+
+  double finalValue = f.Evaluate(coords);
+  REQUIRE(finalValue <= 1e-5);
+  for (size_t j = 0; j < 4; ++j)
+    REQUIRE(coords(j) <= 1e-3);
+}
+
+/**
+ * Test the PSO optimizer on the Rosenbrock Function.  Use arma::mat.
+ */
 TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
 {
   RosenbrockFunction f;
@@ -56,16 +95,39 @@ TEST_CASE("LBestPSORosenbrockTest","[PSOTest]")
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(50);
-  upperBound.fill(60); 
+  upperBound.fill(60);
 
-  LBestPSO s(200, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
+  LBestPSO s(250, lowerBound, upperBound, 3000, 600, 1e-30, 2.05, 2.05);
   arma::vec coordinates = f.GetInitialPoint();
 
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-2));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-2));
+}
+
+/**
+ * Test the PSO optimizer on the Rosenbrock Function.  Use arma::fmat.
+ */
+TEST_CASE("LBestPSORosenbrockFMatTest","[PSOTest]")
+{
+  RosenbrockFunction f;
+
+  // Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(50);
+  upperBound.fill(60);
+
+  LBestPSO s(250, lowerBound, upperBound, 5000, 600, 1e-30, 2.05, 2.05);
+  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+
+  const double result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0.0).margin(1e-3));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-2));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-2));
 }
 
 /**
@@ -122,7 +184,6 @@ TEST_CASE("LBestPSORosenbrockThreadTest4","[PSOTest]")
  * Test the PSO optimizer on the Rosenbrock function with lowerBound and
  * upperbound of type double.
  */
-
 TEST_CASE("LBestPSORosenbrockDoubleTest","[PSOTest]")
 {
   RosenbrockFunction f;
@@ -131,14 +192,14 @@ TEST_CASE("LBestPSORosenbrockDoubleTest","[PSOTest]")
   double lowerBound = 50;
   double upperBound = 60;
 
-  LBestPSO s(64, lowerBound, upperBound, 3000, 400, 1e-30, 2.05, 2.05);
+  LBestPSO s(250, lowerBound, upperBound, 5000, 400, 1e-30, 2.05, 2.05);
   arma::vec coordinates = f.GetInitialPoint();
 
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates[0] == Approx(1.0).epsilon(1e-3));
-  REQUIRE(coordinates[1] == Approx(1.0).epsilon(1e-3));
+  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-3));
+  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-3));
 }
 
 /**
@@ -151,16 +212,16 @@ TEST_CASE("LBestPSOCrossInTrayFunctionTest", "[PSOTest]")
   // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
-  lowerBound.fill(8);
-  upperBound.fill(9);
+  lowerBound.fill(-1);
+  upperBound.fill(1);
 
-  LBestPSO s(500, lowerBound, upperBound);
+  LBestPSO s(500, lowerBound, upperBound, 6000, 400, 1e-30, 2.05, 2.05);
   arma::mat coordinates = arma::mat("10; 10");
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-2.06261).margin(0.01));
-  REQUIRE(abs(coordinates[0]) == Approx(1.34941).margin(0.01));
-  REQUIRE(abs(coordinates[1]) == Approx(1.34941).margin(0.01));
+  REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(0.01));
+  REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(0.01));
 }
 
 /**
@@ -181,8 +242,8 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0).margin(0.01));
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
 
 /**
@@ -204,8 +265,8 @@ TEST_CASE("LBestPSOBealeFunctionTest", "[PSOTest]")
   const double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0).margin(0.01));
-  REQUIRE(coordinates[0] == Approx(3).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0.5).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(3).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0.5).margin(0.01));
 }
 
 /**
@@ -226,8 +287,8 @@ TEST_CASE("LBestPSOGoldsteinPriceFunctionTest", "[PSOTest]")
   arma::mat coordinates = arma::mat("1; 0");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(-1).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(-1).margin(0.01));
 }
 
 /**
@@ -248,8 +309,8 @@ TEST_CASE("LBestPSOLevyFunctionN13Test", "[PSOTest]")
   arma::mat coordinates = arma::mat("3; 3");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(1).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(1).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(1).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(1).margin(0.01));
 }
 
 /**
@@ -270,8 +331,8 @@ TEST_CASE("LBestPSOHimmelblauFunctionTest", "[PSOTest]")
   arma::mat coordinates = arma::mat("2; 1");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(3.0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(2.0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(3.0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(2.0).margin(0.01));
 }
 
 /**
@@ -292,8 +353,29 @@ TEST_CASE("LBestPSOThreeHumpCamelFunctionTest", "[PSOTest]")
   arma::mat coordinates = arma::mat("2; 2");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
-  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
+}
+
+/**
+ * Test the PSO optimizer on Schaffer Function N.2.
+ */
+TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
+{
+  SchafferFunctionN2 f;
+
+  // Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(40);
+  upperBound.fill(50);
+
+  LBestPSO s(500, lowerBound, upperBound);
+  arma::mat coordinates = arma::mat("10; 10");
+  s.Optimize(f, coordinates);
+
+  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
 
 // TODO: With future improvements in metaheuristic optimisers in ensmallen,
@@ -305,22 +387,23 @@ TEST_CASE("LBestPSOThreeHumpCamelFunctionTest", "[PSOTest]")
 TEST_CASE("LBestPSOScafferFunctionN4Test", "[PSOTest]")
 {
   SchafferFunctionN4 f;
- 
+
   // Setting bounds for the initial swarm population.
   arma::vec lowerBound(2);
   arma::vec upperBound(2);
   lowerBound.fill(-0.01);
   upperBound.fill(1.5);
-  
+
   LBestPSO s(25000, lowerBound, upperBound, 4000, 40, 1e-40, 1.5, 1.0);
   arma::mat coordinates = arma::mat("0; 10");
   const double result = s.Optimize(f, coordinates);
-  
+
   REQUIRE(result == Approx(0.292579).margin(0.1));
-  REQUIRE(coordinates[0] == Approx(0).margin(0.1));
-  REQUIRE(abs(coordinates[1]) == Approx(1.25313).margin(0.1));
+  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+  REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
 }
 */
+<<<<<<< HEAD
 
 /**
  * Test the PSO optimizer on Schaffer Function N.2.
@@ -347,3 +430,27 @@ TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
   REQUIRE(coordinates[0] == Approx(0).margin(0.01));
   REQUIRE(coordinates[1] == Approx(0).margin(0.01));
 }
+||||||| merged common ancestors
+
+/**
+ * Test the PSO optimizer on Schaffer Function N.2.
+ */
+TEST_CASE("LBestPSOSchafferFunctionN2Test", "[PSOTest]")
+{
+  SchafferFunctionN2 f;
+
+  // Setting bounds for the initial swarm population.
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
+  lowerBound.fill(40);
+  upperBound.fill(50);
+
+  LBestPSO s(500, lowerBound, upperBound);
+  arma::mat coordinates = arma::mat("10; 10");
+  s.Optimize(f, coordinates);
+
+  REQUIRE(coordinates[0] == Approx(0).margin(0.01));
+  REQUIRE(coordinates[1] == Approx(0).margin(0.01));
+}
+=======
+>>>>>>> 4a35fd6e1b9aeb3b66499b218ec6958851beb93c

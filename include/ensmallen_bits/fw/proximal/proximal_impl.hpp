@@ -32,30 +32,31 @@ namespace ens {
  *
  * This is just a soft thresholding.
  */
-inline void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
+template<typename MatType>
+inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
 {
-  arma::vec simplexSol = arma::abs(v);
+  MatType simplexSol = arma::abs(v);
 
   // Already with L1 norm <= tau.
   if (arma::accu(simplexSol) <= tau)
     return;
 
   simplexSol = arma::sort(simplexSol, "descend");
-  arma::vec simplexSum = arma::cumsum(simplexSol);
+  MatType simplexSum = arma::cumsum(simplexSol);
 
   double nu = 0;
   size_t rho = 0;
   for (size_t j = 1; j <= simplexSol.n_rows; j++)
   {
     rho = simplexSol.n_rows - j;
-    nu = simplexSol(rho) - (simplexSum(rho) - tau)/(rho + 1);
+    nu = simplexSol(rho) - (simplexSum(rho) - tau) / (rho + 1);
     if (nu > 0)
       break;
   }
-  double theta = (simplexSum(rho) - tau)/rho;
+  double theta = (simplexSum(rho) - tau) / rho;
 
   // Threshold on absolute value of v with theta.
-  for (arma::uword j = 0; j< simplexSol.n_rows; j++)
+  for (arma::uword j = 0; j < simplexSol.n_rows; j++)
   {
     if (v(j) >= 0.0)
       v(j) = std::max(v(j) - theta, 0.0);
@@ -68,7 +69,8 @@ inline void Proximal::ProjectToL1Ball(arma::vec& v, double tau)
  * Approximate the vector v with a tau-sparse vector.
  * This is a hard-thresholding.
  */
-inline void Proximal::ProjectToL0Ball(arma::vec& v, int tau)
+template<typename MatType>
+inline void Proximal::ProjectToL0Ball(MatType& v, int tau)
 {
   arma::uvec indices = arma::sort_index(arma::abs(v));
   arma::uword numberToKill = v.n_elem - tau;

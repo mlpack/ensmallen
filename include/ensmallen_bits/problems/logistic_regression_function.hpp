@@ -26,19 +26,19 @@ template<typename MatType = arma::mat>
 class LogisticRegressionFunction
 {
  public:
-  LogisticRegressionFunction(const MatType& predictors,
-                             const arma::Row<size_t>& responses,
+  LogisticRegressionFunction(MatType& predictors,
+                             arma::Row<size_t>& responses,
                              const double lambda = 0);
 
-  LogisticRegressionFunction(const MatType& predictors,
-                             const arma::Row<size_t>& responses,
-                             const arma::vec& initialPoint,
+  LogisticRegressionFunction(MatType& predictors,
+                             arma::Row<size_t>& responses,
+                             MatType& initialPoint,
                              const double lambda = 0);
 
   //! Return the initial point for the optimization.
-  const arma::mat& InitialPoint() const { return initialPoint; }
+  const MatType& InitialPoint() const { return initialPoint; }
   //! Modify the initial point for the optimization.
-  arma::mat& InitialPoint() { return initialPoint; }
+  MatType& InitialPoint() { return initialPoint; }
 
   //! Return the regularization parameter (lambda).
   const double& Lambda() const { return lambda; }
@@ -51,7 +51,8 @@ class LogisticRegressionFunction
   const arma::Row<size_t>& Responses() const { return responses; }
 
   /**
-   * Shuffle the order of function visitation.  This may be called by the optimizer.
+   * Shuffle the order of function visitation.  This may be called by the
+   * optimizer.
    */
   void Shuffle();
 
@@ -66,7 +67,7 @@ class LogisticRegressionFunction
    *
    * @param parameters Vector of logistic regression parameters.
    */
-  double Evaluate(const arma::mat& parameters) const;
+  typename MatType::elem_type Evaluate(const MatType& parameters) const;
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
@@ -76,8 +77,8 @@ class LogisticRegressionFunction
    * correctly with the given parameters, then Evaluate() will return nan (this
    * is kind of a corner case and should not happen for reasonable models).
    *
-   * The optimum (minimum) of this function is 0.0, and occurs when the points are
-   * classified correctly with very high probability.
+   * The optimum (minimum) of this function is 0.0, and occurs when the points
+   * are classified correctly with very high probability.
    *
    * @param parameters Vector of logistic regression parameters.
    * @param begin Index of the starting point to use for objective function
@@ -85,9 +86,9 @@ class LogisticRegressionFunction
    * @param batchSize Number of points to be passed at a time to use for
    *     objective function evaluation.
    */
-  double Evaluate(const arma::mat& parameters,
-                  const size_t begin,
-                  const size_t batchSize = 1) const;
+  typename MatType::elem_type Evaluate(const MatType& parameters,
+                                       const size_t begin,
+                                       const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -96,7 +97,8 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param gradient Vector to output gradient into.
    */
-  void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
+  template<typename GradType>
+  void Gradient(const MatType& parameters, GradType& gradient) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -112,7 +114,7 @@ class LogisticRegressionFunction
    *     function gradient evaluation.
    */
   template<typename GradType>
-  void Gradient(const arma::mat& parameters,
+  void Gradient(const MatType& parameters,
                 const size_t begin,
                 GradType& gradient,
                 const size_t batchSize = 1) const;
@@ -128,7 +130,7 @@ class LogisticRegressionFunction
    *    be computed.
    * @param gradient Sparse matrix to output gradient into.
    */
-  void PartialGradient(const arma::mat& parameters,
+  void PartialGradient(const MatType& parameters,
                        const size_t j,
                        arma::sp_mat& gradient) const;
 
@@ -137,17 +139,19 @@ class LogisticRegressionFunction
    * log-likelihood function simultaneously with the given parameters.
    */
   template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
-                              GradType& gradient) const;
+  typename MatType::elem_type EvaluateWithGradient(
+      const MatType& parameters,
+      GradType& gradient) const;
 
   template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
-                              const size_t begin,
-                              GradType& gradient,
-                              const size_t batchSize = 1) const;
+  typename MatType::elem_type EvaluateWithGradient(
+      const MatType& parameters,
+      const size_t begin,
+      GradType& gradient,
+      const size_t batchSize = 1) const;
 
   //! Return the initial point for the optimization.
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
+  const MatType& GetInitialPoint() const { return initialPoint; }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }
@@ -166,13 +170,13 @@ class LogisticRegressionFunction
    *
    * @param predictors Input predictors.
    * @param responses Vector of responses.
-  * @param parameters Vector of logistic regression parameters.
+   * @param parameters Vector of logistic regression parameters.
    * @param decisionBoundary Decision boundary (default 0.5).
    * @return Percentage of responses that are predicted correctly.
    */
   double ComputeAccuracy(const MatType& predictors,
                          const arma::Row<size_t>& responses,
-                         const arma::mat& parameters,
+                         const MatType& parameters,
                          const double decisionBoundary = 0.5) const;
 
   /**
@@ -189,18 +193,18 @@ class LogisticRegressionFunction
    */
   void Classify(const MatType& dataset,
                 arma::Row<size_t>& labels,
-                const arma::mat& parameters,
+                const MatType& parameters,
                 const double decisionBoundary = 0.5) const;
 
  private:
   //! The initial point, from which to start the optimization.
-  arma::mat initialPoint;
+  MatType initialPoint;
   //! The matrix of data points (predictors).  This is an alias until shuffling
   //! is done.
-  MatType predictors;
+  MatType& predictors;
   //! The vector of responses to the input data points.  This is an alias until
   //! shuffling is done.
-  arma::Row<size_t> responses;
+  arma::Row<size_t>& responses;
   //! The regularization parameter for L2-regularization.
   double lambda;
 };
