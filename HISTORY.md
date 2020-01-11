@@ -6,6 +6,9 @@
   * Minor test stability fixes on i386
     ([#156](https://github.com/mlpack/ensmallen/pull/156)).
 
+  * Fix Lookahead MaxIterations() check.
+    ([#159](https://github.com/mlpack/ensmallen/pull/159)).
+
 ### ensmallen 2.11.1: "The Poster Session Is Full"
 ###### 2019-12-28
   * Fix Lookahead Synchronization period type
