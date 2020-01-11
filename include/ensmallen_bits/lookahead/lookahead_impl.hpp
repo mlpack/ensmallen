@@ -98,16 +98,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
 
   // Check if the optimizer implements HasMaxIterations() and override the
   // parameter with k.
-  if (traits::HasMaxIterationsSignature<BaseOptimizerType>::value)
-  {
-    baseOptimizer.MaxIterations() = k;
-  }
-  else
-  {
-    Warn << "The base optimizer does not have a definition of "
-        << "MaxIterations(), the base optimizer will have its configuration "
-        << "unchanged.";
-  }
+  SetMaxIterations(baseOptimizer, k);
 
   // Check if the optimizer implements ResetPolicy() and override the reset
   // policy.
