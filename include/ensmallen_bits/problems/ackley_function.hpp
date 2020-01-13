@@ -47,7 +47,8 @@ class AckleyFunction
    * @param c Multiplicative constant with a default value of 2 * pi.
    * @param epsilon Coefficient to avoid division by zero (numerical stability).
    */
-  AckleyFunction(const double c = 2 * arma::datum::pi,
+  AckleyFunction(const double n = 2,
+                 const double c = 2 * arma::datum::pi,
                  const double epsilon = 1e-8);
 
   /**
