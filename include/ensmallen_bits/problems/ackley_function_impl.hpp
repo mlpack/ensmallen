@@ -18,8 +18,10 @@
 namespace ens {
 namespace test {
 
-inline AckleyFunction::AckleyFunction(const double c, const double epsilon) :
-    c(c), epsilon(epsilon)
+inline AckleyFunction::AckleyFunction(const size_t n,
+                                      const double c,
+                                      const double epsilon) :
+    n(n), c(c), epsilon(epsilon)
 { /* Nothing to do here */}
 
 inline void AckleyFunction::Shuffle() { /* Nothing to do here */ }

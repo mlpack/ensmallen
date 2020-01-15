@@ -44,10 +44,11 @@ class AckleyFunction
   /**
    * Initialize the AckleyFunction.
    *
+   * @param n Number of dimensions of the objective function to be optimized.
    * @param c Multiplicative constant with a default value of 2 * pi.
    * @param epsilon Coefficient to avoid division by zero (numerical stability).
    */
-  AckleyFunction(const double n = 2,
+  AckleyFunction(const size_t n = 2,
                  const double c = 2 * arma::datum::pi,
                  const double epsilon = 1e-8);
 
@@ -62,7 +63,7 @@ class AckleyFunction
 
   //! Get the starting point.
   template<typename MatType = arma::mat>
-  MatType GetInitialPoint() const { return MatType("-5.0; 5.0"); }
+  MatType GetInitialPoint() const { return 5.0 * arma::ones<MatType>(n); }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -107,6 +108,11 @@ class AckleyFunction
   template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient);
 
+  //! Get the value used for n.
+  size_t NumDimensions() const { return n; }
+  //! Modify the value used for n.
+  size_t& NumDimensions() { return n; }
+
   //! Get the value used for c.
   double MultiplicativeConstant() const { return c; }
   //! Modify the value used for c.
@@ -118,6 +124,8 @@ class AckleyFunction
   double& Epsilon() { return epsilon; }
 
  private:
+  //! The number of dimensions.
+  size_t n;
   //! The value of the multiplicative constant.
   double c;
   //! The value used for numerical stability.
