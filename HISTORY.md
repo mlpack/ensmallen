@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.11.2: "The Poster Session Is Full"
 ###### 2020-01-16
   * Allow callback instantiation for SGD based optimizer 
