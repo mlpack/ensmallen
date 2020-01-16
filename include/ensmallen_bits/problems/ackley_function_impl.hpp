@@ -35,13 +35,21 @@ typename MatType::elem_type AckleyFunction::Evaluate(
   // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
 
-  // For convenience; we assume these temporaries will be optimized out.
-  const ElemType x1 = coordinates(0);
-  const ElemType x2 = coordinates(1);
+  // Aliases to help calculate the result. 
+  // Sum of quadratic terms.
+  ElemType quadSum = 0.0;
+  //Sum of cosine terms.
+  ElemType cosSum = 0.0;
+  
+  for (size_t i = 0; i < n; i++)
+  {	
+    quadSum += coordinates(i) * coordinates(i);
+    cosSum += std::cos(c * coordinates(i));
+  }
 
-  const ElemType objective = -20 * std::exp(
-      -0.2 * std::sqrt(0.5 * (x1 * x1 + x2 * x2))) -
-      std::exp(0.5 * (std::cos(c * x1) + std::cos(c * x2))) + std::exp(1) + 20;
+  const ElemType objective = -20 * std::exp(-0.2 * std::sqrt(0.5 * quadSum)) -
+                             std::exp(0.5 * cosSum) +
+                             std::exp(1) + 20;
 
   return objective;
 }

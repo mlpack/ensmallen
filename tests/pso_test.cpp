@@ -157,6 +157,30 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
   upperBound.fill(5);
 
   LBestPSO s(64, lowerBound, upperBound);
+  arma::mat coordinates = f.GetInitialPoint();
+
+  const double result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(0).margin(0.01));
+
+  for (size_t i = 0; i < 10; i++)
+    REQUIRE(coordinates(i) == Approx(0).margin(0.01));
+}
+
+/**
+ * Test the PSO optimizer a high-dimensional Ackley Function.
+ */
+TEST_CASE("LBestPSOHighAckleyFunctionTest", "[PSOTest]")
+{
+  AckleyFunction f(10);
+
+  // Setting bounds for the initial swarm population.
+  arma::vec lowerBound(10);
+  arma::vec upperBound(10);
+  lowerBound.fill(4);
+  upperBound.fill(5);
+
+  LBestPSO s(1000, lowerBound, upperBound);
   arma::mat coordinates = arma::mat("5; 5");
   const double result = s.Optimize(f, coordinates);
 
@@ -164,6 +188,7 @@ TEST_CASE("LBestPSOAckleyFunctionTest", "[PSOTest]")
   REQUIRE(coordinates(0) == Approx(0).margin(0.01));
   REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
+
 
 /**
  * Test the PSO optimizer on the Beale Function.
