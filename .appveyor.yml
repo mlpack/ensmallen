@@ -54,4 +54,4 @@ build_script:
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
   # Run tests.
-  - ctest -C Release .
+  - ctest -C Release -V --output-on-failure .
