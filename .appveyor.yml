@@ -53,5 +53,7 @@ build_script:
     "%MSBUILD%" "ensmallen.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
-  # Run tests.
+  # Run tests after copying libraries.
+  - sh: cp %ARMADILLO_LIBRARY% .
+  - sh: cp %BLAS_LIBRARY% .
   - ctest -C Release -V --output-on-failure .
