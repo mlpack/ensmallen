@@ -135,7 +135,7 @@ inline typename MatType::elem_type GockenbachFunction::EvaluateConstraint(
     case 1: // h(x) = (x_3 - x_1^2) >= 0
       // To deal with the inequality, the constraint will simply evaluate to 0
       // when h(x) >= 0.
-      constraint = std::min(0.0,
+      constraint = std::min(typename MatType::elem_type(0),,
           (coordinates[2] - std::pow(coordinates[0], 2)));
       break;
   }
