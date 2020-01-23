@@ -23,7 +23,9 @@ using namespace std;
 TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 {
   SchafferFunctionN1<arma::mat> SCH;
-  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6);
+  arma::vec lowerBound("-1000 -1000");
+  arma::vec upperBound("1000 1000");
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
   arma::mat coords = SCH.GetInitialPoint();
   std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
@@ -49,7 +51,9 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
 {
   FonsecaFlemmingFunction<arma::mat> FON;
-  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6);
+  arma::vec lowerBound("-4 -4");
+  arma::vec upperBound("4 4");
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
   arma::mat coords = FON.GetInitialPoint();
   std::vector<arma::mat> bestFront = opt.Optimize(FON, coords);
