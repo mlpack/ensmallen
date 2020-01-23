@@ -1098,7 +1098,7 @@ class SquaredFunction
 
 int main()
 {
-  // The minimum is at x = [0 0 0].  Our initial point is chosen to be 
+  // The minimum is at x = [0 0 0].  Our initial point is chosen to be
   // [1.0, -1.0, 1.0].
   arma::fmat x("1.0 -1.0 1.0");
 
@@ -1144,3 +1144,36 @@ including ensmallen:
 This can be useful for situations where you know that the checks should be
 ignored.  However, be aware that the code may fail to compile and give more
 confusing and difficult error messages!
+
+## Multi-objective functions
+
+A multi-objective is a set of functions or objectives that are simultaneousy
+being optimised for. For this, a class with the following API must be
+implemented:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+class ArbitraryMultiObjectiveFunction
+{
+ public:
+  // This should return a column vector of the evaulated objectives.
+  arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords);
+
+  // This should return the starting point for the optimization.
+  MatType GetInitialPoint();
+
+  // This should return the number of simultaneous objectives being optimized.
+  size_t NumObjectives();
+};
+```
+
+</details>
+
+The [NSGA2](#nsga2) optimizer can be used to optmize these kinds of functions.
+
+Each of these optimizers has an Optimize() function that is called as Optimize(f, x, l, u) where f is the function to be optimized (which implements Evaluate()) and x holds the initial point of the optimization. After Optimize() is called, x will hold the final result of the optimization (that is, the best x found that minimizes f(x)). The lower and upper bounds for the coordinates are l and u respectively.
+
+The Schaffer N.1 function and the Fonseca Flemming function are examples of these types of functions.
