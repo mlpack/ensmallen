@@ -56,4 +56,5 @@ build_script:
   # Run tests after copying libraries.
   - sh: cp %ARMADILLO_LIBRARY% .
   - sh: cp %BLAS_LIBRARY% .
+  - dumpbin.exe /DEPENDENTS ensmallen_tests
   - ctest -C Release -V --output-on-failure .
