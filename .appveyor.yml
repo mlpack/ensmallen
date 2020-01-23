@@ -2,6 +2,7 @@ environment:
   ARMADILLO_DOWNLOAD: "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
   ARMADILLO_LIBRARY: "C:/projects/mlpack/armadillo-8.400.0/build/Debug/armadillo.lib"
   BLAS_LIBRARY: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a"
+  BLAS_LIBRARY_DLL: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll"
 
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -54,7 +55,7 @@ build_script:
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
   # Run tests after copying libraries.
-  - sh: cp %ARMADILLO_LIBRARY% .
-  - sh: cp %BLAS_LIBRARY% .
+  - sh: cp %BLAS_LIBRARY_DLL% .
   - ps: pushd "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"; .\dumpbin.exe /dependents $env:APPVEYOR_BUILD_FOLDER"\build\Release\ensmallen_tests.exe"; popd
+  - dir
   - ctest -C Release -V --output-on-failure .
