@@ -1572,9 +1572,8 @@ NSGA2 (Non-dominated Sorting Genetic Algorithm - II) is a multi-objective optimi
 #### Constructors
 
  * `NSGA2()`
- * `NSGA2(`_`populationSize, maxGenerations`_`)`
- * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength`_`)`
- * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, epsilon`_`)`
+ * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, epsilon, lowerBound, upperBound`_`)`
+
 
 #### Attributes
 
@@ -1586,9 +1585,12 @@ NSGA2 (Non-dominated Sorting Genetic Algorithm - II) is a multi-objective optimi
 | `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
 | `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
 | `double` | **`epsilon`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-6` |
+| `arma::vec` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
+| `arma::vec` | **`upperBound`** | Lower bound of the coordinates of the initial population. | `1` |
+
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()` and `Epsilon()`.
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
 
 #### Examples:
 
@@ -1598,10 +1600,12 @@ Attributes of the optimizer may also be changed via the member methods
 
 ```c++
 SchafferFunctionN1<arma::mat> SCH;
-arma::mat coords = SCH.GetInitialPoint();
+  arma::vec lowerBound("-1000 -1000");
+  arma::vec upperBound("1000 1000");
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
-NSGA2 optimizer(20, 1000, 0.6, 0.3, 0.01, 1e-6);
-std::vector<arma::mat> bestFront = optimizer.Optimize(SCH, coords);
+  arma::mat coords = SCH.GetInitialPoint();
+  std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
 ```
 
 </details>
