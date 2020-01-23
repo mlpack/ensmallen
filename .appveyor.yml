@@ -56,5 +56,5 @@ build_script:
   # Run tests after copying libraries.
   - sh: cp %ARMADILLO_LIBRARY% .
   - sh: cp %BLAS_LIBRARY% .
-  - ps: pushd "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"; .\dumpbin.exe /dependents $env:APPVEYOR_BUILD_FOLDER"\build/ensmallen_tests"; popd
+  - ps: pushd "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"; .\dumpbin.exe /dependents $env:APPVEYOR_BUILD_FOLDER"\build\Release\ensmallen_tests"; popd
   - ctest -C Release -V --output-on-failure .
