@@ -66,38 +66,6 @@ class FonsecaFlemmingFunction
   //! Number of objectives to optimize
   size_t NumObjectives() const { return numObjectives; }
 
-  /**
-   * Get the upper bound for a particular objective
-   *
-   * @param objectiveNumber The objective for which to get the bound for.
-   * @return double
-   */
-  double GetMaximum(size_t objectiveNumber)
-  {
-    if (objectiveNumber != 0 && objectiveNumber != 1)
-    {
-      throw std::logic_error("FonsecaFlemmingFunction::GetMaximum() objectiveNumber"
-          " must be either 0 or 1");
-    }
-    return 4;
-  }
-
-  /**
-   * Get the lower bound for a particular objective
-   *
-   * @param objectiveNumber The objective for which to get the bound for.
-   * @return double
-   */
-  double GetMinimum(size_t objectiveNumber)
-  {
-    if (objectiveNumber != 0 && objectiveNumber != 1)
-    {
-      throw std::logic_error("FonsecaFlemmingFunction::GetMinimum() objectiveNumber"
-          " must be either 0 or 1");
-    }
-    return -4;
-  }
-
  private:
   size_t numObjectives;
   size_t numVariables;

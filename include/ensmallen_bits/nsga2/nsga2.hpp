@@ -67,13 +67,17 @@ class NSGA2 {
    * @param mutationStrength The strength of the mutation.
    * @param epsilon The minimum difference required to distinguish between
    *     candidate solutions.
+   * @param lowerBound Lower bound of the coordinates of the initial population.
+   * @param upperBound Upper bound of the coordinates of the initial population.
    */
   NSGA2(const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
         const double mutationProb = 0.3,
         const double mutationStrength = 1e-3,
-        const double epsilon = 1e-6);
+        const double epsilon = 1e-6,
+        const arma::vec lowerBound = arma::ones(1, 1),
+        const arma::vec upperBound = arma::ones(1, 1));
 
   /**
    * Optimize a set of objectives. The initial population is generated using the
@@ -149,11 +153,15 @@ class NSGA2 {
    * @tparam MultiobjectiveFunctionType A generic multi-objective function.
    * @param population The elite population.
    * @param objectives The set of objectives.
+   * @param lowerBound Lower bound of the coordinates of the initial population.
+   * @param upperBound Upper bound of the coordinates of the initial population.
    */
   template<typename MatType,
            typename MultiobjectiveFunctionType>
   void BinaryTournamentSelection(std::vector<MatType>& population,
-                                 MultiobjectiveFunctionType& objectives);
+                                 MultiobjectiveFunctionType& objectives,
+                                 const arma::vec& lowerBound,
+                                 const arma::vec& upperBound);
 
   /**
    * Crossover two parents to create a pair of new children.
@@ -176,10 +184,15 @@ class NSGA2 {
    * @tparam MultiobjectiveFunctionType A generic multi-objective function.
    * @param child The candidate whose coordinates are being modified.
    * @param objectives The set of objectives.
+   * @param lowerBound Lower bound of the coordinates of the initial population.
+   * @param upperBound Upper bound of the coordinates of the initial population.
    */
   template<typename MatType,
            typename MultiobjectiveFunctionType>
-  void Mutate(MatType& child, MultiobjectiveFunctionType& objectives);
+  void Mutate(MatType& child,
+              MultiobjectiveFunctionType& objectives,
+              const arma::vec& lowerBound,
+              const arma::vec& upperBound);
 
   /**
    * Sort the candidate population using their domination count and the set of
@@ -223,11 +236,15 @@ class NSGA2 {
    * @param front The previously generated Pareto fronts.
    * @param objectives The set of objectives.
    * @param crowdingDistance The previously calculated objectives.
+   * @param lowerBound Lower bound of the coordinates of the initial population.
+   * @param upperBound Upper bound of the coordinates of the initial population.
    */
   template<typename MultiobjectiveFunctionType>
   void CrowdingDistanceAssignment(const std::vector<size_t>& front,
                                   MultiobjectiveFunctionType& objectives,
-                                  std::vector<double>& crowdingDistance);
+                                  std::vector<double>& crowdingDistance,
+                                  const arma::vec& lowerBound,
+                                  const arma::vec& upperBound);
 
   /**
    * The operator used in the crowding distance based sorting.
@@ -266,6 +283,12 @@ class NSGA2 {
 
   //! The tolerance for termination.
   double epsilon;
+
+  //! Lower bound of the initial swarm.
+  arma::mat lowerBound;
+
+  //! Upper bound of the initial swarm.
+  arma::mat upperBound;
 };
 
 } // namespace ens
