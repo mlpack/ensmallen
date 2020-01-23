@@ -128,6 +128,16 @@ class NSGA2 {
   //! Modify the tolerance.
   double& Epsilon() { return epsilon; }
 
+  //! Retrieve value of lowerBound.
+  const arma::vec& LowerBound() const { return lowerBound; }
+  //! Modify value of lowerBound.
+  arma::vec& LowerBound() { return lowerBound; }
+
+  //! Retrieve value of upperBound.
+  const arma::vec& UpperBound() const { return upperBound; }
+  //! Modify value of upperBound.
+  arma::vec& UpperBound() { return upperBound; }
+
  private:
   /**
    * Evulate objectives for the elite population.
@@ -285,10 +295,10 @@ class NSGA2 {
   double epsilon;
 
   //! Lower bound of the initial swarm.
-  arma::mat lowerBound;
+  arma::vec lowerBound;
 
   //! Upper bound of the initial swarm.
-  arma::mat upperBound;
+  arma::vec upperBound;
 };
 
 } // namespace ens
