@@ -55,8 +55,6 @@ build_script:
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
   # Run tests after copying libraries.
-  - ps: pushd "$env:APPVEYOR_BUILD_FOLDER/OpenBlas.0.2.14.1/lib/native/lib/x64/"; dir; popd
-  - ps: cp "$env:BLAS_LIBRARY_DLL" "$env:APPVEYOR_BUILD_FOLDER/build/Release/"
-  - ps: pushd "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"; .\dumpbin.exe /dependents $env:APPVEYOR_BUILD_FOLDER"\build\Release\ensmallen_tests.exe"; popd
+  - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
   - dir
   - ctest -C Release -V --output-on-failure .
