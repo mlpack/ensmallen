@@ -56,6 +56,5 @@ build_script:
 
   # Run tests after copying libraries.
   - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
-  - dir
-  - ctest -C Release -V --output-on-failure .
   - Release\ensmallen_tests.exe SWATSStyblinskiTangFunctionFMatTest
+  - ctest -C Release -V --output-on-failure .
