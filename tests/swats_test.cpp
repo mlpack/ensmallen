@@ -83,8 +83,8 @@ TEST_CASE("SWATSStyblinskiTangFunctionFMatTest", "[SWATSTest]")
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
+  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.1));
+  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.1));
 }
 
 #if ARMA_VERSION_MAJOR > 9 ||\
