@@ -13,6 +13,8 @@
 #ifndef ENSMALLEN_PROBLEMS_FONSECA_FLEEMING_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_FONSECA_FLEEMING_FUNCTION_HPP
 
+#include <tuple>
+
 namespace ens {
 namespace test {
 
@@ -32,6 +34,30 @@ namespace test {
 template<typename MatType = arma::mat>
 class FonsecaFlemmingFunction
 {
+ private:
+  size_t numObjectives;
+  size_t numVariables;
+
+  struct ObjectiveA
+  {
+    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+    {
+        return 1.0f - exp(- pow(coords[0] - 1.0f/sqrt(3), 2) -
+            - pow(coords[1] - 1.0f/sqrt(3), 2)
+            - pow(coords[0] - 1.0f/sqrt(3), 2));
+    }
+  } objectiveA;
+
+  struct ObjectiveB
+  {
+    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+    {
+        return 1.0f - exp(- pow(coords[0] + 1.0f/sqrt(3), 2) -
+            - pow(coords[1] + 1.0f/sqrt(3), 2)
+            - pow(coords[0] + 1.0f/sqrt(3), 2));
+    }
+  } objectiveB;
+
  public:
   FonsecaFlemmingFunction() : numObjectives(2), numVariables(3)
   {/* Nothing to do here. */}
@@ -49,10 +75,8 @@ class FonsecaFlemmingFunction
 
     arma::Col<ElemType> objectives(numObjectives);
 
-    objectives(0) = 1.0f - exp(- pow(coords[0] - 1.0f/sqrt(3), 2) -
-        - pow(coords[1] - 1.0f/sqrt(3), 2) - pow(coords[0] - 1.0f/sqrt(3), 2));
-    objectives(1) = 1.0f - exp(- pow(coords[0] + 1.0f/sqrt(3), 2) -
-        - pow(coords[1] + 1.0f/sqrt(3), 2) - pow(coords[0] + 1.0f/sqrt(3), 2));
+    objectives(0) = objectiveA.Evaluate(coords);
+    objectives(1) = objectiveB.Evaluate(coords);
 
     return objectives;
   }
@@ -63,12 +87,11 @@ class FonsecaFlemmingFunction
     return arma::vec(numVariables, 1, arma::fill::zeros);
   }
 
-  //! Number of objectives to optimize
-  size_t NumObjectives() const { return numObjectives; }
-
- private:
-  size_t numObjectives;
-  size_t numVariables;
+  //! Get objective functions.
+  std::tuple<ObjectiveA, ObjectiveB> GetObjectives()
+  {
+    return std::make_tuple(objectiveA, objectiveB);
+  }
 };
 } // namespace test
 } // namespace ens
