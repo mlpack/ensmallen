@@ -41,10 +41,10 @@ inline NSGA2::NSGA2(const size_t populationSize,
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template<typename MultiobjectiveFunctionType,
-         typename MatType,
+template<typename MatType,
+         typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
+std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
                                      MatType& iterate,
                                      CallbackTypes&&... callbacks)
 {
@@ -54,6 +54,9 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
     throw std::logic_error("NSGA2::Optimize(): population size should be at"
         " least 4, and, a multiple of 4!");
   }
+
+  // TODO: Does not work presently "implicit instantiation of undefined template"
+  numObjectives = std::tuple_size<decltype(objectives)>::value;
 
   // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
@@ -101,7 +104,7 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
 
     // Create new population of candidate from the present elite population
     // Have P_t, generate G_t using P_t
-    BinaryTournamentSelection(population, objectives, lowerBound, upperBound);
+    BinaryTournamentSelection(population, lowerBound, upperBound);
 
     // Evaluate the objectives for the new population
     calculatedObjectives.resize(population.size());
@@ -116,7 +119,6 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
 
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
       CrowdingDistanceAssignment(fronts[fNum],
-                                 objectives,
                                  crowdingDistance,
                                  lowerBound,
                                  upperBound);
@@ -165,22 +167,21 @@ std::vector<MatType> NSGA2::Optimize(MultiobjectiveFunctionType& objectives,
 }
 
 //! Evaluate the objectives for the entire population.
-template<typename MultiobjectiveFunctionType,
-         typename MatType>
+template<typename MatType,
+         typename ...ArbitraryFunctionType>
 inline void NSGA2::EvaluateObjectives(
     std::vector<MatType>& population,
-    MultiobjectiveFunctionType& objectives,
+    std::tuple<ArbitraryFunctionType...>& objectives,
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
 {
-  for (size_t i = 0; i < populationSize; i++)
-    calculatedObjectives[i] = objectives.Evaluate(population[i]);
+  // TODO: The std::get<> needs compile time constant indices!
+  for (size_t i = 0; i < numObjectives; i++)
+    calculatedObjectives[i] = std::get<i>(objectives).Evaluate(population[i]);
 }
 
 //! Reproduce and generate new candidates
-template<typename MatType,
-         typename MultiobjectiveFunctionType>
+template<typename MatType>
 inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
-                                             MultiobjectiveFunctionType& objectives,
                                              const arma::vec& lowerBound,
                                              const arma::vec& upperBound)
 {
@@ -208,9 +209,9 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
     Crossover(childA, childB, population[indexA], population[indexB]);
 
     Info << "NSGA2::BinaryTournamentSelection() Mutate(A)" << std::endl;
-    Mutate(childA, objectives, lowerBound, upperBound);
+    Mutate(childA, lowerBound, upperBound);
     Info << "NSGA2::BinaryTournamentSelection() Mutate(B)" << std::endl;
-    Mutate(childB, objectives, lowerBound, upperBound);
+    Mutate(childB, lowerBound, upperBound);
 
     // Add the children to the candidate population.
     children.push_back(childA);
@@ -238,10 +239,8 @@ inline void NSGA2::Crossover(MatType& childA,
 }
 
 //! Perform mutation of the candidates weights with some noise.
-template<typename MatType,
-         typename MultiobjectiveFunctionType>
+template<typename MatType>
 inline void NSGA2::Mutate(MatType& child,
-                          MultiobjectiveFunctionType& objectives,
                           const arma::vec& lowerBound,
                           const arma::vec& upperBound)
 {
@@ -249,7 +248,7 @@ inline void NSGA2::Mutate(MatType& child,
       (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 
   // constrain all genes to be between bounds
-  for (size_t idx = 0; idx < objectives.NumObjectives(); idx++)
+  for (size_t idx = 0; idx < numObjectives; idx++)
   {
     if (child[idx] < lowerBound(idx))
       child[idx] = lowerBound(idx);
@@ -343,9 +342,7 @@ inline bool NSGA2::Dominates(
 }
 
 //! Assign crowding distance to the population.
-template<typename MultiobjectiveFunctionType>
 inline void NSGA2::CrowdingDistanceAssignment(const std::vector<size_t>& front,
-                                              MultiobjectiveFunctionType& objectives,
                                               std::vector<double>& crowdingDistance,
                                               const arma::vec& lowerBound,
                                               const arma::vec& upperBound)
@@ -357,7 +354,7 @@ inline void NSGA2::CrowdingDistanceAssignment(const std::vector<size_t>& front,
 
     size_t fSize = front.size();
 
-    for (size_t m = 0; m < objectives.NumObjectives(); m++)
+    for (size_t m = 0; m < numObjectives; m++)
     {
       crowdingDistance[front[0]] = upperBound(m);
       crowdingDistance[front[fSize - 1]] = upperBound(m);

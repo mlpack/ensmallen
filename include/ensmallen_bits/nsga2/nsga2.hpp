@@ -83,7 +83,7 @@ class NSGA2 {
    * Optimize a set of objectives. The initial population is generated using the
    * starting point. The output is the best generated front.
    *
-   * @tparam MultiobjectiveFunctionType A generic multi-objective function.
+   * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
    * @tparam MatType Type of matrix to optimize.
    * @tparam CallbackTypes Types of callback functions.
    * @param objectives Vector of objective functions to optimize for.
@@ -91,10 +91,10 @@ class NSGA2 {
    * @param callbacks Callback functions.
    * @return std::vector<MatType> The best front obtained after optimization.
    */
-  template<typename MultiobjectiveFunctionType,
-           typename MatType,
+  template<typename MatType,
+           typename... ArbitraryFunctionType,
            typename... CallbackTypes>
-  std::vector<MatType> Optimize(MultiobjectiveFunctionType& objectives,
+  std::vector<MatType> Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
                                 MatType& iterate,
                                 CallbackTypes&&... callbacks);
 
@@ -142,17 +142,17 @@ class NSGA2 {
   /**
    * Evulate objectives for the elite population.
    *
-   * @tparam MultiobjectiveFunctionType A generic multi-objective function.
+   * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
    * @tparam MatType Type of matrix to optimize.
    * @param population The elite population.
    * @param objectives The set of objectives.
    * @param calculatedObjectives Vector to store calculated objectives.
    */
-  template<typename MultiobjectiveFunctionType,
-           typename MatType>
+  template<typename MatType,
+           typename... ArbitraryFunctionType>
   void EvaluateObjectives(
       std::vector<MatType>& population,
-      MultiobjectiveFunctionType& objectives,
+      std::tuple<ArbitraryFunctionType...>& objectives,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
 
   /**
@@ -160,16 +160,13 @@ class NSGA2 {
    * population.
    *
    * @tparam MatType Type of matrix to optimize.
-   * @tparam MultiobjectiveFunctionType A generic multi-objective function.
    * @param population The elite population.
    * @param objectives The set of objectives.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType,
-           typename MultiobjectiveFunctionType>
+  template<typename MatType>
   void BinaryTournamentSelection(std::vector<MatType>& population,
-                                 MultiobjectiveFunctionType& objectives,
                                  const arma::vec& lowerBound,
                                  const arma::vec& upperBound);
 
@@ -191,16 +188,13 @@ class NSGA2 {
   /**
    * Mutate the coordinates for a candidate.
    * @tparam MatType Type of matrix to optimize.
-   * @tparam MultiobjectiveFunctionType A generic multi-objective function.
    * @param child The candidate whose coordinates are being modified.
    * @param objectives The set of objectives.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType,
-           typename MultiobjectiveFunctionType>
+  template<typename MatType>
   void Mutate(MatType& child,
-              MultiobjectiveFunctionType& objectives,
               const arma::vec& lowerBound,
               const arma::vec& upperBound);
 
@@ -242,16 +236,13 @@ class NSGA2 {
   /**
    * Assigns crowding distance metric for sorting.
    *
-   * @tparam MultiobjectiveFunctionType A generic multi-objective function.
    * @param front The previously generated Pareto fronts.
    * @param objectives The set of objectives.
    * @param crowdingDistance The previously calculated objectives.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MultiobjectiveFunctionType>
   void CrowdingDistanceAssignment(const std::vector<size_t>& front,
-                                  MultiobjectiveFunctionType& objectives,
                                   std::vector<double>& crowdingDistance,
                                   const arma::vec& lowerBound,
                                   const arma::vec& upperBound);
@@ -275,6 +266,9 @@ class NSGA2 {
                         size_t idxQ,
                         const std::vector<size_t>& ranks,
                         const std::vector<double>& crowdingDistance);
+
+  //! The number of objectives being optimised for
+  size_t numObjectives;
 
   //! The number of candidates in the population.
   size_t populationSize;

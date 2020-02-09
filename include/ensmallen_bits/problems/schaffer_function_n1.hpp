@@ -62,9 +62,6 @@ class SchafferFunctionN1
     return arma::vec(numVariables, 1, arma::fill::zeros);
   }
 
-  //! Number of objectives to optimize
-  size_t NumObjectives() const { return numObjectives; }
-
  private:
   size_t numObjectives;
   size_t numVariables;
