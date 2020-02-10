@@ -1605,7 +1605,9 @@ SchafferFunctionN1<arma::mat> SCH;
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
   arma::mat coords = SCH.GetInitialPoint();
-  std::vector<arma::mat> bestFront = opt.Optimize(SCH, coords);
+  auto objectives = SCH.GetObjectives();
+
+  std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
 ```
 
 </details>
