@@ -152,9 +152,9 @@ class NSGA2 {
            typename MatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>& population,
-                     std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<double> >& calculatedObjectives);
+  EvaluateObjectives(std::vector<MatType>&,
+                     std::tuple<ArbitraryFunctionType...>&,
+                     std::vector<arma::Col<double> >&);
 
   template<std::size_t I = 0,
          typename MatType,
