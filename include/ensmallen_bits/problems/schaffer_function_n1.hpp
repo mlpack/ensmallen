@@ -32,6 +32,26 @@ namespace test {
 template<typename MatType = arma::mat>
 class SchafferFunctionN1
 {
+ private:
+  size_t numObjectives;
+  size_t numVariables;
+
+  struct ObjectiveA
+  {
+    typename MatType::elem_type Evaluate(const MatType& coords)
+    {
+        return std::pow(coords[0], 2);
+    }
+  } objectiveA;
+
+  struct ObjectiveB
+  {
+    typename MatType::elem_type Evaluate(const MatType& coords)
+    {
+        return std::pow(coords[0] - 2, 2);
+    }
+  } objectiveB;
+
  public:
  //! Initialize the SchafferFunctionN1
   SchafferFunctionN1() : numObjectives(2), numVariables(1)
@@ -62,9 +82,11 @@ class SchafferFunctionN1
     return arma::vec(numVariables, 1, arma::fill::zeros);
   }
 
- private:
-  size_t numObjectives;
-  size_t numVariables;
+  //! Get objective functions.
+  std::tuple<ObjectiveA, ObjectiveB> GetObjectives()
+  {
+    return std::make_tuple(objectiveA, objectiveB);
+  }
 };
 } // namespace test
 } // namespace ens
