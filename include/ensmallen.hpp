@@ -65,6 +65,7 @@
 // Callbacks.
 #include "ensmallen_bits/callbacks/callbacks.hpp"
 #include "ensmallen_bits/callbacks/early_stop_at_min_loss.hpp"
+#include "ensmallen_bits/callbacks/early_stop_at_min_loss_on_validation.hpp"
 #include "ensmallen_bits/callbacks/print_loss.hpp"
 #include "ensmallen_bits/callbacks/progress_bar.hpp"
 #include "ensmallen_bits/callbacks/store_best_coordinates.hpp"
