@@ -34,10 +34,12 @@ class EarlyStopAtMinLossOnValidation
    */
   EarlyStopAtMinLossOnValidation(arma::mat& predictors,
                                  arma::mat& responses,
-                                 const size_t patienceIn = 10) :
+                                 const size_t patienceIn = 10,
+                                 std::ostream& output = arma::get_cout_stream()) :
       patience(patienceIn),
       bestObjective(std::numeric_limits<double>::max()),
-      steps(0)
+      steps(0),
+      output(output)
   {
     this->predictors = std::move(predictors);
     this->responses = std::move(responses);   
@@ -60,7 +62,7 @@ class EarlyStopAtMinLossOnValidation
                 const double /* objective */)
   {
     double objective = function.Evaluate(predictors, responses);
-    
+    output << "Validation loss: "<< objective << std::endl;    
     if (objective < bestObjective)
     {
       steps = 0;
@@ -87,6 +89,9 @@ class EarlyStopAtMinLossOnValidation
 
   //! Locally-stored number of steps since the loss improved.
   size_t steps;
+
+  //! The output stream that all data is to be sent to; example: std::cout.
+  std::ostream& output;
 
   //! The matrix of data points (predictors).
   arma::mat predictors;
