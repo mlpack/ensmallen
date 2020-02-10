@@ -55,11 +55,7 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
         " least 4, and, a multiple of 4!");
   }
 
-  // TODO: Does not work presently "implicit instantiation of undefined template"
   numObjectives = sizeof...(ArbitraryFunctionType);
-
-  // Convenience typedef.
-  typedef typename MatType::elem_type ElemType;
 
   // Cache calculated objectives.
   std::vector<arma::Col<double> > calculatedObjectives;
