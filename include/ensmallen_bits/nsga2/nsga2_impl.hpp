@@ -56,13 +56,13 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
   }
 
   // TODO: Does not work presently "implicit instantiation of undefined template"
-  numObjectives = std::tuple_size<decltype(objectives)>::value;
+  numObjectives = sizeof...(ArbitraryFunctionType);
 
   // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
 
   // Cache calculated objectives.
-  std::vector<arma::Col<ElemType> > calculatedObjectives;
+  std::vector<arma::Col<double> > calculatedObjectives;
   // Pre-allocate space for the calculated objectives.
   calculatedObjectives.resize(populationSize);
 
@@ -92,6 +92,8 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
 
   // Evaluate the fitness before optimization.
+  for (size_t i = 0; i < population.size(); i++)
+    calculatedObjectives[i] = arma::Col<double>(numObjectives);
   EvaluateObjectives(population, objectives, calculatedObjectives);
 
   // Iterate until maximum number of generations is obtained.
@@ -108,6 +110,8 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
 
     // Evaluate the objectives for the new population
     calculatedObjectives.resize(population.size());
+    for (size_t i = 0; i < population.size(); i++)
+      calculatedObjectives[i] = arma::Col<double>(numObjectives);
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t
@@ -166,17 +170,36 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
   return bestFront;
 }
 
-//! Evaluate the objectives for the entire population.
-template<typename MatType,
+//! No objectives to evaluate.
+template<std::size_t I,
+         typename MatType,
          typename ...ArbitraryFunctionType>
-inline void NSGA2::EvaluateObjectives(
+typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
+NSGA2::EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
+    std::vector<arma::Col<double> >& calculatedObjectives)
 {
-  // TODO: The std::get<> needs compile time constant indices!
-  for (size_t i = 0; i < numObjectives; i++)
-    calculatedObjectives[i] = std::get<i>(objectives).Evaluate(population[i]);
+  // Nothing to do here.
+}
+
+//! Evaluate the objectives for the entire population.
+template<std::size_t I,
+         typename MatType,
+         typename ...ArbitraryFunctionType>
+typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
+NSGA2::EvaluateObjectives(
+    std::vector<MatType>& population,
+    std::tuple<ArbitraryFunctionType...>& objectives,
+    std::vector<arma::Col<double> >& calculatedObjectives)
+{
+  for (size_t i = 0; i < populationSize; i++)
+  {
+    calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
+    EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population,
+                                                               objectives,
+                                                               calculatedObjectives);
+  }
 }
 
 //! Reproduce and generate new candidates

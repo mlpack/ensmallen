@@ -148,12 +148,21 @@ class NSGA2 {
    * @param objectives The set of objectives.
    * @param calculatedObjectives Vector to store calculated objectives.
    */
-  template<typename MatType,
-           typename... ArbitraryFunctionType>
-  void EvaluateObjectives(
-      std::vector<MatType>& population,
-      std::tuple<ArbitraryFunctionType...>& objectives,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+  template<std::size_t I = 0,
+           typename MatType,
+           typename ...ArbitraryFunctionType>
+  typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
+  EvaluateObjectives(std::vector<MatType>& population,
+                     std::tuple<ArbitraryFunctionType...>& objectives,
+                     std::vector<arma::Col<double> >& calculatedObjectives);
+
+  template<std::size_t I = 0,
+         typename MatType,
+         typename ...ArbitraryFunctionType>
+  typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
+  EvaluateObjectives(std::vector<MatType>& population,
+                     std::tuple<ArbitraryFunctionType...>& objectives,
+                     std::vector<arma::Col<double> >& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new

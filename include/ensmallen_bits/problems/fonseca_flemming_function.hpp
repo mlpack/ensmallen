@@ -40,7 +40,7 @@ class FonsecaFlemmingFunction
 
   struct ObjectiveA
   {
-    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+    typename MatType::elem_type Evaluate(const MatType& coords)
     {
         return 1.0f - exp(- pow(coords[0] - 1.0f/sqrt(3), 2) -
             - pow(coords[1] - 1.0f/sqrt(3), 2)
@@ -50,7 +50,7 @@ class FonsecaFlemmingFunction
 
   struct ObjectiveB
   {
-    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+    typename MatType::elem_type Evaluate(const MatType& coords)
     {
         return 1.0f - exp(- pow(coords[0] + 1.0f/sqrt(3), 2) -
             - pow(coords[1] + 1.0f/sqrt(3), 2)
