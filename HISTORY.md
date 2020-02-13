@@ -1,5 +1,20 @@
-### ensmallen ?.??.?
+### ensmallen ?.??.?: "???"
 ###### ????-??-??
+  * Prevent spurious compiler warnings
+    ([#161](https://github.com/mlpack/ensmallen/pull/161)).
+  
+  * ...
+
+### ensmallen 2.11.2: "The Poster Session Is Full"
+###### 2020-01-16
+  * Allow callback instantiation for SGD based optimizer 
+    ([#138](https://github.com/mlpack/ensmallen/pull/155)).
+
+  * Minor test stability fixes on i386
+    ([#156](https://github.com/mlpack/ensmallen/pull/156)).
+
+  * Fix Lookahead MaxIterations() check.
+    ([#159](https://github.com/mlpack/ensmallen/pull/159)).
 
 ### ensmallen 2.11.1: "The Poster Session Is Full"
 ###### 2019-12-28

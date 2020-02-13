@@ -101,7 +101,8 @@ class AdaGrad
            CallbackTypes&&... callbacks)
   {
     return optimizer.Optimize<SeparableFunctionType, MatType, GradType,
-        CallbackTypes...>(function, iterate, callbacks...);
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
   }
 
   //! Forward the MatType as GradType.
