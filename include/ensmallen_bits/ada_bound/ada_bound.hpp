@@ -113,8 +113,9 @@ class AdaBoundType
            MatType& iterate,
            CallbackTypes&&... callbacks)
   {
-    return optimizer.template Optimize<DecomposableFunctionType, MatType, GradType,
-        CallbackTypes...>(function, iterate, callbacks...);
+    return optimizer.template Optimize<DecomposableFunctionType, MatType,
+        GradType, CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
   }
 
   //! Forward the MatType as GradType.

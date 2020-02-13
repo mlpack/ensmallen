@@ -101,7 +101,8 @@ class SMORMS3
     // TODO: disallow sp_mat
 
     return optimizer.Optimize<SeparableFunctionType, MatType, GradType,
-        CallbackTypes...>(function, iterate, callbacks...);
+        CallbackTypes...>(function, iterate,
+        std::forward<CallbackTypes>(callbacks)...);
   }
 
   //! Forward the MatType as GradType.
