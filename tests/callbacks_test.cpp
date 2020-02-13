@@ -152,6 +152,38 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
   REQUIRE(cb.calledStepTaken == calledStepTaken);
 }
 
+template<typename OptimizerType>
+void CallbacksFullMultiobjectiveFunctionTest(OptimizerType& optimizer,
+                                             bool calledEvaluate,
+                                             bool calledGradient,
+                                             bool calledBeginEpoch,
+                                             bool calledEndEpoch,
+                                             bool calledBeginOptimization,
+                                             bool calledEndOptimization,
+                                             bool calledEvaluateConstraint,
+                                             bool calledGradientConstraint,
+                                             bool calledStepTaken)
+{
+  SchafferFunctionN1<arma::mat> SCH;
+
+  CompleteCallbackTestFunction cb;
+
+  arma::mat coordinates = SCH.GetInitialPoint();
+  auto objectives = SCH.GetObjectives();
+
+  optimizer.Optimize(objectives, coordinates, cb);
+
+  REQUIRE(cb.calledEvaluate == calledEvaluate);
+  REQUIRE(cb.calledGradient == calledGradient);
+  REQUIRE(cb.calledBeginEpoch == calledBeginEpoch);
+  REQUIRE(cb.calledEndEpoch == calledEndEpoch);
+  REQUIRE(cb.calledBeginOptimization == calledBeginOptimization);
+  REQUIRE(cb.calledEndOptimization == calledEndOptimization);
+  REQUIRE(cb.calledEvaluateConstraint == calledEvaluateConstraint);
+  REQUIRE(cb.calledGradientConstraint == calledGradientConstraint);
+  REQUIRE(cb.calledStepTaken == calledStepTaken);
+}
+
 /**
  * Make sure we invoke all callbacks (AdaDelta).
  */
@@ -270,6 +302,18 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
   Katyusha optimizer(1.0, 10.0, 1, 3, 0, 1e-10, true);
   CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
       false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (NSGA2).
+ */
+TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest")
+{
+  arma::vec lowerBound("-1000 -1000");
+  arma::vec upperBound("1000 1000");
+  NSGA2 optimizer(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+  CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
+      true, true, false, false, true);
 }
 
 /**
