@@ -2,8 +2,9 @@
 ###### ????-??-??
   * Prevent spurious compiler warnings
     ([#161](https://github.com/mlpack/ensmallen/pull/161)).
-  
-  * ...
+
+  * Fix minor memory leaks
+    ([#167](https://github.com/mlpack/ensmallen/pull/167)).
 
 ### ensmallen 2.11.2: "The Poster Session Is Full"
 ###### 2020-01-16

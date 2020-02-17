@@ -44,6 +44,14 @@ SGD<UpdatePolicyType, DecayPolicyType>::SGD(
     isInitialized(false)
 { /* Nothing to do. */ }
 
+template<typename UpdatePolicyType, typename DecayPolicyType>
+SGD<UpdatePolicyType, DecayPolicyType>::~SGD()
+{
+  // Clean decay and update policies, if they were initialized.
+  instDecayPolicy.Clean();
+  instUpdatePolicy.Clean();
+}
+
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename SeparableFunctionType,

@@ -18,7 +18,9 @@
 #include <queue>
 
 namespace ens {
-/* After the velocity of each particle is updated at the end of each iteration
+
+/**
+ * After the velocity of each particle is updated at the end of each iteration
  * in PSO, the position of particle i (in iteration j) is updated as:
  *
  * \f[

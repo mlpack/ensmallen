@@ -109,6 +109,11 @@ class Lookahead
             const bool exactObjective = false);
 
   /**
+   * Clean any memory associated with the Lookahead object.
+   */
+  ~Lookahead();
+
+  /**
    * Optimize the given function using Lookahead. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
