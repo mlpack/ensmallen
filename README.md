@@ -35,6 +35,26 @@ the library.
   [ensmallen: a flexible C++ library for efficient function optimization](http://www.ensmallen.org/files/ensmallen_2018.pdf).
   Workshop on Systems for ML and Open Source Software at NIPS 2018.
 
+```
+@article{DBLP:journals/corr/abs-1810-09361,
+  author    = {Shikhar Bhardwaj and
+               Ryan R. Curtin and
+               Marcus Edel and
+               Yannis Mentekidis and
+               Conrad Sanderson},
+  title     = {ensmallen: a flexible {C++} library for efficient function optimization},
+  journal   = {CoRR},
+  volume    = {abs/1810.09361},
+  doi       = {10.5281/zenodo.2008650},
+  year      = {2018},
+  url       = {http://arxiv.org/abs/1810.09361},
+  archivePrefix = {arXiv},
+  eprint    = {1810.09361},
+  timestamp = {Wed, 31 Oct 2018 14:24:29 +0100},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1810-09361},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+```
 
 ### Developers and Contributors
 
