@@ -111,6 +111,14 @@ class PSOType
   { /* Nothing to do. */ }
 
   /**
+   * Clean memory associated with the PSO object.
+   */
+  ~PSOType()
+  {
+    instUpdatePolicy.Clean();
+  }
+
+  /**
    * Construct the particle swarm optimizer with the given function and
    * parameters. The defaults here are not necessarily good for the given
    * problem, so it is suggested that the values used be tailored to the task
