@@ -1,7 +1,8 @@
 /**
- * @file early_stop_at_min_loss.hpp
+ * @file early_stop_at_min_loss_On_Validation.hpp
  * @author Marcus Edel
- *
+ * @author Omar Shrit
+ * 
  * Implementation of the early stop at minimum loss callback function.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -22,13 +23,12 @@ class EarlyStopAtMinLossOnValidation
 {
  public:
   /**
-   * Set up the early stop at min loss class, which keeps track of the minimum
-   * loss and stops the optimization process if the loss stops decreasing.
+   * Set up the early stop at min loss On Validation class, which keeps track 
+   * of the minimum loss and stops the optimization process if the loss stops 
+   * decreasing on a specific validation set.
    * 
    * @param predictors: data matrix used to predict the responses.
-   * 
-   * @param responses: data matrix used to evaluate the predictions.
-   * 
+   * @param responses: data matrix used to evaluate the predictions. 
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
