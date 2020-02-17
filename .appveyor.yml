@@ -1,6 +1,5 @@
 environment:
   ARMADILLO_DOWNLOAD: "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
-  ARMADILLO_LIBRARY: "C:/projects/mlpack/armadillo-8.400.0/build/Debug/armadillo.lib"
   BLAS_LIBRARY: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a"
   BLAS_LIBRARY_DLL: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll"
 
@@ -46,7 +45,6 @@ build_script:
     cmake -G "%VSVER%"
     -DARMADILLO_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/../armadillo-8.400.0/include/
     -DARMADILLO_LIBRARIES=%BLAS_LIBRARY%
-    -DARMADILLO_LIBRARY=%ARMADILLO_LIBRARY%
     -DLAPACK_LIBRARY=%BLAS_LIBRARY%
     -DBLAS_LIBRARY=%BLAS_LIBRARY%
     -DCMAKE_BUILD_TYPE=Release ..
