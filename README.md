@@ -41,6 +41,7 @@ the library.
   title     = {ensmallen: a flexible {C++} library for efficient function optimization},
   journal   = {CoRR},
   volume    = {abs/1810.09361},
+  doi       = {10.5281/zenodo.2008650},
   year      = {2018},
   url       = {http://arxiv.org/abs/1810.09361},
   archivePrefix = {arXiv},
