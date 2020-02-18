@@ -1,6 +1,7 @@
 /**
  * @file early_stop_at_min_loss.hpp
  * @author Marcus Edel
+ * @author Omar Shrit
  *
  * Implementation of the early stop at minimum loss callback function.
  *
@@ -28,11 +29,36 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss(const size_t patienceIn = 10) :
+  EarlyStopAtMinLoss(const size_t patienceIn = 10, 
+                    std::ostream& output = arma::get_cout_stream()) :
       patience(patienceIn),
       bestObjective(std::numeric_limits<double>::max()),
-      steps(0)
+      steps(0),
+      output(output)
   { /* Nothing to do here */ }
+
+  /**
+   * Set up the early stop at min class, which keeps track
+   * of the minimum loss and stops the optimization process if the loss stops
+   * decreasing on a specific validation set.
+   *
+   * @param predictors: data matrix used to predict the responses.
+   * @param responses: data matrix used to evaluate the predictions.
+   * @param patienceIn The number of epochs to wait after the minimum loss has
+   * been reached or no improvement has been made (Default: 10).
+   */
+  EarlyStopAtMinLoss(arma::mat& predictors,
+                     arma::mat& responses,
+                     const size_t patienceIn = 10,
+                     std::ostream& output = arma::get_cout_stream()) :
+      patience(patienceIn),
+      bestObjective(std::numeric_limits<double>::max()),
+      steps(0),
+      output(output)
+  {
+    this->predictors = std::move(predictors);
+    this->responses = std::move(responses);
+  }
 
   /**
    * Callback function called at the end of a pass over the data.
@@ -45,11 +71,17 @@ class EarlyStopAtMinLoss
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
   bool EndEpoch(OptimizerType& /* optimizer */,
-                FunctionType& /* function */,
+                FunctionType& function,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
-                const double objective)
+                double objective)
   {
+    if ((!predictors.empty()) and (!responses.empty()))
+    {
+      objective = function.Evaluate(predictors, responses);
+      output << "Validation loss: "<< objective << std::endl; 
+    }
+
     if (objective < bestObjective)
     {
       steps = 0;
@@ -76,6 +108,15 @@ class EarlyStopAtMinLoss
 
   //! Locally-stored number of steps since the loss improved.
   size_t steps;
+
+ //! The output stream that all data is to be sent to; example: std::cout.
+  std::ostream& output;
+
+  //! The matrix of data points (predictors).
+  arma::mat predictors;
+
+  //! The matrix of responses to the input data points.
+  arma::mat responses;
 };
 
 } // namespace ens
