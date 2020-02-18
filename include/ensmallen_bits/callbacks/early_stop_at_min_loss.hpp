@@ -30,7 +30,7 @@ class EarlyStopAtMinLoss
    *    been reached or no improvement has been made (Default: 10).
    */
   EarlyStopAtMinLoss(const size_t patienceIn = 10, 
-                    std::ostream& output = arma::get_cout_stream()) :
+                     std::ostream& output = arma::get_cout_stream()) :
       patience(patienceIn),
       bestObjective(std::numeric_limits<double>::max()),
       steps(0),
@@ -56,8 +56,8 @@ class EarlyStopAtMinLoss
       steps(0),
       output(output)
   {
-    this->predictors = std::move(predictors);
-    this->responses = std::move(responses);
+    this->predictors = predictors;
+    this->responses = responses;
   }
 
   /**
