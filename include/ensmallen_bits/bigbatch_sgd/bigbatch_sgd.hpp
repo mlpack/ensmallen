@@ -101,6 +101,12 @@ class BigBatchSGD
               const double tolerance = 1e-5,
               const bool shuffle = true,
               const bool exactObjective = false);
+
+  /**
+   * Clean any memory associated with the BigBatchSGD object.
+   */
+  ~BigBatchSGD();
+
   /**
    * Optimize the given function using big-batch SGD.  The given starting point
    * will be modified to store the finishing point of the algorithm, and the

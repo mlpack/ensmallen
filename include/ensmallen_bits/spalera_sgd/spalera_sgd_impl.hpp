@@ -45,6 +45,13 @@ SPALeRASGD<DecayPolicyType>::SPALeRASGD(const double stepSize,
     isInitialized(false)
 { /* Nothing to do. */ }
 
+template<typename DecayPolicyType>
+SPALeRASGD<DecayPolicyType>::~SPALeRASGD()
+{
+  instUpdatePolicy.Clean();
+  instDecayPolicy.Clean();
+}
+
 //! Optimize the function (minimize).
 template<typename DecayPolicyType>
 template<typename SeparableFunctionType,
