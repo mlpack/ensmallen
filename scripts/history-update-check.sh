@@ -10,7 +10,9 @@
 # Make sure to update HISTORY.md manually first!
 set -e
 
-if [ ! git diff --exit-code master -- HISTORY.md ]; then 
+! git diff --exit-code master -- HISTORY.md > /dev/null
+
+if [ $? ]; then
     echo "History log was updated ..."
 else
     echo "History log is missing an entry for this PR ..."
