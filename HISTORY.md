@@ -9,6 +9,9 @@
   * Revamp CMake configuration
     ([#152](https://github.com/mlpack/ensmallen/pull/152)).
 
+  * Require new HISTORY.md entry for each PR.
+    ([#171](https://github.com/mlpack/ensmallen/pull/171)).
+
 ### ensmallen 2.11.2: "The Poster Session Is Full"
 ###### 2020-01-16
   * Allow callback instantiation for SGD based optimizer 
