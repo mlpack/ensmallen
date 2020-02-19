@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.11.3: "The Poster Session Is Full"
+###### 2020-02-19
   * Prevent spurious compiler warnings
     ([#161](https://github.com/mlpack/ensmallen/pull/161)).
 
