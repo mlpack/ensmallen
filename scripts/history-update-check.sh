@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 #
-# Check each PR has an entry in HISTORY.md.
+# Check each PR has an entry in HISTORY.md during a CI routine.
 #
 # Arguments:
 #   $ history-update-check.sh
 #
 # This should be run from the root of the repository.
-#
-# Make sure to update HISTORY.md manually first!
 set -e
 
 ! git diff --exit-code master -- HISTORY.md > /dev/null
