@@ -3,6 +3,9 @@
   * Prevent spurious compiler warnings
     ([#161](https://github.com/mlpack/ensmallen/pull/161)).
 
+  * Fix minor memory leaks
+    ([#167](https://github.com/mlpack/ensmallen/pull/167)).
+
   * Revamp CMake configuration
     ([#152](https://github.com/mlpack/ensmallen/pull/152)).
 
