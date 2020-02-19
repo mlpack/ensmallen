@@ -6,6 +6,9 @@
   * Fix minor memory leaks
     ([#167](https://github.com/mlpack/ensmallen/pull/167)).
 
+  * Revamp CMake configuration
+    ([#152](https://github.com/mlpack/ensmallen/pull/152)).
+
 ### ensmallen 2.11.2: "The Poster Session Is Full"
 ###### 2020-01-16
   * Allow callback instantiation for SGD based optimizer 
