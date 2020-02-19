@@ -16,6 +16,15 @@ gradient-free optimizers, and constrained optimization.
 * OpenBLAS or Intel MKL or LAPACK (see Armadillo site for details)
 
 
+### Installation
+
+ensmallen can be installed with CMake 3.3 or later.
+If CMake is not already available on your system, it can be obtained from https://cmake.org
+
+If you are using an older system such as RHEL 7 or CentOS 7,
+an updated version of CMake is also available via the EPEL repository.
+
+
 ### License
 
 Unless stated otherwise, the source code for **ensmallen**
