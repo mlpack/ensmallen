@@ -11,10 +11,10 @@ set -e
 ! git diff --exit-code master -- HISTORY.md > /dev/null
 
 if [ $? ]; then
-    echo "History log was updated ..."
+    echo "HISTORY.md was updated with a change for the PR ..."
 else
-    echo "History log is missing an entry for this PR ..."
-    echo "Please update the history log to run CI ..."
+    echo "Please describe your PR changes in HISTORY.md ..."
+    echo "Exiting CI process ... "
     exit 1
 fi
 
