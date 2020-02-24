@@ -5,9 +5,10 @@ language: cpp
 env:
   - ARMADILLO=latest
   - ARMADILLO=minimum
+  - SANITY=history
 
 before_install:
-  - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$SANITY" == "history" ]; then
       sh ./scripts/history-update-check.sh;
     fi
   - sudo apt-get update
