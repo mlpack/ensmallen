@@ -1144,3 +1144,66 @@ including ensmallen:
 This can be useful for situations where you know that the checks should be
 ignored.  However, be aware that the code may fail to compile and give more
 confusing and difficult error messages!
+
+
+## Multi objective functions
+
+A multi objective function is a set of functions or objectives that are
+simultaneously being optimised for. For this, a class/struct with the following
+API must be used:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+class ArbitraryMultiObjectiveFunction
+{
+private:
+  size_t numObjectives;
+  size_t numVariables;
+
+  struct Objective1
+  {
+    typename MatType::elem_type Evaluate(const MatType& coords) {
+      // Here f1 is the objective 1 evaluated using coords.
+      return f1(coords);
+    }
+  } objective1;
+
+  struct Objective2
+  {
+    typename MatType::elem_type Evaluate(const MatType& coords) {
+      // Here f2 is the objective 2 evaluated using coords.
+      return f2(coords);
+    }
+  } objective2;
+
+  ...
+
+  struct ObjectiveN
+  {
+    typename MatType::elem_type Evaluate(const MatType& coords) {
+      // Here fN is the objective N evaluated using coords.
+      return fN(coords);
+    }
+  } objectiveN;
+
+public:
+  // This multi objective funstion has N objectives and involves M variables.
+  ArbitraryMultiObjectiveFunction() : numObjectives(N), numVariables(M) {}
+
+  //! Get the starting point.
+  MatType GetInitialPoint();
+
+  //! Get objective functions.
+  std::tuple<Objective1, Objective2, ..., ObjectiveN> GetObjectives()
+  {
+    return std::make_tuple(objective1, objective2, ..., objectiveN);
+  }
+};
+```
+</details>
+
+The following optimizers can be used with multi objective functions:
+- [NSGA2](#nsga2)
