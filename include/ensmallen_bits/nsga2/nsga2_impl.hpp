@@ -16,9 +16,6 @@
 #define ENSMALLEN_NSGA2_NSGA2_IMPL_HPP
 
 #include "nsga2.hpp"
-#include <set>
-#include <vector>
-#include <map>
 
 namespace ens {
 
