@@ -5,10 +5,10 @@ language: cpp
 env:
   - ARMADILLO=latest
   - ARMADILLO=minimum
-  - SANITY=history
+  - SANITY_HISTORY=true
 
 before_install:
-  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$SANITY" == "history" ]; then
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ ! -z ${SANITY_HISTORY+x} ] && [ "$SANITY_HISTORY" == "true" ]; then
       sh ./scripts/history-update-check.sh;
       exit 0
     fi
