@@ -10,6 +10,7 @@ env:
 before_install:
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$SANITY" == "history" ]; then
       sh ./scripts/history-update-check.sh;
+      exit 0
     fi
   - sudo apt-get update
   - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
