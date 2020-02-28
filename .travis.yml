@@ -19,11 +19,7 @@ jobs:
       name: "HISTORY.md Check"
       script: sh ./scripts/history-update-check.sh ; exit 0
 
-install:
-  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ ! -z ${SANITY_HISTORY+x} ] && [ "$SANITY_HISTORY" == "true" ]; then
-      sh ./scripts/history-update-check.sh;
-      exit 0;
-    fi
+script:
   - sudo apt-get update
   - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
   - if [ $ARMADILLO == "latest" ]; then
@@ -33,8 +29,6 @@ install:
     fi
   - cmake . && make && sudo make install && cd ..
   - mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
-
-script:
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 
