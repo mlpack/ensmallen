@@ -9,12 +9,12 @@ env:
 
 stages:
   - name: sanity
-    if: env(TRAVIS_PULL_REQUEST) != true AND env(false) = true
+    if: env(TRAVIS_PULL_REQUEST) != false AND env(SANITY_HISTORY) = true
   - name: cmake
     if: env(SANITY_HISTORY) != true
   - name: build
     if: env(SANITY_HISTORY) != true
-  - name: test
+  - name: ctest
     if: env(SANITY_HISTORY) != true
 
 before_install:
@@ -31,11 +31,11 @@ jobs:
   include:
     - stage: sanity
       script: sh ./scripts/history-update-check.sh ; exit 0
-    - stage: compile
+    - stage: cmake
       script: cmake . && make && sudo make install && cd ..
     - stage: build
       script: mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
-    - stage: test
+    - stage: ctest
       script: CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 
