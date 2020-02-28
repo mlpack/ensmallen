@@ -2,10 +2,7 @@
 ###### 2020-??-??
 
   * Require new HISTORY.md entry for each PR.
-    ([#171](https://github.com/mlpack/ensmallen/pull/171)).
-
-  * Bugfix for HISTORY.md check
-    ([#172](https://github.com/mlpack/ensmallen/pull/171)).
+    ([#171](https://github.com/mlpack/ensmallen/pull/171), [#172](https://github.com/mlpack/ensmallen/pull/172)).
 
 ### ensmallen 2.11.3: "The Poster Session Is Full"
 ###### 2020-02-19
