@@ -7,13 +7,17 @@ env:
   - ARMADILLO=minimum
   - SANITY_HISTORY=true
 
+stages:
+  - name: sanity
+    if: env(TRAVIS_PULL_REQUEST) != true AND env(false) = true
+  - name: cmake
+    if: env(SANITY_HISTORY) != true
+  - name: build
+    if: env(SANITY_HISTORY) != true
+  - name: test
+    if: env(SANITY_HISTORY) != true
+
 before_install:
-  - if [ ! -z ${SANITY_HISTORY+x} ] && [ "$SANITY_HISTORY" == "true" ]; then
-      if  [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-        sh ./scripts/history-update-check.sh;
-      fi
-      exit 0;
-    fi
   - sudo apt-get update
   - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
   - if [ $ARMADILLO == "latest" ]; then
@@ -22,13 +26,18 @@ before_install:
   - if [ $ARMADILLO == "minimum" ]; then
       curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*;
     fi
-  - cmake . && make && sudo make install && cd ..
 
-install:
-  - mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
+jobs:
+  include:
+    - stage: sanity
+      script: sh ./scripts/history-update-check.sh ; exit 0
+    - stage: compile
+      script: cmake . && make && sudo make install && cd ..
+    - stage: build
+      script: mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
+    - stage: test
+      script: CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
-script:
-  - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 notifications:
   email:
