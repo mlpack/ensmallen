@@ -9,26 +9,27 @@ env:
 
 stages:
   - name: sanity
-    if: env(TRAVIS_PULL_REQUEST) != false AND env(SANITY_HISTORY) = "perform"
-  - name: test
-    if: env(SANITY_HISTORY) != "perform"
+    if: type = pull_request AND env(SANITY_HISTORY) = "perform"
+  - name: build
+    if: env(ARMADILLO) in (latest, minimum)
+    env: ARMA_URL=https://ftp.fau.de/macports/distfiles/armadillo/
+  - name: ctest
+    if: env(ARMADILLO) in (latest, minimum)
+    env: ARMA_URL=https://ftp.fau.de/macports/distfiles/armadillo/
 
 jobs:
   include:
     - stage: sanity
       script: sh ./scripts/history-update-check.sh ; exit 0
-    - stage: test
+    - stage: build
       script:
         - sudo apt-get update
         - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
-        - if [ $ARMADILLO == "latest" ]; then
-            curl https://ftp.fau.de/macports/distfiles/armadillo/`curl https://ftp.fau.de/macports/distfiles/armadillo/ -- | grep '.tar.xz' | sed 's/^.*<a href="\(armadillo-[0-9]*.[0-9]*.[0-9]*.tar.xz\)".*$/\1/' | tail -1` | tar xvJ && cd armadillo*;
-          fi
-        - if [ $ARMADILLO == "minimum" ]; then
-            curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*;
-          fi
+        - curl $ARMA_URL `curl $ARMA_URL -- | grep '.tar.xz' | sed 's/^.*<a href="\(armadillo-[0-9]*.[0-9]*.[0-9]*.tar.xz\)".*$/\1/' | tail -1` | tar xvJ && cd armadillo*;
         - mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
         - cmake . && make && sudo make install && cd ..
+    - stage: ctest
+      script:
         - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 
