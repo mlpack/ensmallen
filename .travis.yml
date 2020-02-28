@@ -7,11 +7,9 @@ env:
   - ARMADILLO=minimum
 
 stages:
+  - test
   - name: sanity
     if: type = pull_request AND env(SANITY_HISTORY) = "perform"
-  - name: build
-    if: env(ARMADILLO) in (latest,minimum)
-    env: ARMA_URL=https://ftp.fau.de/macports/distfiles/armadillo/
 
 jobs:
   include:
