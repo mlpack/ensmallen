@@ -3,17 +3,13 @@ dist: trusty
 language: cpp
 
 env:
-  - ARMADILLO=latest
+  - ARMADILLO=latest SANITY_HISTORY=perform
   - ARMADILLO=minimum
-  - SANITY_HISTORY=perform
 
 stages:
   - name: sanity
     if: type = pull_request AND env(SANITY_HISTORY) = "perform"
   - name: build
-    if: env(ARMADILLO) in (latest,minimum)
-    env: ARMA_URL=https://ftp.fau.de/macports/distfiles/armadillo/
-  - name: ctest
     if: env(ARMADILLO) in (latest,minimum)
     env: ARMA_URL=https://ftp.fau.de/macports/distfiles/armadillo/
 
@@ -22,22 +18,25 @@ jobs:
     - stage: sanity
       name: "HISTORY.md Check"
       script: sh ./scripts/history-update-check.sh ; exit 0
-    - stage: build
-      name: "Cmake and Build"
-      script: sudo apt-get update
-    - script: sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
-    - script: |
-        if [ $ARMADILLO == "latest" ]; then
-          curl https://ftp.fau.de/macports/distfiles/armadillo/`curl https://ftp.fau.de/macports/distfiles/armadillo/ -- | grep '.tar.xz' | sed 's/^.*<a href="\(armadillo-[0-9]*.[0-9]*.[0-9]*.tar.xz\)".*$/\1/' | tail -1` | tar xvJ && cd armadillo*;
-        else
-          curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*;
-        fi
-    - script: cmake . && make && sudo make install && cd ..
-    - script: mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
-    - stage: ctest
-      name: "Ctest"
-      script:
-        - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
+
+install:
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ ! -z ${SANITY_HISTORY+x} ] && [ "$SANITY_HISTORY" == "true" ]; then
+      sh ./scripts/history-update-check.sh;
+      exit 0;
+    fi
+  - sudo apt-get update
+  - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
+  - if [ $ARMADILLO == "latest" ]; then
+      curl https://ftp.fau.de/macports/distfiles/armadillo/`curl https://ftp.fau.de/macports/distfiles/armadillo/ -- | grep '.tar.xz' | sed 's/^.*<a href="\(armadillo-[0-9]*.[0-9]*.[0-9]*.tar.xz\)".*$/\1/' | tail -1` | tar xvJ && cd armadillo*;
+    else
+      curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*;
+    fi
+  - cmake . && make && sudo make install && cd ..
+  - mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
+
+script:
+  - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
+
 
 
 notifications:
