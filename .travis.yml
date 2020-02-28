@@ -1,4 +1,4 @@
-sudo: required
+os: linux
 dist: trusty
 language: cpp
 
@@ -8,8 +8,10 @@ env:
   - SANITY_HISTORY=true
 
 before_install:
-  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ ! -z ${SANITY_HISTORY+x} ] && [ "$SANITY_HISTORY" == "true" ]; then
-      sh ./scripts/history-update-check.sh;
+  - if [ ! -z ${SANITY_HISTORY+x} ] && [ "$SANITY_HISTORY" == "true" ]; then
+      if  [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+        sh ./scripts/history-update-check.sh;
+      fi
       exit 0;
     fi
   - sudo apt-get update

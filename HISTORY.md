@@ -3,7 +3,10 @@
 
   * Require new HISTORY.md entry for each PR.
     ([#171](https://github.com/mlpack/ensmallen/pull/171)).
-    
+
+  * Bugfix for HISTORY.md check
+    ([#172](https://github.com/mlpack/ensmallen/pull/171)).
+
 ### ensmallen 2.11.3: "The Poster Session Is Full"
 ###### 2020-02-19
   * Prevent spurious compiler warnings
@@ -17,7 +20,7 @@
 
 ### ensmallen 2.11.2: "The Poster Session Is Full"
 ###### 2020-01-16
-  * Allow callback instantiation for SGD based optimizer 
+  * Allow callback instantiation for SGD based optimizer
     ([#138](https://github.com/mlpack/ensmallen/pull/155)).
 
   * Minor test stability fixes on i386
