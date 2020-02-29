@@ -61,6 +61,13 @@ class AddEvaluate<FunctionType,
         static_cast<Function<FunctionType,
                              MatType, GradType>*>(this))->Evaluate(coordinates);
    }
+
+  typename MatType::elem_type Evaluate(arma::mat predictors, arma::mat responses)
+  {
+    return static_cast<FunctionType*>(
+        static_cast<Function<FunctionType,
+                             MatType, GradType>*>(this))->Evaluate(predictors, responses);
+  }
 };
 
 /**
