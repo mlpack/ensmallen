@@ -47,8 +47,8 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    * been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss(arma::mat& predictors,
-                     arma::mat& responses,
+  EarlyStopAtMinLoss(const arma::mat& predictors,
+                     const arma::mat& responses,
                      const size_t patienceIn = 10,
                      std::ostream& output = arma::get_cout_stream()) :
       patience(patienceIn),
