@@ -7,7 +7,7 @@
 #
 # This should be run from the root of the repository.
 $res=$(git diff --name-only | grep ^HISTORY.md | wc -l)
-
+git diff --name-only
 if [ $res ]; then
     echo "HISTORY.md was updated with a change for the PR ..."
 else
