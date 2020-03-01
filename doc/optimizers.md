@@ -554,11 +554,11 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
 // Big-Batch SGD with the adaptive stepsize policy.
-BBS_BB optimizer(batchSize, 0.01, 0.1, 8000, 1e-4);
+BBS_BB optimizer(10, 0.01, 0.1, 8000, 1e-4);
 optimizer.Optimize(f, coordinates);
 
 // Big-Batch SGD with backtracking line search.
-BBS_Armijo optimizer2(batchSize, 0.01, 0.1, 8000, 1e-4);
+BBS_Armijo optimizer2(10, 0.01, 0.1, 8000, 1e-4);
 optimizer2.Optimize(f, coordinates);
 ```
 
@@ -629,11 +629,11 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
 // CMAES with the FullSelection policy.
-CMAES<> optimizer(0, -1, 1, 32, 200, 0.1e-4);
+CMAES<> optimizer(0, -1, 1, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
 // CMAES with the RandomSelection policy.
-ApproxCMAES<> approxOptimizer(batchSize, 0.01, 0.1, 8000, 1e-4);
+ApproxCMAES<> approxOptimizer(0, -1, 1. 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
 
@@ -2068,7 +2068,7 @@ shorter type `SA<>` may be used instead of the equivalent
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `CoolingScheduleType` | **`coolingSchedule`** | Instantiated cooling schedule (default ExponentialSchedule). | **n/a** |
+| `CoolingScheduleType` | **`coolingSchedule`** | Instantiated cooling schedule (default ExponentialSchedule). | **CoolingScheduleType()** |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 indicates no limit). | `1000000` |
 | `double` | **`initT`** | Initial temperature. | `10000.0` |
 | `size_t` | **`initMoves`** | Number of initial iterations without changing temperature. | `1000` |
