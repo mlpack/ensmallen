@@ -6,11 +6,9 @@
 #   $ history-update-check.sh
 #
 # This should be run from the root of the repository.
-set -e
+$res=$(git diff --name-only | grep ^HISTORY.md | wc -l)
 
-! git diff --exit-code master -- HISTORY.md > /dev/null
-
-if [ $? ]; then
+if [ $res ]; then
     echo "HISTORY.md was updated with a change for the PR ..."
 else
     echo "Please describe your PR changes in HISTORY.md ..."
