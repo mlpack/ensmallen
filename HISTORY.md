@@ -3,7 +3,8 @@
 
   * Require new HISTORY.md entry for each PR.
     ([#171](https://github.com/mlpack/ensmallen/pull/171),
-     [#172](https://github.com/mlpack/ensmallen/pull/172)).
+     [#172](https://github.com/mlpack/ensmallen/pull/172),
+     [#175](https://github.com/mlpack/ensmallen/pull/175)).
 
 ### ensmallen 2.11.3: "The Poster Session Is Full"
 ###### 2020-02-19
