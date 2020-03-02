@@ -15,7 +15,7 @@ jobs:
   include:
     - stage: sanity
       name: "HISTORY.md Check"
-      script: sh ./scripts/history-update-check.sh ; exit 0
+      script: sh ./scripts/history-update-check.sh
 
 script:
   - sudo apt-get update
