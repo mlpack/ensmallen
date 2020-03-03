@@ -6,6 +6,9 @@
      [#172](https://github.com/mlpack/ensmallen/pull/172),
      [#175](https://github.com/mlpack/ensmallen/pull/175)).
 
+  * Update/fix example documentation
+    ([#174](https://github.com/mlpack/ensmallen/pull/174)).
+
 ### ensmallen 2.11.3: "The Poster Session Is Full"
 ###### 2020-02-19
   * Prevent spurious compiler warnings
