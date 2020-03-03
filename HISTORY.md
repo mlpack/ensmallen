@@ -1,5 +1,5 @@
-### ensmallen 2.11.?: "?????"
-###### 2020-??-??
+### ensmallen 2.11.4: "The Poster Session Is Full"
+###### 2020-03-03
 
   * Require new HISTORY.md entry for each PR.
     ([#171](https://github.com/mlpack/ensmallen/pull/171),
