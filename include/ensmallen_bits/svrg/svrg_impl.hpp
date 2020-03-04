@@ -42,6 +42,13 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::SVRGType(
     isInitialized(false)
 { /* Nothing to do. */ }
 
+template<typename UpdatePolicyType, typename DecayPolicyType>
+SVRGType<UpdatePolicyType, DecayPolicyType>::~SVRGType()
+{
+  instUpdatePolicy.Clean();
+  instDecayPolicy.Clean();
+}
+
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType, typename DecayPolicyType>
 template<typename SeparableFunctionType,

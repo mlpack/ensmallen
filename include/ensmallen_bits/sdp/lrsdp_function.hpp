@@ -59,6 +59,11 @@ class LRSDPFunction
                 const arma::Mat<typename SDPType::ElemType>& initialPoint);
 
   /**
+   * Clean any memory associated with the LRSDPFunction.
+   */
+  ~LRSDPFunction();
+
+  /**
    * Evaluate the objective function of the LRSDP (no constraints) at the given
    * coordinates.
    */

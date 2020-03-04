@@ -1105,7 +1105,7 @@ int main()
   // Create simulated annealing optimizer with default options.
   // The ens::SA<> type can be replaced with any suitable ensmallen optimizer
   // that is able to handle arbitrary functions.
-  ens::L_BFGS<> optimizer;
+  ens::L_BFGS optimizer;
   SquaredFunction f; // Create function to be optimized.
   optimizer.Optimize(f, x); // The optimizer will infer arma::fmat!
 
