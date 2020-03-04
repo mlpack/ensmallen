@@ -1,13 +1,15 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+  * Add NSGA2 optimizer for multi-objective functions
+    ([#149](https://github.com/mlpack/ensmallen/pull/149))
   * Prevent spurious compiler warnings
     ([#161](https://github.com/mlpack/ensmallen/pull/161)).
-  
+
   * ...
 
 ### ensmallen 2.11.2: "The Poster Session Is Full"
 ###### 2020-01-16
-  * Allow callback instantiation for SGD based optimizer 
+  * Allow callback instantiation for SGD based optimizer
     ([#138](https://github.com/mlpack/ensmallen/pull/155)).
 
   * Minor test stability fixes on i386
