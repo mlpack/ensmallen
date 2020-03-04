@@ -1146,9 +1146,9 @@ ignored.  However, be aware that the code may fail to compile and give more
 confusing and difficult error messages!
 
 
-## Multi objective functions
+## Multi-objective functions
 
-A multi objective function is a set of functions or objectives that are
+A multi-objective function is a set of functions or objectives that are
 simultaneously being optimised for. For this, a class/struct with the following
 API must be used:
 
@@ -1159,7 +1159,7 @@ API must be used:
 ```c++
 class ArbitraryMultiObjectiveFunction
 {
-private:
+ private:
   size_t numObjectives;
   size_t numVariables;
 
@@ -1189,8 +1189,8 @@ private:
     }
   } objectiveN;
 
-public:
-  // This multi objective funstion has N objectives and involves M variables.
+ public:
+  // This multi-objective funstion has N objectives and involves M variables.
   ArbitraryMultiObjectiveFunction() : numObjectives(N), numVariables(M) {}
 
   //! Get the starting point.
@@ -1205,5 +1205,5 @@ public:
 ```
 </details>
 
-The following optimizers can be used with multi objective functions:
+The following optimizers can be used with multi-objective functions:
 - [NSGA2](#nsga2)

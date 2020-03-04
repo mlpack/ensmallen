@@ -140,7 +140,7 @@ class NSGA2 {
 
  private:
   /**
-   * Evulate objectives for the elite population.
+   * Evaulate objectives for the elite population.
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
    * @tparam MatType Type of matrix to optimize.
@@ -196,6 +196,7 @@ class NSGA2 {
 
   /**
    * Mutate the coordinates for a candidate.
+   *
    * @tparam MatType Type of matrix to optimize.
    * @param child The candidate whose coordinates are being modified.
    * @param objectives The set of objectives.
