@@ -60,6 +60,12 @@ inline Lookahead<BaseOptimizerType, DecayPolicyType>::Lookahead(
     isInitialized(false)
 { /* Nothing to do. */ }
 
+template<typename BaseOptimizerType, typename DecayPolicyType>
+inline Lookahead<BaseOptimizerType, DecayPolicyType>::~Lookahead()
+{
+  instDecayPolicy.Clean();
+}
+
 //! Optimize the function (minimize).
 template<typename BaseOptimizerType, typename DecayPolicyType>
 template<typename SeparableFunctionType,

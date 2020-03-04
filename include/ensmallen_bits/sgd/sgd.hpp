@@ -102,6 +102,11 @@ class SGD
       const bool exactObjective = false);
 
   /**
+   * Clean any memory associated with the SGD object.
+   */
+  ~SGD();
+
+  /**
    * Optimize the given function using stochastic gradient descent.  The given
    * starting point will be modified to store the finishing point of the
    * algorithm, and the final objective value is returned.
