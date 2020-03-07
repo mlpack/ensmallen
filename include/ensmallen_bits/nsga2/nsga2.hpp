@@ -87,7 +87,7 @@ class NSGA2 {
    * @tparam MatType Type of matrix to optimize.
    * @tparam CallbackTypes Types of callback functions.
    * @param objectives Vector of objective functions to optimize for.
-   * @param iterate Starting point
+   * @param iterate Starting point.
    * @param callbacks Callback functions.
    * @return std::vector<MatType> The best front obtained after optimization.
    */
