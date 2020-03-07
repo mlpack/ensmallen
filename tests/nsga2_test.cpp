@@ -68,7 +68,7 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
   FonsecaFlemmingFunction<arma::mat> FON;
   const arma::vec lowerBound("-4 -4");
   const arma::vec upperBound("4 4");
-  const double tolerance = 1e-5;
+  const double tolerance = 1e-6;
   const double strength = 1e-3;
   const double expectedLowerBound = -1.0f/sqrt(3);
   const double expectedUpperBound = 1.0f/sqrt(3);
