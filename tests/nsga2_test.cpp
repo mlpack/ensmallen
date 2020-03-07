@@ -69,11 +69,11 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
   const arma::vec lowerBound("-4 -4");
   const arma::vec upperBound("4 4");
   const double tolerance = 1e-5;
-  const double strength = 1e-3;
+  const double strength = 1e-4;
   const double expectedLowerBound = -1.0f/sqrt(3);
   const double expectedUpperBound = 1.0f/sqrt(3);
 
-  NSGA2 opt(15, 15000, 0.5, 0.5, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(40, 5000, 0.5, 0.5, strength, tolerance, lowerBound, upperBound);
 
   arma::mat coords = FON.GetInitialPoint();
   auto objectives = FON.GetObjectives();
