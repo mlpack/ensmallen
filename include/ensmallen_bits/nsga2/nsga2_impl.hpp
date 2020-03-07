@@ -126,7 +126,7 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
                                                           MatType candidateQ)
               {
                 size_t idxP, idxQ;
-                for (int i = 0; i < population.size(); i++)
+                for (size_t i = 0; i < population.size(); i++)
                 {
                   if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
                   {
