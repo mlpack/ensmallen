@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.11.5: "The Poster Session Is Full"
+###### 2020-03-11
   * Change "mathematical optimization" term to "numerical optimization" in the
     documentation ([#177](https://github.com/mlpack/ensmallen/pull/177)).
 
