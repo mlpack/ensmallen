@@ -1,10 +1,10 @@
-**ensmallen** is a C++ header-only library for mathematical optimization.
+**ensmallen** is a C++ header-only library for numerical optimization.
 
 Documentation and downloads: http://ensmallen.org
 
 ensmallen provides a simple set of abstractions for writing an objective
 function to optimize. It also provides a large set of standard and cutting-edge
-optimizers that can be used for virtually any mathematical optimization task.
+optimizers that can be used for virtually any numerical optimization task.
 These include full-batch gradient descent techniques, small-batch techniques,
 gradient-free optimizers, and constrained optimization.
 
