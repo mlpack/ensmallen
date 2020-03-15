@@ -129,14 +129,15 @@ inline typename MatType::elem_type GockenbachFunction::EvaluateConstraint(
   switch (index)
   {
     case 0: // g(x) = (x_3 - x_2 - x_1 - 1) = 0
-      constraint = (coordinates[2] - coordinates[1] - coordinates[0] - 1);
+      constraint = (coordinates[2] - coordinates[1] - coordinates[0] -
+          typename MatType::elem_type(1));
       break;
 
     case 1: // h(x) = (x_3 - x_1^2) >= 0
       // To deal with the inequality, the constraint will simply evaluate to 0
       // when h(x) >= 0.
-      constraint = std::min(0.0,
-          (coordinates[2] - std::pow(coordinates[0], 2)));
+      constraint = std::min(typename MatType::elem_type(0), (coordinates[2] -
+          std::pow(coordinates[0], typename MatType::elem_type(2))));
       break;
   }
 

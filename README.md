@@ -1,10 +1,10 @@
-**ensmallen** is a C++ header-only library for mathematical optimization.
+**ensmallen** is a C++ header-only library for numerical optimization.
 
 Documentation and downloads: http://ensmallen.org
 
 ensmallen provides a simple set of abstractions for writing an objective
 function to optimize. It also provides a large set of standard and cutting-edge
-optimizers that can be used for virtually any mathematical optimization task.
+optimizers that can be used for virtually any numerical optimization task.
 These include full-batch gradient descent techniques, small-batch techniques,
 gradient-free optimizers, and constrained optimization.
 
@@ -14,6 +14,15 @@ gradient-free optimizers, and constrained optimization.
 * C++ compiler with C++11 support
 * Armadillo: http://arma.sourceforge.net
 * OpenBLAS or Intel MKL or LAPACK (see Armadillo site for details)
+
+
+### Installation
+
+ensmallen can be installed with CMake 3.3 or later.
+If CMake is not already available on your system, it can be obtained from https://cmake.org
+
+If you are using an older system such as RHEL 7 or CentOS 7,
+an updated version of CMake is also available via the EPEL repository via the `cmake3` package.
 
 
 ### License
@@ -35,6 +44,26 @@ the library.
   [ensmallen: a flexible C++ library for efficient function optimization](http://www.ensmallen.org/files/ensmallen_2018.pdf).
   Workshop on Systems for ML and Open Source Software at NIPS 2018.
 
+```
+@article{DBLP:journals/corr/abs-1810-09361,
+  author    = {Shikhar Bhardwaj and
+               Ryan R. Curtin and
+               Marcus Edel and
+               Yannis Mentekidis and
+               Conrad Sanderson},
+  title     = {ensmallen: a flexible {C++} library for efficient function optimization},
+  journal   = {CoRR},
+  volume    = {abs/1810.09361},
+  doi       = {10.5281/zenodo.2008650},
+  year      = {2018},
+  url       = {http://arxiv.org/abs/1810.09361},
+  archivePrefix = {arXiv},
+  eprint    = {1810.09361},
+  timestamp = {Wed, 31 Oct 2018 14:24:29 +0100},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1810-09361},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+```
 
 ### Developers and Contributors
 
