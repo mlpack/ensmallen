@@ -1149,8 +1149,8 @@ confusing and difficult error messages!
 ## Multi-objective functions
 
 A multi-objective function is a set of functions or objectives that are
-simultaneously being optimised for. For this, a class/struct with the following
-API must be used:
+simultaneously optimised. For this variety of problems, a class/struct
+with the following API must be used:
 
 <details open>
 <summary>Click to collapse/expand example code.
