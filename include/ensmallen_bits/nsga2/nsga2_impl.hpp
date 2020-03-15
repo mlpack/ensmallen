@@ -24,8 +24,8 @@ inline NSGA2::NSGA2(const size_t populationSize,
                     const double mutationProb,
                     const double mutationStrength,
                     const double epsilon,
-                    const arma::vec lowerBound,
-                    const arma::vec upperBound) :
+                    const arma::vec& lowerBound,
+                    const arma::vec& upperBound) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -120,8 +120,7 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
                                  upperBound);
 
     // Sort based on crowding distance.
-    std::sort(population.begin(),
-              population.end(),
+    std::sort(population.begin(), population.end(),
               [this, ranks, crowdingDistance, population](MatType candidateP,
                                                           MatType candidateQ)
               {
@@ -129,20 +128,13 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
                 for (size_t i = 0; i < population.size(); i++)
                 {
                   if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
-                  {
                     idxP = i;
-                  }
 
                   if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
-                  {
                     idxQ = i;
-                  }
                 }
 
-                return CrowdingOperator(idxP,
-                                        idxQ,
-                                        ranks,
-                                        crowdingDistance);
+                return CrowdingOperator(idxP, idxQ, ranks, crowdingDistance);
               }
     );
 
@@ -331,22 +323,22 @@ inline bool NSGA2::Dominates(
     size_t candidateP,
     size_t candidateQ)
 {
-  bool all_better_or_equal = true;
-  bool atleast_one_better = false;
+  bool allBetterOrEqual = true;
+  bool atleastOneBetter = false;
   size_t n_objectives = calculatedObjectives[0].n_elem;
 
   for (size_t i = 0; i < n_objectives; i++)
   {
     // P is worse than Q for the i-th objective function.
     if (calculatedObjectives[candidateP](i) > calculatedObjectives[candidateQ](i))
-      all_better_or_equal = false;
+      allBetterOrEqual = false;
 
     // P is better than Q for the i-th objective function.
     else if (calculatedObjectives[candidateP](i) < calculatedObjectives[candidateQ](i))
-      atleast_one_better = true;
+      atleastOneBetter = true;
   }
 
-  return all_better_or_equal && atleast_one_better;
+  return allBetterOrEqual && atleastOneBetter;
 }
 
 //! Assign crowding distance to the population.
