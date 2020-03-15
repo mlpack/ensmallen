@@ -132,8 +132,8 @@ class ProgressBar
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void StepTaken(OptimizerType& /* optimizer */,
-                 FunctionType& /* function */,
+  void StepTaken(OptimizerType& optimizer,
+                 FunctionType& function,
                  const MatType& /* coordinates */)
   {
     if (newEpoch)
@@ -164,8 +164,22 @@ class ProgressBar
     output << "] " << progress << "% - ETA: " << (size_t) stepTimer.toc() *
         (epochSize - step + 1) % 60 << "s - loss: " <<
         objective / (double) step <<  "\r";
-    output.flush();
 
+    if (optimizer.MaxIterations() < function.NumFunctions() &&
+        optimizer.MaxIterations() != 0)
+    {
+      if (progress == (size_t)((double)(optimizer.MaxIterations()) /
+                                (double)(function.NumFunctions()) * 100) &&
+                      (double)(step*optimizer.BatchSize() -
+                      optimizer.MaxIterations()) >= 0.0)
+      {
+        output << "\n" << "Optimization terminated because of the entire "
+                       << "dataset not being passed to the optimizer."
+                       << "\r";
+      }
+    }
+
+    output.flush();
     stepTimer.tic();
   }
 

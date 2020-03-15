@@ -25,7 +25,7 @@ namespace ens {
 
 /**
  * Stochastic Gradient Descent is a technique for minimizing a function which
- * can be expressed as a sum of other functions.  That is, suppose we have
+ * can be expressed as a sum of other functions. That is, suppose we have
  *
  * \f[
  * f(A) = \sum_{i = 0}^{n} f_i(A)

@@ -21,7 +21,7 @@
 namespace ens {
 
 /**
- * CMA-ES - Covariance Matrix Adaptation Evolution Strategy is s a stochastic
+ * CMA-ES - Covariance Matrix Adaptation Evolution Strategy is a stochastic
  * search algorithm. CMA-ES is a second order approach estimating a positive
  * definite matrix within an iterative procedure using the covariance matrix.
  *
