@@ -124,8 +124,8 @@ class ProgressBar
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void StepTaken(OptimizerType& /* optimizer */,
-                 FunctionType& /* function */,
+  void StepTaken(OptimizerType& optimizer,
+                 FunctionType& function,
                  const MatType& /* coordinates */)
   {
     if (newEpoch)
