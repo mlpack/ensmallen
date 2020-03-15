@@ -81,17 +81,9 @@ class ProgressBar
     if (function.NumFunctions() % optimizer.BatchSize() > 0)
       epochSize++;
 
-    if (!optimizer.MaxIterations())
-    {
-      Warn << "Maximum number of iterations not defined (no limit),"
-           << " no progress bar shown." << std::endl;
-    }
-    else
-    {
-      epochs = optimizer.MaxIterations() / epochSize;
-      if (optimizer.MaxIterations() % epochSize > 0)
-        epochs++;
-    }
+    epochs = optimizer.MaxIterations() / function.NumFunctions();
+    if (optimizer.MaxIterations() % function.NumFunctions() > 0)
+      epochs++;
 
     stepTimer.tic();
   }
@@ -138,9 +130,18 @@ class ProgressBar
   {
     if (newEpoch)
     {
-      output << "Epoch " << epoch << "/" << epochs << "\n";
-      output.flush();
-      newEpoch = false;
+      if (!optimizer.MaxIterations())
+      {
+        output << "Epoch " << epoch << "\n";
+        output.flush();
+        newEpoch = false;
+      }
+      else
+      {
+        output << "Epoch " << epoch << "/" << epochs << "\n";
+        output.flush();
+        newEpoch = false;
+      }
     }
 
     const size_t progress = ((double) step / epochSize) * 100;
@@ -165,8 +166,6 @@ class ProgressBar
         (epochSize - step + 1) % 60 << "s - loss: " <<
         objective / (double) step <<  "\r";
     output.flush();
-
-    stepTimer.tic();
   }
 
   /**
