@@ -1600,14 +1600,14 @@ Attributes of the optimizer may also be changed via the member methods
 
 ```c++
 SchafferFunctionN1<arma::mat> SCH;
-  arma::vec lowerBound("-1000 -1000");
-  arma::vec upperBound("1000 1000");
-  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+arma::vec lowerBound("-1000 -1000");
+arma::vec upperBound("1000 1000");
+NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
-  arma::mat coords = SCH.GetInitialPoint();
-  auto objectives = SCH.GetObjectives();
+arma::mat coords = SCH.GetInitialPoint();
+auto objectives = SCH.GetObjectives();
 
-  std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
+std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
 ```
 
 </details>

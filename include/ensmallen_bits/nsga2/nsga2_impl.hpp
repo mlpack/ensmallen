@@ -278,7 +278,7 @@ inline void NSGA2::FastNonDominatedSort(
     dominated[p] = std::set<size_t>();
     dominationCount[p] = 0;
 
-    for (size_t q=0; q < populationSize; q++)
+    for (size_t q = 0; q < populationSize; q++)
       if (Dominates<MatType>(calculatedObjectives, p, q))
         dominated[p].insert(q);
       else if (Dominates<MatType>(calculatedObjectives, q, p))
