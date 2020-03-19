@@ -170,12 +170,12 @@ class ProgressBar
     {
       if (progress == (size_t)((double)(optimizer.MaxIterations()) /
                                 (double)(function.NumFunctions()) * 100) &&
-                      (int)(step * optimizer.BatchSize() -
+                      (int)(steps * optimizer.BatchSize() -
                       optimizer.MaxIterations()) >= 0)
       {
         output << "\n" << "Optimization terminated because of the entire "
                        << "dataset not being passed to the optimizer."
-                       << "\r";
+                       << "\n" << "\r";
       }
     }
 
