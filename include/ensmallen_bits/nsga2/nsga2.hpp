@@ -142,7 +142,7 @@ class NSGA2 {
   /**
    * Evaluate objectives for the elite population.
    *
-   * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
+   * @tparam ArbitraryFunctionType std::tuple of multiple function types.
    * @tparam MatType Type of matrix to optimize.
    * @param population The elite population.
    * @param objectives The set of objectives.
