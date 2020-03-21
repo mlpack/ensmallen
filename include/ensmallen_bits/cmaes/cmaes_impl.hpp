@@ -216,7 +216,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
-    sigma(idx1) = sigma(idx0) * std::exp(cs / ds *( psNorm / enn - 1));
+    sigma(idx1) = sigma(idx0) * std::exp(cs / ds * ( psNorm / enn - 1));
 
     // Update covariance matrix.
     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
