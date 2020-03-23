@@ -38,6 +38,12 @@ BigBatchSGD<UpdatePolicyType>::BigBatchSGD(
     updatePolicy(UpdatePolicyType())
 { /* Nothing to do. */ }
 
+template<typename UpdatePolicyType>
+BigBatchSGD<UpdatePolicyType>::~BigBatchSGD()
+{
+  instUpdatePolicy.Clean();
+}
+
 //! Optimize the function (minimize).
 template<typename UpdatePolicyType>
 template<typename SeparableFunctionType,
