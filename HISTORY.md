@@ -1,5 +1,9 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Correction in the formulation of sigma in CMA-ES
+    ([#183](https://github.com/mlpack/ensmallen/pull/183)).
+
+ * ...
 
 ### ensmallen 2.11.5: "The Poster Session Is Full"
 ###### 2020-03-11
