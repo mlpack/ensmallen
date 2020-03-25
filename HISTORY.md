@@ -1,9 +1,10 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
-<<<<<<< HEAD
-=======
  * Correction in the formulation of sigma in CMA-ES
     ([#183](https://github.com/mlpack/ensmallen/pull/183)).
+
+ * Fixing progress bar
+    ([#181](https://github.com/mlpack/ensmallen/pull/181)).
 
  * ...
 
@@ -24,7 +25,6 @@
 
 ### ensmallen 2.11.3: "The Poster Session Is Full"
 ###### 2020-02-19
->>>>>>> minor-cmaes-sigma-fix
   * Prevent spurious compiler warnings
     ([#161](https://github.com/mlpack/ensmallen/pull/161)).
   
