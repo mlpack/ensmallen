@@ -125,7 +125,7 @@ class ProgressBar
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
   void StepTaken(OptimizerType& optimizer,
-                 FunctionType& function,
+                 FunctionType& /* function */,
                  const MatType& /* coordinates */)
   {
     if (newEpoch)

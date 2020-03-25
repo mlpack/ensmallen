@@ -3,7 +3,7 @@
  * Correction in the formulation of sigma in CMA-ES
     ([#183](https://github.com/mlpack/ensmallen/pull/183)).
 
- * Fixing progress bar
+ * Fixing ProgressBar
     ([#181](https://github.com/mlpack/ensmallen/pull/181)).
 
  * ...
@@ -27,12 +27,16 @@
 ###### 2020-02-19
   * Prevent spurious compiler warnings
     ([#161](https://github.com/mlpack/ensmallen/pull/161)).
-  
-  * ...
+
+  * Fix minor memory leaks
+    ([#167](https://github.com/mlpack/ensmallen/pull/167)).
+
+  * Revamp CMake configuration
+    ([#152](https://github.com/mlpack/ensmallen/pull/152)).
 
 ### ensmallen 2.11.2: "The Poster Session Is Full"
 ###### 2020-01-16
-  * Allow callback instantiation for SGD based optimizer 
+  * Allow callback instantiation for SGD based optimizer
     ([#138](https://github.com/mlpack/ensmallen/pull/155)).
 
   * Minor test stability fixes on i386
