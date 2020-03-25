@@ -1,5 +1,30 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+<<<<<<< HEAD
+=======
+ * Correction in the formulation of sigma in CMA-ES
+    ([#183](https://github.com/mlpack/ensmallen/pull/183)).
+
+ * ...
+
+### ensmallen 2.11.5: "The Poster Session Is Full"
+###### 2020-03-11
+  * Change "mathematical optimization" term to "numerical optimization" in the
+    documentation ([#177](https://github.com/mlpack/ensmallen/pull/177)).
+
+### ensmallen 2.11.4: "The Poster Session Is Full"
+###### 2020-03-03
+  * Require new HISTORY.md entry for each PR.
+    ([#171](https://github.com/mlpack/ensmallen/pull/171),
+     [#172](https://github.com/mlpack/ensmallen/pull/172),
+     [#175](https://github.com/mlpack/ensmallen/pull/175)).
+
+  * Update/fix example documentation
+    ([#174](https://github.com/mlpack/ensmallen/pull/174)).
+
+### ensmallen 2.11.3: "The Poster Session Is Full"
+###### 2020-02-19
+>>>>>>> minor-cmaes-sigma-fix
   * Prevent spurious compiler warnings
     ([#161](https://github.com/mlpack/ensmallen/pull/161)).
   
