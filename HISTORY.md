@@ -2,7 +2,8 @@
 ###### ????-??-??
  * Correction in the formulation of sigma in CMA-ES
     ([#183](https://github.com/mlpack/ensmallen/pull/183)).
-
+ * Remove deprecated methods from PrimalDualSolver implementation
+    ([#185](https://github.com/mlpack/ensmallen/pull/185)
  * ...
 
 ### ensmallen 2.11.5: "The Poster Session Is Full"
