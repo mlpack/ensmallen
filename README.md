@@ -1,3 +1,7 @@
+<h2 align="center">
+  <a href="http://ensmallen.org/"><img src="http://ensmallen.org/img/ensmallen_text.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="ensmallen: a C++ header-only library for numerical optimization"></a>
+</h2>
+
 **ensmallen** is a C++ header-only library for numerical optimization.
 
 Documentation and downloads: http://ensmallen.org
@@ -27,12 +31,10 @@ an updated version of CMake is also available via the EPEL repository via the `c
 
 ### License
 
-Unless stated otherwise, the source code for **ensmallen**
-is licensed under the 3-clause BSD license (the "License").
-A copy of the License is included in the "LICENSE.txt" file.
-You may also obtain a copy of the License at
-http://opensource.org/licenses/BSD-3-Clause
-
+Unless stated otherwise, the source code for **ensmallen** is licensed under the
+3-clause BSD license (the "License").  A copy of the License is included in the
+"LICENSE.txt" file.  You may also obtain a copy of the License at
+http://opensource.org/licenses/BSD-3-Clause .
 
 ### Citation
 
