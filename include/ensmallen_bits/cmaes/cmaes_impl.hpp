@@ -77,7 +77,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   const double muEffective = 1 / arma::accu(arma::pow(w, 2));
 
   // Step size control parameters.
-  BaseMatType sigma(3, 1); // sigma is vector-shaped.
+  BaseMatType sigma(2, 1); // sigma is vector-shaped.
   sigma(0) = 0.3 * (upperBound - lowerBound);
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
@@ -97,7 +97,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       muEffective) / (std::pow(iterate.n_elem + 2, 2) +
       alphaMu * muEffective / 2));
 
-  std::vector<BaseMatType> mPosition(3, BaseMatType(iterate.n_rows,
+  std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows,
       iterate.n_cols));
   mPosition[0] = lowerBound + arma::randu<BaseMatType>(
       iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
@@ -216,8 +216,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
-    sigma(idx1) = sigma(idx0) * std::pow(
-        std::exp(cs / ds * psNorm / enn - 1), 0.3);
+    sigma(idx1) = sigma(idx0) * std::exp(cs / ds * ( psNorm / enn - 1));
 
     // Update covariance matrix.
     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
