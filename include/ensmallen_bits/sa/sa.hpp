@@ -73,7 +73,7 @@ class SA
    * @param initMoveCoef Initial move size.
    * @param gain Proportional control in feedback move control.
    */
-  SA(CoolingScheduleType& coolingSchedule,
+  SA(const CoolingScheduleType& coolingSchedule = CoolingScheduleType(),
      const size_t maxIterations = 1000000,
      const double initT = 10000.,
      const size_t initMoves = 1000,
@@ -101,6 +101,11 @@ class SA
   typename MatType::elem_type Optimize(FunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks);
+
+  //! Get the cooling schedule.
+  CoolingScheduleType CoolingSchedule() const { return coolingSchedule; }
+  //! Modify the cooling schedule.
+  CoolingScheduleType& CoolingSchedule() { return coolingSchedule; }
 
   //! Get the temperature.
   double Temperature() const { return temperature; }
@@ -139,7 +144,7 @@ class SA
 
  private:
   //! The cooling schedule being used.
-  CoolingScheduleType& coolingSchedule;
+  CoolingScheduleType coolingSchedule;
   //! The maximum number of iterations.
   size_t maxIterations;
   //! The current temperature.

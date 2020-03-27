@@ -1,26 +1,32 @@
-sudo: required
+os: linux
 dist: trusty
 language: cpp
 
 env:
-  - ARMADILLO=latest
+  - ARMADILLO=latest SANITY_HISTORY=perform
   - ARMADILLO=minimum
 
-before_install:
+stages:
+  - test
+  - name: sanity
+    if: type = pull_request AND env(SANITY_HISTORY) = "perform"
+
+jobs:
+  include:
+    - stage: sanity
+      name: "HISTORY.md Check"
+      script: sh ./scripts/history-update-check.sh
+
+script:
   - sudo apt-get update
   - sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ xz-utils
   - if [ $ARMADILLO == "latest" ]; then
       curl https://ftp.fau.de/macports/distfiles/armadillo/`curl https://ftp.fau.de/macports/distfiles/armadillo/ -- | grep '.tar.xz' | sed 's/^.*<a href="\(armadillo-[0-9]*.[0-9]*.[0-9]*.tar.xz\)".*$/\1/' | tail -1` | tar xvJ && cd armadillo*;
-    fi
-  - if [ $ARMADILLO == "minimum" ]; then
+    else
       curl https://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*;
     fi
   - cmake . && make && sudo make install && cd ..
-
-install:
   - mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" -DCMAKE_C_FLAGS="-Werror" .. && make -j2
-
-script:
   - CTEST_OUTPUT_ON_FAILURE=1 travis_wait 30 ctest -j2
 
 notifications:
