@@ -1,4 +1,8 @@
-**ensmallen** is a C++ header-only library for mathematical optimization.
+<h2 align="center">
+  <a href="http://ensmallen.org/"><img src="http://ensmallen.org/img/ensmallen_text.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="ensmallen: a C++ header-only library for numerical optimization"></a>
+</h2>
+
+**ensmallen** is a C++ header-only library for numerical optimization.
 
 Documentation and downloads: http://ensmallen.org
 
