@@ -50,6 +50,12 @@ LRSDPFunction<SDPType>::LRSDPFunction(
 }
 
 template<typename SDPType>
+LRSDPFunction<SDPType>::~LRSDPFunction()
+{
+  rrt.Clean();
+}
+
+template<typename SDPType>
 template<typename MatType>
 typename MatType::elem_type LRSDPFunction<SDPType>::Evaluate(
     const MatType& /* coordinates */) const
