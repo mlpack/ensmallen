@@ -38,11 +38,11 @@ inline PrimalDualSolver::PrimalDualSolver(const size_t maxIterations,
                                           const double normXzTol,
                                           const double primalInfeasTol,
                                           const double dualInfeasTol) :
-                                          maxIterations(maxIterations),
-                                          tau(tau),
-                                          normXzTol(normXzTol),
-                                          primalInfeasTol(primalInfeasTol),
-                                          dualInfeasTol(dualInfeasTol)
+    maxIterations(maxIterations),
+    tau(tau),
+    normXzTol(normXzTol),
+    primalInfeasTol(primalInfeasTol),
+    dualInfeasTol(dualInfeasTol)
 {
   // Nothing to do.
 }
