@@ -243,7 +243,7 @@ static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
   ysparse = -1.1 * arma::vec(arma::sum(arma::abs(sdp.C()), 0).t());
   Z = -arma::diagmat(ysparse) + sdp.C();
 
-  PrimalDualSolver<> solver;
+  PrimalDualSolver solver;
 
   solver.Optimize(sdp, X, ysparse, ydense, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
@@ -260,7 +260,7 @@ static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
   ysparse = arma::randu<arma::vec>(sdp.NumSparseConstraints());
   Z.eye(sdp.N(), sdp.N());
 
-  PrimalDualSolver<> solver;
+  PrimalDualSolver solver;
   solver.Optimize(sdp, X, ysparse, ydense, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
@@ -289,7 +289,7 @@ TEST_CASE("DeprecatedSmallLovaszThetaSdp", "[SdpPrimalDualTest]")
   UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
   auto sdp = ConstructLovaszThetaSDPFromGraph(g);
 
-  PrimalDualSolver<> solver;
+  PrimalDualSolver solver;
 
   arma::mat X, Z;
   arma::mat ysparse, ydense;
@@ -304,7 +304,7 @@ TEST_CASE("SmallLovaszThetaSdp", "[SdpPrimalDualTest]")
   UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
   auto sdp = ConstructLovaszThetaSDPFromGraph(g);
 
-  PrimalDualSolver<> solver;
+  PrimalDualSolver solver;
 
   arma::mat X, Z, ysparse, ydense;
   sdp.GetInitialPoints(X, ysparse, ydense, Z);
@@ -439,7 +439,7 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
     const arma::mat A0 = RandomFullRowRankMatrix(p0, k0);
     const arma::vec b0 = arma::randu<arma::vec>(p0);
     const auto sdp0 = ConstructLogChebychevApproxSdp(A0, b0);
-    PrimalDualSolver<> solver0;
+    PrimalDualSolver solver0;
     arma::mat X0, Z0;
     arma::mat ysparse0, ydense0;
     sdp0.GetInitialPoints(X0, ysparse0, ydense0, Z0);
@@ -459,7 +459,7 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
     const arma::mat A1 = RandomFullRowRankMatrix(p1, k1);
     const arma::vec b1 = arma::randu<arma::vec>(p1);
     const auto sdp1 = ConstructLogChebychevApproxSdp(A1, b1);
-    PrimalDualSolver<> solver1;
+    PrimalDualSolver solver1;
     arma::mat X1, Z1;
     arma::mat ysparse1, ydense1;
     sdp1.GetInitialPoints(X1, ysparse1, ydense1, Z1);
@@ -573,7 +573,7 @@ TEST_CASE("CorrelationCoeffToySdp","[SdpPrimalDualTest]")
   sdp.C().zeros();
   sdp.C()(0, 2) = sdp.C()(2, 0) = 1.;
 
-  PrimalDualSolver<> solver;
+  PrimalDualSolver solver;
   arma::mat X, Z;
   arma::mat ysparse, ydense;
   sdp.GetInitialPoints(X, ysparse, ydense, Z);

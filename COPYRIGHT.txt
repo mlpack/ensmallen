@@ -38,6 +38,7 @@ Copyright:
   Copyright 2019, Rahul Ganesh Prabhu
   Copyright 2019, Roberto Hueso <robertohueso96@gmail.com>
   Copyright 2019, Sayan Goswami <sayan.goswami.106@gmail.com>
+  Copyright 2020, Joe Dinius <josephwdinius@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
