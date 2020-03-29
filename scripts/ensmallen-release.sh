@@ -96,7 +96,7 @@ fi
 sed -i "s/ensmallen-[0-9]*\.[0-9]*\.[0-9]*/ensmallen-$MAJOR.$MINOR.$PATCH/g" CONTRIBUTING.md;
 
 # Update HISTORY.md with the release date and possibly name.
-version_name=`grep ENS_VERSION_NAME include/ensmallen_bits/ens_version.hpp | sed 's/.*\"\(.*\)\"/\1/'`;
+version_name=`grep ENS_VERSION_NAME include/ensmallen_bits/ens_version.hpp | head -1 | sed 's/.*\"\(.*\)\"/\1/'`;
 year=`date +%Y`;
 month=`date +%m`;
 day=`date +%d`;
