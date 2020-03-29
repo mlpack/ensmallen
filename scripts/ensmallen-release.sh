@@ -55,6 +55,7 @@ fi
 
 # Make sure 'gh' is installed.
 hub_output="`which hub`";
+echo "hub output is $hub_output";
 if [ "a$hub_output" == "a" ]; then
   echo "The Hub command-line tool must be installed for this script to run successfully.";
   echo "See https://hub.github.com for more details and installation instructions.";
