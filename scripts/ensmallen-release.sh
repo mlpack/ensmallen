@@ -7,6 +7,7 @@
 #
 # This should be run from the root of the repository.
 set -e
+set -x
 
 if [ "$#" -lt 4 ]; then
   echo "At least four arguments required!";
