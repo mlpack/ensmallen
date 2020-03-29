@@ -100,8 +100,8 @@ version_name=`grep ENS_VERSION_NAME include/ensmallen_bits/ens_version.hpp | hea
 year=`date +%Y`;
 month=`date +%m`;
 day=`date +%d`;
-sed -i "s/### ensmallen ?.??.?: \"???\"/### ensmallen $MAJOR.$MINOR.$PATCH: \"$version_name\"/" HISTORY.md
-sed -i "s/###### ????-??-??/###### $year-$month-$day/";
+sed -i "s/### ensmallen ?.??.?: \"???\"/### ensmallen $MAJOR.$MINOR.$PATCH: \"$version_name\"/" HISTORY.md;
+sed -i "s/###### ????-??-??/###### $year-$month-$day/" HISTORY.md;
 
 # Now, we'll do all this on a new release branch.
 git checkout -b release-$MAJOR-$MINOR-$PATCH;
