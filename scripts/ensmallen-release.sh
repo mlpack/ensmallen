@@ -39,7 +39,7 @@ if [ "a$dest_remote_name" == "a" ]; then
 fi
 
 # Also check that we're on the master branch, from the correct origin.
-current_branch=`git branch --no-color | grep '^\* | awk -F' ' '{ print $2 }''`;
+current_branch=`git branch --no-color | grep '^\* ' | awk -F' ' '{ print $2 }'`;
 current_origin=`git rev-parse --abbrev-ref --symbolic-full-name @{u} | awk -F'/' '{ print $1 }'`;
 if [ "a$current_branch" != "amaster" ]; then
   echo "Current branch is $current_branch."
