@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+  * Update release script.
+
+  * Don't actually release this version!
 
 ### ensmallen 2.11.5: "The Poster Session Is Full"
 ###### 2020-03-11
