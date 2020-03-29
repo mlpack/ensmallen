@@ -3,51 +3,142 @@
 # Release a new version of ensmallen.
 #
 # Arguments:
-#   $ ensmallen-release.sh <major> <minor> <patch> [<name>]
+#   $ ensmallen-release.sh <github username> <major> <minor> <patch> [<name>]
 #
 # This should be run from the root of the repository.
-#
-# Make sure to update HISTORY.md manually first!
 set -e
 
-if [ "$#" -lt 3 ]; then
-  echo "At least three arguments required!";
-  echo "$ ensmallen-release.sh <major> <minor> <patch> [<name>]";
+if [ "$#" -lt 4 ]; then
+  echo "At least four arguments required!";
+  echo "$ ensmallen-release.sh <github username> <major> <minor> <patch> [<name>]";
   exit 1;
 fi
 
-if [ "$#" -gt 4 ]; then
-  echo "Too many arguments!"
-  echo "$ ensmallen-release.sh <major> <minor> <patch> [<name>]";
+if [ "$#" -gt 5 ]; then
+  echo "Too many arguments!";
+  echo "$ ensmallen-release.sh <github username> <major> <minor> <patch> [<name>]";
   exit 1;
 fi
 
+# Make sure that the branch is clean.
 lines=`git diff | wc -l`;
 if [ "$lines" != "0" ]; then
-  echo "git diff returned a nonzero result!"
-  git diff
+  echo "git diff returned a nonzero result!";
+  echo "";
+  git diff;
   exit 1;
 fi
 
-MAJOR=$1;
-MINOR=$2;
-PATCH=$3;
+# Make sure that the mlpack repository exists.
+dest_remote_name=`git remote -v | grep "https://github.com/mlpack/ensmallen (fetch)" | head -1 | awk -F' ' '{ print $1 }'`;
+if [ "a$dest_remote_name" == "a" ]; then
+    echo "No git remote found for https://github.com/mlpack/ensmallen!";
+    echo "Make sure that you've got the ensmallen repository as a remote, and that the master branch from that remote is checked out.";
+    echo "You can do this with a fresh repository via \`git clone https://github.com/mlpack/ensmallen\`.";
+    exit 1;
+fi
+
+# Also check that we're on the master branch, from the correct origin.
+current_branch=`git branch --no-color --show-current`;
+current_origin=`git rev-parse --abbrev-ref --symbolic-full-name @{u} | awk -F'/' '{ print $1 }'`;
+if [ "a$current_branch" != "amaster" ]; then
+  echo "Current branch is $current_branch."
+  echo "This script has to be run from the master branch."
+  exit 1;
+elif [ "a$current_origin" != "a$dest_remote_name" ]; then
+  echo "Current branch does not track from remote mlpack repository!";
+  echo "Instead, it tracks from $current_origin/master.";
+  echo "Make sure to check out a branch that tracks $dest_remote_name/master.";
+  exit 1;
+fi
+
+# Make sure 'gh' is installed.
+hub_output=`hub --version | grep 'hub version '`;
+if [ "a$hub_output" == "a" ]; then
+  echo "The Hub command-line tool must be installed for this script to run successfully.";
+  echo "See https://hub.github.com for more details and installation instructions.";
+  echo "";
+  echo "(apt-get install hub on Debian and Ubuntu)";
+  echo "(brew install hub via Homebrew)";
+  exit 1;
+fi
+
+# Check git remotes.
+github_user=$1;
+remote_name=`git remote -v | grep "https://github.com/$github_user/ensmallen (push)" | head -1 | awk -F' ' '{ print $1 }'`;
+if [ "a$remote_name" == "a" ]; then
+    echo "No git remote found for https://github.com/$github_user/ensmallen!";
+    echo "Adding remote '$github_user'.";
+    git remote add $github_user https://github.com/$github_user/ensmallen;
+    remote_name="$github_user";
+fi
+git fetch $github_user;
+
+# Make sure everything is up to date.
+git pull;
+
+# Make updates to files that will be needed for the release.
+MAJOR=$2;
+MINOR=$3;
+PATCH=$4;
 
 sed -i 's/ENS_VERSION_MAJOR[ ]*[0-9]*$/ENS_VERSION_MAJOR '$MAJOR'/' include/ensmallen_bits/ens_version.hpp;
 sed -i 's/ENS_VERSION_MINOR[ ]*[0-9]*$/ENS_VERSION_MINOR '$MINOR'/' include/ensmallen_bits/ens_version.hpp;
 sed -i 's/ENS_VERSION_PATCH[ ]*[0-9]*$/ENS_VERSION_PATCH '$PATCH'/' include/ensmallen_bits/ens_version.hpp;
 
-if [ "$#" -eq "4" ]; then
-  sed -i 's/ENS_VERSION_NAME[ ]*\".*\"$/ENS_VERSION_NAME \"'"$4"'\"/' include/ensmallen_bits/ens_version.hpp;
+if [ "$#" -eq "5" ]; then
+  sed -i 's/ENS_VERSION_NAME[ ]*\".*\"$/ENS_VERSION_NAME \"'"$5"'\"/' include/ensmallen_bits/ens_version.hpp;
 fi
 
-# update CONTRIBUTING.md
+# Update CONTRIBUTING.md.
 sed -i "s/ensmallen-[0-9]*\.[0-9]*\.[0-9]*/ensmallen-$MAJOR.$MINOR.$PATCH/g" CONTRIBUTING.md;
 
-git pull
+# Update HISTORY.md with the release date and possibly name.
+version_name=`grep ENS_VERSION_NAME include/ensmallen_bits/ens_version.hpp | sed 's/.*\"\(.*\)\"/\1/'`;
+year=`date +%Y`;
+month=`date +%m`;
+day=`date +%d`;
+sed -i "s/### ensmallen ?.??.?: \"???\"/### ensmallen $MAJOR.$MINOR.$PATCH: \"$version_name\"/" HISTORY.md
+sed -i "s/###### ????-??-??/###### $year-$month-$day/";
+
+# Now, we'll do all this on a new release branch.
+git checkout -b release-$MAJOR-$MINOR-$PATCH;
+
 git add include/ensmallen_bits/ens_version.hpp;
-git add CONTRIBUTING.md
+git add CONTRIBUTING.md;
+git add HISTORY.md;
 git commit -m "Update and release version $MAJOR.$MINOR.$PATCH.";
+
+# Add one more commit to create the new HISTORY block.
+echo "### ensmallen ?.??.?: \"???\"" > HISTORY.md.new;
+echo "###### ????-??-??" >> HISTORY.md.new;
+echo "" >> HISTORY.md.new;
+cat HISTORY.md >> HISTORY.md.new;
+mv HISTORY.md.new HISTORY.md;
+git add HISTORY.md;
+git commit -m "Add new block for next release to HISTORY.md.";
+
+# Push to new branch.
+git push --set-upstream $github_user release-$MAJOR-$MINOR-$PATCH;
+
+# Next, we have to actually open the PR for the release.
+hub pull-request \
+    -b $dest_remote_name:master \
+    -h $github_user:release-$MAJOR-$MINOR-$PATCH \
+    -m "Release version $MAJOR-$MINOR-$PATCH" \
+    -m "This automatically-generated pull request adds the commits necessary to make the $MAJOR-$MINOR-$PATCH release." \
+    -m "" \
+    -m "Once the PR is merged, mlpack-bot will tag the release and publish it." \
+    -m "Or, well, hopefully that will happen someday." \
+    -m "" \
+    -l "t: release"
+
+
+exit 0;
+
+## everything below here isn't done...
+
+# Tag will be done by mlpack-bot.
 git tag $MAJOR.$MINOR.$PATCH;
 git push origin $MAJOR.$MINOR.$PATCH;
 git push origin master;
