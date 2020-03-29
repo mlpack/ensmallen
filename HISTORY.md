@@ -1,5 +1,5 @@
 ### ensmallen ?.??.?: "???
-###### ????-??-??
+###### 2020-03-29
   * Update release script.
 
   * Don't actually release this version!
