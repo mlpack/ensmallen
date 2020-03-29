@@ -22,11 +22,7 @@ namespace ens {
  * PrimalDualSolver can optimize semidefinite programs.  For more details, see the
  * documentation on function types included with this distribution or on the
  * ensmallen website.
- *
- * @tparam DeprecatedSDPType Type of SDP to solve.  This parameter is deprecated
- *      and will be removed in ensmallen 2.10.0.
  */
-template<typename DeprecatedSDPType = SDP<arma::mat>>
 class PrimalDualSolver
 {
  public:
@@ -45,72 +41,6 @@ class PrimalDualSolver
                    const double normXzTol = 1e-7,
                    const double primalInfeasTol = 1e-7,
                    const double dualInfeasTol = 1e-7);
-
-  /**
-   * Construct a new solver instance from a given SDP instance.  Uses a random,
-   * positive initialization point.
-   *
-   * This constructor is deprecated.  Use the constructor that does not take an
-   * SDPType and then call Optimize() with the SDP to be solved.
-   *
-   * This constructor will be removed in ensmallen 2.10.0.
-   *
-   * @param sdp Initialized SDP to be solved.
-   */
-  ens_deprecated PrimalDualSolver(const DeprecatedSDPType& sdp);
-
-  /**
-   * Construct a new solver instance with the given SDP instance and initial
-   * points for optimization.
-   *
-   * This constructor is deprecated.  Use the constructor that does not take an
-   * SDPType and then call Optimize() with the SDP to be solved.
-   *
-   * This constructor will be removed in ensmallen 2.10.0.
-   *
-   * @param sdp Initialized SDP to be solved.
-   * @param initialX Initial primal point for optimization.
-   * @param initialYSparse Initial y values for sparse constraints.
-   * @param initialYDense Initial y values for dense constraints.
-   * @param initialZ Initial dual point for optimization.
-   */
-  ens_deprecated PrimalDualSolver(const DeprecatedSDPType& sdp,
-                                  const arma::mat& initialX,
-                                  const arma::vec& initialYSparse,
-                                  const arma::vec& initialYDense,
-                                  const arma::mat& initialZ);
-
-  /**
-   * Optimize the stored SDP instance, storing the primal coordinates in X and
-   * returning the primal objective value.  Any initial point in X will be
-   * ignored.
-   *
-   * This function is deprecated and will be removed in ensmallen 2.10.0.  Use
-   * the overload of Optimize() that takes an SDP.
-   *
-   * @param X Matrix to store final primal coordinates for optimization.
-   * @return Primal objective value.
-   */
-  ens_deprecated double Optimize(arma::mat& X);
-
-  /**
-   * Optimize the stored SDP instance, storing the primal coordinates, dual
-   * coordinates, and sparse and dense y values into the given matrices and
-   * vectors.  The primal objective is returned.  Any initial setting of the
-   * given matrices will be ignored.
-   *
-   * This function is deprecated and will be rmeoved in ensmallen 2.10.0.  Use
-   * the overload of Optimize() that takes an SDP.
-   *
-   * @param X Matrix to store final primal coordinates into.
-   * @param ySparse Vector to store final sparse y values into.
-   * @param yDense Vector to store final dense y values into.
-   * @param Z Matrix to store final dual coordinates into.
-   */
-  ens_deprecated double Optimize(arma::mat& X,
-                                 arma::vec& ySparse,
-                                 arma::vec& yDense,
-                                 arma::mat& Z);
 
   /**
    * Optimize the given SDP with the given initial coordinates.  To get a set of
@@ -181,15 +111,6 @@ class PrimalDualSolver
   double& DualInfeasTol() { return dualInfeasTol; }
 
  private:
-  /**
-   * These are deprecated and will be removed in ensmallen 2.10.0.
-   */
-  DeprecatedSDPType deprecatedSDP;
-  arma::mat initialX;
-  arma::vec initialYSparse;
-  arma::vec initialYDense;
-  arma::mat initialZ;
-
   //! Maximum number of iterations to run. Set to 0 for no limit.
   size_t maxIterations;
 

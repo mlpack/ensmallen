@@ -108,8 +108,8 @@ $ cd ensmallen
 
 # - or -
 
-$ wget http://ensmallen.org/files/ensmallen-2.11.5.tar.gz
-$ tar -xvzpf ensmallen-2.11.5.tar.gz
+$ wget http://ensmallen.org/files/ensmallen-2.12.0.tar.gz
+$ tar -xvzpf ensmallen-2.12.0.tar.gz
 $ cd ensmallen-latest
 ```
 
