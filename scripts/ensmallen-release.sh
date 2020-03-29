@@ -54,7 +54,7 @@ elif [ "a$current_origin" != "a$dest_remote_name" ]; then
 fi
 
 # Make sure 'gh' is installed.
-hub_output="`which hub`";
+hub_output="`which hub`" || true;
 echo "hub output is $hub_output";
 if [ "a$hub_output" == "a" ]; then
   echo "The Hub command-line tool must be installed for this script to run successfully.";
