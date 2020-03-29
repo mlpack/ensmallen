@@ -125,7 +125,7 @@ git push --set-upstream $github_user release-$MAJOR-$MINOR-$PATCH;
 
 # Next, we have to actually open the PR for the release.
 hub pull-request \
-    -b $dest_remote_name:master \
+    -b mlpack:master \
     -h $github_user:release-$MAJOR-$MINOR-$PATCH \
     -m "Release version $MAJOR-$MINOR-$PATCH" \
     -m "This automatically-generated pull request adds the commits necessary to make the $MAJOR-$MINOR-$PATCH release." \
