@@ -85,7 +85,7 @@ gradients.
 | `double` | **`stepSize`** | Step size for each iteration. | `1.0` |
 | `size_t` | **`batchSize`**| Number of points to process in one step. | `32` |
 | `double` | **`rho`** | Smoothing constant. Corresponding to fraction of gradient to keep at each time step. | `0.95` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-6` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-6` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -141,7 +141,7 @@ parameters.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
 | `size_t` | **`batchSize`** | Number of points to process in one step. | `32` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-8` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -766,7 +766,7 @@ Eve is a stochastic gradient based optimization method with locally and globally
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`beta3`** | Exponential decay rate for relative change. | `0.999` |
 | `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `double` | **`clip`** | Clipping range to avoid extreme valus. | `10` |
+| `double` | **`clip`** | Clipping range to avoid extreme values. | `10` |
 | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -1625,7 +1625,7 @@ OptimisticAdam is an optimizer which implements the Optimistic Adam algorithm
 which uses Optmistic Mirror Descent with the Adam Optimizer.  It addresses the
 problem of limit cycling while training GANs (generative adversarial networks).
 It uses OMD to achieve faster regret rates in solving the zero sum game of
-training a GAN. It consistently achieves a smaller KL divergnce with~ respect to
+training a GAN. It consistently achieves a smaller KL divergence with~ respect to
 the true underlying data distribution.  The implementation here can be used with
 any differentiable separable function, not just GAN training.
 
@@ -2046,7 +2046,7 @@ RMSProp utilizes the magnitude of recent gradients to normalize the gradients.
 | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
 | `size_t` | **`batchSize`** | Number of points to process in each step. | `32` |
 | `double` | **`alpha`** | Smoothing constant, similar to that used in AdaDelta and momentum methods. | `0.99` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-8` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -2563,7 +2563,7 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
 SMORMS3 is a hybrid of RMSprop, which is trying to estimate a safe and optimal
-distance based on curvature or perhaps just normalizing the stepsize in the
+distance based on curvature or perhaps just normalizing the step-size in the
 parameter space.
 
 #### Constructors
@@ -2579,7 +2579,7 @@ parameter space.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`batchSize`** | Number of points to process at each step. | `32` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-16` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-16` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
@@ -2786,7 +2786,7 @@ the projection of Adam steps on the gradient subspace.
 | `size_t` | **`batchSize`** | Number of points to process at each step. | `32` |
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-16` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-16` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |

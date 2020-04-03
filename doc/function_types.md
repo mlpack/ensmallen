@@ -761,7 +761,7 @@ class CategoricalFunction
 
 </details>
 
-However, when an optimizer's Optimize() method is called, two additional
+However, when an optimizers Optimize() method is called, two additional
 parameters must be specified, in addition to the function to optimize and the
 matrix holding the parameters:
 
@@ -1149,8 +1149,8 @@ confusing and difficult error messages!
 ## Multi-objective functions
 
 A multi-objective function is a set of functions or objectives that are
-simultaneously optimised. For this variety of problems, a class/struct
-with a speicfic API must be used which is illustrated in the file
+simultaneously optimized. For this variety of problems, a class/struct
+with a specific API must be used which is illustrated in the file
 `include/ensmallen_bits/problems/schaffer_function_n1.hpp` for the Schaffer N.1
 function.
 
