@@ -3,7 +3,7 @@
  * @author Sayan Goswami
  *
  * Implementation of the NSGA-II algorithm. Used for multi-objective
- * optimisation problems on arbitrary functions.
+ * optimization problems on arbitrary functions.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -114,10 +114,11 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
     crowdingDistance.resize(population.size());
 
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
-      CrowdingDistanceAssignment(fronts[fNum],
-                                 crowdingDistance,
-                                 lowerBound,
+    {
+      CrowdingDistanceAssignment(fronts[fNum], crowdingDistance, lowerBound,
                                  upperBound);
+    }
+
 
     // Sort based on crowding distance.
     std::sort(population.begin(), population.end(),
@@ -178,8 +179,7 @@ NSGA2::EvaluateObjectives(
   for (size_t i = 0; i < populationSize; i++)
   {
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
-    EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population,
-                                                               objectives,
+    EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
                                                                calculatedObjectives);
   }
 }
@@ -279,10 +279,12 @@ inline void NSGA2::FastNonDominatedSort(
     dominationCount[p] = 0;
 
     for (size_t q = 0; q < populationSize; q++)
+    {
       if (Dominates<MatType>(calculatedObjectives, p, q))
         dominated[p].insert(q);
       else if (Dominates<MatType>(calculatedObjectives, q, p))
         dominationCount[p] += 1;
+    }
 
     if (dominationCount[p] == 0)
     {
@@ -360,8 +362,10 @@ inline void NSGA2::CrowdingDistanceAssignment(const std::vector<size_t>& front,
       crowdingDistance[front[fSize - 1]] = upperBound(m);
 
       for (size_t i = 1; i < fSize - 1 ; i++)
+      {
         crowdingDistance[front[i]] += (crowdingDistance[front[i - 1]] -
             crowdingDistance[front[i + 1]]) / (upperBound(m) - lowerBound(m));
+      }
     }
   }
 }
