@@ -1609,8 +1609,11 @@ arma::vec lowerBound("-1000 -1000");
 arma::vec upperBound("1000 1000");
 NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
+typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
 arma::mat coords = SCH.GetInitialPoint();
-auto objectives = SCH.GetObjectives();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
 ```
