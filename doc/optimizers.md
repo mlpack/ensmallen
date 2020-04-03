@@ -1580,7 +1580,6 @@ size equal to that of the starting population.
  * `NSGA2()`
  * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, epsilon, lowerBound, upperBound`_`)`
 
-
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
