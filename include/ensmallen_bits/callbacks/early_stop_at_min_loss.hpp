@@ -19,6 +19,7 @@ namespace ens {
  * Early stopping to terminate the optimization process early if the loss stops
  * decreasing.
  */
+template<typename AnnType>
 class EarlyStopAtMinLoss
 {
  public:
@@ -29,13 +30,12 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss(const size_t patienceIn = 10, 
-                     std::ostream& output = arma::get_cout_stream()) :
-      patience(patienceIn),
-      bestObjective(std::numeric_limits<double>::max()),
-      steps(0),
-      output(output)
-  { /* Nothing to do here */ }
+  EarlyStopAtMinLoss<AnnType>(const size_t patienceIn = 10,
+                              std::ostream& output = arma::get_cout_stream())
+    : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
+      steps(0), output(output)
+  { /* Nothing to do here */
+  }
 
   /**
    * Set up the early stop at min class, which keeps track
@@ -47,13 +47,13 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    * been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss(const arma::mat& predictors,
-                     const arma::mat& responses,
-                     const size_t patienceIn = 10,
-                     std::ostream& output = arma::get_cout_stream()) :
-      patience(patienceIn),
-      bestObjective(std::numeric_limits<double>::max()),
-      steps(0),
+  EarlyStopAtMinLoss<AnnType>(AnnType& network,
+                              const arma::mat& predictors,
+                              const arma::mat& responses,
+                              const size_t patienceIn = 10,
+                              std::ostream& output = arma::get_cout_stream())
+    : network(network), patience(patienceIn),
+      bestObjective(std::numeric_limits<double>::max()), steps(0),
       output(output)
   {
     this->predictors = predictors;
@@ -78,8 +78,8 @@ class EarlyStopAtMinLoss
   {
     if ((!predictors.empty()) and (!responses.empty()))
     {
-      objective = function.Evaluate(predictors, responses);
-      output << "Validation loss: "<< objective << std::endl; 
+      objective = network.Evaluate(predictors, responses);
+      output << "Validation loss: " << objective << std::endl;
     }
 
     if (objective < bestObjective)
@@ -100,6 +100,10 @@ class EarlyStopAtMinLoss
   }
 
  private:
+  // Reference to the model being trained, used to evaluate the training
+  // on validation set.
+  AnnType& network;
+
   //! The number of epochs to wait before terminating the optimization process.
   size_t patience;
 
@@ -109,7 +113,7 @@ class EarlyStopAtMinLoss
   //! Locally-stored number of steps since the loss improved.
   size_t steps;
 
- //! The output stream that all data is to be sent to; example: std::cout.
+  //! The output stream that all data is to be sent to; example: std::cout.
   std::ostream& output;
 
   //! The matrix of data points (predictors).
