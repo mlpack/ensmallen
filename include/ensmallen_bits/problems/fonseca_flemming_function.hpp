@@ -38,26 +38,6 @@ class FonsecaFlemmingFunction
   size_t numObjectives;
   size_t numVariables;
 
-  struct ObjectiveA
-  {
-    typename MatType::elem_type Evaluate(const MatType& coords)
-    {
-        return 1.0f - exp(- pow(coords[0] - 1.0f/sqrt(3), 2) -
-            - pow(coords[1] - 1.0f/sqrt(3), 2)
-            - pow(coords[0] - 1.0f/sqrt(3), 2));
-    }
-  } objectiveA;
-
-  struct ObjectiveB
-  {
-    typename MatType::elem_type Evaluate(const MatType& coords)
-    {
-        return 1.0f - exp(- pow(coords[0] + 1.0f/sqrt(3), 2) -
-            - pow(coords[1] + 1.0f/sqrt(3), 2)
-            - pow(coords[0] + 1.0f/sqrt(3), 2));
-    }
-  } objectiveB;
-
  public:
   FonsecaFlemmingFunction() : numObjectives(2), numVariables(3)
   {/* Nothing to do here. */}
@@ -86,6 +66,26 @@ class FonsecaFlemmingFunction
   {
     return arma::vec(numVariables, 1, arma::fill::zeros);
   }
+
+  struct ObjectiveA
+  {
+    typename MatType::elem_type Evaluate(const MatType& coords)
+    {
+        return 1.0f - exp(- pow(coords[0] - 1.0f/sqrt(3), 2) -
+            - pow(coords[1] - 1.0f/sqrt(3), 2)
+            - pow(coords[0] - 1.0f/sqrt(3), 2));
+    }
+  } objectiveA;
+
+  struct ObjectiveB
+  {
+    typename MatType::elem_type Evaluate(const MatType& coords)
+    {
+        return 1.0f - exp(- pow(coords[0] + 1.0f/sqrt(3), 2) -
+            - pow(coords[1] + 1.0f/sqrt(3), 2)
+            - pow(coords[0] + 1.0f/sqrt(3), 2));
+    }
+  } objectiveB;
 
   //! Get objective functions.
   std::tuple<ObjectiveA, ObjectiveB> GetObjectives()
