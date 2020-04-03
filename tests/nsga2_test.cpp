@@ -38,10 +38,14 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
   SchafferFunctionN1<arma::mat> SCH;
   arma::vec lowerBound("-1000 -1000");
   arma::vec upperBound("1000 1000");
+
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
   arma::mat coords = SCH.GetInitialPoint();
-  auto objectives = SCH.GetObjectives();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
   std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
 
@@ -75,8 +79,11 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
 
   NSGA2 opt(40, 5000, 0.5, 0.5, strength, tolerance, lowerBound, upperBound);
 
+  typedef decltype(FON.objectiveA) ObjectiveTypeA;
+  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+
   arma::mat coords = FON.GetInitialPoint();
-  auto objectives = FON.GetObjectives();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
 
