@@ -1,8 +1,8 @@
 ### ensmallen ?.??.?: "???
 ###### ????-??-??
  * Add NSGA2 optimizer for multi-objective functions
-    ([#149](https://github.com/mlpack/ensmallen/pull/149))
-  
+    ([#149](https://github.com/mlpack/ensmallen/pull/149)).
+
  * ...
 
 ### ensmallen 2.12.0: "Stir Crazy"
