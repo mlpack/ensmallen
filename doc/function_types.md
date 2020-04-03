@@ -841,6 +841,19 @@ int main()
 
 </details>
 
+
+## Multi-objective functions
+
+A multi-objective function is a set of functions or objectives that are
+simultaneously optimized. For this variety of problems, a class/struct
+with a specific API must be used which is illustrated in the file
+`include/ensmallen_bits/problems/schaffer_function_n1.hpp` for the Schaffer N.1
+function.
+
+The following optimizers can be used with multi-objective functions:
+- [NSGA2](#nsga2)
+
+
 ## Constrained functions
 
 A constrained function is an objective function `f(x)` that is also subject to
@@ -1144,15 +1157,3 @@ including ensmallen:
 This can be useful for situations where you know that the checks should be
 ignored.  However, be aware that the code may fail to compile and give more
 confusing and difficult error messages!
-
-
-## Multi-objective functions
-
-A multi-objective function is a set of functions or objectives that are
-simultaneously optimized. For this variety of problems, a class/struct
-with a specific API must be used which is illustrated in the file
-`include/ensmallen_bits/problems/schaffer_function_n1.hpp` for the Schaffer N.1
-function.
-
-The following optimizers can be used with multi-objective functions:
-- [NSGA2](#nsga2)
