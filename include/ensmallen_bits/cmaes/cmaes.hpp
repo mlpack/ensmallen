@@ -66,6 +66,7 @@ class CMAES
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param initialSigma The initial step size
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
    */
@@ -75,7 +76,8 @@ class CMAES
         const size_t batchSize = 32,
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType());
+        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+        const double initialSigma = 0.6);
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -97,9 +99,9 @@ class CMAES
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks);
 
-  //! Get the step size.
+  //! Get the population size.
   size_t PopulationSize() const { return lambda; }
-  //! Modify the step size.
+  //! Modify the population size.
   size_t& PopulationSize() { return lambda; }
 
   //! Get the lower bound of decision variables.
@@ -107,9 +109,9 @@ class CMAES
   //! Modify the lower bound of decision variables.
   double& LowerBound() { return lowerBound; }
 
-  //! Get the upper bound of decision variables
+  //! Get the upper bound of decision variables.
   double UpperBound() const { return upperBound; }
-  //! Modify the upper bound of decision variables
+  //! Modify the upper bound of decision variables.
   double& UpperBound() { return upperBound; }
 
   //! Get the batch size.
@@ -132,6 +134,11 @@ class CMAES
   //! Modify the selection policy.
   SelectionPolicyType& SelectionPolicy() { return selectionPolicy; }
 
+  //! Get the initial step size.
+  double InitialSigma() const { return initialSigma; }
+  //! Modify the initial step size.
+  double& InitialSigma() { return initialSigma; }
+
  private:
   //! Population size.
   size_t lambda;
@@ -139,7 +146,7 @@ class CMAES
   //! Lower bound of decision variables.
   double lowerBound;
 
-  //! Upper bound of decision variables
+  //! Upper bound of decision variables.
   double upperBound;
 
   //! The batch size for processing.
@@ -153,6 +160,15 @@ class CMAES
 
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy;
+
+  //! Initial step size.
+  double initialSigma;
+
+  //! Methods used to transform the candidates into the constraints.
+  template<typename ElemType, typename BaseMatType>
+  void BoundaryTransform(BaseMatType& matrix);
+  template<typename ElemType, typename BaseMatType>
+  void BoundaryTransformInverse(BaseMatType& matrix);
 };
 
 /**

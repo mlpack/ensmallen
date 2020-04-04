@@ -29,15 +29,22 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
                                   const size_t batchSize,
                                   const size_t maxIterations,
                                   const double tolerance,
-                                  const SelectionPolicyType& selectionPolicy) :
+                                  const SelectionPolicyType& selectionPolicy,
+                                  const double initialSigma) :
     lambda(lambda),
     lowerBound(lowerBound),
     upperBound(upperBound),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    selectionPolicy(selectionPolicy)
-{ /* Nothing to do. */ }
+    selectionPolicy(selectionPolicy),
+    initialSigma(initialSigma)
+{
+  if (lowerBound == upperBound)
+  {
+    Warn << "Lower and upper bounds must be different." << std::endl;
+  }
+}
 
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType>
@@ -78,7 +85,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  sigma(0) = 0.3 * (upperBound - lowerBound);
+  sigma(0) = initialSigma;
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
@@ -99,13 +106,16 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows,
       iterate.n_cols));
-  mPosition[0] = lowerBound + arma::randu<BaseMatType>(
-      iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
+  BaseMatType initialVal;
+  initialVal.randu(iterate.n_rows, iterate.n_cols);
+  initialVal += (BaseMatType)(iterateIn);
+  mPosition[0] = initialVal;
 
   BaseMatType step(iterate.n_rows, iterate.n_cols);
   step.zeros();
 
   // Calculate the first objective function.
+  BoundaryTransform<ElemType, BaseMatType>(mPosition[0]);
   ElemType currentObjective = 0;
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
@@ -177,6 +187,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
       // Calculate the objective function.
+      BoundaryTransform<ElemType, BaseMatType>(pPosition[idx(j)]);
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
           pPosition[idx(j)], callbacks...);
     }
@@ -191,6 +202,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
 
     // Calculate the objective function.
+    BoundaryTransform<ElemType, BaseMatType>(mPosition[idx1]);
     currentObjective = selectionPolicy.Select(function, batchSize,
         mPosition[idx1], callbacks...);
 
@@ -311,6 +323,89 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
+}
+
+// Transforms the candidate into the given bounds.
+template<typename SelectionPolicyType>
+template<typename ElemType, typename BaseMatType>
+void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
+{
+  double diff = (upperBound - lowerBound) / 2.0;
+  double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
+  double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
+  double xlow = lowerBound - 2 * al - diff;
+  double xup = upperBound + 2 * au + diff;
+  double r = 2 * (upperBound - lowerBound + al + au);
+
+  for (size_t col=0; col < matrix.n_cols; col++)
+  {
+    for (size_t row=0; row < matrix.n_rows; row++)
+    {
+      ElemType y = matrix(row, col);
+      //boundary transformation shift into feasible preimage.
+      if (y < xlow)
+      {
+        y += (ElemType)(r * (1 + (xlow - y) / r));
+      }
+      if (y > xup)
+      {
+        y -= (ElemType)(r * (1 + (y - xup) / r));
+      }
+      if (y < lowerBound - al)
+      {
+        y += (ElemType)(2 * (lowerBound - al - y));
+      }
+      if (y > upperBound + au)
+      {
+        y -= (ElemType)(2 * (y - upperBound - au));
+      }
+      //boundary transformation
+      if (y < lowerBound + al)
+      {
+        y = (ElemType)(lowerBound + (y - (lowerBound - al)) *
+            (y - (lowerBound - al)) / 4.0 / al);
+      }
+      else if (y > upperBound - au)
+      {
+        y = (ElemType)(upperBound - (y - (upperBound + au)) *
+            (y - (upperBound + au)) / 4.0 / au);
+      }
+
+      matrix(row, col) = y;
+    }
+  }
+  
+}
+
+// Computes the inverse of the transformation.
+template<typename SelectionPolicyType>
+template<typename ElemType, typename BaseMatType>
+void CMAES<SelectionPolicyType>::BoundaryTransformInverse(BaseMatType& matrix)
+{
+  double diff = (upperBound - lowerBound) / 2.0;
+  double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
+  double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
+
+  for (size_t col=0; col < matrix.n_cols; col++)
+  {
+    for (size_t row=0; row < matrix.n_rows; row++)
+    {
+      ElemType y = matrix(row, col);
+      
+      if (y < lowerBound + al)
+      {
+        y =  (ElemType)(lowerBound - al) + 2 *
+              std::pow(std::abs(al * (y - lowerBound)),0.5);
+      }
+      else if (y > upperBound - au)
+      {
+        y = (ElemType)(upperBound + au) - 2 *
+             std::pow(std::abs(au * (upperBound - y)),0.5);
+      }
+
+      matrix(row, col) = y;
+    }
+  }
 }
 
 } // namespace ens
