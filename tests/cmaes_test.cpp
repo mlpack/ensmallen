@@ -169,3 +169,6 @@ TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
       break;
     }
   }
+
+  REQUIRE(success == true);
+}
