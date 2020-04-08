@@ -130,18 +130,11 @@ class ProgressBar
   {
     if (newEpoch)
     {
-      if (!optimizer.MaxIterations())
-      {
-        output << "Epoch " << epoch << "\n";
-        output.flush();
-        newEpoch = false;
-      }
-      else
-      {
-        output << "Epoch " << epoch << "/" << epochs << "\n";
-        output.flush();
-        newEpoch = false;
-      }
+      output << "Epoch " << epoch;
+      if (epochs > 0)
+        output << "/" << epochs << std::endl;
+      output.flush();
+      newEpoch = false;
     }
 
     const size_t progress = ((double) step / epochSize) * 100;
