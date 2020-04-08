@@ -339,7 +339,7 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
 
   for (size_t col=0; col < matrix.n_cols; col++)
   {
-    for (size_t row=0; row < matrix.n_rows; row++)
+    for (size_t row = 0; row < matrix.n_rows; row++)
     {
       ElemType y = matrix(row, col);
       //boundary transformation shift into feasible preimage.
