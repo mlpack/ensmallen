@@ -381,9 +381,9 @@ template<typename SelectionPolicyType>
 template<typename ElemType, typename BaseMatType>
 void CMAES<SelectionPolicyType>::BoundaryTransformInverse(BaseMatType& matrix)
 {
-  double diff = (upperBound - lowerBound) / 2.0;
-  double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
-  double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
+  const double diff = (upperBound - lowerBound) / 2.0;
+  const double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
+  const double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
 
   for (size_t col = 0; col < matrix.n_cols; col++)
   {
