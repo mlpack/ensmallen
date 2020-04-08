@@ -1036,12 +1036,12 @@ int main()
   // use the PrimalDualSolver to solve it.
   // ens::PrimalDualSolver could be replaced with ens::LRSDP or other ensmallen
   // SDP solvers.
-  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
+  PrimalDualSolver solver;
   arma::mat X, Z;
   arma::vec ysparse, ydense;
   // ysparse, ydense, and Z hold the primal and dual variables found during the
   // optimization.
-  const double obj = solver.Optimize(X, ysparse, ydense, Z);
+  const double obj = solver.Optimize(sdp, X, ysparse, ydense, Z);
 
   std::cout << "SDP optimized with objective " << obj << "." << std::endl;
 }

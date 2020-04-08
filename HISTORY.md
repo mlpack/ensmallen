@@ -1,9 +1,19 @@
-### ensmallen ?.??.?: "???"
+### ensmallen ?.??.?: "???
 ###### ????-??-??
- * Fixing ProgressBar
+ * Fix total number of epochs and time estimation for ProgressBar callback
     ([#181](https://github.com/mlpack/ensmallen/pull/181)).
-
+    
  * ...
+
+### ensmallen 2.12.0: "Stir Crazy"
+###### 2020-03-28
+ * Correction in the formulation of sigma in CMA-ES
+    ([#183](https://github.com/mlpack/ensmallen/pull/183)).
+
+ * Remove deprecated methods from PrimalDualSolver implementation
+    ([#185](https://github.com/mlpack/ensmallen/pull/185).
+
+ * Update logo ([#186](https://github.com/mlpack/ensmallen/pull/186)).
 
 ### ensmallen 2.11.5: "The Poster Session Is Full"
 ###### 2020-03-11
