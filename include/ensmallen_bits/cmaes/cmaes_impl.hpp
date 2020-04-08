@@ -330,12 +330,12 @@ template<typename SelectionPolicyType>
 template<typename ElemType, typename BaseMatType>
 void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
 {
-  double diff = (upperBound - lowerBound) / 2.0;
-  double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
-  double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
-  double xlow = lowerBound - 2 * al - diff;
-  double xup = upperBound + 2 * au + diff;
-  double r = 2 * (upperBound - lowerBound + al + au);
+  const double diff = (upperBound - lowerBound) / 2.0;
+  const double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
+  const double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
+  const double xlow = lowerBound - 2 * al - diff;
+  const double xup = upperBound + 2 * au + diff;
+  const double r = 2 * (upperBound - lowerBound + al + au);
 
   for (size_t col = 0; col < matrix.n_cols; col++)
   {
@@ -347,15 +347,15 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
       {
         y += (ElemType)(r * (1 + (xlow - y) / r));
       }
-      if (y > xup)
+      else if (y > xup)
       {
         y -= (ElemType)(r * (1 + (y - xup) / r));
       }
-      if (y < lowerBound - al)
+      else if (y < lowerBound - al)
       {
         y += (ElemType)(2 * (lowerBound - al - y));
       }
-      if (y > upperBound + au)
+      else if (y > upperBound + au)
       {
         y -= (ElemType)(2 * (y - upperBound - au));
       }
