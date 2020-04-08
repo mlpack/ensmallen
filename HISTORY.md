@@ -1,8 +1,5 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
- * Correction in the formulation of sigma in CMA-ES
-    ([#183](https://github.com/mlpack/ensmallen/pull/183)).
-
  * Fixing ProgressBar
     ([#181](https://github.com/mlpack/ensmallen/pull/181)).
 
