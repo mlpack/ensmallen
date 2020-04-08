@@ -337,7 +337,7 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
   double xup = upperBound + 2 * au + diff;
   double r = 2 * (upperBound - lowerBound + al + au);
 
-  for (size_t col=0; col < matrix.n_cols; col++)
+  for (size_t col = 0; col < matrix.n_cols; col++)
   {
     for (size_t row = 0; row < matrix.n_rows; row++)
     {
