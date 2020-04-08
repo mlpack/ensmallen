@@ -155,10 +155,12 @@ class ProgressBar
       }
     }
 
-    output << "] " << progress << "% - ETA: " << (size_t) stepTimer.toc() *
-        (epochSize - step + 1) % 60 << "s - loss: " <<
+    output << "] " << progress << "% - ETA: " <<  fmod(stepTimer.toc() *
+        (double)(epochSize - step + 1), 60) << "s - loss: " <<
         objective / (double) step <<  "\r";
     output.flush();
+
+    stepTimer.tic();
   }
 
   /**
