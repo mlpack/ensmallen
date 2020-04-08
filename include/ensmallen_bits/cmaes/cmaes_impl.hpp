@@ -359,7 +359,7 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
       {
         y -= (ElemType)(2 * (y - upperBound - au));
       }
-      //boundary transformation
+      // Boundary transformation.
       if (y < lowerBound + al)
       {
         y = (ElemType)(lowerBound + (y - (lowerBound - al)) *
