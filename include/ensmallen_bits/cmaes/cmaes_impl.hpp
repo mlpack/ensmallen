@@ -385,9 +385,9 @@ void CMAES<SelectionPolicyType>::BoundaryTransformInverse(BaseMatType& matrix)
   double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
   double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
 
-  for (size_t col=0; col < matrix.n_cols; col++)
+  for (size_t col = 0; col < matrix.n_cols; col++)
   {
-    for (size_t row=0; row < matrix.n_rows; row++)
+    for (size_t row = 0; row < matrix.n_rows; row++)
     {
       ElemType y = matrix(row, col);
       
