@@ -342,7 +342,7 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
     for (size_t row = 0; row < matrix.n_rows; row++)
     {
       ElemType y = matrix(row, col);
-      //boundary transformation shift into feasible preimage.
+      // Boundary transformation shift into feasible pre-image.
       if (y < xlow)
       {
         y += (ElemType)(r * (1 + (xlow - y) / r));
