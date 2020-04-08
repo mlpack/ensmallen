@@ -374,7 +374,6 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
       matrix(row, col) = y;
     }
   }
-  
 }
 
 // Computes the inverse of the transformation.
