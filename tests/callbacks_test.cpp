@@ -579,3 +579,39 @@ TEST_CASE("ProgressBarCallbackNoMaxIterationsTest", "[CallbacksTest]")
 
   REQUIRE(stream.str().length() > 0);
 }
+
+/**
+ * Make sure the ProgressBar callback will show the progress on the specified
+ * output stream with the correct epoch number if the MaxIterations parameter
+ * of the optimizer is 0.
+ */
+TEST_CASE("ProgressBarCallbackNoMaxIterationsEpochTest", "[CallbacksTest]")
+{
+  SGDTestFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+
+  StandardSGD s(0.0003, 1, 0, 1e-9, true);
+
+  std::stringstream stream;
+  s.Optimize(f, coordinates, ProgressBar(10, stream));
+
+  REQUIRE(stream.str().find("Epoch 1") != std::string::npos);
+}
+
+/**
+ * Make sure the ProgressBar callback will show the progress on the specified
+ * output stream with the correct epoch number if the MaxIterations parameter
+ * of the optimizer is not equal to 0.
+ */
+TEST_CASE("ProgressBarCallbackEpochTest", "[CallbacksTest]")
+{
+  SGDTestFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+
+  StandardSGD s(0.0003, 1, 1, 1e-9, true);
+
+  std::stringstream stream;
+  s.Optimize(f, coordinates, ProgressBar(10, stream));
+
+  REQUIRE(stream.str().find("Epoch 1/1") != std::string::npos);
+}

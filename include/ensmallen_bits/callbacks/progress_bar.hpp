@@ -132,8 +132,16 @@ class ProgressBar
     {
       output << "Epoch " << epoch;
       if (epochs > 0)
+      {
         output << "/" << epochs << std::endl;
-      output.flush();
+        output.flush();
+      }
+      else
+      {
+        output << std::endl;
+        output.flush();
+      }
+      
       newEpoch = false;
     }
 
@@ -155,8 +163,8 @@ class ProgressBar
       }
     }
 
-    output << "] " << progress << "% - ETA: " <<  fmod(stepTimer.toc() *
-        (double)(epochSize - step + 1), 60) << "s - loss: " <<
+    output << "] " << progress << "% - ETA: " <<  (size_t)(stepTimer.toc() *
+        (epochSize - step + 1))%60 << "s - loss: " <<
         objective / (double) step <<  "\r";
     output.flush();
 
