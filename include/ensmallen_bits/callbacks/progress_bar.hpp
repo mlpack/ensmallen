@@ -137,8 +137,6 @@ class ProgressBar
       }
       output << '\n';
       newEpoch = false;
-      
-      newEpoch = false;
     }
 
     const size_t progress = ((double) step / epochSize) * 100;
