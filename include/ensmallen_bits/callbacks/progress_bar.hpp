@@ -133,14 +133,10 @@ class ProgressBar
       output << "Epoch " << epoch;
       if (epochs > 0)
       {
-        output << "/" << epochs << std::endl;
-        output.flush();
+        output << "/" << epochs;
       }
-      else
-      {
-        output << std::endl;
-        output.flush();
-      }
+      output << '\n';
+      newEpoch = false;
       
       newEpoch = false;
     }
