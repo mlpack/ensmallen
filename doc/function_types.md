@@ -845,10 +845,39 @@ int main()
 ## Multi-objective functions
 
 A multi-objective function is a set of functions or objectives that are
-simultaneously optimized. For this variety of problems, a class/struct
-with a specific API must be used which is illustrated in the file
-`include/ensmallen_bits/problems/schaffer_function_n1.hpp` for the Schaffer N.1
-function.
+simultaneously optimized to reach an optima.
+
+In order to optimize a multi-objective function with ensmallen, a class
+implementing the API below is required.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+template<typename MatType = arma::mat>
+class MultiObjectiveFunctionType
+{
+ public:
+  // Evaluate all the objectives with the given coordinate.
+  arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords);
+
+  // Get the starting point.
+  MatType GetInitialPoint();
+
+  // Each objective has to be represented as a struct with an Evaluate method.
+  struct Objective1
+  {
+    // Evaluate objective 1 with the given coordinate.
+    typename MatType::elem_type Evaluate(const MatType& coords);
+  }
+
+  // Get all N objective functions.
+  std::tuple<Objective1, ..., ObjectiveN> GetObjectives();
+}
+```
+
+</details>
 
 The following optimizers can be used with multi-objective functions:
 - [NSGA2](#nsga2)
