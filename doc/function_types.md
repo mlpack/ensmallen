@@ -853,7 +853,6 @@ function.
 The following optimizers can be used with multi-objective functions:
 - [NSGA2](#nsga2)
 
-
 ## Constrained functions
 
 A constrained function is an objective function `f(x)` that is also subject to
