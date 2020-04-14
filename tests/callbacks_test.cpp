@@ -572,7 +572,7 @@ TEST_CASE("ProgressBarCallbackNoMaxIterationsTest", "[CallbacksTest]")
   SGDTestFunction f;
   arma::mat coordinates = f.GetInitialPoint();
 
-  StandardSGD s(0.0003, 1, 0, INT_MAX, true);
+  StandardSGD s(0.0003, 1, 0, DBL_MAX, true);
 
   std::stringstream stream;
   s.Optimize(f, coordinates, ProgressBar(10, stream));
@@ -590,7 +590,7 @@ TEST_CASE("ProgressBarCallbackNoMaxIterationsEpochTest", "[CallbacksTest]")
   SGDTestFunction f;
   arma::mat coordinates = f.GetInitialPoint();
 
-  StandardSGD s(0.0003, 1, 0, INT_MAX, true);
+  StandardSGD s(0.0003, 1, 0, DBL_MAX, true);
 
   std::stringstream stream;
   s.Optimize(f, coordinates, ProgressBar(10, stream));
