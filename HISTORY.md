@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???
 ###### ????-??-??
+ * handle SpSubview_col and SpSubview_col in Armadillo 9.870
+    ([#194](https://github.com/mlpack/ensmallen/pull/194)).
+
  * ...
 
 ### ensmallen 2.12.0: "Stir Crazy"
