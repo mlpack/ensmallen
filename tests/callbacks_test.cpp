@@ -595,6 +595,7 @@ TEST_CASE("ProgressBarCallbackNoMaxIterationsEpochTest", "[CallbacksTest]")
   std::stringstream stream;
   s.Optimize(f, coordinates, ProgressBar(10, stream));
   REQUIRE(stream.str().find("Epoch 1") != std::string::npos);
+  REQUIRE(stream.str().find("Epoch 1/") == std::string::npos);
 }
 
 /**
