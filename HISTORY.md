@@ -1,4 +1,4 @@
-### ensmallen ?.??.?: "???
+### ensmallen ?.??.?: "???"
 ###### ????-??-??
  * Fix total number of epochs and time estimation for ProgressBar callback
     ([#181](https://github.com/mlpack/ensmallen/pull/181)).
