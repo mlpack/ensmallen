@@ -173,9 +173,30 @@ class ProgressBar
                       (int)(steps * optimizer.BatchSize() -
                       optimizer.MaxIterations()) >= 0)
       {
-        output << "\n" << "Optimization terminated because of the entire "
-                       << "dataset not being passed to the optimizer."
-                       << "\n" << "\r";
+        const size_t progress = ((double) step / epochSize) * 100;
+        output << step++ << "/" << epochSize << " [";
+        for (size_t i = 0; i < 100; i += width)
+        {
+          if (i < progress)
+          {
+            output << "=";
+          }
+          else if (i == progress)
+          {
+            output << ">";
+          }
+          else
+          {
+            output << "x";
+          }
+        }
+
+        output << "] " << progress << "% - ETA: " << (size_t) stepTimer.toc() *
+            (epochSize - step + 1) % 60 << "s - loss: " <<
+            objective / (double) step <<  "\r";
+        output << "\n" << "Optimization finished before the end of an epoch "
+                       << "because of the entire dataset not being passed to "
+                       << "the optimizer." << "\n" << "\r";
       }
     }
 
