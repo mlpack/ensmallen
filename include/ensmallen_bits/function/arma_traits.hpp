@@ -76,6 +76,31 @@ struct MatTypeTraits<arma::SpSubview<eT>>
       "or a matrix alias instead!");
 };
 
+
+#if ((ARMA_VERSION_MAJOR >= 10) || \
+    ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
+
+// Armadillo 9.869+ has SpSubview_col and SpSubview_row
+
+template<typename eT>
+struct MatTypeTraits<arma::SpSubview_col<eT>>
+{
+  static_assert(sizeof(arma::SpSubview_col<eT>) == 0,
+      "Armadillo subviews cannot be passed to Optimize()!  Create a matrix "
+      "or a matrix alias instead!");
+};
+
+template<typename eT>
+struct MatTypeTraits<arma::SpSubview_row<eT>>
+{
+  static_assert(sizeof(arma::SpSubview_row<eT>) == 0,
+      "Armadillo subviews cannot be passed to Optimize()!  Create a matrix "
+      "or a matrix alias instead!");
+};
+
+#endif
+
+
 template<typename eT>
 struct MatTypeTraits<arma::Cube<eT>>
 {
