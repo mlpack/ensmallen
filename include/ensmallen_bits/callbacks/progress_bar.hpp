@@ -183,7 +183,7 @@ class ProgressBar
           }
           else if (i == progress)
           {
-            output << ">";
+            output << "|";
           }
           else
           {
