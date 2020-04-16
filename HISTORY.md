@@ -1,6 +1,6 @@
 ### ensmallen ?.??.?: "???
 ###### ????-??-??
- * handle SpSubview_col and SpSubview_row in Armadillo 9.870
+ * Handle SpSubview_col and SpSubview_row in Armadillo 9.870
     ([#194](https://github.com/mlpack/ensmallen/pull/194)).
 
  * ...
