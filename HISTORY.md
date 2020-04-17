@@ -6,7 +6,11 @@
  * Handle SpSubview_col and SpSubview_row in Armadillo 9.870
     ([#194](https://github.com/mlpack/ensmallen/pull/194)).
 
- * ...
+ * Minor documentation fixes
+    ([#197](https://github.com/mlpack/ensmallen/pull/197)).
+
+
+
 
 ### ensmallen 2.12.0: "Stir Crazy"
 ###### 2020-03-28

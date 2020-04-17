@@ -212,7 +212,7 @@ std::cout << "The optimized model found by AdaDelta has the "
 
 ## Callback States
 
-Callbacks are called at different states during the optimization process:
+Callbacks are called at several states during the optimization process:
 
 * At the beginning and end of the optimization process.
 * After any call to `Evaluate()` and `EvaluateConstraint`.
