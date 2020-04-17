@@ -1914,7 +1914,7 @@ optimizer.Optimize(f, coordinates);
 
 QHAdam is an optimizer that uses quasi-hyperbolic descent with the Adam
 optimizer.  This replaces the moment estimators of Adam with quasi-hyperbolic
-terms, and different values of the `v1` and `v2` parameters are equivalent to
+terms, and various values of the `v1` and `v2` parameters are equivalent to
 the following other optimizers:
 
  * When `v1 = v2 = 1`, `QHAdam` is equivalent to `Adam`.
