@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-16
  * Fix total number of epochs and time estimation for ProgressBar callback
