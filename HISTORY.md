@@ -2,11 +2,9 @@
 ###### ????-??-??
  * Fix total number of epochs and time estimation for ProgressBar callback
     ([#181](https://github.com/mlpack/ensmallen/pull/181)).
-    
+
  * Handle SpSubview_col and SpSubview_row in Armadillo 9.870
     ([#194](https://github.com/mlpack/ensmallen/pull/194)).
-
- * ...
 
 ### ensmallen 2.12.0: "Stir Crazy"
 ###### 2020-03-28
