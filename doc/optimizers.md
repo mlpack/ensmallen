@@ -179,7 +179,7 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
-Adam is an an algorithm for first-order gradient-based optimization of
+Adam is an algorithm for first-order gradient-based optimization of
 stochastic objective functions, based on adaptive estimates of lower-order
 moments.
 
