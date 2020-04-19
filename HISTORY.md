@@ -1,7 +1,16 @@
-### ensmallen ?.??.?: "???
+### ensmallen ?.??.?: "???"
 ###### ????-??-??
  * Add NSGA2 optimizer for multi-objective functions
     ([#149](https://github.com/mlpack/ensmallen/pull/149)).
+
+ * Fix total number of epochs and time estimation for ProgressBar callback
+    ([#181](https://github.com/mlpack/ensmallen/pull/181)).
+
+ * Handle SpSubview_col and SpSubview_row in Armadillo 9.870
+    ([#194](https://github.com/mlpack/ensmallen/pull/194)).
+
+ * Minor documentation fixes
+    ([#197](https://github.com/mlpack/ensmallen/pull/197)).
 
  * ...
 
