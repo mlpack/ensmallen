@@ -12,9 +12,6 @@
  * Minor documentation fixes
     ([#197](https://github.com/mlpack/ensmallen/pull/197)).
 
-
-
-
 ### ensmallen 2.12.0: "Stir Crazy"
 ###### 2020-03-28
  * Correction in the formulation of sigma in CMA-ES
