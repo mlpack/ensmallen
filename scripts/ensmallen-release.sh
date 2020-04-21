@@ -33,7 +33,7 @@ fi
 
 # Make sure that the mlpack repository exists.
 dest_remote_name=`git remote -v |\
-                  grep "https://github.com/mlpack/ensmallen (fetch)" |\
+                  grep "mlpack/ensmallen (fetch)" |\
                   head -1 |\
                   awk -F' ' '{ print $1 }'`;
 
@@ -77,11 +77,11 @@ fi
 # Check git remotes: we need to make sure we have a fork to push to.
 github_user=$1;
 remote_name=`git remote -v |\
-             grep "https://github.com/$github_user/ensmallen (push)" |\
+             grep "$github_user/ensmallen (push)" |\
              head -1 |\
              awk -F' ' '{ print $1 }'`;
 if [ "a$remote_name" == "a" ]; then
-  echo "No git remote found for https://github.com/$github_user/ensmallen!";
+  echo "No git remote found for $github_user/ensmallen!";
   echo "Adding remote '$github_user'.";
   git remote add $github_user https://github.com/$github_user/ensmallen;
   remote_name="$github_user";
