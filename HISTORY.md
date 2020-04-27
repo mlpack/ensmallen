@@ -3,6 +3,8 @@
  * Add NSGA2 optimizer for multi-objective functions
     ([#149](https://github.com/mlpack/ensmallen/pull/149)).
 
+### ensmallen 2.12.1: "Stir Crazy"
+###### 2020-04-20
  * Fix total number of epochs and time estimation for ProgressBar callback
     ([#181](https://github.com/mlpack/ensmallen/pull/181)).
 
@@ -11,8 +13,6 @@
 
  * Minor documentation fixes
     ([#197](https://github.com/mlpack/ensmallen/pull/197)).
-
- * ...
 
 ### ensmallen 2.12.0: "Stir Crazy"
 ###### 2020-03-28
