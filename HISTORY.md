@@ -2,6 +2,8 @@
 ###### ????-??-??
  * Add NSGA2 optimizer for multi-objective functions
     ([#149](https://github.com/mlpack/ensmallen/pull/149)).
+ * Fix CMake package export
+    ([#198](https://github.com/mlpack/ensmallen/pull/198)).
 
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-20
