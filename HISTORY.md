@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix CMake package export
+    ([#198](https://github.com/mlpack/ensmallen/pull/198)).
 
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-20

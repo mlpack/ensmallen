@@ -38,9 +38,9 @@ target_include_directories(ensmallen INTERFACE
 
 # Set warning flags for target.
 if(MSVC)
-  target_compile_options(ensmallen INTERFACE /Wall )
+  target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:/Wall>)
 else()
-  target_compile_options(ensmallen INTERFACE -Wall -Wpedantic -Wunused-parameter)
+  target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:-Wall -Wpedantic -Wunused-parameter>)
 endif()
 
 # Find OpenMP and link it.
