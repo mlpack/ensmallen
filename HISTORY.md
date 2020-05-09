@@ -3,6 +3,9 @@
  * Fix CMake package export
     ([#198](https://github.com/mlpack/ensmallen/pull/198)).
 
+ * Fix CMA-ES inconsistencies
+    ([#193](https://github.com/mlpack/ensmallen/pull/193)).
+
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-20
  * Fix total number of epochs and time estimation for ProgressBar callback
@@ -20,7 +23,7 @@
     ([#183](https://github.com/mlpack/ensmallen/pull/183)).
 
  * Remove deprecated methods from PrimalDualSolver implementation
-    ([#185](https://github.com/mlpack/ensmallen/pull/185).
+    ([#185](https://github.com/mlpack/ensmallen/pull/185)).
 
  * Update logo ([#186](https://github.com/mlpack/ensmallen/pull/186)).
 
