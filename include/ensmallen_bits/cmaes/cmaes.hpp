@@ -165,9 +165,9 @@ class CMAES
   double initialSigma;
 
   //! Methods used to transform the candidates into the constraints.
-  template<typename ElemType, typename BaseMatType>
+  template<typename BaseMatType>
   void BoundaryTransform(BaseMatType& matrix);
-  template<typename ElemType, typename BaseMatType>
+  template<typename BaseMatType>
   void BoundaryTransformInverse(BaseMatType& matrix);
 };
 

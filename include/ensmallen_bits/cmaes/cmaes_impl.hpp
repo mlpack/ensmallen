@@ -115,7 +115,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   step.zeros();
 
   // Calculate the first objective function.
-  BoundaryTransform<ElemType, BaseMatType>(mPosition[0]);
+  BoundaryTransform<BaseMatType>(mPosition[0]);
   ElemType currentObjective = 0;
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
@@ -187,7 +187,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
       // Calculate the objective function.
-      BoundaryTransform<ElemType, BaseMatType>(pPosition[idx(j)]);
+      BoundaryTransform<BaseMatType>(pPosition[idx(j)]);
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
           pPosition[idx(j)], callbacks...);
     }
@@ -202,7 +202,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
 
     // Calculate the objective function.
-    BoundaryTransform<ElemType, BaseMatType>(mPosition[idx1]);
+    BoundaryTransform<BaseMatType>(mPosition[idx1]);
     currentObjective = selectionPolicy.Select(function, batchSize,
         mPosition[idx1], callbacks...);
 
@@ -327,9 +327,10 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
 // Transforms the candidate into the given bounds.
 template<typename SelectionPolicyType>
-template<typename ElemType, typename BaseMatType>
+template<typename BaseMatType>
 void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
 {
+  typedef typename BaseMatType::elem_type ElemType;
   const double diff = (upperBound - lowerBound) / 2.0;
   const double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
   const double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);
@@ -378,9 +379,10 @@ void CMAES<SelectionPolicyType>::BoundaryTransform(BaseMatType& matrix)
 
 // Computes the inverse of the transformation.
 template<typename SelectionPolicyType>
-template<typename ElemType, typename BaseMatType>
+template<typename BaseMatType>
 void CMAES<SelectionPolicyType>::BoundaryTransformInverse(BaseMatType& matrix)
 {
+  typedef typename BaseMatType::elem_type ElemType;
   const double diff = (upperBound - lowerBound) / 2.0;
   const double al = std::min(diff, (1 + std::abs(lowerBound)) / 20.0);
   const double au = std::min(diff, (1 + std::abs(upperBound)) / 20.0);

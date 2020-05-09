@@ -584,6 +584,7 @@ matrix within an iterative procedure using the covariance matrix.
  * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound`_`)`
  * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize`_`)`
  * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize, maxIterations, tolerance, selectionPolicy, initialSigma`_`)`
 
 The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
@@ -606,10 +607,11 @@ For convenience the following types can be used:
 | `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `double` | **`initialSigma`** | The initial step size. | `0.6` |
 
 Attributes of the optimizer may also be changed via the member methods
 `Lambda()`, `LowerBound()`, `UpperBound()`, `BatchSize()`, `MaxIterations()`,
-`Tolerance()`, and `SelectionPolicy()`.
+`Tolerance()`, `SelectionPolicy()` and `InitialSigma()`.
 
 The `selectionPolicy` attribute allows an instantiated `SelectionPolicyType` to
 be given.  The `FullSelection` policy has no need to be instantiated and thus
