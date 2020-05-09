@@ -25,6 +25,7 @@
 #include "holder_table_function.hpp"
 #include "levy_function_n13.hpp"
 #include "logistic_regression_function.hpp"
+#include "logistic_regression_function_validation_function.hpp"
 #include "matyas_function.hpp"
 #include "mc_cormick_function.hpp"
 #include "rastrigin_function.hpp"
