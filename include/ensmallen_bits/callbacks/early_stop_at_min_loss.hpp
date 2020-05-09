@@ -19,7 +19,9 @@ namespace ens {
  * Early stopping to terminate the optimization process early if the loss stops
  * decreasing.
  */
-template<typename AnnType>
+template<typename AnnType,
+         typename InMatType = arma::mat,
+         typename OutMatType = arma::mat>
 class EarlyStopAtMinLoss
 {
  public:
@@ -30,8 +32,9 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss<AnnType>(const size_t patienceIn = 10,
-                              std::ostream& output = arma::get_cout_stream())
+  EarlyStopAtMinLoss<AnnType, InMatType, OutMatType>(
+      const size_t patienceIn = 10,
+      std::ostream& output = arma::get_cout_stream())
     : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
       steps(0), output(output)
   { /* Nothing to do here */
@@ -47,11 +50,12 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    * been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss<AnnType>(AnnType& network,
-                              const arma::mat& predictors,
-                              const arma::mat& responses,
-                              const size_t patienceIn = 10,
-                              std::ostream& output = arma::get_cout_stream())
+  EarlyStopAtMinLoss<AnnType, InMatType, OutMatType>(
+      AnnType& network,
+      const InMatType& predictors,
+      const OutMatType& responses,
+      const size_t patienceIn = 10,
+      std::ostream& output = arma::get_cout_stream())
     : network(network), patience(patienceIn),
       bestObjective(std::numeric_limits<double>::max()), steps(0),
       output(output)
@@ -71,7 +75,7 @@ class EarlyStopAtMinLoss
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
   bool EndEpoch(OptimizerType& /* optimizer */,
-                FunctionType& function,
+                FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
                 double objective)
@@ -117,10 +121,10 @@ class EarlyStopAtMinLoss
   std::ostream& output;
 
   //! The matrix of data points (predictors).
-  arma::mat predictors;
+  InMatType predictors;
 
   //! The matrix of responses to the input data points.
-  arma::mat responses;
+  OutMatType responses;
 };
 
 } // namespace ens
