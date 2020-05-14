@@ -396,12 +396,12 @@ void CMAES<SelectionPolicyType>::BoundaryTransformInverse(BaseMatType& matrix)
       if (y < lowerBound + al)
       {
         y =  (ElemType)(lowerBound - al) + 2 *
-              std::pow(std::abs(al * (y - lowerBound)),0.5);
+              std::sqrt(std::abs(al * (y - lowerBound));
       }
       else if (y > upperBound - au)
       {
         y = (ElemType)(upperBound + au) - 2 *
-             std::pow(std::abs(au * (upperBound - y)),0.5);
+             std::sqrt(std::abs(au * (upperBound - y));
       }
 
       matrix(row, col) = y;
