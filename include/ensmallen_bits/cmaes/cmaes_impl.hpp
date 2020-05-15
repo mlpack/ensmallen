@@ -17,6 +17,7 @@
 
 // In case it hasn't been included yet.
 #include "cmaes.hpp"
+#include <assert.h>
 
 #include <ensmallen_bits/function.hpp>
 
@@ -40,10 +41,8 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
     selectionPolicy(selectionPolicy),
     initialSigma(initialSigma)
 {
-  if (lowerBound == upperBound)
-  {
-    Warn << "Lower and upper bounds must be different." << std::endl;
-  }
+  assert(this->lowerBound != this->upperBound && "The values of "
+        "lowerbound and upperbound must be different.");
 }
 
 //! Optimize the function (minimize).
@@ -396,12 +395,12 @@ void CMAES<SelectionPolicyType>::BoundaryTransformInverse(BaseMatType& matrix)
       if (y < lowerBound + al)
       {
         y =  (ElemType)(lowerBound - al) + 2 *
-              std::sqrt(std::abs(al * (y - lowerBound));
+              std::sqrt(std::abs(al * (y - lowerBound)));
       }
       else if (y > upperBound - au)
       {
         y = (ElemType)(upperBound + au) - 2 *
-             std::sqrt(std::abs(au * (upperBound - y));
+             std::sqrt(std::abs(au * (upperBound - y)));
       }
 
       matrix(row, col) = y;
