@@ -66,7 +66,7 @@ class CMAES
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
-   * @param initialSigma The initial step size
+   * @param initialSigma The initial step size.
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
    */
