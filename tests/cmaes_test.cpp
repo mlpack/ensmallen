@@ -172,3 +172,26 @@ TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 
   REQUIRE(success == true);
 }
+
+/**
+ * Test to check if the boundary transformation
+ * works as expected.
+ */
+TEST_CASE("BoundaryConditionTestFunction", "[CMAESTest]")
+{
+  SGDTestFunction f;
+  CMAES<> optimizer(0, -10, 10, 32, 200, -1);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  for (size_t col = 0; col < coordinates.n_cols; col++)
+  {
+    for (size_t row = 0; row < coordinates.n_rows; row++)
+    {
+      bool success = coordinates(row, col) <= 10 && 
+                     coordinates(row, col) >= -10;
+      REQUIRE(success == true);
+    }
+  }
+}

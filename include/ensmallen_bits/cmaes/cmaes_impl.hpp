@@ -42,7 +42,7 @@ CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
     initialSigma(initialSigma)
 {
   assert(this->lowerBound != this->upperBound && "The values of "
-        "lowerbound and upperbound must be different.");
+        "lower bound and upper bound must be different.");
 }
 
 //! Optimize the function (minimize).
