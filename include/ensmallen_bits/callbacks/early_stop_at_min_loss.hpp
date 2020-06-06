@@ -13,6 +13,9 @@
 #ifndef ENSMALLEN_CALLBACKS_EARLY_STOP_AT_MIN_LOSS_HPP
 #define ENSMALLEN_CALLBACKS_EARLY_STOP_AT_MIN_LOSS_HPP
 
+#include <functional>
+#include <cmath>
+
 namespace ens {
 
 /**
@@ -38,6 +41,24 @@ class EarlyStopAtMinLoss
     : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
       steps(0), output(output)
   { /* Nothing to do here */
+  }
+
+  /**
+   * Set up the early stop at min loss class, which keeps track of the minimum
+   * loss and stops the optimization process if the loss stops decreasing.
+   *
+   * @param func, callback to return immediate loss calculated bt the networl
+   * @param patienceIn The number of epochs to wait after the minimum loss has
+   *    been reached or no improvement has been made (Default: 10).
+   */
+  EarlyStopAtMinLoss<AnnType, InMatType, OutMatType>(
+      std::function<double()> func,
+      const size_t patienceIn = 10,
+      std::ostream& output = arma::get_cout_stream())
+    : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
+      steps(0), output(output), localObjective(std::nan("1"))
+  {
+    localObjective = func();
   }
 
   /**
@@ -85,6 +106,11 @@ class EarlyStopAtMinLoss
       objective = network.Evaluate(predictors, responses);
       output << "Validation loss: " << objective << std::endl;
     }
+    else if (!std::isnan(localObjective))
+    {
+      objective = localObjective;
+      output << "Validation loss: " << objective << std::endl;
+    }
 
     if (objective < bestObjective)
     {
@@ -125,6 +151,9 @@ class EarlyStopAtMinLoss
 
   //! The matrix of responses to the input data points.
   OutMatType responses;
+
+  //! objecive returned from lambda.
+  double localObjective;
 };
 
 } // namespace ens
