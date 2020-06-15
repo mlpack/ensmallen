@@ -61,7 +61,7 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
       break;
     }
   }
-  REQUIRE(all_in_range);
+  REQUIRE(allInRange);
 }
 
 /**
