@@ -78,7 +78,7 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
   for (size_t i = 0; i < populationSize; i++)
   {
     population.push_back(arma::randu<MatType>(iterate.n_rows,
-        iterate.n_cols) + iterate);
+        iterate.n_cols) - 0.5 + iterate);
   }
 
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
