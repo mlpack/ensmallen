@@ -74,8 +74,8 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
   const arma::vec upperBound("4 4");
   const double tolerance = 1e-6;
   const double strength = 1e-4;
-  const double expectedLowerBound = -1.0f/sqrt(3);
-  const double expectedUpperBound = 1.0f/sqrt(3);
+  const double expectedLowerBound = -1.0 / sqrt(3);
+  const double expectedUpperBound = 1.0 / sqrt(3);
 
   NSGA2 opt(20, 4000, 0.5, 0.5, strength, tolerance, lowerBound, upperBound);
 
