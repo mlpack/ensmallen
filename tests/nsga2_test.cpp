@@ -57,7 +57,7 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 
     if (val < 0.0 || val > 2.0)
     {
-      all_in_range = false;
+      allInRange = false;
       break;
     }
   }
