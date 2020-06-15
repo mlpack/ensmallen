@@ -104,5 +104,5 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
       break;
     }
   }
-  REQUIRE(all_in_range);
+  REQUIRE(allInRange);
 }
