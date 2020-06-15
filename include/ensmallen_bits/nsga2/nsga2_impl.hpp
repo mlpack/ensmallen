@@ -73,7 +73,7 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
   // Controls early termination of the optimization process.
   bool terminate = false;
 
-  // Generate the population based on a Gaussian distribution around the given
+  // Generate the population based on a uniform distribution around the given
   // starting point.
   for (size_t i = 0; i < populationSize; i++)
   {
