@@ -99,7 +99,7 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
         !IsInBounds(valY, expectedLowerBound, expectedUpperBound) ||
         !IsInBounds(valZ, expectedLowerBound, expectedUpperBound))
     {
-      all_in_range = false;
+      allInRange = false;
       break;
     }
   }
