@@ -87,7 +87,7 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
 
   std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
 
-  bool all_in_range = true;
+  bool allInRange = true;
 
   for(arma::mat solution: bestFront)
   {
