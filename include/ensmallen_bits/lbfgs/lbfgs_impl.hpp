@@ -385,8 +385,6 @@ L_BFGS::Optimize(FunctionType& function,
   for (size_t itNum = 0; (optimizeUntilConvergence || (itNum != maxIterations))
       && !terminate; ++itNum)
   {
-    Info << "iteration " << itNum << ", " << functionValue << "; " << iterate <<
-"\n";
     prevFunctionValue = functionValue;
 
     // Break when the norm of the gradient becomes too small.
