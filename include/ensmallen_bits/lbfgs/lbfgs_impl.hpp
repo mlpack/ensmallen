@@ -114,10 +114,8 @@ void L_BFGS::SearchDirection(const MatType& gradient,
                              const CubeType& y,
                              MatType& searchDirection)
 {
-  std::cout << "SearchDirection(): \n";
   // Start from this point.
   searchDirection = gradient;
-  std::cout << " - searchDirection " << searchDirection;
 
   // See "A Recursive Formula to Compute H * g" in "Updating quasi-Newton
   // matrices with limited storage" (Nocedal, 1980).
@@ -128,29 +126,20 @@ void L_BFGS::SearchDirection(const MatType& gradient,
   arma::Col<CubeElemType> alpha(numBasis);
 
   size_t limit = (numBasis > iterationNum) ? 0 : (iterationNum - numBasis);
-  std::cout << "limit: " << limit << "\n";
   for (size_t i = iterationNum; i != limit; i--)
   {
-    std::cout << "iteration: " << i << "\n";
     int translatedPosition = (i + (numBasis - 1)) % numBasis;
     rho[iterationNum - i] = 1.0 / arma::dot(y.slice(translatedPosition),
                                             s.slice(translatedPosition));
-    std::cout << "relevant y: " << y.slice(translatedPosition);
-    std::cout << "relevant s: " << s.slice(translatedPosition);
     alpha[iterationNum - i] = rho[iterationNum - i] *
         arma::dot(s.slice(translatedPosition), searchDirection);
-    std::cout << "rho: " << rho[iterationNum - i] << "\n";
-    std::cout << "alpha: " << alpha[iterationNum - i] << "\n";
     searchDirection -= alpha[iterationNum - i] * y.slice(translatedPosition);
   }
 
-  std::cout << "scaling factor: " << scalingFactor << "\n";
   searchDirection *= scalingFactor;
 
   for (size_t i = limit; i < iterationNum; i++)
   {
-    std::cout << "iteration 2 " << i << ", iterationNum " << iterationNum <<
-"\n";
     int translatedPosition = i % numBasis;
     double beta = rho[iterationNum - i - 1] *
         arma::dot(y.slice(translatedPosition), searchDirection);
@@ -160,7 +149,6 @@ void L_BFGS::SearchDirection(const MatType& gradient,
 
   // Negate the search direction so that it is a descent direction.
   searchDirection *= -1;
-  std::cout << "after negation: " << searchDirection << "\n";
 }
 
 /**
@@ -256,10 +244,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
 
   while (true)
   {
-    std::cout << "line search, step size " << stepSize << "\n";
     // Perform a step and evaluate the gradient and the function values at that
     // point.
-    std::cout << "lbfgs search direction: " << searchDirection << "\n";
     newIterateTmp = iterate;
     newIterateTmp += stepSize * searchDirection;
     functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
@@ -317,10 +303,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   }
 
   // Move to the new iterate.
-  std::cout << "search direction: " << searchDirection << "\nbest step size: "
-<< bestStepSize << "\n";
   iterate += bestStepSize * searchDirection;
-  std::cout << "new iterate: " << iterate << "\n";
   finalStepSize = bestStepSize;
   return true;
 }
@@ -410,8 +393,7 @@ L_BFGS::Optimize(FunctionType& function,
     //
     // But don't do this on the first iteration to ensure we always take at
     // least one descent step.
-    if ((itNum > 0 && (arma::norm(gradient, 2) < minGradientNorm)) ||
-        arma::norm(gradient, 2) == 0)
+    if (arma::norm(gradient, 2) < minGradientNorm)
     {
       Info << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
