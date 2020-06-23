@@ -424,7 +424,7 @@ optimizer uses [L-BFGS](#l-bfgs).
 
 #### Constructors
 
- * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor sigmaUpdateFactor`_`)`
+ * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor, sigmaUpdateFactor`_`)`
 
 #### Attributes
 
