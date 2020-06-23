@@ -134,6 +134,7 @@ AugLagrangian::Optimize(
     if (!lbfgs.Optimize(augfunc, coordinates, callbacks...))
       Info << "L-BFGS reported an error during optimization."
           << std::endl;
+    Info << "Done with L-BFGS: " << coordinates << "\n";
 
     const ElemType objective = function.Evaluate(coordinates);
 
