@@ -27,7 +27,8 @@ inline AugLagrangian::AugLagrangian(const size_t maxIterations,
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
     lbfgs(lbfgs),
-    terminate(false)
+    terminate(false),
+    sigma(0.0)
 {
 }
 
