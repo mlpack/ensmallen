@@ -3,6 +3,12 @@
  * Fix CMake package export
     ([#198](https://github.com/mlpack/ensmallen/pull/198)).
 
+ * Clarify and fix documentation for constrained optimizers
+    ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+
+ * Fix L-BFGS convergence when starting from a minimum
+    ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-20
  * Fix total number of epochs and time estimation for ProgressBar callback
