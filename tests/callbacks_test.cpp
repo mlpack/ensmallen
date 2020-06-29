@@ -165,9 +165,10 @@ void EarlyStopCallbacksFunctionTest(OptimizerType& optimizer)
   arma::mat coordinates = lr.GetInitialPoint();
   LogisticRegressionValidationFunction lrValidation(lr, coordinates);
 
-  EarlyStopAtMinLoss<LogisticRegressionValidationFunction,
-  arma::mat, arma::Row<size_t>> cb(
-    lrValidation, testData, testResponses);
+  EarlyStopAtMinLoss<arma::mat> cb(
+    [&](const arma::mat& /* coordinates */){
+   return lrValidation.Evaluate(testData, testResponses);
+  });
 
   optimizer.Optimize(lr, coordinates, cb);
 }
