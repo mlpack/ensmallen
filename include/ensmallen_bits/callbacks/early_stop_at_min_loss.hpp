@@ -36,7 +36,8 @@ class EarlyStopAtMinLoss
   EarlyStopAtMinLoss<MatType>(
       const size_t patienceIn = 10,
       std::ostream& output = arma::get_cout_stream())
-    : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
+    : callback_used(false), patience(patienceIn), 
+      bestObjective(std::numeric_limits<double>::max()),
       steps(0), output(output)
   { /* Nothing to do here */
   }
@@ -53,7 +54,8 @@ class EarlyStopAtMinLoss
       std::function<double(const MatType&)> func,
       const size_t patienceIn = 10,
       std::ostream& output = arma::get_cout_stream())
-    : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
+    : callback_used(true), 
+      patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
       steps(0), output(output), localFunc(func)
   {
     // Nothing to do here
@@ -75,8 +77,11 @@ class EarlyStopAtMinLoss
                 const size_t /* epoch */,
                 double objective)
   {
-    objective = localFunc(coordinates);
-    output << "Validation loss: " << objective << std::endl;
+    if (callback_used)
+    {
+      objective = localFunc(coordinates);
+      output << "Validation loss: " << objective << std::endl; 
+    } 
 
     if (objective < bestObjective)
     {
@@ -96,6 +101,8 @@ class EarlyStopAtMinLoss
   }
 
  private:
+  //! False if the first constructor is called, true is the user passed a lambda. 
+  bool callback_used;
 
   //! The number of epochs to wait before terminating the optimization process.
   size_t patience;
