@@ -22,9 +22,7 @@ namespace ens {
  * Early stopping to terminate the optimization process early if the loss stops
  * decreasing.
  */
-template<typename AnnType,
-         typename InMatType = arma::mat,
-         typename OutMatType = arma::mat>
+template<typename MatType = arma::mat>
 class EarlyStopAtMinLoss
 {
  public:
@@ -35,7 +33,7 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss<AnnType, InMatType, OutMatType>(
+  EarlyStopAtMinLoss<MatType>(
       const size_t patienceIn = 10,
       std::ostream& output = arma::get_cout_stream())
     : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
@@ -51,38 +49,14 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss<AnnType, InMatType, OutMatType>(
-      std::function<double()> func,
+  EarlyStopAtMinLoss<MatType>(
+      std::function<double(const MatType&)> func,
       const size_t patienceIn = 10,
       std::ostream& output = arma::get_cout_stream())
     : patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
-      steps(0), output(output), localObjective(std::nan("1"))
+      steps(0), output(output), localFunc(func)
   {
-    localObjective = func();
-  }
-
-  /**
-   * Set up the early stop at min class, which keeps track
-   * of the minimum loss and stops the optimization process if the loss stops
-   * decreasing on a specific validation set.
-   *
-   * @param predictors: data matrix used to predict the responses.
-   * @param responses: data matrix used to evaluate the predictions.
-   * @param patienceIn The number of epochs to wait after the minimum loss has
-   * been reached or no improvement has been made (Default: 10).
-   */
-  EarlyStopAtMinLoss<AnnType, InMatType, OutMatType>(
-      AnnType& network,
-      const InMatType& predictors,
-      const OutMatType& responses,
-      const size_t patienceIn = 10,
-      std::ostream& output = arma::get_cout_stream())
-    : network(network), patience(patienceIn),
-      bestObjective(std::numeric_limits<double>::max()), steps(0),
-      output(output)
-  {
-    this->predictors = predictors;
-    this->responses = responses;
+    // Nothing to do here
   }
 
   /**
@@ -94,23 +68,15 @@ class EarlyStopAtMinLoss
    * @param epoch The index of the current epoch.
    * @param objective Objective value of the current point.
    */
-  template<typename OptimizerType, typename FunctionType, typename MatType>
+  template<typename OptimizerType, typename FunctionType>
   bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
-                const MatType& /* coordinates */,
+                const MatType&  coordinates,
                 const size_t /* epoch */,
                 double objective)
   {
-    if ((!predictors.empty()) and (!responses.empty()))
-    {
-      objective = network.Evaluate(predictors, responses);
-      output << "Validation loss: " << objective << std::endl;
-    }
-    else if (!std::isnan(localObjective))
-    {
-      objective = localObjective;
-      output << "Validation loss: " << objective << std::endl;
-    }
+    objective = localFunc(coordinates);
+    output << "Validation loss: " << objective << std::endl;
 
     if (objective < bestObjective)
     {
@@ -130,9 +96,6 @@ class EarlyStopAtMinLoss
   }
 
  private:
-  // Reference to the model being trained, used to evaluate the training
-  // on validation set.
-  AnnType& network;
 
   //! The number of epochs to wait before terminating the optimization process.
   size_t patience;
@@ -146,14 +109,11 @@ class EarlyStopAtMinLoss
   //! The output stream that all data is to be sent to; example: std::cout.
   std::ostream& output;
 
-  //! The matrix of data points (predictors).
-  InMatType predictors;
-
-  //! The matrix of responses to the input data points.
-  OutMatType responses;
-
   //! objecive returned from lambda.
   double localObjective;
+
+  //! function to call at the end of the epoch
+  std::function<double(const MatType&)> localFunc;
 };
 
 } // namespace ens
