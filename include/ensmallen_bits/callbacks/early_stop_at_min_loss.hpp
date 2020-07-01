@@ -73,7 +73,7 @@ class EarlyStopAtMinLoss
   template<typename OptimizerType, typename FunctionType>
   bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
-                const MatType&  coordinates,
+                const MatType& coordinates,
                 const size_t /* epoch */,
                 double objective)
   {
