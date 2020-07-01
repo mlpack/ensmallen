@@ -102,7 +102,7 @@ class EarlyStopAtMinLoss
 
  private:
   //! False if the first constructor is called, true is the user passed a lambda. 
-  bool callback_used;
+  bool callbackUsed;
 
   //! The number of epochs to wait before terminating the optimization process.
   size_t patience;
