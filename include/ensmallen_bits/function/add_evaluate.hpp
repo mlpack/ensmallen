@@ -60,7 +60,7 @@ class AddEvaluate<FunctionType,
     return static_cast<FunctionType*>(
         static_cast<Function<FunctionType,
                              MatType, GradType>*>(this))->Evaluate(coordinates);
-   }
+  }
 };
 
 /**
