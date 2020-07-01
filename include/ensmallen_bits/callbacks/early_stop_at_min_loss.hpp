@@ -35,7 +35,8 @@ class EarlyStopAtMinLoss
    */
   EarlyStopAtMinLoss<MatType>(
       const size_t patienceIn = 10)
-    : callbackUsed(false), patience(patienceIn), 
+    : callbackUsed(false), 
+      patience(patienceIn), 
       bestObjective(std::numeric_limits<double>::max()),
       steps(0)
   { /* Nothing to do here */
@@ -53,8 +54,10 @@ class EarlyStopAtMinLoss
       std::function<double(const MatType&)> func,
       const size_t patienceIn = 10)
     : callbackUsed(true), 
-      patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
-      steps(0), localFunc(func)
+      patience(patienceIn), 
+      bestObjective(std::numeric_limits<double>::max()),
+      steps(0), 
+      localFunc(func)
   {
     // Nothing to do here
   }
