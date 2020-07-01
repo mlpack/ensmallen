@@ -53,8 +53,8 @@ class EarlyStopAtMinLoss
   EarlyStopAtMinLoss<MatType>(
       std::function<double(const MatType&)> func,
       const size_t patienceIn = 10,
-      std::ostream& output = arma::get_cout_stream())
-    : callback_used(true), 
+      std::ostream& output = arma::get_cout_stream()) :
+      callback_used(true), 
       patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
       steps(0), output(output), localFunc(func)
   {
