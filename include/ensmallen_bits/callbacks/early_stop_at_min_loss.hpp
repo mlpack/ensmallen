@@ -77,7 +77,7 @@ class EarlyStopAtMinLoss
                 const size_t /* epoch */,
                 double objective)
   {
-    if (callback_used)
+    if (callbackUsed)
     {
       objective = localFunc(coordinates);
       output << "Validation loss: " << objective << std::endl; 
