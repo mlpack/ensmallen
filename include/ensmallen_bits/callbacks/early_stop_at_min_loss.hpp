@@ -34,11 +34,10 @@ class EarlyStopAtMinLoss
    *    been reached or no improvement has been made (Default: 10).
    */
   EarlyStopAtMinLoss<MatType>(
-      const size_t patienceIn = 10,
-      std::ostream& output = arma::get_cout_stream())
-    : callback_used(false), patience(patienceIn), 
+      const size_t patienceIn = 10)
+    : callbackUsed(false), patience(patienceIn), 
       bestObjective(std::numeric_limits<double>::max()),
-      steps(0), output(output)
+      steps(0)
   { /* Nothing to do here */
   }
 
@@ -52,11 +51,10 @@ class EarlyStopAtMinLoss
    */
   EarlyStopAtMinLoss<MatType>(
       std::function<double(const MatType&)> func,
-      const size_t patienceIn = 10,
-      std::ostream& output = arma::get_cout_stream()) :
-      callback_used(true), 
+      const size_t patienceIn = 10)
+    : callbackUsed(true), 
       patience(patienceIn), bestObjective(std::numeric_limits<double>::max()),
-      steps(0), output(output), localFunc(func)
+      steps(0), localFunc(func)
   {
     // Nothing to do here
   }
@@ -80,7 +78,6 @@ class EarlyStopAtMinLoss
     if (callbackUsed)
     {
       objective = localFunc(coordinates);
-      output << "Validation loss: " << objective << std::endl; 
     } 
 
     if (objective < bestObjective)
@@ -112,9 +109,6 @@ class EarlyStopAtMinLoss
 
   //! Locally-stored number of steps since the loss improved.
   size_t steps;
-
-  //! The output stream that all data is to be sent to; example: std::cout.
-  std::ostream& output;
 
   //! objecive returned from lambda.
   double localObjective;
