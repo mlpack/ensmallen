@@ -153,7 +153,7 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
 }
 
 template<typename OptimizerType>
-void EarlyStopCallbacksFunctionTest(OptimizerType& optimizer)
+void EarlyStopCallbacksLambdaFunctionTest(OptimizerType& optimizer)
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -174,10 +174,10 @@ void EarlyStopCallbacksFunctionTest(OptimizerType& optimizer)
   optimizer.Optimize(lr, coordinates, cb);
 }
 
-TEST_CASE("EarlyStopAtMinLossCallbackTest", "[CallbacksTest]")
+TEST_CASE("EarlyStopAtMinLossLambdaCallbackTest", "[CallbacksTest]")
 {
   SMORMS3 smorms3;
-  EarlyStopCallbacksFunctionTest(smorms3);
+  EarlyStopCallbacksLambdaFunctionTest(smorms3);
 }
 
 /**
@@ -499,7 +499,6 @@ TEST_CASE("SACallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("EarlyStopAtMinLossCallbackTest", "[CallbacksTest]")
 {
-  
   SGDTestFunction f;
   arma::mat coordinates = f.GetInitialPoint();
 
