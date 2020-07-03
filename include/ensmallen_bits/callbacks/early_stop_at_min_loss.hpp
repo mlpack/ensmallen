@@ -43,7 +43,7 @@ class EarlyStopAtMinLoss
    * Set up the early stop at min loss class, which keeps track of the minimum
    * loss and stops the optimization process if the loss stops decreasing.
    *
-   * @param func, callback to return immediate loss calculated bt the networl
+   * @param func, callback to return immediate loss evaluated by the function
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
