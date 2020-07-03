@@ -165,11 +165,11 @@ void EarlyStopCallbacksLambdaFunctionTest(OptimizerType& optimizer)
   arma::mat coordinates = lr.GetInitialPoint();
 
   EarlyStopAtMinLoss<arma::mat> cb(
-    [&](const arma::mat& /* coordinates */)
-    {
-      return lr.ComputeAccuracy(testData, testResponses,
-                                coordinates);
-    });
+      [&](const arma::mat& /* coordinates */)
+      {
+        return lr.ComputeAccuracy(testData, testResponses,
+                                  coordinates);
+      });
 
   optimizer.Optimize(lr, coordinates, cb);
 }
@@ -178,6 +178,29 @@ TEST_CASE("EarlyStopAtMinLossLambdaCallbackTest", "[CallbacksTest]")
 {
   SMORMS3 smorms3;
   EarlyStopCallbacksLambdaFunctionTest(smorms3);
+}
+
+TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
+{
+  // Use the 50-dimensional Rosenbrock function.
+  GeneralizedRosenbrockFunction f(50);
+  // Start at some really large point.
+  arma::mat coordinates = f.GetInitialPoint();
+  coordinates.fill(100.0);
+
+  EarlyStopAtMinLoss<arma::mat> cb(
+      [&](const arma::mat& coordinates)
+      {
+        // Terminate if any coordinate has a value less than 10.
+        return arma::abs(coordinates).min();
+      });
+
+  SMORMS3 smorms3;
+  smorms3.Optimize(f, coordinates, cb);
+
+  // Make sure that we did not get to the optimum.
+  for (size_t i = 0; i < coordinates.n_elem; ++i)
+    REQUIRE(std::abs(coordinates[i]) >= 3.0);
 }
 
 /**
