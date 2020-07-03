@@ -8,6 +8,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+#include <limits>
+
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -192,7 +194,9 @@ TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
       [&](const arma::mat& coordinates)
       {
         // Terminate if any coordinate has a value less than 10.
-        return arma::abs(coordinates).min();
+        double minValue = arma::abs(coordinates).min();
+        return (minValue < 10.0) ? 
+          std::numeric_limits<double>::max() : minValue;
       });
 
   SMORMS3 smorms3;
