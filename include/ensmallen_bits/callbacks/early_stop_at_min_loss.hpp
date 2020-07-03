@@ -112,7 +112,7 @@ class EarlyStopAtMinLoss
   //! Locally-stored number of steps since the loss improved.
   size_t steps;
 
-  //! function to call at the end of the epoch
+  //! Function to call at the end of the epoch.
   std::function<double(const MatType&)> localFunc;
 };
 
