@@ -37,8 +37,7 @@ class EarlyStopAtMinLoss
       patience(patienceIn), 
       bestObjective(std::numeric_limits<double>::max()),
       steps(0)
-  { /* Nothing to do here */
-  }
+  { /* Nothing to do here */ }
 
   /**
    * Set up the early stop at min loss class, which keeps track of the minimum
