@@ -14,7 +14,6 @@
 #define ENSMALLEN_CALLBACKS_EARLY_STOP_AT_MIN_LOSS_HPP
 
 #include <functional>
-#include <cmath>
 
 namespace ens {
 
