@@ -23,7 +23,7 @@ MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates, PrintLoss());
 ```
 
-</details>  
+</details>
 
 Passing multiple callbacks is just the same as passing a single callback:
 
@@ -42,7 +42,7 @@ MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates, PrintLoss(), EarlyStopAtMinLoss());
 ```
 
-</details>  
+</details>
 
 It is also possible to pass a callback instantiation that allows accessing of
 internal callback parameters at a later state:
@@ -84,12 +84,16 @@ has been made.
 
  * `EarlyStopAtMinLoss()`
  * `EarlyStopAtMinLoss(`_`patience`_`)`
+ * `EarlyStopAtMinLoss(`_`func`_`)`
+ * `EarlyStopAtMinLoss(`_`func`_`,`_`patience`_`)`
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`patience`** | The number of epochs to wait after the minimum loss has been reached. | `10` |
+| `std::function<double(const MatType&)>` | **`func`** | A callback to return immediate loss evaluated by the function. | |
+
 
 #### Examples:
 
@@ -103,6 +107,27 @@ AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
+```
+Another example of using lambda in the constructor.
+
+```c++
+ // Use the 50-dimensional Rosenbrock function.
+  GeneralizedRosenbrockFunction f(50);
+  // Start at some really large point.
+  arma::mat coordinates = f.GetInitialPoint();
+  coordinates.fill(100.0);
+
+  EarlyStopAtMinLoss<arma::mat> cb(
+      [&](const arma::mat& coordinates)
+      {
+        // Terminate if any coordinate has a value less than 10.
+        double minValue = arma::abs(coordinates).min();
+        return (minValue < 10.0) ? 
+          std::numeric_limits<double>::max() : minValue;
+      });
+
+  SMORMS3 smorms3;
+  smorms3.Optimize(f, coordinates, cb);
 ```
 
 </details>
