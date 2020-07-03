@@ -33,9 +33,8 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss<MatType>(
-      const size_t patienceIn = 10)
-    : callbackUsed(false), 
+  EarlyStopAtMinLoss<MatType>(const size_t patienceIn = 10) :
+      callbackUsed(false), 
       patience(patienceIn), 
       bestObjective(std::numeric_limits<double>::max()),
       steps(0)
