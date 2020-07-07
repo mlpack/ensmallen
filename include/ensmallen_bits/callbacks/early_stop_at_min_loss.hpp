@@ -22,7 +22,7 @@ namespace ens {
  * decreasing.
  */
 template<typename MatType = arma::mat>
-class EarlyStopAtMinLoss
+class EarlyStopAtMinLossType
 {
  public:
   /**
@@ -32,7 +32,7 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss<MatType>(const size_t patienceIn = 10) :
+  EarlyStopAtMinLossType<MatType>(const size_t patienceIn = 10) :
       callbackUsed(false), 
       patience(patienceIn), 
       bestObjective(std::numeric_limits<double>::max()),
@@ -47,7 +47,7 @@ class EarlyStopAtMinLoss
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLoss<MatType>(
+  EarlyStopAtMinLossType<MatType>(
       std::function<double(const MatType&)> func,
       const size_t patienceIn = 10)
     : callbackUsed(true), 
@@ -113,6 +113,14 @@ class EarlyStopAtMinLoss
   //! Function to call at the end of the epoch.
   std::function<double(const MatType&)> localFunc;
 };
+
+/*
+ * Note that the using definition is temporary, this definition should
+ * be removed when releasing ensmallen 3.0
+ * The renaming of the class is only to avoid a major version bump
+ * because if the template type added to this class
+ */
+using EarlyStopAtMinLoss = EarlyStopAtMinLossType<arma::mat>;
 
 } // namespace ens
 

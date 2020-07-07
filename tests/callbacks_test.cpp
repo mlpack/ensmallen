@@ -164,7 +164,7 @@ void EarlyStopCallbacksLambdaFunctionTest(OptimizerType& optimizer)
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
   arma::mat coordinates = lr.GetInitialPoint();
 
-  EarlyStopAtMinLoss<arma::mat> cb(
+  EarlyStopAtMinLoss cb(
       [&](const arma::mat& /* coordinates */)
       {
         return lr.ComputeAccuracy(testData, testResponses,
@@ -188,7 +188,7 @@ TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
   arma::mat coordinates = f.GetInitialPoint();
   coordinates.fill(100.0);
 
-  EarlyStopAtMinLoss<arma::mat> cb(
+  EarlyStopAtMinLoss cb(
       [&](const arma::mat& coordinates)
       {
         // Terminate if any coordinate has a value less than 10.
