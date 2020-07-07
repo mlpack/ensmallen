@@ -115,23 +115,31 @@ optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
 Another example of using lambda in the constructor.
 
 ```c++
- // Use the 50-dimensional Rosenbrock function.
-  GeneralizedRosenbrockFunction f(50);
-  // Start at some really large point.
-  arma::mat coordinates = f.GetInitialPoint();
-  coordinates.fill(100.0);
+// Generate random training data and labels.
+arma::mat trainingData(5, 100, arma::fill::randu);
+arma::Row<size_t> trainingLabels =
+    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
+// Generate a validation set.
+arma::mat validationData(5, 100, arma::fill::randu);
+arma::Row<size_t> validationLabels =
+    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
 
-  EarlyStopAtMinLoss<arma::mat> cb(
-      [&](const arma::mat& coordinates)
-      {
-        // Terminate if any coordinate has a value less than 10.
-        double minValue = arma::abs(coordinates).min();
-        return (minValue < 10.0) ? 
-          std::numeric_limits<double>::max() : minValue;
-      });
+// Create a LogisticRegressionFunction for both the training and validation data.
+LogisticRegressionFunction lrfTrain(trainingData, trainingLabels);
+LogisticRegressionFunction lrfValidation(validationData, validationLabels);
 
-  SMORMS3 smorms3;
-  smorms3.Optimize(f, coordinates, cb);
+// Create a callback that will terminate when the validation loss starts to
+// increase.
+EarlyStopAtMinLoss cb(
+    [&](const arma::mat& coordinates)
+    {
+      // You could also, e.g., print the validation loss here to watch it converge.
+      return lrfValidation.Evaluate(coordinates);
+    });
+    
+arma::mat coordinates = lrfTrain.GetInitialPoint();
+SMORMS3 smorms3;
+smorms3.Optimize(lrfTrain, coordinates, cb);
 ```
 
 </details>
