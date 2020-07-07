@@ -533,7 +533,7 @@ TEST_CASE("EarlyStopAtMinLossCallbackTest", "[CallbacksTest]")
   s.ExactObjective() = true;
 
   // The optimization process should return in one second.
-  const double result = s.Optimize(f, coordinates, EarlyStopAtMinLoss<arma::mat>(100));
+  const double result = s.Optimize(f, coordinates, EarlyStopAtMinLoss(100));
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0005));
   REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
