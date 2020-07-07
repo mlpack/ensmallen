@@ -92,8 +92,12 @@ has been made.
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`patience`** | The number of epochs to wait after the minimum loss has been reached. | `10` |
-| `std::function<double(const MatType&)>` | **`func`** | A callback to return immediate loss evaluated by the function. | |
+| `std::function<double(const arma::mat&)>` | **`func`** | A callback to return immediate loss evaluated by the function. | |
 
+Note that for the `func` argument above, if a
+[different matrix type](#alternate-matrix-types) is desired, instead of using
+the class `EarlyStopAtMinLoss`, the class `EarlyStopAtMinLossType<MatType>`
+should be used.
 
 #### Examples:
 
