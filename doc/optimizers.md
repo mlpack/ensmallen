@@ -1624,6 +1624,7 @@ std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
 
  * [NSGA-II Algorithm](https://www.iitk.ac.in/kangal/Deb_NSGA-II.pdf)
  * [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
+  * [Multi-objective functions](#multi-objective-functions)
 
 ## OptimisticAdam
 
