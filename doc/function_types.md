@@ -845,7 +845,7 @@ int main()
 ## Multi-objective functions
 
 A multi-objective function is a set of functions or objectives that are
-simultaneously optimized to reach an optima.
+simultaneously optimized to reach an optimum.
 
 In order to optimize a multi-objective function with ensmallen, a class
 implementing the API below is required.
