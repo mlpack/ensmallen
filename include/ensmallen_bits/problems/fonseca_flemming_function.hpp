@@ -81,9 +81,9 @@ class FonsecaFlemmingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-        return 1.0f - exp(- pow(coords[0] + 1.0f/sqrt(3), 2) -
-            - pow(coords[1] + 1.0f/sqrt(3), 2)
-            - pow(coords[2] + 1.0f/sqrt(3), 2));
+        return 1.0f - exp(- pow(coords[0] + 1.0f / sqrt(3), 2) -
+            - pow(coords[1] + 1.0f / sqrt(3), 2)
+            - pow(coords[2] + 1.0f / sqrt(3), 2));
     }
   } objectiveB;
 
