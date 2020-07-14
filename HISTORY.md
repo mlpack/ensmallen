@@ -5,7 +5,10 @@
 
  * Fix CMA-ES inconsistencies
     ([#193](https://github.com/mlpack/ensmallen/pull/193)).
-
+    
+  * Allow early stop callback to accept a lambda function
+    ([#165](https://github.com/mlpack/ensmallen/pull/165)).
+    
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-20
  * Fix total number of epochs and time estimation for ProgressBar callback
