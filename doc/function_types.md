@@ -761,7 +761,7 @@ class CategoricalFunction
 
 </details>
 
-However, when an optimizers Optimize() method is called, two additional
+However, when an optimizer's Optimize() method is called, two additional
 parameters must be specified, in addition to the function to optimize and the
 matrix holding the parameters:
 
