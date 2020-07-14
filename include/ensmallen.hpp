@@ -44,12 +44,14 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
+
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
