@@ -152,6 +152,58 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
   REQUIRE(cb.calledStepTaken == calledStepTaken);
 }
 
+template<typename OptimizerType>
+void EarlyStopCallbacksLambdaFunctionTest(OptimizerType& optimizer)
+{
+  arma::mat data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  LogisticRegressionTestData(data, testData, shuffledData,
+      responses, testResponses, shuffledResponses);
+  
+  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
+  arma::mat coordinates = lr.GetInitialPoint();
+
+  EarlyStopAtMinLoss cb(
+      [&](const arma::mat& /* coordinates */)
+      {
+        return lr.ComputeAccuracy(testData, testResponses,
+                                  coordinates);
+      });
+
+  optimizer.Optimize(lr, coordinates, cb);
+}
+
+TEST_CASE("EarlyStopAtMinLossLambdaCallbackTest", "[CallbacksTest]")
+{
+  SMORMS3 smorms3;
+  EarlyStopCallbacksLambdaFunctionTest(smorms3);
+}
+
+TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
+{
+  // Use the 50-dimensional Rosenbrock function.
+  GeneralizedRosenbrockFunction f(50);
+  // Start at some really large point.
+  arma::mat coordinates = f.GetInitialPoint();
+  coordinates.fill(100.0);
+
+  EarlyStopAtMinLoss cb(
+      [&](const arma::mat& coordinates)
+      {
+        // Terminate if any coordinate has a value less than 10.
+        double minValue = arma::abs(coordinates).min();
+        return (minValue < 10.0) ? 
+          std::numeric_limits<double>::max() : minValue;
+      });
+
+  SMORMS3 smorms3;
+  smorms3.Optimize(f, coordinates, cb);
+
+  // Make sure that we did not get to the optimum.
+  for (size_t i = 0; i < coordinates.n_elem; ++i)
+    REQUIRE(std::abs(coordinates[i]) >= 3.0);
+}
 
 /**
  * Make sure we invoke all callbacks (AdaBound).
