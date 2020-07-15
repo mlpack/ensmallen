@@ -148,10 +148,12 @@ git push --set-upstream $github_user release-$MAJOR.$MINOR.$PATCH;
 hub pull-request \
     -b mlpack:master \
     -h $github_user:release-$MAJOR.$MINOR.$PATCH \
-    -m "Release version $MAJOR.$MINOR.$PATCH" \
+    -m "Release version $MAJOR.$MINOR.$PATCH: \"$version_name\"" \
     -m "This automatically-generated pull request adds the commits necessary to make the $MAJOR.$MINOR.$PATCH release." \
     -m "Once the PR is merged, mlpack-bot will tag the release as HEAD~1 (so that it doesn't include the new HISTORY block) and publish it." \
     -m "Or, well, hopefully that will happen someday." \
+    -m "### Changelog" \
+    -m `cat HISTORY.md | awk '/^### /{f=0} /^### ensmallen '$MAJOR'.'$MINOR'.'$PATCH'/{f=1} f{print}' | grep -v '^#'`
     -l "t: release"
 
 echo "";
