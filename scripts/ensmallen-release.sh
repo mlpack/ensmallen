@@ -131,7 +131,12 @@ git add CONTRIBUTING.md;
 git add HISTORY.md;
 git commit -m "Update and release version $MAJOR.$MINOR.$PATCH.";
 
-changelog_str=`cat HISTORY.md | awk '/^### /{f=0} /^### ensmallen '$MAJOR'.'$MINOR'.'$PATCH'/{f=1} f{print}' | grep -v '^#'`;
+changelog_str=`cat HISTORY.md |\
+    awk '/^### /{f=0} /^### ensmallen 2.13.0: "Automatically Automated Automation"/{f=1} f{print}' |\
+    grep -v '^#' |\
+    tr '\n' '!' |\
+    sed -e 's/!  [ ]*/ /g' |\
+    tr '!' '\n'`;
 echo "Changelog string:"
 echo "$changelog_str"
 
