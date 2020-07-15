@@ -89,7 +89,7 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
 
   bool allInRange = true;
 
-  for(size_t i = 0; i < bestFront.size(); i++)
+  for (size_t i = 0; i < bestFront.size(); i++)
   {
     const arma::mat solution = bestFront[i];
     double valX = arma::as_scalar(solution(0));
