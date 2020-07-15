@@ -1593,7 +1593,6 @@ size equal to that of the starting population.
 | `arma::vec` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
 | `arma::vec` | **`upperBound`** | Lower bound of the coordinates of the initial population. | `1` |
 
-
 Attributes of the optimizer may also be changed via the member methods
 `PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
 
@@ -1615,7 +1614,9 @@ typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-std::vector<arma::mat> bestFront = opt.Optimize(objectives, coords);
+std::vector<arma::Col<double>> obj = opt.Optimize(objectives, coords);
+// Now obtain the best front.
+std::vector<arma::mat> bestFront = opt.Front();
 ```
 
 </details>

@@ -40,7 +40,7 @@ inline NSGA2::NSGA2(const size_t populationSize,
 template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
+std::vector<arma::Col<double> > NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
                                      MatType& iterate,
                                      CallbackTypes&&... callbacks)
 {
@@ -144,13 +144,16 @@ std::vector<MatType> NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objec
   }
 
   // Set the candidates from the best front as the output.
-  std::vector<MatType> bestFront;
+  std::vector<MatType> front;
 
   for (size_t f: fronts[0])
-    bestFront.push_back(population[f]);
+    front.push_back(population[f]);
+
+  bestFront = front;
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
-  return bestFront;
+
+  return calculatedObjectives;
 }
 
 //! No objectives to evaluate.
