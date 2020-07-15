@@ -131,6 +131,10 @@ git add CONTRIBUTING.md;
 git add HISTORY.md;
 git commit -m "Update and release version $MAJOR.$MINOR.$PATCH.";
 
+changelog_str=`cat HISTORY.md | awk '/^### /{f=0} /^### ensmallen '$MAJOR'.'$MINOR'.'$PATCH'/{f=1} f{print}' | grep -v '^#'`;
+echo "Changelog string:"
+echo "$changelog_str"
+
 # Add one more commit to create the new HISTORY block.
 echo "### ensmallen ?.??.?: \"???\"" > HISTORY.md.new;
 echo "###### ????-??-??" >> HISTORY.md.new;
@@ -153,7 +157,7 @@ hub pull-request \
     -m "Once the PR is merged, mlpack-bot will tag the release as HEAD~1 (so that it doesn't include the new HISTORY block) and publish it." \
     -m "Or, well, hopefully that will happen someday." \
     -m "### Changelog" \
-    -m `cat HISTORY.md | awk '/^### /{f=0} /^### ensmallen '$MAJOR'.'$MINOR'.'$PATCH'/{f=1} f{print}' | grep -v '^#'`
+    -m "$changelog_str" \
     -l "t: release"
 
 echo "";
