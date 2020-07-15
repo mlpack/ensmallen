@@ -89,12 +89,12 @@ class NSGA2 {
    * @param objectives Vector of objective functions to optimize for.
    * @param iterate Starting point.
    * @param callbacks Callback functions.
-   * @return std::vector<MatType> The best front obtained after optimization.
+   * @return std::vector<arma::Col<double>> Objective values for each of the children.
    */
   template<typename MatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
-  std::vector<MatType> Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
+  std::vector<arma::Col<double>> Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
                                 MatType& iterate,
                                 CallbackTypes&&... callbacks);
 
@@ -137,6 +137,9 @@ class NSGA2 {
   const arma::vec& UpperBound() const { return upperBound; }
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
+
+  //! Retrieve the bestFront.
+  const std::vector<arma::mat>& Front() const { return bestFront; }
 
  private:
   /**
@@ -303,6 +306,9 @@ class NSGA2 {
 
   //! Upper bound of the initial swarm.
   arma::vec upperBound;
+
+  //! Best front, stored after Optimize() is called.
+  std::vector<arma::mat> bestFront;
 };
 
 } // namespace ens
