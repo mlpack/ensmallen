@@ -4,7 +4,7 @@
 # access to the ensmallen.org website is needed.  Generally, this script will be
 # run by mlpack-bot, so it never needs to be run by hand.
 #
-# Usage: update-website.sh <major> <minor> <patch>
+# Usage: update-website-after-release.sh <major> <minor> <patch>
 
 MAJOR=$1;
 MINOR=$2;
@@ -17,7 +17,7 @@ dest_remote_name=`git remote -v |\
                   awk -F' ' '{ print $1 }'`;
 
 if [ "a$dest_remote_name" == "a" ]; then
-  echo "No git remote found for https://github.com/mlpack/ensmallen!";
+  echo "No git remote found for mlpack/ensmallen!";
   echo "Make sure that you've got the ensmallen repository as a remote, and" \
       "that the master branch from that remote is checked out.";
   echo "You can do this with a fresh repository via \`git clone" \
