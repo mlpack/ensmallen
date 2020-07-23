@@ -47,7 +47,7 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
   arma::mat coords = SCH.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-  std::vector<arma::Col<double>> obj = opt.Optimize(objectives, coords);
+  double obj = opt.Optimize(objectives, coords);
   std::vector<arma::mat> bestFront = opt.Front();
 
   bool allInRange = true;
@@ -86,7 +86,7 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
   arma::mat coords = FON.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-  std::vector<arma::Col<double>> obj = opt.Optimize(objectives, coords);
+  double obj = opt.Optimize(objectives, coords);
   std::vector<arma::mat> bestFront = opt.Front();
 
   bool allInRange = true;
