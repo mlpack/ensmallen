@@ -3,6 +3,10 @@
  * Add NSGA2 optimizer for multi-objective functions
     ([#149](https://github.com/mlpack/ensmallen/pull/149)).
 
+ * Update automatic website update release script
+   ([#207](https://github.com/mlpack/ensmallen/pull/207)).
+
+
 ### ensmallen 2.13.0: "Automatically Automated Automation"
 ###### 2020-07-15
  * Fix CMake package export
