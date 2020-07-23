@@ -94,7 +94,7 @@ class NSGA2 {
   template<typename MatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
-  std::vector<arma::Col<double>> Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
+ typename MatType::elem_type Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
                                 MatType& iterate,
                                 CallbackTypes&&... callbacks);
 

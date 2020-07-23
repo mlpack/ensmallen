@@ -40,7 +40,7 @@ inline NSGA2::NSGA2(const size_t populationSize,
 template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-std::vector<arma::Col<double> > NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
+typename MatType::elem_type NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
                                      MatType& iterate,
                                      CallbackTypes&&... callbacks)
 {
@@ -50,6 +50,9 @@ std::vector<arma::Col<double> > NSGA2::Optimize(std::tuple<ArbitraryFunctionType
     throw std::logic_error("NSGA2::Optimize(): population size should be at"
         " least 4, and, a multiple of 4!");
   }
+
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
 
   numObjectives = sizeof...(ArbitraryFunctionType);
 
@@ -149,11 +152,20 @@ std::vector<arma::Col<double> > NSGA2::Optimize(std::tuple<ArbitraryFunctionType
   for (size_t f: fronts[0])
     front.push_back(population[f]);
 
+  // bestFront is stored, can be obtained by the Front() getter.
   bestFront = front;
+
+  // Assign iterate to first element of the best front.
+  iterate = bestFront[0];
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
-  return calculatedObjectives;
+  arma::Col<ElemType> sumOfObjectives(numObjectives);
+
+  for(arma::Col<ElemType> objective: calculatedObjectives)
+    sumOfObjectives += objective;
+
+  return arma::accu(sumOfObjectives);
 }
 
 //! No objectives to evaluate.
