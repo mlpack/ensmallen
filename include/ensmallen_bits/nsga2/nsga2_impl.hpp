@@ -160,12 +160,13 @@ typename MatType::elem_type NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
-  arma::Col<ElemType> sumOfObjectives(numObjectives);
+  ElemType performance = std::numeric_limits<ElemType>::max();
 
   for(arma::Col<ElemType> objective: calculatedObjectives)
-    sumOfObjectives += objective;
+    if (arma::accu(objective) < performance)
+      performance = arma::accu(objective);
 
-  return arma::accu(sumOfObjectives);
+  return performance;
 }
 
 //! No objectives to evaluate.
