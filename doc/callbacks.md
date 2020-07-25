@@ -23,7 +23,7 @@ MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates, PrintLoss());
 ```
 
-</details>  
+</details>
 
 Passing multiple callbacks is just the same as passing a single callback:
 
@@ -42,7 +42,7 @@ MomentumSGD optimizer(0.01, 32, 100000, 1e-5, true, MomentumUpdate(0.5));
 optimizer.Optimize(f, coordinates, PrintLoss(), EarlyStopAtMinLoss());
 ```
 
-</details>  
+</details>
 
 It is also possible to pass a callback instantiation that allows accessing of
 internal callback parameters at a later state:
@@ -84,12 +84,20 @@ has been made.
 
  * `EarlyStopAtMinLoss()`
  * `EarlyStopAtMinLoss(`_`patience`_`)`
+ * `EarlyStopAtMinLoss(`_`func`_`)`
+ * `EarlyStopAtMinLoss(`_`func`_`,`_`patience`_`)`
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`patience`** | The number of epochs to wait after the minimum loss has been reached. | `10` |
+| `std::function<double(const arma::mat&)>` | **`func`** | A callback to return immediate loss evaluated by the function. | |
+
+Note that for the `func` argument above, if a
+[different matrix type](#alternate-matrix-types) is desired, instead of using
+the class `EarlyStopAtMinLoss`, the class `EarlyStopAtMinLossType<MatType>`
+should be used.
 
 #### Examples:
 
@@ -103,6 +111,35 @@ AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, EarlyStopAtMinLoss());
+```
+Another example of using lambda in the constructor.
+
+```c++
+// Generate random training data and labels.
+arma::mat trainingData(5, 100, arma::fill::randu);
+arma::Row<size_t> trainingLabels =
+    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
+// Generate a validation set.
+arma::mat validationData(5, 100, arma::fill::randu);
+arma::Row<size_t> validationLabels =
+    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 1));
+
+// Create a LogisticRegressionFunction for both the training and validation data.
+LogisticRegressionFunction lrfTrain(trainingData, trainingLabels);
+LogisticRegressionFunction lrfValidation(validationData, validationLabels);
+
+// Create a callback that will terminate when the validation loss starts to
+// increase.
+EarlyStopAtMinLoss cb(
+    [&](const arma::mat& coordinates)
+    {
+      // You could also, e.g., print the validation loss here to watch it converge.
+      return lrfValidation.Evaluate(coordinates);
+    });
+    
+arma::mat coordinates = lrfTrain.GetInitialPoint();
+SMORMS3 smorms3;
+smorms3.Optimize(lrfTrain, coordinates, cb);
 ```
 
 </details>

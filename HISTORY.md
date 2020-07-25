@@ -1,13 +1,21 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Update automatic website update release script
+   ([#207](https://github.com/mlpack/ensmallen/pull/207)).
+
+ * Clarify and fix documentation for constrained optimizers
+   ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+
+ * Fix L-BFGS convergence when starting from a minimum
+   ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+
+### ensmallen 2.13.0: "Automatically Automated Automation"
+###### 2020-07-15
  * Fix CMake package export
     ([#198](https://github.com/mlpack/ensmallen/pull/198)).
 
- * Clarify and fix documentation for constrained optimizers
-    ([#201](https://github.com/mlpack/ensmallen/pull/201)).
-
- * Fix L-BFGS convergence when starting from a minimum
-    ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+ * Allow early stop callback to accept a lambda function
+   ([#165](https://github.com/mlpack/ensmallen/pull/165)).
 
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-20
