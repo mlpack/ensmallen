@@ -847,17 +847,18 @@ A constrained function is an objective function `f(x)` that is also subject to
 some constraints on `x`.  (For instance, perhaps a constraint could be that `x`
 is a positive semidefinite matrix.)  ensmallen is able to handle differentiable
 objective functions of this type---so, `f'(x)` must also be computable.  Given
-some set of constraints c_0(x), ... c_M(x), we can re-express our constrained
+some set of constraints `c_0(x)`, ..., `c_M(x)`, we can re-express our constrained
 objective function as
 
 ```
 f_C(x) = f(x) + c_0(x) + ... + c_M(x)
 ```
 
-where the constraint `c_i(x)` is `DBL_MAX` if it is not satisfied, and
-otherwise takes some real value.  For a "hard constraint", we can simply take
-`c_i(x) = 0` when it is satisfied.  But allowing `c_i(x)` to return anything
-allows us to handle "soft" constraints also.
+where the (soft) constraint `c_i(x)` is a positive value if it is not satisfied, and
+`0` if it is satisfied.  The soft constraint `c_i(x)` should take some value
+representing how far from a feasible solution `x` is.  It should be
+differentiable, since ensmallen's constrained optimizers will use the gradient
+of the constraint to find a feasible solution.
 
 In order to optimize a constrained function with ensmallen, a class
 implementing the API below is required.
@@ -880,16 +881,14 @@ class ConstrainedFunctionType
   size_t NumConstraints();
 
   // Evaluate constraint i at the parameters x.  If the constraint is
-  // unsatisfied, DBL_MAX should be returned.  If the constraint is satisfied,
-  // any real value can be returned.  The optimizer will add this value to its
-  // overall objective that it is trying to minimize.  (So, a hard constraint
-  // can just return 0 if it's satisfied.)
+  // unsatisfied, a value greater than 0 should be returned.  If the constraint
+  // is satisfied, 0 should be returned.  The optimizer will add this value to
+  // its overall objective that it is trying to minimize.
   double EvaluateConstraint(const size_t i, const arma::mat& x);
 
   // Evaluate the gradient of constraint i at the parameters x, storing the
-  // result in the given matrix g.  If this is a hard constraint you can set
-  // the gradient to 0.  If the constraint is not satisfied, it could be
-  // helpful to set the gradient in such a way that the gradient points in the
+  // result in the given matrix g.  If the constraint is not satisfied, the
+  // gradient should be set in such a way that the gradient points in the
   // direction where the constraint would be satisfied.
   void GradientConstraint(const size_t i, const arma::mat& x, arma::mat& g);
 };
