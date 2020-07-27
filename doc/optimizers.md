@@ -1614,6 +1614,7 @@ typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
+// obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj = opt.Optimize(objectives, coords);
 // Now obtain the best front.
 std::vector<arma::mat> bestFront = opt.Front();
