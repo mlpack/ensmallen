@@ -878,6 +878,10 @@ std::vector<arma::mat> bestFront = optimizer.Front();
 
 </details>
 
+*Note*: all multi-objective function optimizers have both the function `Optimize()` to find the
+best front, and also the function `Front()` to return all sets of coordinates that are on the
+front.
+
 The following optimizers can be used with multi-objective functions:
 - [NSGA2](#nsga2)
 
