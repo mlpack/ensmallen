@@ -847,33 +847,32 @@ int main()
 A multi-objective function is a set of functions or objectives that are
 simultaneously optimized to reach an optimum.
 
-In order to optimize a multi-objective function with ensmallen, a class
-implementing the API below is required.
+In order to optimize a multi-objective function with ensmallen, a `std::tuple<>`
+containing multiple `ArbitraryFunctionType`s ([see here](#arbitrary-functions))
+should be passed to a multi-objective optimizer's `Optimize()` function.
+
+An example below simultaneously optimizes the generalized Rosenbrock function
+in 6 dimensions and the Wood function using [NSGA2](#nsga2).
 
 <details open>
 <summary>Click to collapse/expand example code.
 </summary>
 
 ```c++
-template<typename MatType = arma::mat>
-class MultiObjectiveFunctionType
-{
- public:
-  // Evaluate all the objectives with the given coordinate.
-  arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords);
+GeneralizedRosenbrockFunction rf(6);
+WoodFunction wf;
+std::tuple<GeneralizedRosenbrockFunction, WoodFunction> objectives(rf, wf);
 
-  // Get the starting point.
-  MatType GetInitialPoint();
+// Create an initial point (a random point in 6 dimensions).
+arma::mat coordinates(6, 1, arma::fill::randu);
 
-  // Each objective has to be represented as a struct with an Evaluate method.
-  struct Objective1
-  {
-    // Evaluate objective 1 with the given coordinate.
-    typename MatType::elem_type Evaluate(const MatType& coords);
-  }
+// `coordinates` will be set to the coordinates on the best front that minimize the
+// sum of objective functions, and `bestFrontSum` will be the sum of all objectives
+// at that coordinate set.
+double bestFrontSum = Optimize(objectives, coordinates);
 
-  // Get all N objective functions.
-  std::tuple<Objective1, ..., ObjectiveN> GetObjectives();
+// Set `bestFront` to contain all of the coordinates on the best front.
+std::vector<arma::mat> bestFront = optimizer.Front();
 }
 ```
 
