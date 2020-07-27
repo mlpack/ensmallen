@@ -844,8 +844,11 @@ int main()
 
 ## Multi-objective functions
 
-A multi-objective function is a set of functions or objectives that are
-simultaneously optimized to reach an optimum.
+A multi-objective optimizer does not return just one set of coordinates at the
+minimum of all objective functions, but instead finds a *front* or *frontier* of
+possible coordinates that are Pareto-optimal (that is, no individual objective
+function's value can be reduced without increasing at least one other
+objective function).
 
 In order to optimize a multi-objective function with ensmallen, a `std::tuple<>`
 containing multiple `ArbitraryFunctionType`s ([see here](#arbitrary-functions))
