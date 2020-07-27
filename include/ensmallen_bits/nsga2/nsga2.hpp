@@ -138,7 +138,8 @@ class NSGA2 {
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the bestFront.
+  //! Retrieve the best front (the Pareto frontier).  This returns an empty vector until `Optimize()`
+  //! has been called.
   const std::vector<arma::mat>& Front() const { return bestFront; }
 
  private:
