@@ -391,7 +391,7 @@ L_BFGS::Optimize(FunctionType& function,
     //
     // But don't do this on the first iteration to ensure we always take at
     // least one descent step.
-    if (itNum > 0 && (arma::norm(gradient, 2) < minGradientNorm))
+    if (arma::norm(gradient, 2) < minGradientNorm)
     {
       Info << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
