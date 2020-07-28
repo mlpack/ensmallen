@@ -166,10 +166,13 @@ void CallbacksFullMultiobjectiveFunctionTest(OptimizerType& optimizer,
 {
   SchafferFunctionN1<arma::mat> SCH;
 
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
   CompleteCallbackTestFunction cb;
 
   arma::mat coordinates = SCH.GetInitialPoint();
-  auto objectives = SCH.GetObjectives();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
   optimizer.Optimize(objectives, coordinates, cb);
 
@@ -192,7 +195,7 @@ void EarlyStopCallbacksLambdaFunctionTest(OptimizerType& optimizer)
 
   LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
-  
+
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
   arma::mat coordinates = lr.GetInitialPoint();
 
@@ -225,7 +228,7 @@ TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
       {
         // Terminate if any coordinate has a value less than 10.
         double minValue = arma::abs(coordinates).min();
-        return (minValue < 10.0) ? 
+        return (minValue < 10.0) ?
           std::numeric_limits<double>::max() : minValue;
       });
 
@@ -371,7 +374,7 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
 /**
  * Make sure we invoke all callbacks (NSGA2).
  */
-TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest")
+TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest]")
 {
   arma::vec lowerBound("-1000 -1000");
   arma::vec upperBound("1000 1000");
@@ -646,12 +649,12 @@ TEST_CASE("TimerStopCallbackTest", "[CallbacksTest]")
 {
   SGDTestFunction f;
   arma::mat coordinates = f.GetInitialPoint();
-  
+
   // Instantiate the optimizer with a number of iterations that will take a
   // long time to finish.
   Adam opt(0.5, 2, 0.7, 0.999, 1e-8, 2000000000, -100, false);
   arma::wall_clock timer;
-  
+
   timer.tic();
   // The optimization process should return in one second.
   opt.Optimize(f, coordinates, TimerStop(0.5));
