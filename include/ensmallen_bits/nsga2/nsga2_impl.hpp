@@ -55,6 +55,7 @@ typename MatType::elem_type NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>
   typedef typename MatType::elem_type ElemType;
 
   numObjectives = sizeof...(ArbitraryFunctionType);
+  numVariables = iterate.n_rows;
 
   // Cache calculated objectives.
   std::vector<arma::Col<ElemType> > calculatedObjectives;
@@ -266,7 +267,7 @@ inline void NSGA2::Mutate(MatType& child,
       (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 
   // Constrain all genes to be between bounds.
-  for (size_t idx = 0; idx < numObjectives; idx++)
+  for (size_t idx = 0; idx < numVariables; idx++)
   {
     if (child[idx] < lowerBound(idx))
       child[idx] = lowerBound(idx);
