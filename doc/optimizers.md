@@ -1563,6 +1563,67 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## MOEA/D
+*An optimizer for arbitrary multi-objective functions.*
+MOEA/D (Multi Objective Evolutionary Algorithm based on Decomposition) is a multi
+objective optimization algorithm. The algorithm works by decomposing a multi objective
+problem to a single objective one by employing different decomposition approaches such 
+as Tchebycheff approach, Boundary-intersection approach and weighted sum approach.
+These approaches are based on a weight vector, random choices of weight vectors produce
+random single objective problems. Solving each problem, we get a different solution which
+will be a part of the Pareto Front.
+
+#### Constructors
+* `MOEAD()`
+* `MOEAD(`_`populationSize, crossoverProb, mutationProb, mutationStrength, T, lowerBound, upperBound`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 4 in size and a multiple of 4. | `100` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
+| `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
+| `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
+| `size_t` | **`T`** | The number of nearest-neighbours to consider for each weight.  | `50` |
+| `arma::vec` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
+| `arma::vec` | **`upperBound`** | Lower bound of the coordinates of the initial population. | `1` |
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `CrossoverRate()`, `MutationProbability()`, `LowerBound()` and `UpperBound()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SchafferFunctionN1<arma::mat> SCH;
+arma::vec lowerBound("-1000 -1000");
+arma::vec upperBound("1000 1000");
+MOEAD opt(1000, 0.5, 0.5, 1e-3, 50, lowerBound, upperBound);
+
+typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+arma::mat coords = SCH.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+
+// obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
+double obj = opt.Optimize(objectives, coords);
+// Now obtain the best front.
+std::vector<arma::mat> bestFront = opt.Front();
+```
+
+</details>
+
+#### See also:
+
+ * [MOEA/D Algorithm](https://www.researchgate.net/publication/3418989_MOEAD_A_Multiobjective_Evolutionary_Algorithm_Based_on_Decomposition/link/0912f50c77bae013b5000000/download)
+ * [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
+ * [Multi-objective functions](#multi-objective-functions)
+  
 ## OptimisticAdam
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
