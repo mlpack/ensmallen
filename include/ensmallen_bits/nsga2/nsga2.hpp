@@ -281,8 +281,11 @@ class NSGA2 {
                         const std::vector<size_t>& ranks,
                         const std::vector<double>& crowdingDistance);
 
-  //! The number of objectives being optimised for
+  //! The number of objectives being optimised for.
   size_t numObjectives;
+
+  //! The numbeer of variables used per objectives.
+  size_t numVariables;
 
   //! The number of candidates in the population.
   size_t populationSize;
