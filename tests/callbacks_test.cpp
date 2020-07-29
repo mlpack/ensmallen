@@ -376,8 +376,8 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest]")
 {
-  arma::vec lowerBound("-1000 -1000");
-  arma::vec upperBound("1000 1000");
+  arma::vec lowerBound = {-1000, -1000};
+  arma::vec upperBound = {1000, 1000};
   NSGA2 optimizer(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
   CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
       true, true, false, false, true);
