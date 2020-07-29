@@ -88,7 +88,7 @@ typename MatType::elem_type NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>
 
   // Evaluate the fitness before optimization.
   for (size_t i = 0; i < population.size(); i++)
-    calculatedObjectives[i] = arma::Col<ElemType>(numObjectives);
+    calculatedObjectives[i] = arma::Col<ElemType>(numObjectives, arma::fill::zeros);
   EvaluateObjectives(population, objectives, calculatedObjectives);
 
   // Iterate until maximum number of generations is obtained.
@@ -106,7 +106,7 @@ typename MatType::elem_type NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
     for (size_t i = 0; i < population.size(); i++)
-      calculatedObjectives[i] = arma::Col<ElemType>(numObjectives);
+      calculatedObjectives[i] = arma::Col<ElemType>(numObjectives, arma::fill::zeros);
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
