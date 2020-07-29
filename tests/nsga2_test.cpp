@@ -36,8 +36,8 @@ bool IsInBounds(const double& value, const double& low, const double& high)
 TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 {
   SchafferFunctionN1<arma::mat> SCH;
-  arma::vec lowerBound("-1000 -1000");
-  arma::vec upperBound("1000 1000");
+  arma::vec lowerBound = {-1000, -1000};;
+  arma::vec upperBound = {1000, 1000};;
 
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
@@ -71,8 +71,8 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
 {
   FonsecaFlemmingFunction<arma::mat> FON;
-  const arma::vec lowerBound("-4 -4");
-  const arma::vec upperBound("4 4");
+  const arma::vec lowerBound = {-4, -4};
+  const arma::vec upperBound = {4, 4};
   const double tolerance = 1e-6;
   const double strength = 1e-4;
   const double expectedLowerBound = -1.0 / sqrt(3);
