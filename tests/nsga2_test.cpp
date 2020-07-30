@@ -17,7 +17,7 @@ using namespace ens::test;
 using namespace std;
 
 /**
- * Checks if low <= value <= high. Used by NSGA2FonsecaFlemmingTest.
+ * Checks if low <= value <= high. Used by NSGA2FonsecaFlemingTest.
  *
  * @param value The value being checked.
  * @param low The lower bound.
@@ -101,11 +101,11 @@ TEST_CASE("NSGA2SchafferN1TestVectorBounds", "[NSGA2Test]")
 }
 
 /**
- * Optimize for the Fonseca Flemming function using NSGA-II optimizer.
+ * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
-TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
+TEST_CASE("NSGA2FonsecaFlemingTest", "[NSGA2Test]")
 {
-  FonsecaFlemmingFunction<arma::mat> FON;
+  FonsecaFlemingFunction<arma::mat> FON;
   const double lowerBound = -4;
   const double upperBound = 4;
   const double tolerance = 1e-6;
@@ -145,11 +145,11 @@ TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
 }
 
 /**
- * Optimize for the Fonseca Flemming function using NSGA-II optimizer.
+ * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
-TEST_CASE("NSGA2FonsecaFlemmingTestVectorBounds", "[NSGA2Test]")
+TEST_CASE("NSGA2FonsecaFlemingTestVectorBounds", "[NSGA2Test]")
 {
-  FonsecaFlemmingFunction<arma::mat> FON;
+  FonsecaFlemingFunction<arma::mat> FON;
   const arma::vec lowerBound = {-4, -4, -4};
   const arma::vec upperBound = {4, 4, 4};
   const double tolerance = 1e-6;
