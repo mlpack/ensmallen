@@ -5,7 +5,7 @@
  * NSGA-II is a multi-objective optimization algorithm, widely used in
  * many real-world applications. NSGA-II generates offsprings using
  * crossover and mutation and then selects the next generation according
- * to nondominated-sorting and crowding distance comparison.
+ * to non-dominated-sorting and crowding distance comparison.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
