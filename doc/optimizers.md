@@ -1593,6 +1593,8 @@ size equal to that of the starting population.
 | `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. This should be initialized to contain one element per variable involved with the optimization problem. | `0` |
 | `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. This should be initialized to contain one element per variable involved with the optimization problem. | `1` |
 
+Note that `lowerBound` and `upperBound` need to be set explicitly for any multi-objective optimization involving more than one variable, or, when they differ from the default values.
+
 Attributes of the optimizer may also be changed via the member methods
 `PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
 
