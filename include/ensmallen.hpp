@@ -52,7 +52,6 @@
 #include <utility>
 #include <vector>
 
-
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
 // it's part of the C++11 standard.
