@@ -1589,7 +1589,7 @@ size equal to that of the starting population.
 | `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
 | `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
 | `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
-| `double` | **`epsilon`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-6` |
+| `double` | **`epsilon`** | The value used internally to evaluate approximate equality in crowding distance based sorting. | `1e-6` |
 | `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. This should be initialized to contain one element per variable involved with the optimization problem. | `0` |
 | `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. This should be initialized to contain one element per variable involved with the optimization problem. | `1` |
 
