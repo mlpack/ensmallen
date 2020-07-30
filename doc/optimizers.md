@@ -1575,7 +1575,7 @@ will be a part of the Pareto Front.
 
 #### Constructors
 * `MOEAD()`
-* `MOEAD(`_`populationSize, crossoverProb, mutationProb, mutationStrength, T, lowerBound, upperBound`_`)`
+* `MOEAD(`_`populationSize, crossoverProb, mutationProb, mutationStrength, neighbourhoodSize, lowerBound, upperBound`_`)`
 
 #### Attributes
 
@@ -1585,12 +1585,12 @@ will be a part of the Pareto Front.
 | `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
 | `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
 | `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
-| `size_t` | **`T`** | The number of nearest-neighbours to consider for each weight.  | `50` |
+| `size_t` | **`neighbourhoodSize`** | The number of nearest-neighbours to consider for each weight.  | `50` |
 | `arma::vec` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
 | `arma::vec` | **`upperBound`** | Lower bound of the coordinates of the initial population. | `1` |
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `CrossoverRate()`, `MutationProbability()`, `LowerBound()` and `UpperBound()`.
+`PopulationSize()`, `CrossoverRate()`, `MutationProbability()`, `NeighbourhoodSize()`, `LowerBound()` and `UpperBound()`.
 
 #### Examples:
 
