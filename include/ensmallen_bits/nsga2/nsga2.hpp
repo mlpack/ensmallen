@@ -89,7 +89,8 @@ class NSGA2 {
    * @param objectives Vector of objective functions to optimize for.
    * @param iterate Starting point.
    * @param callbacks Callback functions.
-   * @return std::vector<arma::Col<double>> Objective values for each of the children.
+   * @return MatType::elem_type The minimum of the accumulated sum over the
+   *     objective values in the best front.
    */
   template<typename MatType,
            typename... ArbitraryFunctionType,
