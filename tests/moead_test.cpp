@@ -58,7 +58,6 @@ TEST_CASE("MOEADFonsecaFlemmingTest", "[MOEADTest]")
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
-    std::cout<<valX<<" "<<valY<<" "<<valZ<<"\n";
 
     if (!InBounds(valX, expectedLowerBound, expectedUpperBound) ||
         !InBounds(valY, expectedLowerBound, expectedUpperBound) ||
@@ -96,7 +95,6 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
   for (arma::mat solution: bestFront)
   {
     double valX = arma::as_scalar(solution(0));
-    std::cout<<valX<<"\n";
     double val = arma::as_scalar(solution);
 
     if (val < 0.0 || val > 2.0)
