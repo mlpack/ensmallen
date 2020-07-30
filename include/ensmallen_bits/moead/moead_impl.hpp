@@ -22,23 +22,25 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double crossoverProb,
                     const double mutationProb,
                     const double mutationStrength,
-                    const size_t T,
+                    const size_t neighbourhoodSize,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
     populationSize(populationSize),
     crossoverProb(crossoverProb),
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
-    T(T),
+    neighbourhoodSize(neighbourhoodSize),
     lowerBound(lowerBound),
     upperBound(upperBound)
   { /* Nothing to do here. */ }
 
 //! Optimize the function.
 template<typename MatType,
-         typename... ArbitraryFunctionType>
+         typename... ArbitraryFunctionType,
+         typename... CallbackTypes>
 typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                   MatType& iterate)
+                                            MatType& iterate,
+                                            CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -56,43 +58,46 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // Number of objective functions. Represented by m in the paper.
   numObjectives = sizeof...(ArbitraryFunctionType);
 
+  // Controls early termination of the optimization process.
+  bool terminate = false;
+
   // 1.1 The external population, non-dominated solutions.
   std::vector<MatType> externalPopulation;
 
   // Weight vectors, where each one of them represents a decomposition.
   std::vector<arma::vec> weights(populationSize);
-  for(size_t i =0; i<populationSize; i++)
+  for (size_t i = 0; i < populationSize; i++)
     weights[i] = arma::vec(numObjectives, arma::fill::randu);
 
-  // 1.2 Storing the indices of T nearest neighbours of each weight vector.
-  arma::Mat<size_t> B(populationSize, T);
-  for(size_t i = 0; i < populationSize; i++)
+  // 1.2 Storing the indices of nearest neighbours of each weight vector.
+  arma::Mat<size_t> B(populationSize, neighbourhoodSize);
+  for (size_t i = 0; i < populationSize; i++)
   {
     // To temporarily store the distance between weights(i) and each other weights.
     arma::vec distances(populationSize);
-    for(size_t j = 0; j < populationSize; j++)
+    for (size_t j = 0; j < populationSize; j++)
     {
       distances(j) = 0;
-      for(size_t w = 0; w < numObjectives ; w++)
+      for (size_t w = 0; w < numObjectives ; w++)
       {
         distances(j) += std::pow(weights[i](w) - weights[j](w), 2);
       }
-      distances(j)=std::sqrt(distances(j));
+      distances(j) = std::sqrt(distances(j));
     }
     arma::uvec sortedIndices = arma::stable_sort_index(distances, "descend");
-    for(size_t iter = 1; iter<=T; iter++)
+    for (size_t iter = 1; iter <= neighbourhoodSize; iter++)
       B(i, iter-1) = sortedIndices(iter);
   }
 
   // 1.3 Random generation of the initial population.
   std::vector<MatType> population(populationSize);
-  for(size_t i = 0; i < populationSize; i++)
+  for (size_t i = 0; i < populationSize; i++)
     population[i] = arma::randu<MatType>(iterate.n_rows, iterate.n_cols)
         - 0.5 + iterate;
 
   // 1.3 F-value initialisation for the population.
   std::vector<arma::vec> FValue(populationSize);
-  for ( size_t i = 0; i<populationSize; i++)
+  for (size_t i = 0; i < populationSize; i++)
     FValue[i].resize(numObjectives);
   EvaluateObjectives(population, objectives, FValue);
 
@@ -100,9 +105,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   arma::vec idealPoint(numObjectives);
   idealPoint.fill(-1/.0);
 
+  terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
   // 2 The main loop.
-  for(size_t i =0; i<populationSize; i++)
+  for (size_t i = 0; i < populationSize && !terminate; i++)
   {
+    terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
+
     // To generate random numbers.
     std::default_random_engine generator;
 
@@ -114,25 +122,25 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     std::uniform_real_distribution<double> crossoverDeterminer(0, 1);
 
     // 2.1 Randomly select two indices in B(i) and use them to make a child.
-    size_t k = distribution(generator), l =distribution(generator);
+    size_t k = distribution(generator), l = distribution(generator);
     if (k == l)
     {
-      if (k==populationSize-1)
-        k-=1;
+      if (k == populationSize-1)
+        k -= 1;
       else
-        k+=1;
+        k += 1;
     }
     MatType candidate;
-    if(crossoverDeterminer(generator)<crossoverProb)
+    if(crossoverDeterminer(generator) < crossoverProb)
     {
       candidate.resize(iterate.n_rows, iterate.n_cols);
-      for(size_t idx =0;idx<iterate.n_rows; idx++)
+      for (size_t idx = 0;idx < iterate.n_rows; idx++)
       {
-        if(crossoverDeterminer(generator)<0.5)
+        if(crossoverDeterminer(generator) < 0.5)
           candidate[idx] = population[k][idx];
         else
           candidate[idx] = population[l][idx];
-        if(candidate[idx]<lowerBound(idx))
+        if(candidate[idx] < lowerBound(idx))
           candidate[idx] = lowerBound(idx);
         if(candidate[idx]>upperBound(idx))
           candidate[idx] = upperBound(idx);
@@ -147,24 +155,24 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     // Store solution for candidate.
     arma::mat evaluatedCandidate(1, numObjectives);
     std::vector<MatType> candidateVector(1);
-    candidateVector[0]=candidate;
+    candidateVector[0] = candidate;
     EvaluateObjectives(candidateVector, objectives, evaluatedCandidate);
     arma::vec evalCandidate(numObjectives);
 
     // 2.3 Update of ideal point.
-    for(size_t idx = 0;idx<numObjectives;idx++)
+    for (size_t idx = 0;idx < numObjectives;idx++)
     {
-      idealPoint(idx)=std::max(idealPoint(idx),
+      idealPoint(idx) = std::max(idealPoint(idx),
           evaluatedCandidate(0, idx));
       evalCandidate(idx) = evaluatedCandidate(0, idx);
     }
 
     // 2.4 Update of the neighbouring solutions.
-    for(size_t idx=0;idx<T;idx++)
+    for (size_t idx = 0;idx < neighbourhoodSize;idx++)
     {
       if(DecomposedSingleObjective(weights[B(i, idx)],
                                    idealPoint, evalCandidate)
-            <=DecomposedSingleObjective(weights[B(i,idx)],
+            <= DecomposedSingleObjective(weights[B(i,idx)],
                                         idealPoint, FValue[B(i, idx)]))
       {
         population.at(B(i, idx)) = candidate;
@@ -179,7 +187,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       auto df = [&](MatType firstMat) -> bool
       {
         std::vector<MatType> wrapperFirst(1), wrapperSecond(1);
-        wrapperFirst[0]=firstMat;
+        wrapperFirst[0] = firstMat;
         first[0].resize(numObjectives);
         EvaluateObjectives(wrapperFirst, objectives, first);
         return Dominates(evalCandidate, first[0]);
@@ -194,7 +202,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       //! Check if any of the remaining members of external population dominate
       //! candidate.
       bool flag = 0;
-      for( size_t idx = 0; idx < externalPopulation.size(); idx++)
+      for (size_t idx = 0; idx < externalPopulation.size(); idx++)
       {
         if (Dominates(first[0], evalCandidate))
         {
@@ -202,7 +210,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           break;
         }
       }
-      if(flag==0) externalPopulation.push_back(candidate);
+      if(flag == 0) externalPopulation.push_back(candidate);
     }
     else
     {
@@ -211,9 +219,11 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   }
   bestFront = std::move(externalPopulation);
 
+  Callback::EndOptimization(*this, objectives, iterate, callbacks...);
+
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for(arma::Col<ElemType> objective: FValue)
+  for (arma::Col<ElemType> objective: FValue)
     if (arma::accu(objective) < performance)
       performance = arma::accu(objective);
 
@@ -260,7 +270,7 @@ inline bool MOEAD::Dominates(const arma::vec& first,
     const arma::vec& second)
 {
   size_t i; int flag = 0;
-  for ( i = 0; i < numObjectives; i++)
+  for (i = 0; i < numObjectives; i++)
   {
     if ( first(i) < second(i) )
     {
@@ -269,7 +279,7 @@ inline bool MOEAD::Dominates(const arma::vec& first,
     if( first(i) > second(i) )
       flag = 1;
   }
-  if ( i==numObjectives && flag ==1 )
+  if ( i == numObjectives && flag == 1 )
   {
     return true;
   }
