@@ -872,7 +872,8 @@ arma::mat coordinates(6, 1, arma::fill::randu);
 // `coordinates` will be set to the coordinates on the best front that minimize the
 // sum of objective functions, and `bestFrontSum` will be the sum of all objectives
 // at that coordinate set.
-double bestFrontSum = Optimize(objectives, coordinates);
+NSGA2 nsga;
+double bestFrontSum = nsga.Optimize(objectives, coordinates);
 
 // Set `bestFront` to contain all of the coordinates on the best front.
 std::vector<arma::mat> bestFront = optimizer.Front();
