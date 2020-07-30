@@ -104,8 +104,8 @@ class NSGA2 {
         const double mutationProb = 0.3,
         const double mutationStrength = 1e-3,
         const double epsilon = 1e-6,
-        const double& lowerBound = 0,
-        const double& upperBound = 1);
+        const double lowerBound = 0,
+        const double upperBound = 1);
 
   /**
    * Optimize a set of objectives. The initial population is generated using the

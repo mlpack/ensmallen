@@ -42,8 +42,8 @@ inline NSGA2::NSGA2(const size_t populationSize,
                     const double mutationProb,
                     const double mutationStrength,
                     const double epsilon,
-                    const double& lowerBound,
-                    const double& upperBound) :
+                    const double lowerBound,
+                    const double upperBound) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
