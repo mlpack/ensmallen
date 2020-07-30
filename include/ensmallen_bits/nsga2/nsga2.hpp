@@ -95,9 +95,10 @@ class NSGA2 {
   template<typename MatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
- typename MatType::elem_type Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                      MatType& iterate,
-                                      CallbackTypes&&... callbacks);
+ typename MatType::elem_type Optimize(
+     std::tuple<ArbitraryFunctionType...>& objectives,
+     MatType& iterate,
+     CallbackTypes&&... callbacks);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
