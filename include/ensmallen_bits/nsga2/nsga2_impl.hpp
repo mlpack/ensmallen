@@ -123,7 +123,6 @@ typename MatType::elem_type NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>
                                  upperBound);
     }
 
-
     // Sort based on crowding distance.
     std::sort(population.begin(), population.end(),
               [this, ranks, crowdingDistance, population](MatType candidateP,
