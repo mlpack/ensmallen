@@ -36,8 +36,43 @@ bool IsInBounds(const double& value, const double& low, const double& high)
 TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
 {
   SchafferFunctionN1<arma::mat> SCH;
-  arma::vec lowerBound = {-1000, -1000};;
-  arma::vec upperBound = {1000, 1000};;
+  const double lowerBound = -1000;
+  const double upperBound = 1000;
+
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+  arma::mat coords = SCH.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+  std::vector<arma::mat> bestFront = opt.Front();
+
+  bool allInRange = true;
+
+  for (arma::mat solution: bestFront)
+  {
+    double val = arma::as_scalar(solution);
+
+    if (val < 0.0 || val > 2.0)
+    {
+      allInRange = false;
+      break;
+    }
+  }
+  REQUIRE(allInRange);
+}
+
+/**
+ * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
+ */
+TEST_CASE("NSGA2SchafferN1TestVectorBounds", "[NSGA2Test]")
+{
+  SchafferFunctionN1<arma::mat> SCH;
+  const arma::vec lowerBound = {-1000};
+  const arma::vec upperBound = {1000};
 
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
@@ -69,6 +104,50 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
  * Optimize for the Fonseca Flemming function using NSGA-II optimizer.
  */
 TEST_CASE("NSGA2FonsecaFlemmingTest", "[NSGA2Test]")
+{
+  FonsecaFlemmingFunction<arma::mat> FON;
+  const double lowerBound = -4;
+  const double upperBound = 4;
+  const double tolerance = 1e-6;
+  const double strength = 1e-4;
+  const double expectedLowerBound = -1.0 / sqrt(3);
+  const double expectedUpperBound = 1.0 / sqrt(3);
+
+  NSGA2 opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
+
+  typedef decltype(FON.objectiveA) ObjectiveTypeA;
+  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+
+  arma::mat coords = FON.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+  std::vector<arma::mat> bestFront = opt.Front();
+
+  bool allInRange = true;
+
+  for (size_t i = 0; i < bestFront.size(); i++)
+  {
+    const arma::mat solution = bestFront[i];
+    double valX = arma::as_scalar(solution(0));
+    double valY = arma::as_scalar(solution(1));
+    double valZ = arma::as_scalar(solution(2));
+
+    if (!IsInBounds(valX, expectedLowerBound, expectedUpperBound) ||
+        !IsInBounds(valY, expectedLowerBound, expectedUpperBound) ||
+        !IsInBounds(valZ, expectedLowerBound, expectedUpperBound))
+    {
+      allInRange = false;
+      break;
+    }
+  }
+  REQUIRE(allInRange);
+}
+
+/**
+ * Optimize for the Fonseca Flemming function using NSGA-II optimizer.
+ */
+TEST_CASE("NSGA2FonsecaFlemmingTestVectorBounds", "[NSGA2Test]")
 {
   FonsecaFlemmingFunction<arma::mat> FON;
   const arma::vec lowerBound = {-4, -4, -4};

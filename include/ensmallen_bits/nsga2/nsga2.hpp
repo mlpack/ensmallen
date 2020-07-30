@@ -80,6 +80,34 @@ class NSGA2 {
         const arma::vec& upperBound = arma::ones(1, 1));
 
   /**
+   * Constructor for the NSGA2 optimizer. This constructor provides an overload
+   * to use `lowerBound` and `upperBound` of type double.
+   *
+   * The default values provided over here are not necessarily suitable for a
+   * given function. Therefore it is highly recommended to adjust the
+   * parameters according to the problem.
+   *
+   * @param populationSize The number of candidates in the population.
+   *     This should be atleast 4 in size and a multiple of 4.
+   * @param maxGenerations The maximum number of generations allowed for NSGA-II.
+   * @param crossoverProb The probability that a crossover will occur.
+   * @param mutationProb The probability that a mutation will occur.
+   * @param mutationStrength The strength of the mutation.
+   * @param epsilon The minimum difference required to distinguish between
+   *     candidate solutions.
+   * @param lowerBound Lower bound of the coordinates of the initial population.
+   * @param upperBound Upper bound of the coordinates of the initial population.
+   */
+  NSGA2(const size_t populationSize = 100,
+        const size_t maxGenerations = 2000,
+        const double crossoverProb = 0.6,
+        const double mutationProb = 0.3,
+        const double mutationStrength = 1e-3,
+        const double epsilon = 1e-6,
+        const double& lowerBound = 0,
+        const double& upperBound = 1);
+
+  /**
    * Optimize a set of objectives. The initial population is generated using the
    * starting point. The output is the best generated front.
    *
@@ -255,13 +283,9 @@ class NSGA2 {
    * @param front The previously generated Pareto fronts.
    * @param objectives The set of objectives.
    * @param crowdingDistance The previously calculated objectives.
-   * @param lowerBound Lower bound of the coordinates of the initial population.
-   * @param upperBound Upper bound of the coordinates of the initial population.
    */
   void CrowdingDistanceAssignment(const std::vector<size_t>& front,
-                                  std::vector<double>& crowdingDistance,
-                                  const arma::vec& lowerBound,
-                                  const arma::vec& upperBound);
+                                  std::vector<double>& crowdingDistance);
 
   /**
    * The operator used in the crowding distance based sorting.

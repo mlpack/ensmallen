@@ -36,6 +36,24 @@ inline NSGA2::NSGA2(const size_t populationSize,
     upperBound(upperBound)
 { /* Nothing to do here. */ }
 
+inline NSGA2::NSGA2(const size_t populationSize,
+                    const size_t maxGenerations,
+                    const double crossoverProb,
+                    const double mutationProb,
+                    const double mutationStrength,
+                    const double epsilon,
+                    const double& lowerBound,
+                    const double& upperBound) :
+    populationSize(populationSize),
+    maxGenerations(maxGenerations),
+    crossoverProb(crossoverProb),
+    mutationProb(mutationProb),
+    mutationStrength(mutationStrength),
+    epsilon(epsilon),
+    lowerBound(lowerBound * arma::ones(1, 1)),
+    upperBound(upperBound * arma::ones(1, 1))
+{ /* Nothing to do here. */ }
+
 //! Optimize the function.
 template<typename MatType,
          typename... ArbitraryFunctionType,
@@ -51,6 +69,20 @@ typename MatType::elem_type NSGA2::Optimize(
     throw std::logic_error("NSGA2::Optimize(): population size should be at"
         " least 4, and, a multiple of 4!");
   }
+
+  // Check if lower bound is a vector of a single dimension.
+  if (lowerBound.n_rows == 1)
+    lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+
+  // Check if lower bound is a vector of a single dimension.
+  if (upperBound.n_rows == 1)
+    upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+
+  // Check the dimensions of lowerBound and upperBound.
+  assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
+      "lowerBound are not the same as the dimensions of iterate.");
+  assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
+      "upperBound are not the same as the dimensions of iterate.");
 
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -120,8 +152,7 @@ typename MatType::elem_type NSGA2::Optimize(
 
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
-      CrowdingDistanceAssignment(fronts[fNum], crowdingDistance, lowerBound,
-                                 upperBound);
+      CrowdingDistanceAssignment(fronts[fNum], crowdingDistance);
     }
 
     // Sort based on crowding distance.
@@ -362,9 +393,7 @@ inline bool NSGA2::Dominates(
 
 //! Assign crowding distance to the population.
 inline void NSGA2::CrowdingDistanceAssignment(const std::vector<size_t>& front,
-                                              std::vector<double>& crowdingDistance,
-                                              const arma::vec& lowerBound,
-                                              const arma::vec& upperBound)
+                                              std::vector<double>& crowdingDistance)
 {
   if (front.size() > 0)
   {
@@ -375,13 +404,15 @@ inline void NSGA2::CrowdingDistanceAssignment(const std::vector<size_t>& front,
 
     for (size_t m = 0; m < numObjectives; m++)
     {
-      crowdingDistance[front[0]] = upperBound(m);
-      crowdingDistance[front[fSize - 1]] = upperBound(m);
+      crowdingDistance[front[0]] = std::numeric_limits<double>::max();
+      crowdingDistance[front[fSize - 1]] = std::numeric_limits<double>::max();
 
       for (size_t i = 1; i < fSize - 1 ; i++)
       {
         crowdingDistance[front[i]] += (crowdingDistance[front[i - 1]] -
-            crowdingDistance[front[i + 1]]) / (upperBound(m) - lowerBound(m));
+            crowdingDistance[front[i + 1]]) /
+            (std::numeric_limits<double>::max() -
+            std::numeric_limits<double>::min());
       }
     }
   }
