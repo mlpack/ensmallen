@@ -17,7 +17,7 @@
 #include "drop_wave_function.hpp"
 #include "easom_function.hpp"
 #include "eggholder_function.hpp"
-#include "fonseca_flemming_function.hpp"
+#include "fonseca_fleming_function.hpp"
 #include "fw_test_function.hpp"
 #include "generalized_rosenbrock_function.hpp"
 #include "goldstein_price_function.hpp"
