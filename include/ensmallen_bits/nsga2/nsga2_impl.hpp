@@ -15,6 +15,7 @@
 #define ENSMALLEN_NSGA2_NSGA2_IMPL_HPP
 
 #include "nsga2.hpp"
+#include <assert.h>
 
 namespace ens {
 
