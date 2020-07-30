@@ -1590,10 +1590,10 @@ size equal to that of the starting population.
 | `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
 | `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
 | `double` | **`epsilon`** | The value used internally to evaluate approximate equality in crowding distance based sorting. | `1e-6` |
-| `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. This should be initialized to contain one element per variable involved with the optimization problem. | `0` |
-| `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. This should be initialized to contain one element per variable involved with the optimization problem. | `1` |
+| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
+| `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
 
-Note that `lowerBound` and `upperBound` need to be set explicitly for any multi-objective optimization involving more than one variable, or, when they differ from the default values.
+Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
 
 Attributes of the optimizer may also be changed via the member methods
 `PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
