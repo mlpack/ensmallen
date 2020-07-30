@@ -40,9 +40,10 @@ inline NSGA2::NSGA2(const size_t populationSize,
 template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-typename MatType::elem_type NSGA2::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                     MatType& iterate,
-                                     CallbackTypes&&... callbacks)
+typename MatType::elem_type NSGA2::Optimize(
+    std::tuple<ArbitraryFunctionType...>& objectives,
+    MatType& iterate,
+    CallbackTypes&&... callbacks)
 {
   // Make sure for evolution to work at least four candidates are present.
   if (populationSize < 4 && populationSize % 4 != 0)
