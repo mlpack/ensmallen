@@ -55,7 +55,7 @@ class MOEAD {
      * @param populationSize, the number of elements in the population.
      * @param crossoverProb The probability that a crossover will occur.
      * @param mutationProb The probability that a mutation will occur.
-     * @param T, the number of nearest neighbours of weights to find.
+     * @param neighbourhoodSize, the number of nearest neighbours of weights to find.
      * @param lowerBound, the lower bound on each variable of a member
      *    of the variable space.
      * @param upperBound, the upper bound on each variable of a member
@@ -65,7 +65,7 @@ class MOEAD {
           const double crossoverProb = 0.6,
           const double mutationProb = 0.3,
           const double mutationStrength = 1e-3,
-          const size_t T = 50,
+          const size_t neighbourhoodSize = 50,
           const arma::vec& lowerBound = arma::ones(1, 1),
           const arma::vec& upperBound = arma::ones(1, 1));
     /**
@@ -74,13 +74,17 @@ class MOEAD {
      *
      * @tparam MatType, the type of matrix used to store coordinates.
      * @tparam ArbitraryFunctionType, the type of objective function.
+     * @tparam CallbackTypes, types of callback function.
      * @param objectives, std::tuple of the objective functions.
      * @param iterate, the initial reference point for generating population.
+     * @param callbacks, callback functions.
      */
     template<typename MatType,
-             typename... ArbitraryFunctionType>
+             typename... ArbitraryFunctionType,
+             typename... CallbackTypes>
     typename MatType::elem_type Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                MatType& iterate);
+                                MatType& iterate,
+                                CallbackTypes&&... callbacks);
 
     //! Get the population size.
     size_t PopulationSize() const { return populationSize; }
@@ -96,6 +100,11 @@ class MOEAD {
     double MutationProbability() const { return mutationProb; }
     //! Modify the mutation probability.
     double& MutationProbability() { return mutationProb; }
+
+    //! Get the size of the weight neighbourhood.
+    size_t NeighbourhoodSize() const { return neighbourhoodSize; }
+    //! Modify the size of the weight neighbourhood.
+    size_t& NeighbourhoodSize() { return neighbourhoodSize; }
 
     //! Retrieve value of lowerBound.
     const arma::vec& LowerBound() const { return lowerBound; }
@@ -202,16 +211,13 @@ class MOEAD {
     double mutationStrength;
 
     //! Number of nearest neighbours of weights to consider.
-    size_t T;
+    size_t neighbourhoodSize;
 
     //! Lower bound on each variable in the variable space.
     arma::vec lowerBound;
 
     //! Upper bound on each variable in the variable space.
     arma::vec upperBound;
-
-    //delete.
-    double DEParameter;
 
     //! The number of objectives in multi objective optimisation problem.
     size_t numObjectives;
