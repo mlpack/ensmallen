@@ -121,7 +121,7 @@ class DemonAdamUpdate
     {
       double decayRate = 1;
       if (parent.t > 0)
-        decayRate = 1 - parent.t / parent.T;
+        decayRate = 1.0 - (double)parent.t / (double)parent.T;
 
       const double betaDecay = parent.betaInit * decayRate;
       const double beta = betaDecay / ((1.0 - parent.betaInit) + betaDecay);
