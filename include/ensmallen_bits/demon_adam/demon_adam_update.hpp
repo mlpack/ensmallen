@@ -83,7 +83,7 @@ class DemonAdamUpdate
    public:
     // Convenient typedef.
     typedef typename UpdateRule::template Policy<MatType, GradType>
-          InstUpdateRuleType;
+        InstUpdateRuleType;
 
     /**
      * This constructor is called by the SGD Optimize() method before the start
