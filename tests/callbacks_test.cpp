@@ -562,3 +562,35 @@ TEST_CASE("TimerStopCallbackTest", "[CallbacksTest]")
   // Add some time to account for the function to return.
   REQUIRE(timer.toc() < 2);
 }
+
+/**
+ * Make sure the Report callback will show the report on the specified
+ * output stream.
+ */
+TEST_CASE("ReportCallbackTest", "[CallbacksTest]")
+{
+  SGDTestFunction f0;
+  arma::mat coordinates = f0.GetInitialPoint();
+
+  StandardSGD s(0.0003, 1, 10000, 1e-9, true);
+
+  std::stringstream stream;
+  s.Optimize(f0, coordinates, Report(0.1, stream));
+
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  RosenbrockWoodFunction f1;
+  L_BFGS lbfgs;
+  lbfgs.MaxIterations() = 100;
+
+  coordinates = f1.GetInitialPoint();
+  lbfgs.Optimize(f1, coordinates, Report(0.1, stream));
+
+  stream.str("");
+  SchafferFunctionN2 f2;
+  CNE cne;
+
+  coordinates = f2.GetInitialPoint();
+  cne.Optimize(f2, coordinates, Report(0.1, stream));
+}
