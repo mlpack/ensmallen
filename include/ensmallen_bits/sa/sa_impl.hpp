@@ -18,7 +18,7 @@ namespace ens {
 
 template<typename CoolingScheduleType>
 SA<CoolingScheduleType>::SA(
-    CoolingScheduleType& coolingSchedule,
+    const CoolingScheduleType& coolingSchedule,
     const size_t maxIterations,
     const double initT,
     const size_t initMoves,

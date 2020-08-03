@@ -257,6 +257,7 @@ class Callback
   {
     // This will return immediately once a callback returns true.
     bool result = false;
+    (void)(objective);  // prevent spurious compiler warnings
     (void)std::initializer_list<bool>{ result =
         result || Callback::EvaluateFunction(callbacks, optimizer, function,
         coordinates, objective)... };
@@ -332,6 +333,8 @@ class Callback
   {
     // This will return immediately once a callback returns true.
     bool result = false;
+    (void)(constraint);  // prevent spurious compiler warnings
+    (void)(constraintValue);
     (void)std::initializer_list<bool>{ result =
         result || Callback::EvaluateConstraintFunction(callbacks, optimizer,
             function, coordinates, constraint, constraintValue)... };
@@ -478,6 +481,7 @@ class Callback
   {
     // This will return immediately once a callback returns true.
     bool result = false;
+    (void)(constraint);  // prevent spurious compiler warnings
     (void)std::initializer_list<bool>{ result =
         result || Callback::GradientConstraintFunction(callbacks, optimizer,
         function, coordinates, constraint, gradient)... };
@@ -509,6 +513,7 @@ class Callback
   {
     // This will return immediately once a callback returns true.
     bool result = false;
+    (void)(objective);  // prevent spurious compiler warnings
     (void)std::initializer_list<bool>{ result =
         result || Callback::EvaluateFunction(callbacks, optimizer, function,
         coordinates, objective)... };
@@ -584,6 +589,8 @@ class Callback
   {
     // This will return immediately once a callback returns true.
     bool result = false;
+    (void)(epoch);  // prevent spurious compiler warnings
+    (void)(objective);
     (void)std::initializer_list<bool>{ result =
         result || Callback::BeginEpochFunction(callbacks, optimizer, function,
         coordinates, epoch, objective)... };
@@ -672,6 +679,8 @@ class Callback
   {
     // This will return immediately once a callback returns true.
     bool result = false;
+    (void)(epoch);  // prevent spurious compiler warnings
+    (void)(objective);
     (void)std::initializer_list<bool>{ result =
         result || Callback::EndEpochFunction(callbacks, optimizer, function,
         coordinates, epoch, objective)... };

@@ -33,52 +33,11 @@
 #include "lin_alg.hpp"
 
 namespace ens {
-
-template<typename DeprecatedSDPType>
-ens_deprecated
-PrimalDualSolver<DeprecatedSDPType>::PrimalDualSolver(
-    const DeprecatedSDPType& sdp) :
-    deprecatedSDP(sdp),
-    initialX(arma::eye<arma::mat>(sdp.N(), sdp.N())),
-    initialYSparse(arma::ones<arma::vec>(sdp.NumSparseConstraints())),
-    initialYDense(arma::ones<arma::vec>(sdp.NumDenseConstraints())),
-    initialZ(arma::eye<arma::mat>(sdp.N(), sdp.N())),
-    maxIterations(1000),
-    tau(0.99),
-    normXzTol(1e-7),
-    primalInfeasTol(1e-7),
-    dualInfeasTol(1e-7)
-{ /* Nothing to do. */ }
-
-template<typename DeprecatedSDPType>
-ens_deprecated
-PrimalDualSolver<DeprecatedSDPType>::PrimalDualSolver(
-    const DeprecatedSDPType& sdp,
-    const arma::mat& initialX,
-    const arma::vec& initialYSparse,
-    const arma::vec& initialYDense,
-    const arma::mat& initialZ) :
-    deprecatedSDP(sdp),
-    initialX(initialX),
-    initialYSparse(initialYSparse),
-    initialYDense(initialYDense),
-    initialZ(initialZ),
-    maxIterations(1000),
-    tau(0.99),
-    normXzTol(1e-7),
-    primalInfeasTol(1e-7),
-    dualInfeasTol(1e-7)
-{
-  // Nothing to do.
-}
-
-template<typename DeprecatedSDPType>
-PrimalDualSolver<DeprecatedSDPType>::PrimalDualSolver(
-    const size_t maxIterations,
-    const double tau,
-    const double normXzTol,
-    const double primalInfeasTol,
-    const double dualInfeasTol) :
+inline PrimalDualSolver::PrimalDualSolver(const size_t maxIterations,
+                                          const double tau,
+                                          const double normXzTol,
+                                          const double primalInfeasTol,
+                                          const double dualInfeasTol) :
     maxIterations(maxIterations),
     tau(tau),
     normXzTol(normXzTol),
@@ -227,46 +186,8 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   dsZ = rd - subTerm;
 }
 
-template<typename DeprecatedSDPType>
-ens_deprecated
-double PrimalDualSolver<DeprecatedSDPType>::Optimize(
-    arma::mat& coordinates)
-{
-  // Use the internally-held initial parameters.
-  coordinates = initialX;
-  arma::mat ySparse = initialYSparse;
-  arma::mat yDense = initialYDense;
-  arma::mat Z = initialZ;
-  return Optimize<DeprecatedSDPType, arma::mat>(deprecatedSDP, coordinates,
-      ySparse, yDense, Z);
-}
-
-template<typename DeprecatedSDPType>
-ens_deprecated
-double PrimalDualSolver<DeprecatedSDPType>::Optimize(
-    arma::mat& coordinates,
-    arma::vec& ySparse,
-    arma::vec& yDense,
-    arma::mat& z)
-{
-  // Initialize internally then call the other overload.
-  coordinates = initialX;
-  arma::mat ySparseMat = initialYSparse;
-  arma::mat yDenseMat = initialYDense;
-  z = initialZ;
-
-  const double result = Optimize<DeprecatedSDPType, arma::mat>(deprecatedSDP,
-      coordinates, ySparseMat, yDenseMat, z);
-
-  ySparse = ySparseMat.col(0);
-  yDense = yDenseMat.col(0);
-
-  return result;
-}
-
-template<typename DeprecatedSDPType>
 template<typename SDPType, typename MatType, typename... CallbackTypes>
-typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
+typename MatType::elem_type PrimalDualSolver::Optimize(
     const SDPType& sdp,
     MatType& coordinates,
     CallbackTypes&&... callbacks)
@@ -279,9 +200,8 @@ typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
   return Optimize(sdp, coordinates, ySparse, yDense, z, callbacks...);
 }
 
-template<typename DeprecatedSDPType>
 template<typename SDPType, typename MatType, typename... CallbackTypes>
-typename MatType::elem_type PrimalDualSolver<DeprecatedSDPType>::Optimize(
+typename MatType::elem_type PrimalDualSolver::Optimize(
     const SDPType& sdp,
     MatType& coordinates,
     MatType& ySparse,
