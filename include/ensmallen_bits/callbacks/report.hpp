@@ -531,9 +531,6 @@ class Report
   //! Step-size storage.
   std::vector<double> stepsizes;
 
-  //! Length of a single step (1%).
-  double width;
-
   //! Objective over the current epoch.
   double objective;
 
