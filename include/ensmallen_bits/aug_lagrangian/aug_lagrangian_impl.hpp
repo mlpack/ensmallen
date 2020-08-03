@@ -27,7 +27,8 @@ inline AugLagrangian::AugLagrangian(const size_t maxIterations,
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
     lbfgs(lbfgs),
-    terminate(false)
+    terminate(false),
+    sigma(0.0)
 {
 }
 
@@ -134,6 +135,7 @@ AugLagrangian::Optimize(
     if (!lbfgs.Optimize(augfunc, coordinates, callbacks...))
       Info << "L-BFGS reported an error during optimization."
           << std::endl;
+    Info << "Done with L-BFGS: " << coordinates << "\n";
 
     const ElemType objective = function.Evaluate(coordinates);
 

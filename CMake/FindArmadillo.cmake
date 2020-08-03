@@ -366,4 +366,10 @@ mark_as_advanced(
   ARMADILLO_INCLUDE_DIR
   ARMADILLO_LIBRARIES)
 
+if (ARMADILLO_FOUND AND NOT TARGET Armadillo:Armadillo)
+  add_library(Armadillo::Armadillo INTERFACE IMPORTED)
+  set_target_properties(Armadillo::Armadillo PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${ARMADILLO_INCLUDE_DIR}"
+      INTERFACE_LINK_LIBRARIES "${ARMADILLO_LIBRARIES}")
+endif()
+
 #======================

@@ -109,6 +109,11 @@ class Lookahead
             const bool exactObjective = false);
 
   /**
+   * Clean any memory associated with the Lookahead object.
+   */
+  ~Lookahead();
+
+  /**
    * Optimize the given function using Lookahead. The given starting point will
    * be modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
@@ -188,6 +193,31 @@ class Lookahead
   bool& ExactObjective() { return exactObjective; }
 
  private:
+  /**
+   * Set the maximum number of iterations if the given optimizer implements
+   * MaxIterations().
+   *
+   * @param optimizer Optimizer to check for MaxIterations().
+   * @param k The number of iterations.
+   */
+  template<typename OptimizerType>
+  static typename std::enable_if<traits::HasMaxIterationsSignature<
+      OptimizerType>::value, void>::type
+  SetMaxIterations(OptimizerType& optimizer, const size_t k)
+  {
+    optimizer.MaxIterations() = k;
+  }
+
+  template<typename OptimizerType>
+  static typename std::enable_if<!traits::HasMaxIterationsSignature<
+      OptimizerType>::value, void>::type
+  SetMaxIterations(const OptimizerType& /* optimizer */, const size_t /* k */)
+  {
+    Warn << "The base optimizer does not have a definition of "
+        << "MaxIterations(), the base optimizer will have its configuration "
+        << "unchanged.";
+  }
+
   //! The base optimizer for the forward step.
   BaseOptimizerType baseOptimizer;
 

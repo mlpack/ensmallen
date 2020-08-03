@@ -33,20 +33,20 @@
   #error "need Armadillo version 8.400 or later"
 #endif
 
-#include <cmath>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <cctype>
-#include <climits>
 #include <cfloat>
+#include <cmath>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <limits>
+#include <sstream>
 #include <stdexcept>
+#include <string>
 #include <tuple>
 #include <utility>
-#include <iostream>
-#include <string>
-#include <sstream>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because

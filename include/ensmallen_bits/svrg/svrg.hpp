@@ -121,6 +121,11 @@ class SVRGType
            const bool exactObjective = false);
 
   /**
+   * Clean any memory associated with the SVRGType object.
+   */
+  ~SVRGType();
+
+  /**
    * Optimize the given function using SVRG. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
