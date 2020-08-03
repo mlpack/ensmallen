@@ -171,6 +171,39 @@ optimizer.Optimize(f, coordinates, ProgressBar());
 
 </details>
 
+### Report 
+
+Callback that prints a optimizer report to stdout or a specified output stream.
+
+#### Constructors
+
+ * `Report()`
+ * `Report(`_`iterationsPercentage`_`)`
+ * `Report(`_`iterationsPercentage, output`_`)`
+ * `Report(`_`iterationsPercentage, output, outputMatrixSize`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`iterationsPercentage`** | The number of iterations to report in percent, between [0, 1]. | `0.1` |
+| `std::ostream` | **`output`** | Ostream which receives output from this object. | `stdout` |
+| `size_t` | **`outputMatrixSize`** | The number of values to output for the function coordinates. | `4` |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, Report());
+```
+
 ### StoreBestCoordinates
 
 Callback that stores the model parameter after every epoch if the objective
