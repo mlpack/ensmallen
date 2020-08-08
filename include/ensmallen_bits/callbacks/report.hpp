@@ -369,7 +369,7 @@ class Report
       traits::HasMaxIterationsSignature<OptimizerType>::value, void>::type
   PrintMaxIterations(const OptimizerType& optimizer, std::stringstream& stream)
   {
-    PrettyPrintElement(stream, "Max iterations:", 30);
+    PrettyPrintElement(stream, "Max. iterations:", 30);
     stream << optimizer.MaxIterations() << std::endl;
 
     PrettyPrintElement(stream, "Reached maximum iterations:", 30);
