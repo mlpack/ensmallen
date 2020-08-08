@@ -213,7 +213,7 @@ class Report
                 const size_t /* epoch */,
                 const double objective)
   {
-    // In case StepTake() has been called first we clear the existing data.
+    // In case StepTaken() has been called first we clear the existing data.
     if (!hasEndEpoch)
     {
       hasEndEpoch = true;
