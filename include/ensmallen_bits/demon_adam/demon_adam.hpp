@@ -57,8 +57,6 @@ class DemonAdamType
    *
    * @param stepSize Step size for each iteration.
    * @param batchSize Number of points to process in a single step.
-   * @param momentumIterations The number of iterations before the momentum
-   *     will decay to zero.
    * @param momentum The initial momentum coefficient.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
@@ -76,7 +74,6 @@ class DemonAdamType
    */
   DemonAdamType(const double stepSize = 0.001,
                 const size_t batchSize = 32,
-                const size_t momentumIterations = 100,
                 const double momentum = 0.9,
                 const double beta1 = 0.9,
                 const double beta2 = 0.999,
@@ -91,8 +88,8 @@ class DemonAdamType
                 maxIterations,
                 tolerance,
                 shuffle,
-                DemonAdamUpdate<UpdateRule>(momentumIterations, momentum,
-                    UpdateRule(eps, beta1, beta2)),
+                DemonAdamUpdate<UpdateRule>(maxIterations * batchSize,
+                    momentum, UpdateRule(eps, beta1, beta2)),
                 NoDecay(),
                 resetPolicy,
                 exactObjective)

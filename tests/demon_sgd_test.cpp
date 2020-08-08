@@ -21,7 +21,7 @@ using namespace ens::test;
 TEST_CASE("DemonSGDSimpleTestFunction", "[DemonSGDTest]")
 {
   SGDTestFunction f;
-  DemonSGD optimizer(1e-2, 1, 10, 0.9, 400000, 1e-3, false);
+  DemonSGD optimizer(1e-2, 1, 0.9, 400000);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -44,7 +44,7 @@ TEST_CASE("DemonSGDLogisticRegressionTest", "[DemonSGDTest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  DemonSGD optimizer;
+  DemonSGD optimizer(0.8, 32, 0.9, 100000, 1e-9, true, true, true);
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);
 
@@ -58,33 +58,12 @@ TEST_CASE("DemonSGDLogisticRegressionTest", "[DemonSGDTest]")
 }
 
 /**
- * Test DemonSGD on the GeneralizedRosenbrock function.
- */
-TEST_CASE("DemonSGDGeneralizedRosenbrockTest", "[DemonSGDTest]")
-{
-  // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
-  {
-    // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
-    DemonSGD optimizer(0.001, 1, 10, 0.4, 0, 1e-15);
-
-    arma::mat coordinates = f.GetInitialPoint();
-    double result = optimizer.Optimize(f, coordinates);
-
-    REQUIRE(result == Approx(0.0).margin(1e-2));
-    for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
-  }
-}
-
-/**
  * Tests the DemonSGD optimizer using a simple test function.
  */
 TEST_CASE("DemonSGDSimpleTestFunctionFloat", "[DemonSGDTest]")
 {
   SGDTestFunction f;
-  DemonSGD optimizer(1e-2, 1, 10, 0.9, 400000, 1e-3, false);
+  DemonSGD optimizer(1e-2, 1, 0.9, 400000);
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
@@ -94,23 +73,3 @@ TEST_CASE("DemonSGDSimpleTestFunctionFloat", "[DemonSGDTest]")
   REQUIRE(coordinates(2) == Approx(0.0).margin(0.1));
 }
 
-/**
- * Test DemonSGD on the GeneralizedRosenbrock function.
- */
-TEST_CASE("DemonSGDGeneralizedRosenbrockTestFloat", "[DemonSGDTest]")
-{
-  // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
-  {
-    // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
-    DemonSGD optimizer(0.001, 1, 10, 0.4, 0, 1e-15);
-
-    arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-    double result = optimizer.Optimize(f, coordinates);
-
-    REQUIRE(result == Approx(0.0).margin(1e-2));
-    for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
-  }
-}

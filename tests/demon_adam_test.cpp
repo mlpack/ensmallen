@@ -21,7 +21,7 @@ using namespace ens::test;
 TEST_CASE("DemonAdamSimpleTestFunction", "[DemonAdamTest]")
 {
   SGDTestFunction f;
-  DemonAdam optimizer(1e-3, 1, 10, 0.9, 0.9, 0.999, 1e-8, 900000, 1e-9);
+  DemonAdam optimizer(1e-3, 1, 0.9, 0.9, 0.999, 1e-8, 900000);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -44,7 +44,8 @@ TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdamTest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  DemonAdam optimizer;
+  DemonAdam optimizer(0.5, 10, 0.9, 0.9, 0.999, 1e-8,
+      10000, 1e-9, true, true, true);
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);
 
@@ -63,7 +64,7 @@ TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdamTest]")
 TEST_CASE("DemonAdamSphereFunctionTest", "[DemonAdamTest]")
 {
   SphereFunction f(2);
-  DemonAdam optimizer(0.5, 2, 10, 0.9);
+  DemonAdam optimizer(0.5, 2, 0.9);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -78,7 +79,7 @@ TEST_CASE("DemonAdamSphereFunctionTest", "[DemonAdamTest]")
 TEST_CASE("DemonAdamMatyasFunctionTest", "[DemonAdamTest]")
 {
   MatyasFunction f;
-  DemonAdam optimizer(0.5, 1, 10, 0.9);
+  DemonAdam optimizer(0.5, 1, 0.9);
 
   arma::mat coordinates = f.GetInitialPoint();
   optimizer.Optimize(f, coordinates);
@@ -96,7 +97,7 @@ TEST_CASE("DemonAdamMatyasFunctionTest", "[DemonAdamTest]")
 TEST_CASE("DemonAdamSimpleTestFunctionFloat", "[DemonAdamTest]")
 {
   SGDTestFunction f;
-  DemonAdam optimizer(1e-3, 1, 10, 0.9, 0.7, 0.999, 1e-8, 900000, 1e-9);
+  DemonAdam optimizer(1e-3, 1, 0.9, 0.7, 0.999, 1e-8, 900000);
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
@@ -112,7 +113,7 @@ TEST_CASE("DemonAdamSimpleTestFunctionFloat", "[DemonAdamTest]")
 TEST_CASE("DemonAdamSphereFunctionTestFloat", "[DemonAdamTest]")
 {
   SphereFunction f(2);
-  DemonAdam optimizer(0.5, 2, 10, 0.9);
+  DemonAdam optimizer(0.5, 2, 0.9);
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
@@ -127,7 +128,7 @@ TEST_CASE("DemonAdamSphereFunctionTestFloat", "[DemonAdamTest]")
 TEST_CASE("DemonAdamMatyasFunctionTestFloat", "[DemonAdamTest]")
 {
   MatyasFunction f;
-  DemonAdam optimizer(0.5, 1, 10, 0.9);
+  DemonAdam optimizer(0.5, 1, 0.9);
 
   arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
   optimizer.Optimize(f, coordinates);
@@ -152,7 +153,8 @@ TEST_CASE("DemonAdaMaxLogisticRegressionTest", "[DemonAdamTest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
   
-  DemonAdamType<AdaMaxUpdate> optimizer;
+  DemonAdamType<AdaMaxUpdate> optimizer(0.5, 10, 0.9, 0.9, 0.999, 1e-8,
+      10000, 1e-9, true, true, true);
   arma::mat coordinates = lr.GetInitialPoint();
   optimizer.Optimize(lr, coordinates);
 

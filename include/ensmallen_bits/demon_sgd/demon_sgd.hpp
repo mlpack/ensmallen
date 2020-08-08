@@ -49,8 +49,6 @@ class DemonSGD
    *
    * @param stepSize Step size for each iteration.
    * @param batchSize Number of points to process in a single step.
-   * @param momentumIterations The number of iterations before the momentum
-   *     will decay to zero.
    * @param momentum The initial momentum coefficient.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
@@ -64,7 +62,6 @@ class DemonSGD
    */
   DemonSGD(const double stepSize = 0.001,
            const size_t batchSize = 32,
-           const size_t momentumIterations = 100,
            const double momentum = 0.9,
            const size_t maxIterations = 100000,
            const double tolerance = 1e-5,
@@ -76,7 +73,7 @@ class DemonSGD
                 maxIterations,
                 tolerance,
                 shuffle,
-                DemonSGDUpdate(momentumIterations, momentum),
+                DemonSGDUpdate(maxIterations * batchSize, momentum),
                 NoDecay(),
                 resetPolicy,
                 exactObjective)
