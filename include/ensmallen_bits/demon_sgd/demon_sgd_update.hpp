@@ -46,7 +46,11 @@ class DemonSGDUpdate
       betaInit(momentum),
       t(0)
   {
-    // Nothing to do.
+    // Make sure the momentum iterations parameter is non-zero.
+    assert(momentumIterations != 0 && "The number of iterations before the "
+        "momentum will decay is zero, make sure the max iterations and "
+        "batch size parameter is set correctly. "
+        "Default: momentumIterations = maxIterations * batchSize.");
   }
 
   //! Get the momentum coefficient.
