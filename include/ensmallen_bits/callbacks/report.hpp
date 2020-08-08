@@ -74,7 +74,7 @@ class Report
                        FunctionType& function,
                        MatType& coordinates)
   {
-    output << "Report" << std::endl;
+    output << "Optimization Report" << std::endl;
     output << std::string(80, '-') << std::endl << std::endl;
 
     std::streamsize streamPrecision = output.precision(4);
