@@ -176,7 +176,7 @@ class Report
 
     if (hasGradient)
     {
-      PrettyPrintElement("Coordinates max norm:", 30);
+      PrettyPrintElement("Coordinates max. norm:", 30);
       output << *std::max_element(std::begin(gradientsNorm),
           std::end(gradientsNorm)) << std::endl;
     }
