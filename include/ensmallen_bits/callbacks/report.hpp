@@ -424,7 +424,7 @@ class Report
    * Output formated data.
    *
    * @param data The data to print on the given stream.
-   * @param width The width of the the formated output data.
+   * @param width The width of the the formatted output data.
    */
   template<typename T>
   void PrettyPrintElement(const T& data, const size_t width = 14)
