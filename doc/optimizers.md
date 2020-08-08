@@ -202,7 +202,7 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -260,7 +260,7 @@ with _`UpdateRule`_` = AdaMaxUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -380,7 +380,7 @@ with _`UpdateRule`_` = AMSGradUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -755,8 +755,8 @@ total contribution of a gradient to all future updates.
 
  * `DemonAdam()`
  * `DemonAdam(`_`stepSize, batchSize`_`)`
- * `DemonAdam(`_`stepSize, batchSize, momentum, momentumIterations, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `DemonAdam(`_`stepSize, batchSize, momentum, momentumIterations, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 Note that the `DemonAdam` class is based on
 the `DemonAdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = AdamUpdate`.
@@ -767,12 +767,11 @@ the `DemonAdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = AdamUpdate`.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
-| `size_t` | **`momentumIterations`** | The number of iterations before the momentum will decay to zero. | `100` |
 | `double` | **`momentum`** | The initial momentum coefficient. | `0.9` |
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -792,7 +791,7 @@ The attributes of the optimizer may also be modified via the member methods
 MatyasFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-DemonAdam optimizer(0.5, 1, 10, 0.9);
+DemonAdam optimizer(0.5, 1, 0.9);
 optimizer.Optimize(f, coordinates);
 ```
 
@@ -816,8 +815,8 @@ contribution of a gradient to all future updates.
 
  * `DemonSGD()`
  * `DemonSGD(`_`stepSize, batchSize`_`)`
- * `DemonSGD(`_`stepSize, batchSize, momentum, momentumIterations, maxIterations, tolerance, shuffle`_`)`
- * `DemonSGD(`_`stepSize, batchSize, momentum, momentumIterations, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle`_`)`
+ * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle, resetPolicy`_`)`
 
 #### Attributes
 
@@ -825,9 +824,8 @@ contribution of a gradient to all future updates.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
-| `size_t` | **`momentumIterations`** | The number of iterations before the momentum will decay to zero. | `100` |
 | `double` | **`momentum`** | The initial momentum coefficient. | `0.9` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -846,7 +844,7 @@ The attributes of the optimizer may also be modified via the member methods
 MatyasFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-DemonSGD optimizer(0.5, 1, 10, 0.9);
+DemonSGD optimizer(0.5, 1, 0.9);
 optimizer.Optimize(f, coordinates);
 ```
 
@@ -882,7 +880,7 @@ Eve is a stochastic gradient based optimization method with locally and globally
 | `double` | **`beta3`** | Exponential decay rate for relative change. | `0.999` |
 | `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
 | `double` | **`clip`** | Clipping range to avoid extreme valus. | `10` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -990,7 +988,7 @@ changes.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1361,7 +1359,7 @@ can be paired with the `Lookahead` optimizer.
 | `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | Adam |
 | `double` | **`stepSize`** | Step size for each iteration. | `0.5` |
 | `size_t` | **`k`** | The synchronization period. | `5` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -1523,7 +1521,7 @@ with _`UpdateRule`_` = NadamUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1581,7 +1579,7 @@ with _`UpdateRule`_` = NadaMaxUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1709,7 +1707,7 @@ Note that the `OptimisticAdam` class is based on the
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1763,7 +1761,7 @@ Padam is a variant of Adam with a partially adaptive momentum estimation method.
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`partial`** | Partially adaptive parameter. | `0.25` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -2056,7 +2054,7 @@ the following other optimizers:
  | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
  | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
  | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
- | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+ | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
  | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
  | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
  | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
