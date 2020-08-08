@@ -346,7 +346,7 @@ class Report
       traits::HasNumFunctionsSignature<FunctionType>::value, void>::type
   PrintNumFunctions(const FunctionType& function, std::stringstream& stream)
   {
-    PrettyPrintElement(stream, "Num functions:", 30);
+    PrettyPrintElement(stream, "Number of functions:", 30);
     stream << function.NumFunctions() << std::endl;
   }
 
