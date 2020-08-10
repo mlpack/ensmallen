@@ -19,7 +19,7 @@ using namespace ens::test;
 using namespace std;
 
 /**
- * Checks if low <= value <= high. Used by MOEADFonsecaFlemmingTest.
+ * Checks if low <= value <= high. Used by MOEADFonsecaFlemingTest.
  *
  * @param value The value being checked.
  * @param low The lower bound.
@@ -33,11 +33,11 @@ bool InBounds(const double& value, const double& low, const double& high)
 }
 
 /**
- * Optimize for the Fonseca Flemming function using MOEA/D optimizer.
+ * Optimize for the Fonseca Fleming function using MOEA/D optimizer.
  */
-TEST_CASE("MOEADFonsecaFlemmingTest", "[MOEADTest]")
+TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
 {
-  FonsecaFlemmingFunction<arma::mat> FON;
+  FonsecaFlemingFunction<arma::mat> FON;
   const arma::vec lowerBound("-4 -4 -4");
   const arma::vec upperBound("4 4 4");
   const double strength = 1e-3;
