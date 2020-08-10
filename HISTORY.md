@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Add MOEA/D optimizer for multi-objective functions
+    ([#210](https://github.com/mlpack/ensmallen/pull/210))
+    
  * Add NSGA2 optimizer for multi-objective functions
     ([#149](https://github.com/mlpack/ensmallen/pull/149)).
 
