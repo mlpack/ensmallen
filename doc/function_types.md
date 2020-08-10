@@ -841,23 +841,72 @@ int main()
 
 </details>
 
+
+## Multi-objective functions
+
+A multi-objective optimizer does not return just one set of coordinates at the
+minimum of all objective functions, but instead finds a *front* or *frontier* of
+possible coordinates that are Pareto-optimal (that is, no individual objective
+function's value can be reduced without increasing at least one other
+objective function).
+
+In order to optimize a multi-objective function with ensmallen, a `std::tuple<>`
+containing multiple `ArbitraryFunctionType`s ([see here](#arbitrary-functions))
+should be passed to a multi-objective optimizer's `Optimize()` function.
+
+An example below simultaneously optimizes the generalized Rosenbrock function
+in 6 dimensions and the Wood function using [NSGA2](#nsga2).
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+GeneralizedRosenbrockFunction rf(6);
+WoodFunction wf;
+std::tuple<GeneralizedRosenbrockFunction, WoodFunction> objectives(rf, wf);
+
+// Create an initial point (a random point in 6 dimensions).
+arma::mat coordinates(6, 1, arma::fill::randu);
+
+// `coordinates` will be set to the coordinates on the best front that minimize the
+// sum of objective functions, and `bestFrontSum` will be the sum of all objectives
+// at that coordinate set.
+NSGA2 nsga;
+double bestFrontSum = nsga.Optimize(objectives, coordinates);
+
+// Set `bestFront` to contain all of the coordinates on the best front.
+std::vector<arma::mat> bestFront = optimizer.Front();
+}
+```
+
+</details>
+
+*Note*: all multi-objective function optimizers have both the function `Optimize()` to find the
+best front, and also the function `Front()` to return all sets of coordinates that are on the
+front.
+
+The following optimizers can be used with multi-objective functions:
+- [NSGA2](#nsga2)
+
 ## Constrained functions
 
 A constrained function is an objective function `f(x)` that is also subject to
 some constraints on `x`.  (For instance, perhaps a constraint could be that `x`
 is a positive semidefinite matrix.)  ensmallen is able to handle differentiable
 objective functions of this type---so, `f'(x)` must also be computable.  Given
-some set of constraints c_0(x), ... c_M(x), we can re-express our constrained
+some set of constraints `c_0(x)`, ..., `c_M(x)`, we can re-express our constrained
 objective function as
 
 ```
 f_C(x) = f(x) + c_0(x) + ... + c_M(x)
 ```
 
-where the constraint `c_i(x)` is `DBL_MAX` if it is not satisfied, and
-otherwise takes some real value.  For a "hard constraint", we can simply take
-`c_i(x) = 0` when it is satisfied.  But allowing `c_i(x)` to return anything
-allows us to handle "soft" constraints also.
+where the (soft) constraint `c_i(x)` is a positive value if it is not satisfied, and
+`0` if it is satisfied.  The soft constraint `c_i(x)` should take some value
+representing how far from a feasible solution `x` is.  It should be
+differentiable, since ensmallen's constrained optimizers will use the gradient
+of the constraint to find a feasible solution.
 
 In order to optimize a constrained function with ensmallen, a class
 implementing the API below is required.
@@ -880,16 +929,14 @@ class ConstrainedFunctionType
   size_t NumConstraints();
 
   // Evaluate constraint i at the parameters x.  If the constraint is
-  // unsatisfied, DBL_MAX should be returned.  If the constraint is satisfied,
-  // any real value can be returned.  The optimizer will add this value to its
-  // overall objective that it is trying to minimize.  (So, a hard constraint
-  // can just return 0 if it's satisfied.)
+  // unsatisfied, a value greater than 0 should be returned.  If the constraint
+  // is satisfied, 0 should be returned.  The optimizer will add this value to
+  // its overall objective that it is trying to minimize.
   double EvaluateConstraint(const size_t i, const arma::mat& x);
 
   // Evaluate the gradient of constraint i at the parameters x, storing the
-  // result in the given matrix g.  If this is a hard constraint you can set
-  // the gradient to 0.  If the constraint is not satisfied, it could be
-  // helpful to set the gradient in such a way that the gradient points in the
+  // result in the given matrix g.  If the constraint is not satisfied, the
+  // gradient should be set in such a way that the gradient points in the
   // direction where the constraint would be satisfied.
   void GradientConstraint(const size_t i, const arma::mat& x, arma::mat& g);
 };
@@ -1098,7 +1145,7 @@ class SquaredFunction
 
 int main()
 {
-  // The minimum is at x = [0 0 0].  Our initial point is chosen to be 
+  // The minimum is at x = [0 0 0].  Our initial point is chosen to be
   // [1.0, -1.0, 1.0].
   arma::fmat x("1.0 -1.0 1.0");
 

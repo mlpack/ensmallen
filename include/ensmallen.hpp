@@ -33,20 +33,24 @@
   #error "need Armadillo version 8.400 or later"
 #endif
 
-#include <cmath>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <cctype>
-#include <climits>
 #include <cfloat>
+#include <climits>
+#include <cmath>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <map>
+#include <set>
+#include <limits>
+#include <sstream>
 #include <stdexcept>
+#include <string>
 #include <tuple>
 #include <utility>
-#include <iostream>
-#include <string>
-#include <sstream>
+#include <vector>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
@@ -95,6 +99,7 @@
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
 #include "ensmallen_bits/lookahead/lookahead.hpp"
 #include "ensmallen_bits/moead/moead.hpp"
+#include "ensmallen_bits/nsga2/nsga2.hpp"
 #include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
 #include "ensmallen_bits/pso/pso.hpp"
