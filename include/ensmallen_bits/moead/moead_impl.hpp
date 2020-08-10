@@ -63,6 +63,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   // 1.1 The external population, non-dominated solutions.
   std::vector<MatType> externalPopulation;
+  std::vector<arma::vec> externalPopulationFValue;
 
   // Weight vectors, where each one of them represents a decomposition.
   std::vector<arma::vec> weights(populationSize);
@@ -130,53 +131,50 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       else
         k += 1;
     }
-    MatType candidate;
+    std::vector<MatType> candidate(1);
     if(crossoverDeterminer(generator) < crossoverProb)
     {
-      candidate.resize(iterate.n_rows, iterate.n_cols);
+      candidate[0].resize(iterate.n_rows, iterate.n_cols);
       for (size_t idx = 0;idx < iterate.n_rows; idx++)
       {
         if(crossoverDeterminer(generator) < 0.5)
-          candidate[idx] = population[k][idx];
+          candidate[0][idx] = population[k][idx];
         else
-          candidate[idx] = population[l][idx];
-        if(candidate[idx] < lowerBound(idx))
-          candidate[idx] = lowerBound(idx);
-        if(candidate[idx]>upperBound(idx))
-          candidate[idx] = upperBound(idx);
+          candidate[0][idx] = population[l][idx];
+        if(candidate[0][idx] < lowerBound(idx))
+          candidate[0][idx] = lowerBound(idx);
+        if(candidate[0][idx]>upperBound(idx))
+          candidate[0][idx] = upperBound(idx);
       }
     }
     else
-      candidate = population[i];
+      candidate[0] = population[i];
 
     // 2.2 Improve the child.
-    Mutate(candidate, lowerBound, upperBound);
+    Mutate(candidate[0], lowerBound, upperBound);
 
     // Store solution for candidate.
-    arma::mat evaluatedCandidate(1, numObjectives);
-    std::vector<MatType> candidateVector(1);
-    candidateVector[0] = candidate;
-    EvaluateObjectives(candidateVector, objectives, evaluatedCandidate);
-    arma::vec evalCandidate(numObjectives);
+    std::vector<arma::vec> evaluatedCandidate(1);
+    evaluatedCandidate[0].resize(numObjectives);
+    EvaluateObjectives(candidate, objectives, evaluatedCandidate);
 
     // 2.3 Update of ideal point.
     for (size_t idx = 0;idx < numObjectives;idx++)
     {
       idealPoint(idx) = std::max(idealPoint(idx),
-          evaluatedCandidate(0, idx));
-      evalCandidate(idx) = evaluatedCandidate(0, idx);
+          evaluatedCandidate[0][idx]);
     }
 
     // 2.4 Update of the neighbouring solutions.
     for (size_t idx = 0;idx < neighbourhoodSize;idx++)
     {
       if(DecomposedSingleObjective(weights[B(i, idx)],
-                                   idealPoint, evalCandidate)
+                                   idealPoint, evaluatedCandidate[0])
             <= DecomposedSingleObjective(weights[B(i,idx)],
                                         idealPoint, FValue[B(i, idx)]))
       {
-        population.at(B(i, idx)) = candidate;
-        FValue[B(i, idx)] = evalCandidate;
+        population.at(B(i, idx)) = candidate[0];
+        FValue[B(i, idx)] = evaluatedCandidate[0];
       }
     }
 
@@ -190,7 +188,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         wrapperFirst[0] = firstMat;
         first[0].resize(numObjectives);
         EvaluateObjectives(wrapperFirst, objectives, first);
-        return Dominates(evalCandidate, first[0]);
+        return Dominates(evaluatedCandidate[0], first[0]);
       };
       //! Remove the part that is dominated by candidate.
       externalPopulation.erase(
@@ -204,17 +202,22 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       bool flag = 0;
       for (size_t idx = 0; idx < externalPopulation.size(); idx++)
       {
-        if (Dominates(first[0], evalCandidate))
+        if (Dominates(first[0], evaluatedCandidate[0]))
         {
           flag = 1;
           break;
         }
       }
-      if(flag == 0) externalPopulation.push_back(candidate);
+      if(flag == 0)
+      {
+        externalPopulation.push_back(candidate[0]);
+        externalPopulationFValue.push_back(evaluatedCandidate[0]);
+      }
     }
     else
     {
-      externalPopulation.push_back(candidate);
+      externalPopulation.push_back(candidate[0]);
+      externalPopulationFValue.push_back(evaluatedCandidate[0]);
     }
   }
   bestFront = std::move(externalPopulation);
@@ -223,7 +226,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for (arma::Col<ElemType> objective: FValue)
+  for (arma::Col<ElemType> objective: externalPopulationFValue)
     if (arma::accu(objective) < performance)
       performance = arma::accu(objective);
 
@@ -265,7 +268,6 @@ inline double MOEAD::DecomposedSingleObjective(const arma::vec& weights,
   return value;
 }
 
-//! To check if first dominates second.
 inline bool MOEAD::Dominates(const arma::vec& first,
     const arma::vec& second)
 {
