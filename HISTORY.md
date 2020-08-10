@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.14.0: "No Direction Home"
+###### 2020-08-10
  * Add NSGA2 optimizer for multi-objective functions
     ([#149](https://github.com/mlpack/ensmallen/pull/149)).
 
