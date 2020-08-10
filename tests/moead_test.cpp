@@ -94,7 +94,6 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
 
   for (arma::mat solution: bestFront)
   {
-    double valX = arma::as_scalar(solution(0));
     double val = arma::as_scalar(solution);
 
     if (val < 0.0 || val > 2.0)
