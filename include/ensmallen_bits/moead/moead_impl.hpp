@@ -31,7 +31,8 @@ inline MOEAD::MOEAD(const size_t populationSize,
     mutationStrength(mutationStrength),
     neighbourhoodSize(neighbourhoodSize),
     lowerBound(lowerBound),
-    upperBound(upperBound)
+    upperBound(upperBound),
+    numObjectives(0)
   { /* Nothing to do here. */ }
 
 //! Optimize the function.
