@@ -72,7 +72,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     weights[i] = arma::vec(numObjectives, arma::fill::randu);
 
   // 1.2 Storing the indices of nearest neighbours of each weight vector.
-  arma::Mat<size_t> B(populationSize, neighbourhoodSize);
+  arma::Mat<size_t> weightNeighbourIndices(populationSize, neighbourhoodSize);
   for (size_t i = 0; i < populationSize; i++)
   {
     // To temporarily store the distance between weights(i) and each other weights.
@@ -88,7 +88,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     }
     arma::uvec sortedIndices = arma::stable_sort_index(distances, "descend");
     for (size_t iter = 1; iter <= neighbourhoodSize; iter++)
-      B(i, iter-1) = sortedIndices(iter);
+      weightNeighbourIndices(i, iter-1) = sortedIndices(iter);
   }
 
   // 1.3 Random generation of the initial population.
@@ -123,7 +123,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     // mutation or crossover will happen or not.
     std::uniform_real_distribution<double> crossoverDeterminer(0, 1);
 
-    // 2.1 Randomly select two indices in B(i) and use them to make a child.
+    // 2.1 Randomly select two indices in weightNeighbourIndices(i) and use them
+    // to make a child.
     size_t k = distribution(generator), l = distribution(generator);
     if (k == l)
     {
@@ -169,13 +170,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     // 2.4 Update of the neighbouring solutions.
     for (size_t idx = 0;idx < neighbourhoodSize;idx++)
     {
-      if(DecomposedSingleObjective(weights[B(i, idx)],
+      if(DecomposedSingleObjective(weights[weightNeighbourIndices(i, idx)],
                                    idealPoint, evaluatedCandidate[0])
-            <= DecomposedSingleObjective(weights[B(i,idx)],
-                                        idealPoint, FValue[B(i, idx)]))
+            <= DecomposedSingleObjective(
+                  weights[weightNeighbourIndices(i,idx)],
+                  idealPoint, FValue[weightNeighbourIndices(i, idx)]))
       {
-        population.at(B(i, idx)) = candidate[0];
-        FValue[B(i, idx)] = evaluatedCandidate[0];
+        population.at(weightNeighbourIndices(i, idx)) = candidate[0];
+        FValue[weightNeighbourIndices(i, idx)] = evaluatedCandidate[0];
       }
     }
 
