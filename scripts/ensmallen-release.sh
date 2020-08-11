@@ -23,7 +23,8 @@ if [ "$#" -gt 5 ]; then
 fi
 
 # Make sure that the branch is clean.
-lines=`git diff | wc -l`;
+# Truncate leading whitespaces since wc -l on MacOS adds an extra \t.
+lines=`git diff | wc -l | sed -e 's/^\s*//g'`;
 if [ "$lines" != "0" ]; then
   echo "git diff returned a nonzero result!";
   echo "";
