@@ -237,7 +237,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 }
 
 //! Perform mutation of the candidate.
-  template<typename MatType>
+template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,
     const arma::vec& lowerBound,
     const arma::vec& upperBound)
