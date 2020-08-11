@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Remove hardcoded information from release script
+    ([#216](https://github.com/mlpack/ensmallen/pull/216)).
 
 ### ensmallen 2.14.0: "No Direction Home"
 ###### 2020-08-10
