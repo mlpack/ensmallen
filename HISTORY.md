@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Adjust tolerance for AugLagrangian convergence based on element type
+   ([#217](https://github.com/mlpack/ensmallen/pull/217)).
 
 ### ensmallen 2.14.0: "No Direction Home"
 ###### 2020-08-10
