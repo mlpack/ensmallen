@@ -75,32 +75,41 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
  */
 TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
 {
-  SchafferFunctionN1<arma::mat> SCH;
-  arma::vec lowerBound = {-1000};
-  arma::vec upperBound = {1000};
-
-  MOEAD opt(1000, 0.6, 0.7, 1e-3, 200, lowerBound, upperBound);
-
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
-
-  arma::mat coords = SCH.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  std::vector<arma::mat> bestFront = opt.Front();
-
-  bool allInRange = true;
-
-  for (arma::mat solution: bestFront)
+  bool success=false;
+  for(size_t trial = 0; trial < 3; trial++)
   {
-    double val = arma::as_scalar(solution);
+    SchafferFunctionN1<arma::mat> SCH;
+    arma::vec lowerBound = {-1000};
+    arma::vec upperBound = {1000};
 
-    if (val < 0.0 || val > 2.0)
+    MOEAD opt(1000, 0.6, 0.7, 1e-3, 200, lowerBound, upperBound);
+
+    typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+    typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+    arma::mat coords = SCH.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
+        SCH.GetObjectives();
+
+    opt.Optimize(objectives, coords);
+    std::vector<arma::mat> bestFronts = opt.Front();
+
+    bool allInRange = true;
+
+    for (arma::mat solution: bestFronts)
     {
-      allInRange = false;
+      double val = arma::as_scalar(solution);
+      if (val < 0.0 || val > 2.0)
+      {
+        allInRange = false;
+        break;
+      }
+    }
+    if(allInRange==true)
+    {
+      success=true;
       break;
     }
   }
-  REQUIRE(allInRange);
+  REQUIRE(success);
 }
