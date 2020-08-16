@@ -88,7 +88,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     }
     arma::uvec sortedIndices = arma::stable_sort_index(distances, "descend");
     for (size_t iter = 1; iter <= neighbourhoodSize; iter++)
-      weightNeighbourIndices(i, iter-1) = sortedIndices(iter);
+      weightNeighbourIndices(i, iter - 1) = sortedIndices(iter);
   }
 
   // 1.3 Random generation of the initial population.
@@ -170,7 +170,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     // 2.4 Update of the neighbouring solutions.
     for (size_t idx = 0;idx < neighbourhoodSize;idx++)
     {
-      if(DecomposedSingleObjective(weights[weightNeighbourIndices(i, idx)],
+      if (DecomposedSingleObjective(weights[weightNeighbourIndices(i, idx)],
                                    idealPoint, evaluatedCandidate[0])
             <= DecomposedSingleObjective(
                   weights[weightNeighbourIndices(i,idx)],
@@ -211,7 +211,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           break;
         }
       }
-      if(flag == 0)
+      if (flag == 0)
       {
         externalPopulation.push_back(candidate[0]);
         externalPopulationFValue.push_back(evaluatedCandidate[0]);
