@@ -4,6 +4,9 @@
    introduced by `wc -l` in MacOS)
     ([#216](https://github.com/mlpack/ensmallen/pull/216)).
 
+ * Adjust tolerance for AugLagrangian convergence based on element type
+   ([#217](https://github.com/mlpack/ensmallen/pull/217)).
+
 ### ensmallen 2.14.0: "No Direction Home"
 ###### 2020-08-10
  * Add NSGA2 optimizer for multi-objective functions
