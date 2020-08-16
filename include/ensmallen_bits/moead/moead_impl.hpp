@@ -94,8 +94,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 1.3 Random generation of the initial population.
   std::vector<MatType> population(populationSize);
   for (size_t i = 0; i < populationSize; i++)
+  {
     population[i] = arma::randu<MatType>(iterate.n_rows, iterate.n_cols)
         - 0.5 + iterate;
+  }
 
   // 1.3 F-value initialisation for the population.
   std::vector<arma::vec> FValue(populationSize);
