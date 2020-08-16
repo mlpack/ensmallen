@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Adjust tolerance for AugLagrangian convergence based on element type
+   ([#217](https://github.com/mlpack/ensmallen/pull/217)).
+   
  * Add MOEA/D optimizer for multi-objective functions
     ([#210](https://github.com/mlpack/ensmallen/pull/210))
 
