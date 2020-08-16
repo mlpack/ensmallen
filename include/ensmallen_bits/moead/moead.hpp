@@ -52,14 +52,15 @@ class MOEAD {
    * given function. Therefore, it is highly recommended to adjust the
    * parameters according to the problem.
    *
-   * @param populationSize, the number of elements in the population.
+   * @param populationSize The number of elements in the population.
    * @param crossoverProb The probability that a crossover will occur.
    * @param mutationProb The probability that a mutation will occur.
-   * @param neighbourhoodSize, the number of nearest neighbours of weights
+   * @param mutationStrength The strength of mutation.
+   * @param neighbourhoodSize The number of nearest neighbours of weights
    *    to find.
-   * @param lowerBound, the lower bound on each variable of a member
+   * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
-   * @param upperBound, the upper bound on each variable of a member
+   * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
   MOEAD(const size_t populationSize = 100,
@@ -73,12 +74,12 @@ class MOEAD {
    * Optimize a set of objectives. The initial population is generated
    * using the initial point. The output is the best generated front.
    *
-   * @tparam MatType, the type of matrix used to store coordinates.
-   * @tparam ArbitraryFunctionType, the type of objective function.
-   * @tparam CallbackTypes, types of callback function.
-   * @param objectives, std::tuple of the objective functions.
-   * @param iterate, the initial reference point for generating population.
-   * @param callbacks, callback functions.
+   * @tparam MatType The type of matrix used to store coordinates.
+   * @tparam ArbitraryFunctionType The type of objective function.
+   * @tparam CallbackTypes Types of callback function.
+   * @param objectives std::tuple of the objective functions.
+   * @param iterate The initial reference point for generating population.
+   * @param callbacks The callback functions.
    */
   template<typename MatType,
            typename... ArbitraryFunctionType,
@@ -126,10 +127,10 @@ class MOEAD {
    * Mutate child formed by the crossover of two random members of the 
    * population.
    *
-   * @tparam MatType, the type of matrix used to store coordinates.
-   * @param child, the matrix to mutate.
-   * @param lowerBound, the lower bound on each variable in the matrix.
-   * @param upperBound, the upper bound on each variable in the matrix.
+   * @tparam MatType The type of matrix used to store coordinates.
+   * @param child The matrix to mutate.
+   * @param lowerBound The lower bound on each variable in the matrix.
+   * @param upperBound The upper bound on each variable in the matrix.
    */
   template<typename MatType>
   void Mutate(MatType& child,
@@ -140,10 +141,10 @@ class MOEAD {
    * Decompose the multi objective problem to a single objetive problem
    * using the Tchebycheff approach.
    *
-   * @param weights, a set of real number which act as weights.
-   * @param idealPoint, ideal point z in Tchebycheff decomposition.
-   * @param evaluatedCandidate, value of the candidate per objective.
-   * @return the single value obtained from decomposed function.
+   * @param weights A set of real number which act as weights.
+   * @param idealPoint Ideal point z in Tchebycheff decomposition.
+   * @param evaluatedCandidate Value of the candidate per objective.
+   * @return The single value obtained from decomposed function.
    */
   double DecomposedSingleObjective(const arma::vec& weights,
                                    const arma::vec& idealPoint,
