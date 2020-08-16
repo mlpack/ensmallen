@@ -1,5 +1,9 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix release script (remove hardcoded information, trim leading whitespaces
+   introduced by `wc -l` in MacOS)
+    ([#216](https://github.com/mlpack/ensmallen/pull/216)).
+
  * Adjust tolerance for AugLagrangian convergence based on element type
    ([#217](https://github.com/mlpack/ensmallen/pull/217)).
 
