@@ -39,7 +39,7 @@ build_script:
   - >
     "%MSBUILD%" "armadillo.sln"
     /m /verbosity:quiet /p:Configuration=Release;Platform=x64
-  - cd ../
+  - cd ../..
   - dir
 
   # Now build ensmallen.
