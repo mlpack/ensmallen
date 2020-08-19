@@ -43,7 +43,7 @@ build_script:
   - dir
 
   # Now build ensmallen.
-  - cd ensmallen && mkdir build && cd build
+  - cd ensmallen-h5jj0 && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
     -DARMADILLO_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/../armadillo-8.400.0/include/
