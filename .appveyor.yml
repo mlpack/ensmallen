@@ -2,7 +2,7 @@ environment:
   ARMADILLO_DOWNLOAD: "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
   BLAS_LIBRARY: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a"
   BLAS_LIBRARY_DLL: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll"
-  
+
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       VSVER: Visual Studio 14 2015 Win64
