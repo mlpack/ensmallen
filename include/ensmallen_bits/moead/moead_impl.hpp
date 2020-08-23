@@ -107,7 +107,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   // 1.4 Initialize the ideal point z.
   arma::vec idealPoint(numObjectives);
-  idealPoint.fill(-std::numeric_limits<ElemType>::max());
+  idealPoint.fill(std::numeric_limits<ElemType>::max());
 
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
   // 2 The main loop.
@@ -115,33 +115,17 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   {
     terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
 
-    // To generate random numbers.
-    std::default_random_engine generator;
-
-    // Distribution to choose two random parents for mutation.
-    std::uniform_int_distribution<size_t> distribution(0, populationSize-1);
-
-    // Distribution to choose a number between 0 and 1 to determine whether
-    // mutation or crossover will happen or not.
-    std::uniform_real_distribution<double> crossoverDeterminer(0, 1);
-
     // 2.1 Randomly select two indices in weightNeighbourIndices(i) and use them
     // to make a child.
-    size_t k = distribution(generator), l = distribution(generator);
-    if (k == l)
-    {
-      if (k == populationSize-1)
-        k -= 1;
-      else
-        k += 1;
-    }
+    size_t k = weightNeighbourIndices(arma::randi(arma::distr_param(0,  neighbourhoodSize-1))),
+           l = weightNeighbourIndices(arma::randi(arma::distr_param(0,  neighbourhoodSize-1)));
     std::vector<MatType> candidate(1);
-    if(crossoverDeterminer(generator) < crossoverProb)
+    if(arma::randu() < crossoverProb)
     {
       candidate[0].resize(iterate.n_rows, iterate.n_cols);
       for (size_t idx = 0;idx < iterate.n_rows; idx++)
       {
-        if (crossoverDeterminer(generator) < 0.5)
+        if (arma::randu() < 0.5)
           candidate[0][idx] = population[k][idx];
         else
           candidate[0][idx] = population[l][idx];
@@ -165,7 +149,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     // 2.3 Update of ideal point.
     for (size_t idx = 0;idx < numObjectives;idx++)
     {
-      idealPoint(idx) = std::max(idealPoint(idx),
+      idealPoint(idx) = std::min(idealPoint(idx),
           evaluatedCandidate[0][idx]);
     }
 
@@ -205,8 +189,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       //! Check if any of the remaining members of external population dominate
       //! candidate.
       bool flag = 0;
+      std::vector<MatType> wrapperFirst(1);
       for (size_t idx = 0; idx < externalPopulation.size(); idx++)
       {
+        wrapperFirst[0]=externalPopulation[idx];
+        first[0].clear();
+        first[0].resize(numObjectives);
+        EvaluateObjectives(wrapperFirst, objectives, first);
         if (Dominates(first[0], evaluatedCandidate[0]))
         {
           flag = 1;
