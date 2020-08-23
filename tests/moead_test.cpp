@@ -101,7 +101,6 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
       if (val < 0.0 || val > 2.0)
       {
         allInRange = false;
-        break;
       }
     }
   REQUIRE(allInRange);
