@@ -58,6 +58,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
+    std::cout<<valX<<" "<<valY<<" "<<valZ<<"\n";
 
     if (!InBounds(valX, expectedLowerBound, expectedUpperBound) ||
         !InBounds(valY, expectedLowerBound, expectedUpperBound) ||
@@ -75,9 +76,6 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
  */
 TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
 {
-  bool success=false;
-  for(size_t trial = 0; trial < 3; trial++)
-  {
     SchafferFunctionN1<arma::mat> SCH;
     arma::vec lowerBound = {-1000};
     arma::vec upperBound = {1000};
@@ -99,17 +97,12 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
     for (arma::mat solution: bestFronts)
     {
       double val = arma::as_scalar(solution);
+      std::cout<<val<<"\n";
       if (val < 0.0 || val > 2.0)
       {
         allInRange = false;
         break;
       }
     }
-    if(allInRange==true)
-    {
-      success=true;
-      break;
-    }
-  }
-  REQUIRE(success);
+  REQUIRE(allInRange);
 }
