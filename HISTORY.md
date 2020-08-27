@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix implementation of fonesca fleming problem function f1 and f2 
+   type usage and negative signs. ([#223](https://github.com/mlpack/ensmallen/pull/223))
 
 ### ensmallen 2.14.1: "No Direction Home"
 ###### 2020-08-19
