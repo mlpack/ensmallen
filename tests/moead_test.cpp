@@ -43,7 +43,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
   const double strength = 1e-3;
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
-  MOEAD opt(150, 0.6, 0.7, strength, 10, lowerBound, upperBound);
+  MOEAD opt(150, 10, 0.6, 0.7, strength, 10, 0.5, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -80,7 +80,7 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
     arma::vec lowerBound = {-1000};
     arma::vec upperBound = {1000};
 
-    MOEAD opt(150, 0.6, 0.7, 1e-3, 10, lowerBound, upperBound);
+    MOEAD opt(150, 10, 0.6, 0.7, 1e-3, 10, 0.5, lowerBound, upperBound);
 
     typedef decltype(SCH.objectiveA) ObjectiveTypeA;
     typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -101,6 +101,7 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
       if (val < 0.0 || val > 2.0)
       {
         allInRange = false;
+        break;
       }
     }
   REQUIRE(allInRange);
