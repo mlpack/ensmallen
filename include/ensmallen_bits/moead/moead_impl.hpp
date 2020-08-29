@@ -19,17 +19,21 @@
 namespace ens {
 
 inline MOEAD::MOEAD(const size_t populationSize,
+                    const size_t numGeneration,
                     const double crossoverProb,
                     const double mutationProb,
                     const double mutationStrength,
                     const size_t neighbourhoodSize,
+                    const double distributionIndex,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
     populationSize(populationSize),
+    numGeneration(numGeneration),
     crossoverProb(crossoverProb),
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
     neighbourhoodSize(neighbourhoodSize),
+    distributionIndex(distributionIndex),
     lowerBound(lowerBound),
     upperBound(upperBound),
     numObjectives(0)
@@ -65,11 +69,15 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 1.1 The external population, non-dominated solutions.
   std::vector<MatType> externalPopulation;
   std::vector<arma::vec> externalPopulationFValue;
+  std::vector<size_t> shuffle(populationSize);
 
   // Weight vectors, where each one of them represents a decomposition.
   std::vector<arma::vec> weights(populationSize);
   for (size_t i = 0; i < populationSize; i++)
+  {
     weights[i] = arma::vec(numObjectives, arma::fill::randu);
+    shuffle[i] = i;
+  }
 
   // 1.2 Storing the indices of nearest neighbours of each weight vector.
   arma::Mat<size_t> weightNeighbourIndices(populationSize, neighbourhoodSize);
@@ -106,112 +114,120 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   EvaluateObjectives(population, objectives, FValue);
 
   // 1.4 Initialize the ideal point z.
-  arma::vec idealPoint(numObjectives);
-  idealPoint.fill(std::numeric_limits<ElemType>::max());
+  std::vector<arma::vec> idealPoint(1);
+  idealPoint[0].resize(numObjectives);
+  std::vector<MatType> iterateWrapper(0);
+  EvaluateObjectives(iterateWrapper, objectives, idealPoint);
+
 
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
+
   // 2 The main loop.
-  for (size_t i = 0; i < populationSize && !terminate; i++)
+  for(size_t g = 0; g < numGeneration; g++)
   {
-    terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
-
-    // 2.1 Randomly select two indices in weightNeighbourIndices(i) and use them
-    // to make a child.
-    size_t k = weightNeighbourIndices(arma::randi(arma::distr_param(0,  neighbourhoodSize-1))),
-           l = weightNeighbourIndices(arma::randi(arma::distr_param(0,  neighbourhoodSize-1)));
-    std::vector<MatType> candidate(1);
-    if(arma::randu() < crossoverProb)
+    std::random_shuffle(shuffle.begin(), shuffle.end());
+    for (size_t i : shuffle)
     {
-      candidate[0].resize(iterate.n_rows, iterate.n_cols);
-      for (size_t idx = 0;idx < iterate.n_rows; idx++)
+      terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
+
+      // 2.1 Randomly select two indices in weightNeighbourIndices(i) and use them
+      // to make a child.
+      size_t k = weightNeighbourIndices(i, arma::randi(arma::distr_param(0,  neighbourhoodSize-1))),
+             l = weightNeighbourIndices(i, arma::randi(arma::distr_param(0,  neighbourhoodSize-1)));
+      std::vector<MatType> candidate(1);
+      if(arma::randu() < crossoverProb)
       {
-        if (arma::randu() < 0.5)
-          candidate[0][idx] = population[k][idx];
-        else
-          candidate[0][idx] = population[l][idx];
-        if(candidate[0][idx] < lowerBound(idx))
-          candidate[0][idx] = lowerBound(idx);
-        if(candidate[0][idx]>upperBound(idx))
-          candidate[0][idx] = upperBound(idx);
-      }
-    }
-    else
-      candidate[0] = population[i];
-
-    // 2.2 Improve the child.
-    Mutate(candidate[0], lowerBound, upperBound);
-
-    // Store solution for candidate.
-    std::vector<arma::vec> evaluatedCandidate(1);
-    evaluatedCandidate[0].resize(numObjectives);
-    EvaluateObjectives(candidate, objectives, evaluatedCandidate);
-
-    // 2.3 Update of ideal point.
-    for (size_t idx = 0;idx < numObjectives;idx++)
-    {
-      idealPoint(idx) = std::min(idealPoint(idx),
-          evaluatedCandidate[0][idx]);
-    }
-
-    // 2.4 Update of the neighbouring solutions.
-    for (size_t idx = 0;idx < neighbourhoodSize;idx++)
-    {
-      if (DecomposedSingleObjective(weights[weightNeighbourIndices(i, idx)],
-                                   idealPoint, evaluatedCandidate[0])
-            <= DecomposedSingleObjective(
-                  weights[weightNeighbourIndices(i,idx)],
-                  idealPoint, FValue[weightNeighbourIndices(i, idx)]))
-      {
-        population.at(weightNeighbourIndices(i, idx)) = candidate[0];
-        FValue[weightNeighbourIndices(i, idx)] = evaluatedCandidate[0];
-      }
-    }
-
-    // 2.5 Updating External Population.
-    if ( !externalPopulation.empty() )
-    {
-      std::vector<arma::vec> first(1);
-      auto df = [&](MatType firstMat) -> bool
-      {
-        std::vector<MatType> wrapperFirst(1), wrapperSecond(1);
-        wrapperFirst[0] = firstMat;
-        first[0].resize(numObjectives);
-        EvaluateObjectives(wrapperFirst, objectives, first);
-        return Dominates(evaluatedCandidate[0], first[0]);
-      };
-      //! Remove the part that is dominated by candidate.
-      externalPopulation.erase(
-          std::remove_if(
-          externalPopulation.begin(),
-          externalPopulation.end(),
-          df), externalPopulation.end());
-
-      //! Check if any of the remaining members of external population dominate
-      //! candidate.
-      bool flag = 0;
-      std::vector<MatType> wrapperFirst(1);
-      for (size_t idx = 0; idx < externalPopulation.size(); idx++)
-      {
-        wrapperFirst[0]=externalPopulation[idx];
-        first[0].clear();
-        first[0].resize(numObjectives);
-        EvaluateObjectives(wrapperFirst, objectives, first);
-        if (Dominates(first[0], evaluatedCandidate[0]))
+        candidate[0].resize(iterate.n_rows, iterate.n_cols);
+        for (size_t idx = 0;idx < iterate.n_rows; idx++)
         {
-          flag = 1;
-          break;
+          if (arma::randu() < 0.5)
+            candidate[0][idx] = population[k][idx];
+          else
+            candidate[0][idx] = population[l][idx];
+          if(candidate[0][idx] < lowerBound(idx))
+            candidate[0][idx] = lowerBound(idx);
+          if(candidate[0][idx]>upperBound(idx))
+            candidate[0][idx] = upperBound(idx);
         }
       }
-      if (flag == 0)
+      else
+        candidate[0] = population[i];
+
+      // 2.2 Improve the child.
+      Mutate(candidate[0], 1/ numObjectives,lowerBound, upperBound);
+
+      // Store solution for candidate.
+      std::vector<arma::vec> evaluatedCandidate(1);
+      evaluatedCandidate[0].resize(numObjectives);
+      EvaluateObjectives(candidate, objectives, evaluatedCandidate);
+
+      // 2.3 Update of ideal point.
+      for (size_t idx = 0;idx < numObjectives;idx++)
+      {
+        idealPoint[0](idx) = std::min(idealPoint[0](idx),
+            evaluatedCandidate[0][idx]);
+      }
+
+      // 2.4 Update of the neighbouring solutions.
+      for (size_t idx = 0;idx < neighbourhoodSize;idx++)
+      {
+        if (DecomposedSingleObjective(weights[weightNeighbourIndices(i, idx)],
+              idealPoint[0], evaluatedCandidate[0])
+            <= DecomposedSingleObjective(
+              weights[weightNeighbourIndices(i,idx)],
+              idealPoint[0], FValue[weightNeighbourIndices(i, idx)]))
+        {
+          population.at(weightNeighbourIndices(i, idx)) = candidate[0];
+          FValue[weightNeighbourIndices(i, idx)] = evaluatedCandidate[0];
+        }
+      }
+
+      // 2.5 Updating External Population.
+      if ( !externalPopulation.empty() )
+      {
+        std::vector<arma::vec> first(1);
+        auto df = [&](MatType firstMat) -> bool
+        {
+          std::vector<MatType> wrapperFirst(1), wrapperSecond(1);
+          wrapperFirst[0] = firstMat;
+          first[0].resize(numObjectives);
+          EvaluateObjectives(wrapperFirst, objectives, first);
+          return Dominates(evaluatedCandidate[0], first[0]);
+        };
+        //! Remove the part that is dominated by candidate.
+        externalPopulation.erase(
+            std::remove_if(
+              externalPopulation.begin(),
+              externalPopulation.end(),
+              df), externalPopulation.end());
+
+        //! Check if any of the remaining members of external population dominate
+        //! candidate.
+        bool flag = 0;
+        std::vector<MatType> wrapperFirst(1);
+        for (size_t idx = 0; idx < externalPopulation.size(); idx++)
+        {
+          wrapperFirst[0]=externalPopulation[idx];
+          first[0].clear();
+          first[0].resize(numObjectives);
+          EvaluateObjectives(wrapperFirst, objectives, first);
+          if (Dominates(first[0], evaluatedCandidate[0]))
+          {
+            flag = 1;
+            break;
+          }
+        }
+        if (flag == 0)
+        {
+          externalPopulation.push_back(candidate[0]);
+          externalPopulationFValue.push_back(evaluatedCandidate[0]);
+        }
+      }
+      else
       {
         externalPopulation.push_back(candidate[0]);
         externalPopulationFValue.push_back(evaluatedCandidate[0]);
       }
-    }
-    else
-    {
-      externalPopulation.push_back(candidate[0]);
-      externalPopulationFValue.push_back(evaluatedCandidate[0]);
     }
   }
   bestFront = std::move(externalPopulation);
@@ -232,19 +248,42 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 //! Perform mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,
+    const double& rate,
     const arma::vec& lowerBound,
     const arma::vec& upperBound)
 {
-  child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
-    (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
+  size_t numVariables = lowerBound.n_elem;
+  double rnd, delta1, delta2, mutationPower, deltaq;
+  double y, yl, yu, val, xy;
 
-  // Constraint all genes to be between bounds.
-  for (size_t idx = 0; idx < child.n_rows; idx++)
+  for(size_t j=0; j < numVariables; j++)
   {
-    if (child[idx] < lowerBound(idx))
-      child[idx] = lowerBound(idx);
-    else if (child[idx] > upperBound(idx))
-      child[idx] = upperBound(idx);
+    if(arma::randu() <= rate)
+    {
+      y = child[j];
+      yl = lowerBound(j);
+      yu = upperBound(j);
+      delta1 = (y-yl)/(yu-yl);
+      delta2 = (yu-y)/(yu-yl);    
+      rnd=arma::randu();
+      mutationPower=1/distributionIndex;
+      if (rnd <= 0.5)
+      {
+        xy = 1.0-delta1;
+        val = 2.0*rnd+(1.0-2.0*rnd)*(std::pow(xy,(distributionIndex+1.0)));
+        deltaq =  std::pow(val,mutationPower) - 1.0;
+      }
+      else
+      {
+        xy = 1.0-delta2;
+        val = 2.0*(1.0-rnd)+2.0*(rnd-0.5)*(pow(xy,(distributionIndex+1.0)));
+        deltaq = 1.0 - (pow(val,mutationPower));
+      }
+      y = y + deltaq*(yu-yl);
+      if (y<yl) y = yl;
+      if (y>yu) y = yu;
+      child[j] = y;
+    }
   }
 }
 
