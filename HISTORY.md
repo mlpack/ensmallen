@@ -1,5 +1,21 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+
+### ensmallen 2.14.1: "No Direction Home"
+###### 2020-08-19
+ * Fix release script (remove hardcoded information, trim leading whitespaces
+   introduced by `wc -l` in MacOS)
+    ([#216](https://github.com/mlpack/ensmallen/pull/216),
+     [#220](https://github.com/mlpack/ensmallen/pull/220)).
+
+ * Adjust tolerance for AugLagrangian convergence based on element type
+   ([#217](https://github.com/mlpack/ensmallen/pull/217)).
+
+### ensmallen 2.14.0: "No Direction Home"
+###### 2020-08-10
+ * Add NSGA2 optimizer for multi-objective functions
+    ([#149](https://github.com/mlpack/ensmallen/pull/149)).
+
  * Update automatic website update release script
    ([#207](https://github.com/mlpack/ensmallen/pull/207)).
 
