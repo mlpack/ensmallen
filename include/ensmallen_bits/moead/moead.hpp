@@ -53,6 +53,7 @@ class MOEAD {
    * parameters according to the problem.
    *
    * @param populationSize The number of elements in the population.
+   * @param numGeneration The number of generations the algorithm runs.
    * @param crossoverProb The probability that a crossover will occur.
    * @param mutationProb The probability that a mutation will occur.
    * @param mutationStrength The strength of mutation.
@@ -64,10 +65,12 @@ class MOEAD {
    *    of the variable space.
    */
   MOEAD(const size_t populationSize = 100,
+        const size_t numGeneration = 100,
         const double crossoverProb = 0.6,
         const double mutationProb = 0.3,
         const double mutationStrength = 1e-3,
         const size_t neighbourhoodSize = 50,
+        const double distributionIndex = 0.5,
         const arma::vec& lowerBound = arma::ones(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
   /**
@@ -92,6 +95,11 @@ class MOEAD {
   size_t PopulationSize() const { return populationSize; }
   //! Modify the population size.
   size_t& PopulationSize() { return populationSize; }
+
+  //! Get the number of generations.
+  size_t NumGeneration() const { return numGeneration; }
+  //! Modify the number of generations.
+  size_t& NumGeneration() { return numGeneration; }
 
   //! Get the crossover rate.
   double CrossoverRate() const { return crossoverProb; }
@@ -134,6 +142,7 @@ class MOEAD {
    */
   template<typename MatType>
   void Mutate(MatType& child,
+              const double& rate,
               const arma::vec& lowerBound,
               const arma::vec& upperBound);
 
@@ -204,6 +213,9 @@ class MOEAD {
   //! Size of the population.
   size_t populationSize;
 
+  //! Number of generations.
+  size_t numGeneration;
+
   //! Probability of crossover between two members.
   double crossoverProb;
 
@@ -215,6 +227,9 @@ class MOEAD {
 
   //! Number of nearest neighbours of weights to consider.
   size_t neighbourhoodSize;
+
+  //! Distribution index for the polynomial distribution.
+  double distributionIndex;
 
   //! Lower bound on each variable in the variable space.
   arma::vec lowerBound;
