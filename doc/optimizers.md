@@ -85,7 +85,7 @@ gradients.
 | `double` | **`stepSize`** | Step size for each iteration. | `1.0` |
 | `size_t` | **`batchSize`**| Number of points to process in one step. | `32` |
 | `double` | **`rho`** | Smoothing constant. Corresponding to fraction of gradient to keep at each time step. | `0.95` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-6` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-6` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -141,7 +141,7 @@ parameters.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
 | `size_t` | **`batchSize`** | Number of points to process in one step. | `32` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-8` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -1280,7 +1280,7 @@ proximalOptimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable functions](#differentiable-functions)*
 
-L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm using a limited amount of computer memory.  
+L-BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm using a limited amount of computer memory.
 
 #### Constructors
 
@@ -1676,6 +1676,73 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## NSGA2
+
+*An optimizer for arbitrary multi-objective functions.*
+
+NSGA2 (Non-dominated Sorting Genetic Algorithm - II) is a multi-objective
+optimization algorithm. The algorithm works by generating a candidate population
+from a fixed starting point. At each stage of optimization, a new population of
+children is generated. This new population along with its predecessor is sorted
+using non-domination as the metric. Following this, the population is further
+segregated into fronts. A new population is generated from these fronts having
+size equal to that of the starting population.
+
+#### Constructors
+
+ * `NSGA2()`
+ * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, epsilon, lowerBound, upperBound`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 4 in size and a multiple of 4. | `100` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for NSGA2. | `2000` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
+| `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
+| `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
+| `double` | **`epsilon`** | The value used internally to evaluate approximate equality in crowding distance based sorting. | `1e-6` |
+| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
+| `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
+
+Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SchafferFunctionN1<arma::mat> SCH;
+arma::vec lowerBound("-1000 -1000");
+arma::vec upperBound("1000 1000");
+NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+
+typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+arma::mat coords = SCH.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+
+// obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
+double obj = opt.Optimize(objectives, coords);
+// Now obtain the best front.
+std::vector<arma::mat> bestFront = opt.Front();
+```
+
+</details>
+
+#### See also:
+
+ * [NSGA-II Algorithm](https://www.iitk.ac.in/kangal/Deb_NSGA-II.pdf)
+ * [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
+  * [Multi-objective functions](#multi-objective-functions)
+
 ## OptimisticAdam
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -1684,7 +1751,7 @@ OptimisticAdam is an optimizer which implements the Optimistic Adam algorithm
 which uses Optmistic Mirror Descent with the Adam Optimizer.  It addresses the
 problem of limit cycling while training GANs (generative adversarial networks).
 It uses OMD to achieve faster regret rates in solving the zero sum game of
-training a GAN. It consistently achieves a smaller KL divergnce with~ respect to
+training a GAN. It consistently achieves a smaller KL divergence with~ respect to
 the true underlying data distribution.  The implementation here can be used with
 any differentiable separable function, not just GAN training.
 
@@ -2105,7 +2172,7 @@ RMSProp utilizes the magnitude of recent gradients to normalize the gradients.
 | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
 | `size_t` | **`batchSize`** | Number of points to process in each step. | `32` |
 | `double` | **`alpha`** | Smoothing constant, similar to that used in AdaDelta and momentum methods. | `0.99` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-8` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
@@ -2622,7 +2689,7 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
 SMORMS3 is a hybrid of RMSprop, which is trying to estimate a safe and optimal
-distance based on curvature or perhaps just normalizing the stepsize in the
+distance based on curvature or perhaps just normalizing the step-size in the
 parameter space.
 
 #### Constructors
@@ -2638,7 +2705,7 @@ parameter space.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`batchSize`** | Number of points to process at each step. | `32` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-16` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-16` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
@@ -2845,7 +2912,7 @@ the projection of Adam steps on the gradient subspace.
 | `size_t` | **`batchSize`** | Number of points to process at each step. | `32` |
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
-| `double` | **`epsilon`** | Value used to initialise the mean squared gradient parameter. | `1e-16` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-16` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the mini-batch order is shuffled; otherwise, each mini-batch is visited in linear order. | `true` |
