@@ -22,8 +22,8 @@ namespace test {
  * The Fonseca Fleming function N.1 is defined by
  *
  * \f[
- * f_1(x) = 1 - \exp(\sum_1^3{(x_i - \frac{1}{\sqrt3})^2})
- * f_2(x) = 1 - \exp(\sum_1^3{(x_i + \frac{1}{\sqrt3})^2})
+ * f_{1}\left(\boldsymbol{x}\right) = 1 - \exp \left[-\sum_{i=1}^{3} \left(x_{i} - \frac{1}{\sqrt{n}} \right)^{2} \right] \\
+ * f_{2}\left(\boldsymbol{x}\right) = 1 - \exp \left[-\sum_{i=1}^{3} \left(x_{i} + \frac{1}{\sqrt{n}} \right)^{2} \right] \\
  * \f]
  *
  * The optimal solutions to this multi-objective function lie in the
@@ -71,9 +71,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-        return 1.0f - exp(-pow(coords[0] - 1.0f / sqrt(3), 2) -
-            - pow(coords[1] - 1.0f / sqrt(3), 2)
-            - pow(coords[2] - 1.0f / sqrt(3), 2));
+        return 1.0 - exp(
+             -pow(static_cast<double>(coords[0]) - 1.0 / sqrt(3.0), 2.0)
+             -pow(static_cast<double>(coords[1]) - 1.0 / sqrt(3.0), 2.0)
+             -pow(static_cast<double>(coords[2]) - 1.0 / sqrt(3.0), 2.0)
+        );
     }
   } objectiveA;
 
@@ -81,9 +83,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-        return 1.0f - exp(-pow(coords[0] + 1.0f / sqrt(3), 2) -
-            - pow(coords[1] + 1.0f / sqrt(3), 2)
-            - pow(coords[2] + 1.0f / sqrt(3), 2));
+        return 1.0 - exp(
+            -pow(static_cast<double>(coords[0]) + 1.0 / sqrt(3.0), 2.0)
+            -pow(static_cast<double>(coords[1]) + 1.0 / sqrt(3.0), 2.0)
+            -pow(static_cast<double>(coords[2]) + 1.0 / sqrt(3.0), 2.0)
+        );
     }
   } objectiveB;
 
