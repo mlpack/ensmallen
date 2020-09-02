@@ -116,7 +116,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 1.4 Initialize the ideal point z.
   std::vector<arma::vec> idealPoint(1);
   idealPoint[0].resize(numObjectives);
-  std::vector<MatType> iterateWrapper(0);
+  std::vector<MatType> iterateWrapper(1);
+  iterateWrapper[0].resize(iterate.n_rows, iterate.n_cols);
+  iterateWrapper[0]=iterate;
   EvaluateObjectives(iterateWrapper, objectives, idealPoint);
 
 
@@ -135,12 +137,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       size_t k = weightNeighbourIndices(i, arma::randi(arma::distr_param(0,  neighbourhoodSize-1))),
              l = weightNeighbourIndices(i, arma::randi(arma::distr_param(0,  neighbourhoodSize-1)));
       std::vector<MatType> candidate(1);
-      if(arma::randu() < crossoverProb)
+      double determiner1 = arma::randu();
+      if(determiner1 < crossoverProb)
       {
         candidate[0].resize(iterate.n_rows, iterate.n_cols);
         for (size_t idx = 0;idx < iterate.n_rows; idx++)
         {
-          if (arma::randu() < 0.5)
+          double determiner2 = arma::randu();
+          if (determiner2 < 0.5)
             candidate[0][idx] = population[k][idx];
           else
             candidate[0][idx] = population[l][idx];
@@ -154,7 +158,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         candidate[0] = population[i];
 
       // 2.2 Improve the child.
-      Mutate(candidate[0], 1/ numObjectives,lowerBound, upperBound);
+      Mutate(candidate[0], 1 / numObjectives, lowerBound, upperBound);
 
       // Store solution for candidate.
       std::vector<arma::vec> evaluatedCandidate(1);
@@ -258,7 +262,8 @@ inline void MOEAD::Mutate(MatType& child,
 
   for(size_t j=0; j < numVariables; j++)
   {
-    if(arma::randu() <= rate)
+    double determiner = arma::randu();
+    if(determiner <= rate)
     {
       y = child[j];
       yl = lowerBound(j);
@@ -388,3 +393,4 @@ MOEAD::EvaluateObjectives(
 }
 
 #endif
+
