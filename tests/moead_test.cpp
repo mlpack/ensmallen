@@ -80,7 +80,7 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
     arma::vec lowerBound = {-1000};
     arma::vec upperBound = {1000};
 
-    MOEAD opt(150, 10, 0.6, 0.7, 1e-3, 10, 0.5, lowerBound, upperBound);
+    MOEAD opt(150, 10, 0.6, 0.7, 1e-3, 9, 0.8, lowerBound, upperBound);
 
     typedef decltype(SCH.objectiveA) ObjectiveTypeA;
     typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -92,17 +92,23 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
     opt.Optimize(objectives, coords);
     std::vector<arma::mat> bestFronts = opt.Front();
 
+    double minimumPositive = 1000;
     bool allInRange = true;
 
     for (arma::mat solution: bestFronts)
     {
       double val = arma::as_scalar(solution);
+      minimumPositive=min(minimumPositive, val>=0?val:1000);
       std::cout<<val<<"\n";
       if (val < 0.0 || val > 2.0)
       {
-        allInRange = false;
-        break;
+        if(val>2.0 || (val<0.0 && std::abs(val)>minimumPositive))
+        {
+          allInRange = false;
+          break;
+        }
       }
     }
   REQUIRE(allInRange);
 }
+
