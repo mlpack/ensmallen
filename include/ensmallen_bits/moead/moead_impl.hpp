@@ -39,6 +39,27 @@ inline MOEAD::MOEAD(const size_t populationSize,
     numObjectives(0)
   { /* Nothing to do here. */ }
 
+inline MOEAD::MOEAD(const size_t populationSize,
+                    const size_t numGeneration,
+                    const double crossoverProb,
+                    const double mutationProb,
+                    const double mutationStrength,
+                    const size_t neighbourhoodSize,
+                    const double distributionIndex,
+                    const double lowerBound,
+                    const double upperBound) :
+    populationSize(populationSize),
+    numGeneration(numGeneration),
+    crossoverProb(crossoverProb),
+    mutationProb(mutationProb),
+    mutationStrength(mutationStrength),
+    neighbourhoodSize(neighbourhoodSize),
+    distributionIndex(distributionIndex),
+    lowerBound(lowerBound * arma::ones(1, 1)),
+    upperBound(upperBound * arma::ones(1, 1)),
+    numObjectives(0)
+  { /* Nothing to do here. */ }
+
 //! Optimize the function.
 template<typename MatType,
          typename... ArbitraryFunctionType,
@@ -47,6 +68,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
                                             MatType& iterate,
                                             CallbackTypes&&... callbacks)
 {
+  // Check if lower bound is a vector of a single dimension.
+  if (lowerBound.n_rows == 1)
+    lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+
+  // Check if lower bound is a vector of a single dimension.
+  if (upperBound.n_rows == 1)
+    upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
 
@@ -393,4 +421,3 @@ MOEAD::EvaluateObjectives(
 }
 
 #endif
-
