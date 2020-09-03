@@ -59,6 +59,7 @@ class MOEAD {
    * @param mutationStrength The strength of mutation.
    * @param neighbourhoodSize The number of nearest neighbours of weights
    *    to find.
+   * @param distributionIndex The distribution index for polynomial mutation.
    * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
    * @param upperBound The upper bound on each variable of a member
@@ -71,8 +72,41 @@ class MOEAD {
         const double mutationStrength = 1e-3,
         const size_t neighbourhoodSize = 50,
         const double distributionIndex = 0.5,
-        const arma::vec& lowerBound = arma::ones(1, 1),
+        const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
+
+  /**
+   * Constructor for the MOEA/D optimizer. This constructor is provides an
+   * overload to use lowerBound and upperBound as doubles, in case all the
+   * variables in the problem have the same limits.
+   *
+   * The default values provided here are not necessarily suitable for a
+   * given function. Therefore, it is highly recommended to adjust the
+   * parameters according to the problem.
+   *
+   * @param populationSize The number of elements in the population.
+   * @param numGeneration The number of generations the algorithm runs.
+   * @param crossoverProb The probability that a crossover will occur.
+   * @param mutationProb The probability that a mutation will occur.
+   * @param mutationStrength The strength of mutation.
+   * @param neighbourhoodSize The number of nearest neighbours of weights
+   *    to find.
+   * @param distributionIndex The distribution index for polynomial mutation.
+   * @param lowerBound The lower bound on each variable of a member
+   *    of the variable space.
+   * @param upperBound The upper bound on each variable of a member
+   *    of the variable space.
+   */
+    MOEAD(const size_t populationSize = 100,
+        const size_t numGeneration = 100,
+        const double crossoverProb = 0.6,
+        const double mutationProb = 0.3,
+        const double mutationStrength = 1e-3,
+        const size_t neighbourhoodSize = 50,
+        const double distributionIndex = 0.5,
+        const double lowerBound = 0,
+        const double upperBound = 1);
+
   /**
    * Optimize a set of objectives. The initial population is generated
    * using the initial point. The output is the best generated front.
@@ -116,6 +150,11 @@ class MOEAD {
   //! Modify the size of the weight neighbourhood.
   size_t& NeighbourhoodSize() { return neighbourhoodSize; }
 
+  //! Get the value of the distribution index.
+  double DistributionIndex() const { return distributionIndex; }
+  //! Modify the value of the distribution index.
+  double& DistributionIndex() { return distributionIndex; }
+
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
@@ -137,6 +176,7 @@ class MOEAD {
    *
    * @tparam MatType The type of matrix used to store coordinates.
    * @param child The matrix to mutate.
+   * @param rate To determine whether mutation happens at a particular index.
    * @param lowerBound The lower bound on each variable in the matrix.
    * @param upperBound The upper bound on each variable in the matrix.
    */
@@ -250,3 +290,4 @@ class MOEAD {
 #include "moead_impl.hpp"
 
 #endif
+
