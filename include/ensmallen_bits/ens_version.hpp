@@ -23,9 +23,9 @@
 // contain the capitalized string "RC".
 #define ENS_VERSION_NAME  "No Direction Home"
 // Incorporate the date the version was released
-#define ENS_VERSION_YEAR  2020
-#define ENS_VERSION_MONTH 09
-#define ENS_VERSION_DAY   05
+#define ENS_VERSION_YEAR  "2020"
+#define ENS_VERSION_MONTH "09"
+#define ENS_VERSION_DAY   "05"
 
 namespace ens {
 
@@ -35,9 +35,9 @@ struct version
   static const unsigned int minor = ENS_VERSION_MINOR;
   static const unsigned int patch = ENS_VERSION_PATCH;
 
-  static const unsigned int release_year = ENS_VERSION_YEAR;
-  static const unsigned int release_month = ENS_VERSION_MONTH;
-  static const unsigned int release_day = ENS_VERSION_DAY;
+  static const std::string release_year = ENS_VERSION_YEAR;
+  static const std::string release_month = ENS_VERSION_MONTH;
+  static const std::string release_day = ENS_VERSION_DAY;
 
   static inline std::string as_string()
   {
@@ -45,8 +45,8 @@ struct version
 
     std::stringstream ss;
     ss << version::major << '.' << version::minor << '.' << version::patch
-       << ' (' << nickname << ')\n' <<
-       'Released on ' << release_year << '-' << release_month << '-' << release_day;
+       << " (" << nickname << ')\n' 
+       << "Released on " << release_year << '-' << release_month << '-' << release_day;
 
     return ss.str();
   }

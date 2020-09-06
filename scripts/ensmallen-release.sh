@@ -125,11 +125,11 @@ sed -i "s/### ensmallen ?.??.?: \"???\"/### $new_line/" HISTORY.md;
 sed -i "s/###### ????-??-??/###### $year-$month-$day/" HISTORY.md;
 
 # Update date in ens_version.hpp
-sed -i 's/ENS_VERSION_YEAR[ ]*[0-9]*$/ENS_VERSION_YEAR '$year'/' \
+sed -i 's/ENS_VERSION_YEAR[ ]*\".*\"$/ENS_VERSION_YEAR \"'"$year"'\"/' \
     include/ensmallen_bits/ens_version.hpp;
-sed -i 's/ENS_VERSION_MONTH[ ]*[0-9]*$/ENS_VERSION_MONTH '$month'/' \
+sed -i 's/ENS_VERSION_MONTH[ ]*\".*\"$/ENS_VERSION_MONTH \"'"$month"'\"/' \
     include/ensmallen_bits/ens_version.hpp;
-sed -i 's/ENS_VERSION_DAY[ ]*[0-9]*$/ENS_VERSION_DAY '$day'/' \
+sed -i 's/ENS_VERSION_DAY[ ]*\".*\"$/ENS_VERSION_DAY \"'"$day"'\"/' \
     include/ensmallen_bits/ens_version.hpp;
 
 # Now, we'll do all this on a new release branch.
