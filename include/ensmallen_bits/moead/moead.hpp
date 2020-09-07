@@ -20,13 +20,13 @@
 namespace ens {
 
 /**
- * This class implements the MOEA/D algorithm. Step numbers used in different
- * parts of the implementation correspond to the step number used in the
- * original algorithm by the author.
+ * This class implements the MOEA/D algorithm with Differential Evolution
+ * crossover. Step numbers used in different parts of the implementation
+ * correspond to the step number used in the original algorithm by the author.
  *
  * For more information, see the following:
  * @code
- * @articl{article,
+ * @article{article,
  * author = {Zhang, Qingfu and Li, Hui},
  * year = {2008},
  * month = {01},
@@ -36,6 +36,15 @@ namespace ens {
  * volume = {11},
  * journal = {Evolutionary Computation, IEEE Transactions on},
  * doi = {10.1109/TEVC.2007.892759}}
+ *
+ * @article{4633340,
+ * author={H. {Li} and Q. {Zhang}},
+ * journal={IEEE Transactions on Evolutionary Computation}, 
+ * title={Multiobjective Optimization Problems With Complicated Pareto Sets, MOEA/D and NSGA-II}, 
+ * year={2009},
+ * volume={13},
+ * number={2},
+ * pages={284-302},}
  * @endcode
  *
  * MOEA/D can optimize arbitrary multi-objective functions. For more details,
@@ -290,4 +299,5 @@ class MOEAD {
 #include "moead_impl.hpp"
 
 #endif
+
 
