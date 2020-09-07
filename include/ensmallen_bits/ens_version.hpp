@@ -35,18 +35,17 @@ struct version
   static const unsigned int minor = ENS_VERSION_MINOR;
   static const unsigned int patch = ENS_VERSION_PATCH;
 
-  static const std::string release_year = ENS_VERSION_YEAR;
-  static const std::string release_month = ENS_VERSION_MONTH;
-  static const std::string release_day = ENS_VERSION_DAY;
-
   static inline std::string as_string()
   {
     const char* nickname = ENS_VERSION_NAME;
+    const char* year = ENS_VERSION_YEAR;
+    const char* month = ENS_VERSION_MONTH;
+    const char* day = ENS_VERSION_DAY;
 
     std::stringstream ss;
     ss << version::major << '.' << version::minor << '.' << version::patch
        << " (" << nickname << ')\n' 
-       << "Released on " << release_year << '-' << release_month << '-' << release_day;
+       << "Released on " << year << '-' << month << '-' << day;
 
     return ss.str();
   }
