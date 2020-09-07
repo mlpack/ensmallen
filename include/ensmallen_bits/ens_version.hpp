@@ -44,7 +44,7 @@ struct version
 
     std::stringstream ss;
     ss << version::major << '.' << version::minor << '.' << version::patch
-       << " (" << nickname << ')\n' 
+       << " (" << nickname << ")\n" 
        << "Released on " << year << '-' << month << '-' << day;
 
     return ss.str();
