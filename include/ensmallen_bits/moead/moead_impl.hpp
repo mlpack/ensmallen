@@ -97,12 +97,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 1.1 The external population, non-dominated solutions.
   std::vector<MatType> externalPopulation;
   std::vector<arma::vec> externalPopulationFValue;
-  std::vector<size_t> shuffle(populationSize);
+  arma::Col<size_t> shuffle;
 
   // Weight vectors, where each one of them represents a decomposition.
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
-  for (size_t i = 0; i < populationSize; i++)
-    shuffle[i] = i;
 
   // 1.2 Storing the indices of nearest neighbours of each weight vector.
   arma::Mat<size_t> weightNeighbourIndices(populationSize, neighbourhoodSize);
@@ -145,7 +143,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 2 The main loop.
   for(size_t g = 0; g < numGeneration; g++)
   {
-    std::random_shuffle(shuffle.begin(), shuffle.end());
+    shuffle = arma::shuffle(arma::linspace<arma::Col<size_t> >(0, populationSize-1));
     for (size_t i : shuffle)
     {
       terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
@@ -418,4 +416,3 @@ MOEAD::EvaluateObjectives(
 }
 
 #endif
-
