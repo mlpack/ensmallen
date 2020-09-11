@@ -97,8 +97,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 1.1 The external population, non-dominated solutions.
   std::vector<MatType> externalPopulation;
   std::vector<arma::vec> externalPopulationFValue;
-  arma::Col<size_t> shuffle;
 
+  arma::Col<size_t> shuffle;
   // Weight vectors, where each one of them represents a decomposition.
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
 
@@ -143,7 +143,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 2 The main loop.
   for(size_t g = 0; g < numGeneration; g++)
   {
-    shuffle = arma::shuffle(arma::linspace<arma::Col<size_t> >(0, populationSize-1));
+    shuffle = std::get<0>(objectives).Shuffle(populationSize);
     for (size_t i : shuffle)
     {
       terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
