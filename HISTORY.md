@@ -1,5 +1,18 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+
+### ensmallen 2.14.2: "No Direction Home"
+###### 2020-08-31
+ * Fix implementation of fonesca fleming problem function f1 and f2 
+   type usage and negative signs. ([#223](https://github.com/mlpack/ensmallen/pull/223))
+
+### ensmallen 2.14.1: "No Direction Home"
+###### 2020-08-19
+ * Fix release script (remove hardcoded information, trim leading whitespaces
+   introduced by `wc -l` in MacOS)
+    ([#216](https://github.com/mlpack/ensmallen/pull/216),
+     [#220](https://github.com/mlpack/ensmallen/pull/220)).
+
  * Adjust tolerance for AugLagrangian convergence based on element type
    ([#217](https://github.com/mlpack/ensmallen/pull/217)).
    

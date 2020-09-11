@@ -23,7 +23,8 @@ if [ "$#" -gt 5 ]; then
 fi
 
 # Make sure that the branch is clean.
-lines=`git diff | wc -l`;
+# Truncate leading whitespaces since wc -l on MacOS adds an extra \t.
+lines=`git diff | wc -l | sed -e 's/^\s*//g'`;
 if [ "$lines" != "0" ]; then
   echo "git diff returned a nonzero result!";
   echo "";
@@ -132,7 +133,7 @@ git add HISTORY.md;
 git commit -m "Update and release version $MAJOR.$MINOR.$PATCH.";
 
 changelog_str=`cat HISTORY.md |\
-    awk '/^### /{f=0} /^### ensmallen 2.13.0: "Automatically Automated Automation"/{f=1} f{print}' |\
+    awk '/^### /{f=0} /^### ensmallen '"$MAJOR"'.'"$MINOR"'.'"$PATCH"': "'"$version_name"'"/{f=1} f{print}' |\
     grep -v '^#' |\
     tr '\n' '!' |\
     sed -e 's/!  [ ]*/ /g' |\
