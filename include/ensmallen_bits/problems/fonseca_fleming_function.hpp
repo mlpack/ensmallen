@@ -39,6 +39,7 @@ class FonsecaFlemingFunction
   size_t numVariables;
 
  public:
+  //! Initialize the FonsecaFlemingFunction.
   FonsecaFlemingFunction() : numObjectives(2), numVariables(3)
   {/* Nothing to do here. */}
 
@@ -71,9 +72,16 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-        return 1.0f - exp(-pow(coords[0] - 1.0f / sqrt(3), 2) -
-            - pow(coords[1] - 1.0f / sqrt(3), 2)
-            - pow(coords[2] - 1.0f / sqrt(3), 2));
+        return 1.0 - exp(
+             -pow(static_cast<double>(coords[0]) - 1.0 / sqrt(3.0), 2.0)
+             -pow(static_cast<double>(coords[1]) - 1.0 / sqrt(3.0), 2.0)
+             -pow(static_cast<double>(coords[2]) - 1.0 / sqrt(3.0), 2.0)
+        );
+    }
+    arma::Col<size_t> Shuffle(size_t& populationSize)
+    {
+      return arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
+            populationSize -1));
     }
   } objectiveA;
 
@@ -81,9 +89,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-        return 1.0f - exp(-pow(coords[0] + 1.0f / sqrt(3), 2) -
-            - pow(coords[1] + 1.0f / sqrt(3), 2)
-            - pow(coords[2] + 1.0f / sqrt(3), 2));
+      return 1.0 - exp(
+          -pow(static_cast<double>(coords[0]) + 1.0 / sqrt(3.0), 2.0)
+          -pow(static_cast<double>(coords[1]) + 1.0 / sqrt(3.0), 2.0)
+          -pow(static_cast<double>(coords[2]) + 1.0 / sqrt(3.0), 2.0)
+          );
     }
   } objectiveB;
 
