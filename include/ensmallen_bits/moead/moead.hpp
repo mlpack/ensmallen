@@ -29,29 +29,23 @@ namespace ens {
  * @article{article,
  * author = {Zhang, Qingfu and Li, Hui},
  * year = {2008},
- * month = {01},
  * pages = {712 - 731},
  * title = {MOEA/D: A Multiobjective Evolutionary Algorithm Based on
  *    Decomposition},
- * volume = {11},
  * journal = {Evolutionary Computation, IEEE Transactions on},
- * doi = {10.1109/TEVC.2007.892759}}
  *
  * @article{4633340,
  * author={H. {Li} and Q. {Zhang}},
- * journal={IEEE Transactions on Evolutionary Computation}, 
- * title={Multiobjective Optimization Problems With Complicated Pareto Sets, MOEA/D and NSGA-II}, 
  * year={2009},
- * volume={13},
- * number={2},
  * pages={284-302},}
+ * title={Multiobjective Optimization Problems With Complicated Pareto Sets, MOEA/D and NSGA-II}, 
+ * journal={IEEE Transactions on Evolutionary Computation}, 
  * @endcode
  *
  * MOEA/D can optimize arbitrary multi-objective functions. For more details,
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-
 class MOEAD {
  public:
   /**
@@ -81,6 +75,7 @@ class MOEAD {
         const double mutationStrength = 1e-3,
         const size_t neighbourhoodSize = 50,
         const double distributionIndex = 0.5,
+        const double neighbourhoodProb = 0.5,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -107,14 +102,15 @@ class MOEAD {
    *    of the variable space.
    */
     MOEAD(const size_t populationSize = 100,
-        const size_t numGeneration = 100,
-        const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3,
-        const size_t neighbourhoodSize = 50,
-        const double distributionIndex = 0.5,
-        const double lowerBound = 0,
-        const double upperBound = 1);
+          const size_t numGeneration = 100,
+          const double crossoverProb = 0.6,
+          const double mutationProb = 0.3,
+          const double mutationStrength = 1e-3,
+          const size_t neighbourhoodSize = 50,
+          const double distributionIndex = 0.5,
+          const double neighbourhoodProb = 0.5,
+          const double lowerBound = 0,
+          const double upperBound = 1);
 
   /**
    * Optimize a set of objectives. The initial population is generated
@@ -131,8 +127,8 @@ class MOEAD {
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
   typename MatType::elem_type Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                              MatType& iterate,
-                              CallbackTypes&&... callbacks);
+                                       MatType& iterate,
+                                       CallbackTypes&&... callbacks);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -164,6 +160,11 @@ class MOEAD {
   //! Modify the value of the distribution index.
   double& DistributionIndex() { return distributionIndex; }
 
+  //! Get the value of neighbourhood probability.
+  double NeighbourhoodProb() const { return neighbourhoodProb; }
+  //! Modify the value of neigbourhood probability.
+  double& NeighbourhoodProb() { return neighbourhoodProb; }
+
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
@@ -179,6 +180,7 @@ class MOEAD {
   const std::vector<arma::mat>& Front() const { return bestFront; }
 
  private:
+
   /**
    * Mutate child formed by the crossover of two random members of the 
    * population.
@@ -199,7 +201,7 @@ class MOEAD {
    * Decompose the multi objective problem to a single objetive problem
    * using the Tchebycheff approach.
    *
-   * @param weights A set of real number which act as weights.
+   * @param weights A set of)real number which act as weights.
    * @param idealPoint Ideal point z in Tchebycheff decomposition.
    * @param evaluatedCandidate Value of the candidate per objective.
    * @return The single value obtained from decomposed function.
@@ -243,22 +245,6 @@ class MOEAD {
       std::tuple<ArbitraryFunctionType...>& objectives,
       arma::mat& calculatedObjectives);
 
-  template<std::size_t I = 0,
-           typename MatType,
-           typename ...ArbitraryFunctionType>
-  typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>&,
-      std::tuple<ArbitraryFunctionType...>&,
-      std::vector<arma::vec>&);
-
-  template<std::size_t I = 0,
-           typename MatType,
-           typename ...ArbitraryFunctionType>
-  typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>& population,
-      std::tuple<ArbitraryFunctionType...>& objectives,
-      std::vector<arma::vec>& calculatedObjectives);
-
   //! Size of the population.
   size_t populationSize;
 
@@ -280,6 +266,9 @@ class MOEAD {
   //! Distribution index for the polynomial distribution.
   double distributionIndex;
 
+  //! The probability that two elements will be chosen from the neighbourhood.
+  double neighbourhoodProb;
+
   //! Lower bound on each variable in the variable space.
   arma::vec lowerBound;
 
@@ -299,5 +288,3 @@ class MOEAD {
 #include "moead_impl.hpp"
 
 #endif
-
-

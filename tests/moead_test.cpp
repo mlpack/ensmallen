@@ -43,7 +43,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
   const double strength = 1e-3;
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
-  MOEAD opt(150, 10, 0.6, 0.7, strength, 10, 0.5, lowerBound, upperBound);
+  MOEAD opt(150, 10, 0.6, 0.7, strength, 10, 0.5, 0.5, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -58,6 +58,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
+    std::cout<<valX<<" "<<valY<<" "<<valZ<<"\n";
 
     if (!InBounds(valX, expectedLowerBound, expectedUpperBound) ||
         !InBounds(valY, expectedLowerBound, expectedUpperBound) ||
@@ -80,7 +81,7 @@ TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
   const double strength = 1e-3;
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
-  MOEAD opt(150, 10, 0.6, 0.7, strength, 10, 0.5, lowerBound, upperBound);
+  MOEAD opt(150, 10, 0.6, 0.7, strength, 10, 0.5, 0.5, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -111,35 +112,36 @@ TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
  */
 TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
 {
-    SchafferFunctionN1<arma::mat> SCH;
-    double lowerBound = {-1000};
-    const double upperBound = {1000};
+  SchafferFunctionN1<arma::mat> SCH;
+  double lowerBound = {-1000};
+  const double upperBound = {1000};
 
-    MOEAD opt(150, 10, 0.6, 0.7, 1e-3, 9, 0.5, lowerBound, upperBound);
+  MOEAD opt(150, 10, 0.6, 0.7, 1e-3, 9, 0.5, 0.5, lowerBound, upperBound);
 
-    typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-    typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 
-    arma::mat coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-        SCH.GetObjectives();
+  arma::mat coords = SCH.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
+      SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    std::vector<arma::mat> bestFronts = opt.Front();
+  opt.Optimize(objectives, coords);
+  std::vector<arma::mat> bestFronts = opt.Front();
 
-    bool allInRange = true;
-    double minimumPositive = 1000;
+  bool allInRange = true;
+  double minimumPositive = 1000;
 
-    for (arma::mat solution: bestFronts)
+  for (arma::mat solution: bestFronts)
+  {
+    const double val = arma::as_scalar(solution);
+    minimumPositive = std::min(minimumPositive, val>=0 ? val : 1000);
+    std::cout<<val<<"\n";
+    if ((val < 0.0 || val > 2.0)
     {
-      const double val = arma::as_scalar(solution);
-      minimumPositive = std::min(minimumPositive, val>=0?val:1000);
-      if ((val < 0.00 && std::abs(val) >= minimumPositive) || val > 2.0)
-      {
-        allInRange = false;
-        break;
-      }
+      allInRange = false;
+      break;
     }
+  }
   REQUIRE(allInRange);
 }
 /**
@@ -147,34 +149,34 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
  */
 TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
 {
-    SchafferFunctionN1<arma::mat> SCH;
-    arma::vec lowerBound = {-1000};
-    arma::vec upperBound = {1000};
+  SchafferFunctionN1<arma::mat> SCH;
+  arma::vec lowerBound = {-1000};
+  arma::vec upperBound = {1000};
 
-    MOEAD opt(150, 10, 0.6, 0.7, 1e-3, 9, 0.5, lowerBound, upperBound);
+  MOEAD opt(150, 10, 0.6, 0.7, 1e-3, 9, 0.5, 0.5, lowerBound, upperBound);
 
-    typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-    typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 
-    arma::mat coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-        SCH.GetObjectives();
+  arma::mat coords = SCH.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
+      SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    std::vector<arma::mat> bestFronts = opt.Front();
+  opt.Optimize(objectives, coords);
+  std::vector<arma::mat> bestFronts = opt.Front();
 
-    bool allInRange = true;
-    double minimumPositive = 1000;
+  bool allInRange = true;
+  double minimumPositive = 1000;
 
-    for (arma::mat solution: bestFronts)
+  for (arma::mat solution: bestFronts)
+  {
+    double val = arma::as_scalar(solution);
+    minimumPositive = std::min(minimumPositive, val>=0 ? val : 1000);
+    if ((val < 0.00 || val > 2.0)
     {
-      double val = arma::as_scalar(solution);
-      minimumPositive = std::min(minimumPositive, val>=0?val:1000);
-      if ((val < 0.00 && std::abs(val) >= minimumPositive) || val > 2.0)
-      {
-        allInRange = false;
-        break;
-      }
+      allInRange = false;
+      break;
     }
+  }
   REQUIRE(allInRange);
 }
