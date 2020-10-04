@@ -1,5 +1,37 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+
+### ensmallen 2.14.2: "No Direction Home"
+###### 2020-08-31
+ * Fix implementation of fonesca fleming problem function f1 and f2 
+   type usage and negative signs. ([#223](https://github.com/mlpack/ensmallen/pull/223))
+
+### ensmallen 2.14.1: "No Direction Home"
+###### 2020-08-19
+ * Fix release script (remove hardcoded information, trim leading whitespaces
+   introduced by `wc -l` in MacOS)
+    ([#216](https://github.com/mlpack/ensmallen/pull/216),
+     [#220](https://github.com/mlpack/ensmallen/pull/220)).
+
+ * Adjust tolerance for AugLagrangian convergence based on element type
+   ([#217](https://github.com/mlpack/ensmallen/pull/217)).
+
+### ensmallen 2.14.0: "No Direction Home"
+###### 2020-08-10
+ * Add NSGA2 optimizer for multi-objective functions
+    ([#149](https://github.com/mlpack/ensmallen/pull/149)).
+
+ * Update automatic website update release script
+   ([#207](https://github.com/mlpack/ensmallen/pull/207)).
+
+ * Clarify and fix documentation for constrained optimizers
+   ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+
+ * Fix L-BFGS convergence when starting from a minimum
+   ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+
+### ensmallen 2.13.0: "Automatically Automated Automation"
+###### 2020-07-15
  * Fix CMake package export
     ([#198](https://github.com/mlpack/ensmallen/pull/198)).
 
@@ -9,6 +41,9 @@
   * Allow early stop callback to accept a lambda function
     ([#165](https://github.com/mlpack/ensmallen/pull/165)).
     
+ * Allow early stop callback to accept a lambda function
+   ([#165](https://github.com/mlpack/ensmallen/pull/165)).
+
 ### ensmallen 2.12.1: "Stir Crazy"
 ###### 2020-04-20
  * Fix total number of epochs and time estimation for ProgressBar callback

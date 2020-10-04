@@ -27,7 +27,8 @@ inline AugLagrangian::AugLagrangian(const size_t maxIterations,
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
     lbfgs(lbfgs),
-    terminate(false)
+    terminate(false),
+    sigma(0.0)
 {
 }
 
@@ -107,6 +108,10 @@ AugLagrangian::Optimize(
   // Track the last objective to compare for convergence.
   ElemType lastObjective = function.Evaluate(coordinates);
 
+  // Convergence tolerance---depends on the epsilon of the type we are using for
+  // optimization.
+  ElemType tolerance = 1e3 * std::numeric_limits<ElemType>::epsilon();
+
   // Then, calculate the current penalty.
   ElemType penalty = 0;
   for (size_t i = 0; i < function.NumConstraints(); i++)
@@ -134,6 +139,7 @@ AugLagrangian::Optimize(
     if (!lbfgs.Optimize(augfunc, coordinates, callbacks...))
       Info << "L-BFGS reported an error during optimization."
           << std::endl;
+    Info << "Done with L-BFGS: " << coordinates << "\n";
 
     const ElemType objective = function.Evaluate(coordinates);
 
@@ -142,7 +148,7 @@ AugLagrangian::Optimize(
 
     // Check if we are done with the entire optimization (the threshold we are
     // comparing with is arbitrary).
-    if (std::abs(lastObjective - objective) < 1e-10 &&
+    if (std::abs(lastObjective - objective) < tolerance &&
         augfunc.Sigma() > 500000)
     {
       lambda = std::move(augfunc.Lambda());
@@ -196,6 +202,13 @@ AugLagrangian::Optimize(
       // We multiply sigma by a constant value.
       augfunc.Sigma() *= sigmaUpdateFactor;
       Info << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
+      if (augfunc.Sigma() >= std::numeric_limits<ElemType>::max() / 2.0)
+      {
+        Warn << "AugLagrangian::Optimize(): sigma too large for element type; "
+            << "terminating." << std::endl;
+        Callback::EndOptimization(*this, function, coordinates, callbacks...);
+        return false;
+      }
     }
 
     terminate |= Callback::StepTaken(*this, function, coordinates,
