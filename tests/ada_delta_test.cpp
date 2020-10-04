@@ -65,11 +65,20 @@ TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDeltaTest]")
  */
 TEST_CASE("SimpleAdaDeltaTestFunctionFMat", "[AdaDeltaTest]")
 {
+  size_t trials = 3;
   SGDTestFunction f;
-  AdaDelta optimizer(1.0, 1, 0.05, 1e-6, 5000000, 1e-15, true, true);
+  arma::fmat coordinates;
 
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
+  for (size_t i = 0; i < trials; ++i)
+  {
+    coordinates = f.GetInitialPoint<arma::fmat>();
+
+    AdaDelta optimizer(2.0, 1, 0.05, 1e-6, 5000000, 1e-8, true, true);
+    optimizer.Optimize(f, coordinates);
+
+    if (arma::max(arma::vectorise(arma::abs(coordinates))) < 0.01f)
+      break;
+  }
 
   REQUIRE(coordinates(0) == Approx(0.0f).margin(0.01));
   REQUIRE(coordinates(1) == Approx(0.0f).margin(0.01));
