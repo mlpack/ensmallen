@@ -179,19 +179,28 @@ TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
  */
 TEST_CASE("BoundaryConditionTestFunction", "[CMAESTest]")
 {
-  SGDTestFunction f;
-  CMAES<> optimizer(0, -10, 10, 32, 200, -1);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  for (size_t col = 0; col < coordinates.n_cols; col++)
+  const size_t trials = 3;
+  for(size_t trail=0; trail < trials; ++trail)
   {
-    for (size_t row = 0; row < coordinates.n_rows; row++)
+    arma::mat data, testData, shuffledData;
+    arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+    LogisticRegressionTestData(data, testData, shuffledData, 
+         responses, testResponses, shuffledResponses);
+    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
+
+    CMAES<> optimizer(0, -10, 10, 32, 200, -1);
+    arma::mat coordinates = lr.GetInitialPoint();
+    optimizer.Optimize(lr, coordinates);
+
+    for (size_t col = 0; col < coordinates.n_cols; col++)
     {
-      bool success = coordinates(row, col) <= 10 && 
-                     coordinates(row, col) >= -10;
-      REQUIRE(success == true);
+      for (size_t row = 0; row < coordinates.n_rows; row++)
+      {
+        bool success = coordinates(row, col) <= 10 && 
+                       coordinates(row, col) >= -10;
+        REQUIRE(success == true);
+      }
     }
-  }
+  }  
 }
