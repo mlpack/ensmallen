@@ -1,5 +1,6 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Make a few tests more robust.
 
 ### ensmallen 2.14.2: "No Direction Home"
 ###### 2020-08-31
