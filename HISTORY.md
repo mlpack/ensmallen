@@ -1,6 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
- * Make a few tests more robust.
+ * Make a few tests more robust
+   ([#228](https://github.com/mlpack/ensmallen/pull/228)).
 
 ### ensmallen 2.14.2: "No Direction Home"
 ###### 2020-08-31
