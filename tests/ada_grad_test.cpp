@@ -63,11 +63,20 @@ TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGradTest]")
  */
 TEST_CASE("SimpleAdaGradTestFunctionFMat", "[AdaGradTest]")
 {
+  size_t trials = 3;
   SGDTestFunction f;
-  AdaGrad optimizer(0.99, 1, 1e-8, 5000000, 1e-9, true);
+  arma::fmat coordinates;
 
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
+  for (size_t i = 0; i < trials; ++i)
+  {
+    coordinates = f.GetInitialPoint<arma::fmat>();
+
+    AdaGrad optimizer(0.99, 1, 1e-8, 5000000, 1e-9, true);
+    optimizer.Optimize(f, coordinates);
+
+    if (arma::max(arma::vectorise(arma::abs(coordinates))) < 0.01f)
+      break;
+  }
 
   REQUIRE(coordinates(0) == Approx(0.0f).margin(0.01));
   REQUIRE(coordinates(1) == Approx(0.0f).margin(0.01));
