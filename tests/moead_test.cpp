@@ -136,7 +136,7 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
     const double val = arma::as_scalar(solution);
     minimumPositive = std::min(minimumPositive, val>=0 ? val : 1000);
     std::cout<<val<<"\n";
-    if ((val < 0.0 || val > 2.0)
+    if (val < 0.0 || val > 2.0)
     {
       allInRange = false;
       break;
@@ -172,7 +172,7 @@ TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
   {
     double val = arma::as_scalar(solution);
     minimumPositive = std::min(minimumPositive, val>=0 ? val : 1000);
-    if ((val < 0.00 || val > 2.0)
+    if (val < 0.00 || val > 2.0)
     {
       allInRange = false;
       break;
