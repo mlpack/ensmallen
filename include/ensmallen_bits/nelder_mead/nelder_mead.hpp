@@ -1,5 +1,5 @@
 /**
- * @file NelderMead.hpp
+ * @file nelder_mead.hpp
  * @author Marcus Edel
  *
  * Definition of an Nelder-Mead with adaptive parameters proposed by F. Gao and
