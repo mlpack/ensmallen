@@ -103,6 +103,7 @@
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
 #include "ensmallen_bits/pso/pso.hpp"
 #include "ensmallen_bits/rmsprop/rmsprop.hpp"
+#include "ensmallen_bits/nelder_mead/nelder_mead.hpp"
 
 #include "ensmallen_bits/sa/sa.hpp"
 #include "ensmallen_bits/sarah/sarah.hpp"
