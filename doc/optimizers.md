@@ -1246,7 +1246,7 @@ can be paired with the `Lookahead` optimizer.
 | `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | Adam |
 | `double` | **`stepSize`** | Step size for each iteration. | `0.5` |
 | `size_t` | **`k`** | The synchronization period. | `5` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -1277,6 +1277,61 @@ optimizer.Optimize(f, coordinates);
  * [SGD](#standard-sgd)
  * [Lookahead Optimizer: k steps forward, 1 step back](https://arxiv.org/abs/1907.08610)
  * [Differentiable separable functions](#differentiable-separable-functions)
+
+## Nelder-Mead
+
+*An optimizer for [arbitrary functions](#arbitrary-functions).*
+
+The Nelder-Mead (NM) method (also called downhill simplex method is a heuristic
+(search method for minimizing an objective function given in an N-dimensional
+space. The key concept of the method is the simplex, an N dimensional polytope
+that is a convex hull of a set of N + 1 linearly independent points. The method
+is an iterative process which transforms an initial simplex iteratively into a
+different one following a path in the space along which the function values are
+progressively reduced.
+
+#### Constructors
+
+ * `NelderMead()`
+ * `NelderMead(`_`maxIterations, tolerance, simplexer`_`)`
+ * `NelderMead(`_`alpha, beta, gamma, delta, maxIterations, tolerance, simplexer`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`alpha`** | The reflection parameter. | `` |
+| `double` | **`beta`** | The expansion parameter. | `` |
+| `double` | **`gamma`** | The contraction parameter. | `` |
+| `double` | **`delta`** | The shrink step parameter. | `` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | The final value of the objective function for termination. If set to negative value, tolerance is not considered. | `1e-15` |
+| `SimplexerType` | **`simplexer`** | The simplex policy used to construct the initial simplex. | `AffineSimplexer` |
+
+Attributes of the optimizer may also be changed via the member methods
+`Alpha()`, `Beta()`, `Gamma()`, `Delta()`, `MaxIterations()`
+`Tolerance()` and `Simplexer()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+NelderMead optimizer;
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Nelder-Mead in Wikipedia](https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method)
+ * [Arbitrary functions](#arbitrary-functions)
 
 ## LRSDP (low-rank SDP solver)
 
