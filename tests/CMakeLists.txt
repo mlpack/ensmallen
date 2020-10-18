@@ -24,6 +24,7 @@ set(ENSMALLEN_TESTS_SOURCES
     lookahead_test.cpp
     lrsdp_test.cpp
     momentum_sgd_test.cpp
+    nelder_mead_test.cpp
     nesterov_momentum_sgd_test.cpp
     nsga2_test.cpp
     parallel_sgd_test.cpp
