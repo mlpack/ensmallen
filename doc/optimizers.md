@@ -1309,7 +1309,7 @@ progressively reduced.
 | `SimplexerType` | **`simplexer`** | The simplex policy used to construct the initial simplex. | `AffineSimplexer` |
 
 Attributes of the optimizer may also be changed via the member methods
-`Alpha()`, `Beta()`, `Gamma()`, `Delta()`, `MaxIterations()`
+`Alpha()`, `Beta()`, `Gamma()`, `Delta()`, `MaxIterations()`,
 `Tolerance()` and `Simplexer()`.
 
 #### Examples:
