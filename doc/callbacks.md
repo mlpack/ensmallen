@@ -242,7 +242,7 @@ StoreBestCoordinates<arma::mat> cb;
 optimizer.Optimize(f, coordinates, cb);
 
 std::cout << "The optimized model found by AdaDelta has the "
-      << "parameters " << cb.BestCoordinatest();
+      << "parameters " << cb.BestCoordinates();
 ```
 
 </details>
