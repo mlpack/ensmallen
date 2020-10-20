@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Add Yogi optimizer
+    ([#232](https://github.com/mlpack/ensmallen/pull/232)).
 
 ### ensmallen 2.18.2: "Fairmount Bagel"
 ###### 2022-02-13
