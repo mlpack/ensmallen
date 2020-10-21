@@ -149,9 +149,6 @@ class YogiUpdate
   // The second moment coefficient.
   double beta2;
 
-  // The second quasi-hyperbolic term.
-  double v2;
-
   // The number of iterations.
   size_t iteration;
 };
