@@ -3,6 +3,9 @@
  * Make a few tests more robust
    ([#228](https://github.com/mlpack/ensmallen/pull/228)).
 
+ * Add Yogi optimizer
+    ([#232](https://github.com/mlpack/ensmallen/pull/232)).
+
 ### ensmallen 2.14.2: "No Direction Home"
 ###### 2020-08-31
  * Fix implementation of fonesca fleming problem function f1 and f2 
