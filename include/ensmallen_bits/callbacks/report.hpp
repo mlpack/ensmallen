@@ -43,7 +43,8 @@ class Report
       hasGradient(false),
       hasEndEpoch(false),
       gradientCalls(0),
-      evaluateCalls(0)
+      evaluateCalls(0),
+      epochCalls(0)
   { /* Nothing to do here. */ }
 
   /**
@@ -142,7 +143,6 @@ class Report
     if (functionStream.rdbuf()->in_avail() > 0)
       output << functionStream.str();
 
-    output << "Function:" << std::endl;
     PrettyPrintElement("Coordinates rows:", 30);
     output << coordinates.n_rows << std::endl;
     PrettyPrintElement("Coordinates columns:", 30);
@@ -168,8 +168,17 @@ class Report
     PrettyPrintElement("Iterations:", 30);
     output << objectives.size() << std::endl;
 
+    if (epochCalls > 0)
+    {
+      PrettyPrintElement("Number of epochs:", 30);
+      output << epochCalls << std::endl;
+    }
+
     if (!stepsizes.empty())
     {
+      PrettyPrintElement("Initial step size:", 30);
+      output << stepsizes.front() << std::endl;
+
       PrettyPrintElement("Final step size:", 30);
       output << stepsizes.back() << std::endl;
     }
@@ -195,6 +204,25 @@ class Report
 
     // Restore precision.
     output.precision(streamPrecision);
+  }
+
+  /**
+   * Callback function called at the beginning of a pass over the data.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param epoch The index of the current epoch.
+   * @param objective Objective value of the current point.
+   */
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void BeginEpoch(OptimizerType& /* optimizer */,
+                  FunctionType& /* function */,
+                  const MatType& /* coordinates */,
+                  const size_t /* epoch */,
+                  const double /* objective */)
+  {
+    epochCalls++;
   }
 
   /**
@@ -229,7 +257,7 @@ class Report
 
     if (hasGradient)
       gradientsNorm.push_back(gradientNorm);
-    
+
     SaveStepSize(optimizer);
   }
 
@@ -283,16 +311,17 @@ class Report
     * @param function Function to optimize.
     * @param coordinates Starting point.
     * @param constraint The index of the constraint;
-    * @param objective Objective value of the current point.
+    * @param objectiveIn Objective value of the current point.
     */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EvaluateConstraint(OptimizerType& optimizer,
-                          FunctionType& function,
-                          const MatType& coordinates,
+  void EvaluateConstraint(OptimizerType& /* optimizer */,
+                          FunctionType& /* function */,
+                          const MatType& /* coordinates */,
                           const size_t /* constraint */,
-                          const double objective)
+                          const double objectiveIn)
   {
-    Evaluate(optimizer, function, coordinates, objective);
+    objective += objectiveIn;
+    evaluateCalls++;
   }
 
   /**
@@ -369,7 +398,7 @@ class Report
       traits::HasMaxIterationsSignature<OptimizerType>::value, void>::type
   PrintMaxIterations(const OptimizerType& optimizer, std::stringstream& stream)
   {
-    PrettyPrintElement(stream, "Max. iterations:", 30);
+    PrettyPrintElement(stream, "Maximum iterations:", 30);
     stream << optimizer.MaxIterations() << std::endl;
 
     PrettyPrintElement(stream, "Reached maximum iterations:", 30);
@@ -507,7 +536,7 @@ class Report
   typename std::enable_if<!traits::HasStepSizeSignature<OptimizerType>::value,
       void>::type
   SaveStepSize(const OptimizerType& /* optimizer */) { }
-  
+
   //! The number of iterations to print in percent.
   double iterationsPercentage;
 
@@ -548,6 +577,9 @@ class Report
 
   //! The number of Evaluate() calls.
   size_t evaluateCalls;
+
+  //! The number of BeginEpoch() calls.
+  size_t epochCalls;
 
   //! Locally-stored optimization step timer object.
   arma::wall_clock optimizationTimer;
