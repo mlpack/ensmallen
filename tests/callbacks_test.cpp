@@ -160,7 +160,7 @@ void EarlyStopCallbacksLambdaFunctionTest(OptimizerType& optimizer)
 
   LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
-  
+
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
   arma::mat coordinates = lr.GetInitialPoint();
 
@@ -193,7 +193,7 @@ TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
       {
         // Terminate if any coordinate has a value less than 10.
         double minValue = arma::abs(coordinates).min();
-        return (minValue < 10.0) ? 
+        return (minValue < 10.0) ?
           std::numeric_limits<double>::max() : minValue;
       });
 
@@ -602,12 +602,12 @@ TEST_CASE("TimerStopCallbackTest", "[CallbacksTest]")
 {
   SGDTestFunction f;
   arma::mat coordinates = f.GetInitialPoint();
-  
+
   // Instantiate the optimizer with a number of iterations that will take a
   // long time to finish.
   Adam opt(0.5, 2, 0.7, 0.999, 1e-8, 2000000000, -100, false);
   arma::wall_clock timer;
-  
+
   timer.tic();
   // The optimization process should return in one second.
   opt.Optimize(f, coordinates, TimerStop(0.5));
@@ -673,14 +673,13 @@ TEST_CASE("ProgressBarCallbackEpochTest", "[CallbacksTest]")
  */
 TEST_CASE("ReportCallbackTest", "[CallbacksTest]")
 {
-  SGDTestFunction f0;
-  arma::mat coordinates = f0.GetInitialPoint();
+  std::stringstream stream;
 
+  SGDTestFunction f0;
   StandardSGD s(0.0003, 1, 10000, 1e-9, true);
 
-  std::stringstream stream;
+  arma::mat coordinates = f0.GetInitialPoint();
   s.Optimize(f0, coordinates, Report(0.1, stream));
-
   REQUIRE(stream.str().length() > 0);
 
   stream.str("");
@@ -690,11 +689,22 @@ TEST_CASE("ReportCallbackTest", "[CallbacksTest]")
 
   coordinates = f1.GetInitialPoint();
   lbfgs.Optimize(f1, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
 
   stream.str("");
   SchafferFunctionN2 f2;
   CNE cne;
+  cne.MaxGenerations() = 100;
 
   coordinates = f2.GetInitialPoint();
   cne.Optimize(f2, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  AugLagrangianTestFunction f3;
+  AugLagrangian aug;
+
+  coordinates = f3.GetInitialPoint();
+  aug.Optimize(f3, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
 }
