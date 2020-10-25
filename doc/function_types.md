@@ -557,6 +557,7 @@ The following optimizers can be used with differentiable separable functions:
  - [AdaBound](#adabound)
  - [AdaDelta](#adadelta)
  - [AdaGrad](#adagrad)
+ - [AdaSqrt](#adasqrt)
  - [Adam](#adam)
  - [AdaMax](#adamax)
  - [AMSBound](#amsbound)

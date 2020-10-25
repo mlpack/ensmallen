@@ -1,6 +1,8 @@
 /**
- * @file ada_sqrt_test.cpp
+ * @file ada_grad_test.cpp
+ * @author Abhinav Moudgil
  * @author Marcus Edel
+ * @author Conrad Sanderson
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -16,9 +18,25 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Run AdaSqrt on logistic regression and make sure the results are acceptable.
+ * Tests the Adagrad optimizer using a simple test function.
  */
-TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrtTest]")
+TEST_CASE("SimpleAdaGradTestFunction", "[AdaGradTest]")
+{
+  SGDTestFunction f;
+  AdaGrad optimizer(0.99, 1, 1e-8, 5000000, 1e-9, true);
+
+  arma::mat coordinates = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinates);
+
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.003));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(0.003));
+}
+
+/**
+ * Run AdaGrad on logistic regression and make sure the results are acceptable.
+ */
+TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGradTest]")
 {
   arma::mat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -27,9 +45,9 @@ TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrtTest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
 
-  AdaSqrt optimizer(0.01, 32, 1e-8, 5000000, 1e-9, true);
+  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
   arma::mat coordinates = lr.GetInitialPoint();
-  optimizer.Optimize(lr, coordinates);
+  adagrad.Optimize(lr, coordinates);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses, coordinates);
@@ -41,9 +59,34 @@ TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrtTest]")
 }
 
 /**
- * Run AdaSqrt on logistic regression and make sure the results are acceptable.
+ * Tests the Adagrad optimizer using a simple test function with arma::fmat.
  */
-TEST_CASE("AdaSqrtLogisticRegressionTestFMat", "[AdaSqrtTest]")
+TEST_CASE("SimpleAdaGradTestFunctionFMat", "[AdaGradTest]")
+{
+  size_t trials = 3;
+  SGDTestFunction f;
+  arma::fmat coordinates;
+
+  for (size_t i = 0; i < trials; ++i)
+  {
+    coordinates = f.GetInitialPoint<arma::fmat>();
+
+    AdaGrad optimizer(0.99, 1, 1e-8, 5000000, 1e-9, true);
+    optimizer.Optimize(f, coordinates);
+
+    if (arma::max(arma::vectorise(arma::abs(coordinates))) < 0.01f)
+      break;
+  }
+
+  REQUIRE(coordinates(0) == Approx(0.0f).margin(0.01));
+  REQUIRE(coordinates(1) == Approx(0.0f).margin(0.01));
+  REQUIRE(coordinates(2) == Approx(0.0f).margin(0.01));
+}
+
+/**
+ * Run AdaGrad on logistic regression and make sure the results are acceptable.
+ */
+TEST_CASE("AdaGradLogisticRegressionTestFMat", "[AdaGradTest]")
 {
   arma::fmat data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -52,9 +95,9 @@ TEST_CASE("AdaSqrtLogisticRegressionTestFMat", "[AdaSqrtTest]")
       responses, testResponses, shuffledResponses);
   LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
 
-  AdaSqrt optimizer(0.01, 32, 1e-8, 5000000, 1e-9, true);
+  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
   arma::fmat coordinates = lr.GetInitialPoint();
-  optimizer.Optimize(lr, coordinates);
+  adagrad.Optimize(lr, coordinates);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses, coordinates);
