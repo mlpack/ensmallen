@@ -38,17 +38,26 @@ struct version
   static inline std::string as_string()
   {
     const char* nickname = ENS_VERSION_NAME;
+
+    std::stringstream ss;
+    ss << version::major << '.' << version::minor << '.' << version::patch
+       << " (" << nickname << ")";
+
+    return ss.str();
+  }
+    
+  static inline std::string date()
+  {
     const char* year = ENS_VERSION_YEAR;
     const char* month = ENS_VERSION_MONTH;
     const char* day = ENS_VERSION_DAY;
 
     std::stringstream ss;
-    ss << version::major << '.' << version::minor << '.' << version::patch
-       << " (" << nickname << ")\n" 
-       << "Released on " << year << '-' << month << '-' << day;
+    ss << year << '-' << month << '-' << day;
 
     return ss.str();
   }
 };
+
 
 } // namespace ens
