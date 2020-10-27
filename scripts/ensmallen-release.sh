@@ -169,6 +169,6 @@ hub pull-request \
 
 echo "";
 echo "Switching back to 'master' branch.";
-echo "If you want to access the release branch again, use \`git checkout" \
+echo "If you want to access the release branch again, use \`git checkout " \
     "release-$MAJOR.$MINOR.$PATCH\`.";
 exit 0;
