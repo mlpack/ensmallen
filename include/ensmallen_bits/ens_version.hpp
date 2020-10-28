@@ -59,5 +59,4 @@ struct version
   }
 };
 
-
 } // namespace ens
