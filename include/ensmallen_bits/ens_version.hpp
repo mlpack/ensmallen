@@ -22,7 +22,7 @@
 // name will typically be a seemingly arbitrary set of words that does not
 // contain the capitalized string "RC".
 #define ENS_VERSION_NAME  "No Direction Home"
-// Incorporate the date the version was released
+// Incorporate the date the version was released.
 #define ENS_VERSION_YEAR  "2020"
 #define ENS_VERSION_MONTH "09"
 #define ENS_VERSION_DAY   "05"
