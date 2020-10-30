@@ -21,7 +21,11 @@
 // (i.e. the version name will be "RC1", "RC2", etc.).  Otherwise the version
 // name will typically be a seemingly arbitrary set of words that does not
 // contain the capitalized string "RC".
-#define ENS_VERSION_NAME "No Direction Home"
+#define ENS_VERSION_NAME  "No Direction Home"
+// Incorporate the date the version was released.
+#define ENS_VERSION_YEAR  "2020"
+#define ENS_VERSION_MONTH "09"
+#define ENS_VERSION_DAY   "05"
 
 namespace ens {
 
@@ -38,6 +42,14 @@ struct version
     std::stringstream ss;
     ss << version::major << '.' << version::minor << '.' << version::patch
        << " (" << nickname << ')';
+
+    return ss.str();
+  }
+    
+  static inline std::string date()
+  {
+    std::stringstream ss;
+    ss << ENS_VERSION_YEAR << '-' << ENS_VERSION_MONTH << '-' << ENS_VERSION_DAY;
 
     return ss.str();
   }
