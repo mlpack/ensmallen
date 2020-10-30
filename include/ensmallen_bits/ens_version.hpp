@@ -41,19 +41,15 @@ struct version
 
     std::stringstream ss;
     ss << version::major << '.' << version::minor << '.' << version::patch
-       << " (" << nickname << ")";
+       << " (" << nickname << ')';
 
     return ss.str();
   }
     
   static inline std::string date()
   {
-    const char* year = ENS_VERSION_YEAR;
-    const char* month = ENS_VERSION_MONTH;
-    const char* day = ENS_VERSION_DAY;
-
     std::stringstream ss;
-    ss << year << '-' << month << '-' << day;
+    ss << ENS_VERSION_YEAR << '-' << ENS_VERSION_MONTH << '-' << ENS_VERSION_DAY;
 
     return ss.str();
   }
