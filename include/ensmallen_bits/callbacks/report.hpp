@@ -423,7 +423,7 @@ class Report
       void>::type
   PrintBatchSize(const OptimizerType& optimizer, std::stringstream& stream)
   {
-    PrettyPrintElement(stream, "Batchsize:", 30);
+    PrettyPrintElement(stream, "Batch size:", 30);
     stream << optimizer.BatchSize() << std::endl;
   }
 
