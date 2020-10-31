@@ -450,7 +450,7 @@ class Report
   }
 
   /**
-   * Output formated data.
+   * Output formatted data.
    *
    * @param data The data to print on the given stream.
    * @param width The width of the the formatted output data.
