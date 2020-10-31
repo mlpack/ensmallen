@@ -438,7 +438,7 @@ class Report
    *
    * @param out Output stream.
    * @param data The data to print on the given stream.
-   * @param width The width of the the formated output data.
+   * @param width The width of the the formatted output data.
    */
   template<typename T>
   void PrettyPrintElement(std::ostream& out,
