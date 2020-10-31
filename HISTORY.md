@@ -3,6 +3,8 @@
  * Make a few tests more robust
    ([#228](https://github.com/mlpack/ensmallen/pull/228)).
 
+ * Add release date to version information. ([#226](https://github.com/mlpack/ensmallen/pull/226))
+ 
  * Fix typo in release script
    ([#236](https://github.com/mlpack/ensmallen/pull/236)).
 
