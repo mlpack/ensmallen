@@ -434,7 +434,7 @@ class Report
                  std::stringstream& /* stream */) { }
 
   /**
-   * Output formated data.
+   * Output formatted data.
    *
    * @param out Output stream.
    * @param data The data to print on the given stream.
