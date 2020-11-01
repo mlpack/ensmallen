@@ -37,6 +37,9 @@
  * Fix L-BFGS convergence when starting from a minimum
    ([#201](https://github.com/mlpack/ensmallen/pull/201)).
 
+* Add optimizer summary report callback 
+   ([#213](https://github.com/mlpack/ensmallen/pull/213)).
+
 ### ensmallen 2.13.0: "Automatically Automated Automation"
 ###### 2020-07-15
  * Fix CMake package export
