@@ -66,7 +66,7 @@
 #include "ensmallen_bits/utility/any.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
 
-// contains traits, must be placed before report callback
+// Contains traits, must be placed before report callback.
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
 // Callbacks.
