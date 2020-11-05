@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.15.1: "Why Can't I Manage To Grow Any Plants?"
+###### 2020-11-05
 
  * Fix include order to ensure traits is loaded before reports
    ([#239](https://github.com/mlpack/ensmallen/pull/239)).
