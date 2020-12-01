@@ -1,6 +1,9 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
 
+* Added DemonSGD and DemonAdam optimizers
+   ([#211](https://github.com/mlpack/ensmallen/pull/211)).
+
 ### ensmallen 2.15.1: "Why Can't I Manage To Grow Any Plants?"
 ###### 2020-11-05
 
