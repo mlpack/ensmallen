@@ -713,3 +713,45 @@ TEST_CASE("ProgressBarCallbackEpochTest", "[CallbacksTest]")
   s.Optimize(f, coordinates, ProgressBar(10, stream));
   REQUIRE(stream.str().find("Epoch 1/1") != std::string::npos);
 }
+
+/**
+ * Make sure the Report callback will show the report on the specified
+ * output stream.
+ */
+TEST_CASE("ReportCallbackTest", "[CallbacksTest]")
+{
+  std::stringstream stream;
+
+  SGDTestFunction f0;
+  StandardSGD s(0.0003, 1, 10000, 1e-9, true);
+
+  arma::mat coordinates = f0.GetInitialPoint();
+  s.Optimize(f0, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  RosenbrockWoodFunction f1;
+  L_BFGS lbfgs;
+  lbfgs.MaxIterations() = 100;
+
+  coordinates = f1.GetInitialPoint();
+  lbfgs.Optimize(f1, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  SchafferFunctionN2 f2;
+  CNE cne;
+  cne.MaxGenerations() = 100;
+
+  coordinates = f2.GetInitialPoint();
+  cne.Optimize(f2, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  AugLagrangianTestFunction f3;
+  AugLagrangian aug;
+
+  coordinates = f3.GetInitialPoint();
+  aug.Optimize(f3, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+}
