@@ -808,7 +808,7 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
-DemonSGD is an SGD based optimzer. DemonSGD is motivated by decaying the total
+DemonSGD is an SGD based optimizer. DemonSGD is motivated by decaying the total
 contribution of a gradient to all future updates.
 
 #### Constructors
