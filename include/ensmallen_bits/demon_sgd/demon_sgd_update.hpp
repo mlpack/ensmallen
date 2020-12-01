@@ -93,7 +93,7 @@ class DemonSGDUpdate
     { /* Nothing to do here */ }
 
     /**
-     * Update step for DamonSGD.
+     * Update step for DemonSGD.
      *
      * @param iterate Parameters that minimize the function.
      * @param stepSize Step size to be used for the given iteration.
