@@ -748,7 +748,7 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
-DemonAdam is an Adam based optimzer. DemonAdam is motivated by decaying the
+DemonAdam is an Adam based optimizer. DemonAdam is motivated by decaying the
 total contribution of a gradient to all future updates.
 
 #### Constructors
