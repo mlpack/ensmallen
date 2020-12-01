@@ -124,6 +124,14 @@ new_line="ensmallen $MAJOR.$MINOR.$PATCH: \"$version_name\"";
 sed -i "s/### ensmallen ?.??.?: \"???\"/### $new_line/" HISTORY.md;
 sed -i "s/###### ????-??-??/###### $year-$month-$day/" HISTORY.md;
 
+# Update date in ens_version.hpp
+sed -i 's/ENS_VERSION_YEAR[ ]*\".*\"$/ENS_VERSION_YEAR \"'"$year"'\"/' \
+    include/ensmallen_bits/ens_version.hpp;
+sed -i 's/ENS_VERSION_MONTH[ ]*\".*\"$/ENS_VERSION_MONTH \"'"$month"'\"/' \
+    include/ensmallen_bits/ens_version.hpp;
+sed -i 's/ENS_VERSION_DAY[ ]*\".*\"$/ENS_VERSION_DAY \"'"$day"'\"/' \
+    include/ensmallen_bits/ens_version.hpp;
+
 # Now, we'll do all this on a new release branch.
 git checkout -b release-$MAJOR.$MINOR.$PATCH;
 
@@ -169,6 +177,6 @@ hub pull-request \
 
 echo "";
 echo "Switching back to 'master' branch.";
-echo "If you want to access the release branch again, use \`git checkout" \
+echo "If you want to access the release branch again, use \`git checkout " \
     "release-$MAJOR.$MINOR.$PATCH\`.";
 exit 0;
