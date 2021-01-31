@@ -1,7 +1,7 @@
 // Example implementation of an objective function class for linear regression
 // and usage of the L-BFGS optimizer.
 // 
-// Compilatation:
+// Compilation:
 // g++ example.cpp -o example -O3 -larmadillo
 
 
