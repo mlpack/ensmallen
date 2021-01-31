@@ -1,6 +1,9 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
 
+ * expand README with example installation and add simple example program
+   showing usage of the L-BFGS optimizer
+
 ### ensmallen 2.15.1: "Why Can't I Manage To Grow Any Plants?"
 ###### 2020-11-05
 
