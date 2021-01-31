@@ -33,10 +33,10 @@ class LinearRegressionFunction
 int main(int argc, char** argv)
 {
   if (argc < 3)
-    {
+  {
     std::cout << "usage: " << argv[0] << " n_dims n_points" << std::endl;
     return -1;
-    }
+  }
   
   int n_dims   = atoi(argv[1]);
   int n_points = atoi(argv[2]);
