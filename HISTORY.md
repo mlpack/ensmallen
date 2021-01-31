@@ -2,7 +2,7 @@
 ###### ????-??-??
 
  * expand README with example installation and add simple example program
-   showing usage of the L-BFGS optimizer
+   showing usage of the L-BFGS optimizer ([#248](https://github.com/mlpack/ensmallen/pull/248)).
 
 ### ensmallen 2.15.1: "Why Can't I Manage To Grow Any Plants?"
 ###### 2020-11-05
