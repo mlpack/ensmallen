@@ -58,7 +58,8 @@ int main(int argc, char** argv)
   ens::L_BFGS opt;
   opt.MaxIterations() = 10;
   
-  arma::vec theta(n_dims, arma::fill::randu);   // initial point (uniform random)
+  // initial point (uniform random)
+  arma::vec theta(n_dims, arma::fill::randu);
   
   opt.Optimize(lrf, theta);
   
