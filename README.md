@@ -40,7 +40,7 @@ sudo make install
 
 ### Example Usage
 
-See `example.cpp` for example usage of the L-BFGS optimizer.
+See [`example.cpp`](example.cpp) for example usage of the L-BFGS optimizer in a linear regression setting.
 
 
 ### License
