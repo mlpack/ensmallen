@@ -28,6 +28,20 @@ If CMake is not already available on your system, it can be obtained from https:
 If you are using an older system such as RHEL 7 or CentOS 7,
 an updated version of CMake is also available via the EPEL repository via the `cmake3` package.
 
+Example installation:
+
+```
+mkdir build
+cd build
+cmake ..
+sudo make install
+```
+
+
+### Example Usage
+
+See [`example.cpp`](example.cpp) for example usage of the L-BFGS optimizer in a linear regression setting.
+
 
 ### License
 
@@ -36,14 +50,15 @@ Unless stated otherwise, the source code for **ensmallen** is licensed under the
 "LICENSE.txt" file.  You may also obtain a copy of the License at
 http://opensource.org/licenses/BSD-3-Clause .
 
+
 ### Citation
 
 Please cite the following paper if you use ensmallen in your research and/or
 software. Citations are useful for the continued development and maintenance of
 the library.
 
-* S. Bhardwaj, R. Curtin, M. Edel, Y. Mentekidis, C. Sanderson.
-  [ensmallen: a flexible C++ library for efficient function optimization](http://www.ensmallen.org/files/ensmallen_2018.pdf).
+* S. Bhardwaj, R. Curtin, M. Edel, Y. Mentekidis, C. Sanderson.  
+  [ensmallen: a flexible C++ library for efficient function optimization](http://www.ensmallen.org/files/ensmallen_2018.pdf).  
   Workshop on Systems for ML and Open Source Software at NIPS 2018.
 
 ```
