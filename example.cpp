@@ -54,7 +54,7 @@ int main(int argc, char** argv)
   
   LinearRegressionFunction lrf(X, y);
   
-  // create an Limited-memory BFGS optimizer object with default parameters
+  // create a Limited-memory BFGS optimizer object with default parameters
   ens::L_BFGS opt;
   opt.MaxIterations() = 10;
   
