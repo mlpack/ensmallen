@@ -57,6 +57,12 @@
  * Fix CMake package export
     ([#198](https://github.com/mlpack/ensmallen/pull/198)).
 
+ * Fix CMA-ES inconsistencies
+    ([#193](https://github.com/mlpack/ensmallen/pull/193)).
+    
+  * Allow early stop callback to accept a lambda function
+    ([#165](https://github.com/mlpack/ensmallen/pull/165)).
+    
  * Allow early stop callback to accept a lambda function
    ([#165](https://github.com/mlpack/ensmallen/pull/165)).
 
@@ -77,7 +83,7 @@
     ([#183](https://github.com/mlpack/ensmallen/pull/183)).
 
  * Remove deprecated methods from PrimalDualSolver implementation
-    ([#185](https://github.com/mlpack/ensmallen/pull/185).
+    ([#185](https://github.com/mlpack/ensmallen/pull/185)).
 
  * Update logo ([#186](https://github.com/mlpack/ensmallen/pull/186)).
 
