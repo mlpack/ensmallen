@@ -1,12 +1,14 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Expand README with example installation and add simple example program
+   showing usage of the L-BFGS optimizer
+   ([#248](https://github.com/mlpack/ensmallen/pull/248)).
 
- * expand README with example installation and add simple example program
-   showing usage of the L-BFGS optimizer ([#248](https://github.com/mlpack/ensmallen/pull/248)).
+ * Refactor tests to increase stability and reduce random errors
+   ([#249](https://github.com/mlpack/ensmallen/pull/249)).
 
 ### ensmallen 2.15.1: "Why Can't I Manage To Grow Any Plants?"
 ###### 2020-11-05
-
  * Fix include order to ensure traits is loaded before reports
    ([#239](https://github.com/mlpack/ensmallen/pull/239)).
 
@@ -16,7 +18,7 @@
    ([#228](https://github.com/mlpack/ensmallen/pull/228)).
 
  * Add release date to version information. ([#226](https://github.com/mlpack/ensmallen/pull/226))
- 
+
  * Fix typo in release script
    ([#236](https://github.com/mlpack/ensmallen/pull/236)).
 
