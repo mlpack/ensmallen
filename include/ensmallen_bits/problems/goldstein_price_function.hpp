@@ -62,8 +62,16 @@ class GoldsteinPriceFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
+  //! This was previously -2; 2.
   template<typename MatType = arma::mat>
-  MatType GetInitialPoint() const { return MatType("-2; 2"); }
+  MatType GetInitialPoint() const { return MatType("0.2; -0.5"); }
+
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("0.0; -1.0"); }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return 3.0; }
 
   /**
    * Evaluate a function for a particular batch-size.

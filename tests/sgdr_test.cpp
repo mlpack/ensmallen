@@ -59,28 +59,11 @@ TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
  */
 TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-
-  // Now run SGDR with a couple of batch sizes.
+  // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
-
-    arma::mat coordinates = lr.GetInitialPoint();
-    sgdr.Optimize(lr, coordinates);
-
-    // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-        coordinates);
-    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+    LogisticRegressionFunctionTest(sgdr, 0.003, 0.006);
   }
 }
 
@@ -90,28 +73,11 @@ TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
  */
 TEST_CASE("SGDRLogisticRegressionFMatTest","[SGDRTest]")
 {
-  arma::fmat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-
-  // Now run SGDR with a couple of batch sizes.
+  // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
-
-    arma::fmat coordinates = lr.GetInitialPoint();
-    sgdr.Optimize(lr, coordinates);
-
-    // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-        coordinates);
-    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+    LogisticRegressionFunctionTest<arma::fmat>(sgdr, 0.015, 0.03, 3);
   }
 }
 
@@ -124,28 +90,11 @@ TEST_CASE("SGDRLogisticRegressionFMatTest","[SGDRTest]")
  */
 TEST_CASE("SGDRLogisticRegressionSpMatTest","[SGDRTest]")
 {
-  arma::sp_mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-
-  // Now run SGDR with a couple of batch sizes.
+  // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegression<arma::sp_mat> lr(shuffledData, shuffledResponses, 0.5);
-
-    arma::sp_mat coordinates = lr.GetInitialPoint();
-    sgdr.Optimize(lr, coordinates);
-
-    // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-    REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-        coordinates);
-    REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+    LogisticRegressionFunctionTest<arma::sp_mat>(sgdr, 0.003, 0.006);
   }
 }
 

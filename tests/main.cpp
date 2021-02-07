@@ -22,9 +22,9 @@ int main(int argc, char** argv)
    * each run.  This is good for ensuring that a test's tolerance is sufficient
    * across many different runs.
    */
-  //size_t seed = std::time(NULL);
-  //srand((unsigned int) seed);
-  //arma::arma_rng::set_seed(seed);
+  size_t seed = std::time(NULL);
+  srand((unsigned int) seed);
+  arma::arma_rng::set_seed(seed);
 
   std::cout << "ensmallen version: " << ens::version::as_string() << std::endl;
 

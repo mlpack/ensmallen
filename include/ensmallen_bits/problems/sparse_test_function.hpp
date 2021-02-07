@@ -36,6 +36,13 @@ class SparseTestFunction
   template<typename MatType>
   MatType GetInitialPoint() const { return MatType("0 0 0 0;"); }
 
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("2.0 1.0 1.5 4.0"); }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return 123.75; }
+
   //! Evaluate a function.
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates,

@@ -44,25 +44,37 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 
-  arma::mat coords = SCH.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  std::vector<arma::mat> bestFront = opt.Front();
-
-  bool allInRange = true;
-
-  for (arma::mat solution: bestFront)
+  // We allow a few trials in case of poor convergence.
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
   {
-    double val = arma::as_scalar(solution);
+    arma::mat coords = SCH.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    if (val < 0.0 || val > 2.0)
+    opt.Optimize(objectives, coords);
+    std::vector<arma::mat> bestFront = opt.Front();
+
+    bool allInRange = true;
+
+    for (arma::mat solution: bestFront)
     {
-      allInRange = false;
+      double val = arma::as_scalar(solution);
+
+      if (val < 0.0 || val > 2.0)
+      {
+        allInRange = false;
+        break;
+      }
+    }
+
+    if (allInRange)
+    {
+      success = true;
       break;
     }
   }
-  REQUIRE(allInRange);
+
+  REQUIRE(success == true);
 }
 
 /**
@@ -70,6 +82,7 @@ TEST_CASE("NSGA2SchafferN1Test", "[NSGA2Test]")
  */
 TEST_CASE("NSGA2SchafferN1TestVectorBounds", "[NSGA2Test]")
 {
+  // This test can be a little flaky, so we try it a few times.
   SchafferFunctionN1<arma::mat> SCH;
   const arma::vec lowerBound = {-1000};
   const arma::vec upperBound = {1000};
@@ -79,25 +92,36 @@ TEST_CASE("NSGA2SchafferN1TestVectorBounds", "[NSGA2Test]")
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 
-  arma::mat coords = SCH.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  std::vector<arma::mat> bestFront = opt.Front();
-
-  bool allInRange = true;
-
-  for (arma::mat solution: bestFront)
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
   {
-    double val = arma::as_scalar(solution);
+    arma::mat coords = SCH.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    if (val < 0.0 || val > 2.0)
+    opt.Optimize(objectives, coords);
+    std::vector<arma::mat> bestFront = opt.Front();
+
+    bool allInRange = true;
+
+    for (arma::mat solution: bestFront)
     {
-      allInRange = false;
+      double val = arma::as_scalar(solution);
+
+      if (val < 0.0 || val > 2.0)
+      {
+        allInRange = false;
+        break;
+      }
+    }
+
+    if (allInRange)
+    {
+      success = true;
       break;
     }
   }
-  REQUIRE(allInRange);
+
+  REQUIRE(success == true);
 }
 
 /**
