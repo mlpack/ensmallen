@@ -57,6 +57,13 @@ class EggholderFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-333; -333"); }
 
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("512; 404.2319"); }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return -959.6407; }
+
   /**
    * Evaluate a function for a particular batch-size.
    *

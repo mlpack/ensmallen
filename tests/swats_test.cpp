@@ -22,24 +22,9 @@ using namespace ens::test;
  */
 TEST_CASE("SWATSLogisticRegressionTestFunction", "[SWATSTest]")
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
-
-  SWATS optimizer(0.01, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
-  arma::mat coordinates = lr.GetInitialPoint();
-  optimizer.Optimize(lr, coordinates);
-
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  SWATS optimizer(1e-3, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
+  // We allow a few trials in case of poor convergence.
+  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 5);
 }
 
 /**
@@ -47,14 +32,8 @@ TEST_CASE("SWATSLogisticRegressionTestFunction", "[SWATSTest]")
  */
 TEST_CASE("SWATSSphereFunctionTest", "[SWATSTest]")
 {
-  SphereFunction f(2);
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction>(optimizer, 1.0, 0.1);
 }
 
 /**
@@ -62,14 +41,8 @@ TEST_CASE("SWATSSphereFunctionTest", "[SWATSTest]")
  */
 TEST_CASE("SWATSStyblinskiTangFunctionTest", "[SWATSTest]")
 {
-  StyblinskiTangFunction f(2);
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
+  FunctionTest<StyblinskiTangFunction>(optimizer, 0.3, 0.03);
 }
 
 /**
@@ -77,14 +50,8 @@ TEST_CASE("SWATSStyblinskiTangFunctionTest", "[SWATSTest]")
  */
 TEST_CASE("SWATSStyblinskiTangFunctionFMatTest", "[SWATSTest]")
 {
-  StyblinskiTangFunction f(2);
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.1));
-  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.1));
+  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 3.0, 0.3);
 }
 
 #if ARMA_VERSION_MAJOR > 9 ||\
@@ -95,14 +62,8 @@ TEST_CASE("SWATSStyblinskiTangFunctionFMatTest", "[SWATSTest]")
  */
 TEST_CASE("SWATSStyblinskiTangFunctionSpMatTest", "[SWATSTest]")
 {
-  StyblinskiTangFunction f(2);
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01));
-  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01));
+  FunctionTest<StyblinskiTangFunction, arma::sp_mat>(optimizer, 0.3, 0.03);
 }
 
 #endif

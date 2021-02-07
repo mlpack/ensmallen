@@ -56,6 +56,13 @@ class DropWaveFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("0.5; 0.5"); }
 
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("0.0; 0.0"); }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return 0.0; }
+
   /**
    * Evaluate a function for a particular batch-size.
    *
