@@ -62,6 +62,18 @@ class SchwefelFunction
     return arma::conv_to<MatType>::from(initialPoint);
   }
 
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const
+  {
+    MatType result(initialPoint.n_rows, initialPoint.n_cols);
+    result.fill(420.9687);
+    return result;
+  }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return 0.0; }
+
   /**
    * Evaluate a function for a particular batch-size.
    *

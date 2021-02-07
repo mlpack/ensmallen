@@ -57,6 +57,13 @@ class ColvilleFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-5; 3; 1; -9"); }
 
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("1; 1; 1; 1"); }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return 0.0; }
+
   /**
    * Evaluate a function for a particular batch-size.
    *

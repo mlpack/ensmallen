@@ -29,6 +29,13 @@ class GDTestFunction
   template<typename MatType>
   MatType GetInitialPoint() const { return MatType("1; 3; 2"); }
 
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("0; 0; 0"); }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return 0.0; }
+
   //! Evaluate a function.
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;

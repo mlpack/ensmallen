@@ -46,7 +46,7 @@ class StyblinskiTangFunction
    *
    * @param n Number of dimensions for the function.
    */
-  StyblinskiTangFunction(const size_t n);
+  StyblinskiTangFunction(const size_t n = 2);
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -63,6 +63,19 @@ class StyblinskiTangFunction
   {
     return arma::conv_to<MatType>::from(initialPoint);
   }
+
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const
+  {
+    MatType result(initialPoint.n_rows, initialPoint.n_cols);
+    for (size_t i = 0; i < result.n_elem; ++i)
+      result[i] = -2.903534;
+    return result;
+  }
+
+  //! Get the final objective.
+  const double GetFinalObjective() const { return -39.16599 * n; }
 
   /**
    * Evaluate a function for a particular batch-size.
