@@ -60,7 +60,6 @@ class AckleyFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  //! This was previously -5.0, 5.0.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("0.02; 0.02"); }
 

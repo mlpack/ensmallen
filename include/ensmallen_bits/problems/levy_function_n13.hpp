@@ -49,7 +49,6 @@ class LevyFunctionN13
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  //! This was previously -10.0; 10.0.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("0.9; 1.1"); }
 
