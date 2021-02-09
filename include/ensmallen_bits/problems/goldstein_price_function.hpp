@@ -62,7 +62,6 @@ class GoldsteinPriceFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  //! This was previously -2; 2.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("0.2; -0.5"); }
 

@@ -59,7 +59,6 @@ class ThreeHumpCamelFunction
   size_t NumFunctions() const { return 1; }
 
   //! Get the starting point.
-  //! This was previously -4.5; 4.5.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("1; 1"); }
 
