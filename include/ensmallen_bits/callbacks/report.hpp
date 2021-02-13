@@ -149,6 +149,15 @@ class Report
     output << coordinates.n_cols << std::endl;
     output << std::endl;
 
+    // If we did not take any steps, at least fill what the initial objective
+    // was.
+    const bool tookStep = (objectives.size() > 0);
+    if (objectives.size() == 0)
+    {
+      objectives.push_back(function.Evaluate(coordinates));
+      timings.push_back(optimizationTimer.toc());
+    }
+
     output << "Loss:" << std::endl;
     PrettyPrintElement("Initial", 30);
     output << objectives[0] << std::endl;
@@ -166,7 +175,10 @@ class Report
       output << optimizerStream.str();
 
     PrettyPrintElement("Iterations:", 30);
-    output << objectives.size() << std::endl;
+    if (tookStep)
+      output << objectives.size() << std::endl;
+    else
+      output << "0 (No steps taken!  Did optimization fail?)" << std::endl;
 
     if (epochCalls > 0)
     {
@@ -183,7 +195,7 @@ class Report
       output << stepsizes.back() << std::endl;
     }
 
-    if (hasGradient)
+    if (hasGradient && gradientsNorm.size() > 0)
     {
       PrettyPrintElement("Coordinates max. norm:", 30);
       output << *std::max_element(std::begin(gradientsNorm),
