@@ -152,10 +152,21 @@ class Report
     // If we did not take any steps, at least fill what the initial objective
     // was.
     const bool tookStep = (objectives.size() > 0);
-    if (objectives.size() == 0)
+    if (objectives.size() == 0 && evaluateCalls > 0)
     {
-      objectives.push_back(function.Evaluate(coordinates));
+      objectives.push_back(objective);
       timings.push_back(optimizationTimer.toc());
+    }
+    else if (evaluateCalls == 0)
+    {
+      // It's not entirely clear how to compute the objective (since the
+      // function could implement many different ways of evaluating the
+      // objective), so issue an error and return.
+      output << "Objective never computed.  Did the optimization fail?"
+          << std::endl;
+      PrettyPrintElement("Time (in seconds):", 30);
+      output << optimizationTimer.toc() << std::endl;
+      return;
     }
 
     output << "Loss:" << std::endl;
