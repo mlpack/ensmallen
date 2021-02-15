@@ -178,7 +178,7 @@ class Report
     if (tookStep)
       output << objectives.size() << std::endl;
     else
-      output << "0 (No steps taken!  Did optimization fail?)" << std::endl;
+      output << "0 (No steps taken! Did the optimization fail?)" << std::endl;
 
     if (epochCalls > 0)
     {
