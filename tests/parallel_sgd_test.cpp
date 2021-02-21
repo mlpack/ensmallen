@@ -38,6 +38,7 @@ TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
 
   size_t threadsAvailable = omp_get_max_threads();
 
+  SparseTestFunction f;
   for (size_t i = threadsAvailable; i > 0; --i)
   {
     omp_set_num_threads(i);
