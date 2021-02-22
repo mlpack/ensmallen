@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix test compilation issue when `ENS_USE_OPENMP` is set
+   ([#255](https://github.com/mlpack/ensmallen/pull/255)).
 
 ### ensmallen 2.16.0: "Severely Dented Can Of Polyurethane"
 ###### 2021-02-11
