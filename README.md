@@ -33,7 +33,7 @@ Example installation:
 ```
 mkdir build
 cd build
-cMake.
+cmake ..
 sudo make install
 ```
 
