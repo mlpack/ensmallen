@@ -15,7 +15,7 @@ IRC channel on irc.freenode.net.
 Once a pull request is submitted, it must be reviewed and approved before a
 merge, to ensure that:
 
- * the design matches the rest of the ensmallen design
+ * The design matches the rest of the ensmallen design
  * the style matches the [mlpack style guide](
     https://github.com/mlpack/mlpack/wiki/DesignGuidelines#StyleGuidelines)
  * any new functionality is tested and working
@@ -23,12 +23,13 @@ merge, to ensure that:
 Please do make sure that if you contribute a new optimizer or other new
 functionality, that you've added some tests in the `tests/` directory.  And if
 you are fixing a bug, it's always nice to include a test case if possible to so
+you are fixing a bug, it's always nice to include a test case if possible so
 that the bug won't happen again.
 
 ## Build/test process
 
 All of the code for ensmallen is located in `include/ensmallen_bits/` and all of
-the tests are in `tests/`.  ensmallen is header-only, so anything in
+The tests are in `tests/`.  ensmallen is header-only, so anything in
 `include/ensmallen_bits/` must be either template methods or marked `inline`.
 
 Adding a new test can be done either by adding a new `TEST_CASE()` block to an
@@ -98,9 +99,9 @@ vcpkg install ensmallen:x64-windows
 
 ### Build and Test
 
-This section describes how to build the **ensmallen** tests from source. **ensmallen** uses CMake as its build system and [Catch2](https://github.com/catchorg/Catch2) as the unit test framework.
+This section describes how to build the **ensmallen** tests from the source. **ensmallen** uses CMake as its build system and [Catch2](https://github.com/catchorg/Catch2) as the unit test framework.
 
-First, clone the source code from Github and change into the cloned directory. Or alternatively, you can download the latest relese from the [website](http://ensmallen.org) and extract it.
+First, clone the source code from Github and change it into the cloned directory. Alternatively, you can download the latest release from the [website](http://ensmallen.org) and extract it.
 
 ```bash
 $ git clone https://github.com/mlpack/ensmallen
@@ -113,7 +114,7 @@ $ tar -xvzpf ensmallen-2.16.0.tar.gz
 $ cd ensmallen-latest
 ```
 
-Next, make a build directory and change into that directory.
+Next, make a build directory and change it into that directory.
 
 ```bash
 $ mkdir build
