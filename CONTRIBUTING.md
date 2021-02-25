@@ -22,7 +22,6 @@ merge, to ensure that:
 
 Please do make sure that if you contribute a new optimizer or other new
 functionality, that you've added some tests in the `tests/` directory.  And if
-you are fixing a bug, it's always nice to include a test case if possible to so
 you are fixing a bug, it's always nice to include a test case if possible so
 that the bug won't happen again.
 
