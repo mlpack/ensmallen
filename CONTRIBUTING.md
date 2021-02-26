@@ -100,7 +100,7 @@ vcpkg install ensmallen:x64-windows
 
 This section describes how to build the **ensmallen** tests from the source. **ensmallen** uses CMake as its build system and [Catch2](https://github.com/catchorg/Catch2) as the unit test framework.
 
-First, clone the source code from Github and change it into the cloned directory. Alternatively, you can download the latest release from the [website](http://ensmallen.org) and extract it.
+First, clone the source code from Github and change into the cloned directory. Alternatively, you can download the latest release from the [website](http://ensmallen.org) and extract it.
 
 ```bash
 $ git clone https://github.com/mlpack/ensmallen
