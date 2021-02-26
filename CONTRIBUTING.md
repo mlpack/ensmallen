@@ -113,7 +113,7 @@ $ tar -xvzpf ensmallen-2.16.0.tar.gz
 $ cd ensmallen-latest
 ```
 
-Next, make a build directory and change it into that directory.
+Next, make a build directory and change into that directory.
 
 ```bash
 $ mkdir build
