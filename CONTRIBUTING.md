@@ -28,7 +28,7 @@ that the bug won't happen again.
 ## Build/test process
 
 All of the code for ensmallen is located in `include/ensmallen_bits/` and all of
-The tests are in `tests/`.  ensmallen is header-only, so anything in
+the tests are in `tests/`.  ensmallen is header-only, so anything in
 `include/ensmallen_bits/` must be either template methods or marked `inline`.
 
 Adding a new test can be done either by adding a new `TEST_CASE()` block to an
