@@ -70,7 +70,7 @@ class GoldsteinPriceFunction
   MatType GetFinalPoint() const { return MatType("0.0; -1.0"); }
 
   //! Get the final objective.
-  const double GetFinalObjective() const { return 3.0; }
+  double GetFinalObjective() const { return 3.0; }
 
   /**
    * Evaluate a function for a particular batch-size.

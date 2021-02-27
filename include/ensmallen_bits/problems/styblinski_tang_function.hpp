@@ -75,7 +75,7 @@ class StyblinskiTangFunction
   }
 
   //! Get the final objective.
-  const double GetFinalObjective() const { return -39.16599 * n; }
+  double GetFinalObjective() const { return -39.16599 * n; }
 
   /**
    * Evaluate a function for a particular batch-size.

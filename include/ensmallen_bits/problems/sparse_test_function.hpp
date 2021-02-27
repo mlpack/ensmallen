@@ -41,7 +41,7 @@ class SparseTestFunction
   MatType GetFinalPoint() const { return MatType("2.0 1.0 1.5 4.0"); }
 
   //! Get the final objective.
-  const double GetFinalObjective() const { return 123.75; }
+  double GetFinalObjective() const { return 123.75; }
 
   //! Evaluate a function.
   template<typename MatType>

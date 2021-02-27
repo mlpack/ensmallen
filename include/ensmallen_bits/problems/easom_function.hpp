@@ -61,7 +61,7 @@ class EasomFunction
   MatType GetFinalPoint() const { return MatType("3.14; 3.14"); }
 
   //! Get the final objective.
-  const double GetFinalObjective() const { return -1.0; }
+  double GetFinalObjective() const { return -1.0; }
 
   /**
    * Evaluate a function for a particular batch-size.
