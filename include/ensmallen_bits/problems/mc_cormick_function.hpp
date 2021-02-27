@@ -61,7 +61,7 @@ class McCormickFunction
   MatType GetFinalPoint() const { return MatType("-0.54719; -1.54719"); }
 
   //! Get the final objective.
-  const double GetFinalObjective() const { return -1.9133; }
+  double GetFinalObjective() const { return -1.9133; }
 
   /**
    * Evaluate a function for a particular batch-size.

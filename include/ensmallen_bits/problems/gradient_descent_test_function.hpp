@@ -34,7 +34,7 @@ class GDTestFunction
   MatType GetFinalPoint() const { return MatType("0; 0; 0"); }
 
   //! Get the final objective.
-  const double GetFinalObjective() const { return 0.0; }
+  double GetFinalObjective() const { return 0.0; }
 
   //! Evaluate a function.
   template<typename MatType>
