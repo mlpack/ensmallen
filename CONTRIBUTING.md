@@ -15,7 +15,7 @@ IRC channel on irc.freenode.net.
 Once a pull request is submitted, it must be reviewed and approved before a
 merge, to ensure that:
 
- * The design matches the rest of the ensmallen design
+ * the design matches the rest of the ensmallen design
  * the style matches the [mlpack style guide](
     https://github.com/mlpack/mlpack/wiki/DesignGuidelines#StyleGuidelines)
  * any new functionality is tested and working
