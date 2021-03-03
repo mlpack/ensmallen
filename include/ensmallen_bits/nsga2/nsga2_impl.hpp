@@ -119,7 +119,7 @@ typename MatType::elem_type NSGA2::Optimize(
         iterate.n_cols) - 0.5 + iterate);
   }
 
-  Info << "NSGA2 initialized successfully. Optimization started." << '\n';
+  Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
 
   // Evaluate the fitness before optimization.
   for (size_t i = 0; i < population.size(); i++)
@@ -131,7 +131,7 @@ typename MatType::elem_type NSGA2::Optimize(
 
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {
-    Info << "NSGA2: iteration " << generation << "." << '\n';
+    Info << "NSGA2: iteration " << generation << "." << std::endl;
     terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
 
     // Create new population of candidate from the present elite population.
