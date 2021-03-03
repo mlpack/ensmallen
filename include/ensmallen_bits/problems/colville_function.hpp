@@ -62,7 +62,7 @@ class ColvilleFunction
   MatType GetFinalPoint() const { return MatType("1; 1; 1; 1"); }
 
   //! Get the final objective.
-  const double GetFinalObjective() const { return 0.0; }
+  double GetFinalObjective() const { return 0.0; }
 
   /**
    * Evaluate a function for a particular batch-size.
