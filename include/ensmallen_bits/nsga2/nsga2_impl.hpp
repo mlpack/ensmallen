@@ -278,7 +278,7 @@ template<typename MatType>
 inline void NSGA2::Crossover(MatType& childA,
                              MatType& childB,
                              const MatType& parentA,
-                             const MatType&  parentB)
+                             const MatType& parentB)
 {
   // Indices at which crossover is to occur.
   const arma::umat idx = arma::randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
