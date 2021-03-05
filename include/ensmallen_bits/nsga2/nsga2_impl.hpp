@@ -75,7 +75,7 @@ typename MatType::elem_type NSGA2::Optimize(
   if (lowerBound.n_rows == 1)
     lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
 
-  // Check if lower bound is a vector of a single dimension.
+  // Check if upper bound is a vector of a single dimension.
   if (upperBound.n_rows == 1)
     upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
 
