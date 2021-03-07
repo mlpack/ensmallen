@@ -75,6 +75,11 @@ class SchafferFunctionN1
     {
         return std::pow(coords[0], 2);
     }
+    arma::Col<size_t> Shuffle(size_t& populationSize)
+    {
+        return arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
+                                                                populationSize -1));
+    }
   } objectiveA;
 
   struct ObjectiveB
