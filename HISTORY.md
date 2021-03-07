@@ -80,6 +80,9 @@
 
  * Adjust tolerance for AugLagrangian convergence based on element type
    ([#217](https://github.com/mlpack/ensmallen/pull/217)).
+   
+ * Add MOEA/D optimizer for multi-objective functions
+    ([#210](https://github.com/mlpack/ensmallen/pull/210))
 
 ### ensmallen 2.14.0: "No Direction Home"
 ###### 2020-08-10
