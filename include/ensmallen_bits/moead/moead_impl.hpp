@@ -202,11 +202,11 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         }
       }
 
-	    Mutate(candidate[0], 1 / numObjectives, lowerBound, upperBound);
+	    Mutate(candidate, 1 / numObjectives, lowerBound, upperBound);
 
       // Store solution for candidate.
       arma::mat evaluatedCandidate(numObjectives, 1);
-      EvaluateObjectives(candidate, objectives, evaluatedCandidate);
+      EvaluateObjectives(std::vector<MatType>(candidate), objectives, evaluatedCandidate);
 
       // 2.3 Update of ideal point.
       for (size_t idx = 0;idx < numObjectives;++idx)
