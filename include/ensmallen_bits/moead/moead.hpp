@@ -194,7 +194,7 @@ class MOEAD {
    * @return std::tuple<int, int> 
    */
   std::tuple<int, int>
-  MatingSelection(const arma::Mat<arma::uword>& weightNeighbourIndices);
+  MatingSelection(const size_t popIdx, const arma::Mat<arma::uword>& weightNeighbourIndices);
 
   /**
    * Mutate child formed by the crossover of two random members of the 

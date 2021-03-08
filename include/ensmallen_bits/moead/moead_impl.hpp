@@ -177,7 +177,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // to make a child.
       size_t r1, r2, r3;
       r1 = i;
-      std::tie(r2, r3) = MatingSelection(weightNeighbourIndices);
+      std::tie(r2, r3) = MatingSelection(i, weightNeighbourIndices);
 
       // 2.2 Reproduction: Apply the Differential Operator on the selected indices
       // followed by Mutation.
@@ -298,15 +298,15 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 }
 
 inline std::tuple<int, int>
-MOEAD::MatingSelection(const arma::Mat<arma::uword>& weightNeighbourIndices)
+MOEAD::MatingSelection(const size_t popIdx, const arma::Mat<arma::uword>& weightNeighbourIndices)
 {
 	size_t k, l;
 	if (arma::randu() < neighborProb)
 	{
 		k = weightNeighbourIndices(
-			i, arma::randi(arma::distr_param(0, neighborSize - 1)));
+			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
 		l = weightNeighbourIndices(
-			i, arma::randi(arma::distr_param(0, neighborSize - 1)));
+			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
 		if (k == l)
 		{
 			if (k == neighborSize - 1)
