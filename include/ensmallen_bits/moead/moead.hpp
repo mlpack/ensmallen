@@ -76,6 +76,7 @@ class MOEAD {
         const size_t neighborSize = 50,
         const double distributionIndex = 0.5,
         const double neighborProb = 0.5,
+        const double scalingFactor = 0.6,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -109,6 +110,7 @@ class MOEAD {
           const size_t neighborSize = 50,
           const double distributionIndex = 0.5,
           const double neighborProb = 0.5,
+          const double scalingFactor = 0.6,
           const double lowerBound = 0,
           const double upperBound = 1);
 
