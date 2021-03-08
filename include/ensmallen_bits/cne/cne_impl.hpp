@@ -139,6 +139,8 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
     // Create next generation of species.
     Reproduce(population, fitnessValues, index);
 
+    std::cout << population[index[0]].t() << std::endl;
+
     // Check for termination criteria.
     if (std::abs(lastBestFitness - fitnessValues.min()) < tolerance)
     {
