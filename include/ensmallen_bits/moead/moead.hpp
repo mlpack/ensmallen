@@ -286,8 +286,8 @@ class MOEAD {
   //! The number of objectives in multi objective optimisation problem.
   size_t numObjectives;
 
-  //! 
-  doubel 
+  //! Scale the difference between two random points during crossover.
+  double scalingFactor;
 
   //! The Pareto Optimal Front.
   std::vector<arma::mat> bestFront;

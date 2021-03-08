@@ -174,29 +174,35 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
       // 2.2 Reproduction: Apply the Differential Operator on the selected indices
       // followed by Mutation.
-      std::vector<MatType> candidate(1);
-      double determiner1 = arma::randu();
-      if(determiner1 < crossoverProb)
+      MatType candidate(iterate.nrows, iterate.ncols); //TODO: Potentially wrong, because iterate can be a population swarm
+      double delta = arma::randu();
+      if (delta < crossoverProb)
       {
-        candidate[0].resize(iterate.n_rows, iterate.n_cols);
-        for (size_t idx = 0;idx < iterate.n_rows; ++idx)
+        for (size_t geneIdx = 0; geneIdx < iterate.n_rows, ++geneIdx)
         {
-          double determiner2 = arma::randu();
-          if (determiner2 < 0.5)
-            candidate[0][idx] = population[k][idx];
+          candidate[geneIdx] = population[r1][geneIdx] +
+                        scaleFactor * (population[r2][geneIdx] -
+                                        population[r3][geneIdx]);
+
+          // Handle boundary condition
+          if (candidate[geneIdx] < lowerBound[geneIdx])
+          {
+            candidate[geneIdx] = lowerBound[geneIdx] +
+                          arma::randu() * (population[i][geneIdx] -
+                                            lowerBound[geneIdx]);
+          }
+          else if (candidate[geneIdx] > upperBound[geneIdx])
+          {
+            candidate[geneIdx] = upperrBound[geneIdx] +
+                          arma::randu() * (upperBound[geneIdx] -
+                                            population[i][geneIdx]);
+          }
           else
-            candidate[0][idx] = population[l][idx];
-          if(candidate[0][idx] < lowerBound(idx))
-            candidate[0][idx] = lowerBound(idx);
-          if(candidate[0][idx]>upperBound(idx))
-            candidate[0][idx] = upperBound(idx);
+            candidate[geneIdx] = population[i][geneIdx];
         }
       }
-      else
-        candidate[0] = population[i];
 
-
-      Mutate(candidate[0], 1 / numObjectives, lowerBound, upperBound);
+	    Mutate(candidate[0], 1 / numObjectives, lowerBound, upperBound);
 
       // Store solution for candidate.
       arma::mat evaluatedCandidate(numObjectives, 1);
@@ -318,13 +324,6 @@ MOEAD::MatingSelection(const arma::Mat<arma::uword>& weightNeighbourIndices)
   return std::make_tuple(k, l);
 }
 
-template<typename MatType>
-MatType DifferentialCrossover(const MatType& x_r1,
-    const MatType& x_r2,
-    const MatType& x_r3)
-{
-    
-}
 //! Perform mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,
