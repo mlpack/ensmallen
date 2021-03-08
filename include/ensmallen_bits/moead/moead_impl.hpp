@@ -225,14 +225,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // 2.4 Update of the neighbouring solutions.
       for (size_t idx = 0;idx < neighborSize;++idx)
       {
-        if (DecomposedSingleObjective(weights.col(weightNeighbourIndices(i, idx)),
+        if (DecomposedSingleObjective(weights.col(weightNeighbourIndices(idx, i)),
               idealPoint.col(0), candidateFval.col(0))
             <= DecomposedSingleObjective(
-               weights.col(weightNeighbourIndices(i,idx)),
-               idealPoint.col(0), FValue.col(weightNeighbourIndices(i, idx))))
+               weights.col(weightNeighbourIndices(idx,i)),
+               idealPoint.col(0), FValue.col(weightNeighbourIndices(idx, i))))
         {
-          population.at(weightNeighbourIndices(i, idx)) = candidate[0];
-          FValue.col(weightNeighbourIndices(i, idx)) = candidateFval.col(0);
+          population.at(weightNeighbourIndices(idx, i)) = candidate[0];
+          FValue.col(weightNeighbourIndices(idx, i)) = candidateFval.col(0);
         }
       }
 
