@@ -168,31 +168,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
       // 2.1 Randomly select two indices in weightNeighbourIndices(i) and use them
       // to make a child.
-      size_t k, l;
-      if(arma::randu() < neighborProb)
-      {
-        k = weightNeighbourIndices(i, arma::randi(arma::distr_param(0,  neighborSize - 1)));
-        l = weightNeighbourIndices(i, arma::randi(arma::distr_param(0,  neighborSize - 1)));
-        if(k == l)
-        {
-          if(k == neighborSize - 1)
-            --k;
-          else
-            ++k;
-        }
-      }
-      else
-      {
-        k = arma::randi(arma::distr_param(0, populationSize - 1));
-        l = arma::randi(arma::distr_param(0, populationSize - 1));
-        if(k == l)
-        {
-          if(k == populationSize - 1)
-            --k;
-          else
-            ++k;
-        }
-      }
+      size_t r1, r2, r3;
+      r1 = i;
+      std::tie(r2, r3) = MatingSelection(weightNeighbourIndices);
+
+      // 2.2 Reproduction: Apply the Differential Operator on the selected indices
+      // followed by Mutation.
       std::vector<MatType> candidate(1);
       double determiner1 = arma::randu();
       if(determiner1 < crossoverProb)
@@ -214,7 +195,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       else
         candidate[0] = population[i];
 
-      // 2.2 Improve the child.
+
       Mutate(candidate[0], 1 / numObjectives, lowerBound, upperBound);
 
       // Store solution for candidate.
@@ -303,6 +284,47 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   return performance;
 }
 
+inline std::tuple<int, int>
+MOEAD::MatingSelection(const arma::Mat<arma::uword>& weightNeighbourIndices)
+{
+	size_t k, l;
+	if (arma::randu() < neighborProb)
+	{
+		k = weightNeighbourIndices(
+			i, arma::randi(arma::distr_param(0, neighborSize - 1)));
+		l = weightNeighbourIndices(
+			i, arma::randi(arma::distr_param(0, neighborSize - 1)));
+		if (k == l)
+		{
+			if (k == neighborSize - 1)
+				--k;
+			else
+				++k;
+		}
+	}
+	else
+	{
+		k = arma::randi(arma::distr_param(0, populationSize - 1));
+		l = arma::randi(arma::distr_param(0, populationSize - 1));
+		if (k == l)
+		{
+			if (k == populationSize - 1)
+				--k;
+			else
+				++k;
+		}
+	}
+
+  return std::make_tuple(k, l);
+}
+
+template<typename MatType>
+MatType DifferentialCrossover(const MatType& x_r1,
+    const MatType& x_r2,
+    const MatType& x_r3)
+{
+    
+}
 //! Perform mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,

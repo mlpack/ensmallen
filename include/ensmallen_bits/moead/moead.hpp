@@ -180,7 +180,28 @@ class MOEAD {
   const std::vector<arma::mat>& Front() const { return bestFront; }
 
  private:
-
+  /**
+   * @brief Randomly select two members from the population.
+   * 
+   * @param weightNeighbourIndices 
+   * @return std::tuple<int, int> 
+   */
+  std::tuple<int, int>
+  MatingSelection(const arma::Mat<arma::uword>& weightNeighbourIndices);
+  /**
+   * @brief Produces an offspring using the Differential Operator.
+   * Note that r1 != r2 != r3.
+   * 
+   * @param x_r1 The randomly chosen vector form the population
+   * @param x_r2 The randomly chosen vector from the population.
+   * @param x_r3 The randomly chosen vector from the population.
+   * @return The solution vector
+   */
+  template<typename MatType>
+  MatType DifferentialCrossover(
+      const MatType& x_r1,
+      const MatType& x_r2,
+      const MatType& x_r3);
   /**
    * Mutate child formed by the crossover of two random members of the 
    * population.
@@ -277,6 +298,9 @@ class MOEAD {
 
   //! The number of objectives in multi objective optimisation problem.
   size_t numObjectives;
+
+  //! 
+  doubel 
 
   //! The Pareto Optimal Front.
   std::vector<arma::mat> bestFront;
