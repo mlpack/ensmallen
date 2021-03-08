@@ -165,6 +165,11 @@ class MOEAD {
   //! Modify the value of neigbourhood probability.
   double& NeighborProb() { return neighborProb; }
 
+  //! Get the value of scaling factor.
+  double ScalingFactor() const { return scalingFactor; }
+  //! Modify the value of scaling factor.
+  double& ScalingFactor() { return scalingFactor; }
+
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
@@ -277,6 +282,9 @@ class MOEAD {
   //! The probability that two elements will be chosen from the neighbor.
   double neighborProb;
 
+  //! Scale the difference between two random points during crossover.
+  double scalingFactor;
+
   //! Lower bound on each variable in the variable space.
   arma::vec lowerBound;
 
@@ -285,9 +293,6 @@ class MOEAD {
 
   //! The number of objectives in multi objective optimisation problem.
   size_t numObjectives;
-
-  //! Scale the difference between two random points during crossover.
-  double scalingFactor;
 
   //! The Pareto Optimal Front.
   std::vector<arma::mat> bestFront;
