@@ -188,17 +188,17 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           if (candidate[geneIdx] < lowerBound[geneIdx])
           {
             candidate[geneIdx] = lowerBound[geneIdx] +
-                          arma::randu() * (population[i][geneIdx] -
+                          arma::randu() * (population[r1][geneIdx] -
                                             lowerBound[geneIdx]);
           }
           else if (candidate[geneIdx] > upperBound[geneIdx])
           {
             candidate[geneIdx] = upperrBound[geneIdx] +
                           arma::randu() * (upperBound[geneIdx] -
-                                            population[i][geneIdx]);
+                                            population[r1][geneIdx]);
           }
           else
-            candidate[geneIdx] = population[i][geneIdx];
+            candidate[geneIdx] = population[r1][geneIdx];
         }
       }
 
