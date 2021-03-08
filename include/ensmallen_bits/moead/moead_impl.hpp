@@ -103,8 +103,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       throw std::logic_error(oss.str());
   }
 
-  // Number of objective functions. Represented by m in the paper.
+  // Number of objective functions. Represented by M in the paper.
   numObjectives = sizeof...(ArbitraryFunctionType);
+  // Dimensionality of variable space. Also referred to as number of genes.
+  size_t numVariables = iterate.n_rows;
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -134,11 +136,16 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   std::vector<MatType> population(populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
-    population[i] = arma::randu<MatType>(iterate.n_rows, iterate.n_cols)
-        - 0.5 + iterate;
-
-    population[i] = population[i] < lowerBound ? lowerBound : population[i];
-    population[i] = population[i] > upperBound ? upperBound : population[i];
+	  population[i] =
+		  arma::randu<MatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+    
+	  for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
+	  {
+		  if (population[i][geneIdx] < lowerBound[geneIdx])
+			  population[i][geneIdx] = lowerBound[geneIdx];
+		  else if (population[i][geneIdx] > upperBound[geneIdx])
+			  population[i][geneIdx] = upperBound[geneIdx];
+	  }
   }
 
   // 1.3 F-value initialisation for the population.
@@ -178,7 +185,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       double delta = arma::randu();
       if (delta < crossoverProb)
       {
-        for (size_t geneIdx = 0; geneIdx < iterate.n_rows, ++geneIdx)
+        for (size_t geneIdx = 0; geneIdx < numVariables, ++geneIdx)
         {
           candidate[geneIdx] = population[r1][geneIdx] +
                         scaleFactor * (population[r2][geneIdx] -
