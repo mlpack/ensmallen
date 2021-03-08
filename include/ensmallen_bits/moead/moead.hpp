@@ -188,20 +188,7 @@ class MOEAD {
    */
   std::tuple<int, int>
   MatingSelection(const arma::Mat<arma::uword>& weightNeighbourIndices);
-  /**
-   * @brief Produces an offspring using the Differential Operator.
-   * Note that r1 != r2 != r3.
-   * 
-   * @param x_r1 The randomly chosen vector form the population
-   * @param x_r2 The randomly chosen vector from the population.
-   * @param x_r3 The randomly chosen vector from the population.
-   * @return The solution vector
-   */
-  template<typename MatType>
-  MatType DifferentialCrossover(
-      const MatType& x_r1,
-      const MatType& x_r2,
-      const MatType& x_r3);
+
   /**
    * Mutate child formed by the crossover of two random members of the 
    * population.
