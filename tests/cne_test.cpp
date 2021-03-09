@@ -10,7 +10,6 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#define ENS_PRINT_INFO
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -129,6 +128,8 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
   {
     arma::mat coordinates = arma::mat("0.5; 2");
     optimizer.Optimize(f, coordinates);
+
+    std::cout << "Trial: " << trial << std::endl;
 
     if (trial != 4)
     {
