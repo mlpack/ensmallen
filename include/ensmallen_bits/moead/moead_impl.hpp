@@ -24,9 +24,9 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double mutationProb,
                     const double mutationStrength,
                     const size_t neighborSize,
-                    const double scalingFactor,
                     const double distributionIndex,
                     const double neighborProb,
+                    const double scalingFactor,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
     populationSize(populationSize),
@@ -35,9 +35,9 @@ inline MOEAD::MOEAD(const size_t populationSize,
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
     neighborSize(neighborSize),
-    scalingFactor(scalingFactor),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
+    scalingFactor(scalingFactor),
     lowerBound(lowerBound),
     upperBound(upperBound),
     numObjectives(0)
@@ -49,9 +49,9 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double mutationProb,
                     const double mutationStrength,
                     const size_t neighborSize,
-                    const double scalingFactor,
                     const double distributionIndex,
                     const double neighborProb,
+                    const double scalingFactor,
                     const double lowerBound,
                     const double upperBound) :
     populationSize(populationSize),
@@ -60,9 +60,9 @@ inline MOEAD::MOEAD(const size_t populationSize,
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
     neighborSize(neighborSize),
-    scalingFactor(scalingFactor),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
+    scalingFactor(scalingFactor),
     lowerBound(lowerBound * arma::ones(1, 1)),
     upperBound(upperBound * arma::ones(1, 1)),
     numObjectives(0)
@@ -181,10 +181,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // to make a child.
       size_t r1, r2, r3;
       r1 = i;
-      P_TYPE pFlag = P_TYPE::NONE; //TODO: Perhaps a boolean with comment would be better
-	    (arma::randu < neighborProb) ? pFlag = P_TYPE::FROM_NEIGHBOR
-				                    : pFlag = P_TYPE::FROM_POPULATION;
-	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, pFlag);
+      bool sampleNeighbor; // If true, sample from neighbor; otherwise sample from population.
+      sampleNeighbor = ( arma::randu() < neighborProb ); 
+	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
 
       // 2.2 Reproduction: Apply the Differential Operator on the selected indices
       // followed by Mutation.
@@ -192,10 +191,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       double delta = arma::randu();
       if (delta < crossoverProb)
       {
-        for (size_t geneIdx = 0; geneIdx < numVariables, ++geneIdx)
+        for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
         {
           candidate[geneIdx] = population[r1][geneIdx] +
-                        scaleFactor * (population[r2][geneIdx] -
+                        scalingFactor * (population[r2][geneIdx] -
                                         population[r3][geneIdx]);
 
           // Handle boundary condition
@@ -207,7 +206,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           }
           else if (candidate[geneIdx] > upperBound[geneIdx])
           {
-            candidate[geneIdx] = upperrBound[geneIdx] +
+            candidate[geneIdx] = upperBound[geneIdx] +
                           arma::randu() * (upperBound[geneIdx] -
                                             population[r1][geneIdx]);
           }
@@ -307,10 +306,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 inline std::tuple<int, int>
 MOEAD::MatingSelection(const size_t popIdx,
     const arma::Mat<arma::uword>& neighborIndices,
-    P_TYPE pFlag)
+    bool sampleNeighbor)
 {
 	size_t k, l;
-	if (pFlag == P_TYPE::FROM_NEIGHBOR)
+	if (sampleNeighbor)
 	{
 		k = neighborIndices(
 			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
