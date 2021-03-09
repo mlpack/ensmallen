@@ -114,17 +114,17 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   // Controls early termination of the optimization process.
   bool terminate = false;
-
+  //TODO: Add more checks?
   // 1.1 The external population, non-dominated solutions.
   std::vector<MatType> externalPopulation;
   std::vector<arma::vec> externalPopulationFValue;
 
   arma::Col<size_t> shuffle;
   // The Lambda matrix. Each vector represents a decomposition subproblem.
-  arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
+  arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu); //FIXME: Should use weight generation method
 
   // 1.2 Storing the indices of nearest neighbours of each weight vector.
-  arma::Mat<arma::uword> weightNeighbourIndices(neighborSize, populationSize);
+  arma::Mat<arma::uword> neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
       // To temporarily store the distance between weights(i) and each other weights.
@@ -133,7 +133,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
               arma::sqrt(arma::sum(arma::pow(weights.col(i) - weights.each_col(), 2)));
       arma::uvec sortedIndices = arma::stable_sort_index(distances);
       // Ignore distance from self
-      weightNeighbourIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
+      neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
   }
 
   // 1.3 Random generation of the initial population.
@@ -177,14 +177,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     {
       terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
 
-      // 2.1 Randomly select two indices in weightNeighbourIndices(i) and use them
+      // 2.1 Randomly select two indices in neighborIndices(i) and use them
       // to make a child.
       size_t r1, r2, r3;
       r1 = i;
-      P_TYPE pFlag = P_TYPE::NONE;
+      P_TYPE pFlag = P_TYPE::NONE; //TODO: Perhaps a boolean with comment would be better
 	    (arma::randu < neighborProb) ? pFlag = P_TYPE::FROM_NEIGHBOR
 				                    : pFlag = P_TYPE::FROM_POPULATION;
-	    std::tie(r2, r3) = MatingSelection(i, weightNeighbourIndices, pFlag);
+	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, pFlag);
 
       // 2.2 Reproduction: Apply the Differential Operator on the selected indices
       // followed by Mutation.
@@ -229,17 +229,17 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
             candidateFval(idx, 0));
       }
 
-      // 2.4 Update of the neighbouring solutions.
+      // 2.4 Update of the neighbouring solutions. //FIXME: Sample from either the population OR neighbor based on pFlag
       for (size_t idx = 0;idx < neighborSize;++idx)
       {
-        if (DecomposedSingleObjective(weights.col(weightNeighbourIndices(idx, i)),
+        if (DecomposedSingleObjective(weights.col(neighborIndices(idx, i)),
               idealPoint.col(0), candidateFval.col(0))
             <= DecomposedSingleObjective(
-               weights.col(weightNeighbourIndices(idx,i)),
-               idealPoint.col(0), FValue.col(weightNeighbourIndices(idx, i))))
+               weights.col(neighborIndices(idx,i)),
+               idealPoint.col(0), FValue.col(neighborIndices(idx, i))))
         {
-          population.at(weightNeighbourIndices(idx, i)) = candidate[0];
-          FValue.col(weightNeighbourIndices(idx, i)) = candidateFval.col(0);
+          population.at(neighborIndices(idx, i)) = candidate[0];
+          FValue.col(neighborIndices(idx, i)) = candidateFval.col(0);
         }
       }
 
@@ -306,15 +306,15 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
 inline std::tuple<int, int>
 MOEAD::MatingSelection(const size_t popIdx,
-    const arma::Mat<arma::uword>& weightNeighbourIndices,
+    const arma::Mat<arma::uword>& neighborIndices,
     P_TYPE pFlag)
 {
 	size_t k, l;
 	if (pFlag == P_TYPE::FROM_NEIGHBOR)
 	{
-		k = weightNeighbourIndices(
+		k = neighborIndices(
 			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
-		l = weightNeighbourIndices(
+		l = neighborIndices(
 			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
 		if (k == l)
 		{
@@ -391,7 +391,8 @@ inline void MOEAD::Mutate(MatType& child,
 inline double MOEAD::DecomposedSingleObjective(const arma::vec& weights,
     const arma::vec& idealPoint,
     const arma::vec& candidateFval)
-{
+{ //FIXME: weights[i] == 0? 1e-4 : weights[i]
+  //TODO: Add more methods perhaps? (BI, TCHEBYCHEFF, WEIGHTED)
   return arma::min(weights % arma::abs(candidateFval - idealPoint));
 }
 
