@@ -24,6 +24,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double mutationProb,
                     const double mutationStrength,
                     const size_t neighborSize,
+                    const double scalingFactor,
                     const double distributionIndex,
                     const double neighborProb,
                     const arma::vec& lowerBound,
@@ -34,6 +35,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
     neighborSize(neighborSize),
+    scalingFactor(scalingFactor),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
     lowerBound(lowerBound),
@@ -47,6 +49,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double mutationProb,
                     const double mutationStrength,
                     const size_t neighborSize,
+                    const double scalingFactor,
                     const double distributionIndex,
                     const double neighborProb,
                     const double lowerBound,
@@ -57,6 +60,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
     neighborSize(neighborSize),
+    scalingFactor(scalingFactor),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
     lowerBound(lowerBound * arma::ones(1, 1)),
@@ -177,7 +181,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // to make a child.
       size_t r1, r2, r3;
       r1 = i;
-      std::tie(r2, r3) = MatingSelection(i, weightNeighbourIndices);
+      P_TYPE pFlag = P_TYPE::NONE;
+	    (arma::randu < neighborProb) ? pFlag = P_TYPE::FROM_NEIGHBOR
+				                    : pFlag = P_TYPE::FROM_POPULATION;
+	    std::tie(r2, r3) = MatingSelection(i, weightNeighbourIndices, pFlag);
 
       // 2.2 Reproduction: Apply the Differential Operator on the selected indices
       // followed by Mutation.
@@ -298,10 +305,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 }
 
 inline std::tuple<int, int>
-MOEAD::MatingSelection(const size_t popIdx, const arma::Mat<arma::uword>& weightNeighbourIndices)
+MOEAD::MatingSelection(const size_t popIdx,
+    const arma::Mat<arma::uword>& weightNeighbourIndices,
+    P_TYPE pFlag)
 {
 	size_t k, l;
-	if (arma::randu() < neighborProb)
+	if (pFlag == P_TYPE::FROM_NEIGHBOR)
 	{
 		k = weightNeighbourIndices(
 			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
