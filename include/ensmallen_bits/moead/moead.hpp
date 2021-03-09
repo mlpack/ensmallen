@@ -1,6 +1,6 @@
 /**
  * @file moead.hpp
- * @author Utkarsh Rai
+ * @authors Utkarsh Rai, Nanubala Gnana Sai
  *
  * MOEA/D, Multi Objective Evolutionary Algorithm based on Decompositon is a
  * multi objective optimization algorithm. It employs evolutionary algorithms,
@@ -62,7 +62,11 @@ class MOEAD {
    * @param mutationStrength The strength of mutation.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
-   * @param distributionIndex The distribution index for polynomial mutation.
+   * @param distributionIndex The crowding degree of the mutation.
+   * @param neighborProb The probability of sampling from neighbor.
+   * @param scalingFactor The F parameter of the differential operator.
+   * @param maxReplace The limit of solutions allowed to be replaced by a child.
+   * @param preserveDiversity Enforce preserving diversity.
    * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
    * @param upperBound The upper bound on each variable of a member
@@ -76,7 +80,9 @@ class MOEAD {
         const size_t neighborSize = 50,
         const double distributionIndex = 0.5,
         const double neighborProb = 0.5,
-        const double scalingFactor = 0.6,
+        const double scalingFactor = 0.5,
+        const size_t maxReplace = 10,
+        const bool preserveDiversity = true,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -96,7 +102,11 @@ class MOEAD {
    * @param mutationStrength The strength of mutation.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
-   * @param distributionIndex The distribution index for polynomial mutation.
+   * @param distributionIndex The crowding degree of the mutation.
+   * @param neighborProb The probability of sampling from neighbor.
+   * @param scalingFactor The F parameter of the differential operator.
+   * @param maxReplace The limit of solutions allowed to be replaced by a child.
+   * @param preserveDiversity Enforce preserving diversity.
    * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
    * @param upperBound The upper bound on each variable of a member
@@ -110,7 +120,9 @@ class MOEAD {
           const size_t neighborSize = 50,
           const double distributionIndex = 0.5,
           const double neighborProb = 0.5,
-          const double scalingFactor = 0.6,
+          const double scalingFactor = 0.5,
+          const size_t maxReplace = 10,
+          const bool preserveDiversity = true,
           const double lowerBound = 0,
           const double upperBound = 1);
 
@@ -171,6 +183,16 @@ class MOEAD {
   double ScalingFactor() const { return scalingFactor; }
   //! Modify the value of scaling factor.
   double& ScalingFactor() { return scalingFactor; }
+
+  //! Retrieve value of maxReplace.
+  size_t MaxReplace() const { return maxReplace; }
+  //! Modify value of maxReplace.
+  size_t& MaxReplace() { return maxReplace; }
+
+  //! Modify value of preserveDiversity.
+  bool PreserveDiversity() const { return preserveDiversity; }
+  //! Modify value of preserveDiversity.
+  bool& PreserveDiversity() { return preserveDiversity; }
 
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
@@ -280,7 +302,8 @@ class MOEAD {
   //! Number of nearest neighbours of weights to consider.
   size_t neighborSize;
 
-  //! Distribution index for the polynomial distribution.
+  //! The crowding degree of the mutation. Higher value produces a mutant
+  //! resembling its parent.
   double distributionIndex;
 
   //! The probability that two elements will be chosen from the neighbor.
@@ -288,6 +311,13 @@ class MOEAD {
 
   //! Scale the difference between two random points during crossover.
   double scalingFactor;
+
+  //! Maximum number of childs which can replace the parent. Higher value
+  //! leads to a loss of diversity.
+  size_t maxReplace;
+
+  //! If enabled, the optimizer favors a diversity in solutions.
+  bool preserveDiversity;
 
   //! Lower bound on each variable in the variable space.
   arma::vec lowerBound;
