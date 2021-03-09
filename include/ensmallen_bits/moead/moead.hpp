@@ -185,6 +185,13 @@ class MOEAD {
   //! Retrieve the best front (the Pareto frontier).  This returns an empty
   //! vector until `Optimize()` has been called.
   const std::vector<arma::mat>& Front() const { return bestFront; }
+  
+  enum class P_TYPE : unsigned char //TODO: Add doc
+  {
+      NONE = 0x00,
+      FROM_POPULATION = 0x01,
+      FROM_NEIGHBOR = 0x02,
+  };
 
  private:
   /**
@@ -194,7 +201,9 @@ class MOEAD {
    * @return std::tuple<int, int> 
    */
   std::tuple<int, int>
-  MatingSelection(const size_t popIdx, const arma::Mat<arma::uword>& weightNeighbourIndices);
+  MatingSelection(const size_t popIdx,
+                  const arma::Mat<arma::uword>& weightNeighbourIndices,
+                  P_TYPE pFlag);
 
   /**
    * Mutate child formed by the crossover of two random members of the 
