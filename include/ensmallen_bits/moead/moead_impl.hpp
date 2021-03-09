@@ -1,6 +1,6 @@
 /**
  * @file moead_impl.hpp
- * @author Utkarsh Rai
+ * @authors Utkarsh Rai, Nanubala Gnana Sai
  *
  * Implementation of the MOEA/D algorithm. Used for multi-objective
  * optimization problems on arbitrary functions.
@@ -27,6 +27,8 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double distributionIndex,
                     const double neighborProb,
                     const double scalingFactor,
+                    const size_t maxReplace,
+                    const bool preserveDiversity,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
     populationSize(populationSize),
@@ -38,6 +40,8 @@ inline MOEAD::MOEAD(const size_t populationSize,
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
     scalingFactor(scalingFactor),
+    maxReplace(maxReplace),
+    preserveDiversity(preserveDiversity),
     lowerBound(lowerBound),
     upperBound(upperBound),
     numObjectives(0)
@@ -52,6 +56,8 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double distributionIndex,
                     const double neighborProb,
                     const double scalingFactor,
+                    const size_t maxReplace,
+                    const bool preserveDiversity,
                     const double lowerBound,
                     const double upperBound) :
     populationSize(populationSize),
@@ -63,6 +69,8 @@ inline MOEAD::MOEAD(const size_t populationSize,
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
     scalingFactor(scalingFactor),
+    maxReplace(maxReplace),
+    preserveDiversity(preserveDiversity),
     lowerBound(lowerBound * arma::ones(1, 1)),
     upperBound(upperBound * arma::ones(1, 1)),
     numObjectives(0)
@@ -228,22 +236,24 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
             candidateFval(idx, 0));
       }
 
-      // 2.4 Update of the neighbouring solutions. //FIXME: Sample from either the population OR neighbor based on pFlag
-      for (size_t idx = 0;idx < neighborSize;++idx)
-      {
-        if (DecomposedSingleObjective(weights.col(neighborIndices(idx, i)),
-              idealPoint.col(0), candidateFval.col(0))
-            <= DecomposedSingleObjective(
-               weights.col(neighborIndices(idx,i)),
-               idealPoint.col(0), FValue.col(neighborIndices(idx, i))))
-        {
-          population.at(neighborIndices(idx, i)) = candidate[0];
-          FValue.col(neighborIndices(idx, i)) = candidateFval.col(0);
-        }
-      }
+      // 2.4 Update of the neighbouring solutions. //FIXME: MOAD implementation not MOEAD-DE
+      // for (size_t idx = 0;idx < neighborSize;++idx)
+      // {
+      //   if (DecomposedSingleObjective(weights.col(neighborIndices(idx, i)),
+      //         idealPoint.col(0), candidateFval.col(0))
+      //       <= DecomposedSingleObjective(
+      //          weights.col(neighborIndices(idx,i)),
+      //          idealPoint.col(0), FValue.col(neighborIndices(idx, i))))
+      //   {
+      //     population.at(neighborIndices(idx, i)) = candidate[0];
+      //     FValue.col(neighborIndices(idx, i)) = candidateFval.col(0);
+      //   }
+      // }
+
+      size_t replaceCounter = 0;
 
       // 2.5 Updating External Population.
-      if (!externalPopulation.empty())
+      if (!externalPopulation.empty()) //FIXME: MOAD implementation not MOEAD-DE
       {
         arma::mat first(numObjectives, 1);
         auto df = [&](MatType firstMat) -> bool
