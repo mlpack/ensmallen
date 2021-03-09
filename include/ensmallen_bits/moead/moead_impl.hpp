@@ -94,19 +94,19 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
 
-  if(lowerBound.size() != upperBound.size())
+  if (lowerBound.size() != upperBound.size())
   {
     throw std::logic_error("MOEAD::Optimize(): size of lowerBound and upperBound "
         "must be equal.");
   }
 
-  if(lowerBound.size() != iterate.n_elem)
+  if (lowerBound.size() != iterate.n_elem)
   {
     throw std::logic_error("MOEAD::Optimize(): there should be a lower bound and "
         "an upper bound for each variable in the initial point.");
   }
 
-  if(populationSize < neighborSize + 1)
+  if (populationSize < neighborSize + 1)
   {
       std::ostringstream oss;
       oss << "MOEAD::Optimize(): " << "neighborSize is " << neighborSize
@@ -123,10 +123,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // Controls early termination of the optimization process.
   bool terminate = false;
   //TODO: Add more checks?
-  // 1.1 The external population, non-dominated solutions.
-  std::vector<MatType> externalPopulation;
-  std::vector<arma::vec> externalPopulationFValue;
-
   arma::Col<size_t> shuffle;
   // The Lambda matrix. Each vector represents a decomposition subproblem.
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu); //FIXME: Should use weight generation method
@@ -161,17 +157,17 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   }
 
   // 1.3 F-value initialisation for the population.
-  arma::mat FValue(numObjectives, populationSize);
-  EvaluateObjectives(population, objectives, FValue);
+  arma::mat populationFval(numObjectives, populationSize);
+  EvaluateObjectives(population, objectives, populationFval);
 
   // 1.4 Initialize the ideal point z.
-  arma::mat idealPoint(numObjectives, 1);
-  idealPoint.fill(std::numeric_limits<ElemType>::max());
+  arma::vec idealPoint(numObjectives);
+  idealPoint.fill(std::numeric_limits<double>::max());
   for (size_t i = 0; i < numObjectives; ++i)
   {
     for (size_t j = 0; j < populationSize; ++j)
     {
-      idealPoint(i, 0) = std::min(idealPoint(i, 0), FValue(i, j));
+      idealPoint(i) = std::min(idealPoint(i), populationFval(i, j));
     }
   }
 
@@ -184,13 +180,16 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     for (size_t i : shuffle)
     {
       terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
+      
+      Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
       // 2.1 Randomly select two indices in neighborIndices(i) and use them
       // to make a child.
       size_t r1, r2, r3;
       r1 = i;
-      bool sampleNeighbor; // If true, sample from neighbor; otherwise sample from population.
-      sampleNeighbor = ( arma::randu() < neighborProb ); 
+      // When preserveDiversity is active, randomly choose from the population
+      // or the neighbors.
+      bool sampleNeighbor = ( arma::randu() < neighborProb || !preserveDiversity );
 	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
 
       // 2.2 Reproduction: Apply the Differential Operator on the selected indices
@@ -226,85 +225,52 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 	    Mutate(candidate, 1.f / numVariables, lowerBound, upperBound);
 
       // Store solution for candidate.
-      arma::mat candidateFval(numObjectives, 1);
+      arma::vec candidateFval(numObjectives);
       EvaluateObjectives(std::vector<MatType>(candidate), objectives, candidateFval);
 
       // 2.3 Update of ideal point.
       for (size_t idx = 0;idx < numObjectives;++idx)
       {
-        idealPoint(idx, 0) = std::min(idealPoint(idx, 0),
-            candidateFval(idx, 0));
+        idealPoint(idx) = std::min(idealPoint(idx),
+            candidateFval(idx));
       }
 
-      // 2.4 Update of the neighbouring solutions. //FIXME: MOAD implementation not MOEAD-DE
-      // for (size_t idx = 0;idx < neighborSize;++idx)
-      // {
-      //   if (DecomposedSingleObjective(weights.col(neighborIndices(idx, i)),
-      //         idealPoint.col(0), candidateFval.col(0))
-      //       <= DecomposedSingleObjective(
-      //          weights.col(neighborIndices(idx,i)),
-      //          idealPoint.col(0), FValue.col(neighborIndices(idx, i))))
-      //   {
-      //     population.at(neighborIndices(idx, i)) = candidate[0];
-      //     FValue.col(neighborIndices(idx, i)) = candidateFval.col(0);
-      //   }
-      // }
-
+      // 2.4 Update of the neighbouring solutions.
       size_t replaceCounter = 0;
+      size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
-      // 2.5 Updating External Population.
-      if (!externalPopulation.empty()) //FIXME: MOAD implementation not MOEAD-DE
-      {
-        arma::mat first(numObjectives, 1);
-        auto df = [&](MatType firstMat) -> bool
-        {
-          std::vector<MatType> wrapperFirst(1), wrapperSecond(1);
-          wrapperFirst[0] = firstMat;
-          EvaluateObjectives(wrapperFirst, objectives, first);
-          return Dominates(candidateFval.col(0), first.col(0));
-        };
-        //! Remove the part that is dominated by candidate.
-        externalPopulation.erase(
-            std::remove_if(
-              externalPopulation.begin(),
-              externalPopulation.end(),
-              df), externalPopulation.end());
+      arma::Col<size_t> idxShuffle = std::get<0>(objectives).Shuffle(sampleSize);
 
-        //! Check if any of the remaining members of external population dominate
-        //! candidate.
-        bool flag = 0;
-        std::vector<MatType> wrapperFirst(1);
-        for (size_t idx = 0; idx < externalPopulation.size(); ++idx)
-        {
-          wrapperFirst[0]=externalPopulation[idx];
-          first.clear();
-          first.resize(numObjectives, 1);
-          EvaluateObjectives(wrapperFirst, objectives, first);
-          if (Dominates(first.col(0), candidateFval.col(0)))
-          {
-            flag = 1;
-            break;
-          }
-        }
-        if (flag == 0)
-        {
-          externalPopulation.push_back(candidate[0]);
-          externalPopulationFValue.push_back(candidateFval.col(0));
-        }
-      }
-      else
+      for (size_t idx : idxShuffle)
       {
-        externalPopulation.push_back(candidate[0]);
-        externalPopulationFValue.push_back(candidateFval.col(0));
+        // Number of solutions shouldn't exceed maxReplace if
+        // we wish to preserve diversity.
+        if (replaceCounter >= maxReplace && preserveDiversity)
+          break;
+          
+        size_t pick = sampleNeighbor ? neighborIndices(idx, i) : idx;
+
+		    double candidateDecomposition = DecomposeObjectives(
+			    weights.col(pick), idealPoint, candidateFval);
+		    double parentDecomposition = DecomposeObjectives(
+			    weights.col(pick), idealPoint, populationFval.col(pick));
+
+        if (candidateDecomposition < parentDecomposition)
+        {
+          population[pick] = candidate;
+          populationFval.col(pick) = candidateFval;
+          replaceCounter++;
+        }
       }
     }
   }
-  bestFront = std::move(externalPopulation);
+
+  bestFront = std::move(population);
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
   ElemType performance = std::numeric_limits<ElemType>::max();
-  for (arma::Col<ElemType> objective: externalPopulationFValue)
+  for (arma::Col<ElemType> objective: populationFval)
   {
     if (arma::accu(objective) < performance)
       performance = arma::accu(objective);
@@ -397,7 +363,7 @@ inline void MOEAD::Mutate(MatType& child,
 
 //! Calculate the output for single objective function using the Tchebycheff
 //! approach.
-inline double MOEAD::DecomposedSingleObjective(const arma::vec& weights,
+inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
     const arma::vec& idealPoint,
     const arma::vec& candidateFval)
 { //FIXME: weights[i] == 0? 1e-4 : weights[i]
@@ -414,7 +380,7 @@ inline bool MOEAD::Dominates(const arma::vec& first,
     if (first(i) > second(i))
       return false;
 
-    if(first(i) < second(i))
+    if (first(i) < second(i))
       flag = 1;
   }
   if (flag)
