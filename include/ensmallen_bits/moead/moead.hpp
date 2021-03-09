@@ -189,7 +189,7 @@ class MOEAD {
   //! Modify value of maxReplace.
   size_t& MaxReplace() { return maxReplace; }
 
-  //! Modify value of preserveDiversity.
+  //! Retreive value of preserveDiversity.
   bool PreserveDiversity() const { return preserveDiversity; }
   //! Modify value of preserveDiversity.
   bool& PreserveDiversity() { return preserveDiversity; }
@@ -245,9 +245,9 @@ class MOEAD {
    * @param evaluatedCandidate Value of the candidate per objective.
    * @return The single value obtained from decomposed function.
    */
-  double DecomposedSingleObjective(const arma::vec& weights,
-                                   const arma::vec& idealPoint,
-                                   const arma::vec& evaluatedCandidate);
+  double DecomposeObjectives(const arma::vec& weights,
+                             const arma::vec& idealPoint,
+                             const arma::vec& evaluatedCandidate);
 
   /**
    * Check domination between two vectors.
