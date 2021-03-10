@@ -368,7 +368,7 @@ inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
     const arma::vec& candidateFval)
 { //FIXME: weights[i] == 0? 1e-4 : weights[i]
   //TODO: Add more methods perhaps? (BI, TCHEBYCHEFF, WEIGHTED)
-  return arma::min(weights % arma::abs(candidateFval - idealPoint));
+  return arma::max(weights % arma::abs(candidateFval - idealPoint));
 }
 
 inline bool MOEAD::Dominates(const arma::vec& first,
