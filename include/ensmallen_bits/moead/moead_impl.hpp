@@ -140,7 +140,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
   }
 
-  // 1.3 Random generation of the initial population.
+  // 1.2 Random generation of the initial population.
   std::vector<MatType> population(populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
@@ -156,11 +156,11 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 	  }
   }
 
-  // 1.3 F-value initialisation for the population.
+  // F-value initialisation for the population.
   arma::mat populationFval(numObjectives, populationSize);
   EvaluateObjectives(population, objectives, populationFval);
 
-  // 1.4 Initialize the ideal point z.
+  // 1.3 Initialize the ideal point z.
   arma::vec idealPoint(numObjectives);
   idealPoint.fill(std::numeric_limits<double>::max());
   for (size_t i = 0; i < numObjectives; ++i)
@@ -192,7 +192,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       bool sampleNeighbor = ( arma::randu() < neighborProb || !preserveDiversity );
 	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
 
-      // 2.2 Reproduction: Apply the Differential Operator on the selected indices
+      // 2.2 - 2.3 Reproduction and Repair: Apply the Differential Operator on the selected indices
       // followed by Mutation.
       MatType candidate(iterate.nrows, iterate.ncols); //TODO: Potentially wrong, because iterate can be a population swarm
       double delta = arma::randu();
@@ -228,14 +228,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       arma::vec candidateFval(numObjectives);
       EvaluateObjectives(std::vector<MatType>(candidate), objectives, candidateFval);
 
-      // 2.3 Update of ideal point.
+      // 2.4 Update of ideal point.
       for (size_t idx = 0;idx < numObjectives;++idx)
       {
         idealPoint(idx) = std::min(idealPoint(idx),
             candidateFval(idx));
       }
 
-      // 2.4 Update of the neighbouring solutions.
+      // 2.5 Update of the population.
       size_t replaceCounter = 0;
       size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
