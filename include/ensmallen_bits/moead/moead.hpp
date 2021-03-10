@@ -215,9 +215,9 @@ class MOEAD {
    * @brief Randomly select two members from the population.
    *
    * @param weightNeighbourIndices
-   * @return std::tuple<int, int>
+   * @return std::tuple<size_t, size_t>
    */
-  std::tuple<int, int>
+  std::tuple<size_t, size_t>
   MatingSelection(const size_t popIdx,
                   const arma::Mat<arma::uword>& weightNeighbourIndices,
                   bool sampleNeighbor);
