@@ -209,31 +209,34 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // Mutation.
       MatType candidate(iterate.nrows, iterate.ncols);
       double delta = arma::randu();
+      for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
+      {
+
       if (delta < crossoverProb)
       {
-        for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
-        {
-          candidate[geneIdx] = population[r1][geneIdx] +
-                        differentialWeight * (population[r2][geneIdx] -
-                                        population[r3][geneIdx]);
+        candidate[geneIdx] = population[r1][geneIdx] +
+                      differentialWeight * (population[r2][geneIdx] -
+                                      population[r3][geneIdx]);
 
-          // Handle boundary condition
-          if (candidate[geneIdx] < lowerBound[geneIdx])
-          {
-            candidate[geneIdx] = lowerBound[geneIdx] +
-                          arma::randu() * (population[r1][geneIdx] -
-                                            lowerBound[geneIdx]);
-          }
-          else if (candidate[geneIdx] > upperBound[geneIdx])
-          {
-            candidate[geneIdx] = upperBound[geneIdx] +
-                          arma::randu() * (upperBound[geneIdx] -
-                                            population[r1][geneIdx]);
-          }
-          else
-            candidate[geneIdx] = population[r1][geneIdx];
+        // Boundary conditions.
+        if (candidate[geneIdx] < lowerBound[geneIdx])
+        {
+          candidate[geneIdx] = lowerBound[geneIdx] +
+                        arma::randu() * (population[r1][geneIdx] -
+                                          lowerBound[geneIdx]);
+        }
+        if (candidate[geneIdx] > upperBound[geneIdx])
+        {
+          candidate[geneIdx] = upperBound[geneIdx] -
+                        arma::randu() * (upperBound[geneIdx] -
+                                          population[r1][geneIdx]);
         }
       }
+
+      else
+        candidate[geneIdx] = population[r1][geneIdx];
+      }
+
 
 	    Mutate(candidate, 1.f / numVariables, lowerBound, upperBound);
 
