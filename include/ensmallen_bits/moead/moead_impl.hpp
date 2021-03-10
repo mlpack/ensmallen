@@ -111,7 +111,16 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     throw std::logic_error("MOEAD::Optimize(): This is a multiobjective problem, "
         "numObjectives must be atleast 2.");
   }
-//TODO: Check if any of lowerBound is equal to upperBound
+
+  if (neighborSize > populationSize - 1u)
+  {
+      std::ostringstream oss;
+      oss << "MOEAD::Optimize(): " << "neighborSize is " << neighborSize
+          << "but populationSize is " << populationSize << "(should be"
+          << " atleast " << (neighborSize + 1u) << ")" << std::endl;
+      throw std::logic_error(oss.str());
+  }
+
   if (lowerBound.size() != upperBound.size())
   {
     throw std::logic_error("MOEAD::Optimize(): size of lowerBound and upperBound "
@@ -124,13 +133,17 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         "an upper bound for each variable in the initial point.");
   }
 
-  if (neighborSize > populationSize - 1u)
+  for(size_t geneIdx = 0; geneIdx < lowerBound.size(); geneIdx++)
   {
-      std::ostringstream oss;
-      oss << "MOEAD::Optimize(): " << "neighborSize is " << neighborSize
-          << "but populationSize is " << populationSize << "(should be"
-          << " atleast " << (neighborSize + 1u) << ")" << std::endl;
-      throw std::logic_error(oss.str());
+      if(lowerBound[geneIdx] >= upperBound[geneIdx])
+      {
+        std::ostringstream ss;
+        ss << "MOEAD::Optimize():" << "the lowerBound value: " << lowerBound[geneIdx]
+            << " is greater than upperBound value: " << upperBound[geneIdx]
+            << " at index: " << geneIdx << std::endl;
+
+        throw std::logic_error(ss.str());
+      }
   }
 
   bool terminate = false;
@@ -138,7 +151,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   arma::Col<size_t> shuffle;
   // The weight matrix. Each vector represents a decomposition subproblem.
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
-  weights += 1e-10; //Handles zero weight case.
+  weights += arma::datum::eps; // Numerical stability
 
   // 1.2 Storing the indices of nearest neighbors of each weight vector.
   arma::Mat<arma::uword> neighborIndices(neighborSize, populationSize);
