@@ -15,6 +15,7 @@
 #define ENSMALLEN_MOEAD_MOEAD_IMPL_HPP
 
 #include "moead.hpp"
+#include <assert.h>
 
 namespace ens {
 
@@ -123,7 +124,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         "an upper bound for each variable in the initial point.");
   }
 
-  if (populationSize < neighborSize + 1u)
+  if (neighborSize > populationSize - 1u)
   {
       std::ostringstream oss;
       oss << "MOEAD::Optimize(): " << "neighborSize is " << neighborSize
@@ -291,21 +292,23 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 }
 
 //! Randomly chooses to select from parents or neighbors.
-inline std::tuple<int, int>
+inline std::tuple<size_t, size_t>
 MOEAD::MatingSelection(const size_t popIdx,
     const arma::Mat<arma::uword>& neighborIndices,
     bool sampleNeighbor)
 {
 	size_t k, l;
+  assert(neighborSize > 1u);
+
 	if (sampleNeighbor)
 	{
 		k = neighborIndices(
-			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
+			arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx);
 		l = neighborIndices(
-			arma::randi(arma::distr_param(0, neighborSize - 1)), popIdx);
+			arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx);
 		if (k == l)
 		{
-			if (k == neighborSize - 1)
+			if (k == neighborSize - 1u)
 				--k;
 			else
 				++k;
@@ -313,11 +316,11 @@ MOEAD::MatingSelection(const size_t popIdx,
 	}
 	else
 	{
-		k = arma::randi(arma::distr_param(0, populationSize - 1));
-		l = arma::randi(arma::distr_param(0, populationSize - 1));
+		k = arma::randi(arma::distr_param(0, populationSize - 1u));
+		l = arma::randi(arma::distr_param(0, populationSize - 1u));
 		if (k == l)
 		{
-			if (k == populationSize - 1)
+			if (k == populationSize - 1u)
 				--k;
 			else
 				++k;
