@@ -64,7 +64,8 @@ class MOEAD {
    *    to find.
    * @param distributionIndex The crowding degree of the mutation.
    * @param neighborProb The probability of sampling from neighbor.
-   * @param scalingFactor The F parameter of the differential operator.
+   * @param differentialWeight A parameter used in the mutation of candidate
+   *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
    * @param preserveDiversity Enforce preserving diversity.
    * @param lowerBound The lower bound on each variable of a member
@@ -80,7 +81,7 @@ class MOEAD {
         const size_t neighborSize = 50,
         const double distributionIndex = 0.5,
         const double neighborProb = 0.5,
-        const double scalingFactor = 0.5,
+        const double differentialWeight = 0.8,
         const size_t maxReplace = 10,
         const bool preserveDiversity = true,
         const arma::vec& lowerBound = arma::zeros(1, 1),
@@ -104,7 +105,8 @@ class MOEAD {
    *    to find.
    * @param distributionIndex The crowding degree of the mutation.
    * @param neighborProb The probability of sampling from neighbor.
-   * @param scalingFactor The F parameter of the differential operator.
+   * @param differentialWeight A parameter used in the mutation of candidate
+   *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
    * @param preserveDiversity Enforce preserving diversity.
    * @param lowerBound The lower bound on each variable of a member
@@ -120,7 +122,7 @@ class MOEAD {
           const size_t neighborSize = 50,
           const double distributionIndex = 0.5,
           const double neighborProb = 0.5,
-          const double scalingFactor = 0.5,
+          const double differentialWeight = 0.8,
           const size_t maxReplace = 10,
           const bool preserveDiversity = true,
           const double lowerBound = 0,
@@ -144,45 +146,45 @@ class MOEAD {
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks);
 
-  //! Get the population size.
+  //! Retrieve population size.
   size_t PopulationSize() const { return populationSize; }
   //! Modify the population size.
   size_t& PopulationSize() { return populationSize; }
 
-  //! Get the number of generations.
+  //! Retrieve number of generations.
   size_t NumGeneration() const { return numGeneration; }
   //! Modify the number of generations.
   size_t& NumGeneration() { return numGeneration; }
 
-  //! Get the crossover rate.
+  //! Retrieve crossover rate.
   double CrossoverRate() const { return crossoverProb; }
   //! Modify the crossover rate.
   double& CrossoverRate() { return crossoverProb; }
 
-  //! Get the mutation probability.
+  //! Retrieve mutation probability.
   double MutationProbability() const { return mutationProb; }
   //! Modify the mutation probability.
   double& MutationProbability() { return mutationProb; }
 
-  //! Get the size of the weight neighbor.
+  //! Retrieve size of the weight neighbor.
   size_t NeighborSize() const { return neighborSize; }
   //! Modify the size of the weight neighbor.
   size_t& NeighborSize() { return neighborSize; }
 
-  //! Get the value of the distribution index.
+  //! Retrieve value of the distribution index.
   double DistributionIndex() const { return distributionIndex; }
   //! Modify the value of the distribution index.
   double& DistributionIndex() { return distributionIndex; }
 
-  //! Get the value of neighbor probability.
+  //! Retrieve value of neighbor probability.
   double NeighborProb() const { return neighborProb; }
   //! Modify the value of neigbourhood probability.
   double& NeighborProb() { return neighborProb; }
 
-  //! Get the value of scaling factor.
-  double ScalingFactor() const { return scalingFactor; }
+  //! Retrieve value of scaling factor.
+  double differentialWeight() const { return differentialWeight; }
   //! Modify the value of scaling factor.
-  double& ScalingFactor() { return scalingFactor; }
+  double& differentialWeight() { return differentialWeight; }
 
   //! Retrieve value of maxReplace.
   size_t MaxReplace() const { return maxReplace; }
@@ -309,8 +311,8 @@ class MOEAD {
   //! The probability that two elements will be chosen from the neighbor.
   double neighborProb;
 
-  //! Scale the difference between two random points during crossover.
-  double scalingFactor;
+  //! Amplification factor for differentiation.
+  double differentialWeight;
 
   //! Maximum number of childs which can replace the parent. Higher value
   //! leads to a loss of diversity.
