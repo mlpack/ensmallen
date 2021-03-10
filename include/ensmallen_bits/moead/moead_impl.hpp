@@ -238,7 +238,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       }
 
 
-	    Mutate(candidate, 1.f / numVariables, lowerBound, upperBound);
+	    Mutate(candidate, 1.f / static_cast<double>(numVariables), lowerBound, upperBound);
 
       arma::vec candidateFval(numObjectives);
       EvaluateObjectives(std::vector<MatType>(candidate), objectives, candidateFval);
@@ -347,7 +347,7 @@ inline void MOEAD::Mutate(MatType& child,
   for (size_t j = 0; j < numVariables; ++j)
   {
     double determiner = arma::randu();
-    if (determiner <= rate)
+    if (determiner <= rate && lowerBound(j) != upperBound(j))
     {
       current = child[j];
       currentLower = lowerBound(j);
@@ -367,8 +367,8 @@ inline void MOEAD::Mutate(MatType& child,
       {
         upperDelta = 1.0 - delta2;
         value = 2.0 * (1.0 - rnd) + 2.0 * (rnd - 0.5) *
-            (pow(upperDelta, (distributionIndex + 1.0)));
-        deltaq = 1.0 - (pow(value, mutationPower));
+            (std::pow(upperDelta, (distributionIndex + 1.0)));
+        deltaq = 1.0 - (std::pow(value, mutationPower));
       }
 
       current += deltaq * (currentUpper - currentLower);
