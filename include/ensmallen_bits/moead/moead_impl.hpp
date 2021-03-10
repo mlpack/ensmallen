@@ -108,8 +108,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   if (numObjectives < 2u)
   {
-    throw std::logic_error("MOEAD::Optimize(): This is a multiobjective problem,
-        numObjectives must be atleast 2.");
+    throw std::logic_error("MOEAD::Optimize(): This is a multiobjective problem, "
+        "numObjectives must be atleast 2.");
   }
 //TODO: Check if any of lowerBound is equal to upperBound
   if (lowerBound.size() != upperBound.size())
@@ -169,7 +169,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 	  }
   }
 
-  // F-value initialisation for the population.
   arma::mat populationFval(numObjectives, populationSize);
   EvaluateObjectives(population, objectives, populationFval);
 
