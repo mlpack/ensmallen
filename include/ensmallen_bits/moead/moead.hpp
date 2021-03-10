@@ -38,8 +38,8 @@ namespace ens {
  * author={H. {Li} and Q. {Zhang}},
  * year={2009},
  * pages={284-302},}
- * title={Multiobjective Optimization Problems With Complicated Pareto Sets, MOEA/D and NSGA-II}, 
- * journal={IEEE Transactions on Evolutionary Computation}, 
+ * title={Multiobjective Optimization Problems With Complicated Pareto Sets, MOEA/D and NSGA-II},
+ * journal={IEEE Transactions on Evolutionary Computation},
  * @endcode
  *
  * MOEA/D can optimize arbitrary multi-objective functions. For more details,
@@ -182,9 +182,9 @@ class MOEAD {
   double& NeighborProb() { return neighborProb; }
 
   //! Retrieve value of scaling factor.
-  double differentialWeight() const { return differentialWeight; }
+  double DifferentialWeight() const { return differentialWeight; }
   //! Modify the value of scaling factor.
-  double& differentialWeight() { return differentialWeight; }
+  double& DifferentialWeight() { return differentialWeight; }
 
   //! Retrieve value of maxReplace.
   size_t MaxReplace() const { return maxReplace; }
@@ -213,9 +213,9 @@ class MOEAD {
  private:
   /**
    * @brief Randomly select two members from the population.
-   * 
-   * @param weightNeighbourIndices 
-   * @return std::tuple<int, int> 
+   *
+   * @param weightNeighbourIndices
+   * @return std::tuple<int, int>
    */
   std::tuple<int, int>
   MatingSelection(const size_t popIdx,
@@ -223,8 +223,8 @@ class MOEAD {
                   bool sampleNeighbor);
 
   /**
-   * Mutate child formed by the crossover of two random members of the 
-   * population.
+   * Mutate the child formed by the crossover of two random members of the
+   * population. Uses polynomial mutation.
    *
    * @tparam MatType The type of matrix used to store coordinates.
    * @param child The matrix to mutate.
@@ -252,16 +252,6 @@ class MOEAD {
                              const arma::vec& evaluatedCandidate);
 
   /**
-   * Check domination between two vectors.
-   *
-   * @param first, the first of the two vectors to compare.
-   * @param second, the second of the two vectors to compare.
-   * @return true if first dominates second else false.
-   */
-  bool Dominates(const arma::vec& first,
-                 const arma::vec& second);
-
-  /**
    * Evaluate objectives for the elite population.
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple function types.
@@ -269,7 +259,7 @@ class MOEAD {
    * @param population The elite population.
    * @param objectives The set of objectives.
    * @param calculatedObjectives Vector to store calculated objectives.
-   */    
+   */
   template<std::size_t I = 0,
            typename MatType,
            typename ...ArbitraryFunctionType>
@@ -318,7 +308,7 @@ class MOEAD {
   //! leads to a loss of diversity.
   size_t maxReplace;
 
-  //! If enabled, the optimizer favors a diversity in solutions.
+  //! If enabled, the optimizer produces diverse set of solutions.
   bool preserveDiversity;
 
   //! Lower bound on each variable in the variable space.

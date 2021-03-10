@@ -91,9 +91,26 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // Check if lower bound is a vector of a single dimension.
   if (upperBound.n_rows == 1)
     upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
 
+  // Number of objective functions. Represented by M in the paper.
+  numObjectives = sizeof...(ArbitraryFunctionType);
+  // Dimensionality of variable space. Also referred to as number of genes.
+  size_t numVariables = iterate.n_rows;
+
+  if (populationSize <= 0)
+  {
+    throw std::logic_error("MOEAD::Optimize(): populationSize should be positive.");
+  }
+
+  if (numObjectives < 2u)
+  {
+    throw std::logic_error("MOEAD::Optimize(): This is a multiobjective problem,
+        numObjectives must be atleast 2.");
+  }
+//TODO: Check if any of lowerBound is equal to upperBound
   if (lowerBound.size() != upperBound.size())
   {
     throw std::logic_error("MOEAD::Optimize(): size of lowerBound and upperBound "
@@ -106,32 +123,27 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         "an upper bound for each variable in the initial point.");
   }
 
-  if (populationSize < neighborSize + 1)
+  if (populationSize < neighborSize + 1u)
   {
       std::ostringstream oss;
       oss << "MOEAD::Optimize(): " << "neighborSize is " << neighborSize
           << "but populationSize is " << populationSize << "(should be"
-          << " atleast " << neighborSize + 1 << std::endl;
+          << " atleast " << (neighborSize + 1u) << ")" << std::endl;
       throw std::logic_error(oss.str());
   }
-
-  // Number of objective functions. Represented by M in the paper.
-  numObjectives = sizeof...(ArbitraryFunctionType);
-  // Dimensionality of variable space. Also referred to as number of genes.
-  size_t numVariables = iterate.n_rows;
 
   bool terminate = false;
 
   arma::Col<size_t> shuffle;
   // The weight matrix. Each vector represents a decomposition subproblem.
-  arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu());
+  arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
   weights += 1e-10; //Handles zero weight case.
 
-  // 1.2 Storing the indices of nearest neighbours of each weight vector.
+  // 1.2 Storing the indices of nearest neighbors of each weight vector.
   arma::Mat<arma::uword> neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
-      // To temporarily store the distance between weights(i) and each other weights.
+      // Cache the distance between weights(i) and other weights.
       arma::rowvec distances(populationSize);
       distances =
               arma::sqrt(arma::sum(arma::pow(weights.col(i) - weights.each_col(), 2)));
@@ -146,7 +158,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   {
 	  population[i] =
 		  arma::randu<MatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
-    
+
 	  for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
 	  {
 		  if (population[i][geneIdx] < lowerBound[geneIdx])
@@ -180,7 +192,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     for (size_t i : shuffle)
     {
       terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
-      
+
       Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
       // 2.1 Randomly select two indices in neighborIndices(i) and use them
@@ -192,9 +204,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       bool sampleNeighbor = ( arma::randu() < neighborProb || !preserveDiversity );
 	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
 
-      // 2.2 - 2.3 Reproduction and Repair: Apply the Differential Operator on the selected indices
-      // followed by Mutation.
-      MatType candidate(iterate.nrows, iterate.ncols); //TODO: Potentially wrong, because iterate can be a population swarm
+      // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
+      // Mutation.
+      MatType candidate(iterate.nrows, iterate.ncols);
       double delta = arma::randu();
       if (delta < crossoverProb)
       {
@@ -224,7 +236,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
 	    Mutate(candidate, 1.f / numVariables, lowerBound, upperBound);
 
-      // Store solution for candidate.
       arma::vec candidateFval(numObjectives);
       EvaluateObjectives(std::vector<MatType>(candidate), objectives, candidateFval);
 
@@ -247,7 +258,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         // we wish to preserve diversity.
         if (replaceCounter >= maxReplace && preserveDiversity)
           break;
-          
+
         size_t pick = sampleNeighbor ? neighborIndices(idx, i) : idx;
 
 		    double candidateDecomposition = DecomposeObjectives(
@@ -279,6 +290,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   return performance;
 }
 
+//! Randomly chooses to select from parents or neighbors.
 inline std::tuple<int, int>
 MOEAD::MatingSelection(const size_t popIdx,
     const arma::Mat<arma::uword>& neighborIndices,
@@ -315,7 +327,7 @@ MOEAD::MatingSelection(const size_t popIdx,
   return std::make_tuple(k, l);
 }
 
-//! Perform mutation of the candidate.
+//! Perform Polynomial mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,
     const double& rate,
@@ -335,7 +347,7 @@ inline void MOEAD::Mutate(MatType& child,
       currentLower = lowerBound(j);
       currentUpper = upperBound(j);
       delta1 = (current - currentLower) / (currentUpper - currentLower);
-      delta2 = (currentUpper - current) / (currentUpper - currentLower);    
+      delta2 = (currentUpper - current) / (currentUpper - currentLower);
       rnd = arma::randu();
       mutationPower = 1.0 /( distributionIndex + 1.0 );
       if (rnd < 0.5)
@@ -366,8 +378,7 @@ inline void MOEAD::Mutate(MatType& child,
 inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
     const arma::vec& idealPoint,
     const arma::vec& candidateFval)
-{ //FIXME: weights[i] == 0? 1e-4 : weights[i]
-  //TODO: Add more methods perhaps? (BI, TCHEBYCHEFF, WEIGHTED)
+{
   return arma::max(weights % arma::abs(candidateFval - idealPoint));
 }
 
