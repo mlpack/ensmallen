@@ -26,7 +26,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const size_t neighborSize,
                     const double distributionIndex,
                     const double neighborProb,
-                    const double scalingFactor,
+                    const double differentialWeight,
                     const size_t maxReplace,
                     const bool preserveDiversity,
                     const arma::vec& lowerBound,
@@ -39,7 +39,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     neighborSize(neighborSize),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
-    scalingFactor(scalingFactor),
+    differentialWeight(differentialWeight),
     maxReplace(maxReplace),
     preserveDiversity(preserveDiversity),
     lowerBound(lowerBound),
@@ -55,7 +55,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const size_t neighborSize,
                     const double distributionIndex,
                     const double neighborProb,
-                    const double scalingFactor,
+                    const double differentialWeight,
                     const size_t maxReplace,
                     const bool preserveDiversity,
                     const double lowerBound,
@@ -68,7 +68,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     neighborSize(neighborSize),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
-    scalingFactor(scalingFactor),
+    differentialWeight(differentialWeight),
     maxReplace(maxReplace),
     preserveDiversity(preserveDiversity),
     lowerBound(lowerBound * arma::ones(1, 1)),
@@ -120,12 +120,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // Dimensionality of variable space. Also referred to as number of genes.
   size_t numVariables = iterate.n_rows;
 
-  // Controls early termination of the optimization process.
   bool terminate = false;
-  //TODO: Add more checks?
+
   arma::Col<size_t> shuffle;
-  // The Lambda matrix. Each vector represents a decomposition subproblem.
-  arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu); //FIXME: Should use weight generation method
+  // The weight matrix. Each vector represents a decomposition subproblem.
+  arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu());
+  weights += 1e-10; //Handles zero weight case.
 
   // 1.2 Storing the indices of nearest neighbours of each weight vector.
   arma::Mat<arma::uword> neighborIndices(neighborSize, populationSize);
@@ -201,7 +201,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
         {
           candidate[geneIdx] = population[r1][geneIdx] +
-                        scalingFactor * (population[r2][geneIdx] -
+                        differentialWeight * (population[r2][geneIdx] -
                                         population[r3][geneIdx]);
 
           // Handle boundary condition
@@ -369,24 +369,6 @@ inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
 { //FIXME: weights[i] == 0? 1e-4 : weights[i]
   //TODO: Add more methods perhaps? (BI, TCHEBYCHEFF, WEIGHTED)
   return arma::max(weights % arma::abs(candidateFval - idealPoint));
-}
-
-inline bool MOEAD::Dominates(const arma::vec& first,
-    const arma::vec& second)
-{
-  int flag = 0;
-  for (size_t i = 0; i < numObjectives; ++i)
-  {
-    if (first(i) > second(i))
-      return false;
-
-    if (first(i) < second(i))
-      flag = 1;
-  }
-  if (flag)
-    return true;
-
-  return false;
 }
 
 //! No objectives to evaluate.
