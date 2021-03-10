@@ -436,7 +436,7 @@ optimizer uses [L-BFGS](#l-bfgs).
 | `L_BFGS&` | **`lbfgs`** | Internal l-bfgs optimizer. | `L_BFGS()` |
 
 The attributes of the optimizer may also be modified via the member methods
-`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `L_BFGS()`.
+`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `LBFGS()`.
 
 <details open>
 <summary>Click to collapse/expand example code.
