@@ -264,7 +264,7 @@ class MOEAD {
            typename MatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>&,
+  EvaluateObjectives(const std::vector<MatType>&,
       std::tuple<ArbitraryFunctionType...>&,
       arma::mat&);
 
@@ -272,7 +272,7 @@ class MOEAD {
            typename MatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>& population,
+  EvaluateObjectives(const std::vector<MatType>& population,
       std::tuple<ArbitraryFunctionType...>& objectives,
       arma::mat& calculatedObjectives);
 
