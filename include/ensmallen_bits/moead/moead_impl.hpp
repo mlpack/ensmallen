@@ -219,7 +219,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Mutation.
-      MatType candidate(iterate.nrows, iterate.ncols);
+      MatType candidate(iterate.n_rows, iterate.n_cols);
       double delta = arma::randu();
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
       {
@@ -253,7 +253,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 	    Mutate(candidate, 1.f / static_cast<double>(numVariables), lowerBound, upperBound);
 
       arma::vec candidateFval(numObjectives);
-      EvaluateObjectives(std::vector<MatType>(candidate), objectives, candidateFval);
+      EvaluateObjectives(std::vector<MatType>{candidate}, objectives, candidateFval);
 
       // 2.4 Update of ideal point.
       for (size_t idx = 0;idx < numObjectives;++idx)
@@ -406,7 +406,7 @@ template<std::size_t I,
   typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 MOEAD::EvaluateObjectives(
-    std::vector<MatType>&,
+    const std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
     arma::mat &)
 {
@@ -419,7 +419,7 @@ template<std::size_t I,
   typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
 MOEAD::EvaluateObjectives(
-    std::vector<MatType>& population,
+    const std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
     arma::mat& calculatedObjectives)
 {
