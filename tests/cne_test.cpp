@@ -129,8 +129,6 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
     arma::mat coordinates = arma::mat("0.5; 2");
     optimizer.Optimize(f, coordinates);
 
-    std::cout << "Trial: " << trial << std::endl;
-
     if (trial != 4)
     {
       if (coordinates(0) != Approx(0).margin(0.1))
