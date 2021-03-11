@@ -133,9 +133,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         "an upper bound for each variable in the initial point.");
   }
 
-  for(size_t geneIdx = 0; geneIdx < lowerBound.size(); geneIdx++)
+  for (size_t geneIdx = 0; geneIdx < lowerBound.size(); geneIdx++)
   {
-      if(lowerBound[geneIdx] >= upperBound[geneIdx])
+      if (lowerBound[geneIdx] >= upperBound[geneIdx])
       {
         std::ostringstream ss;
         ss << "MOEAD::Optimize():" << "the lowerBound value: " << lowerBound[geneIdx]
@@ -151,7 +151,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   arma::Col<size_t> shuffle;
   // The weight matrix. Each vector represents a decomposition subproblem.
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
-  weights += arma::datum::eps; // Numerical stability
+  weights += 1E-10; // Numerical stability
 
   // 1.2 Storing the indices of nearest neighbors of each weight vector.
   arma::Mat<arma::uword> neighborIndices(neighborSize, populationSize);
@@ -249,14 +249,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         candidate[geneIdx] = population[r1][geneIdx];
       }
 
-
-	    Mutate(candidate, 1.f / static_cast<double>(numVariables), lowerBound, upperBound);
+	    Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
 
       arma::vec candidateFval(numObjectives);
       EvaluateObjectives(std::vector<MatType>{candidate}, objectives, candidateFval);
 
       // 2.4 Update of ideal point.
-      for (size_t idx = 0;idx < numObjectives;++idx)
+      for (size_t idx = 0; idx < numObjectives; ++idx)
       {
         idealPoint(idx) = std::min(idealPoint(idx),
             candidateFval(idx));
@@ -297,10 +296,11 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
   ElemType performance = std::numeric_limits<ElemType>::max();
-  for (arma::Col<ElemType> objective: populationFval)
+
+  for (size_t geneIdx = 0; geneIdx < numObjectives; ++geneIdx)
   {
-    if (arma::accu(objective) < performance)
-      performance = arma::accu(objective);
+    if (arma::accu(populationFval[geneIdx]) < performance)
+      performance = arma::accu(populationFval[geneIdx]);
   }
 
   return performance;
