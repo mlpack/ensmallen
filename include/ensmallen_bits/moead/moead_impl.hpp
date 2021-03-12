@@ -308,31 +308,22 @@ MOEAD::MatingSelection(const size_t popIdx,
 	size_t k, l;
   assert(neighborSize > 1u);
 
-	if (sampleNeighbor)
+  k = sampleNeighbor
+		  ? neighborIndices(
+		        arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx)
+		  : arma::randi(arma::distr_param(0, populationSize - 1u));
+
+  l = sampleNeighbor
+		  ? neighborIndices(
+		        arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx)
+		  : arma::randi(arma::distr_param(0, populationSize - 1u));
+
+  if (k == l)
 	{
-		k = neighborIndices(
-			arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx);
-		l = neighborIndices(
-			arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx);
-		if (k == l)
-		{
-			if (k == neighborSize - 1u)
-				--k;
-			else
-				++k;
-		}
-	}
-	else
-	{
-		k = arma::randi(arma::distr_param(0, populationSize - 1u));
-		l = arma::randi(arma::distr_param(0, populationSize - 1u));
-		if (k == l)
-		{
 			if (k == populationSize - 1u)
 				--k;
-			else
+      else
 				++k;
-		}
 	}
 
   return std::make_tuple(k, l);

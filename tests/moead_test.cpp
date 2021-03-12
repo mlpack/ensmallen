@@ -43,7 +43,7 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
   const double strength = 1e-3;
 
   MOEAD opt(150, // population size
-        10,  // num generations
+        2000,  // num generations
         0.6, // cross over prob
         0.7, // mutation prob
         strength, // mutation strength
@@ -52,7 +52,6 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
         0.5, //neighbor prob
         0.8, //differential weight
         10, //maxreplace,
-        true, //Preserve diversity
         lowerBound, //lower bound
         upperBound //upper bound
       );
@@ -106,7 +105,7 @@ TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
   arma::vec upperBound = {1000};
   const double strength = 1e-3;
   MOEAD opt(150, // population size
-      10,  // num generations
+      2000,  // num generations
       0.6, // cross over prob
       0.7, // mutation prob
       strength, // mutation strength
@@ -115,7 +114,6 @@ TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
       0.5, //neighbor prob
       0.8, //differential weight
       10, //maxreplace,
-      true, //Preserve diversity
       lowerBound, //lower bound
       upperBound //upper bound
     );
@@ -168,7 +166,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   MOEAD opt(150, // population size
-            10,  // num generations
+            2000,  // num generations
             0.6, // cross over prob
             0.7, // mutation prob
             strength, // mutation strength
@@ -177,7 +175,6 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
             0.5, //neighbor prob
             0.8, //differential weight
             10, //maxreplace,
-            true, //Preserve diversity
             lowerBound, //lower bound
             upperBound //upper bound
           );
@@ -196,7 +193,6 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
-    std::cout<<valX<<" "<<valY<<" "<<valZ<<"\n";
 
     if (!InBounds(valX, expectedLowerBound, expectedUpperBound) ||
         !InBounds(valY, expectedLowerBound, expectedUpperBound) ||
@@ -221,7 +217,7 @@ TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
   MOEAD opt(150, // population size
-          10,  // num generations
+          2000,  // num generations
           0.6, // cross over prob
           0.7, // mutation prob
           strength, // mutation strength
@@ -230,7 +226,6 @@ TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
           0.5, //neighbor prob
           0.8, //differential weight
           10, //maxreplace,
-          true, //Preserve diversity
           lowerBound, //lower bound
           upperBound //upper bound
         );
