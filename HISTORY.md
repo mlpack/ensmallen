@@ -1,5 +1,10 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Update Catch2 to 2.13.4
+   ([#268](https://github.com/mlpack/ensmallen/pull/268)).
+
+ * Fix typo in documentation
+   ([#270](https://github.com/mlpack/ensmallen/pull/270)).
 
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
@@ -38,7 +43,7 @@
 
 ### ensmallen 2.14.2: "No Direction Home"
 ###### 2020-08-31
- * Fix implementation of fonesca fleming problem function f1 and f2 
+ * Fix implementation of fonesca fleming problem function f1 and f2
    type usage and negative signs. ([#223](https://github.com/mlpack/ensmallen/pull/223))
 
 ### ensmallen 2.14.1: "No Direction Home"
@@ -65,7 +70,7 @@
  * Fix L-BFGS convergence when starting from a minimum
    ([#201](https://github.com/mlpack/ensmallen/pull/201)).
 
-* Add optimizer summary report callback 
+* Add optimizer summary report callback
    ([#213](https://github.com/mlpack/ensmallen/pull/213)).
 
 ### ensmallen 2.13.0: "Automatically Automated Automation"
