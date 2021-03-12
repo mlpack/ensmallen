@@ -62,7 +62,6 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
     arma::cube paretoSet= opt.ParetoSet();
 
     bool allInRange = true;
-    double minimumPositive = 1000;
 
     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
