@@ -28,6 +28,9 @@
  * Make Callback flexible for MultiObjective Optimizers
    ([#289](https://github.com/mlpack/ensmallen/pull/289)).
 
+ * Add MOEA-D/DE Optimizer
+   ([#269](https://github.com/mlpack/ensmallen/pull/269)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set
@@ -80,9 +83,6 @@
 
  * Adjust tolerance for AugLagrangian convergence based on element type
    ([#217](https://github.com/mlpack/ensmallen/pull/217)).
-   
- * Add MOEA/D optimizer for multi-objective functions
-    ([#210](https://github.com/mlpack/ensmallen/pull/210))
 
 ### ensmallen 2.14.0: "No Direction Home"
 ###### 2020-08-10
