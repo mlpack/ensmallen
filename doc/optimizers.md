@@ -1563,19 +1563,17 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
-## MOEA/D
+## MOEA/D-DE
 *An optimizer for arbitrary multi-objective functions.*
-MOEA/D (Multi Objective Evolutionary Algorithm based on Decomposition) is a multi
-objective optimization algorithm. The algorithm works by decomposing a multi objective
-problem to a single objective one by employing different decomposition approaches such
-as Tchebycheff approach, Boundary-intersection approach and weighted sum approach.
-These approaches are based on a weight vector, random choices of weight vectors produce
-random single objective problems. Solving each problem, we get a different solution which
-will be a part of the Pareto Front.
+MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
+objective optimization algorithm. It decomposes a multiobjective optimization problem into a number of scalar
+optimization subproblems and optimizes them simultaneously. Each subproblem randomly use information from neighboring
+subproblems during the evolution stage. The Differential Evolution variant introduces further measures to encourage
+diversity in the produced solution.
 
 #### Constructors
 * `MOEAD()`
-* `MOEAD(`_`populationSize, crossoverProb, mutationProb, mutationStrength, neighbourhoodSize, lowerBound, upperBound`_`)`
+* `MOEAD(`_`populationSize, numGeneration, crossoverProb, mutationProb, mutationStrength, neighborSize, distributionIndex, lowerBound,      neighborProb, differentialWeight, maxReplace, upperBound`_`)`
 
 #### Attributes
 
