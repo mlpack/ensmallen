@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix CNE test trials
+   ([#267](https://github.com/mlpack/ensmallen/pull/267)).
+
  * Update Catch2 to 2.13.4
    ([#268](https://github.com/mlpack/ensmallen/pull/268)).
 
