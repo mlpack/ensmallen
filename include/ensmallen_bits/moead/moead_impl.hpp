@@ -29,7 +29,6 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double neighborProb,
                     const double differentialWeight,
                     const size_t maxReplace,
-                    const bool preserveDiversity,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
     populationSize(populationSize),
@@ -42,7 +41,6 @@ inline MOEAD::MOEAD(const size_t populationSize,
     neighborProb(neighborProb),
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
-    preserveDiversity(preserveDiversity),
     lowerBound(lowerBound),
     upperBound(upperBound),
     numObjectives(0)
@@ -58,7 +56,6 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double neighborProb,
                     const double differentialWeight,
                     const size_t maxReplace,
-                    const bool preserveDiversity,
                     const double lowerBound,
                     const double upperBound) :
     populationSize(populationSize),
@@ -71,7 +68,6 @@ inline MOEAD::MOEAD(const size_t populationSize,
     neighborProb(neighborProb),
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
-    preserveDiversity(preserveDiversity),
     lowerBound(lowerBound * arma::ones(1, 1)),
     upperBound(upperBound * arma::ones(1, 1)),
     numObjectives(0)
@@ -212,9 +208,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // to make a child.
       size_t r1, r2, r3;
       r1 = i;
-      // When preserveDiversity is active, randomly choose from the population
-      // or the neighbors.
-      bool sampleNeighbor = ( arma::randu() < neighborProb || !preserveDiversity );
+      // Randomly choose to sample from the population or the neighbors.
+      bool sampleNeighbor = ( arma::randu() < neighborProb );
 	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
@@ -269,9 +264,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
       for (size_t idx : idxShuffle)
       {
-        // Number of solutions shouldn't exceed maxReplace if
-        // we wish to preserve diversity.
-        if (replaceCounter >= maxReplace && preserveDiversity)
+        if (replaceCounter >= maxReplace)
           break;
 
         size_t pick = sampleNeighbor ? neighborIndices(idx, i) : idx;

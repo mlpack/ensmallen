@@ -83,7 +83,6 @@ class MOEAD {
         const double neighborProb = 0.5,
         const double differentialWeight = 0.8,
         const size_t maxReplace = 10,
-        const bool preserveDiversity = true,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -124,7 +123,6 @@ class MOEAD {
           const double neighborProb = 0.5,
           const double differentialWeight = 0.8,
           const size_t maxReplace = 10,
-          const bool preserveDiversity = true,
           const double lowerBound = 0,
           const double upperBound = 1);
 
@@ -190,11 +188,6 @@ class MOEAD {
   size_t MaxReplace() const { return maxReplace; }
   //! Modify value of maxReplace.
   size_t& MaxReplace() { return maxReplace; }
-
-  //! Retreive value of preserveDiversity.
-  bool PreserveDiversity() const { return preserveDiversity; }
-  //! Modify value of preserveDiversity.
-  bool& PreserveDiversity() { return preserveDiversity; }
 
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
@@ -307,9 +300,6 @@ class MOEAD {
   //! Maximum number of childs which can replace the parent. Higher value
   //! leads to a loss of diversity.
   size_t maxReplace;
-
-  //! If enabled, the optimizer produces diverse set of solutions.
-  bool preserveDiversity;
 
   //! Lower bound on each variable in the variable space.
   arma::vec lowerBound;
