@@ -888,7 +888,7 @@ front.
 
 The following optimizers can be used with multi-objective functions:
 - [NSGA2](#nsga2)
-- [MOEA/D](#moead)
+- [MOEA/D-DE](#moead)
 
 ## Constrained functions
 
