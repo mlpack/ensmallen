@@ -33,7 +33,130 @@ bool InBounds(const double& value, const double& low, const double& high)
 }
 
 /**
- * Optimize for the Fonseca Fleming function using MOEA/D optimizer.
+ * Optimize for the Schaffer N.1 function using MOEA/D-DE optimizer.
+ */
+TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
+{
+  SchafferFunctionN1<arma::mat> SCH;
+  double lowerBound = -1000;
+  const double upperBound = 1000;
+  const double strength = 1e-3;
+
+  MOEAD opt(150, // population size
+        10,  // num generations
+        0.6, // cross over prob
+        0.7, // mutation prob
+        strength, // mutation strength
+        10, //neighbor size
+        0.5, //distribution index
+        0.5, //neighbor prob
+        0.8, //differential weight
+        10, //maxreplace,
+        true, //Preserve diversity
+        lowerBound, //lower bound
+        upperBound //upper bound
+      );
+
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+  // We allow a few trials in case of poor convergence.
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    arma::mat coords = SCH.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+
+    opt.Optimize(objectives, coords);
+    std::vector<arma::mat> bestFront = opt.Front();
+
+    bool allInRange = true;
+    double minimumPositive = 1000;
+
+    for (arma::mat solution: bestFront)
+    {
+      double val = arma::as_scalar(solution);
+      if(val >= 0.0)
+          minimumPositive = std::min(minimumPositive, val);
+
+      if ((val < 0.0 && std::abs(val) >= minimumPositive) || val > 2.0)
+      {
+        allInRange = false;
+        break;
+      }
+    }
+
+    if (allInRange)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  REQUIRE(success == true);
+}
+
+/**
+ * Optimize for the Schaffer N.1 function using MOEA/D-DE optimizer.
+ */
+TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
+{
+  SchafferFunctionN1<arma::mat> SCH;
+  arma::vec lowerBound = {-1000};
+  arma::vec upperBound = {1000};
+  const double strength = 1e-3;
+  MOEAD opt(150, // population size
+      10,  // num generations
+      0.6, // cross over prob
+      0.7, // mutation prob
+      strength, // mutation strength
+      10, //neighbor size
+      0.5, //distribution index
+      0.5, //neighbor prob
+      0.8, //differential weight
+      10, //maxreplace,
+      true, //Preserve diversity
+      lowerBound, //lower bound
+      upperBound //upper bound
+    );
+
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    arma::mat coords = SCH.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+
+    opt.Optimize(objectives, coords);
+    std::vector<arma::mat> bestFront = opt.Front();
+
+    bool allInRange = true;
+
+    for (arma::mat solution: bestFront)
+    {
+      double val = arma::as_scalar(solution);
+
+      if (val < 0.0 || val > 2.0)
+      {
+        allInRange = false;
+        break;
+      }
+    }
+
+    if (allInRange)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  REQUIRE(success == true);
+}
+
+/**
+ * Optimize for the Fonseca Fleming function using MOEA/D-DE optimizer.
  */
 TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
 {
@@ -43,6 +166,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
   const double strength = 1e-3;
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
+
   MOEAD opt(150, // population size
             10,  // num generations
             0.6, // cross over prob
@@ -60,6 +184,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
+
   arma::mat coords = FON.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
   opt.Optimize(objectives, coords);
@@ -85,7 +210,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
 }
 
 /**
- * Optimize for the Fonseca Fleming function using MOEA/D optimizer.
+ * Optimize for the Fonseca Fleming function using MOEA/D-DE optimizer.
  */
 TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
 {
@@ -126,106 +251,6 @@ TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
     if (!InBounds(valX, expectedLowerBound, expectedUpperBound) ||
         !InBounds(valY, expectedLowerBound, expectedUpperBound) ||
         !InBounds(valZ, expectedLowerBound, expectedUpperBound))
-    {
-      allInRange = false;
-      break;
-    }
-  }
-  REQUIRE(allInRange);
-}
-/**
- * Optimize for the function using MOEA/D optimizer.
- */
-TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
-{
-  SchafferFunctionN1<arma::mat> SCH;
-  double lowerBound = {-1000};
-  const double upperBound = {1000};
-  const double strength = 1e-3;
-
-  MOEAD opt(150, // population size
-        10,  // num generations
-        0.6, // cross over prob
-        0.7, // mutation prob
-        strength, // mutation strength
-        10, //neighbor size
-        0.5, //distribution index
-        0.5, //neighbor prob
-        0.8, //differential weight
-        10, //maxreplace,
-        true, //Preserve diversity
-        lowerBound, //lower bound
-        upperBound //upper bound
-      );
-
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
-
-  arma::mat coords = SCH.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      SCH.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  std::vector<arma::mat> bestFronts = opt.Front();
-
-  bool allInRange = true;
-  double minimumPositive = 1000;
-
-  for (arma::mat solution: bestFronts)
-  {
-    const double val = arma::as_scalar(solution);
-    minimumPositive = std::min(minimumPositive, val>=0 ? val : 1000);
-    std::cout<<val<<"\n";
-    if (val < 0.0 || val > 2.0)
-    {
-      allInRange = false;
-      break;
-    }
-  }
-  REQUIRE(allInRange);
-}
-/**
- * Optimize for the function using MOEA/D optimizer.
- */
-TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
-{
-  SchafferFunctionN1<arma::mat> SCH;
-  arma::vec lowerBound = {-1000};
-  arma::vec upperBound = {1000};
-  const double strength = 1e-3;
-  MOEAD opt(150, // population size
-      10,  // num generations
-      0.6, // cross over prob
-      0.7, // mutation prob
-      strength, // mutation strength
-      10, //neighbor size
-      0.5, //distribution index
-      0.5, //neighbor prob
-      0.8, //differential weight
-      10, //maxreplace,
-      true, //Preserve diversity
-      lowerBound, //lower bound
-      upperBound //upper bound
-    );
-
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
-
-  arma::mat coords = SCH.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      SCH.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  std::vector<arma::mat> bestFronts = opt.Front();
-
-  bool allInRange = true;
-  double minimumPositive = 1000;
-
-  for (arma::mat solution: bestFronts)
-  {
-    double val = arma::as_scalar(solution);
-    minimumPositive = std::min(minimumPositive, val>=0 ? val : 1000);
-    if (val < 0.00 || val > 2.0)
     {
       allInRange = false;
       break;
