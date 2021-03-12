@@ -2,7 +2,7 @@
  * @file moead_impl.hpp
  * @authors Utkarsh Rai, Nanubala Gnana Sai
  *
- * Implementation of the MOEA/D algorithm. Used for multi-objective
+ * Implementation of the MOEA/D-DE algorithm. Used for multi-objective
  * optimization problems on arbitrary functions.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
