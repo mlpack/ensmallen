@@ -59,8 +59,6 @@ class MOEAD {
    * @param populationSize The number of elements in the population.
    * @param maxGenerations The maximum number of generations allowed.
    * @param crossoverProb The probability that a crossover will occur.
-   * @param mutationProb The probability that a mutation will occur.
-   * @param mutationStrength The strength of mutation.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
    * @param distributionIndex The crowding degree of the mutation.
@@ -68,22 +66,19 @@ class MOEAD {
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
-   * @param preserveDiversity Enforce preserving diversity.
    * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-  MOEAD(const size_t populationSize = 100,
-        const size_t maxGenerations = 2000,
-        const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3,
-        const size_t neighborSize = 50,
-        const double distributionIndex = 0.5,
-        const double neighborProb = 0.3,
-        const double differentialWeight = 0.8,
-        const size_t maxReplace = 10,
+  MOEAD(const size_t populationSize = 150,
+        const size_t maxGenerations = 1000,
+        const double crossoverProb = 1.0,
+        const size_t neighborSize = 20,
+        const double distributionIndex = 20,
+        const double neighborProb = 0.9,
+        const double differentialWeight = 0.5,
+        const size_t maxReplace = 2,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -99,8 +94,6 @@ class MOEAD {
    * @param populationSize The number of elements in the population.
    * @param maxGenerations The maximum number of generations allowed.
    * @param crossoverProb The probability that a crossover will occur.
-   * @param mutationProb The probability that a mutation will occur.
-   * @param mutationStrength The strength of mutation.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
    * @param distributionIndex The crowding degree of the mutation.
@@ -108,22 +101,19 @@ class MOEAD {
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
-   * @param preserveDiversity Enforce preserving diversity.
    * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-    MOEAD(const size_t populationSize = 100,
-          const size_t maxGenerations = 2000,
-          const double crossoverProb = 0.6,
-          const double mutationProb = 0.3,
-          const double mutationStrength = 1e-3,
-          const size_t neighborSize = 50,
-          const double distributionIndex = 0.5,
-          const double neighborProb = 0.3,
-          const double differentialWeight = 0.8,
-          const size_t maxReplace = 10,
+    MOEAD(const size_t populationSize = 150,
+          const size_t maxGenerations = 1000,
+          const double crossoverProb = 1.0,
+          const size_t neighborSize = 20,
+          const double distributionIndex = 20,
+          const double neighborProb = 0.9,
+          const double differentialWeight = 0.5,
+          const size_t maxReplace = 2,
           const double lowerBound = 0,
           const double upperBound = 1);
 
@@ -159,11 +149,6 @@ class MOEAD {
   double CrossoverRate() const { return crossoverProb; }
   //! Modify the crossover rate.
   double& CrossoverRate() { return crossoverProb; }
-
-  //! Retrieve mutation probability.
-  double MutationProbability() const { return mutationProb; }
-  //! Modify the mutation probability.
-  double& MutationProbability() { return mutationProb; }
 
   //! Retrieve size of the weight neighbor.
   size_t NeighborSize() const { return neighborSize; }
@@ -278,12 +263,6 @@ class MOEAD {
 
   //! Probability of crossover between two members.
   double crossoverProb;
-
-  //! Probability of mutation of a child.
-  double mutationProb;
-
-  //! Strength of mutation.
-  double mutationStrength;
 
   //! Number of nearest neighbours of weights to consider.
   size_t neighborSize;
