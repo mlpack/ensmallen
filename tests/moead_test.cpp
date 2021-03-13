@@ -42,7 +42,7 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
   const double strength = 1e-3;
 
   MOEAD opt(150, // population size
-        2000,  // num generations
+        2000,  // max generations
         0.6, // cross over prob
         0.7, // mutation prob
         strength, // mutation strength
@@ -104,7 +104,7 @@ TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
   arma::vec upperBound = {1000};
   const double strength = 1e-3;
   MOEAD opt(150, // population size
-      2000,  // num generations
+      2000,  // max generations
       0.6, // cross over prob
       0.7, // mutation prob
       strength, // mutation strength
@@ -165,7 +165,7 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   MOEAD opt(150, // population size
-            2000,  // num generations
+            2000,  // max generations
             0.6, // cross over prob
             0.7, // mutation prob
             strength, // mutation strength
@@ -216,7 +216,7 @@ TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
   MOEAD opt(150, // population size
-          2000,  // num generations
+          2000,  // max generations
           0.6, // cross over prob
           0.7, // mutation prob
           strength, // mutation strength
