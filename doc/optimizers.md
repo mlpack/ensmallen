@@ -1566,29 +1566,36 @@ optimizer.Optimize(f, coordinates);
 ## MOEA/D-DE
 *An optimizer for arbitrary multi-objective functions.*
 MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
-objective optimization algorithm. It decomposes a multiobjective optimization problem into a number of scalar
-optimization subproblems and optimizes them simultaneously. Each subproblem randomly uses information from neighboring
-subproblems during the evolution stage. The Differential Evolution variant introduces further measures to encourage
-diversity in the produced solution.
+objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
+subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
+algorithm uses Differential Crossover followed by polynomial mutation to create offsprings which are then
+decomposed using Tchebycheff's approach. A diversity preserving mechanism is also employed which produces
+a varied set of solution.
 
 #### Constructors
 * `MOEAD()`
-* `MOEAD(`_`populationSize, numGeneration, crossoverProb, mutationProb, mutationStrength, neighborSize, distributionIndex, lowerBound, neighborProb, differentialWeight, maxReplace, upperBound`_`)`
+* `MOEAD(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, neighborSize, distributionIndex, lowerBound,  neighborProb, differentialWeight, maxReplace, upperBound`_`)`
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 4 in size and a multiple of 4. | `100` |
+| `size_t` | **`populationSize`** | The number of candidates in the population. | `100` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `2000` |
 | `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
 | `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
 | `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
-| `size_t` | **`neighbourhoodSize`** | The number of nearest-neighbours to consider for each weight.  | `50` |
-| `arma::vec` | **`lowerBound`** | Lower bound of the coordinates of the initial population. | `1` |
-| `arma::vec` | **`upperBound`** | Lower bound of the coordinates of the initial population. | `1` |
+| `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider for each weight.  | `50` |
+| `double` | **`distributionIndex`** | The crowding degree of the mutation. | `0.5` |
+| `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.3` |
+| `double` | **`differentialWeight`** | Amplification factor of the differentiation. | `0.8` |
+| `size_t` | **`maxReplace`** | The limit of solutions allowed to be replaced by a child. | `10` |
+| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
+| `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `CrossoverRate()`, `MutationProbability()`, `NeighbourhoodSize()`, `LowerBound()` and `UpperBound()`.
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `NeighborSize()`, `DistributionIndex()`,
+`NeighborProb()`, `DifferentialWeight()`, `MaxReplace()`, `LowerBound()` and `UpperBound()`.
 
 #### Examples:
 
