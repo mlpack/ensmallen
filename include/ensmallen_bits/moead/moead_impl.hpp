@@ -20,7 +20,7 @@
 namespace ens {
 
 inline MOEAD::MOEAD(const size_t populationSize,
-                    const size_t numGeneration,
+                    const size_t maxGenerations,
                     const double crossoverProb,
                     const double mutationProb,
                     const double mutationStrength,
@@ -32,7 +32,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
     populationSize(populationSize),
-    numGeneration(numGeneration),
+    maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
@@ -47,7 +47,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
   { /* Nothing to do here. */ }
 
 inline MOEAD::MOEAD(const size_t populationSize,
-                    const size_t numGeneration,
+                    const size_t maxGenerations,
                     const double crossoverProb,
                     const double mutationProb,
                     const double mutationStrength,
@@ -59,7 +59,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double lowerBound,
                     const double upperBound) :
     populationSize(populationSize),
-    numGeneration(numGeneration),
+    maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
@@ -195,7 +195,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
   // 2 The main loop.
-  for (size_t g = 0; g < numGeneration; ++g)
+  for (size_t g = 0; g < maxGenerations; ++g)
   {
     shuffle = std::get<0>(objectives).Shuffle(populationSize);
     for (size_t i : shuffle)
