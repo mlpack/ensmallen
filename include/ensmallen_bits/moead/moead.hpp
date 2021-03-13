@@ -75,13 +75,13 @@ class MOEAD {
    *    of the variable space.
    */
   MOEAD(const size_t populationSize = 100,
-        const size_t maxGenerations = 100,
+        const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
         const double mutationProb = 0.3,
         const double mutationStrength = 1e-3,
         const size_t neighborSize = 50,
         const double distributionIndex = 0.5,
-        const double neighborProb = 0.5,
+        const double neighborProb = 0.3,
         const double differentialWeight = 0.8,
         const size_t maxReplace = 10,
         const arma::vec& lowerBound = arma::zeros(1, 1),
@@ -115,13 +115,13 @@ class MOEAD {
    *    of the variable space.
    */
     MOEAD(const size_t populationSize = 100,
-          const size_t maxGenerations = 100,
+          const size_t maxGenerations = 2000,
           const double crossoverProb = 0.6,
           const double mutationProb = 0.3,
           const double mutationStrength = 1e-3,
           const size_t neighborSize = 50,
           const double distributionIndex = 0.5,
-          const double neighborProb = 0.5,
+          const double neighborProb = 0.3,
           const double differentialWeight = 0.8,
           const size_t maxReplace = 10,
           const double lowerBound = 0,
