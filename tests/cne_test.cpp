@@ -10,7 +10,6 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -140,6 +139,9 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
 
     REQUIRE(coordinates(0) == Approx(0).margin(0.1));
     REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
+
+    // The test was successfull or reached the maximum number of trials.
+    break;
   }
 }
 
