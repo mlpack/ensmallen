@@ -339,7 +339,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
 //! Randomly chooses to select from parents or neighbors.
 inline std::tuple<size_t, size_t>
-MOEAD::MatingSelection(const size_t popIdx,
+MOEAD::MatingSelection(
+    const size_t subProblemIdx,
     const arma::umat& neighborIndices,
     bool sampleNeighbor)
 {
@@ -347,12 +348,12 @@ MOEAD::MatingSelection(const size_t popIdx,
 
   k = sampleNeighbor
 		  ? neighborIndices(
-		        arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx)
+		        arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
 		  : arma::randi(arma::distr_param(0, populationSize - 1u));
 
   l = sampleNeighbor
 		  ? neighborIndices(
-		        arma::randi(arma::distr_param(0, neighborSize - 1u)), popIdx)
+		        arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
 		  : arma::randi(arma::distr_param(0, populationSize - 1u));
 
   if (k == l)
@@ -369,7 +370,7 @@ MOEAD::MatingSelection(const size_t popIdx,
 //! Perform Polynomial mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,
-    const double& rate,
+    const double& mutationRate,
     const arma::vec& lowerBound,
     const arma::vec& upperBound)
 {
@@ -380,7 +381,7 @@ inline void MOEAD::Mutate(MatType& child,
   for (size_t j = 0; j < numVariables; ++j)
   {
     double determiner = arma::randu();
-    if (determiner <= rate && lowerBound(j) != upperBound(j))
+    if (determiner <= mutationRate && lowerBound(j) != upperBound(j))
     {
       current = child[j];
       currentLower = lowerBound(j);

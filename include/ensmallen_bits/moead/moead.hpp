@@ -191,14 +191,15 @@ class MOEAD {
 
  private:
   /**
-   * @brief Randomly select two members from the population.
+   * @brief Randomly selects two members from the population.
    *
-   * @param weightNeighbourIndices
-   * @return std::tuple<size_t, size_t>
+   * @param subProblemIdx Index of the current subproblem.
+   * @param neighborSize A matrix containing indices of the neighbors.
+   * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
   std::tuple<size_t, size_t>
-  MatingSelection(const size_t popIdx,
-                  const arma::umat& weightNeighbourIndices,
+  MatingSelection(const size_t subProblemIdx,
+                  const arma::umat& neighborSize,
                   bool sampleNeighbor);
 
   /**
@@ -206,29 +207,28 @@ class MOEAD {
    * population. Uses polynomial mutation.
    *
    * @tparam MatType The type of matrix used to store coordinates.
-   * @param child The matrix to mutate.
-   * @param rate To determine whether mutation happens at a particular index.
+   * @param child The candidate to be mutated.
+   * @param mutationRate The probability of mutation.
    * @param lowerBound The lower bound on each variable in the matrix.
    * @param upperBound The upper bound on each variable in the matrix.
    */
   template<typename MatType>
   void Mutate(MatType& child,
-              const double& rate,
+              const double& mutationRate,
               const arma::vec& lowerBound,
               const arma::vec& upperBound);
 
   /**
-   * Decompose the multi objective problem to a single objetive problem
-   * using the Tchebycheff approach.
+   * Decompose the multi objective problem to a single objective problem.
    *
-   * @param weights A set of)real number which act as weights.
-   * @param idealPoint Ideal point z in Tchebycheff decomposition.
-   * @param evaluatedCandidate Value of the candidate per objective.
-   * @return The single value obtained from decomposed function.
+   * @param weights Decomposition weights.
+   * @param idealPoint The reference point z for a decomposition problem.
+   * @param candidateFitness The fitness value of the candidate.
+   * @return The real value obtained from the decomposed function.
    */
   double DecomposeObjectives(const arma::vec& weights,
                              const arma::vec& idealPoint,
-                             const arma::vec& evaluatedCandidate);
+                             const arma::vec& candidateFitness);
 
   /**
    * Evaluate objectives for the elite population.
