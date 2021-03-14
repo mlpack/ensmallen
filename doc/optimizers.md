@@ -1574,27 +1574,25 @@ a varied set of solution.
 
 #### Constructors
 * `MOEAD()`
-* `MOEAD(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, neighborSize, distributionIndex, lowerBound,  neighborProb, differentialWeight, maxReplace, upperBound`_`)`
+* `MOEAD(`_`populationSize, maxGenerations, crossoverProb, neighborSize, distributionIndex, neighborProb, differentialWeight, maxReplace, lowerBound, upperBound`_`)`
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `size_t` | **`populationSize`** | The number of candidates in the population. | `100` |
-| `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `2000` |
-| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
-| `double` | **`mutationProb`** | Probability that a weight will get mutated. | `0.3` |
-| `double` | **`mutationStrength`** | The range of mutation noise to be added. This range is between 0 and mutationStrength. | `0.001` |
-| `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider for each weight.  | `50` |
-| `double` | **`distributionIndex`** | The crowding degree of the mutation. | `0.5` |
-| `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.3` |
-| `double` | **`differentialWeight`** | Amplification factor of the differentiation. | `0.8` |
-| `size_t` | **`maxReplace`** | The limit of solutions allowed to be replaced by a child. | `10` |
+| `size_t` | **`populationSize`** | The number of candidates in the population. | `150` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `1000` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `1.0` |
+| `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider for each weight.  | `20` |
+| `double` | **`distributionIndex`** | The crowding degree of the mutation. | `20` |
+| `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.9` |
+| `double` | **`differentialWeight`** | Amplification factor of the differentiation. | `0.5` |
+| `size_t` | **`maxReplace`** | The limit of solutions allowed to be replaced by a child. | `2` |
 | `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
 | `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `NeighborSize()`, `DistributionIndex()`,
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `NeighborSize()`, `DistributionIndex()`,
 `NeighborProb()`, `DifferentialWeight()`, `MaxReplace()`, `LowerBound()` and `UpperBound()`.
 
 #### Examples:
@@ -1607,7 +1605,7 @@ Attributes of the optimizer may also be changed via the member methods
 SchafferFunctionN1<arma::mat> SCH;
 arma::vec lowerBound("-1000 -1000");
 arma::vec upperBound("1000 1000");
-MOEAD opt(1000, 0.5, 0.5, 1e-3, 50, lowerBound, upperBound);
+MOEAD opt(150, 1000, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
@@ -1620,7 +1618,7 @@ std::vector<arma::mat> bestFront = opt.Front();
 </details>
 
 #### See also
-* [MOEA/D Algorithm](https://www.researchgate.net/publication/3418989_MOEAD_A_Multiobjective_Evolutionary_Algorithm_Based_on_Decomposition/link/0912f50c77bae013b5000000/download)
+* [MOEA/D-DE Algorithm](https://ieeexplore.ieee.org/document/4633340)
 * [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
 * [Multi-objective functions](#multi-objective-functions)
 
