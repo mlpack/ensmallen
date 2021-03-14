@@ -126,13 +126,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         + std::to_string(neighborProb) + " was detected.");
   }
 
-  if(maxReplace < 0)
-  {
-    throw std::invalid_argument(
-        "maxReplace should be positive, however "
-        + std::to_string(maxReplace) + " was detected.");
-  }
-
   // Check if lower bound is a vector of a single dimension.
   if (lowerBound.n_rows == 1)
     lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
