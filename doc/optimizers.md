@@ -1573,7 +1573,7 @@ diversity in the produced solution.
 
 #### Constructors
 * `MOEAD()`
-* `MOEAD(`_`populationSize, numGeneration, crossoverProb, mutationProb, mutationStrength, neighborSize, distributionIndex, lowerBound,      neighborProb, differentialWeight, maxReplace, upperBound`_`)`
+* `MOEAD(`_`populationSize, numGeneration, crossoverProb, mutationProb, mutationStrength, neighborSize, distributionIndex, lowerBound, neighborProb, differentialWeight, maxReplace, upperBound`_`)`
 
 #### Attributes
 
