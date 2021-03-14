@@ -22,8 +22,6 @@ namespace ens {
 inline MOEAD::MOEAD(const size_t populationSize,
                     const size_t maxGenerations,
                     const double crossoverProb,
-                    const double mutationProb,
-                    const double mutationStrength,
                     const size_t neighborSize,
                     const double distributionIndex,
                     const double neighborProb,
@@ -34,8 +32,6 @@ inline MOEAD::MOEAD(const size_t populationSize,
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
-    mutationProb(mutationProb),
-    mutationStrength(mutationStrength),
     neighborSize(neighborSize),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
@@ -49,8 +45,6 @@ inline MOEAD::MOEAD(const size_t populationSize,
 inline MOEAD::MOEAD(const size_t populationSize,
                     const size_t maxGenerations,
                     const double crossoverProb,
-                    const double mutationProb,
-                    const double mutationStrength,
                     const size_t neighborSize,
                     const double distributionIndex,
                     const double neighborProb,
@@ -61,8 +55,6 @@ inline MOEAD::MOEAD(const size_t populationSize,
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
-    mutationProb(mutationProb),
-    mutationStrength(mutationStrength),
     neighborSize(neighborSize),
     distributionIndex(distributionIndex),
     neighborProb(neighborProb),
@@ -81,6 +73,66 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
                                             MatType& iterate,
                                             CallbackTypes&&... callbacks)
 {
+  // Sanity checks
+  if (populationSize < 3)
+  {
+    throw std::invalid_argument(
+        "populationSize should be atleast 3 however "
+        + std::to_string(populationSize) + " was detected.");
+  }
+
+  if (crossoverProb > 1.0 || crossoverProb < 0.0)
+  {
+    throw std::invalid_argument(
+        "The parameter crossoverProb needs to be in [0,1], however "
+        + std::to_string(crossoverProb) + " was detected.");
+  }
+
+  if (neighborSize < 2)
+  {
+    throw std::invalid_argument(
+        "neighborSize should be atleast 2, however "
+        + std::to_string(neighborSize) + " was detected."
+    );
+  }
+
+  if (neighborSize > populationSize - 1u)
+  {
+    std::ostringstream oss;
+    oss << "MOEAD::Optimize(): " << "neighborSize is " << neighborSize
+        << " but populationSize is " << populationSize << "(should be"
+        << " atleast " << (neighborSize + 1u) << ")" << std::endl;
+    throw std::logic_error(oss.str());
+  }
+
+  if (distributionIndex < 0)
+  {
+    throw std::invalid_argument(
+        "distributionIndex should be positive, however "
+        + std::to_string(distributionIndex) + " was detected.");
+  }
+
+  if (differentialWeight > 1.0 || differentialWeight < 0.0)
+  {
+    throw std::invalid_argument(
+        "The parameter differentialWeight needs to be in [0,1], however "
+        + std::to_string(differentialWeight) + " was detected.");
+  }
+
+  if (neighborProb > 1.0 || neighborProb < 0.0)
+  {
+    throw std::invalid_argument(
+        "The parameter neighborProb needs to be in [0,1], however "
+        + std::to_string(neighborProb) + " was detected.");
+  }
+
+  if(maxReplace < 0)
+  {
+    throw std::invalid_argument(
+        "maxReplace should be positive, however "
+        + std::to_string(maxReplace) + " was detected.");
+  }
+
   // Check if lower bound is a vector of a single dimension.
   if (lowerBound.n_rows == 1)
     lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
@@ -97,24 +149,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // Dimensionality of variable space. Also referred to as number of genes.
   size_t numVariables = iterate.n_rows;
 
-  if (populationSize <= 0)
-  {
-    throw std::logic_error("MOEAD::Optimize(): populationSize should be positive.");
-  }
-
   if (numObjectives < 2u)
   {
     throw std::logic_error("MOEAD::Optimize(): This is a multiobjective problem, "
         "numObjectives must be atleast 2.");
-  }
-
-  if (neighborSize > populationSize - 1u)
-  {
-      std::ostringstream oss;
-      oss << "MOEAD::Optimize(): " << "neighborSize is " << neighborSize
-          << "but populationSize is " << populationSize << "(should be"
-          << " atleast " << (neighborSize + 1u) << ")" << std::endl;
-      throw std::logic_error(oss.str());
   }
 
   if (lowerBound.size() != upperBound.size())
@@ -131,15 +169,15 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   for (size_t geneIdx = 0; geneIdx < lowerBound.size(); geneIdx++)
   {
-      if (lowerBound[geneIdx] >= upperBound[geneIdx])
-      {
-        std::ostringstream ss;
-        ss << "MOEAD::Optimize():" << "the lowerBound value: " << lowerBound[geneIdx]
-            << " is greater than upperBound value: " << upperBound[geneIdx]
-            << " at index: " << geneIdx << std::endl;
+    if (lowerBound[geneIdx] >= upperBound[geneIdx])
+    {
+      std::ostringstream ss;
+      ss << "MOEAD::Optimize():" << "the lowerBound value: " << lowerBound[geneIdx]
+         << " is greater than upperBound value: " << upperBound[geneIdx]
+         << " at index: " << geneIdx << std::endl;
 
-        throw std::logic_error(ss.str());
-      }
+      throw std::logic_error(ss.str());
+    }
   }
 
   bool terminate = false;
@@ -153,13 +191,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   arma::Mat<arma::uword> neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
-      // Cache the distance between weights(i) and other weights.
-      arma::rowvec distances(populationSize);
-      distances =
-              arma::sqrt(arma::sum(arma::pow(weights.col(i) - weights.each_col(), 2)));
-      arma::uvec sortedIndices = arma::stable_sort_index(distances);
-      // Ignore distance from self
-      neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
+    // Cache the distance between weights(i) and other weights.
+    arma::rowvec distances(populationSize);
+    distances =
+        arma::sqrt(arma::sum(arma::pow(weights.col(i) - weights.each_col(), 2)));
+    arma::uvec sortedIndices = arma::stable_sort_index(distances);
+    // Ignore distance from self
+    neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
   }
 
   // 1.2 Random generation of the initial population.
@@ -167,7 +205,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   for (size_t i = 0; i < populationSize; ++i)
   {
 	  population[i] =
-		  arma::randu<MatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+		    arma::randu<MatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
 	  for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
 	  {
@@ -178,8 +216,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 	  }
   }
 
-  arma::mat populationFval(numObjectives, populationSize);
-  EvaluateObjectives(population, objectives, populationFval);
+  arma::mat populationFitness(numObjectives, populationSize);
+  EvaluateObjectives(population, objectives, populationFitness);
 
   // 1.3 Initialize the ideal point z.
   arma::vec idealPoint(numObjectives);
@@ -188,7 +226,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   {
     for (size_t j = 0; j < populationSize; ++j)
     {
-      idealPoint(i) = std::min(idealPoint(i), populationFval(i, j));
+      idealPoint(i) = std::min(idealPoint(i), populationFitness(i, j));
     }
   }
 
@@ -219,30 +257,30 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
       {
 
-      if (delta < crossoverProb)
-      {
-        candidate[geneIdx] = population[r1][geneIdx] +
-                      differentialWeight * (population[r2][geneIdx] -
+        if (delta < crossoverProb)
+        {
+          candidate[geneIdx] = population[r1][geneIdx] +
+              differentialWeight * (population[r2][geneIdx] -
                                       population[r3][geneIdx]);
 
-        // Boundary conditions.
-        if (candidate[geneIdx] < lowerBound[geneIdx])
-        {
-          candidate[geneIdx] = lowerBound[geneIdx] +
-                        arma::randu() * (population[r1][geneIdx] -
-                                          lowerBound[geneIdx]);
+          // Boundary conditions.
+          if (candidate[geneIdx] < lowerBound[geneIdx])
+          {
+            candidate[geneIdx] = lowerBound[geneIdx] +
+                arma::randu() * (population[r1][geneIdx] -
+                                  lowerBound[geneIdx]);
+          }
+          if (candidate[geneIdx] > upperBound[geneIdx])
+          {
+            candidate[geneIdx] = upperBound[geneIdx] -
+                arma::randu() * (upperBound[geneIdx] -
+                                  population[r1][geneIdx]);
+          }
         }
-        if (candidate[geneIdx] > upperBound[geneIdx])
-        {
-          candidate[geneIdx] = upperBound[geneIdx] -
-                        arma::randu() * (upperBound[geneIdx] -
-                                          population[r1][geneIdx]);
-        }
-      }
 
-      else
-        candidate[geneIdx] = population[r1][geneIdx];
-      }
+        else
+          candidate[geneIdx] = population[r1][geneIdx];
+        }
 
 	    Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
 
@@ -270,14 +308,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         size_t pick = sampleNeighbor ? neighborIndices(idx, i) : idx;
 
 		    double candidateDecomposition = DecomposeObjectives(
-			    weights.col(pick), idealPoint, candidateFval);
+			      weights.col(pick), idealPoint, candidateFval);
 		    double parentDecomposition = DecomposeObjectives(
-			    weights.col(pick), idealPoint, populationFval.col(pick));
+			      weights.col(pick), idealPoint, populationFitness.col(pick));
 
         if (candidateDecomposition < parentDecomposition)
         {
           population[pick] = candidate;
-          populationFval.col(pick) = candidateFval;
+          populationFitness.col(pick) = candidateFval;
           replaceCounter++;
         }
       }
@@ -292,8 +330,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   for (size_t geneIdx = 0; geneIdx < numObjectives; ++geneIdx)
   {
-    if (arma::accu(populationFval[geneIdx]) < performance)
-      performance = arma::accu(populationFval[geneIdx]);
+    if (arma::accu(populationFitness[geneIdx]) < performance)
+      performance = arma::accu(populationFitness[geneIdx]);
   }
 
   return performance;
@@ -306,7 +344,6 @@ MOEAD::MatingSelection(const size_t popIdx,
     bool sampleNeighbor)
 {
 	size_t k, l;
-  assert(neighborSize > 1u);
 
   k = sampleNeighbor
 		  ? neighborIndices(
@@ -320,10 +357,10 @@ MOEAD::MatingSelection(const size_t popIdx,
 
   if (k == l)
 	{
-			if (k == populationSize - 1u)
-				--k;
-      else
-				++k;
+		if (k == populationSize - 1u)
+			--k;
+    else
+			++k;
 	}
 
   return std::make_tuple(k, l);
