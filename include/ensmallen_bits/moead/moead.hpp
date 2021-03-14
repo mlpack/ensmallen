@@ -198,7 +198,7 @@ class MOEAD {
    */
   std::tuple<size_t, size_t>
   MatingSelection(const size_t popIdx,
-                  const arma::Mat<arma::uword>& weightNeighbourIndices,
+                  const arma::umat& weightNeighbourIndices,
                   bool sampleNeighbor);
 
   /**

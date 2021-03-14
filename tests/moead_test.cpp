@@ -39,21 +39,19 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
   SchafferFunctionN1<arma::mat> SCH;
   double lowerBound = -1000;
   const double upperBound = 1000;
-  const double strength = 1e-3;
 
-  MOEAD opt(150, // population size
-        2000,  // max generations
-        0.6, // cross over prob
-        0.7, // mutation prob
-        strength, // mutation strength
-        10, //neighbor size
-        0.5, //distribution index
-        0.5, //neighbor prob
-        0.8, //differential weight
-        10, //maxreplace,
-        lowerBound, //lower bound
-        upperBound //upper bound
-      );
+  MOEAD opt(
+          150, // population size
+          1000,  // max generations
+          1.0,  // crossover prob
+          20, //neighbor size
+          20, //distribution index
+          0.9, //neighbor prob
+          0.5, //differential weight
+          2, //maxreplace,
+          lowerBound, //lower bound
+          upperBound //upper bound
+        );
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -102,20 +100,19 @@ TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
   SchafferFunctionN1<arma::mat> SCH;
   arma::vec lowerBound = {-1000};
   arma::vec upperBound = {1000};
-  const double strength = 1e-3;
-  MOEAD opt(150, // population size
-      2000,  // max generations
-      0.6, // cross over prob
-      0.7, // mutation prob
-      strength, // mutation strength
-      10, //neighbor size
-      0.5, //distribution index
-      0.5, //neighbor prob
-      0.8, //differential weight
-      10, //maxreplace,
-      lowerBound, //lower bound
-      upperBound //upper bound
-    );
+
+  MOEAD opt(
+          150, // population size
+          1000,  // max generations
+          1.0,  // crossover prob
+          20, //neighbor size
+          20, //distribution index
+          0.9, //neighbor prob
+          0.5, //differential weight
+          2, //maxreplace,
+          lowerBound, //lower bound
+          upperBound //upper bound
+        );
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -160,23 +157,21 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
   FonsecaFlemingFunction<arma::mat> FON;
   const double lowerBound = -4;
   const double upperBound = 4;
-  const double strength = 1e-3;
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  MOEAD opt(150, // population size
-            2000,  // max generations
-            0.6, // cross over prob
-            0.7, // mutation prob
-            strength, // mutation strength
-            10, //neighbor size
-            0.5, //distribution index
-            0.5, //neighbor prob
-            0.8, //differential weight
-            10, //maxreplace,
-            lowerBound, //lower bound
-            upperBound //upper bound
-          );
+  MOEAD opt(
+          150, // population size
+          1000,  // max generations
+          1.0,  // crossover prob
+          20, //neighbor size
+          20, //distribution index
+          0.9, //neighbor prob
+          0.5, //differential weight
+          2, //maxreplace,
+          lowerBound, //lower bound
+          upperBound //upper bound
+        );
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -210,24 +205,24 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
 TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
 {
   FonsecaFlemingFunction<arma::mat> FON;
-  const arma::vec lowerBound("-4 -4 -4");
-  const arma::vec upperBound("4 4 4");
-  const double strength = 1e-3;
+  const arma::vec lowerBound = {-4, -4, -4};
+  const arma::vec upperBound = {4, 4, 4};
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
-  MOEAD opt(150, // population size
-          2000,  // max generations
-          0.6, // cross over prob
-          0.7, // mutation prob
-          strength, // mutation strength
-          10, //neighbor size
-          0.5, //distribution index
-          0.5, //neighbor prob
-          0.8, //differential weight
-          10, //maxreplace,
+
+  MOEAD opt(
+          150, // population size
+          1000,  // max generations
+          1.0,  // crossover prob
+          20, //neighbor size
+          20, //distribution index
+          0.9, //neighbor prob
+          0.5, //differential weight
+          2, //maxreplace,
           lowerBound, //lower bound
           upperBound //upper bound
         );
+
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
   arma::mat coords = FON.GetInitialPoint();

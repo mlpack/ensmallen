@@ -182,13 +182,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   bool terminate = false;
 
-  arma::Col<size_t> shuffle;
+  arma::uvec shuffle;
   // The weight matrix. Each vector represents a decomposition subproblem.
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
   weights += 1E-10; // Numerical stability
 
   // 1.2 Storing the indices of nearest neighbors of each weight vector.
-  arma::Mat<arma::uword> neighborIndices(neighborSize, populationSize);
+  arma::umat neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
     // Cache the distance between weights(i) and other weights.
@@ -298,7 +298,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       size_t replaceCounter = 0;
       size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
-      arma::Col<size_t> idxShuffle = std::get<0>(objectives).Shuffle(sampleSize);
+      arma::uvec idxShuffle = std::get<0>(objectives).Shuffle(sampleSize);
 
       for (size_t idx : idxShuffle)
       {
@@ -340,7 +340,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 //! Randomly chooses to select from parents or neighbors.
 inline std::tuple<size_t, size_t>
 MOEAD::MatingSelection(const size_t popIdx,
-    const arma::Mat<arma::uword>& neighborIndices,
+    const arma::umat& neighborIndices,
     bool sampleNeighbor)
 {
 	size_t k, l;
