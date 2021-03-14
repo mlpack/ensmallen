@@ -80,10 +80,10 @@ class FonsecaFlemingFunction
              -pow(static_cast<double>(coords[2]) - 1.0 / sqrt(3.0), 2.0)
         );
     }
-    arma::uvec Shuffle(size_t& populationSize)
+    arma::uvec Shuffle(const size_t& populationSize)
     {
 		  return arma::shuffle(arma::linspace<arma::uvec>(
-			  0, populationSize - 1, populationSize));
+			    0, populationSize - 1, populationSize));
 	  }
   } objectiveA;
 
