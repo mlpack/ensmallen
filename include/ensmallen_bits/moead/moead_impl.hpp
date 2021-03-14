@@ -284,14 +284,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
 	    Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
 
-      arma::vec candidateFval(numObjectives);
-      EvaluateObjectives(std::vector<MatType>{candidate}, objectives, candidateFval);
+      arma::vec candidateFitness(numObjectives);
+      EvaluateObjectives(std::vector<MatType>{candidate}, objectives, candidateFitness);
 
       // 2.4 Update of ideal point.
       for (size_t idx = 0; idx < numObjectives; ++idx)
       {
         idealPoint(idx) = std::min(idealPoint(idx),
-            candidateFval(idx));
+            candidateFitness(idx));
       }
 
       // 2.5 Update of the population.
@@ -308,14 +308,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         size_t pick = sampleNeighbor ? neighborIndices(idx, i) : idx;
 
 		    double candidateDecomposition = DecomposeObjectives(
-			      weights.col(pick), idealPoint, candidateFval);
+			      weights.col(pick), idealPoint, candidateFitness);
 		    double parentDecomposition = DecomposeObjectives(
 			      weights.col(pick), idealPoint, populationFitness.col(pick));
 
         if (candidateDecomposition < parentDecomposition)
         {
           population[pick] = candidate;
-          populationFitness.col(pick) = candidateFval;
+          populationFitness.col(pick) = candidateFitness;
           replaceCounter++;
         }
       }
@@ -416,9 +416,9 @@ inline void MOEAD::Mutate(MatType& child,
 //! approach.
 inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
     const arma::vec& idealPoint,
-    const arma::vec& candidateFval)
+    const arma::vec& candidateFitness)
 {
-  return arma::max(weights % arma::abs(candidateFval - idealPoint));
+  return arma::max(weights % arma::abs(candidateFitness - idealPoint));
 }
 
 //! No objectives to evaluate.
