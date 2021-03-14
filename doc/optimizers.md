@@ -1567,7 +1567,7 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for arbitrary multi-objective functions.*
 MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
 objective optimization algorithm. It decomposes a multiobjective optimization problem into a number of scalar
-optimization subproblems and optimizes them simultaneously. Each subproblem randomly use information from neighboring
+optimization subproblems and optimizes them simultaneously. Each subproblem randomly uses information from neighboring
 subproblems during the evolution stage. The Differential Evolution variant introduces further measures to encourage
 diversity in the produced solution.
 
