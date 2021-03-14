@@ -1,6 +1,7 @@
 /**
  * @file moead.hpp
- * @authors Utkarsh Rai, Nanubala Gnana Sai
+ * @author Utkarsh Rai
+ * @author Nanubala Gnana Sai
  *
  * MOEA/D, Multi Objective Evolutionary Algorithm based on Decompositon is a
  * multi objective optimization algorithm. It employs evolutionary algorithms,
