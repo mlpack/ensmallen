@@ -228,7 +228,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 2 The main loop.
   for (size_t g = 0; g < maxGenerations; ++g)
   {
-    shuffle = std::get<0>(objectives).Shuffle(populationSize);
+    shuffle = arma::shuffle(
+        arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
     for (size_t i : shuffle)
     {
       terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
@@ -291,7 +292,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       size_t replaceCounter = 0;
       size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
-      arma::uvec idxShuffle = std::get<0>(objectives).Shuffle(sampleSize);
+      arma::uvec idxShuffle = arma::shuffle(
+          arma::linspace<arma::uvec>(0, sampleSize - 1, sampleSize));
 
       for (size_t idx : idxShuffle)
       {
