@@ -6,8 +6,9 @@
  * Update Catch2 to 2.13.4
    ([#268](https://github.com/mlpack/ensmallen/pull/268)).
 
- * Fix typo in documentation
-   ([#270](https://github.com/mlpack/ensmallen/pull/270)).
+ * Fix typos in documentation
+   ([#270](https://github.com/mlpack/ensmallen/pull/270),
+    [#271](https://github.com/mlpack/ensmallen/pull/271)).
 
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
