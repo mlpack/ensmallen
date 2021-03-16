@@ -392,8 +392,8 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("MOEADCallbacksFullFunctionTest", "[CallbackTest]")
 {
-  arma::vec lowerBound = {-1000};
-  arma::vec upperBound = {1000};
+  arma::vec lowerBound = {-10};
+  arma::vec upperBound = {10};
   MOEAD optimizer(150,1000, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
   CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
       true, true, false, false, true);
