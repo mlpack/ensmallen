@@ -388,6 +388,18 @@ TEST_CASE("KatyushaCallbacksFullFunctionTest", "[CallbacksTest]")
 }
 
 /**
+ * Make sure we invoke all callbacks (MOEAD).
+ */
+TEST_CASE("MOEADCallbacksFullFunctionTest", "[CallbackTest]")
+{
+  arma::vec lowerBound = {-1000};
+  arma::vec upperBound = {1000};
+  MOEAD optimizer(150,1000, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
+  CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
+      true, true, false, false, true);
+}
+
+/**
  * Make sure we invoke all callbacks (NSGA2).
  */
 TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest]")
