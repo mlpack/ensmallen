@@ -37,8 +37,8 @@ bool InBounds(const double& value, const double& low, const double& high)
 TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
 {
   SchafferFunctionN1<arma::mat> SCH;
-  double lowerBound = -1000;
-  const double upperBound = 1000;
+  const double lowerBound = -10;
+  const double upperBound = 10;
 
   MOEAD opt(
           150, // population size
@@ -98,8 +98,8 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
 TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
 {
   SchafferFunctionN1<arma::mat> SCH;
-  arma::vec lowerBound = {-1000};
-  arma::vec upperBound = {1000};
+  arma::vec lowerBound = {-10};
+  arma::vec upperBound = {10};
 
   MOEAD opt(
           150, // population size
