@@ -21,6 +21,7 @@ namespace test {
  * g(x) = 1 + 10(n-1) + \sum_{i=2}^{n}(x_i^2 - 10cos(4\pi x_i))
  * f_1(x) = x_i
  * h(f_1,g) = 1 - \sqrt{f_i/g}
+ * f_2(x) = g(x) * h(f_1, g)
  * \f]
  *
  * This is a 10-variable problem(n = 10) with a convex
@@ -47,10 +48,104 @@ namespace test {
  * }
  * @endcode
  */
+  template<typename MatType = arma::mat>
+  class ZDT4
+  {
+    private:
+      size_t numObjectives;
+      size_t numVariables;
 
+    public:
+     //! Initialize the ZDT4
+    ZDT4() : numObjectives(2), numVariables(10)
+    {
+      if(numVariables < 2)
+      {
+        std::ostringstream oss;
+        oss << "ZDT4::ZDT4(): expected variable space of "
+        << "dimensions atleast 2, but got " <<  numVariables
+        << std::endl;
+        throw std::invalid_argument(oss.str());
+      }
+    }
 
-  }
-}
+    /**
+     * Evaluate the objectives with the given coordinate.
+     *
+     * @param coords The function coordinates.
+     * @return arma::Col<typename MatType::elem_type>
+     */
+    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+    {
+      double pi = arma::datum::pi;
+      typedef typename MatType::elem_type ElemType;
 
+      if(coords.size() != numVariables)
+      {
+        std::ostringstream oss;
+        oss << "ZDT4::Evaluate(): Provided coordinate's dimension is: "
+            << coords.size() << "expected: " << numVariables
+            << std::endl;
+        throw std::invalid_argument(oss.str());
+      }
 
+      arma::Col<ElemType> objectives(numObjectives);
+      objectives(0) = coords[0];
+      arma::vec truncatedCoords = coords(arma::span(1, numVariables - 1));
+      double sum = arma::accu(arma::square(truncatedCoords) -
+          10.0 * arma::cos(4 * pi * truncatedCoords));
+      double g = 1.0 + 10 * (static_cast<double>(numVariables) - 1.0) + sum;
+      double objectiveRatio = objectives(0) / g;
+	    objectives(1) = g * (std::sqrt(objectiveRatio));
+
+	    return objectives;
+    }
+
+    //! Get the starting point.
+    MatType GetInitialPoint()
+    {
+      return arma::vec(numVariables, 1, arma::fill::zeros);
+    }
+
+    struct ObjectiveF1
+    {
+      typename MatType::elem_type Evaluate(const MatType& coords)
+      {
+        if(coords.size() != numVariables)
+        {
+          std::ostringstream oss;
+          oss << "ZDT4::Evaluate(): Provided coordinate's dimension is: "
+              << coords.size() << "expected: " << numVariables
+              << std::endl;
+          throw std::invalid_argument(oss.str());
+        }
+
+        return coords[0];
+      }
+    } objectiveF1;
+
+    struct ObjectiveF2
+    {
+      typename MatType::elem_type Evaluate(const MatType& coords)
+      {
+        double pi = arma::datum::pi;
+
+        arma::vec truncatedCoords = coords(arma::span(1, numVariables - 1));
+        double sum = arma::accu(arma::square(truncatedCoords) -
+            10.0 * arma::cos(4 * pi * truncatedCoords));
+        double g = 1.0 + 10 * (static_cast<double>(numVariables) - 1.0) + sum;
+        double objectiveRatio = objectiveF1.Evaluate(coords) / g;
+
+        return  g * (std::sqrt(objectiveRatio));
+	    }
+    } objectiveF2;
+
+    //! Get objective functions.
+    std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
+    {
+      return std::make_tuple(objectiveF1, objectiveF2);
+    }
+  };
+  } //namespace test
+  } //namespace ens
 #endif
