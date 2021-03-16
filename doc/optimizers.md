@@ -1603,8 +1603,8 @@ Attributes of the optimizer may also be changed via the member methods
 
 ```c++
 SchafferFunctionN1<arma::mat> SCH;
-arma::vec lowerBound("-1000 -1000");
-arma::vec upperBound("1000 1000");
+arma::vec lowerBound("-10 -10");
+arma::vec upperBound("10 10");
 MOEAD opt(150, 1000, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
