@@ -21,6 +21,7 @@ namespace test {
  * g(x) = 1 + 9[ \sum_{i=2}^{n}(x_i^2)/9]^{0.25}
  * f_1(x) = 1 - e^{-4x_1}sin^{6}(6\pi x_i)
  * h(f1, g) = 1 - (f_1/g)^{2}
+ * f_2(x) = g(x) * h(f_1, g)
  * \f]
  *
  * This is a 10-variable problem(n = 10) with a
@@ -47,16 +48,118 @@ namespace test {
  * }
  * @endcode
  */
+  template<typename MatType = arma::mat>
+  class ZDT6
+  {
+   private:
+    size_t numObjectives;
+    size_t numVariables;
 
+   public:
+     //! Initialize the ZDT6
+    ZDT6() : numObjectives(2), numVariables(30)
+    {/* Nothing to do here. */}
 
-  }
-}
+    ZDT6(const size_t numVariables) :
+        numObjectives(2),
+        numVariables(numVariables)
+    {
+      if(numVariables < 2)
+      {
+        std::ostringstream oss;
+        oss << "ZDT6::ZDT6(): expected variable space of "
+        << "dimensions atleast 2, but got " <<  numVariables
+        << std::endl;
+        throw std::invalid_argument(oss.str());
+      }
+    }
 
+    /**
+     * Evaluate the objectives with the given coordinate.
+     *
+     * @param coords The function coordinates.
+     * @return arma::Col<typename MatType::elem_type>
+     */
+    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+    {
+      // Convenience typedef.
+      typedef typename MatType::elem_type ElemType;
+      double pi = arma::datum::pi;
 
+      if(coords.size() != numVariables)
+      {
+        std::ostringstream oss;
+        oss << "ZDT6::Evaluate(): Provided coordinate's dimension is: "
+            << coords.size() << "expected: " << numVariables
+            << std::endl;
+        throw std::invalid_argument(oss.str());
+      }
 
+	    arma::Col<ElemType> objectives(numObjectives);
+      objectives(0) = 1.0 - std::exp(-4 * coords[0]) *
+          std::pow(std::sin(6 * pi * coords[0]), 6);
+      double sum = std::pow(
+        arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
+	    double g = 1.0 + 9.0 * sum;
+      double objectiveRatio = objectives(0) / g;
+      objectives(1) = g * (1.0 - std::pow(objectiveRatio, 2));
 
+	    return objectives;
+    }
 
+    //! Get the starting point.
+    MatType GetInitialPoint()
+    {
+      return arma::vec(numVariables, 1, arma::fill::zeros);
+    }
 
+    struct ObjectiveF1
+    {
+      typename MatType::elem_type Evaluate(const MatType& coords)
+      {
+        double pi = arma::datum::pi;
+        if(coords.size() != numVariables)
+        {
+          std::ostringstream oss;
+          oss << "ZDT6::Evaluate(): Provided coordinate's dimension is: "
+              << coords.size() << "expected: " << numVariables
+              << std::endl;
+          throw std::invalid_argument(oss.str());
+        }
 
+        return 1.0 - std::exp(-4 * coords[0]) *
+          std::pow(std::sin(6 * pi * coords[0]), 6);
+      }
+    } objectiveF1;
 
+    struct ObjectiveF2
+    {
+      typename MatType::elem_type Evaluate(const MatType& coords)
+      {
+        double pi = arma::datum::pi;
+        if(coords.size() != numVariables)
+        {
+          std::ostringstream oss;
+          oss << "ZDT6::Evaluate(): Provided coordinate's dimension is: "
+              << coords.size() << "expected: " << numVariables
+              << std::endl;
+          throw std::invalid_argument(oss.str());
+        }
+
+        double sum = std::pow(
+            arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
+        double g = 1.0 + 9.0 * sum;
+        double objectiveRatio = objectiveF1.Evaluate(coords) / g;
+        return  g * (1.0 - std::pow(objectiveRatio, 2));
+		  }
+    } objectiveF2;
+
+    //! Get objective functions.
+    std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
+    {
+      return std::make_tuple(objectiveF1, objectiveF2);
+    }
+  };
+  } //namespace test
+  } //namespace ens
 #endif
