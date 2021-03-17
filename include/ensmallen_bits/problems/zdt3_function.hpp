@@ -65,22 +65,12 @@ namespace test {
 
     public:
      //! Initialize the ZDT3
-    ZDT3() : numObjectives(2), numVariables(30)
-    {/* Nothing to do here. */}
-
-    ZDT3(const size_t numVariables) :
+    ZDT3() :
         numObjectives(2),
-        numVariables(numVariables)
-    {
-      if(numVariables < 2)
-      {
-        std::ostringstream oss;
-        oss << "ZDT3::ZDT3(): expected variable space of "
-        << "dimensions atleast 2, but got " <<  numVariables
-        << std::endl;
-        throw std::invalid_argument(oss.str());
-      }
-	  }
+        numVariables(30),
+        objectiveF1(*this),
+        objectiveF2(*this)
+    {/* Nothing to do here. */}
 
     /**
      * Evaluate the objectives with the given coordinate.
@@ -92,15 +82,6 @@ namespace test {
     {
       double pi = arma::datum::pi;
       typedef typename MatType::elem_type ElemType;
-
-      if(coords.size() != numVariables)
-      {
-        std::ostringstream oss;
-        oss << "ZDT3::Evaluate(): Provided coordinate's dimension is: "
-            << coords.size() << "expected: " << numVariables
-            << std::endl;
-        throw std::invalid_argument(oss.str());
-      }
 
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
@@ -121,50 +102,45 @@ namespace test {
 
     struct ObjectiveF1
     {
+      ObjectiveF1(ZDT3& zdtClass) : zdtClass(zdtClass)
+      {/*Nothing to do here */}
+
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
-        if(coords.size() != numVariables)
-        {
-          std::ostringstream oss;
-          oss << "ZDT3::Evaluate(): Provided coordinate's dimension is: "
-              << coords.size() << "expected: " << numVariables
-              << std::endl;
-          throw std::invalid_argument(oss.str());
-        }
-
         return coords[0];
       }
-    } objectiveF1;
+
+      ZDT3& zdtClass;
+    };
 
     struct ObjectiveF2
     {
+      ObjectiveF2(ZDT3& zdtClass) : zdtClass(zdtClass)
+      {/*Nothing to do here */}
+
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
         double pi = arma::datum::pi;
-
-        if(coords.size() != numVariables)
-        {
-          std::ostringstream oss;
-          oss << "ZDT3::Evaluate(): Provided coordinate's dimension is: "
-              << coords.size() << "expected: " << numVariables
-              << std::endl;
-          throw std::invalid_argument(oss.str());
-        }
-
+        double numVariables = zdtClass.numVariables;
         double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-        double g = 1. + 9. * sum / (static_cast<double>(numVariables) - 1.);
-        double objectiveRatio = objectiveF1.Evaluate(coords) / g;
+        double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
+        double objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return g * (1. - std::sqrt(objectiveRatio) -
             (objectiveRatio) * std::sin(10. * pi * coords[0]));
 	    }
-    } objectiveF2;
+
+      ZDT3& zdtClass;
+    };
 
     //! Get objective functions.
     std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
     {
       return std::make_tuple(objectiveF1, objectiveF2);
     }
+
+    ObjectiveF1 objectiveF1;
+    ObjectiveF2 objectiveF2;
   };
   } //namespace test
   } //namespace ens
