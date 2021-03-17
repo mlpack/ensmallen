@@ -57,22 +57,12 @@ namespace test {
 
    public:
      //! Initialize the ZDT6
-    ZDT6() : numObjectives(2), numVariables(30)
-    {/* Nothing to do here. */}
-
-    ZDT6(const size_t numVariables) :
+    ZDT6() :
         numObjectives(2),
-        numVariables(numVariables)
-    {
-      if(numVariables < 2)
-      {
-        std::ostringstream oss;
-        oss << "ZDT6::ZDT6(): expected variable space of "
-        << "dimensions atleast 2, but got " <<  numVariables
-        << std::endl;
-        throw std::invalid_argument(oss.str());
-      }
-    }
+        numVariables(10),
+        objectiveF1(*this),
+        objectiveF2(*this)
+    {/* Nothing to do here. */}
 
     /**
      * Evaluate the objectives with the given coordinate.
@@ -85,15 +75,6 @@ namespace test {
       // Convenience typedef.
       typedef typename MatType::elem_type ElemType;
       double pi = arma::datum::pi;
-
-      if(coords.size() != numVariables)
-      {
-        std::ostringstream oss;
-        oss << "ZDT6::Evaluate(): Provided coordinate's dimension is: "
-            << coords.size() << "expected: " << numVariables
-            << std::endl;
-        throw std::invalid_argument(oss.str());
-      }
 
 	    arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = 1. - std::exp(-4 * coords[0]) *
@@ -115,51 +96,48 @@ namespace test {
 
     struct ObjectiveF1
     {
+      ObjectiveF1(ZDT6& zdtClass) : zdtClass(zdtClass)
+      {/*Nothing to do here */}
+
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
         double pi = arma::datum::pi;
-        if(coords.size() != numVariables)
-        {
-          std::ostringstream oss;
-          oss << "ZDT6::Evaluate(): Provided coordinate's dimension is: "
-              << coords.size() << "expected: " << numVariables
-              << std::endl;
-          throw std::invalid_argument(oss.str());
-        }
-
-        return 1. - std::exp(-4 * coords[0]) *
-            std::pow(std::sin(6 * pi * coords[0]), 6);
+        return 1. - std::exp(-4. * coords[0]) *
+            std::pow(std::sin(6. * pi * coords[0]), 6.);
       }
-    } objectiveF1;
+
+      ZDT6& zdtClass;
+    };
 
     struct ObjectiveF2
     {
+      ObjectiveF2(ZDT6& zdtClass) : zdtClass(zdtClass)
+      {/*Nothing to do here */}
+
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
         double pi = arma::datum::pi;
-        if(coords.size() != numVariables)
-        {
-          std::ostringstream oss;
-          oss << "ZDT6::Evaluate(): Provided coordinate's dimension is: "
-              << coords.size() << "expected: " << numVariables
-              << std::endl;
-          throw std::invalid_argument(oss.str());
-        }
+        double numVariables = zdtClass.numVariables;
 
         double sum = std::pow(
             arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
         double g = 1. + 9. * sum;
-        double objectiveRatio = objectiveF1.Evaluate(coords) / g;
+        double objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return  g * (1. - std::pow(objectiveRatio, 2));
 		  }
-    } objectiveF2;
+
+      ZDT6& zdtClass;
+    };
 
     //! Get objective functions.
     std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
     {
       return std::make_tuple(objectiveF1, objectiveF2);
     }
+
+    ObjectiveF1 objectiveF1;
+    ObjectiveF2 objectiveF2;
   };
   } //namespace test
   } //namespace ens
