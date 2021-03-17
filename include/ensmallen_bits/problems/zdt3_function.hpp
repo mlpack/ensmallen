@@ -105,10 +105,10 @@ namespace test {
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
       double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-      double g = 1.0 + 9.0 * sum / (static_cast<double>(numVariables) - 1.0);
+      double g = 1. + 9. * sum / (static_cast<double>(numVariables) - 1.);
       double objectiveRatio = objectives(0) / g;
-	    objectives(1) = g * (1.0 - std::sqrt(objectiveRatio) -
-				  (objectiveRatio) * std::sin(10.0 * pi * coords[0]));
+	    objectives(1) = g * (1. - std::sqrt(objectiveRatio) -
+				  (objectiveRatio) * std::sin(10. * pi * coords[0]));
 
 	    return objectives;
     }
@@ -152,10 +152,11 @@ namespace test {
         }
 
         double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-        double g = 1.0 + 9.0 * sum / (static_cast<double>(numVariables) - 1.0);
+        double g = 1. + 9. * sum / (static_cast<double>(numVariables) - 1.);
         double objectiveRatio = objectiveF1.Evaluate(coords) / g;
-        return g * (1.0 - std::sqrt(objectiveRatio) -
-            (objectiveRatio) * std::sin(10.0 * pi * coords[0]));
+
+        return g * (1. - std::sqrt(objectiveRatio) -
+            (objectiveRatio) * std::sin(10. * pi * coords[0]));
 	    }
     } objectiveF2;
 
