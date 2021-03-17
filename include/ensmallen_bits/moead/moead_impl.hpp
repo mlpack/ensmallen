@@ -187,7 +187,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     // Cache the distance between weights(i) and other weights.
     arma::rowvec distances(populationSize);
     distances =
-        arma::sqrt(arma::sum(arma::pow(weights.col(i) - weights.each_col(), 2)));
+        arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
     // Ignore distance from self
     neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
