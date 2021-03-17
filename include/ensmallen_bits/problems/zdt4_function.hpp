@@ -93,10 +93,10 @@ namespace test {
       objectives(0) = coords[0];
       arma::vec truncatedCoords = coords(arma::span(1, numVariables - 1));
       double sum = arma::accu(arma::square(truncatedCoords) -
-          10.0 * arma::cos(4 * pi * truncatedCoords));
-      double g = 1.0 + 10 * (static_cast<double>(numVariables) - 1.0) + sum;
+          10. * arma::cos(4 * pi * truncatedCoords));
+      double g = 1. + 10 * static_cast<double>(numVariables - 1) + sum;
       double objectiveRatio = objectives(0) / g;
-	    objectives(1) = g * (std::sqrt(objectiveRatio));
+	    objectives(1) = g * (1. - std::sqrt(objectiveRatio));
 
 	    return objectives;
     }
@@ -132,11 +132,11 @@ namespace test {
 
         arma::vec truncatedCoords = coords(arma::span(1, numVariables - 1));
         double sum = arma::accu(arma::square(truncatedCoords) -
-            10.0 * arma::cos(4 * pi * truncatedCoords));
-        double g = 1.0 + 10 * (static_cast<double>(numVariables) - 1.0) + sum;
+            10. * arma::cos(4 * pi * truncatedCoords));
+        double g = 1. + 10 * static_cast<double>(numVariables - 1) + sum;
         double objectiveRatio = objectiveF1.Evaluate(coords) / g;
 
-        return  g * (std::sqrt(objectiveRatio));
+        return  g * (1. - std::sqrt(objectiveRatio));
 	    }
     } objectiveF2;
 

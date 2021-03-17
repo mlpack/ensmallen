@@ -96,13 +96,13 @@ namespace test {
       }
 
 	    arma::Col<ElemType> objectives(numObjectives);
-      objectives(0) = 1.0 - std::exp(-4 * coords[0]) *
+      objectives(0) = 1. - std::exp(-4 * coords[0]) *
           std::pow(std::sin(6 * pi * coords[0]), 6);
       double sum = std::pow(
-        arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
-	    double g = 1.0 + 9.0 * sum;
+          arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
+	    double g = 1. + 9. * sum;
       double objectiveRatio = objectives(0) / g;
-      objectives(1) = g * (1.0 - std::pow(objectiveRatio, 2));
+      objectives(1) = g * (1. - std::pow(objectiveRatio, 2));
 
 	    return objectives;
     }
@@ -127,8 +127,8 @@ namespace test {
           throw std::invalid_argument(oss.str());
         }
 
-        return 1.0 - std::exp(-4 * coords[0]) *
-          std::pow(std::sin(6 * pi * coords[0]), 6);
+        return 1. - std::exp(-4 * coords[0]) *
+            std::pow(std::sin(6 * pi * coords[0]), 6);
       }
     } objectiveF1;
 
@@ -148,9 +148,10 @@ namespace test {
 
         double sum = std::pow(
             arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
-        double g = 1.0 + 9.0 * sum;
+        double g = 1. + 9. * sum;
         double objectiveRatio = objectiveF1.Evaluate(coords) / g;
-        return  g * (1.0 - std::pow(objectiveRatio, 2));
+
+        return  g * (1. - std::pow(objectiveRatio, 2));
 		  }
     } objectiveF2;
 
