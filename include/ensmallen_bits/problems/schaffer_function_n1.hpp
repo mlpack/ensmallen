@@ -63,7 +63,10 @@ class SchafferFunctionN1
   //! Get the starting point.
   MatType GetInitialPoint()
   {
-    return arma::vec(numVariables, 1, arma::fill::zeros);
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+
+    return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
   }
 
   struct ObjectiveA
