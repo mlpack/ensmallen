@@ -189,7 +189,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     distances =
         arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
-    // Ignore distance from self
+    // Ignore distance from self.
     neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
   }
 
