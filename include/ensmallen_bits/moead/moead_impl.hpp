@@ -197,16 +197,16 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   std::vector<MatType> population(populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
-	  population[i] =
-		    arma::randu<MatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+    population[i] =
+        arma::randu<MatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
-	  for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
-	  {
-	    if (population[i][geneIdx] < lowerBound[geneIdx])
+    for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
+    {
+      if (population[i][geneIdx] < lowerBound[geneIdx])
         population[i][geneIdx] = lowerBound[geneIdx];
       else if (population[i][geneIdx] > upperBound[geneIdx])
         population[i][geneIdx] = upperBound[geneIdx];
-	  }
+    }
   }
 
   arma::mat populationFitness(numObjectives, populationSize);
@@ -339,14 +339,14 @@ MOEAD::MatingSelection(
 	size_t k, l;
 
   k = sampleNeighbor
-		  ? neighborIndices(
-		        arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
-		  : arma::randi(arma::distr_param(0, populationSize - 1u));
+      ? neighborIndices(
+            arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
+      : arma::randi(arma::distr_param(0, populationSize - 1u));
 
   l = sampleNeighbor
-		  ? neighborIndices(
-		        arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
-		  : arma::randi(arma::distr_param(0, populationSize - 1u));
+      ? neighborIndices(
+            arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
+      : arma::randi(arma::distr_param(0, populationSize - 1u));
 
   if (k == l)
   {
