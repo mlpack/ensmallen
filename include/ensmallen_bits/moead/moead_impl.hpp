@@ -202,10 +202,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
 	  for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
 	  {
-		  if (population[i][geneIdx] < lowerBound[geneIdx])
-			  population[i][geneIdx] = lowerBound[geneIdx];
-		  else if (population[i][geneIdx] > upperBound[geneIdx])
-			  population[i][geneIdx] = upperBound[geneIdx];
+	    if (population[i][geneIdx] < lowerBound[geneIdx])
+        population[i][geneIdx] = lowerBound[geneIdx];
+      else if (population[i][geneIdx] > upperBound[geneIdx])
+        population[i][geneIdx] = upperBound[geneIdx];
 	  }
   }
 
@@ -254,20 +254,18 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         {
           candidate[geneIdx] = population[r1][geneIdx] +
               differentialWeight * (population[r2][geneIdx] -
-                                      population[r3][geneIdx]);
+                  population[r3][geneIdx]);
 
           // Boundary conditions.
           if (candidate[geneIdx] < lowerBound[geneIdx])
           {
             candidate[geneIdx] = lowerBound[geneIdx] +
-                arma::randu() * (population[r1][geneIdx] -
-                                  lowerBound[geneIdx]);
+                arma::randu() * (population[r1][geneIdx] - lowerBound[geneIdx]);
           }
           if (candidate[geneIdx] > upperBound[geneIdx])
           {
             candidate[geneIdx] = upperBound[geneIdx] -
-                arma::randu() * (upperBound[geneIdx] -
-                                  population[r1][geneIdx]);
+                arma::randu() * (upperBound[geneIdx] - population[r1][geneIdx]);
           }
         }
 
@@ -275,7 +273,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           candidate[geneIdx] = population[r1][geneIdx];
         }
 
-	    Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
+      Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
 
       arma::vec candidateFitness(numObjectives);
       EvaluateObjectives(std::vector<MatType>{candidate}, objectives, candidateFitness);
@@ -301,10 +299,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
         size_t pick = sampleNeighbor ? neighborIndices(idx, i) : idx;
 
-		    double candidateDecomposition = DecomposeObjectives(
-			      weights.col(pick), idealPoint, candidateFitness);
-		    double parentDecomposition = DecomposeObjectives(
-			      weights.col(pick), idealPoint, populationFitness.col(pick));
+        double candidateDecomposition = DecomposeObjectives(
+            weights.col(pick), idealPoint, candidateFitness);
+        double parentDecomposition = DecomposeObjectives(
+            weights.col(pick), idealPoint, populationFitness.col(pick));
 
         if (candidateDecomposition < parentDecomposition)
         {
@@ -351,12 +349,12 @@ MOEAD::MatingSelection(
 		  : arma::randi(arma::distr_param(0, populationSize - 1u));
 
   if (k == l)
-	{
-		if (k == populationSize - 1u)
-			--k;
+  {
+    if (k == populationSize - 1u)
+      --k;
     else
-			++k;
-	}
+      ++k;
+  }
 
   return std::make_tuple(k, l);
 }
