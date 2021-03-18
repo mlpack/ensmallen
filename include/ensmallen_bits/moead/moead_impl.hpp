@@ -73,7 +73,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
                                             MatType& iterate,
                                             CallbackTypes&&... callbacks)
 {
-  // Sanity checks
+  // Sanity checks.
   if (populationSize < 3)
   {
     throw std::invalid_argument(
@@ -450,4 +450,3 @@ MOEAD::EvaluateObjectives(
 }
 
 #endif
-
