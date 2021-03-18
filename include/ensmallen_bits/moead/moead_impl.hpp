@@ -241,7 +241,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       size_t r1, r2, r3;
       r1 = i;
       // Randomly choose to sample from the population or the neighbors.
-      bool sampleNeighbor = ( arma::randu() < neighborProb );
+      bool sampleNeighbor = arma::randu() < neighborProb;
 	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
