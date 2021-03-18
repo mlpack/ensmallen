@@ -41,16 +41,16 @@ TEST_CASE("MOEADSchafferN1Test", "[MOEADTest]")
   const double upperBound = 10;
 
   MOEAD opt(
-          150, // population size
-          1000,  // max generations
-          1.0,  // crossover prob
-          20, //neighbor size
-          20, //distribution index
-          0.9, //neighbor prob
-          0.5, //differential weight
-          2, //maxreplace,
-          lowerBound, //lower bound
-          upperBound //upper bound
+          150, // Population size.
+          1000,  // Max generations.
+          1.0,  // Crossover probability.
+          20, // Neighborhood size.
+          20, // Distribution index.
+          0.9, // Probability of sampling from neighbor.
+          0.5, // Differential weight.
+          2, // Max childrens to replace parents.
+          lowerBound, // Lower bound.
+          upperBound // Upper bound.
         );
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
@@ -102,16 +102,16 @@ TEST_CASE("MOEADSchafferN1VectorBoundsTest", "[MOEADTest]")
   arma::vec upperBound = {10};
 
   MOEAD opt(
-          150, // population size
-          1000,  // max generations
-          1.0,  // crossover prob
-          20, //neighbor size
-          20, //distribution index
-          0.9, //neighbor prob
-          0.5, //differential weight
-          2, //maxreplace,
-          lowerBound, //lower bound
-          upperBound //upper bound
+          150, // Population size.
+          1000,  // Max generations.
+          1.0,  // Crossover probability.
+          20, // Neighborhood size.
+          20, // Distribution index.
+          0.9, // Probability of sampling from neighbor.
+          0.5, // Differential weight.
+          2, // Max childrens to replace parents.
+          lowerBound, // Lower bound.
+          upperBound // Upper bound.
         );
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
@@ -161,16 +161,16 @@ TEST_CASE("MOEADFonsecaFlemingTest", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   MOEAD opt(
-          150, // population size
-          1000,  // max generations
-          1.0,  // crossover prob
-          20, //neighbor size
-          20, //distribution index
-          0.9, //neighbor prob
-          0.5, //differential weight
-          2, //maxreplace,
-          lowerBound, //lower bound
-          upperBound //upper bound
+          150, // Population size.
+          1000,  // Max generations.
+          1.0,  // Crossover probability.
+          20, // Neighborhood size.
+          20, // Distribution index.
+          0.9, // Probability of sampling from neighbor.
+          0.5, // Differential weight.
+          2, // Max childrens to replace parents.
+          lowerBound, // Lower bound.
+          upperBound // Upper bound.
         );
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
@@ -211,16 +211,16 @@ TEST_CASE("MOEADFonsecaFlemingVectorBoundsTest", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   MOEAD opt(
-          150, // population size
-          1000,  // max generations
-          1.0,  // crossover prob
-          20, //neighbor size
-          20, //distribution index
-          0.9, //neighbor prob
-          0.5, //differential weight
-          2, //maxreplace,
-          lowerBound, //lower bound
-          upperBound //upper bound
+          150, // Population size.
+          1000,  // Max generations.
+          1.0,  // Crossover probability.
+          20, // Neighborhood size.
+          20, // Distribution index.
+          0.9, // Probability of sampling from neighbor.
+          0.5, // Differential weight.
+          2, // Max childrens to replace parents.
+          lowerBound, // Lower bound.
+          upperBound // Upper bound.
         );
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;

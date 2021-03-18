@@ -1,6 +1,7 @@
 /**
  * @file moead_impl.hpp
- * @authors Utkarsh Rai, Nanubala Gnana Sai
+ * @author Utkarsh Rai
+ * @author Nanubala Gnana Sai
  *
  * Implementation of the MOEA/D-DE algorithm. Used for multi-objective
  * optimization problems on arbitrary functions.
@@ -242,7 +243,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       r1 = i;
       // Randomly choose to sample from the population or the neighbors.
       bool sampleNeighbor = arma::randu() < neighborProb;
-	    std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
+      std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Mutation.
