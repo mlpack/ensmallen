@@ -22,6 +22,9 @@
  * Refactor NSGA2
    ([#263](https://github.com/mlpack/ensmallen/pull/263)).
 
+ * Add ZDT Test Suite
+   ([#273](https://github.com/mlpack/ensmallen/pull/273)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set
