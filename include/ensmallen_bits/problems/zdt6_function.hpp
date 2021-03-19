@@ -76,12 +76,12 @@ namespace test {
       typedef typename MatType::elem_type ElemType;
       double pi = arma::datum::pi;
 
-	    arma::Col<ElemType> objectives(numObjectives);
+      arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = 1. - std::exp(-4 * coords[0]) *
           std::pow(std::sin(6 * pi * coords[0]), 6);
       ElemType sum = std::pow(
           arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
-	    ElemType g = 1. + 9. * sum;
+      ElemType g = 1. + 9. * sum;
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::pow(objectiveRatio, 2));
 
