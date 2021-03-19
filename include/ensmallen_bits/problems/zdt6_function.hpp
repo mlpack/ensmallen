@@ -79,10 +79,10 @@ namespace test {
 	    arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = 1. - std::exp(-4 * coords[0]) *
           std::pow(std::sin(6 * pi * coords[0]), 6);
-      double sum = std::pow(
+      ElemType sum = std::pow(
           arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
-	    double g = 1. + 9. * sum;
-      double objectiveRatio = objectives(0) / g;
+	    ElemType g = 1. + 9. * sum;
+      ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::pow(objectiveRatio, 2));
 
       return objectives;
@@ -120,12 +120,14 @@ namespace test {
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
         double pi = arma::datum::pi;
-        double numVariables = zdtClass.numVariables;
+        typedef typename MatType::elem_type ElemType;
 
-        double sum = std::pow(
+        size_t numVariables = zdtClass.numVariables;
+
+        ElemType sum = std::pow(
             arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
-        double g = 1. + 9. * sum;
-        double objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
+        ElemType g = 1. + 9. * sum;
+        ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return  g * (1. - std::pow(objectiveRatio, 2));
     }
