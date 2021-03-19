@@ -83,13 +83,16 @@ namespace test {
       double objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::pow(objectiveRatio, 2));
 
-	    return objectives;
+      return objectives;
     }
 
     //! Get the starting point.
     MatType GetInitialPoint()
     {
-      return arma::vec(numVariables, 1, arma::fill::zeros);
+      // Convenience typedef.
+      typedef typename MatType::elem_type ElemType;
+
+      return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
     }
 
     struct ObjectiveF1
@@ -118,7 +121,7 @@ namespace test {
         double objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return g * (1. - std::pow(objectiveRatio, 2));
-		  }
+      }
 
       ZDT2& zdtClass;
     };

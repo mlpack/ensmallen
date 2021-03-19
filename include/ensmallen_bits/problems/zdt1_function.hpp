@@ -75,20 +75,23 @@ namespace test {
       // Convenience typedef.
       typedef typename MatType::elem_type ElemType;
 
-	    arma::Col<ElemType> objectives(numObjectives);
+      arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
-	    double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-	    double g = 1. + 9. * sum / (static_cast<double>(numVariables) - 1.);
+      double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+      double g = 1. + 9. * sum / (static_cast<double>(numVariables) - 1.);
       double objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::sqrt(objectiveRatio));
 
-	    return objectives;
+      return objectives;
     }
 
     //! Get the starting point.
     MatType GetInitialPoint()
     {
-      return arma::vec(numVariables, 1, arma::fill::zeros);
+      // Convenience typedef.
+      typedef typename MatType::elem_type ElemType;
+
+      return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
     }
 
     struct ObjectiveF1
@@ -117,7 +120,7 @@ namespace test {
         double objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return g * (1. - std::sqrt(objectiveRatio));
-		  }
+      }
 
       ZDT1& zdtClass;
     };

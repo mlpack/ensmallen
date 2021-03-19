@@ -89,15 +89,18 @@ namespace test {
       double g = 1. + 9. * sum / (static_cast<double>(numVariables) - 1.);
       double objectiveRatio = objectives(0) / g;
 	    objectives(1) = g * (1. - std::sqrt(objectiveRatio) -
-				  (objectiveRatio) * std::sin(10. * pi * coords[0]));
+          (objectiveRatio) * std::sin(10. * pi * coords[0]));
 
-	    return objectives;
+      return objectives;
     }
 
     //! Get the starting point.
     MatType GetInitialPoint()
     {
-      return arma::vec(numVariables, 1, arma::fill::zeros);
+      // Convenience typedef.
+      typedef typename MatType::elem_type ElemType;
+
+      return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
     }
 
     struct ObjectiveF1
@@ -128,7 +131,7 @@ namespace test {
 
         return g * (1. - std::sqrt(objectiveRatio) -
             (objectiveRatio) * std::sin(10. * pi * coords[0]));
-	    }
+      }
 
       ZDT3& zdtClass;
     };
