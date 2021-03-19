@@ -77,9 +77,9 @@ namespace test {
 
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
-      double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-      double g = 1. + 9. * sum / (static_cast<double>(numVariables) - 1.);
-      double objectiveRatio = objectives(0) / g;
+      ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+      ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.);
+      ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::sqrt(objectiveRatio));
 
       return objectives;
@@ -114,10 +114,13 @@ namespace test {
 
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
-        double numVariables = zdtClass.numVariables;
-        double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-        double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
-        double objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
+        // Convenience typedef.
+        typedef typename MatType::elem_type ElemType;
+
+        size_t numVariables = zdtClass.numVariables;
+        ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+        ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables - 1));
+        ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return g * (1. - std::sqrt(objectiveRatio));
       }

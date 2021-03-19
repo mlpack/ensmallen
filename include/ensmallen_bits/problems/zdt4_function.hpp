@@ -77,11 +77,11 @@ namespace test {
 
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
-      arma::vec truncatedCoords = coords(arma::span(1, numVariables - 1));
-      double sum = arma::accu(arma::square(truncatedCoords) -
+      arma::Col<ElemType> truncatedCoords = coords(arma::span(1, numVariables - 1));
+      ElemType sum = arma::accu(arma::square(truncatedCoords) -
           10. * arma::cos(4 * pi * truncatedCoords));
-      double g = 1. + 10. * static_cast<double>(numVariables - 1) + sum;
-      double objectiveRatio = objectives(0) / g;
+      ElemType g = 1. + 10. * static_cast<ElemType>(numVariables - 1) + sum;
+      ElemType objectiveRatio = objectives(0) / g;
 	    objectives(1) = g * (1. - std::sqrt(objectiveRatio));
 
       return objectives;
@@ -117,12 +117,14 @@ namespace test {
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
         double pi = arma::datum::pi;
-        double numVariables = zdtClass.numVariables;
-        arma::vec truncatedCoords = coords(arma::span(1, numVariables - 1));
-        double sum = arma::accu(arma::square(truncatedCoords) -
+        typedef typename MatType::elem_type ElemType;
+
+        size_t numVariables = zdtClass.numVariables;
+        arma::Col<ElemType> truncatedCoords = coords(arma::span(1, numVariables - 1));
+        ElemType sum = arma::accu(arma::square(truncatedCoords) -
             10. * arma::cos(4 * pi * truncatedCoords));
-        double g = 1. + 10 * static_cast<double>(numVariables - 1) + sum;
-        double objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
+        ElemType g = 1. + 10 * static_cast<ElemType>(numVariables - 1) + sum;
+        ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return  g * (1. - std::sqrt(objectiveRatio));
       }
