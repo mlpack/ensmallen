@@ -64,7 +64,8 @@ class FonsecaFlemingFunction
   //! Get the starting point.
   MatType GetInitialPoint()
   {
-    typedef MatType::elem_type ElemType;
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
 
     return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
   }
