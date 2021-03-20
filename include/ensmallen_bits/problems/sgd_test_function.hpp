@@ -37,17 +37,6 @@ class SGDTestFunction
   //! Return 3 (the number of functions).
   size_t NumFunctions() const { return 3; }
 
-  //! Get the starting point.
-  template<typename MatType = arma::mat>
-  MatType GetInitialPoint() const { return MatType("6; -45.6; 6.2"); }
-
-  //! Get the final point.
-  template<typename MatType = arma::mat>
-  MatType GetFinalPoint() const { return MatType("0.0; 0.0; 0.0"); }
-
-  //! Get the final objective.
-  double GetFinalObjective() const { return -1.0; }
-
   //! Evaluate a function for a particular batch-size.
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates,
@@ -60,6 +49,22 @@ class SGDTestFunction
                 const size_t begin,
                 GradType& gradient,
                 const size_t batchSize) const;
+
+  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
+  // required for using ensmallen to optimize this function!  They are
+  // specifically used as a convenience just for ensmallen's testing
+  // infrastructure.
+
+  //! Get the starting point.
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const { return MatType("6; -45.6; 6.2"); }
+
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("0.0; 0.0; 0.0"); }
+
+  //! Get the final objective.
+  double GetFinalObjective() const { return -1.0; }
 };
 
 } // namespace test
