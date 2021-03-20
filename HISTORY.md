@@ -10,6 +10,9 @@
    ([#270](https://github.com/mlpack/ensmallen/pull/270),
     [#271](https://github.com/mlpack/ensmallen/pull/271)).
 
+ * Refactor NSGA2
+   ([#263](https://github.com/mlpack/ensmallen/pull/263)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set
