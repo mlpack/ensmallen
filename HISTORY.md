@@ -10,6 +10,9 @@
    ([#270](https://github.com/mlpack/ensmallen/pull/270),
     [#271](https://github.com/mlpack/ensmallen/pull/271)).
 
+ * Add clarifying comments in problems/ implementations
+   ([#276](https://github.com/mlpack/ensmallen/pull/276)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set
