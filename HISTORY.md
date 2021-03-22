@@ -10,6 +10,9 @@
    ([#270](https://github.com/mlpack/ensmallen/pull/270),
     [#271](https://github.com/mlpack/ensmallen/pull/271)).
 
+ * Add clarifying comments in problems/ implementations
+   ([#276](https://github.com/mlpack/ensmallen/pull/276)).
+
  * Refactor NSGA2
    ([#263](https://github.com/mlpack/ensmallen/pull/263)).
 
