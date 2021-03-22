@@ -112,10 +112,10 @@ class AckleyFunction
   //! Modify the value used for numerical stability.
   double& Epsilon() { return epsilon; }
 
-  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
-  // required for using ensmallen to optimize this function!  They are
-  // specifically used as a convenience just for ensmallen's testing
-  // infrastructure.
+  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective(),
+  // GetVariablesBounds() are not required for using ensmallen to
+  // optimize this function!  They are specifically used as a
+  // convenience just for ensmallen's testing infrastructure.
 
   //! Get the starting point.
   template<typename MatType = arma::mat>
@@ -127,6 +127,15 @@ class AckleyFunction
 
   //! Get the final objective.
   double GetFinalObjective() const { return 0.0; }
+
+  //! Get the bounds of variable space.
+  std::tuple<arma::vec, arma::vec> GetVariablesBounds() const
+  {
+    arma::vec lowerBound {-32.768, -32.768};
+    arma::vec upperBound {+32.768, +32.768};
+
+    return std::make_tuple(lowerBound, upperBound);
+  }
 
  private:
   //! The value of the multiplicative constant.
