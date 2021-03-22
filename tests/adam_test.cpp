@@ -322,14 +322,3 @@ TEST_CASE("AdamThreeHumpCamelFunctionTest", "[AdamTest]")
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
   FunctionTest<ThreeHumpCamelFunction>(optimizer, 0.1, 0.01);
 }
-
-/**
- * Test the Adam optimizer on Schaffer function N.2.
- * This is to test Schaffer function N.2 and not Adam.
- * This test will be removed later.
- */
-TEST_CASE("AdamSchafferFunctionN2Test", "[AdamTest]")
-{
-  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
-  FunctionTest<SchafferFunctionN2>(optimizer, 0.1, 0.01);
-}
