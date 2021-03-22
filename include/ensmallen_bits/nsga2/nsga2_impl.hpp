@@ -61,7 +61,7 @@ template<typename MatType,
          typename... CallbackTypes>
 typename MatType::elem_type NSGA2::Optimize(
     std::tuple<ArbitraryFunctionType...>& objectives,
-    MatType& iterate,
+    MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
   // Make sure for evolution to work at least four candidates are present.
@@ -70,6 +70,13 @@ typename MatType::elem_type NSGA2::Optimize(
     throw std::logic_error("NSGA2::Optimize(): population size should be at"
         " least 4, and, a multiple of 4!");
   }
+
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+  RequireDenseFloatingPointType<BaseMatType>();
 
   // Check if lower bound is a vector of a single dimension.
   if (lowerBound.n_rows == 1)
@@ -85,9 +92,6 @@ typename MatType::elem_type NSGA2::Optimize(
   assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
       "upperBound are not the same as the dimensions of iterate.");
 
-  // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-
   numObjectives = sizeof...(ArbitraryFunctionType);
   numVariables = iterate.n_rows;
 
@@ -98,7 +102,7 @@ typename MatType::elem_type NSGA2::Optimize(
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
-  std::vector<MatType> population;
+  std::vector<BaseMatType> population;
   population.reserve(2 * populationSize + 1);
 
   // Pareto fronts, initialized during non-dominated sorting.
@@ -116,7 +120,7 @@ typename MatType::elem_type NSGA2::Optimize(
   // starting point.
   for (size_t i = 0; i < populationSize; i++)
   {
-    population.push_back(arma::randu<MatType>(iterate.n_rows,
+    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
         iterate.n_cols) - 0.5 + iterate);
 
     // Ensure population is within variable space.
@@ -157,21 +161,21 @@ typename MatType::elem_type NSGA2::Optimize(
 
     // Perform fast non dominated sort on P_t ∪ G_t.
     ranks.resize(population.size());
-    FastNonDominatedSort<MatType>(fronts, ranks, calculatedObjectives);
+    FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
 
     // Perform crowding distance assignment.
     crowdingDistance.resize(population.size());
     std::fill(crowdingDistance.begin(), crowdingDistance.end(), 0.);
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
-      CrowdingDistanceAssignment<MatType>(
+      CrowdingDistanceAssignment<BaseMatType>(
           fronts[fNum], calculatedObjectives, crowdingDistance);
     }
 
     // Sort based on crowding distance.
     std::sort(population.begin(), population.end(),
-              [this, ranks, crowdingDistance, population](MatType candidateP,
-                                                          MatType candidateQ)
+              [this, ranks, crowdingDistance, population](BaseMatType candidateP,
+                                                          BaseMatType candidateQ)
               {
                 size_t idxP, idxQ;
                 for (size_t i = 0; i < population.size(); i++)
@@ -183,7 +187,7 @@ typename MatType::elem_type NSGA2::Optimize(
                     idxQ = i;
                 }
 
-                return CrowdingOperator<MatType>(idxP, idxQ, ranks, crowdingDistance);
+                return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks, crowdingDistance);
               }
     );
 
@@ -193,14 +197,14 @@ typename MatType::elem_type NSGA2::Optimize(
   }
 
   // Set the candidates from the best front as the output.
-  std::vector<MatType> front;
+  std::vector<BaseMatType> front;
 
   for (size_t f: fronts[0])
     front.push_back(population[f]);
 
   // bestFront is stored, can be obtained by the Front() getter.
   std::transform(front.begin(), front.end(), std::back_inserter(bestFront),
-    [&](const MatType& individual)
+    [&](const BaseMatType& individual)
       {
         return arma::conv_to<arma::mat>::from(individual);
       });
