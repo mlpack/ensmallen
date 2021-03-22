@@ -19,7 +19,8 @@
 
 namespace ens {
 
-inline NSGA2::NSGA2(const size_t populationSize,
+template<bool Test>
+ NSGA2<Test>::NSGA2(const size_t populationSize,
                     const size_t maxGenerations,
                     const double crossoverProb,
                     const double mutationProb,
@@ -36,8 +37,8 @@ inline NSGA2::NSGA2(const size_t populationSize,
     lowerBound(lowerBound),
     upperBound(upperBound)
 { /* Nothing to do here. */ }
-
-inline NSGA2::NSGA2(const size_t populationSize,
+template<bool Test>
+ NSGA2<Test>::NSGA2(const size_t populationSize,
                     const size_t maxGenerations,
                     const double crossoverProb,
                     const double mutationProb,
@@ -56,10 +57,11 @@ inline NSGA2::NSGA2(const size_t populationSize,
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
+template<bool Test>
 template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-typename MatType::elem_type NSGA2::Optimize(
+typename MatType::elem_type NSGA2<Test>::Optimize(
     std::tuple<ArbitraryFunctionType...>& objectives,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
@@ -224,11 +226,12 @@ typename MatType::elem_type NSGA2::Optimize(
 }
 
 //! No objectives to evaluate.
+template<bool Test>
 template<std::size_t I,
          typename MatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-NSGA2::EvaluateObjectives(
+NSGA2<Test>::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
     std::vector<arma::Col<typename MatType::elem_type> >&)
@@ -237,11 +240,12 @@ NSGA2::EvaluateObjectives(
 }
 
 //! Evaluate the objectives for the entire population.
+template<bool Test>
 template<std::size_t I,
          typename MatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-NSGA2::EvaluateObjectives(
+NSGA2<Test>::EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
@@ -255,8 +259,9 @@ NSGA2::EvaluateObjectives(
 }
 
 //! Reproduce and generate new candidates.
+template<bool Test>
 template<typename MatType>
-inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
+ void NSGA2<Test>::BinaryTournamentSelection(std::vector<MatType>& population,
                                              const arma::vec& lowerBound,
                                              const arma::vec& upperBound)
 {
@@ -295,8 +300,9 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
 }
 
 //! Perform crossover of genes for the children.
+template<bool Test>
 template<typename MatType>
-inline void NSGA2::Crossover(MatType& childA,
+ void NSGA2<Test>::Crossover(MatType& childA,
                              MatType& childB,
                              const MatType& parentA,
                              const MatType& parentB)
@@ -311,8 +317,9 @@ inline void NSGA2::Crossover(MatType& childA,
 }
 
 //! Perform mutation of the candidates weights with some noise.
+template<bool Test>
 template<typename MatType>
-inline void NSGA2::Mutate(MatType& child,
+ void NSGA2<Test>::Mutate(MatType& child,
                           const arma::vec& lowerBound,
                           const arma::vec& upperBound)
 {
@@ -330,8 +337,9 @@ inline void NSGA2::Mutate(MatType& child,
 }
 
 //! Sort population into Pareto fronts.
+template<bool Test>
 template<typename MatType>
-inline void NSGA2::FastNonDominatedSort(
+ void NSGA2<Test>::FastNonDominatedSort(
     std::vector<std::vector<size_t> >& fronts,
     std::vector<size_t>& ranks,
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
@@ -391,8 +399,9 @@ inline void NSGA2::FastNonDominatedSort(
 }
 
 //! Check if a candidate Pareto dominates another candidate.
+template<bool Test>
 template<typename MatType>
-inline bool NSGA2::Dominates(
+ bool NSGA2<Test>::Dominates(
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
     size_t candidateP,
     size_t candidateQ)
@@ -416,8 +425,9 @@ inline bool NSGA2::Dominates(
 }
 
 //! Assign crowding distance to the population.
+template<bool Test>
 template <typename MatType>
-inline void NSGA2::CrowdingDistanceAssignment(
+ void NSGA2<Test>::CrowdingDistanceAssignment(
 	const std::vector<size_t>& front,
 	std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
 	std::vector<typename MatType::elem_type>& crowdingDistance)
@@ -464,8 +474,9 @@ inline void NSGA2::CrowdingDistanceAssignment(
 }
 
 //! Comparator for crowding distance based sorting.
+template<bool Test>
 template<typename MatType>
-inline bool NSGA2::CrowdingOperator(size_t idxP,
+ bool NSGA2<Test>::CrowdingOperator(size_t idxP,
                                     size_t idxQ,
                                     const std::vector<size_t>& ranks,
                                     const std::vector<typename MatType::elem_type>& crowdingDistance)
