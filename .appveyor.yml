@@ -50,7 +50,7 @@ build_script:
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "ensmallen.sln"
-    /m /verbosity:minimal /nologo /p:BuildInParallel=true
+    /m /verbosity:minimal /nologo /p:BuildInParallel=false
 
   # Run tests after copying libraries.
   - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
