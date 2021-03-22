@@ -13,6 +13,9 @@
  * Add clarifying comments in problems/ implementations
    ([#276](https://github.com/mlpack/ensmallen/pull/276)).
 
+ * Add bounds of search space for problem functions.
+   ([#276](https://github.com/mlpack/ensmallen/pull/279)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set
