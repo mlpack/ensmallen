@@ -55,25 +55,6 @@ class SchwefelFunction
   //! Return 1 (the number of functions).
   size_t NumFunctions() const { return n; }
 
-  //! Get the starting point.
-  template<typename MatType = arma::mat>
-  MatType GetInitialPoint() const
-  {
-    return arma::conv_to<MatType>::from(initialPoint);
-  }
-
-  //! Get the final point.
-  template<typename MatType = arma::mat>
-  MatType GetFinalPoint() const
-  {
-    MatType result(initialPoint.n_rows, initialPoint.n_cols);
-    result.fill(420.9687);
-    return result;
-  }
-
-  //! Get the final objective.
-  double GetFinalObjective() const { return 0.0; }
-
   /**
    * Evaluate a function for a particular batch-size.
    *
@@ -116,6 +97,31 @@ class SchwefelFunction
    */
   template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient);
+
+  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
+  // required for using ensmallen to optimize this function!  They are
+  // specifically used as a convenience just for ensmallen's testing
+  // infrastructure.
+
+  //! Get the starting point.
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const
+  {
+    return arma::conv_to<MatType>::from(initialPoint);
+  }
+
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const
+  {
+    MatType result(initialPoint.n_rows, initialPoint.n_cols);
+    result.fill(420.9687);
+    return result;
+  }
+
+  //! Get the final objective.
+  double GetFinalObjective() const { return 0.0; }
+
  private:
   //! Number of dimensions for the function.
   size_t n;
