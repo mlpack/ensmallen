@@ -50,7 +50,6 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-template<bool Test = true>
 class NSGA2 {
  public:
   /**

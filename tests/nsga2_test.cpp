@@ -42,7 +42,7 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
   const double lowerBound = -1000;
   const double upperBound = 1000;
 
-  NSGA2<> opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -91,7 +91,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
   const arma::vec lowerBound = {-1000};
   const arma::vec upperBound = {1000};
 
-  NSGA2<> opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -142,7 +142,7 @@ TEST_CASE("NSGA2FonsecaFlemingDoubleTest", "[NSGA2Test]")
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2<> opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -187,7 +187,7 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2<> opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -248,7 +248,7 @@ TEST_CASE("NSGA2SchafferN1FloatTest", "[NSGA2Test]")
   const double lowerBound = -1000;
   const double upperBound = 1000;
 
-  NSGA2<> opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -297,7 +297,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorFloatBounds", "[NSGA2Test]")
   const arma::vec lowerBound = {-1000};
   const arma::vec upperBound = {1000};
 
-  NSGA2<> opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -348,7 +348,7 @@ TEST_CASE("NSGA2FonsecaFlemingFloatTest", "[NSGA2Test]")
   const float expectedLowerBound = -1.0 / sqrt(3);
   const float expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2<> opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -393,7 +393,7 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
   const float expectedLowerBound = -1.0 / sqrt(3);
   const float expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2<> opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 4000, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
