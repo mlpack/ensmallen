@@ -427,8 +427,7 @@ inline void NSGA2::CrowdingDistanceAssignment(
 
   size_t fSize = front.size();
   // Stores the sorted indices of the fronts.
-  std::vector<size_t> sortedIdx(fSize);
-  std::iota(sortedIdx.begin(), sortedIdx.end(), 0u);
+  arma::uvec sortedIdx  = arma::regspace<arma::uvec>(0, 1, fSize - 1);
 
   for (size_t m = 0; m < numObjectives; m++)
   {
@@ -444,21 +443,21 @@ inline void NSGA2::CrowdingDistanceAssignment(
     std::sort(sortedIdx.begin(), sortedIdx.end(),
       [&](const size_t& frontIdxA, const size_t& frontIdxB)
         {
-          return (fValues[frontIdxA] < fValues[frontIdxB]);
+          return (fValues(frontIdxA) < fValues(frontIdxB));
         });
 
-    crowdingDistance[front[sortedIdx[0]]] =
+    crowdingDistance[front[sortedIdx(0)]] =
         std::numeric_limits<ElemType>::max();
-    crowdingDistance[front[sortedIdx[fSize - 1]]] =
+    crowdingDistance[front[sortedIdx(fSize - 1)]] =
         std::numeric_limits<ElemType>::max();
-    ElemType minFval = fValues[sortedIdx[0]];
-    ElemType maxFval = fValues[sortedIdx[fSize - 1]];
+    ElemType minFval = fValues(sortedIdx(0));
+    ElemType maxFval = fValues(sortedIdx(fSize - 1));
     ElemType scale = (maxFval == minFval) ? 1 : maxFval - minFval;
 
     for (size_t i = 1; i < fSize - 1; i++)
     {
-      crowdingDistance[front[sortedIdx[i]]] +=
-          (fValues[sortedIdx[i + 1]] - fValues[sortedIdx[i - 1]]) / scale;
+      crowdingDistance[front[sortedIdx(i)]] +=
+          (fValues(sortedIdx(i + 1)) - fValues(sortedIdx(i - 1))) / scale;
     }
   }
 }
