@@ -36,6 +36,7 @@ inline NSGA2::NSGA2(const size_t populationSize,
     lowerBound(lowerBound),
     upperBound(upperBound)
 { /* Nothing to do here. */ }
+
 inline NSGA2::NSGA2(const size_t populationSize,
                     const size_t maxGenerations,
                     const double crossoverProb,
@@ -58,7 +59,7 @@ inline NSGA2::NSGA2(const size_t populationSize,
 template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-inline typename MatType::elem_type NSGA2::Optimize(
+typename MatType::elem_type NSGA2::Optimize(
     std::tuple<ArbitraryFunctionType...>& objectives,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
@@ -122,14 +123,13 @@ inline typename MatType::elem_type NSGA2::Optimize(
     population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
         iterate.n_cols) - 0.5 + iterate);
 
-    // Ensure population is within variable space.
+    // Constrain all genes to be between bounds.
     for (size_t geneIdx = 0; geneIdx < numVariables; geneIdx++)
     {
-      if (population[i][geneIdx] < lowerBound[geneIdx])
-        population[i][geneIdx] = lowerBound[geneIdx];
-
-      if (population[i][geneIdx] > upperBound[geneIdx])
-        population[i][geneIdx] = upperBound[geneIdx];
+      if (population[i](geneIdx) < lowerBound(geneIdx))
+        population[i](geneIdx) = lowerBound(geneIdx);
+      else if (population[i](geneIdx) > upperBound(geneIdx))
+        population[i](geneIdx) = upperBound(geneIdx);
     }
   }
 
@@ -226,7 +226,7 @@ inline typename MatType::elem_type NSGA2::Optimize(
 template<std::size_t I,
          typename MatType,
          typename ...ArbitraryFunctionType>
-inline typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
+typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
@@ -459,7 +459,7 @@ inline void NSGA2::CrowdingDistanceAssignment(
       crowdingDistance[front[sortedIdx[i]]] +=
           (fValues[sortedIdx[i + 1]] - fValues[sortedIdx[i - 1]]) / scale;
     }
-    }
+  }
 }
 
 //! Comparator for crowding distance based sorting.
