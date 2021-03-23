@@ -2,6 +2,7 @@ environment:
   ARMADILLO_DOWNLOAD: "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
   BLAS_LIBRARY: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a"
   BLAS_LIBRARY_DLL: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll"
+  APPVEYOR_RDP_PASSWORD: ASDzxc123!
 
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -20,6 +21,9 @@ configuration: Release
 
 install:
   - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
+
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 build_script:
   # First, download and build Armadillo.
@@ -50,7 +54,7 @@ build_script:
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "ensmallen.sln"
-    /m:1 /verbosity:minimal /nologo /p:BuildInParallel=false
+    /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
   # Run tests after copying libraries.
   - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
