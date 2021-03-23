@@ -228,8 +228,8 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
 template<typename MatType>
 std::vector<MatType> castFront(const std::vector<arma::mat>& bestFront)
 {
-  std::vector<MatType> castedFront;
-  std::transform(bestFront.begin(), bestFront.end(), std::back_inserter(castedFront),
+  std::vector<MatType> castedFront(bestFront.size());
+  std::transform(bestFront.begin(), bestFront.end(), castedFront.begin(),
     [&](const arma::mat& individual)
       {
         return arma::conv_to<MatType>::from(individual);
