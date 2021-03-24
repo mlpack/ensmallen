@@ -20,7 +20,7 @@ namespace test {
  * The ZDT3 function, defined by:
  * \f[
  * g(x) = 1 + 9(\sum_{i=2}^{n} x_i )/(n-1)
- * f_1(x) = x_i
+ * f_1(x) = x_1
  * h(f_1,g) = 1 - \sqrt{f_1/g}  - (f_1/g)sin(10\pi f_1)
  * f_2(x) = g(x) * h(f_1, g)
  * \f]
@@ -54,16 +54,12 @@ namespace test {
  * }
  * @endcode
  *
- * @tparam arma::mat Type of matrix to optimize.
+ * @tparam MatType Type of matrix to optimize.
  */
   template<typename MatType = arma::mat>
   class ZDT3
   {
-    private:
-      size_t numObjectives;
-      size_t numVariables;
-
-    public:
+   public:
      //! Initialize the ZDT3
     ZDT3() :
         numObjectives(2),
@@ -80,7 +76,6 @@ namespace test {
      */
     arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
     {
-      double pi = arma::datum::pi;
       typedef typename MatType::elem_type ElemType;
 
       arma::Col<ElemType> objectives(numObjectives);
@@ -89,7 +84,7 @@ namespace test {
       ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.);
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::sqrt(objectiveRatio) -
-          (objectiveRatio) * std::sin(10. * pi * coords[0]));
+          (objectiveRatio) * std::sin(10. * arma::datum::pi * coords[0]));
 
       return objectives;
     }
@@ -123,7 +118,6 @@ namespace test {
 
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
-        double pi = arma::datum::pi;
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
@@ -132,7 +126,7 @@ namespace test {
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
         return g * (1. - std::sqrt(objectiveRatio) -
-            (objectiveRatio) * std::sin(10. * pi * coords[0]));
+            (objectiveRatio) * std::sin(10. * arma::datum::pi * coords[0]));
       }
 
       ZDT3& zdtClass;
@@ -146,6 +140,10 @@ namespace test {
 
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
+
+   private:
+    size_t numObjectives;
+    size_t numVariables;
   };
   } //namespace test
   } //namespace ens

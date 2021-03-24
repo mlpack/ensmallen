@@ -20,7 +20,7 @@ namespace test {
  * The ZDT2 function, defined by:
  * \f[
  * g(x) = 1 + 9(\sum_{i=2}^{n} x_i )/(n-1)
- * f_1(x) = x_i
+ * f_1(x) = x_1
  * h(f_1, g) = 1 - (f_1/g)^2
  * f_2(x) = g(x) * h(f_1, g)
  * \f]
@@ -47,15 +47,11 @@ namespace test {
  * }
  * @endcode
  *
- * @tparam arma::mat Type of matrix to optimize.
+ * @tparam MatType Type of matrix to optimize.
  */
   template<typename MatType = arma::mat>
   class ZDT2
   {
-  private:
-      size_t numObjectives;
-      size_t numVariables;
-
    public:
      //! Initialize the ZDT2
     ZDT2() :
@@ -137,6 +133,10 @@ namespace test {
 
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
+
+   private:
+    size_t numObjectives;
+    size_t numVariables;
   };
   } //namespace test
   } //namespace ens

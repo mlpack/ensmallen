@@ -47,15 +47,13 @@ namespace test {
  *   doi     = {10.1162/106365600568202}
  * }
  * @endcode
+ *
+ * @tparam MatType Type of matrix to optimize.
  */
   template<typename MatType = arma::mat>
   class ZDT4
   {
-    private:
-      size_t numObjectives;
-      size_t numVariables;
-
-    public:
+   public:
      //! Initialize the ZDT4
     ZDT4() :
         numObjectives(2),
@@ -72,14 +70,13 @@ namespace test {
      */
     arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
     {
-      double pi = arma::datum::pi;
       typedef typename MatType::elem_type ElemType;
 
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
       arma::Col<ElemType> truncatedCoords = coords(arma::span(1, numVariables - 1));
       ElemType sum = arma::accu(arma::square(truncatedCoords) -
-          10. * arma::cos(4 * pi * truncatedCoords));
+          10. * arma::cos(4 * arma::datum::pi * truncatedCoords));
       ElemType g = 1. + 10. * static_cast<ElemType>(numVariables - 1) + sum;
       ElemType objectiveRatio = objectives(0) / g;
 	    objectives(1) = g * (1. - std::sqrt(objectiveRatio));
@@ -116,13 +113,12 @@ namespace test {
 
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
-        double pi = arma::datum::pi;
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
         arma::Col<ElemType> truncatedCoords = coords(arma::span(1, numVariables - 1));
         ElemType sum = arma::accu(arma::square(truncatedCoords) -
-            10. * arma::cos(4 * pi * truncatedCoords));
+            10. * arma::cos(4 * arma::datum::pi * truncatedCoords));
         ElemType g = 1. + 10 * static_cast<ElemType>(numVariables - 1) + sum;
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
@@ -140,6 +136,10 @@ namespace test {
 
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
+
+   private:
+    size_t numObjectives;
+    size_t numVariables;
   };
   } //namespace test
   } //namespace ens
