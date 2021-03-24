@@ -46,7 +46,7 @@ namespace test {
  * }
  * @endcode
  *
- * @tparam arma::mat Type of matrix to optimize.
+ * @tparam MatType Type of matrix to optimize.
  */
   template<typename MatType = arma::mat>
   class ZDT1
