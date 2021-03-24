@@ -19,7 +19,7 @@ namespace test {
  * The ZDT6 function, defined by:
  * \f[
  * g(x) = 1 + 9[ \sum_{i=2}^{n}(x_i^2)/9]^{0.25}
- * f_1(x) = 1 - e^{-4x_1}sin^{6}(6\pi x_i)
+ * f_1(x) = 1 - e^{-4x_1}sin^{6}(6\pi x_1)
  * h(f1, g) = 1 - (f_1/g)^{2}
  * f_2(x) = g(x) * h(f_1, g)
  * \f]
@@ -47,14 +47,12 @@ namespace test {
  *   doi     = {10.1162/106365600568202}
  * }
  * @endcode
+ *
+ * @tparam MatType Type of matrix to optimize.
  */
   template<typename MatType = arma::mat>
   class ZDT6
   {
-   private:
-    size_t numObjectives;
-    size_t numVariables;
-
    public:
      //! Initialize the ZDT6
     ZDT6() :
@@ -74,11 +72,10 @@ namespace test {
     {
       // Convenience typedef.
       typedef typename MatType::elem_type ElemType;
-      double pi = arma::datum::pi;
 
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = 1. - std::exp(-4 * coords[0]) *
-          std::pow(std::sin(6 * pi * coords[0]), 6);
+          std::pow(std::sin(6 * arma::datum::pi * coords[0]), 6);
       ElemType sum = std::pow(
           arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
       ElemType g = 1. + 9. * sum;
@@ -104,9 +101,8 @@ namespace test {
 
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
-        double pi = arma::datum::pi;
         return 1. - std::exp(-4. * coords[0]) *
-            std::pow(std::sin(6. * pi * coords[0]), 6.);
+            std::pow(std::sin(6. * arma::datum::pi * coords[0]), 6.);
       }
 
       ZDT6& zdtClass;
@@ -119,7 +115,6 @@ namespace test {
 
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
-        double pi = arma::datum::pi;
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
@@ -143,6 +138,10 @@ namespace test {
 
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
+
+   private:
+    size_t numObjectives;
+    size_t numVariables;
   };
   } //namespace test
   } //namespace ens

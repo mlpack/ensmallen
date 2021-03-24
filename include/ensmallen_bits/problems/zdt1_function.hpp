@@ -20,7 +20,7 @@ namespace test {
  * The ZDT1 function, defined by:
  * \f[
  * g(x) = 1 + 9(\sum_{i=2}^{n} x_i )/(n-1)
- * f_1(x) = x_i
+ * f_1(x) = x_1
  * h(f_1, g) = g(x)[1-\sqrt{f_1/g}\ ]
  * f_2(x) = g(x) * h(f_1, g)
  * \f]
@@ -51,10 +51,6 @@ namespace test {
   template<typename MatType = arma::mat>
   class ZDT1
   {
-   private:
-    size_t numObjectives;
-    size_t numVariables;
-
    public:
      //! Initialize the ZDT1
     ZDT1() :
@@ -136,6 +132,10 @@ namespace test {
 
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
+
+   private:
+    size_t numObjectives;
+    size_t numVariables;
   };
   } //namespace test
   } //namespace ens
