@@ -25,7 +25,7 @@ namespace test {
  * f_2(x) = g(x) * h(f_1, g)
  * \f]
  *
- * This is a 30-variable problem(n = 30) with a convex optimal set.
+ * This is a 30-variable problem (n = 30) with a convex optimal set.
  *
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
