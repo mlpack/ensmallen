@@ -129,7 +129,7 @@ class AckleyFunction
   double GetFinalObjective() const { return 0.0; }
 
   //! Get the bounds of variable space.
-  std::tuple<arma::vec, arma::vec> GetVariablesBounds() const
+  std::tuple<arma::vec, arma::vec> GetVariableBounds() const
   {
     arma::vec lowerBound {-32.768, -32.768};
     arma::vec upperBound {+32.768, +32.768};
