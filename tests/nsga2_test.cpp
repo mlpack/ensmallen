@@ -41,6 +41,8 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
   SchafferFunctionN1<arma::mat> SCH;
   const double lowerBound = -1000;
   const double upperBound = 1000;
+  const double expectedLowerBound = 0.0;
+  const double expectedUpperBound = 2.0;
 
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
@@ -63,7 +65,7 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
     {
       double val = arma::as_scalar(solution);
 
-      if (val < 0.0 || val > 2.0)
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
         break;
@@ -90,6 +92,8 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
   SchafferFunctionN1<arma::mat> SCH;
   const arma::vec lowerBound = {-1000};
   const arma::vec upperBound = {1000};
+  const double expectedLowerBound = 0.0;
+  const double expectedUpperBound = 2.0;
 
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
@@ -111,7 +115,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
     {
       double val = arma::as_scalar(solution);
 
-      if (val < 0.0 || val > 2.0)
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
         break;
@@ -207,9 +211,9 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds(valZ, expectedLowerBound, expectedUpperBound))
+    if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound) ||
+        !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound) ||
+        !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound))
     {
       allInRange = false;
       break;
@@ -247,6 +251,8 @@ TEST_CASE("NSGA2SchafferN1FloatTest", "[NSGA2Test]")
   SchafferFunctionN1<arma::fmat> SCH;
   const double lowerBound = -1000;
   const double upperBound = 1000;
+  const double expectedLowerBound = 0.0;
+  const double expectedUpperBound = 2.0;
 
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
@@ -269,7 +275,7 @@ TEST_CASE("NSGA2SchafferN1FloatTest", "[NSGA2Test]")
     {
       float val = arma::as_scalar(solution);
 
-      if (val < 0.f || val > 2.f)
+      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
         break;
@@ -296,6 +302,8 @@ TEST_CASE("NSGA2SchafferN1TestVectorFloatBounds", "[NSGA2Test]")
   SchafferFunctionN1<arma::fmat> SCH;
   const arma::vec lowerBound = {-1000};
   const arma::vec upperBound = {1000};
+  const double expectedLowerBound = 0.0;
+  const double expectedUpperBound = 2.0;
 
   NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
@@ -317,7 +325,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorFloatBounds", "[NSGA2Test]")
     {
       float val = arma::as_scalar(solution);
 
-      if (val < 0.f || val > 2.f)
+      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
         break;
