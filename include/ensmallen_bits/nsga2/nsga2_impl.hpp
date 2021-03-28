@@ -202,6 +202,7 @@ typename MatType::elem_type NSGA2::Optimize(
     front.push_back(population[f]);
 
   bestFront.resize(front.size());
+
   // bestFront is stored, can be obtained by the Front() getter.
   std::transform(front.begin(), front.end(), bestFront.begin(),
     [&](const BaseMatType& individual)
