@@ -48,14 +48,14 @@ build_script:
     -DARMADILLO_LIBRARIES=%BLAS_LIBRARY%
     -DLAPACK_LIBRARY=%BLAS_LIBRARY%
     -DBLAS_LIBRARY=%BLAS_LIBRARY%
-    -DCMAKE_BUILD_TYPE=Release ..
+    -DCMAKE_BUILD_TYPE=Debug ..
   - >
     "%MSBUILD%" "ensmallen.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
   # # Run tests after copying libraries.
   # - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
-  # - ctest -C Release -V --output-on-failure .
+  # - ctest -C Debug -V --output-on-failure .
 
 on_finish:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
