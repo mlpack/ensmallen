@@ -29,8 +29,8 @@ using namespace std;
 template<typename ElemType>
 bool IsInBounds(const ElemType& value, const ElemType& low, const ElemType& high)
 {
-  ElemType tolerance = 1e-3;
-  return !(value < low - tolerance) && !(high + tolerance < value);
+  ElemType roundoff = 1e-3;
+  return !( value < (low - roundoff) ) && !( (high + roundoff) < value );
 }
 
 /**
