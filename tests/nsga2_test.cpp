@@ -29,7 +29,8 @@ using namespace std;
 template<typename ElemType>
 bool IsInBounds(const ElemType& value, const ElemType& low, const ElemType& high)
 {
-  return !(value < low) && !(high < value);
+  ElemType tolerance = 1e-3;
+  return !(value < low - tolerance) && !(high + tolerance < value);
 }
 
 /**
@@ -44,7 +45,7 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  NSGA2 opt(20, 250, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -95,7 +96,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  NSGA2 opt(20, 250, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -146,7 +147,7 @@ TEST_CASE("NSGA2FonsecaFlemingDoubleTest", "[NSGA2Test]")
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2 opt(20, 250, 0.9, 0.33, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 0.33, strength, tolerance, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -186,12 +187,12 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
   FonsecaFlemingFunction<arma::mat> FON;
   const arma::vec lowerBound = {-4, -4, -4};
   const arma::vec upperBound = {4, 4, 4};
-  const double tolerance = 1e-6;
+  const double epsilon = 1e-6;
   const double strength = 1e-4;
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2 opt(20, 250, 0.9, 0.33, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 0.33, strength, epsilon, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -254,7 +255,7 @@ TEST_CASE("NSGA2SchafferN1FloatTest", "[NSGA2Test]")
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  NSGA2 opt(20, 250, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -305,7 +306,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorFloatBounds", "[NSGA2Test]")
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  NSGA2 opt(20, 250, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 1, 1e-3, 1e-6, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -351,12 +352,12 @@ TEST_CASE("NSGA2FonsecaFlemingFloatTest", "[NSGA2Test]")
   FonsecaFlemingFunction<arma::fmat> FON;
   const double lowerBound = -4;
   const double upperBound = 4;
-  const double tolerance = 1e-6;
+  const double epsilon = 1e-6;
   const double strength = 1e-4;
   const float expectedLowerBound = -1.0 / sqrt(3);
   const float expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2 opt(20, 250, 0.9, 0.33, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 0.33, strength, epsilon, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
@@ -396,12 +397,12 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
   FonsecaFlemingFunction<arma::fmat> FON;
   const arma::vec lowerBound = {-4, -4, -4};
   const arma::vec upperBound = {4, 4, 4};
-  const double tolerance = 1e-6;
+  const double epsilon = 1e-6;
   const double strength = 1e-4;
   const float expectedLowerBound = -1.0 / sqrt(3);
   const float expectedUpperBound = 1.0 / sqrt(3);
 
-  NSGA2 opt(20, 250, 0.9, 0.33, strength, tolerance, lowerBound, upperBound);
+  NSGA2 opt(20, 300, 0.9, 0.33, strength, epsilon, lowerBound, upperBound);
 
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
