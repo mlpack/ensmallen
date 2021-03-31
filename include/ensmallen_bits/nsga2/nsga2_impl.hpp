@@ -453,7 +453,7 @@ inline void NSGA2::CrowdingDistanceAssignment(
     ElemType minFval = fValues(sortedIdx(0));
     ElemType maxFval = fValues(sortedIdx(fSize - 1));
     ElemType scale =
-			std::abs(maxFval - minFval) == 0. ? 1. : std::abs(maxFval - minFval);
+		    std::abs(maxFval - minFval) == 0. ? 1. : std::abs(maxFval - minFval);
 
     for (size_t i = 1; i < fSize - 1; i++)
     {
