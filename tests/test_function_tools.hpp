@@ -132,6 +132,54 @@ bool TestOptimizer(FunctionType& f,
   return true;
 }
 
+template<typename FunctionSuiteType, typename OptimizerType, typename PointType>
+bool TestOptimizer(FunctionSuiteType& f,
+                   OptimizerType& optimizer,
+                   PointType& point,
+                   const std::vector<PointType>& expectedFront,
+                   const double coordinateMargin,
+                   const double expectedPerformance,
+                   const double performanceMargin,
+                   const bool mustSucceed = true)
+{
+  const double performance = optimizer.Optimize(f, point);
+  const std::vector<arma::mat> bestFront = optimizer.Front();
+
+  if (mustSucceed)
+  {
+      REQUIRE(performance == Approx(expectedPerformance).margin(performanceMargin));
+      for (size_t pointIdx = 0; pointIdx < bestFront.size(); ++pointIdx)
+      {
+        const arma::mat& point = bestFront[pointIdx];
+        const arma::mat& expectedResult = expectedFront[pointIdx];
+
+        for (size_t i = 0; i < point.n_elem; ++i)
+        {
+          REQUIRE(point[i] == Approx(expectedResult[i]).margin(coordinateMargin));
+        }
+      }
+  }
+  else
+  {
+    if (performance != Approx(expectedPerformance).margin(performanceMargin))
+      return false;
+
+    for (size_t pointIdx = 0; pointIdx < bestFront.size(); ++pointIdx)
+    {
+      const arma::mat& point = bestFront[pointIdx];
+      const arma::mat& expectedResult = expectedFront[pointIdx];
+
+      for (size_t i = 0; i < point.n_elem; ++i)
+      {
+        if (point[i] != Approx(expectedResult[i]).margin(coordinateMargin))
+          return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 // This runs a test multiple times, but does not do any special behavior between
 // runs.
 template<typename FunctionType, typename OptimizerType, typename PointType>
@@ -161,6 +209,35 @@ void MultipleTrialOptimizerTest(FunctionType& f,
   }
 }
 
+// This runs a test multiple times, but does not do any special behavior between
+// runs. Multiobjective case.
+template<typename FunctionSuiteType, typename OptimizerType, typename PointType>
+void MultipleTrialOptimizerTest(FunctionSuiteType& f,
+                                OptimizerType& optimizer,
+                                PointType& initialPoint,
+                                const std::vector<PointType>& expectedFront,
+                                const double coordinateMargin,
+                                const double expectedPerformance,
+                                const double objectiveMargin,
+                                const size_t trials = 1)
+{
+  for (size_t t = 0; t < trials; ++t)
+  {
+    PointType coordinates(initialPoint);
+
+    // Only force success on the last trial.
+    bool result = TestOptimizer(f, optimizer, coordinates, expectedFront,
+        coordinateMargin, expectedPerformance, objectiveMargin,
+        (t == (trials - 1)));
+    if (result && t != (trials - 1))
+    {
+      // Just make sure at least something was tested for reporting purposes.
+      REQUIRE(result == true);
+      return;
+    }
+  }
+}
+
 template<typename FunctionType,
          typename MatType = arma::mat,
          typename OptimizerType = ens::StandardSGD>
@@ -175,6 +252,22 @@ void FunctionTest(OptimizerType& optimizer,
 
   MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedResult,
       coordinateMargin, f.GetFinalObjective(), objectiveMargin, trials);
+}
+
+template <typename FunctionSuiteType,
+          typename MatType = arma::mat,
+          typename OptimizerType = ens::NSGA2>
+void MultiObjectiveFunctionTest(OptimizerType& optimizer,
+                                const double objectiveMargin = 0.01,
+                                const double coordinateMargin = 0.001,
+                                const size_t trials = 1)
+{
+  FunctionSuiteType f;
+  MatType initialPoint = f.template GetInitialPoint<MatType>();
+  std::vector<MatType> expectedFront = f.template GetFront<MatType>();
+
+  MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedFront,
+    coordinateMargin, f.GetFinalPerformance(), objectiveMargin, trials);
 }
 
 template<typename MatType = arma::mat, typename OptimizerType>
