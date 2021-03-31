@@ -30,7 +30,7 @@ template<typename ElemType>
 bool IsInBounds(const ElemType& value, const ElemType& low, const ElemType& high)
 {
   ElemType roundoff = 1e-2;
-  return !(value < low - roundoff) && !(high + roundoff < value);
+  return !(value < low - roundoff) && !(high + roundoff < value );
 }
 
 /**
