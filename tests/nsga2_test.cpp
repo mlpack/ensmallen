@@ -79,11 +79,7 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
       break;
     }
   }
-  if (success == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
+
   REQUIRE(success == true);
 }
 
@@ -134,12 +130,6 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
     }
   }
 
-  if (success == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
-
   REQUIRE(success == true);
 }
 
@@ -185,11 +175,7 @@ TEST_CASE("NSGA2FonsecaFlemingDoubleTest", "[NSGA2Test]")
       break;
     }
   }
-  if (allInRange == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
+
   REQUIRE(allInRange);
 }
 
@@ -235,11 +221,7 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
       break;
     }
   }
-  if (allInRange == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
+
   REQUIRE(allInRange);
 }
 
@@ -309,11 +291,7 @@ TEST_CASE("NSGA2SchafferN1FloatTest", "[NSGA2Test]")
       break;
     }
   }
-  if (success == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
+
   REQUIRE(success == true);
 }
 
@@ -363,11 +341,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorFloatBounds", "[NSGA2Test]")
       break;
     }
   }
-  if (success == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
+
   REQUIRE(success == true);
 }
 
@@ -413,11 +387,7 @@ TEST_CASE("NSGA2FonsecaFlemingFloatTest", "[NSGA2Test]")
       break;
     }
   }
-  if (allInRange == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
+
   REQUIRE(allInRange);
 }
 
@@ -463,10 +433,6 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
       break;
     }
   }
-  if (allInRange == false)
-  {
-    for (arma::mat solution : opt.Front())
-      std::cout << solution << std::endl;
-  }
+
   REQUIRE(allInRange);
 }
