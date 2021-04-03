@@ -388,6 +388,40 @@ inline void CheckArbitraryFunctionTypeAPI()
 }
 
 /**
+* Perform checks for the ArbitraryFunctionType API.
+* Multiobjective case.
+*/
+template <typename MatType,
+          typename FunctionType,
+          std::size_t I = 1U>
+typename std::enable_if<I == 1U, void>::type
+CheckMultiArbitraryFunctionTypeAPI()
+{
+  CheckArbitraryFunctionTypeAPI<FunctionType, MatType>();
+}
+
+/**
+ * Perform checks for the ArbitraryFunctionType API.
+ * Multiobjective case.
+ */
+template<typename MatType,
+         typename FunctionType,
+         typename... RemainingFunctionTypes,
+         std::size_t I = sizeof...(RemainingFunctionTypes) + 1U>
+typename std::enable_if<(I > 1U), void>::type
+CheckMultiArbitraryFunctionTypeAPI()
+{
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
+      "One of the FunctionType does not have a correct definition of Evaluate(). "
+      "Please ensure that each of the FunctionTypes fully satisfies the requirements of "
+      "the ArbitraryFunctionType API; see the optimizer tutorial for "
+      "more details.");
+  CheckMultiArbitraryFunctionTypeAPI<MatType, RemainingFunctionTypes..., I - 1U>();
+#endif
+}
+
+/**
  * Perform checks for the ResolvableFunctionType API.
  */
 template<typename FunctionType, typename MatType, typename GradType>
