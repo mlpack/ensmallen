@@ -375,16 +375,10 @@ inline void CheckSparseFunctionTypeAPI()
 /**
  * Perform checks for the ArbitraryFunctionType API.
  */
-template<typename... FunctionAndMatTypes, std::size_t I = 0U>
-typename std::enable_if<I == sizeof...(FunctionAndMatTypes) - 2U, void> :: type
-CheckArbitraryFunctionTypeAPI()
+template<typename FunctionType, typename MatType, std::size_t I = 0U>
+void CheckArbitraryFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
-  constexpr size_t size = sizeof...(FunctionAndMatTypes);
-  using TupleType = typename std::tuple<FunctionAndMatTypes...>;
-  using FunctionType = typename std::tuple_element<I, TupleType>::type;
-  using MatType = typename std::tuple_element<size - 1, TupleType>::type;
-
   static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
     "The FunctionType does not have a correct definition of Evaluate(). "
     "Please check that the FunctionType fully satisfies the requirements of "
@@ -404,9 +398,9 @@ CheckArbitraryFunctionTypeAPI()
   using MatType = typename std::tuple_element<size - 1, TupleType>::type;
 
   static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
-    "The FunctionType does not have a correct definition of Evaluate(). "
-    "Please check that the FunctionType fully satisfies the requirements of "
-    "the ArbitraryFunctionType API; see the optimizer tutorial for "
+    "One of the provided FunctionType does not have a correct definition of Evaluate(). "
+    "Please check that the corresponding FunctionType fully satisfies the requirements"
+    "of the ArbitraryFunctionType API; see the optimizer tutorial for "
     "more details.");
 
   CheckArbitraryFunctionTypeAPI<FunctionAndMatTypes..., I + 1>();
