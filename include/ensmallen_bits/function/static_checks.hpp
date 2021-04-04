@@ -404,10 +404,10 @@ CheckMultiArbitraryFunctionTypeAPI()
  * Perform checks for the ArbitraryFunctionType API.
  * Multiobjective case.
  */
-template<typename MatType,
-         typename FunctionType,
+template<typename FunctionType,
          typename... RemainingFunctionTypes,
-         std::size_t I = sizeof...(RemainingFunctionTypes) + 1U>
+         std::size_t I = sizeof...(RemainingFunctionTypes) + 1U,
+         typename MatType>
 typename std::enable_if<(I > 1U), void>::type
 CheckMultiArbitraryFunctionTypeAPI()
 {
@@ -417,7 +417,7 @@ CheckMultiArbitraryFunctionTypeAPI()
       "Please ensure that each of the FunctionTypes fully satisfies the requirements of "
       "the ArbitraryFunctionType API; see the optimizer tutorial for "
       "more details.");
-  CheckMultiArbitraryFunctionTypeAPI<MatType, RemainingFunctionTypes..., I - 1U>();
+  CheckMultiArbitraryFunctionTypeAPI<RemainingFunctionTypes..., I - 1U>();
 #endif
 }
 
