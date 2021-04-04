@@ -227,10 +227,6 @@ NSGA2::EvaluateObjectives(
 {
   for (size_t i = 0; i < populationSize; i++)
   {
-    using FunctionType = typename std::tuple_element<
-        I, std::tuple<ArbitraryFunctionType...>>::type;
-    traits::CheckArbitraryFunctionTypeAPI<
-        FunctionType, MatType>();
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
     EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
                                                                calculatedObjectives);
