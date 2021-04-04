@@ -376,7 +376,7 @@ inline void CheckSparseFunctionTypeAPI()
  * Perform checks for the ArbitraryFunctionType API.
  */
 template<typename FunctionType, typename MatType, std::size_t I = 0U>
-void CheckArbitraryFunctionTypeAPI()
+inline void CheckArbitraryFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
   static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
