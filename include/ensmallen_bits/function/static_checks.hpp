@@ -388,37 +388,32 @@ inline void CheckArbitraryFunctionTypeAPI()
 }
 
 /**
-* Perform checks for the ArbitraryFunctionType API.
-* Multiobjective case.
-*/
-template <typename MatType,
-          typename FunctionType,
-          std::size_t I = 1U>
-typename std::enable_if<I == 1U, void>::type
-CheckMultiArbitraryFunctionTypeAPI()
-{
-  CheckArbitraryFunctionTypeAPI<FunctionType, MatType>();
-}
-
-/**
  * Perform checks for the ArbitraryFunctionType API.
  * Multiobjective case.
  */
-template<typename FunctionType,
-         typename... RemainingFunctionTypes,
-         std::size_t I = sizeof...(RemainingFunctionTypes) + 1U,
-         typename MatType>
-typename std::enable_if<(I > 1U), void>::type
+template<typename... FunctionAndMatTypes, std::size_t I = 0>
+typename std::enable_if<I == sizeof...(FunctionAndMatTypes) - 2U, void> :: type
 CheckMultiArbitraryFunctionTypeAPI()
 {
-#ifndef ENS_DISABLE_TYPE_CHECKS
-  static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
-      "One of the FunctionType does not have a correct definition of Evaluate(). "
-      "Please ensure that each of the FunctionTypes fully satisfies the requirements of "
-      "the ArbitraryFunctionType API; see the optimizer tutorial for "
-      "more details.");
-  CheckMultiArbitraryFunctionTypeAPI<RemainingFunctionTypes..., I - 1U>();
-#endif
+  constexpr size_t size = sizeof...(FunctionAndMatTypes);
+  using TupleType = typename std::tuple<FunctionAndMatTypes...>;
+  using FunctionType = typename std::tuple_element<I, TupleType>::type;
+  using MatType = typename std::tuple_element<size - 1, TupleType>::type;
+
+  CheckArbitraryFunctionTypeAPI<FunctionType, MatType>();
+}
+
+template<typename... FunctionAndMatTypes, std::size_t I = 0>
+typename std::enable_if<I < sizeof...(FunctionAndMatTypes) - 2U, void>::type
+CheckMultiArbitraryFunctionTypeAPI()
+{
+  constexpr size_t size = sizeof...(FunctionAndMatTypes);
+  using TupleType = typename std::tuple<FunctionAndMatTypes...>;
+  using FunctionType = typename std::tuple_element<I, TupleType>::type;
+  using MatType = typename std::tuple_element<size - 1, TupleType>::type;
+  CheckArbitraryFunctionTypeAPI<FunctionType, MatType>();
+
+  CheckMultiArbitraryFunctionTypeAPI<FunctionAndMatTypes..., I + 1>();
 }
 
 /**
