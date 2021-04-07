@@ -375,7 +375,7 @@ inline void CheckSparseFunctionTypeAPI()
 /**
  * Perform checks for the ArbitraryFunctionType API.
  */
-template<typename FunctionType, typename MatType, std::size_t I = 0>
+template<typename FunctionType, typename MatType>
 inline void CheckArbitraryFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
@@ -387,14 +387,13 @@ inline void CheckArbitraryFunctionTypeAPI()
 #endif
 }
 
-template<typename... FunctionAndMatTypes, std::size_t I = 0>
-typename std::enable_if<I < sizeof...(FunctionAndMatTypes) - 2, void>::type
+template<typename FunctionType, typename... RemainingTypes>
+typename std::enable_if<(sizeof...(RemainingTypes) > 1), void>::type
 CheckArbitraryFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
-  constexpr size_t size = sizeof...(FunctionAndMatTypes);
-  using TupleType = typename std::tuple<FunctionAndMatTypes...>;
-  using FunctionType = typename std::tuple_element<I, TupleType>::type;
+  constexpr size_t size = sizeof...(RemainingTypes);
+  using TupleType = typename std::tuple<RemainingTypes...>;
   using MatType = typename std::tuple_element<size - 1, TupleType>::type;
 
   static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
@@ -403,7 +402,7 @@ CheckArbitraryFunctionTypeAPI()
       "of the ArbitraryFunctionType API; see the optimizer tutorial for "
       "more details.");
 
-  CheckArbitraryFunctionTypeAPI<FunctionAndMatTypes..., I + 1>();
+  CheckArbitraryFunctionTypeAPI<RemainingTypes...>();
 #endif
 }
 
