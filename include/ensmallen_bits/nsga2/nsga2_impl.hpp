@@ -173,21 +173,21 @@ typename MatType::elem_type NSGA2::Optimize(
 
     // Sort based on crowding distance.
     std::sort(population.begin(), population.end(),
-              [this, ranks, crowdingDistance, population](BaseMatType candidateP,
-                                                          BaseMatType candidateQ)
-              {
-                size_t idxP, idxQ;
-                for (size_t i = 0; i < population.size(); i++)
-                {
-                  if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
-                    idxP = i;
+      [this, ranks, crowdingDistance, population]
+        (BaseMatType candidateP, BaseMatType candidateQ)
+          {
+            size_t idxP, idxQ;
+            for (size_t i = 0; i < population.size(); i++)
+            {
+              if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
+                idxP = i;
 
-                  if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
-                    idxQ = i;
-                }
+              if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
+                idxQ = i;
+            }
 
-                return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks, crowdingDistance);
-              }
+            return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks, crowdingDistance);
+          }
     );
 
     // Yield a new population P_{t+1} of size populationSize.
