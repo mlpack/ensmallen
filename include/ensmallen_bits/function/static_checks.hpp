@@ -375,7 +375,7 @@ inline void CheckSparseFunctionTypeAPI()
 /**
  * Perform checks for the ArbitraryFunctionType API.
  */
-template<typename FunctionType, typename MatType, std::size_t I = 0U>
+template<typename FunctionType, typename MatType, std::size_t I = 0>
 inline void CheckArbitraryFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
@@ -387,8 +387,8 @@ inline void CheckArbitraryFunctionTypeAPI()
 #endif
 }
 
-template<typename... FunctionAndMatTypes, std::size_t I = 0U>
-typename std::enable_if<I < sizeof...(FunctionAndMatTypes) - 2U, void>::type
+template<typename... FunctionAndMatTypes, std::size_t I = 0>
+typename std::enable_if<I < sizeof...(FunctionAndMatTypes) - 2, void>::type
 CheckArbitraryFunctionTypeAPI()
 {
 #ifndef ENS_DISABLE_TYPE_CHECKS
