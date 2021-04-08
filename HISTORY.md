@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+
+### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
+###### 2021-03-24
  * Fix CNE test trials
    ([#267](https://github.com/mlpack/ensmallen/pull/267)).
 
@@ -26,6 +29,9 @@
 
  * Fix compilation warnings
    ([#259](https://github.com/mlpack/ensmallen/pull/259)).
+
+ * Remove `AdamSchafferFunctionN2Test` test from Adam test suite to prevent
+   spurious issue on some aarch64 ([#265](https://github.com/mlpack/ensmallen/pull/259)).
 
 ### ensmallen 2.16.0: "Severely Dented Can Of Polyurethane"
 ###### 2021-02-11

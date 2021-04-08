@@ -16,7 +16,7 @@
 // The minor version is two digits so regular numerical comparisons of versions
 // work right.  The first minor version of a release is always 10.
 #define ENS_VERSION_MINOR 16
-#define ENS_VERSION_PATCH 1
+#define ENS_VERSION_PATCH 2
 // If this is a release candidate, it will be reflected in the version name
 // (i.e. the version name will be "RC1", "RC2", etc.).  Otherwise the version
 // name will typically be a seemingly arbitrary set of words that does not
@@ -25,7 +25,7 @@
 // Incorporate the date the version was released.
 #define ENS_VERSION_YEAR "2021"
 #define ENS_VERSION_MONTH "03"
-#define ENS_VERSION_DAY "02"
+#define ENS_VERSION_DAY "24"
 
 namespace ens {
 
