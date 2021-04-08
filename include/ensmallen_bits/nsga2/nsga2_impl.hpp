@@ -27,6 +27,8 @@ inline NSGA2::NSGA2(const size_t populationSize,
                     const double epsilon,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
+    numObjectives(0),
+    numVariables(0),
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -45,6 +47,8 @@ inline NSGA2::NSGA2(const size_t populationSize,
                     const double epsilon,
                     const double lowerBound,
                     const double upperBound) :
+    numObjectives(0),
+    numVariables(0),
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -176,7 +180,7 @@ typename MatType::elem_type NSGA2::Optimize(
       [this, ranks, crowdingDistance, population]
         (BaseMatType candidateP, BaseMatType candidateQ)
           {
-            size_t idxP, idxQ;
+            size_t idxP{}, idxQ{};
             for (size_t i = 0; i < population.size(); i++)
             {
               if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
