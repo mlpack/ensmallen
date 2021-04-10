@@ -15,6 +15,9 @@
 
  * Add clarifying comments in problems/ implementations
    ([#276](https://github.com/mlpack/ensmallen/pull/276)).
+   
+ * CheckArbitraryFunctionTypeAPI extended for MOO support
+   ([#283](https://github.com/mlpack/ensmallen/pull/283)).
 
  * Refactor NSGA2
    ([#263](https://github.com/mlpack/ensmallen/pull/263)).
