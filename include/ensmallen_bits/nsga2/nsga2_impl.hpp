@@ -80,6 +80,10 @@ typename MatType::elem_type NSGA2::Optimize(
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  // Make sure that we have the methods that we need.  Long name...
+  traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType...,
+      BaseMatType>();
   RequireDenseFloatingPointType<BaseMatType>();
 
   // Check if lower bound is a vector of a single dimension.
