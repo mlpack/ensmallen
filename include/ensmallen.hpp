@@ -99,6 +99,7 @@
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
+#include "ensmallen_bits/lmcma/lmcma.hpp"
 #include "ensmallen_bits/lookahead/lookahead.hpp"
 #include "ensmallen_bits/nsga2/nsga2.hpp"
 #include "ensmallen_bits/padam/padam.hpp"

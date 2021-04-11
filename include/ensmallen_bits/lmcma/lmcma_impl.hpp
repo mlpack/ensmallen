@@ -12,17 +12,16 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_CMAES_CMAES_IMPL_HPP
-#define ENSMALLEN_CMAES_CMAES_IMPL_HPP
+#ifndef ENSMALLEN_LMCMA_LMCMA_IMPL_HPP
+#define ENSMALLEN_LMCMA_LMCMA_IMPL_HPP
 
-// In case it hasn't been included yet.
-#include "cmaes.hpp"
+#include "lmcma.hpp"
 
 #include <ensmallen_bits/function.hpp>
 
 
 namespace ens {
-    LMCMA::LMCMA(std::size_t N_dim):
+    LMCMA::LMCMA(std::size_t N_dim) :
             T(std::ceil(std::log(N_dim))),
             c_c(0.5/std::sqrt(N_dim)),
             c1(1/(10 * std::log(N_dim + 1))),
@@ -33,17 +32,14 @@ namespace ens {
             lambda(4 + (size_t)std::floor(3*std::log(N_dim))),
             //lambda(100),
             w( 1,std::floor( (4 + (size_t)std::floor(3*std::log(N_dim))) / 2 ), arma::fill::zeros),
-            mu(std::floor( (4 + (size_t)std::floor(3 * std::log(N_dim))) / 2 ) ),
-    {
-
-
-    }
+            mu(std::floor( (4 + (size_t)std::floor(3 * std::log(N_dim))) / 2 ) )
+    {}
 
 
     template<typename SeparableFunctionType,
             typename MatType,
             typename... CallbackTypes>
-    typename MatType::elem_type optimize(SeparableFunctionType& f,
+    typename MatType::elem_type LMCMA::optimize(SeparableFunctionType& f,
                                          MatType& z,
                                          float sigma,         // TODO: remove from here
                                          std::size_t n_iter,  // TODO: Remove from here
@@ -60,7 +56,7 @@ namespace ens {
               SeparableFunctionType, BaseMatType>();
       RequireDenseFloatingPointType<BaseMatType>();
 
-      BaseMatType& iterate = (BaseMatType&) iterateIn;
+      BaseMatType& iterate = (BaseMatType&) z;
 
       size_t N_dim = z.n_elem;
       size_t N = N_dim;
@@ -105,7 +101,7 @@ namespace ens {
       float s = 0;
 
       //
-      uvec index(lambda, 1, arma::fill::zeros),
+      arma::uvec index(lambda, 1, arma::fill::zeros),
         index_old(lambda, 1, arma::fill::zeros);
 
       // Controls early termination of the optimization process.
@@ -114,7 +110,7 @@ namespace ens {
       //********************
       // Now iterate!
       //********************
-      terminate |= Callback::BeginOptimization(*this, function, iterate,
+      terminate |= Callback::BeginOptimization(*this, f, iterate,
                                                callbacks...);
       for (size_t t = 1; t < maxIterations && !terminate; ++t)
       {
@@ -125,7 +121,7 @@ namespace ens {
         {
           z = BaseMatType(N_dim, 1, arma::fill::randn);          // TODO: Radermacher sampling, mirror sampling
           // compute Az
-          reconstruct(P, V, J, std::min((size_t)std::floor(t/T), m-1), z);   // TODO: need template passing for BaseMatType
+          reconstruct(P, V, J, std::min((size_t)std::floor(t/T), m-1), z);
           z = m_new + sigma*z;
           f_eval[k] = f.Evaluate(z);
           X.col(k) = z;
@@ -157,8 +153,6 @@ namespace ens {
 
         // step size
         sigma = sigma * std::exp(s/d_sigma);
-        cout << "sigma:" << sigma << "\n";
-        t++;
 
         f_eval_old = BaseMatType(f_eval);
       }
@@ -222,7 +216,7 @@ namespace ens {
     }
 
     template <typename BaseMatType>
-    void reconstruct(const BaseMatType& P,
+    void LMCMA::reconstruct(const BaseMatType& P,
                      const BaseMatType& V,
                      const arma::umat& J,    /* TODO: why umat? */
                      const std::size_t n_updates,
@@ -270,7 +264,7 @@ namespace ens {
     }
 
     template <typename  BaseMatType>
-    float populationSuccess(const arma::umat& ranks_cur,
+    float LMCMA::populationSuccess(const arma::umat& ranks_cur,
                             const arma::umat& ranks_prev,
                             const BaseMatType& F_cur,
                             const BaseMatType& F_prev)
@@ -301,3 +295,4 @@ namespace ens {
 
 }
 
+#endif
