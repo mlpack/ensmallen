@@ -188,7 +188,7 @@ class NSGA2 {
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<double> >&);
+                     std::vector<arma::Col<typename MatType::elem_type> >&);
 
   template<std::size_t I = 0,
            typename MatType,
@@ -196,7 +196,8 @@ class NSGA2 {
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<double> >& calculatedObjectives);
+                     std::vector<arma::Col<typename MatType::elem_type> >&
+                     calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -281,11 +282,15 @@ class NSGA2 {
    * Assigns crowding distance metric for sorting.
    *
    * @param front The previously generated Pareto fronts.
-   * @param objectives The set of objectives.
-   * @param crowdingDistance The previously calculated objectives.
+   * @param calculatedObjectives The previously calculated objectives.
+   * @param crowdingDistance The crowding distance for each individual in
+   *    the population.
    */
-  void CrowdingDistanceAssignment(const std::vector<size_t>& front,
-                                  std::vector<double>& crowdingDistance);
+  template <typename MatType>
+  void CrowdingDistanceAssignment(
+      const std::vector<size_t>& front,
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      std::vector<typename MatType::elem_type>& crowdingDistance);
 
   /**
    * The operator used in the crowding distance based sorting.
@@ -299,13 +304,15 @@ class NSGA2 {
    * @param idxQ The index of the second cadidate from the elite population
    *     being sorted.
    * @param ranks The previously calculated ranks.
-   * @param crowdingDistance The previously calculated objectives.
+   * @param crowdingDistance The crowding distance for each individual in
+   *    the population.
    * @return true if the first candidate is preferred, otherwise, false.
    */
+  template<typename MatType>
   bool CrowdingOperator(size_t idxP,
                         size_t idxQ,
                         const std::vector<size_t>& ranks,
-                        const std::vector<double>& crowdingDistance);
+                        const std::vector<typename MatType::elem_type>& crowdingDistance);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
