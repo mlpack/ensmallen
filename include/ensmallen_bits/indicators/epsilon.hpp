@@ -17,31 +17,32 @@
 #define ENSMALLEN_INDICATORS_EPSILON_HPP
 
 namespace ens {
-  /**
-   * The epsilon indicator is a binary quality indicator that was proposed by
-   * Zitzler et. al. in response to the observation that quality indicators could
-   * only give information that one approximation set is not worse than another.
-   * The binary epsilon indicator, however, is capable of detecting if an
-   * approximation is better than another.
-   *
-   * \f[ I_c(A,B) = \max_{z_2 \in B} \
-   *                \min_{z_1 \in A} \
-   *                \max_{1 \leq i \leq n} \ \frac{z_1}{z_2}\
-   *                \f]
-   *
-   * For more information, please see:
-   *
-   * @code
-   * @article{1197687,
-   *    author   = {E. Zitzler and L. Thiele and M. Laumanns and C. M. Fonseca and
-   *                V. G. da Fonseca},
-   *    title    = {Performance assessment of multiobjective optimizers: an
-   *                analysis and review},
-   *    journal  = {IEEE Transactions on Evolutionary Computation},
-   *    year     = {2003},
-   * }
-   * @endcode
-   */
+
+/**
+ * The epsilon indicator is a binary quality indicator that was proposed by
+ * Zitzler et. al. in response to the observation that quality indicators could
+ * only give information that one approximation set is not worse than another.
+ * The binary epsilon indicator, however, is capable of detecting if an
+ * approximation is better than another.
+ *
+ * \f[ I_c(A,B) = \max_{z_2 \in B} \
+ *                \min_{z_1 \in A} \
+ *                \max_{1 \leq i \leq n} \ \frac{z_1}{z_2}\
+ *                \f]
+ *
+ * For more information, please see:
+ *
+ * @code
+ * @article{1197687,
+ *    author   = {E. Zitzler and L. Thiele and M. Laumanns and C. M. Fonseca and
+ *                V. G. da Fonseca},
+ *    title    = {Performance assessment of multiobjective optimizers: an
+ *                analysis and review},
+ *    journal  = {IEEE Transactions on Evolutionary Computation},
+ *    year     = {2003},
+ * }
+ * @endcode
+ */
   class Epsilon
   {
     /**
