@@ -17,7 +17,6 @@
 #define ENSMALLEN_INDICATORS_EPSILON_HPP
 
 namespace ens {
-
   /**
    * The epsilon indicator is a binary quality indicator that was proposed by
    * Zitzler et. al. in response to the observation that quality indicators could
@@ -53,8 +52,7 @@ namespace ens {
      * @param referenceFront The given reference front.
      * @return The epsilon value of the front.
      */
-    double Indicate(arma::cube& front,
-      arma::cube& referenceFront)
+    double Evaluate(arma::cube& front, arma::cube& referenceFront)
     {
       double eps = 0;
       for (size_t i = 0; i < referenceFront.n_slices; i++)

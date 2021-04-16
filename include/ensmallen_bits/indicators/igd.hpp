@@ -16,7 +16,6 @@
 #define ENSMALLEN_INDICATORS_IGD_HPP
 
 namespace ens {
-
   /**
    * The IGD indicator is the average distance from each point in the reference
    * front to the nearest point in it's solution. IGD+ is an improvement upon
@@ -49,8 +48,7 @@ namespace ens {
      * @param referenceFront The given reference front.
      * @return The IGD value of the front.
      */
-    double Indicate(arma::cube& front,
-      arma::cube& referenceFront)
+    double Evaluate(arma::cube& front, arma::cube& referenceFront)
     {
       double igd = 0;
       for (size_t i = 0; i < referenceFront.n_slices; i++)
