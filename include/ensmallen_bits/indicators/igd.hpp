@@ -16,28 +16,29 @@
 #define ENSMALLEN_INDICATORS_IGD_HPP
 
 namespace ens {
-  /**
-   * The IGD indicator is the average distance from each point in the reference
-   * front to the nearest point in it's solution. IGD+ is an improvement upon
-   * the IGD indicator, which fixes misleading results given by IGD in certain
-   * cases by using a different distance metric:
-   *
-   * \f[ d^{+}(z,a) = \sqrt{\sum_{i = 1}^{n} \left( \max{a - z}\ \right) \ } \
-   *    \f]
-   *
-   * For more information see:
-   *
-   * @code
-   * @article{10.1007/978-3-319-15892-1_8,
-   *    author   = {Ishibuchi, Hisao and Masuda, Hiroyuki and Tanigaki, Yuki
-   *                and Nojima, Yusuke},
-   *    title    = {Modified Distance Calculation in Generational Distance
-   *                and Inverted Generational Distance},
-   *    book     = {Evolutionary Multi-Criterion Optimization}
-   *    year     = {2015}
-   * }
-   * @endcode
-   */
+
+/**
+ * The IGD indicator is the average distance from each point in the reference
+ * front to the nearest point in it's solution. IGD+ is an improvement upon
+ * the IGD indicator, which fixes misleading results given by IGD in certain
+ * cases by using a different distance metric:
+ *
+ * \f[ d^{+}(z,a) = \sqrt{\sum_{i = 1}^{n} \left( \max{a - z}\ \right) \ } \
+ *    \f]
+ *
+ * For more information see:
+ *
+ * @code
+ * @article{10.1007/978-3-319-15892-1_8,
+ *    author   = {Ishibuchi, Hisao and Masuda, Hiroyuki and Tanigaki, Yuki
+ *                and Nojima, Yusuke},
+ *    title    = {Modified Distance Calculation in Generational Distance
+ *                and Inverted Generational Distance},
+ *    book     = {Evolutionary Multi-Criterion Optimization}
+ *    year     = {2015}
+ * }
+ * @endcode
+ */
   class IGD
   {
     /**
