@@ -170,7 +170,7 @@ class NSGA2 {
 
   //! Retrieve the best front (the Pareto frontier).  This returns an empty vector until `Optimize()`
   //! has been called.
-  const std::vector<arma::mat>& Front() const { return bestFront; }
+  const arma::cube& Front() const { return bestFront; }
 
  private:
   /**
@@ -345,7 +345,7 @@ class NSGA2 {
   arma::vec upperBound;
 
   //! Best front, stored after Optimize() is called.
-  std::vector<arma::mat> bestFront;
+  arma::cube bestFront;
 };
 
 } // namespace ens
