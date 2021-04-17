@@ -45,23 +45,28 @@ namespace ens {
      * Find the IGD value of the front with respect to the given reference
      * front.
      *
+     * @tparam CubeType The cube data type of front.
      * @param front The given approximation front.
      * @param referenceFront The given reference front.
      * @return The IGD value of the front.
      */
-    double Evaluate(arma::cube& front, arma::cube& referenceFront)
+    template<typename CubeType>
+    static typename CubeType::elem_type Evaluate(const CubeType& front,
+                                                 const CubeType& referenceFront)
     {
-      double igd = 0;
+      // Convenience typedefs.
+      typedef typename CubeType::elem_type ElemType;
+      ElemType igd = 0;
       for (size_t i = 0; i < referenceFront.n_slices; i++)
       {
-        double min = DBL_MAX;
+        ElemType min = std::numeric_limits<ElemType>::max();
         for (size_t j = 0; j < front.n_slices; j++)
         {
-          double dist = 0;
+          ElemType dist = 0;
           for (size_t k = 0; k < front.slice(j).n_rows; k++)
           {
-            double z = referenceFront(k, 0, i);
-            double a = front(k, 0, j);
+            ElemType z = referenceFront(k, 0, i);
+            ElemType a = front(k, 0, j);
             dist += std::pow(std::max(z - a, 0.0), 2);
           }
           dist = std::sqrt(dist);

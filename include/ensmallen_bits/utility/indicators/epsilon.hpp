@@ -49,19 +49,24 @@ namespace ens {
      * Find the epsilon value of the front with respect to the given reference
      * front.
      *
+     * @tparam CubeType The cube data type of front.
      * @param front The given approximation front.
      * @param referenceFront The given reference front.
      * @return The epsilon value of the front.
      */
-    double Evaluate(arma::cube& front, arma::cube& referenceFront)
+    template<typename CubeType>
+    static typename CubeType::elem_type Evaluate(const CubeType& front,
+                                                 const CubeType& referenceFront)
     {
-      double eps = 0;
+      // Convenience typedefs.
+      typedef typename CubeType::elem_type ElemType;
+      ElemType eps = 0;
       for (size_t i = 0; i < referenceFront.n_slices; i++)
       {
-        double epsjMin = DBL_MAX;
+        ElemType epsjMin = std::numeric_limits<ElemType>::max();
         for (size_t j = 0; j < front.n_slices; j++)
         {
-          double epsj = (front.slice(j) / referenceFront.slice(i)).max();
+          ElemType epsj = (front.slice(j) / referenceFront.slice(i)).max();
           if (epsj < epsjMin)
             epsjMin = epsj;
         }
