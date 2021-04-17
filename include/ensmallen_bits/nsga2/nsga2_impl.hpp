@@ -204,21 +204,14 @@ typename MatType::elem_type NSGA2::Optimize(
   }
 
   // Set the candidates from the best front as the output.
-  std::vector<BaseMatType> front;
-
-  for (size_t f: fronts[0])
-    front.push_back(population[f]);
-
-  bestFront.resize(front.size());
+  bestFront.resize(population[0].n_rows, population[0].n_cols, fronts[0].size());
   // bestFront is stored, can be obtained by the Front() getter.
-  std::transform(front.begin(), front.end(), bestFront.begin(),
-    [&](const BaseMatType& individual)
-      {
-        return arma::conv_to<arma::mat>::from(individual);
-      });
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+	  bestFront.slice(solutionIdx) =
+		    arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
 
   // Assign iterate to first element of the best front.
-  iterate = front[0];
+  iterate = population[fronts[0][0]];
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 

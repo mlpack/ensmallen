@@ -58,14 +58,13 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    std::vector<arma::mat> bestFront = opt.Front();
+    arma::cube bestFront= opt.Front();
 
     bool allInRange = true;
 
-    for (arma::mat solution: bestFront)
+    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
     {
-      double val = arma::as_scalar(solution);
-
+      double val = arma::as_scalar(bestFront.slice(solutionIdx));
       if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -108,14 +107,13 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    std::vector<arma::mat> bestFront = opt.Front();
+    arma::cube bestFront= opt.Front();
 
     bool allInRange = true;
 
-    for (arma::mat solution: bestFront)
+    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
     {
-      double val = arma::as_scalar(solution);
-
+      double val = arma::as_scalar(bestFront.slice(solutionIdx));
       if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -156,13 +154,13 @@ TEST_CASE("NSGA2FonsecaFlemingDoubleTest", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  std::vector<arma::mat> bestFront = opt.Front();
+  arma::cube bestFront = opt.Front();
 
   bool allInRange = true;
 
-  for (size_t i = 0; i < bestFront.size(); i++)
+  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
   {
-    const arma::mat solution = bestFront[i];
+    const arma::mat solution = bestFront.slice(solutionIdx);
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
@@ -202,13 +200,13 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  std::vector<arma::mat> bestFront = opt.Front();
+  arma::cube bestFront = opt.Front();
 
   bool allInRange = true;
 
-  for (size_t i = 0; i < bestFront.size(); i++)
+  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
   {
-    const arma::mat solution = bestFront[i];
+    const arma::mat solution = bestFront.slice(solutionIdx);
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
@@ -223,26 +221,6 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
   }
 
   REQUIRE(allInRange);
-}
-
-/**
- * @brief Convert the individuals from pareto front to requested data type.
- *
- * @tparam MatType The type to be casted to.
- * @param bestFront Vector containing individuals from the pareto front.
- * @return std::vector<MatType> The casted individuals.
- */
-template<typename MatType>
-std::vector<MatType> castFront(const std::vector<arma::mat>& bestFront)
-{
-  std::vector<MatType> castedFront(bestFront.size());
-  std::transform(bestFront.begin(), bestFront.end(), castedFront.begin(),
-    [&](const arma::mat& individual)
-      {
-        return arma::conv_to<MatType>::from(individual);
-      });
-
-  return castedFront;
 }
 
 /**
@@ -270,14 +248,13 @@ TEST_CASE("NSGA2SchafferN1FloatTest", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    std::vector<arma::fmat> bestFront = castFront<arma::fmat>(opt.Front());
+    arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
 
     bool allInRange = true;
 
-    for (arma::fmat solution: bestFront)
+    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
     {
-      float val = arma::as_scalar(solution);
-
+      float val = arma::as_scalar(bestFront.slice(solutionIdx));
       if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -320,14 +297,13 @@ TEST_CASE("NSGA2SchafferN1TestVectorFloatBounds", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    std::vector<arma::fmat> bestFront = castFront<arma::fmat>(opt.Front());
+    arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
 
     bool allInRange = true;
 
-    for (arma::fmat solution: bestFront)
+    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
     {
-      float val = arma::as_scalar(solution);
-
+      float val = arma::as_scalar(bestFront.slice(solutionIdx));
       if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -368,13 +344,13 @@ TEST_CASE("NSGA2FonsecaFlemingFloatTest", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  std::vector<arma::fmat> bestFront = castFront<arma::fmat>(opt.Front());
+  arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
 
   bool allInRange = true;
 
-  for (size_t i = 0; i < bestFront.size(); i++)
+  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
   {
-    const arma::fmat solution = bestFront[i];
+    const arma::fmat solution = bestFront.slice(solutionIdx);
     float valX = arma::as_scalar(solution(0));
     float valY = arma::as_scalar(solution(1));
     float valZ = arma::as_scalar(solution(2));
@@ -414,13 +390,13 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  std::vector<arma::fmat> bestFront = castFront<arma::fmat>(opt.Front());
+  arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
 
   bool allInRange = true;
 
-  for (size_t i = 0; i < bestFront.size(); i++)
+  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
   {
-    const arma::fmat solution = bestFront[i];
+    const arma::fmat solution = bestFront.slice(solutionIdx);
     float valX = arma::as_scalar(solution(0));
     float valY = arma::as_scalar(solution(1));
     float valZ = arma::as_scalar(solution(2));
