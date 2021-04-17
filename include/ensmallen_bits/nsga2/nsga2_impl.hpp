@@ -207,8 +207,8 @@ typename MatType::elem_type NSGA2::Optimize(
   bestFront.resize(population[0].n_rows, population[0].n_cols, fronts[0].size());
   // bestFront is stored, can be obtained by the Front() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
-	  bestFront.slice(solutionIdx) =
-		    arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+    bestFront.slice(solutionIdx) =
+        arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
 
   // Assign iterate to first element of the best front.
   iterate = population[fronts[0][0]];
