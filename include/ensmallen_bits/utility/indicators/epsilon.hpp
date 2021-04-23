@@ -19,15 +19,15 @@
 namespace ens {
 
 /**
- * The epsilon indicator is a binary quality indicator that was proposed by
- * Zitzler et. al. in response to the observation that quality indicators could
- * only give information that one approximation set is not worse than another.
- * The binary epsilon indicator, however, is capable of detecting if an
- * approximation is better than another.
- *
- * \f[ I_c(A,B) = \max_{z_2 \in B} \
- *                \min_{z_1 \in A} \
- *                \max_{1 \leq i \leq n} \ \frac{z_1}{z_2}\
+ * The epsilon indicator is one of the binary quality indicators that was proposed by
+ * Zitzler et. al.. The indicator originally calculates a weak dominance relation 
+ * between two approximation sets. It returns "epsilon" which is the factor by which 
+ * the given approximation set is worse than the reference front with respect to 
+ * all the objectives.
+ * 
+ * \f[ I_c(A,B) = \max_{z^2 \in B} \
+ *                \min_{z^1 \in A} \
+ *                \max_{1 \leq i \leq n} \ \frac{z^1_i}{z^2_i}\
  *                \f]
  *
  * For more information, please see:
