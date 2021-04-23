@@ -25,7 +25,7 @@ namespace ens {
  * the given approximation set is worse than the reference front with respect to 
  * all the objectives.
  * 
- * \f[ I_c(A,B) = \max_{z^2 \in B} \
+ * \f[ I_{\epsilon}(A,B) = \max_{z^2 \in B} \
  *                \min_{z^1 \in A} \
  *                \max_{1 \leq i \leq n} \ \frac{z^1_i}{z^2_i}\
  *                \f]
