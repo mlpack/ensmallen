@@ -18,12 +18,12 @@
 namespace ens {
 
 /**
- * The IGD indicator is the average distance from each point in the reference
- * front to the nearest point in it's solution. IGD+ is an improvement upon
+ * The IGD indicator returns the average distance from each point in the reference
+ * front to the nearest point to it's solution. IGD+ is an improvement upon
  * the IGD indicator, which fixes misleading results given by IGD in certain
- * cases by using a different distance metric:
+ * cases via a different distance metric:
  *
- * \f[ d^{+}(z,a) = \sqrt{\sum_{i = 1}^{n} \left( \max{a - z}\ \right) \ } \
+ * \f[ d^{+}(z,a) = \sqrt{\sum_{i = 1}^{n}( \max\{a_i - z_i, 0\})^2 \ } \
  *    \f]
  *
  * For more information see:
@@ -67,7 +67,8 @@ namespace ens {
           {
             ElemType z = referenceFront(k, 0, i);
             ElemType a = front(k, 0, j);
-            dist += std::pow(std::max(z - a, 0.0), 2);
+            // Assuming minimization of all objectives.
+            dist += std::pow(std::max(a - z, 0.0), 2);
           }
           dist = std::sqrt(dist);
           if (dist < min)
