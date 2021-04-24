@@ -1,5 +1,5 @@
 /**
- * @file igd.hpp
+ * @file igd_plus.hpp
  * @author Rahul Ganesh Prabhu
  * @author Nanubala Gnana Sai
  *
@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_INDICATORS_IGD_HPP
-#define ENSMALLEN_INDICATORS_IGD_HPP
+#ifndef ENSMALLEN_INDICATORS_IGD_PLUS_HPP
+#define ENSMALLEN_INDICATORS_IGD_PLUS_HPP
 
 namespace ens {
 
@@ -39,10 +39,17 @@ namespace ens {
  * }
  * @endcode
  */
-  class IGD
+  class IGDPlus
   {
+   public:
     /**
-     * Find the IGD value of the front with respect to the given reference
+     * Default constructor does nothing, but is required to satisfy the Indicator
+     * policy.
+     */
+    IGDPlus() { }
+
+    /**
+     * Find the IGD+ value of the front with respect to the given reference
      * front.
      *
      * @tparam CubeType The cube data type of front.
@@ -68,7 +75,7 @@ namespace ens {
             ElemType z = referenceFront(k, 0, i);
             ElemType a = front(k, 0, j);
             // Assuming minimization of all objectives.
-            dist += std::pow(std::max(a - z, 0.0), 2);
+            dist += std::pow(std::max(a - z, ElemType{0}), 2);
           }
           dist = std::sqrt(dist);
           if (dist < min)
