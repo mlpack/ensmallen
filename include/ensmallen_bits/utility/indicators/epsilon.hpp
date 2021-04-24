@@ -45,6 +45,13 @@ namespace ens {
  */
   class Epsilon
   {
+   public:
+    /**
+     * Default constructor does nothing, but is required to satisfy the Indicator
+     * policy.
+     */
+    Epsilon() { }
+
     /**
      * Find the epsilon value of the front with respect to the given reference
      * front.
