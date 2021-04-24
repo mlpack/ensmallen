@@ -66,7 +66,9 @@ namespace ens {
         ElemType epsjMin = std::numeric_limits<ElemType>::max();
         for (size_t j = 0; j < front.n_slices; j++)
         {
-          ElemType epsj = (front.slice(j) / referenceFront.slice(i)).max();
+          arma::Mat<ElemType> frontRatio = front.slice(j) / referenceFront.slice(i);
+          frontRatio.replace(arma::datum::inf, -1.); // Zero division case
+          ElemType epsj = frontRatio.max();
           if (epsj < epsjMin)
             epsjMin = epsj;
         }
