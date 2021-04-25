@@ -47,9 +47,9 @@ TEST_CASE("EpsilonFloatTest", "[IndicatorsTest]")
 {
   arma::fcube referenceFront(2, 1, 3);
   float tol = 1e-10;
-  referenceFront.slice(0) = arma::fvec{0.01010101, 0.89949622};
-  referenceFront.slice(1) = arma::fvec{0.02020202, 0.85786619};
-  referenceFront.slice(2) = arma::fvec{0.03030303, 0.82592234};
+  referenceFront.slice(0) = arma::fvec{0.01010101f, 0.89949622f};
+  referenceFront.slice(1) = arma::fvec{0.02020202f, 0.85786619f};
+  referenceFront.slice(2) = arma::fvec{0.03030303f, 0.82592234f};
   arma::fcube front = referenceFront * 1.1;
   double eps =  Epsilon::Evaluate(front, referenceFront);
 
@@ -87,9 +87,9 @@ TEST_CASE("IGDPlusFloatTest", "[IndicatorsTest]")
 {
   arma::fcube referenceFront(2, 1, 3);
   float tol = 1e-10;
-  referenceFront.slice(0) = arma::fvec{0.01010101, 0.89949622};
-  referenceFront.slice(1) = arma::fvec{0.02020202, 0.85786619};
-  referenceFront.slice(2) = arma::fvec{0.03030303, 0.82592234};
+  referenceFront.slice(0) = arma::fvec{0.01010101f, 0.89949622f};
+  referenceFront.slice(1) = arma::fvec{0.02020202f, 0.85786619f};
+  referenceFront.slice(2) = arma::fvec{0.03030303f, 0.82592234f};
   arma::fcube front = referenceFront * 1.1;
   float igdPlus = IGDPlus::Evaluate(front, referenceFront);
 
