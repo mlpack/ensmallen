@@ -1,6 +1,7 @@
 /**
  * @file nsga2_impl.hpp
  * @author Sayan Goswami
+ * @author Nanubala Gnana Sai
  *
  * Implementation of the NSGA-II algorithm. Used for multi-objective
  * optimization problems on arbitrary functions.
@@ -203,14 +204,24 @@ typename MatType::elem_type NSGA2::Optimize(
     population.resize(populationSize);
   }
 
-  // Set the candidates from the best front as the output.
-  bestFront.resize(population[0].n_rows, population[0].n_cols, fronts[0].size());
-  // bestFront is stored, can be obtained by the Front() getter.
+  // Set the candidates from the Pareto Set as the output.
+  paretoSet.resize(population[0].n_rows, population[0].n_cols, fronts[0].size());
+  // The Pareto Set is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
-    bestFront.slice(solutionIdx) =
+    paretoSet.slice(solutionIdx) =
         arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
 
-  // Assign iterate to first element of the best front.
+  // Calculate the objectives of the surviving population.
+  EvaluateObjectives(population, objectives, calculatedObjectives);
+  // Set the candidates from the Pareto Front as the output.
+  paretoFront.resize(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
+      fronts[0].size());
+  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+    paretoFront.slice(solutionIdx) =
+        arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+
+  // Assign iterate to first element of the Pareto Set.
   iterate = population[fronts[0][0]];
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
