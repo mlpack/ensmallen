@@ -52,6 +52,6 @@ build_script:
     "%MSBUILD%" "ensmallen.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
-  Run tests after copying libraries.
+  #Run tests after copying libraries.
   - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
   - ctest -C Release -V --output-on-failure .
