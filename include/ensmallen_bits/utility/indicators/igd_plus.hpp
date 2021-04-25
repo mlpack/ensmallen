@@ -75,7 +75,7 @@ namespace ens {
             ElemType z = referenceFront(k, 0, i);
             ElemType a = front(k, 0, j);
             // Assuming minimization of all objectives.
-            dist += std::pow(std::max(a - z, ElemType{0}), 2);
+            dist += std::pow(std::max<ElemType>(a - z, 0), 2);
           }
           dist = std::sqrt(dist);
           if (dist < min)
