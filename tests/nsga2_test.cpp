@@ -1,6 +1,7 @@
 /**
  * @file nsga2_test.cpp
  * @author Sayan Goswami
+ * @author Nanubala Gnana Sai
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -58,13 +59,13 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::cube bestFront= opt.Front();
+    arma::cube paretoSet= opt.ParetoSet();
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
-      double val = arma::as_scalar(bestFront.slice(solutionIdx));
+      double val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -107,13 +108,13 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::cube bestFront= opt.Front();
+    arma::cube paretoSet= opt.ParetoSet();
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
-      double val = arma::as_scalar(bestFront.slice(solutionIdx));
+      double val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -154,13 +155,13 @@ TEST_CASE("NSGA2FonsecaFlemingDoubleTest", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  arma::cube bestFront = opt.Front();
+  arma::cube paretoSet = opt.ParetoSet();
 
   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
   {
-    const arma::mat solution = bestFront.slice(solutionIdx);
+    const arma::mat solution = paretoSet.slice(solutionIdx);
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
@@ -200,13 +201,13 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorDoubleBounds", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  arma::cube bestFront = opt.Front();
+  arma::cube paretoSet = opt.ParetoSet();
 
   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
   {
-    const arma::mat solution = bestFront.slice(solutionIdx);
+    const arma::mat solution = paretoSet.slice(solutionIdx);
     double valX = arma::as_scalar(solution(0));
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
@@ -248,13 +249,13 @@ TEST_CASE("NSGA2SchafferN1FloatTest", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
+    arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
-      float val = arma::as_scalar(bestFront.slice(solutionIdx));
+      float val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -297,13 +298,13 @@ TEST_CASE("NSGA2SchafferN1TestVectorFloatBounds", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
+    arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
-      float val = arma::as_scalar(bestFront.slice(solutionIdx));
+      float val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
       {
         allInRange = false;
@@ -344,13 +345,13 @@ TEST_CASE("NSGA2FonsecaFlemingFloatTest", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
+  arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
   {
-    const arma::fmat solution = bestFront.slice(solutionIdx);
+    const arma::fmat solution = paretoSet.slice(solutionIdx);
     float valX = arma::as_scalar(solution(0));
     float valY = arma::as_scalar(solution(1));
     float valZ = arma::as_scalar(solution(2));
@@ -390,13 +391,13 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  arma::fcube bestFront = arma::conv_to<arma::fcube>::from(opt.Front());
+  arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < bestFront.n_slices; ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
   {
-    const arma::fmat solution = bestFront.slice(solutionIdx);
+    const arma::fmat solution = paretoSet.slice(solutionIdx);
     float valX = arma::as_scalar(solution(0));
     float valY = arma::as_scalar(solution(1));
     float valZ = arma::as_scalar(solution(2));
