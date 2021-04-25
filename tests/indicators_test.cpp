@@ -26,7 +26,7 @@ using namespace ens::test;
 TEST_CASE("EpsilonDoubleTest", "[IndicatorsTest]")
 {
   arma::cube referenceFront(2, 1, 3);
-  double tol = 1e-6;
+  double tol = 1e-10;
   referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
   referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
   referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
@@ -46,7 +46,7 @@ TEST_CASE("EpsilonDoubleTest", "[IndicatorsTest]")
 TEST_CASE("EpsilonFloatTest", "[IndicatorsTest]")
 {
   arma::fcube referenceFront(2, 1, 3);
-  float tol = 1e-6;
+  float tol = 1e-10;
   referenceFront.slice(0) = arma::fvec{0.01010101, 0.89949622};
   referenceFront.slice(1) = arma::fvec{0.02020202, 0.85786619};
   referenceFront.slice(2) = arma::fvec{0.03030303, 0.82592234};
@@ -66,7 +66,7 @@ TEST_CASE("EpsilonFloatTest", "[IndicatorsTest]")
 TEST_CASE("IGDPlusDoubleTest", "[IndicatorsTest]")
 {
   arma::cube referenceFront(2, 1, 3);
-  double tol = 1e-6;
+  double tol = 1e-10;
   referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
   referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
   referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
@@ -86,7 +86,7 @@ TEST_CASE("IGDPlusDoubleTest", "[IndicatorsTest]")
 TEST_CASE("IGDPlusFloatTest", "[IndicatorsTest]")
 {
   arma::fcube referenceFront(2, 1, 3);
-  float tol = 1e-6;
+  float tol = 1e-10;
   referenceFront.slice(0) = arma::fvec{0.01010101, 0.89949622};
   referenceFront.slice(1) = arma::fvec{0.02020202, 0.85786619};
   referenceFront.slice(2) = arma::fvec{0.03030303, 0.82592234};
