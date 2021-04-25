@@ -44,7 +44,6 @@ set(ENSMALLEN_TESTS_SOURCES
     svrg_test.cpp
     swats_test.cpp
     wn_grad_test.cpp
-    indicators_test.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
