@@ -208,8 +208,10 @@ typename MatType::elem_type NSGA2::Optimize(
   paretoSet.resize(population[0].n_rows, population[0].n_cols, fronts[0].size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
     paretoSet.slice(solutionIdx) =
-        arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+  }
 
   // Calculate the objectives of the surviving population.
   EvaluateObjectives(population, objectives, calculatedObjectives);
@@ -218,8 +220,10 @@ typename MatType::elem_type NSGA2::Optimize(
       fronts[0].size());
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
     paretoFront.slice(solutionIdx) =
-        arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+  }
 
   // Assign iterate to first element of the Pareto Set.
   iterate = population[fronts[0][0]];
