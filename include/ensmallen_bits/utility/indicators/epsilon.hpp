@@ -74,7 +74,7 @@ namespace ens {
         for (size_t j = 0; j < front.n_slices; j++)
         {
           arma::Mat<ElemType> frontRatio = front.slice(j) / referenceFront.slice(i);
-          frontRatio.replace(arma::datum::inf, -1.); // Zero division case
+          frontRatio.replace(arma::datum::inf, -1.); // Handle zero division case.
           ElemType epsj = frontRatio.max();
           if (epsj < epsjMin)
             epsjMin = epsj;
