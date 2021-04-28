@@ -169,7 +169,7 @@ class NSGA2 {
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  //! Retreive the pareto optimal points in variable space. This returns an empty cube
+  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
   //! until `Optimize()` has been called.
   const arma::cube& ParetoSet() const { return paretoSet; }
 
