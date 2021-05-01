@@ -489,12 +489,12 @@ optimizer uses [L-BFGS](#l-bfgs).
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `1000` |
-| `double` | **`penaltyThresholdFactor`** | When penalty threshold is updated, set it to this multiplied by the penalty. | `10.0` |
-| `double` | **`sigmaUpdateFactor`** | When sigma is updated, multiply it by this. | `0.25` |
+| `double` | **`penaltyThresholdFactor`** | When penalty threshold is updated, set it to this multiplied by the penalty. | `0.25` |
+| `double` | **`sigmaUpdateFactor`** | When sigma is updated, multiply it by this. | `10.0` |
 | `L_BFGS&` | **`lbfgs`** | Internal l-bfgs optimizer. | `L_BFGS()` |
 
 The attributes of the optimizer may also be modified via the member methods
-`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `L_BFGS()`.
+`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `LBFGS()`.
 
 <details open>
 <summary>Click to collapse/expand example code.

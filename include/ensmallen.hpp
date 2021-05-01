@@ -66,11 +66,15 @@
 #include "ensmallen_bits/utility/any.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
 
+// Contains traits, must be placed before report callback.
+#include "ensmallen_bits/function.hpp" // TODO: should move to function/
+
 // Callbacks.
 #include "ensmallen_bits/callbacks/callbacks.hpp"
 #include "ensmallen_bits/callbacks/early_stop_at_min_loss.hpp"
 #include "ensmallen_bits/callbacks/print_loss.hpp"
 #include "ensmallen_bits/callbacks/progress_bar.hpp"
+#include "ensmallen_bits/callbacks/report.hpp"
 #include "ensmallen_bits/callbacks/store_best_coordinates.hpp"
 #include "ensmallen_bits/callbacks/timer_stop.hpp"
 
@@ -89,8 +93,6 @@
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
-
-#include "ensmallen_bits/function.hpp" // TODO: should move to function/
 
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
 #include "ensmallen_bits/gradient_descent/gradient_descent.hpp"

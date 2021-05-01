@@ -44,23 +44,16 @@ class RastriginFunction
    *
    * @param n Number of dimensions for the function.
    */
-  RastriginFunction(const size_t n);
+  RastriginFunction(const size_t n = 2);
 
   /**
    * Shuffle the order of function visitation. This may be called by the
    * optimizer.
    */
- void Shuffle();
+  void Shuffle();
 
   //! Return 1 (the number of functions).
   size_t NumFunctions() const { return n; }
-
-  //! Get the starting point.
-  template<typename MatType = arma::mat>
-  MatType GetInitialPoint() const
-  {
-    return arma::conv_to<MatType>::from(initialPoint);
-  }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -104,6 +97,29 @@ class RastriginFunction
    */
   template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient);
+
+  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
+  // required for using ensmallen to optimize this function!  They are
+  // specifically used as a convenience just for ensmallen's testing
+  // infrastructure.
+
+  //! Get the starting point.
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const
+  {
+    return arma::conv_to<MatType>::from(initialPoint);
+  }
+
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const
+  {
+    return arma::zeros<MatType>(initialPoint.n_rows, initialPoint.n_cols);
+  }
+
+  //! Get the final objective.
+  double GetFinalObjective() const { return 0.0; }
+
  private:
   //! Number of dimensions for the function.
   size_t n;

@@ -45,6 +45,8 @@ ENS_HAS_EXACT_METHOD_FORM(MaxIterations, HasMaxIterations)
 ENS_HAS_EXACT_METHOD_FORM(ResetPolicy, HasResetPolicy)
 //! Detect an BatchSize() method.
 ENS_HAS_EXACT_METHOD_FORM(BatchSize, HasBatchSize)
+//! Detect an StepSize() method.
+ENS_HAS_EXACT_METHOD_FORM(StepSize, HasStepSize)
 
 template<typename MatType, typename GradType>
 struct TypedForms
@@ -389,6 +391,22 @@ struct HasBatchSizeSignature
   const static bool value =
       HasBatchSize<OptimizerType, BatchSizeForm>::value ||
       HasBatchSize<OptimizerType, BatchSizeConstForm>::value;
+};
+
+//! Utility struct, check if size_t StepSize() const or size_t StepSize()
+//! exists.
+template<typename OptimizerType>
+struct HasStepSizeSignature
+{
+  template<typename C>
+  using StepSizeConstForm = double(C::*)(void) const;
+
+  template<typename C>
+  using StepSizeForm = double(C::*)(void);
+
+  const static bool value =
+      HasStepSize<OptimizerType, StepSizeForm>::value ||
+      HasStepSize<OptimizerType, StepSizeConstForm>::value;
 };
 
 //! Utility struct, check if size_t MaxIterations() const exists.

@@ -25,10 +25,6 @@ class GDTestFunction
   //! Nothing to do for the constructor.
   GDTestFunction() { }
 
-  //! Get the starting point.
-  template<typename MatType>
-  MatType GetInitialPoint() const { return MatType("1; 3; 2"); }
-
   //! Evaluate a function.
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
@@ -36,6 +32,22 @@ class GDTestFunction
   //! Evaluate the gradient of a function.
   template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient) const;
+
+  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
+  // required for using ensmallen to optimize this function!  They are
+  // specifically used as a convenience just for ensmallen's testing
+  // infrastructure.
+
+  //! Get the starting point.
+  template<typename MatType>
+  MatType GetInitialPoint() const { return MatType("1; 3; 2"); }
+
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("0; 0; 0"); }
+
+  //! Get the final objective.
+  double GetFinalObjective() const { return 0.0; }
 };
 
 } // namespace test
