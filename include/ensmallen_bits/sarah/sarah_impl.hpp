@@ -89,11 +89,6 @@ SARAHType<UpdatePolicyType>::Optimize(
   BaseGradType gradient0(iterate.n_rows, iterate.n_cols);
   BaseMatType iterate0;
 
-  // Find the number of batches.
-  size_t numBatches = numFunctions / batchSize;
-  if (numFunctions % batchSize != 0)
-    ++numBatches; // Capture last few.
-
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   terminate |= Callback::BeginOptimization(*this, function, iterate,

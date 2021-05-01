@@ -20,31 +20,19 @@ using namespace ens::test;
  */
 TEST_CASE("AdaBoundSphereFunctionTest", "[AdaBoundTest]")
 {
-  SphereFunction f(2);
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction>(optimizer, 0.5, 0.1);
 }
 
 /**
  * Test the AdaBound optimizer on the Sphere function with arma::fmat.
  */
-TEST_CASE("AdaBoundphereFunctionTestFMat", "[AdaBoundTest]")
+TEST_CASE("AdaBoundSphereFunctionTestFMat", "[AdaBoundTest]")
 {
-  SphereFunction f(2);
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -52,15 +40,9 @@ TEST_CASE("AdaBoundphereFunctionTestFMat", "[AdaBoundTest]")
  */
 TEST_CASE("AMSBoundSphereFunctionTest", "[AdaBoundTest]")
 {
-  SphereFunction f(2);
   AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction, arma::mat>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -68,15 +50,9 @@ TEST_CASE("AMSBoundSphereFunctionTest", "[AdaBoundTest]")
  */
 TEST_CASE("AMSBoundphereFunctionTestFMat", "[AdaBoundTest]")
 {
-  SphereFunction f(2);
   AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
 }
 
 #if ARMA_VERSION_MAJOR > 9 ||\
@@ -87,15 +63,9 @@ TEST_CASE("AMSBoundphereFunctionTestFMat", "[AdaBoundTest]")
  */
 TEST_CASE("AdaBoundSphereFunctionTestSpMat", "[AdaBoundTest]")
 {
-  SphereFunction f(2);
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -120,15 +90,9 @@ TEST_CASE("AdaBoundSphereFunctionTestSpMatDenseGradient", "[AdaBoundTest]")
  */
 TEST_CASE("AMSBoundSphereFunctionTestSpMat", "[AdaBoundTest]")
 {
-  SphereFunction f(2);
   AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.1);
 }
 
 /**

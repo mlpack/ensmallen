@@ -12,6 +12,7 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -21,18 +22,9 @@ using namespace ens::test;
  */
 TEST_CASE("RosenbrockFunctionTest", "[LBFGSTest]")
 {
-  RosenbrockFunction f;
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-
-  arma::mat coords = f.GetInitialPoint();
-  lbfgs.Optimize(f, coords);
-
-  double finalValue = f.Evaluate(coords);
-
-  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+  FunctionTest<RosenbrockFunction>(lbfgs, 0.01, 0.001);
 }
 
 /**
@@ -40,18 +32,9 @@ TEST_CASE("RosenbrockFunctionTest", "[LBFGSTest]")
  */
 TEST_CASE("RosenbrockFunctionFloatTest", "[LBFGSTest]")
 {
-  RosenbrockFunction f;
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-
-  arma::fmat coords = f.GetInitialPoint<arma::fvec>();
-  lbfgs.Optimize(f, coords);
-
-  float finalValue = f.Evaluate(coords);
-
-  REQUIRE(finalValue == Approx(0.0f).margin(1e-3));
-  REQUIRE(coords(0) == Approx(1.0f).epsilon(1e-4));
-  REQUIRE(coords(1) == Approx(1.0f).epsilon(1e-4));
+  FunctionTest<RosenbrockFunction, arma::fmat>(lbfgs, 0.1, 0.01);
 }
 
 /**
@@ -79,18 +62,9 @@ TEST_CASE("RosenbrockFunctionSpGradTest", "[LBFGSTest]")
  */
 TEST_CASE("RosenbrockFunctionSpMatTest", "[LBFGSTest]")
 {
-  RosenbrockFunction f;
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-
-  arma::sp_mat coords = f.GetInitialPoint<arma::sp_vec>();
-  lbfgs.Optimize(f, coords);
-
-  double finalValue = f.Evaluate(coords);
-
-  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+  FunctionTest<RosenbrockFunction, arma::sp_mat>(lbfgs, 0.01, 0.001);
 }
 
 /**
@@ -98,15 +72,9 @@ TEST_CASE("RosenbrockFunctionSpMatTest", "[LBFGSTest]")
  */
 TEST_CASE("ColvilleFunctionTest", "[LBFGSTest]")
 {
-  ColvilleFunction f;
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-
-  arma::vec coords = f.GetInitialPoint();
-  lbfgs.Optimize(f, coords);
-
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+  FunctionTest<ColvilleFunction>(lbfgs, 0.01, 0.001);
 }
 
 /**
@@ -114,20 +82,9 @@ TEST_CASE("ColvilleFunctionTest", "[LBFGSTest]")
  */
 TEST_CASE("WoodFunctionTest", "[LBFGSTest]")
 {
-  WoodFunction f;
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-
-  arma::vec coords = f.GetInitialPoint();
-  lbfgs.Optimize(f, coords);
-
-  double finalValue = f.Evaluate(coords);
-
-  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(2) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(3) == Approx(1.0).epsilon(1e-7));
+  FunctionTest<WoodFunction>(lbfgs, 0.01, 0.001);
 }
 
 /**
@@ -164,19 +121,7 @@ TEST_CASE("GeneralizedRosenbrockFunctionTest", "[LBFGSTest]")
  */
 TEST_CASE("RosenbrockWoodFunctionTest", "[LBFGSTest]")
 {
-  RosenbrockWoodFunction f;
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-
-  arma::mat coords = f.GetInitialPoint();
-  lbfgs.Optimize(f, coords);
-
-  double finalValue = f.Evaluate(coords);
-
-  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  for (int row = 0; row < 4; row++)
-  {
-    REQUIRE((coords(row, 0)) == Approx(1.0).epsilon(1e-7));
-    REQUIRE((coords(row, 1)) == Approx(1.0).epsilon(1e-7));
-  }
+  FunctionTest<RosenbrockWoodFunction>(lbfgs, 0.01, 0.001);
 }

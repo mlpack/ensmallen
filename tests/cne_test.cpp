@@ -10,7 +10,6 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -24,24 +23,8 @@ using namespace std;
  */
 TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
-
   CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  arma::mat coordinates = lr.GetInitialPoint();
-  opt.Optimize(lr, coordinates);
-
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  LogisticRegressionFunctionTest(opt, 0.003, 0.006);
 }
 
 /**
@@ -50,24 +33,8 @@ TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
  */
 TEST_CASE("CNELogisticRegressionFMatTest", "[CNETest]")
 {
-  arma::fmat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
-
   CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  arma::fmat coordinates = lr.GetInitialPoint();
-  opt.Optimize(lr, coordinates);
-
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  LogisticRegressionFunctionTest<arma::fmat>(opt, 0.003, 0.006);
 }
 
 /**
@@ -90,14 +57,8 @@ TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
  */
 TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
 {
-  AckleyFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
-
-  arma::mat coordinates = arma::mat("3; 3");
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
+  FunctionTest<AckleyFunction>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -105,14 +66,8 @@ TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
  */
 TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
 {
-  BealeFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
-
-  arma::mat coordinates = arma::mat("3; 3");
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(3).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.5).margin(0.1));
+  FunctionTest<BealeFunction>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -120,14 +75,8 @@ TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
  */
 TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
 {
-  GoldsteinPriceFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.1, -1);
-
-  arma::mat coordinates = arma::mat("0.5; -0.5");
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(-1).margin(0.1));
+  FunctionTest<GoldsteinPriceFunction>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -135,14 +84,8 @@ TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
  */
 TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
 {
-  LevyFunctionN13 f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.02, -1);
-
-  arma::mat coordinates = arma::mat("1.5; 0.5");
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(1).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(1).margin(0.1));
+  FunctionTest<LevyFunctionN13>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -165,14 +108,8 @@ TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
  */
 TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
 {
-  ThreeHumpCamelFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
-
-  arma::mat coordinates = arma::mat("1; 1");
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
+  FunctionTest<ThreeHumpCamelFunction>(optimizer, 0.5, 0.1);
 }
 
 // TODO: The CNE optimizer with the given parameter occasionally fails to find a
@@ -186,11 +123,26 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
   SchafferFunctionN4 f;
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
 
-  arma::mat coordinates = arma::mat("0.5; 2");
-  optimizer.Optimize(f, coordinates);
+  // We allow a few trials.
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    arma::mat coordinates = arma::mat("0.5; 2");
+    optimizer.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
-  REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
+    if (trial != 4)
+    {
+      if (coordinates(0) != Approx(0).margin(0.1))
+        continue;
+      if (abs(coordinates(1)) != Approx(1.25313).margin(0.1))
+        continue;
+    }
+
+    REQUIRE(coordinates(0) == Approx(0).margin(0.1));
+    REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
+
+    // The test was successfull or reached the maximum number of trials.
+    break;
+  }
 }
 
 /**
@@ -198,12 +150,7 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
  */
 TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
 {
-  SchafferFunctionN2 f;
+  // We allow a few trials in case convergence is not achieved.
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
-
-  arma::mat coordinates = arma::mat("0.5; -0.5");
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0).margin(0.1));
+  FunctionTest<SchafferFunctionN2>(optimizer, 0.5, 0.1, 7);
 }

@@ -1,14 +1,70 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
- * Make a few tests more robust
-   ([#228](https://github.com/mlpack/ensmallen/pull/228)).
-
  * Add AdaBelief optimizer
     ([#233](https://github.com/mlpack/ensmallen/pull/233)).
 
+### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
+###### 2021-03-24
+ * Fix CNE test trials
+   ([#267](https://github.com/mlpack/ensmallen/pull/267)).
+
+ * Update Catch2 to 2.13.4
+   ([#268](https://github.com/mlpack/ensmallen/pull/268)).
+
+ * Fix typos in documentation
+   ([#270](https://github.com/mlpack/ensmallen/pull/270),
+    [#271](https://github.com/mlpack/ensmallen/pull/271)).
+
+ * Add clarifying comments in problems/ implementations
+   ([#276](https://github.com/mlpack/ensmallen/pull/276)).
+
+ * CheckArbitraryFunctionTypeAPI extended for MOO support
+   ([#283](https://github.com/mlpack/ensmallen/pull/283)).
+
+ * Refactor NSGA2
+   ([#263](https://github.com/mlpack/ensmallen/pull/263)).
+
+### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
+###### 2021-03-02
+ * Fix test compilation issue when `ENS_USE_OPENMP` is set
+   ([#255](https://github.com/mlpack/ensmallen/pull/255)).
+
+ * Fix CNE initial population generation to use normal distribution
+   ([#258](https://github.com/mlpack/ensmallen/pull/258)).
+
+ * Fix compilation warnings
+   ([#259](https://github.com/mlpack/ensmallen/pull/259)).
+
+ * Remove `AdamSchafferFunctionN2Test` test from Adam test suite to prevent
+   spurious issue on some aarch64 ([#265](https://github.com/mlpack/ensmallen/pull/259)).
+
+### ensmallen 2.16.0: "Severely Dented Can Of Polyurethane"
+###### 2021-02-11
+ * Expand README with example installation and add simple example program
+   showing usage of the L-BFGS optimizer
+   ([#248](https://github.com/mlpack/ensmallen/pull/248)).
+
+ * Refactor tests to increase stability and reduce random errors
+   ([#249](https://github.com/mlpack/ensmallen/pull/249)).
+
+### ensmallen 2.15.1: "Why Can't I Manage To Grow Any Plants?"
+###### 2020-11-05
+ * Fix include order to ensure traits is loaded before reports
+   ([#239](https://github.com/mlpack/ensmallen/pull/239)).
+
+### ensmallen 2.15.0: "Why Can't I Manage To Grow Any Plants?"
+###### 2020-11-01
+ * Make a few tests more robust
+   ([#228](https://github.com/mlpack/ensmallen/pull/228)).
+
+ * Add release date to version information. ([#226](https://github.com/mlpack/ensmallen/pull/226))
+
+ * Fix typo in release script
+   ([#236](https://github.com/mlpack/ensmallen/pull/236)).
+
 ### ensmallen 2.14.2: "No Direction Home"
 ###### 2020-08-31
- * Fix implementation of fonesca fleming problem function f1 and f2 
+ * Fix implementation of fonesca fleming problem function f1 and f2
    type usage and negative signs. ([#223](https://github.com/mlpack/ensmallen/pull/223))
 
 ### ensmallen 2.14.1: "No Direction Home"
@@ -34,6 +90,9 @@
 
  * Fix L-BFGS convergence when starting from a minimum
    ([#201](https://github.com/mlpack/ensmallen/pull/201)).
+
+* Add optimizer summary report callback
+   ([#213](https://github.com/mlpack/ensmallen/pull/213)).
 
 ### ensmallen 2.13.0: "Automatically Automated Automation"
 ###### 2020-07-15
