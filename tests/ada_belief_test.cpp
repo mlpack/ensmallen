@@ -20,14 +20,8 @@ using namespace ens::test;
  */
 TEST_CASE("AdaBeliefSphereFunctionTest", "[AdaBeliefTest]")
 {
-  SphereFunction f(2);
   AdaBelief optimizer(0.5, 2, 0.7, 0.999, 1e-12, 500000, 1e-3, false);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -35,14 +29,8 @@ TEST_CASE("AdaBeliefSphereFunctionTest", "[AdaBeliefTest]")
  */
 TEST_CASE("AdaBeliefSphereFunctionTestFMat", "[AdaBeliefTest]")
 {
-  SphereFunction f(2);
   AdaBelief optimizer(0.5, 2, 0.7, 0.999, 1e-12, 500000, 1e-3, false);
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -50,31 +38,8 @@ TEST_CASE("AdaBeliefSphereFunctionTestFMat", "[AdaBeliefTest]")
  */
 TEST_CASE("AdaBeliefMcCormickFunctionTest", "[AdaBeliefTest]")
 {
-  McCormickFunction f;
   AdaBelief optimizer(0.5, 1, 0.7, 0.999, 1e-12, 500000, 1e-5, false);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  // 3% error tolerance.
-  REQUIRE(coordinates(0) == Approx(-0.547).epsilon(0.03));
-  REQUIRE(coordinates(1) == Approx(-1.547).epsilon(0.03));
-}
-
-/**
- * Tests the AdaBelief optimizer using a simple test function.
- */
-TEST_CASE("SimpleAdaBeliefTestFunction", "[AdaBeliefTest]")
-{
-  SGDTestFunction f;
-  AdaBelief optimizer(1e-3, 1, 0.9, 0.999, 1e-12, 500000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.3));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(0.3));
+  FunctionTest<McCormickFunction>(optimizer, 0.5, 0.1);
 }
 
 /**
@@ -83,24 +48,8 @@ TEST_CASE("SimpleAdaBeliefTestFunction", "[AdaBeliefTest]")
  */
 TEST_CASE("AdaBeliefLogisticRegressionTest", "[AdaBeliefTest]")
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
-
   AdaBelief optimizer;
-  arma::mat coordinates = lr.GetInitialPoint();
-  optimizer.Optimize(lr, coordinates);
-
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
 }
 
 /**
@@ -117,15 +66,6 @@ TEST_CASE("AdaBeliefLogisticRegressionFMatTest", "[AdaBeliefTest]")
   LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
 
   AdaBelief optimizer;
-  arma::fmat coordinates = lr.GetInitialPoint();
-  optimizer.Optimize(lr, coordinates);
-
-  // Ensure that the error is close to zero.
-  const float acc = lr.ComputeAccuracy(data, responses, coordinates);
-  REQUIRE(acc == Approx(100.0).epsilon(0.03)); // 3% error tolerance.
-
-  const float testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.06)); // 6% error tolerance.
+  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
 }
 
