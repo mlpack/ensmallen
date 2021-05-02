@@ -24,8 +24,6 @@ namespace ens {
  * "belief" in the current gradient direction. For more information, see the
  * following.
  *
- * For more information, see the following.
- *
  * @code
  * @misc{zhuang2020adabelief,
  *   title         = {AdaBelief Optimizer: Adapting Stepsizes by the Belief in
@@ -48,7 +46,7 @@ class AdaBelief
  public:
   /**
    * Construct the AdaBelief optimizer with the given function and parameters.
-   * AdaBelief is sensitive to its paramters and hence a good hyper paramater
+   * AdaBelief is sensitive to its parameters and hence a good hyperparameter
    * selection is necessary as its default may not fit every case.
    *
    * The maximum number of iterations refers to the maximum number of
