@@ -21,8 +21,11 @@
 
  * Refactor NSGA2
    ([#263](https://github.com/mlpack/ensmallen/pull/263)).
+   
+* Add Indicators for Multiobjective optimizers
+   ([#285](https://github.com/mlpack/ensmallen/pull/285)).
 
- * Add ZDT Test Suite
+* Add ZDT Test Suite
    ([#273](https://github.com/mlpack/ensmallen/pull/273)).
 
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
