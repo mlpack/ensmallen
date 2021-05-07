@@ -27,11 +27,11 @@ class LMCMA
 
     template <typename BaseMatType>
     size_t update(std::size_t t,
-                         const BaseMatType& p,
-                         BaseMatType& P,
-                         BaseMatType& V,
-                         arma::umat& L,
-                         arma::umat& J);
+                  const BaseMatType& p,
+                  BaseMatType& P,
+                  BaseMatType& V,
+                  arma::umat& L,
+                  arma::umat& J);
 
 
       template <typename BaseMatType>
@@ -44,10 +44,10 @@ class LMCMA
 
       template <typename BaseMatType>
       void reconstructInv(const BaseMatType& V,
-                                 const BaseMatType& J,          /* TODO: why umat? */
-                                 const std::size_t n_updates,   // number of updates
-                                 const BaseMatType z,
-                                 BaseMatType& out);
+                          const BaseMatType& J,          /* TODO: why umat? */
+                          const std::size_t n_updates,   // number of updates
+                          const BaseMatType z,
+                          BaseMatType& out);
 
 
       template <typename  BaseMatType>
