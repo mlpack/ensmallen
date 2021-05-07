@@ -39,7 +39,7 @@ namespace ens {
     template<typename SeparableFunctionType,
             typename MatType,
             typename... CallbackTypes>
-    typename MatType::elem_type LMCMA::optimize(SeparableFunctionType& f,
+    typename MatType::elem_type LMCMA::Optimize(SeparableFunctionType& f,
                                                 MatType& z,
                                                 float sigma,         // TODO: remove from here
                                                 std::size_t n_iter,  // TODO: Remove from here
@@ -159,7 +159,7 @@ namespace ens {
     }
 
     template <typename BaseMatType>
-    size_t LMCMA::update(std::size_t t,
+    size_t LMCMA::Update(std::size_t t,
                          const BaseMatType& p,
                          BaseMatType& P,
                          BaseMatType& V,
@@ -216,7 +216,7 @@ namespace ens {
     }
 
     template <typename BaseMatType>
-    void LMCMA::reconstruct(const BaseMatType& P,
+    void LMCMA::Reconstruct(const BaseMatType& P,
                      const BaseMatType& V,
                      const arma::umat& J,    /* TODO: why umat? */
                      const std::size_t n_updates,
@@ -238,7 +238,7 @@ namespace ens {
     }
 
     template <typename BaseMatType>
-    void LMCMA::reconstructInv(const BaseMatType& V,
+    void LMCMA::ReconstructInv(const BaseMatType& V,
                                const BaseMatType& J,          /* TODO: why umat? */
                                const std::size_t n_updates,   // number of updates
                                const BaseMatType z,
@@ -264,7 +264,7 @@ namespace ens {
     }
 
     template <typename  BaseMatType>
-    float LMCMA::populationSuccess(const arma::umat& ranks_cur,
+    float LMCMA::PopulationSuccess(const arma::umat& ranks_cur,
                             const arma::umat& ranks_prev,
                             const BaseMatType& F_cur,
                             const BaseMatType& F_prev)
