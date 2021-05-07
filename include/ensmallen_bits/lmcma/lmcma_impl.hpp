@@ -40,10 +40,10 @@ namespace ens {
             typename MatType,
             typename... CallbackTypes>
     typename MatType::elem_type LMCMA::optimize(SeparableFunctionType& f,
-                                         MatType& z,
-                                         float sigma,         // TODO: remove from here
-                                         std::size_t n_iter,  // TODO: Remove from here
-                                         CallbackTypes&&... callbacks)
+                                                MatType& z,
+                                                float sigma,         // TODO: remove from here
+                                                std::size_t n_iter,  // TODO: Remove from here
+                                                CallbackTypes&&... callbacks)
     {
 
 
