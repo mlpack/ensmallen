@@ -25,36 +25,36 @@ class LMCMA
                                          CallbackTypes&&... callbacks);
   private:
 
-    template <typename BaseMatType>
+    template <typename MatType>
     size_t Update(std::size_t t,
-                  const BaseMatType& p,
-                  BaseMatType& P,
-                  BaseMatType& V,
+                  const MatType& p,
+                  MatType& P,
+                  MatType& V,
                   arma::umat& L,
                   arma::umat& J);
 
 
-      template <typename BaseMatType>
-      void Reconstruct(const BaseMatType& P,
-                       const BaseMatType& V,
+      template <typename MatType>
+      void Reconstruct(const MatType& P,
+                       const MatType& V,
                        const arma::umat& J,    /* TODO: why umat? */
                        const std::size_t n_updates,
-                       BaseMatType& z);
+                       MatType& z);
 
 
-      template <typename BaseMatType>
-      void ReconstructInv(const BaseMatType& V,
-                          const BaseMatType& J,          /* TODO: why umat? */
+      template <typename MatType>
+      void ReconstructInv(const MatType& V,
+                          const MatType& J,          /* TODO: why umat? */
                           const std::size_t n_updates,   // number of updates
-                          const BaseMatType z,
-                          BaseMatType& out);
+                          const MatType z,
+                          MatType& out);
 
 
-      template <typename  BaseMatType>
+      template <typename  MatType>
       float PopulationSuccess(const arma::umat& ranks_cur,
                               const arma::umat& ranks_prev,
-                              const BaseMatType& F_cur,
-                              const BaseMatType& F_prev);
+                              const MatType& F_cur,
+                              const MatType& F_prev);
 
 
 

@@ -145,7 +145,7 @@ namespace ens {
 
         if(t % T == 0)
         {
-          update(t, p_c, P, V, L, J);
+          Update(t, p_c, P, V, L, J);
         }
 
         psr = populationSuccess(index, index_old, f_eval, f_eval_old) - z_bias;
@@ -158,11 +158,11 @@ namespace ens {
       }
     }
 
-    template <typename BaseMatType>
+    template <typename MatType>
     size_t LMCMA::Update(std::size_t t,
-                         const BaseMatType& p,
-                         BaseMatType& P,
-                         BaseMatType& V,
+                         const MatType& p,
+                         MatType& P,
+                         MatType& V,
                          arma::umat& L,
                          arma::umat& J)
     {
@@ -215,12 +215,12 @@ namespace ens {
       return j_cur;
     }
 
-    template <typename BaseMatType>
-    void LMCMA::Reconstruct(const BaseMatType& P,
-                     const BaseMatType& V,
-                     const arma::umat& J,    /* TODO: why umat? */
-                     const std::size_t n_updates,
-                     BaseMatType& z)
+    template <typename MatType>
+    void LMCMA::Reconstruct(const MatType& P,
+                            const MatType& V,
+                            const arma::umat& J,    /* TODO: why umat? */
+                            const std::size_t n_updates,
+                            MatType& z)
     {
       for(size_t t = 0; t < n_updates; t++)
       {
@@ -237,12 +237,12 @@ namespace ens {
       }
     }
 
-    template <typename BaseMatType>
-    void LMCMA::ReconstructInv(const BaseMatType& V,
-                               const BaseMatType& J,          /* TODO: why umat? */
+    template <typename MatType>
+    void LMCMA::ReconstructInv(const MatType& V,
+                               const MatType& J,          /* TODO: why umat? */
                                const std::size_t n_updates,   // number of updates
-                               const BaseMatType z,
-                               BaseMatType& out)
+                               const MatType z,
+                               MatType& out)
     {
       float c  = std::sqrt(1-c1);
       float c_sq = 1-c1;
@@ -263,11 +263,11 @@ namespace ens {
 
     }
 
-    template <typename  BaseMatType>
+    template <typename  MatType>
     float LMCMA::PopulationSuccess(const arma::umat& ranks_cur,
                             const arma::umat& ranks_prev,
-                            const BaseMatType& F_cur,
-                            const BaseMatType& F_prev)
+                            const MatType& F_cur,
+                            const MatType& F_prev)
     {
       arma::umat ranks_mixed(2*lambda, 1, arma::fill::none);
       BaseMatType F_mixed = arma::join_rows(F_cur, F_prev);
