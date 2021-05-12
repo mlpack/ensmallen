@@ -113,7 +113,7 @@ class AckleyFunction
   double& Epsilon() { return epsilon; }
 
   // Note: GetInitialPoint(), GetFinalPoint(), GetFinalObjective(), and
-  // GetVariablesBounds() are not required for using ensmallen to
+  // GetVariableBounds() are not required for using ensmallen to
   // optimize this function!  They are specifically used as a
   // convenience just for ensmallen's testing infrastructure.
 
