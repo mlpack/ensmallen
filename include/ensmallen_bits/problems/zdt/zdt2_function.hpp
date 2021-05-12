@@ -57,6 +57,7 @@ namespace test {
     ZDT2() :
         numObjectives(2),
         numVariables(30),
+        numParetoPoints(100),
         objectiveF1(*this),
         objectiveF2(*this)
     {/* Nothing to do here. */}
@@ -129,6 +130,18 @@ namespace test {
     std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
     {
       return std::make_tuple(objectiveF1, objectiveF2);
+    }
+
+    //! Get the true Pareto Front
+    arma::cube GetParetoFront()
+    {
+      arma::cube front(2, 1, numParetoPoints);
+      arma::vec x = arma::linspace(0, 1, numParetoPoints);
+      arma::vec y = 1 - arma::square(x);
+      for (size_t idx = 0; idx < numParetoPoints; ++idx)
+        out.slice(idx) = arma::vec{ x(idx), y(idx) };
+
+      return front;
     }
 
     ObjectiveF1 objectiveF1;
