@@ -20,6 +20,9 @@
 
  * Refactor NSGA2
    ([#263](https://github.com/mlpack/ensmallen/pull/263)).
+ 
+ * Add Indicators for Multiobjective optimizers
+   ([#285](https://github.com/mlpack/ensmallen/pull/285)).
 
  * Add bounds of search space for problem functions.
    ([#276](https://github.com/mlpack/ensmallen/pull/279)).
