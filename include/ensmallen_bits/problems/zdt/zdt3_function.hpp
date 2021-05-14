@@ -169,7 +169,7 @@ namespace test {
           front.slice(sliceIdx) = arma::vec{ x(pointIdx), y(pointIdx) };
         }
       }
-	  }
+    }
 
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
