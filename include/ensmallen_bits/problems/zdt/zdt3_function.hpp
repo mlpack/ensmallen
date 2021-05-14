@@ -64,6 +64,7 @@ namespace test {
     ZDT3() :
         numObjectives(2),
         numVariables(30),
+        numParetoPoints(100),
         objectiveF1(*this),
         objectiveF2(*this)
     {/* Nothing to do here. */}
@@ -169,6 +170,8 @@ namespace test {
           front.slice(sliceIdx) = arma::vec{ x(pointIdx), y(pointIdx) };
         }
       }
+
+      return front;
     }
 
     ObjectiveF1 objectiveF1;
