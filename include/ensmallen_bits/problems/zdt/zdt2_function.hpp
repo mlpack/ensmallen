@@ -139,7 +139,7 @@ namespace test {
       arma::vec x = arma::linspace(0, 1, numParetoPoints);
       arma::vec y = 1 - arma::square(x);
       for (size_t idx = 0; idx < numParetoPoints; ++idx)
-        out.slice(idx) = arma::vec{ x(idx), y(idx) };
+        front.slice(idx) = arma::vec{ x(idx), y(idx) };
 
       return front;
     }
@@ -150,6 +150,7 @@ namespace test {
    private:
     size_t numObjectives;
     size_t numVariables;
+    size_t numParetoPoints;
   };
   } //namespace test
   } //namespace ens

@@ -138,12 +138,46 @@ namespace test {
       return std::make_tuple(objectiveF1, objectiveF2);
     }
 
+    //! Get the Pareto Front
+    arma::cube GetParetoFront()
+    {
+      size_t numRegions = 5;
+      size_t regionDensity = std::floor(numParetoPoints / numRegions);
+      size_t apparentParetoPoints = numRegions * regionDensity;
+      arma::cube front(2, 1, apparentParetoPoints);
+
+      arma::mat regions{
+        {0.0, 0.182228780, 0.4093136748,
+         0.6183967944, 0.8233317983},
+        {0.0830015349, 0.2577623634, 0.4538821041,
+         0.6525117038, 0.8518328654}
+      };
+
+      for (size_t regionIdx = 0; regionIdx < numRegions; ++regionIdx)
+      {
+        arma::vec region = regions.col(regionIdx);
+        //! Generate x and y coordinates for the region.
+        arma::vec x = arma::linspace(
+            region(0), region(1), regionDensity);
+        arma::vec y = 1 - arma::sqrt(x) - x
+            % arma::sin(10 * arma::datum::pi * x);
+
+        //! Fill the front with the generated points.
+        for (size_t pointIdx = 0; pointIdx < regionDensity; ++pointIdx)
+        {
+          size_t sliceIdx = regionIdx * regionDensity + pointIdx;
+          front.slice(sliceIdx) = arma::vec{ x(pointIdx), y(pointIdx) };
+        }
+      }
+	  }
+
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
 
    private:
     size_t numObjectives;
     size_t numVariables;
+    size_t numParetoPoints;
   };
   } //namespace test
   } //namespace ens
