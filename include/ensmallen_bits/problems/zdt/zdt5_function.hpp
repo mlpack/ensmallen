@@ -55,10 +55,11 @@ namespace test {
   class ZDT5
   {
    public:
-     //! Initialize the ZDT4
+     //! Initialize the ZDT5
     ZDT5() :
         numObjectives(2),
         numVariables(11),
+        numParetoPoints(100),
         objectiveF1(*this),
         objectiveF2(*this)
     {/* Nothing to do here. */}
@@ -99,7 +100,7 @@ namespace test {
 
     struct ObjectiveF1
     {
-      ObjectiveF1(ZDT4& zdtClass) : zdtClass(zdtClass)
+      ObjectiveF1(ZDT5& zdtClass) : zdtClass(zdtClass)
       {/*Nothing to do here */}
 
       typename MatType::elem_type Evaluate(const MatType& coords)
@@ -107,7 +108,7 @@ namespace test {
         return coords[0];
       }
 
-      ZDT4& zdtClass;
+      ZDT5& zdtClass;
     };
 
     struct ObjectiveF2
@@ -156,6 +157,7 @@ namespace test {
    private:
     size_t numObjectives;
     size_t numVariables;
+    size_t numParetoPoints;
   };
   } //namespace test
   } //namespace ens

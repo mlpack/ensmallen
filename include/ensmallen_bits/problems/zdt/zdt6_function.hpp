@@ -58,6 +58,7 @@ namespace test {
     ZDT6() :
         numObjectives(2),
         numVariables(10),
+        numParetoPoints(100),
         objectiveF1(*this),
         objectiveF2(*this)
     {/* Nothing to do here. */}
@@ -154,6 +155,7 @@ namespace test {
    private:
     size_t numObjectives;
     size_t numVariables;
+    size_t numParetoPoints;
   };
   } //namespace test
   } //namespace ens
