@@ -138,7 +138,7 @@ namespace test {
       arma::vec x = arma::linspace(0, 1, numParetoPoints);
       arma::vec y = 1 - arma::sqrt(x);
       for (size_t idx = 0; idx < numParetoPoints; ++idx)
-        out.slice(idx) = arma::vec{ x(idx), y(idx) };
+        front.slice(idx) = arma::vec{ x(idx), y(idx) };
 
       return front;
     }
