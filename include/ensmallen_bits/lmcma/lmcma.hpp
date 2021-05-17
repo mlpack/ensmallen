@@ -5,15 +5,21 @@
 #ifndef ENSMALLEN_LMCMA_LMCMA_HPP
 #define ENSMALLEN_LMCMA_LMCMA_HPP
 
+//#include <ensmallen_bits/cmaes/full_selection.hpp>
+//#include <ensmallen_bits/cmaes/random_selection.hpp>
+
+#include <ensmallen_bits/lmcma/sampling/mirror_sampling.hpp>
 
 namespace ens {
 
-
-class LMCMA
+template<typename SelectionPolicyType = FullSelection, typename SamplingType = MirrorSampling>
+class LMCMA 
 {
   public:
 
-    LMCMA(std::size_t N_dim);
+    LMCMA(std::size_t N_dim, 
+          const SamplingType& sampler, 
+          const SelectionPolicyType& selectionPolicy);
 
     template<typename SeparableFunctionType,
              typename MatType,
@@ -62,6 +68,9 @@ class LMCMA
       size_t maxIterations;
       std::size_t T;
       std::size_t lambda;
+
+      SelectionPolicyType selectionPolicy;
+      SamplingType sampler;
 
       float c_c;
       float c1;

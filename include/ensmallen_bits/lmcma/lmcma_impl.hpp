@@ -16,30 +16,31 @@
 #define ENSMALLEN_LMCMA_LMCMA_IMPL_HPP
 
 #include "lmcma.hpp"
-
 #include <ensmallen_bits/function.hpp>
 
 
 namespace ens {
-    LMCMA::LMCMA(std::size_t N_dim) :
-            T(std::ceil(std::log(N_dim))),
-            c_c(0.5/std::sqrt(N_dim)),
-            c1(1/(10 * std::log(N_dim + 1))),
-            z_bias(0.25),
-            c_sigma(0.3),
-            d_sigma(0.7),
-            m(4 + (size_t)std::floor(3*std::log(N_dim))),
-            lambda(4 + (size_t)std::floor(3*std::log(N_dim))),
-            //lambda(100),
-            w( 1,std::floor( (4 + (size_t)std::floor(3*std::log(N_dim))) / 2 ), arma::fill::zeros),
-            mu(std::floor( (4 + (size_t)std::floor(3 * std::log(N_dim))) / 2 ) )
+    template<typename SelectionPolicyType, typename SamplingType>
+    LMCMA<SelectionPolicyType, SamplingType>::LMCMA(std::size_t N_dim,
+                  const SamplingType& sampler, 
+                  const SelectionPolicyType& selectionPolicy) :
+    T(std::ceil(std::log(N_dim))),
+    c_c(0.5/std::sqrt(N_dim)),
+    c1(1/(10 * std::log(N_dim + 1))),
+    z_bias(0.25),
+    c_sigma(0.3),
+    d_sigma(0.7),
+    m(4 + (size_t)std::floor(3*std::log(N_dim))),
+    lambda(4 + (size_t)std::floor(3*std::log(N_dim))),
+    w( 1,std::floor( (4 + (size_t)std::floor(3*std::log(N_dim))) / 2 ), arma::fill::zeros),
+    mu(std::floor( (4 + (size_t)std::floor(3 * std::log(N_dim))) / 2 ) )
     {}
 
-
+    template<typename SelectionPolicyType, typename SamplingType>
     template<typename SeparableFunctionType,
             typename MatType,
             typename... CallbackTypes>
-    typename MatType::elem_type LMCMA::Optimize(SeparableFunctionType& f,
+    typename MatType::elem_type LMCMA<SelectionPolicyType, SamplingType>::Optimize(SeparableFunctionType& f,
                                                 MatType& z,
                                                 float sigma,         // TODO: remove from here
                                                 std::size_t n_iter,  // TODO: Remove from here
@@ -56,6 +57,9 @@ namespace ens {
               SeparableFunctionType, BaseMatType>();
       RequireDenseFloatingPointType<BaseMatType>();
 
+      // Approximation of covariance matrix
+      CholeskyReconstructor<BaseMatType> reconstructor(z.n_elem, m, T);
+
       BaseMatType& iterate = (BaseMatType&) z;
 
       size_t N_dim = z.n_elem;
@@ -64,11 +68,6 @@ namespace ens {
       // Pointer vectors
       arma::umat J(1, m, arma::fill::zeros);
       arma::umat L(1, m, arma::fill::zeros);
-
-      // reconstruction step vectors
-      BaseMatType P(N_dim, m, arma::fill::zeros);       // BaseMatType, because is vector in search space
-      BaseMatType V(N_dim, m, arma::fill::zeros);
-      BaseMatType p_c(N_dim, 1, arma::fill::zeros);
 
       // estimated Expectation values for samples
       BaseMatType m_old(N_dim, 1, arma::fill::zeros),
@@ -96,7 +95,7 @@ namespace ens {
       f_eval_old.fill(arma::datum::inf);
 
       //  generation at t'th step
-      BaseMatType X(N_dim, lambda, arma::fill::zeros);
+      std::vector<> generation(N_dim, lambda, arma::fill::zeros);
 
       float s = 0;
 
@@ -116,21 +115,9 @@ namespace ens {
       {
         float psr = 0; // population success
 
-        // sampling
-        for (size_t k = 0; k < lambda; k++)
-        {
-          z = BaseMatType(N_dim, 1, arma::fill::randn);          // TODO: Radermacher sampling, mirror sampling
-          // compute Az
-          reconstruct(P, V, J, std::min((size_t)std::floor(t/T), m-1), z);
-          z = m_new + sigma*z;
-          f_eval[k] = f.Evaluate(z);
-          X.col(k) = z;
-        }
+        sampler.Sample(generation, m_old, sigma, reconstructor, t);
 
         // recombination
-        index_old = arma::uvec(index);
-        index = arma::sort_index(f_eval);
-
         m_old = BaseMatType(m_new);
         m_new = BaseMatType(N_dim,1, arma::fill::zeros);                // TODO: possible without reinintialization - would save some time
 
@@ -145,7 +132,7 @@ namespace ens {
 
         if(t % T == 0)
         {
-          Update(t, p_c, P, V, L, J);
+          reconstructor.Update(t)
         }
 
         psr = populationSuccess(index, index_old, f_eval, f_eval_old) - z_bias;
@@ -158,111 +145,7 @@ namespace ens {
       }
     }
 
-    template <typename MatType>
-    size_t LMCMA::Update(std::size_t t,
-                         const MatType& p,
-                         MatType& P,
-                         MatType& V,
-                         arma::umat& L,
-                         arma::umat& J)
-    {
-      t = std::floor(t/T);    // this is the t'th update
-
-      if(t < m)
-      {
-        // if less then m updates, straight forward
-        J[t] = t;
-      } else {
-        // Find pair of step vectors p, saved at lowest distance
-        // TODO: can possibly be done in a more efficient way - with armadillo?
-        size_t i_min = -1;
-        size_t dif = std::numeric_limits<std::size_t>::infinity();
-        for(size_t i=0; i < m -1; i++)
-        {
-          if(L[J[i+1]] - L[J[i]] - N < dif)
-          {
-            i_min = i;
-            dif = L[J[i+1]] - L[J[i]] - N;
-          }
-        }
-        i_min++;
-
-        if(dif >= 0)
-          i_min = 1;    // the distance is longer then N (to long) => shift
-
-        std::size_t tmp = J[i_min];
-        for(size_t i=i_min; i < m-1; i++)
-        {
-          J[i] = J[i+1];
-        }
-        J[m-1] = tmp;
-      }
-
-      // this guy will be replaced
-      std::size_t j_cur = J[std::min(t, m-1)];
-      L[j_cur] = t*T;
-
-      // update P
-      P.col(j_cur) = p;
-
-      // Reconstruct inverse
-      arma::mat v;
-      for(std::size_t j = 0; j <= std::min(t,m-1); j++){
-        /* TODO: nonefficient, only a subset of V should be updated */
-        reconstructInv(V, J, j, P.col(j),v);
-        V.col(j) = v;
-      }
-      return j_cur;
-    }
-
-    template <typename MatType>
-    void LMCMA::Reconstruct(const MatType& P,
-                            const MatType& V,
-                            const arma::umat& J,    /* TODO: why umat? */
-                            const std::size_t n_updates,
-                            MatType& z)
-    {
-      for(size_t t = 0; t < n_updates; t++)
-      {
-        size_t j = J[t];
-        arma::mat v_j = V.col(j);
-
-        float v_norm = arma::norm(v_j);
-        float v_norm_sq = v_norm * v_norm;
-
-        float a = std::sqrt(1-c1);    // TODO: move this line to constructor
-        float b = a / (v_norm_sq) * ( std::sqrt(1+ c1/(a*a) *  v_norm_sq) - 1 );  // b^{J[I[t]}
-
-        z = a * z  +  b * as_scalar(V.col(j).t() * z) * P.col(j);
-      }
-    }
-
-    template <typename MatType>
-    void LMCMA::ReconstructInv(const MatType& V,
-                               const MatType& J,          /* TODO: why umat? */
-                               const std::size_t n_updates,   // number of updates
-                               const MatType z,
-                               MatType& out)
-    {
-      float c  = std::sqrt(1-c1);
-      float c_sq = 1-c1;
-
-      out = BaseMatType(z);
-      for(size_t t = 0; t < n_updates; t++)
-      {
-        size_t j = J[t];
-        BaseMatType v_j = V.col(j);
-
-        float v_norm = arma::norm(v_j);
-        float v_norm_sq = v_norm * v_norm;
-
-        float d = 1/ ( c * v_norm_sq) * (1 - 1 / std::sqrt(1 + c1 / c_sq * v_norm_sq  ) );
-
-        out = 1 / c * out - d * as_scalar(V.col(j).t() * out) * V.col(j);
-      }
-
-    }
-
+   
     template <typename  MatType>
     float LMCMA::PopulationSuccess(const arma::umat& ranks_cur,
                             const arma::umat& ranks_prev,
