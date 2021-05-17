@@ -150,9 +150,9 @@ namespace ens {
       }
     }
 
-   
+    template<typename SelectionPolicyType, typename SamplingType> 
     template <typename  MatType>
-    float LMCMA::PopulationSuccess(const arma::umat& ranks_cur,
+    float LMCMA<SelectionPolicyType, SamplingType>::PopulationSuccess(const arma::umat& ranks_cur,
                             const arma::umat& ranks_prev,
                             const MatType& F_cur,
                             const MatType& F_prev)
