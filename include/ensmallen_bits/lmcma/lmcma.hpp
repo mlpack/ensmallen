@@ -17,7 +17,10 @@ class LMCMA
 {
   public:
 
-    LMCMA(std::size_t N_dim, 
+    LMCMA(const size_t lambda,
+          const size_t batchSize,
+          const size_t maxIterations,
+          const double tolerance,
           const SamplingType& sampler, 
           const SelectionPolicyType& selectionPolicy);
 
@@ -66,23 +69,9 @@ class LMCMA
 
       //! The maximum number of allowed iterations.
       size_t maxIterations;
-      std::size_t T;
-      std::size_t lambda;
 
       SelectionPolicyType selectionPolicy;
       SamplingType sampler;
-
-      float c_c;
-      float c1;
-      float z_bias;
-      float c_sigma;  // conv combination factor for computing stepsize
-      float d_sigma;  // scale combination factor for computing stepsize
-      arma::mat w;        // weights for computation of one mean-step
-      float mu_w;         //
-      std::size_t mu;     // number of best species
-      std::size_t m;      // number of step vectors stored
-
-      std::size_t N;      // number of iterations between step vectors which are saved
   };
 
 }

@@ -21,19 +21,18 @@
 
 namespace ens {
     template<typename SelectionPolicyType, typename SamplingType>
-    LMCMA<SelectionPolicyType, SamplingType>::LMCMA(std::size_t N_dim,
-                  const SamplingType& sampler, 
-                  const SelectionPolicyType& selectionPolicy) :
-    T(std::ceil(std::log(N_dim))),
-    c_c(0.5/std::sqrt(N_dim)),
-    c1(1/(10 * std::log(N_dim + 1))),
-    z_bias(0.25),
-    c_sigma(0.3),
-    d_sigma(0.7),
-    m(4 + (size_t)std::floor(3*std::log(N_dim))),
-    lambda(4 + (size_t)std::floor(3*std::log(N_dim))),
-    w( 1,std::floor( (4 + (size_t)std::floor(3*std::log(N_dim))) / 2 ), arma::fill::zeros),
-    mu(std::floor( (4 + (size_t)std::floor(3 * std::log(N_dim))) / 2 ) )
+    LMCMA<SelectionPolicyType, SamplingType>::LMCMA(const size_t lambda,
+                                                    const size_t batchSize,
+                                                    const size_t maxIterations,
+                                                    const double tolerance,
+                                                    const SamplingType& sampler, 
+                                                    const SelectionPolicyType& selectionPolicy) :
+    lambda(lambda),
+    batchSize(batchSize),
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    selectionPolicy(selectionPolicy),
+    sampler(sampler)
     {}
 
     template<typename SelectionPolicyType, typename SamplingType>
@@ -46,8 +45,6 @@ namespace ens {
                                                 std::size_t n_iter,  // TODO: Remove from here
                                                 CallbackTypes&&... callbacks)
     {
-
-
       // Convenience typedefs.
       typedef typename MatType::elem_type ElemType;
       typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
@@ -57,17 +54,25 @@ namespace ens {
               SeparableFunctionType, BaseMatType>();
       RequireDenseFloatingPointType<BaseMatType>();
 
-      // Approximation of covariance matrix
+      // Approximation of covariance matrix vector multiplication
       CholeskyReconstructor<BaseMatType> reconstructor(z.n_elem, m, T);
 
       BaseMatType& iterate = (BaseMatType&) z;
 
-      size_t N_dim = z.n_elem;
-      size_t N = N_dim;
-
-      // Pointer vectors
-      arma::umat J(1, m, arma::fill::zeros);
-      arma::umat L(1, m, arma::fill::zeros);
+      // Assign some default values to use during the optimization routine
+      lambda = lambda == 0 ? 4 + (size_t)std::floor(3*std::log(N_dim)) : lambda
+      size_t n_dimensions = iterate.n_elements;
+      size_t T = std::ceil(std::log(n_dimensions));    
+      std::size_t mu;     // number of best species
+      double c_c = 0.5 / std::sqrt(n_dimensions);
+      double c1 = 1 / (10 * std::log(n_dimenions + 1)); 
+      double z_bias = 0.25;
+      double c_sigma = 0.3;                                             // convex combination factor for computing stepsize
+      double d_sigma = 0.7;                                             // scale combination factor for computing stepsize
+      BaseMatType w(mu,1);                                              // recombination weights
+      double mu_w = 1 / arma::norm(w);        
+      size_t m = 4 + (size_t)std::floor(3*std::log(n_dimensions));      // number of step vectors stored
+      size_t N = n;                                                     // number of iterations between step vectors which are saved
 
       // estimated Expectation values for samples
       BaseMatType m_old(N_dim, 1, arma::fill::zeros),
