@@ -61,10 +61,10 @@ namespace test {
   {
    public:
      //! Initialize the ZDT3
-    ZDT3() :
+    ZDT3(size_t numParetoPoints = 100) :
         numObjectives(2),
         numVariables(30),
-        numParetoPoints(100),
+        numParetoPoints(numParetoPoints),
         objectiveF1(*this),
         objectiveF2(*this)
     {/* Nothing to do here. */}
