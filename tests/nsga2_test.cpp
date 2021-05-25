@@ -413,3 +413,25 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
 
   REQUIRE(allInRange);
 }
+
+TEST_CASE("NSGA2ZDTONETest", "[NSGA2Test]")
+{
+  ZDT1<> ZDT_ONE(20);
+  const double lowerBound = 0;
+  const double upperBound = 1;
+  const double tolerance = 1e-6;
+  const double strength = 1e-4;
+
+  NSGA2 opt(20, 300, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
+
+  typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
+  arma::mat coords = ZDT_ONE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_ONE.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+  arma::cube paretoFront = opt.ParetoFront();
+  arma::cube referenceFront = ZDT_ONE.GetParetoFront();
+
+  std::cout << paretoFront << std::endl;
+}
