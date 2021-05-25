@@ -139,8 +139,8 @@ namespace test {
       return std::make_tuple(objectiveF1, objectiveF2);
     }
 
-    //! Get the Pareto Front
-    arma::cube GetParetoFront()
+    //! Get the Reference Front.
+    arma::cube GetReferenceFront()
     {
       size_t numRegions = 5;
       size_t regionDensity = std::floor(numParetoPoints / numRegions);

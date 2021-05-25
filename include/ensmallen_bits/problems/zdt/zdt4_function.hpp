@@ -135,8 +135,8 @@ namespace test {
       return std::make_tuple(objectiveF1, objectiveF2);
     }
 
-    //! Get the true Pareto Front
-    arma::cube GetParetoFront()
+    //! Get the Reference Front.
+    arma::cube GetReferenceFront()
     {
       arma::cube front(2, 1, numParetoPoints);
       arma::vec x = arma::linspace(0, 1, numParetoPoints);
