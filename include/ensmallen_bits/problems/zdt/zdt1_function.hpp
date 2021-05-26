@@ -132,6 +132,8 @@ namespace test {
     }
 
     //! Get the Reference Front.
+    //! Refer PR #273 Ipynb notebook to see the plot of Reference
+    //! Front. The implementation has been taken from pymoo.
     arma::cube GetReferenceFront()
     {
       arma::cube front(2, 1, numParetoPoints);

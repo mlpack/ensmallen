@@ -75,7 +75,6 @@ namespace test {
       typedef typename MatType::elem_type ElemType;
 
       arma::Col<ElemType> objectives(numObjectives);
-      objectives(0) = coords[0];
       size_t numVectors = (coords[0].size() - 30u/5u) + 1u;
       arma::uvec u(numVectors);
       arma::uvec v(numVectors);
@@ -140,6 +139,8 @@ namespace test {
     }
 
     //! Get the Reference Front.
+    //! Refer PR #273 Ipynb notebook to see the plot of Reference
+    //! Front. The implementation has been taken from pymoo.
     arma::cube GetReferenceFront()
     {
       arma::cube front(2, 1, numParetoPoints);
