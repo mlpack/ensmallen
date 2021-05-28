@@ -744,6 +744,101 @@ class Callback
                     MatType& /* coordinates */)
   { return false; }
 
+ /**
+  * Invoke the StepTaken() callback if it exists.
+  * Specialization for MultiObjective case.
+  *
+  * @param callback The callback to call.
+  * @param optimizer The optimizer used to update the function.
+  * @param function Function to optimize.
+  * @param coordinates Starting point.
+  * @param calculatedObjectives The set of calculated objectives so far.
+  * @param frontIndices The indices of the members belonging to Pareto Front.
+  */
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename ObjectivesArrayType,
+           typename IndicesType>
+    static typename std::enable_if<
+    callbacks::traits::HasMOOStepTakenSignature<
+    CallbackType, OptimizerType, FunctionType, MatType, ObjectivesArrayType,
+    IndicesType>::hasBool, bool>::type
+    StepTakenFunction(CallbackType& callback,
+      OptimizerType& optimizer,
+      FunctionType& function,
+      MatType& coordinates,
+      ObjectivesArrayType& calculatedObjectives,
+      IndicesType& frontIndices)
+  {
+    return const_cast<CallbackType&>(callback).StepTaken(optimizer,
+      function, coordinates, calculatedObjectives, frontIndices);
+  }
+
+ /**
+  * Invoke the StepTaken() callback if it exists.
+  * Specialization for MultiObjective case.
+  *
+  * @param callback The callback to call.
+  * @param optimizer The optimizer used to update the function.
+  * @param function Function to optimize.
+  * @param coordinates Starting point.
+  * @param calculatedObjectives The set of calculated objectives so far.
+  * @param frontIndices The indices of the members belonging to Pareto Front.
+  */
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename ObjectivesArrayType,
+           typename IndicesType>
+    static typename std::enable_if<
+    callbacks::traits::HasMOOStepTakenSignature<
+    CallbackType, OptimizerType, FunctionType, MatType, ObjectivesArrayType,
+    IndicesType>::hasVoid, bool>::type
+    StepTakenFunction(CallbackType& callback,
+                      OptimizerType& optimizer,
+                      FunctionType& function,
+                      MatType& coordinates,
+                      ObjectivesArrayType& calculatedObjectives,
+                      IndicesType& frontIndices)
+  {
+    const_cast<CallbackType&>(callback).StepTaken(optimizer,
+      function, coordinates, calculatedObjectives, frontIndices);
+
+    return false;
+  }
+
+ /**
+  * Invoke the StepTaken() callback if it exists.
+  * Specialization for MultiObjective case.
+  *
+  * @param callback The callback to call.
+  * @param optimizer The optimizer used to update the function.
+  * @param function Function to optimize.
+  * @param coordinates Starting point.
+  * @param calculatedObjectives The set of calculated objectives so far.
+  * @param frontIndices The indices of the members belonging to Pareto Front.
+  */
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename ObjectivesArrayType,
+           typename IndicesType>
+    static typename std::enable_if<
+    callbacks::traits::HasMOOStepTakenSignature<
+    CallbackType, OptimizerType, FunctionType, MatType, ObjectivesArrayType,
+    IndicesType>::hasNone, bool>::type
+    StepTakenFunction(CallbackType& callback,
+                      OptimizerType& optimizer,
+                      FunctionType& function,
+                      MatType& coordinates,
+                      ObjectivesArrayType& calculatedObjectives,
+                      IndicesType& frontIndices)
+  { return false; }
+
   /**
    * Iterate over the callbacks and invoke the StepTaken() callback if it
    * exists.
@@ -770,6 +865,40 @@ class Callback
      return result;
   }
 };
+
+/**
+ * Iterate over the callbacks and invoke the StepTaken() callback if it
+ * exists.
+ * 
+ * Specialization for MultiObjective case.
+ * 
+ * @param optimizer The optimizer used to update the function.
+ * @param function Function to optimize.
+ * @param coordinates Starting point.
+ * @param calculatedObjectives The set of calculated objectives so far.
+ * @param frontIndices The indices of the members belonging to Pareto Front.
+ * @param callbacks The callbacks container.
+ */
+template<typename OptimizerType,
+         typename FunctionType,
+         typename ObjectivesArrayType,
+         typename IndicesType,
+         typename MatType,
+         typename ...CallbackTypes>
+  static bool StepTaken(OptimizerType& optimizer,
+                        FunctionType& functions,
+                        MatType& coordinates,
+                        ObjectivesArrayType& calculatedObjectives,
+                        IndicesType& frontIndices,
+                        CallbackTypes&... callbacks)
+{
+  // This will return immediately once a callback returns true.
+  bool result = false;
+  (void)std::initializer_list<bool>{ result =
+    result || Callback::StepTakenFunction(callbacks, optimizer,
+      function, coordinates, calculatedObjectives, frontIndices)... };
+  return result;
+}
 
 } // namespace ens
 
