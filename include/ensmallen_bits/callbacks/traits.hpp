@@ -204,20 +204,20 @@ struct MOOTypedForms
   //! This is the form of a bool StepTaken() for MOO callback method.
   template<typename CallbackType>
   using StepTakenBoolForm =
-    bool(CallbackType::*)(OptimizerType&,
-                          FunctionType&,
-                          const MatType&,
-                          const ObjectivesVecType&,
-                          const IndicesType&);
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const ObjectivesVecType&,
+                            const IndicesType&);
 
   //! This is the form of a void StepTaken() for MOO callback method.
   template<typename CallbackType>
   using StepTakenVoidForm =
-    void(CallbackType::*)(OptimizerType&,
-                          FunctionType&,
-                          const MatType&,
-                          const ObjectivesVecType&,
-                          const IndicesType&);
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const ObjectivesVecType&,
+                            const IndicesType&);
 };
 
 //! Utility struct, check if either void BeginOptimization() or
