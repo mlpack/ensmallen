@@ -761,16 +761,16 @@ class Callback
            typename MatType,
            typename ObjectivesVecType,
            typename IndicesType>
-    static typename std::enable_if<
-    callbacks::traits::HasMOOStepTakenSignature<
-    CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
-    IndicesType>::hasBool, bool>::type
-    StepTakenFunction(CallbackType& callback,
-      OptimizerType& optimizer,
-      FunctionType& function,
-      MatType& coordinates,
-      ObjectivesVecType& objectives,
-      IndicesType& frontIndices)
+  static typename std::enable_if<
+      callbacks::traits::HasMOOStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
+      IndicesType>::hasBool, bool>::type
+  StepTakenFunction(CallbackType& callback,
+                    OptimizerType& optimizer,
+                    FunctionType& function,
+                    MatType& coordinates,
+                    ObjectivesVecType& objectives,
+                    IndicesType& frontIndices)
   {
     return const_cast<CallbackType&>(callback).StepTaken(optimizer,
       function, coordinates, objectives, frontIndices);
@@ -793,16 +793,16 @@ class Callback
            typename MatType,
            typename ObjectivesVecType,
            typename IndicesType>
-    static typename std::enable_if<
-    callbacks::traits::HasMOOStepTakenSignature<
-    CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
-    IndicesType>::hasVoid, bool>::type
-    StepTakenFunction(CallbackType& callback,
-                      OptimizerType& optimizer,
-                      FunctionType& function,
-                      MatType& coordinates,
-                      ObjectivesVecType& objectives,
-                      IndicesType& frontIndices)
+  static typename std::enable_if<
+      callbacks::traits::HasMOOStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
+      IndicesType>::hasVoid, bool>::type
+  StepTakenFunction(CallbackType& callback,
+                    OptimizerType& optimizer,
+                    FunctionType& function,
+                    MatType& coordinates,
+                    ObjectivesVecType& objectives,
+                    IndicesType& frontIndices)
   {
     const_cast<CallbackType&>(callback).StepTaken(optimizer,
       function, coordinates, objectives, frontIndices);
@@ -827,16 +827,16 @@ class Callback
            typename MatType,
            typename ObjectivesVecType,
            typename IndicesType>
-    static typename std::enable_if<
-    callbacks::traits::HasMOOStepTakenSignature<
-    CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
-    IndicesType>::hasNone, bool>::type
-    StepTakenFunction(CallbackType& callback,
-                      OptimizerType& optimizer,
-                      FunctionType& function,
-                      MatType& coordinates,
-                      ObjectivesVecType& objectives,
-                      IndicesType& frontIndices)
+  static typename std::enable_if<
+      callbacks::traits::HasMOOStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
+      IndicesType>::hasNone, bool>::type
+  StepTakenFunction(CallbackType& callback,
+                    OptimizerType& optimizer,
+                    FunctionType& function,
+                    MatType& coordinates,
+                    ObjectivesVecType& objectives,
+                    IndicesType& frontIndices)
   { return false; }
 
   /**
