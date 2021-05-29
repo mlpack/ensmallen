@@ -776,17 +776,6 @@ class Callback
       function, coordinates, objectives, frontIndices);
   }
 
- /**
-  * Invoke the StepTaken() callback if it exists.
-  * Specialization for MultiObjective case.
-  *
-  * @param callback The callback to call.
-  * @param optimizer The optimizer used to update the function.
-  * @param function Function to optimize.
-  * @param coordinates Starting point.
-  * @param objectives The set of calculated objectives so far.
-  * @param frontIndices The indices of the members belonging to Pareto Front.
-  */
   template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
@@ -810,17 +799,6 @@ class Callback
     return false;
   }
 
- /**
-  * Invoke the StepTaken() callback if it exists.
-  * Specialization for MultiObjective case.
-  *
-  * @param callback The callback to call.
-  * @param optimizer The optimizer used to update the function.
-  * @param function Function to optimize.
-  * @param coordinates Starting point.
-  * @param objectives The set of calculated objectives so far.
-  * @param frontIndices The indices of the members belonging to Pareto Front.
-  */
   template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
