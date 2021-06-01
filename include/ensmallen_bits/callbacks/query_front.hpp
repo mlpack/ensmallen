@@ -79,7 +79,6 @@ class QueryFront
   std::vector<arma::cube>& paretoFrontArray;
   //! A counter for the current generation.
   size_t genCounter;
-
 };
 
 } // namespace ens
