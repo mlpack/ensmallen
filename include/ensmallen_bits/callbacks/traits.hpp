@@ -37,6 +37,8 @@ ENS_HAS_EXACT_METHOD_FORM(BeginEpoch, HasBeginEpoch)
 ENS_HAS_EXACT_METHOD_FORM(EndEpoch, HasEndEpoch)
 //! Detect an StepTaken() method.
 ENS_HAS_EXACT_METHOD_FORM(StepTaken, HasStepTaken)
+//! Detect an GenerationalStepTaken() method.
+ENS_HAS_EXACT_METHOD_FORM(GenerationalStepTaken, HasGenerationalStepTaken)
 
 template<typename OptimizerType,
          typename FunctionType,
@@ -189,35 +191,6 @@ struct TypedForms
       void(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&);
-};
-
-//! A utility struct for Typed Forms required in
-//! callbacks for MultiObjective Optimizers.
-template<typename OptimizerType,
-         typename FunctionType,
-         typename MatType,
-         typename ObjectivesVecType,
-         typename IndicesType,
-         typename GradType = MatType>
-struct MOOTypedForms
-{
-  //! This is the form of a bool StepTaken() for MOO callback method.
-  template<typename CallbackType>
-  using StepTakenBoolForm =
-      bool(CallbackType::*)(OptimizerType&,
-                            FunctionType&,
-                            const MatType&,
-                            const ObjectivesVecType&,
-                            const IndicesType&);
-
-  //! This is the form of a void StepTaken() for MOO callback method.
-  template<typename CallbackType>
-  using StepTakenVoidForm =
-      void(CallbackType::*)(OptimizerType&,
-                            FunctionType&,
-                            const MatType&,
-                            const ObjectivesVecType&,
-                            const IndicesType&);
 };
 
 //! Utility struct, check if either void BeginOptimization() or
@@ -394,6 +367,35 @@ struct HasStepTakenSignature
          FunctionType, MatType>::template StepTakenVoidForm>::value;
 };
 
+//! A utility struct for Typed Forms required in
+//! callbacks for MultiObjective Optimizers.
+template<typename OptimizerType,
+         typename FunctionType,
+         typename MatType,
+         typename ObjectivesVecType,
+         typename IndicesType,
+         typename GradType = MatType>
+struct MOOTypedForms
+{
+  //! This is the form of a bool GenerationalStepTaken() for MOO callback method.
+  template<typename CallbackType>
+  using GenerationalStepTakenBoolForm =
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const ObjectivesVecType&,
+                            const IndicesType&);
+
+  //! This is the form of a void StepTaken() for MOO callback method.
+  template<typename CallbackType>
+  using GenerationalStepTakenVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const ObjectivesVecType&,
+                            const IndicesType&);
+};
+
 //! Utility struct, check if either void StepTaken() or bool StepTaken() exists.
 //! Specialization for Multiobjective case.
 template<typename CallbackType,
@@ -402,31 +404,31 @@ template<typename CallbackType,
          typename ObjectivesVecType,
          typename IndicesType,
          typename MatType>
- struct HasMOOStepTakenSignature
+ struct HasGenerationalStepTakenSignature
 {
   const static bool hasBool =
-    HasStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+    HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
-        template StepTakenBoolForm>::value &&
-    !HasStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        template GenerationalStepTakenBoolForm>::value &&
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
-        template StepTakenVoidForm>::value;
+        template GenerationalStepTakenVoidForm>::value;
 
   const static bool hasVoid =
-    !HasStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
-        template StepTakenBoolForm>::value &&
-    HasStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        template GenerationalStepTakenBoolForm>::value &&
+    HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
-        template StepTakenVoidForm>::value;
+        template GenerationalStepTakenVoidForm>::value;
 
   const static bool hasNone =
-    !HasStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
-        template StepTakenBoolForm>::value &&
-    !HasStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        template GenerationalStepTakenBoolForm>::value &&
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
-        template StepTakenVoidForm>::value;
+        template GenerationalStepTakenVoidForm>::value;
 };
 } // namespace traits
 } // namespace callbacks
