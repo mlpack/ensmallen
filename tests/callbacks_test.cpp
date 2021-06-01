@@ -106,6 +106,18 @@ class CompleteCallbackTestFunction
                  MatType& /* coordinates */)
   { calledStepTaken = true; }
 
+    template<typename OptimizerType,
+             typename FunctionType,
+             typename MatType,
+             typename ObjectivesVecType,
+             typename IndicesType>
+    void GenerationalStepTaken(OptimizerType& /* optimizer */,
+                               FunctionType& /* function */,
+                               MatType& /* coordinates */,
+                               ObjectivesVecType& /* objectives */,
+                               IndicesType& /* frontIndices */)
+    { calledGenerationalStepTaken = true; }
+
   bool calledEvaluate;
   bool calledGradient;
   bool calledBeginEpoch;
@@ -115,6 +127,7 @@ class CompleteCallbackTestFunction
   bool calledEvaluateConstraint;
   bool calledGradientConstraint;
   bool calledStepTaken;
+  bool calledGenerationalStepTaken;
 };
 
 template<typename OptimizerType>
@@ -162,7 +175,8 @@ void CallbacksFullMultiobjectiveFunctionTest(OptimizerType& optimizer,
                                              bool calledEndOptimization,
                                              bool calledEvaluateConstraint,
                                              bool calledGradientConstraint,
-                                             bool calledStepTaken)
+                                             bool calledStepTaken,
+                                             bool calledGenerationalStepTaken)
 {
   SchafferFunctionN1<arma::mat> SCH;
 
@@ -185,6 +199,7 @@ void CallbacksFullMultiobjectiveFunctionTest(OptimizerType& optimizer,
   REQUIRE(cb.calledEvaluateConstraint == calledEvaluateConstraint);
   REQUIRE(cb.calledGradientConstraint == calledGradientConstraint);
   REQUIRE(cb.calledStepTaken == calledStepTaken);
+  REQUIRE(cb.calledGenerationalStepTaken == calledGenerationalStepTaken);
 }
 
 template<typename OptimizerType>
@@ -380,7 +395,7 @@ TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest]")
   arma::vec upperBound = {1000};
   NSGA2 optimizer(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
   CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
-      true, true, false, false, true);
+      true, true, false, false, false, true);
 }
 
 /**
