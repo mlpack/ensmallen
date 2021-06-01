@@ -25,7 +25,7 @@
  * Add Indicators for Multiobjective optimizers
    ([#285](https://github.com/mlpack/ensmallen/pull/285)).
 
- * Make Callback traits adaptable for MOO
+ * Make Callback flexible for MultiObjective Optimizers
    ([#289](https://github.com/mlpack/ensmallen/pull/289)).
 
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
