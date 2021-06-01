@@ -33,7 +33,8 @@ class CompleteCallbackTestFunction
       calledEndOptimization(false),
       calledEvaluateConstraint(false),
       calledGradientConstraint(false),
-      calledStepTaken(false)
+      calledStepTaken(false),
+      calledGenerationalStepTaken(false)
   { }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
