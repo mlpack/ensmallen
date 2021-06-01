@@ -25,7 +25,6 @@ class QueryFront
    *
    * @param queryRate The frequency at which the Pareto Front is queried.
    * @param paretoFrontArray A reference to a vector of cube to store the queried fronts.
-   * @param genCounter Internal clock to count generations passed.
    */
     QueryFront(const size_t queryRate, std::vector<arma::cube>& paretoFrontArray) :
         queryRate(queryRate),
