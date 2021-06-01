@@ -745,7 +745,7 @@ class Callback
   { return false; }
 
  /**
-  * Invoke the StepTaken() callback if it exists.
+  * Invoke the GenerationalStepTaken() callback if it exists.
   * Specialization for MultiObjective case.
   *
   * @param callback The callback to call.
@@ -762,18 +762,18 @@ class Callback
            typename ObjectivesVecType,
            typename IndicesType>
   static typename std::enable_if<
-      callbacks::traits::HasMOOStepTakenSignature<
+      callbacks::traits::HasGenerationalStepTakenSignature<
       CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
       IndicesType>::hasBool, bool>::type
-  StepTakenFunction(CallbackType& callback,
-                    OptimizerType& optimizer,
-                    FunctionType& function,
-                    MatType& coordinates,
-                    ObjectivesVecType& objectives,
-                    IndicesType& frontIndices)
+  GenerationalStepTakenFunction(CallbackType& callback,
+                                OptimizerType& optimizer,
+                                FunctionType& function,
+                                MatType& coordinates,
+                                ObjectivesVecType& objectives,
+                                IndicesType& frontIndices)
   {
-    return const_cast<CallbackType&>(callback).StepTaken(optimizer,
-      function, coordinates, objectives, frontIndices);
+    return const_cast<CallbackType&>(callback).GenerationalStepTaken(
+        optimizer, function, coordinates, objectives, frontIndices);
   }
 
   template<typename CallbackType,
@@ -783,18 +783,18 @@ class Callback
            typename ObjectivesVecType,
            typename IndicesType>
   static typename std::enable_if<
-      callbacks::traits::HasMOOStepTakenSignature<
+      callbacks::traits::HasGenerationalStepTakenSignature<
       CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
       IndicesType>::hasVoid, bool>::type
-  StepTakenFunction(CallbackType& callback,
-                    OptimizerType& optimizer,
-                    FunctionType& function,
-                    MatType& coordinates,
-                    ObjectivesVecType& objectives,
-                    IndicesType& frontIndices)
+  GenerationalStepTakenFunction(CallbackType& callback,
+                                OptimizerType& optimizer,
+                                FunctionType& function,
+                                MatType& coordinates,
+                                ObjectivesVecType& objectives,
+                                IndicesType& frontIndices)
   {
-    const_cast<CallbackType&>(callback).StepTaken(optimizer,
-      function, coordinates, objectives, frontIndices);
+    const_cast<CallbackType&>(callback).GenerationalStepTaken(
+        optimizer, function, coordinates, objectives, frontIndices);
 
     return false;
   }
@@ -806,15 +806,15 @@ class Callback
            typename ObjectivesVecType,
            typename IndicesType>
   static typename std::enable_if<
-      callbacks::traits::HasMOOStepTakenSignature<
+      callbacks::traits::HasGenerationalStepTakenSignature<
       CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
       IndicesType>::hasNone, bool>::type
-  StepTakenFunction(CallbackType& callback,
-                    OptimizerType& optimizer,
-                    FunctionType& function,
-                    MatType& coordinates,
-                    ObjectivesVecType& objectives,
-                    IndicesType& frontIndices)
+  GenerationalStepTakenFunction(CallbackType& /* callback */,
+                                OptimizerType& /* optimizer */,
+                                FunctionType& /* function */,
+                                MatType& /* coordinates */,
+                                ObjectivesVecType& /* objectives */,
+                                IndicesType& /* frontIndices */)
   { return false; }
 
   /**
@@ -842,10 +842,9 @@ class Callback
             function, coordinates)... };
      return result;
   }
-};
 
 /**
- * Iterate over the callbacks and invoke the StepTaken() callback if it
+ * Iterate over the callbacks and invoke the GenerationalStepTaken() callback if it
  * exists.
  *
  * Specialization for MultiObjective case.
@@ -863,21 +862,21 @@ template<typename OptimizerType,
          typename IndicesType,
          typename MatType,
          typename ...CallbackTypes>
-  static bool StepTaken(OptimizerType& optimizer,
-                        FunctionType& functions,
-                        MatType& coordinates,
-                        ObjectivesVecType& objectives,
-                        IndicesType& frontIndices,
-                        CallbackTypes&... callbacks)
+  static bool GenerationalStepTaken(OptimizerType& optimizer,
+                                    FunctionType& functions,
+                                    MatType& coordinates,
+                                    ObjectivesVecType& objectives,
+                                    IndicesType& frontIndices,
+                                    CallbackTypes&... callbacks)
 {
   // This will return immediately once a callback returns true.
   bool result = false;
   (void)std::initializer_list<bool>{ result =
-    result || Callback::StepTakenFunction(callbacks, optimizer,
+    result || Callback::GenerationalStepTakenFunction(callbacks, optimizer,
       functions, coordinates, objectives, frontIndices)... };
   return result;
 }
-
+};
 } // namespace ens
 
 #endif
