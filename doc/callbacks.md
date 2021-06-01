@@ -472,6 +472,23 @@ an estimate depending on `exactObjective` value.
 | `size_t` | **`epoch`** | The index of the current epoch. |
 | `double` | **`objective`** | Objective value of the current point. |
 
+### GenerationalStepTaken
+
+Called after the evolution of a single generation. Intended specifically for
+MultiObjective Optimizers.
+
+ * `GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** |
+|----------|----------|-----------------|
+| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
+| `FunctionType` | **`function`** | The function to be optimized. |
+| `MatType` | **`coordinates`** | The current function parameter. |
+| `ObjectivesVecType` | **`objectives`** | The set of calculated objectives so far. |
+| `IndicesType` | **`frontIndices`** | The indices of the members belonging to Pareto Front. |
+
 ## Custom Callbacks
 
 ### Learning rate scheduling
