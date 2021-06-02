@@ -95,10 +95,10 @@ class BoothFunction
   template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient);
 
-  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
-  // required for using ensmallen to optimize this function!  They are
-  // specifically used as a convenience just for ensmallen's testing
-  // infrastructure.
+  // Note: GetInitialPoint(), GetFinalPoint(), GetFinalObjective(), and
+  // GetVariablesBounds() are not required for using ensmallen to
+  // optimize this function!  They are specifically used as a
+  // convenience just for ensmallen's testing infrastructure.
 
   //! Get the starting point.
   template<typename MatType = arma::mat>
@@ -110,6 +110,15 @@ class BoothFunction
 
   //! Get the final objective.
   double GetFinalObjective() const { return 0.0; }
+
+  //! Get the bounds of variable space.
+  std::tuple<arma::vec, arma::vec> GetVariableBounds() const
+  {
+    arma::vec lowerBound {-10.0, -10.0};
+    arma::vec upperBound {+10.0, +10.0};
+
+    return std::make_tuple(lowerBound, upperBound);
+  }
 };
 
 } // namespace test

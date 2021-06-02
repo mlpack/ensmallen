@@ -60,15 +60,6 @@ class SchafferFunctionN1
     return objectives;
   }
 
-  //! Get the starting point.
-  MatType GetInitialPoint()
-  {
-    // Convenience typedef.
-    typedef typename MatType::elem_type ElemType;
-
-    return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
-  }
-
   struct ObjectiveA
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
@@ -89,6 +80,29 @@ class SchafferFunctionN1
   std::tuple<ObjectiveA, ObjectiveB> GetObjectives()
   {
     return std::make_tuple(objectiveA, objectiveB);
+  }
+
+  // Note: GetInitialPoint() and GetVariableBounds() are not
+  // required for using ensmallen to optimize this function!
+  // They are specifically used as a convenience just for
+  // ensmallen's testing infrastructure.
+
+  //! Get the starting point.
+  MatType GetInitialPoint()
+  {
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+
+    return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
+  }
+
+  //! Get the bounds of variable search space.
+  std::tuple<arma::vec, arma::vec> GetVariableBounds() const
+  {
+    arma::vec lowerBound{ -1000., -1000. };
+    arma::vec upperBound{ +1000., +1000. };
+
+    return std::make_tuple(lowerBound, upperBound);
   }
 };
 } // namespace test
