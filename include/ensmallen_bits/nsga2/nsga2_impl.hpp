@@ -155,7 +155,6 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {
     Info << "NSGA2: iteration " << generation << "." << std::endl;
-    terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
 
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
@@ -202,6 +201,9 @@ typename MatType::elem_type NSGA2::Optimize(
     // Yield a new population P_{t+1} of size populationSize.
     // Discards unfit population from the R_{t} to yield P_{t+1}.
     population.resize(populationSize);
+
+    terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
+        calculatedObjectives, fronts, callbacks...);
   }
 
   // Set the candidates from the Pareto Set as the output.
