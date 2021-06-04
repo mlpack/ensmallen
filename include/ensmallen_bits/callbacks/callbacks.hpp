@@ -744,6 +744,79 @@ class Callback
                     MatType& /* coordinates */)
   { return false; }
 
+ /**
+  * Invoke the GenerationalStepTaken() callback if it exists.
+  * Specialization for MultiObjective case.
+  *
+  * @param callback The callback to call.
+  * @param optimizer The optimizer used to update the function.
+  * @param function Function to optimize.
+  * @param coordinates Starting point.
+  * @param objectives The set of calculated objectives so far.
+  * @param frontIndices The indices of the members belonging to Pareto Front.
+  */
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename ObjectivesVecType,
+           typename IndicesType>
+  static typename std::enable_if<
+      callbacks::traits::HasGenerationalStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
+      IndicesType>::hasBool, bool>::type
+  GenerationalStepTakenFunction(CallbackType& callback,
+                                OptimizerType& optimizer,
+                                FunctionType& function,
+                                MatType& coordinates,
+                                ObjectivesVecType& objectives,
+                                IndicesType& frontIndices)
+  {
+    return const_cast<CallbackType&>(callback).GenerationalStepTaken(
+        optimizer, function, coordinates, objectives, frontIndices);
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename ObjectivesVecType,
+           typename IndicesType>
+  static typename std::enable_if<
+      callbacks::traits::HasGenerationalStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
+      IndicesType>::hasVoid, bool>::type
+  GenerationalStepTakenFunction(CallbackType& callback,
+                                OptimizerType& optimizer,
+                                FunctionType& function,
+                                MatType& coordinates,
+                                ObjectivesVecType& objectives,
+                                IndicesType& frontIndices)
+  {
+    const_cast<CallbackType&>(callback).GenerationalStepTaken(
+        optimizer, function, coordinates, objectives, frontIndices);
+
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename ObjectivesVecType,
+           typename IndicesType>
+  static typename std::enable_if<
+      callbacks::traits::HasGenerationalStepTakenSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, ObjectivesVecType,
+      IndicesType>::hasNone, bool>::type
+  GenerationalStepTakenFunction(CallbackType& /* callback */,
+                                OptimizerType& /* optimizer */,
+                                FunctionType& /* function */,
+                                MatType& /* coordinates */,
+                                ObjectivesVecType& /* objectives */,
+                                IndicesType& /* frontIndices */)
+  { return false; }
+
   /**
    * Iterate over the callbacks and invoke the StepTaken() callback if it
    * exists.
@@ -769,8 +842,41 @@ class Callback
             function, coordinates)... };
      return result;
   }
-};
 
+/**
+ * Iterate over the callbacks and invoke the GenerationalStepTaken() callback if it
+ * exists.
+ *
+ * Specialization for MultiObjective case.
+ *
+ * @param optimizer The optimizer used to update the function.
+ * @param function Function to optimize.
+ * @param coordinates Starting point.
+ * @param objectives The set of calculated objectives so far.
+ * @param frontIndices The indices of the members belonging to Pareto Front.
+ * @param callbacks The callbacks container.
+ */
+template<typename OptimizerType,
+         typename FunctionType,
+         typename ObjectivesVecType,
+         typename IndicesType,
+         typename MatType,
+         typename ...CallbackTypes>
+  static bool GenerationalStepTaken(OptimizerType& optimizer,
+                                    FunctionType& functions,
+                                    MatType& coordinates,
+                                    ObjectivesVecType& objectives,
+                                    IndicesType& frontIndices,
+                                    CallbackTypes&... callbacks)
+{
+  // This will return immediately once a callback returns true.
+  bool result = false;
+  (void)std::initializer_list<bool>{ result =
+    result || Callback::GenerationalStepTakenFunction(callbacks, optimizer,
+      functions, coordinates, objectives, frontIndices)... };
+  return result;
+}
+};
 } // namespace ens
 
 #endif
