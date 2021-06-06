@@ -876,14 +876,14 @@ NSGA2 nsga;
 double bestFrontSum = nsga.Optimize(objectives, coordinates);
 
 // Set `bestFront` to contain all of the coordinates on the best front.
-std::vector<arma::mat> bestFront = optimizer.Front();
+arma::cube bestFront = optimizer.ParetoFront();
 }
 ```
 
 </details>
 
 *Note*: all multi-objective function optimizers have both the function `Optimize()` to find the
-best front, and also the function `Front()` to return all sets of coordinates that are on the
+best front, and also the function `ParetoFront()` to return all sets of solutions that are on the
 front.
 
 The following optimizers can be used with multi-objective functions:
