@@ -25,6 +25,9 @@
  * Add Indicators for Multiobjective optimizers
    ([#285](https://github.com/mlpack/ensmallen/pull/285)).
 
+ * Make Callback flexible for MultiObjective Optimizers
+   ([#289](https://github.com/mlpack/ensmallen/pull/289)).
+   
  * Add ZDT Test Suite
    ([#273](https://github.com/mlpack/ensmallen/pull/273)).
 
