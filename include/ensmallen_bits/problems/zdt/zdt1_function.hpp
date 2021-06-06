@@ -51,11 +51,14 @@ namespace test {
   template<typename MatType = arma::mat>
   class ZDT1
   {
+   private:
+    size_t numParetoPoints {100};
+    size_t numObjectives {2};
+    size_t numVariables {30};
+
    public:
      //! Initialize the ZDT1
     ZDT1(size_t numParetoPoints = 100) :
-        numObjectives(2),
-        numVariables(30),
         numParetoPoints(numParetoPoints),
         objectiveF1(*this),
         objectiveF2(*this)
@@ -147,11 +150,6 @@ namespace test {
 
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
-
-   private:
-    size_t numObjectives;
-    size_t numVariables;
-    size_t numParetoPoints;
   };
   } //namespace test
   } //namespace ens
