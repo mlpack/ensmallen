@@ -161,7 +161,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
-  arma::mat populationFitness(numObjectives, populationSize);
+  std::vector<arma::Col<ElemType>> populationFitness(numObjectives, populationSize);
   EvaluateObjectives(population, objectives, populationFitness);
 
   // 1.3 Initialize the ideal point z.
@@ -366,32 +366,32 @@ inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
 
 //! No objectives to evaluate.
 template<std::size_t I,
-  typename MatType,
-  typename ...ArbitraryFunctionType>
-  typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
+         typename MatType,
+         typename ...ArbitraryFunctionType>
+typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 MOEAD::EvaluateObjectives(
-    const std::vector<MatType>&,
+    std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    arma::mat &)
+    std::vector<arma::Col<typename MatType::elem_type> >&)
 {
   // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
 template<std::size_t I,
-  typename MatType,
-  typename ...ArbitraryFunctionType>
-  typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
+         typename MatType,
+         typename ...ArbitraryFunctionType>
+typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
 MOEAD::EvaluateObjectives(
-    const std::vector<MatType>& population,
+    std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    arma::mat& calculatedObjectives)
+    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
 {
-  for (size_t i = 0; i < population.size(); ++i)
+  for (size_t i = 0; i < populationSize; i++)
   {
-    calculatedObjectives(I, i) = std::get<I>(objectives).Evaluate(population[i]);
-    EvaluateObjectives<I + 1, MatType, ArbitraryFunctionType...>(population, objectives,
-        calculatedObjectives);
+    calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
+    EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
+                                                               calculatedObjectives);
   }
 }
 }
