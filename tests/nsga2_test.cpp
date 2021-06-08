@@ -414,6 +414,13 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
   REQUIRE(allInRange);
 }
 
+/**
+ * Test against the first problem of ZDT Test Suite.  ZDT-1 is a 30 
+ * variable-2 objective problem with a convex Pareto Front.
+ * 
+ * NOTE: For the sake of runtime, only ZDT-1 is tested against the
+ * algorithm. Others have been tested separately.
+ */
 TEST_CASE("NSGA2ZDTONETest", "[NSGA2Test]")
 {
   //! Parameters taken from original ZDT Paper.
