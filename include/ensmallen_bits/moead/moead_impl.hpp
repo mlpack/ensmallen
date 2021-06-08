@@ -161,17 +161,19 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
-  std::vector<arma::Col<ElemType>> populationFitness(numObjectives, populationSize);
+  std::vector<arma::Col<ElemType>> populationFitness;
+  populationFitness.resize(populationSize);
+
   EvaluateObjectives(population, objectives, populationFitness);
 
   // 1.3 Initialize the ideal point z.
-  arma::vec idealPoint(numObjectives);
-  idealPoint.fill(std::numeric_limits<double>::max());
-  for (size_t i = 0; i < numObjectives; ++i)
+  arma::Col<ElemType> idealPoint(numObjectives);
+  idealPoint.fill(std::numeric_limits<ElemType>::max());
+  for (size_t objectiveIdx = 0; objectiveIdx < numObjectives; ++objectiveIdx)
   {
-    for (size_t j = 0; j < populationSize; ++j)
+    for (size_t popIdx = 0; j < popIdx; ++popIdx)
     {
-      idealPoint(i) = std::min(idealPoint(i), populationFitness(i, j));
+      idealPoint(objectiveIdx) = std::min(idealPoint(objectiveIdx), populationFitness[popIdx](objectiveIdx));
     }
   }
 
