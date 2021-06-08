@@ -281,10 +281,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
 //! Randomly chooses to select from parents or neighbors.
 inline std::tuple<size_t, size_t>
-MOEAD::MatingSelection(
-    const size_t subProblemIdx,
-    const arma::umat& neighborIndices,
-    bool sampleNeighbor)
+MOEAD::MatingSelection(size_t subProblemIdx,
+                       const arma::umat& neighborIndices,
+                       bool sampleNeighbor)
 {
 	size_t k, l;
 
@@ -312,9 +311,9 @@ MOEAD::MatingSelection(
 //! Perform Polynomial mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,
-    const double& mutationRate,
-    const arma::vec& lowerBound,
-    const arma::vec& upperBound)
+                          double mutationRate,
+                          const arma::vec& lowerBound,
+                          const arma::vec& upperBound)
 {
   size_t numVariables = lowerBound.n_elem;
   double rnd, delta1, delta2, mutationPower, deltaq;
@@ -358,8 +357,8 @@ inline void MOEAD::Mutate(MatType& child,
 //! Calculate the output for single objective function using the Tchebycheff
 //! approach.
 inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
-    const arma::vec& idealPoint,
-    const arma::vec& candidateFitness)
+                                         const arma::vec& idealPoint,
+                                         const arma::vec& candidateFitness)
 {
   return arma::max(weights % arma::abs(candidateFitness - idealPoint));
 }
