@@ -184,8 +184,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
     for (size_t i : shuffle)
     {
-      terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
-
       // 2.1 Randomly select two indices in neighborIndices(i) and use them
       // to make a child.
       size_t r1, r2, r3;
