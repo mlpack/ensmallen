@@ -202,31 +202,32 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       {
         if (delta < crossoverProb)
         {
-          candidate[geneIdx] = population[r1][geneIdx] +
-              differentialWeight * (population[r2][geneIdx] -
-                  population[r3][geneIdx]);
+          candidate(geneIdx) = population[r1](geneIdx) +
+              differentialWeight * (population[r2](geneIdx) -
+                  population[r3](geneIdx));
 
           // Boundary conditions.
-          if (candidate[geneIdx] < lowerBound[geneIdx])
+          if (candidate(geneIdx) < lowerBound(geneIdx))
           {
-            candidate[geneIdx] = lowerBound[geneIdx] +
-                arma::randu() * (population[r1][geneIdx] - lowerBound[geneIdx]);
+            candidate(geneIdx) = lowerBound(geneIdx) +
+                arma::randu() * (population[r1](geneIdx) - lowerBound(geneIdx));
           }
-          if (candidate[geneIdx] > upperBound[geneIdx])
+          if (candidate(geneIdx) > upperBound(geneIdx))
           {
-            candidate[geneIdx] = upperBound[geneIdx] -
-                arma::randu() * (upperBound[geneIdx] - population[r1][geneIdx]);
+            candidate(geneIdx) = upperBound(geneIdx) -
+                arma::randu() * (upperBound(geneIdx) - population[r1](geneIdx));
           }
         }
 
         else
-          candidate[geneIdx] = population[r1][geneIdx];
+          candidate(geneIdx) = population[r1](geneIdx);
         }
 
       Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
 
-      arma::vec candidateFitness(numObjectives);
-      EvaluateObjectives(std::vector<BaseMatType>{candidate}, objectives, candidateFitness);
+      arma::Col<ElemType> candidateFitness(numObjectives);
+      EvaluateObjectives(std::vector<BaseMatType>{candidate}, objectives,
+          std::vector<ElemType>{candidateFitness});
 
       // 2.4 Update of ideal point.
       for (size_t idx = 0; idx < numObjectives; ++idx)
@@ -257,7 +258,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         if (candidateDecomposition < parentDecomposition)
         {
           population[pick] = candidate;
-          populationFitness.col(pick) = candidateFitness;
+          populationFitness[pick] = candidateFitness;
           replaceCounter++;
         }
       }
