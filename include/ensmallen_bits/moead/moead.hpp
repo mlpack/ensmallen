@@ -185,9 +185,14 @@ class MOEAD {
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the best front (the Pareto frontier).  This returns an empty
-  //! vector until `Optimize()` has been called.
-  const std::vector<arma::mat>& Front() const { return bestFront; }
+  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
+  //! until `Optimize()` has been called.
+  const arma::cube& ParetoSet() const { return paretoSet; }
+
+  //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
+  //! `Optimize()` has been called.
+  const arma::cube& ParetoFront() const { return paretoFront; }
+
 
  private:
   /**
@@ -289,8 +294,13 @@ class MOEAD {
   //! The number of objectives in multi objective optimisation problem.
   size_t numObjectives;
 
-  //! The Pareto Optimal Front.
-  std::vector<arma::mat> bestFront;
+  //! The set of all the Pareto optimal points.
+  //! Stored after Optimize() is called.
+  arma::cube paretoSet;
+
+  //! The set of all the Pareto optimal objective vectors.
+  //! Stored after Optimize() is called.
+  arma::cube paretoFront;
 };
 
 } // namespace ens
