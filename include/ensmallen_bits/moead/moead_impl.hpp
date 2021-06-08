@@ -71,23 +71,21 @@ template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
 typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                            MatType& iterate,
+                                            MatType& iterateIn,
                                             CallbackTypes&&... callbacks)
 {
-  // Sanity checks.
+  // Population Size must be at least 3 for MOEA/D-DE to work.
   if (populationSize < 3)
   {
-    throw std::invalid_argument(
-        "populationSize should be atleast 3 however "
-        + std::to_string(populationSize) + " was detected.");
+    throw std::logic_error("MOEA/D-DE::Optimize(): population size should be at least"
+        " 3!");
   }
 
-  if (crossoverProb > 1.0 || crossoverProb < 0.0)
-  {
-    throw std::invalid_argument(
-        "The parameter crossoverProb needs to be in [0,1], however "
-        + std::to_string(crossoverProb) + " was detected.");
-  }
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   if (neighborSize < 2)
   {
@@ -106,27 +104,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     throw std::logic_error(oss.str());
   }
 
-  if (distributionIndex < 0)
-  {
-    throw std::invalid_argument(
-        "distributionIndex should be positive, however "
-        + std::to_string(distributionIndex) + " was detected.");
-  }
-
-  if (differentialWeight > 1.0 || differentialWeight < 0.0)
-  {
-    throw std::invalid_argument(
-        "The parameter differentialWeight needs to be in [0,1], however "
-        + std::to_string(differentialWeight) + " was detected.");
-  }
-
-  if (neighborProb > 1.0 || neighborProb < 0.0)
-  {
-    throw std::invalid_argument(
-        "The parameter neighborProb needs to be in [0,1], however "
-        + std::to_string(neighborProb) + " was detected.");
-  }
-
   // Check if lower bound is a vector of a single dimension.
   if (lowerBound.n_rows == 1)
     lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
@@ -135,44 +112,16 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   if (upperBound.n_rows == 1)
     upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
 
-  // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
+  // Check the dimensions of lowerBound and upperBound.
+  assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
+      "lowerBound are not the same as the dimensions of iterate.");
+  assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
+      "upperBound are not the same as the dimensions of iterate.");
 
   // Number of objective functions. Represented by M in the paper.
   numObjectives = sizeof...(ArbitraryFunctionType);
   // Dimensionality of variable space. Also referred to as number of genes.
   size_t numVariables = iterate.n_rows;
-
-  if (numObjectives < 2u)
-  {
-    throw std::logic_error("MOEAD::Optimize(): This is a multiobjective problem, "
-        "numObjectives must be atleast 2.");
-  }
-
-  if (lowerBound.size() != upperBound.size())
-  {
-    throw std::logic_error("MOEAD::Optimize(): size of lowerBound and upperBound "
-        "must be equal.");
-  }
-
-  if (lowerBound.size() != iterate.n_elem)
-  {
-    throw std::logic_error("MOEAD::Optimize(): there should be a lower bound and "
-        "an upper bound for each variable in the initial point.");
-  }
-
-  for (size_t geneIdx = 0; geneIdx < lowerBound.size(); geneIdx++)
-  {
-    if (lowerBound[geneIdx] >= upperBound[geneIdx])
-    {
-      std::ostringstream ss;
-      ss << "MOEAD::Optimize():" << "the lowerBound value: " << lowerBound[geneIdx]
-         << " is greater than upperBound value: " << upperBound[geneIdx]
-         << " at index: " << geneIdx << std::endl;
-
-      throw std::logic_error(ss.str());
-    }
-  }
 
   bool terminate = false;
 
@@ -195,11 +144,11 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   }
 
   // 1.2 Random generation of the initial population.
-  std::vector<MatType> population(populationSize);
+  std::vector<BaseMatType> population(populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
     population[i] =
-        arma::randu<MatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+        arma::randu<BaseMatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
     {
@@ -209,6 +158,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         population[i][geneIdx] = upperBound[geneIdx];
     }
   }
+
+  Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
   arma::mat populationFitness(numObjectives, populationSize);
   EvaluateObjectives(population, objectives, populationFitness);
@@ -235,8 +186,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     {
       terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
 
-      Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
-
       // 2.1 Randomly select two indices in neighborIndices(i) and use them
       // to make a child.
       size_t r1, r2, r3;
@@ -247,7 +196,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Mutation.
-      MatType candidate(iterate.n_rows, iterate.n_cols);
+      BaseMatType candidate(iterate.n_rows, iterate.n_cols);
       double delta = arma::randu();
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
       {
@@ -277,7 +226,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
 
       arma::vec candidateFitness(numObjectives);
-      EvaluateObjectives(std::vector<MatType>{candidate}, objectives, candidateFitness);
+      EvaluateObjectives(std::vector<BaseMatType>{candidate}, objectives, candidateFitness);
 
       // 2.4 Update of ideal point.
       for (size_t idx = 0; idx < numObjectives; ++idx)
