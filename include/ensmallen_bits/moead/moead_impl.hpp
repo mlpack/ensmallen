@@ -180,7 +180,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
   // 2 The main loop.
-  for (size_t g = 0; g < maxGenerations; ++g)
+  for (size_t generation = 1; generation <= maxGenerations && !terminate; ++generation)
   {
     shuffle = arma::shuffle(
         arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
