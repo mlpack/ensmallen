@@ -125,7 +125,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   bool terminate = false;
 
   arma::uvec shuffle;
-  // The weight matrix. Each vector represents a decomposition subproblem.
+  // The weight matrix. Each vector represents a decomposition subproblem (M X N).
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
   weights += 1E-10; // Numerical stability
 
@@ -184,15 +184,15 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   {
     shuffle = arma::shuffle(
         arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
-    for (size_t i : shuffle)
+    for (size_t subProblemIdx : shuffle)
     {
-      // 2.1 Randomly select two indices in neighborIndices(i) and use them
+      // 2.1 Randomly select two indices in neighborIndices(subProblemIdx) and use them
       // to make a child.
       size_t r1, r2, r3;
-      r1 = i;
+      r1 = subProblemIdx;
       // Randomly choose to sample from the population or the neighbors.
       bool sampleNeighbor = arma::randu() < neighborProb;
-      std::tie(r2, r3) = MatingSelection(i, neighborIndices, sampleNeighbor);
+      std::tie(r2, r3) = MatingSelection(subProblemIdx, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Mutation.
@@ -248,7 +248,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         if (replaceCounter >= maxReplace)
           break;
 
-        size_t pick = sampleNeighbor ? neighborIndices(idx, i) : idx;
+        size_t pick = sampleNeighbor ? neighborIndices(idx, subProblemIdx) : idx;
 
         double candidateDecomposition = DecomposeObjectives(
             weights.col(pick), idealPoint, candidateFitness);
