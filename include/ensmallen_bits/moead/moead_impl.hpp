@@ -118,11 +118,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
       "upperBound are not the same as the dimensions of iterate.");
 
-  // Number of objective functions. Represented by M in the paper.
   numObjectives = sizeof...(ArbitraryFunctionType);
-  // Dimensionality of variable space. Also referred to as number of genes.
   size_t numVariables = iterate.n_rows;
 
+  // Controls early termination of the optimization process.
   bool terminate = false;
 
   arma::uvec shuffle;
@@ -130,7 +129,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
   weights += 1E-10; // Numerical stability
 
-  // 1.2 Storing the indices of nearest neighbors of each weight vector.
+  // 1.1 Storing the indices of nearest neighbors of each weight vector.
   arma::umat neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
@@ -150,12 +149,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
     population[i] =
         arma::randu<BaseMatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
+    // Constrain all genes to be between bounds.
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
     {
-      if (population[i][geneIdx] < lowerBound[geneIdx])
-        population[i][geneIdx] = lowerBound[geneIdx];
-      else if (population[i][geneIdx] > upperBound[geneIdx])
-        population[i][geneIdx] = upperBound[geneIdx];
+      if (population[i](geneIdx) < lowerBound(geneIdx))
+        population[i](geneIdx) = lowerBound(geneIdx);
+      else if (population[i](geneIdx) > upperBound(geneIdx))
+        population[i](geneIdx) = upperBound(geneIdx);
     }
   }
 
