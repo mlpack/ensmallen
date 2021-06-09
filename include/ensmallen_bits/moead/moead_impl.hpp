@@ -144,20 +144,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   // 1.2 Random generation of the initial population.
   std::vector<BaseMatType> population(populationSize);
-  for (size_t i = 0; i < populationSize; ++i)
+  std::generate(population.begin(), population.end(),
+      [](BaseMatType& individual)
   {
-    population[i] =
-        arma::randu<BaseMatType>(iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
-
-    // Constrain all genes to be between bounds.
-    for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
-    {
-      if (population[i](geneIdx) < lowerBound(geneIdx))
-        population[i](geneIdx) = lowerBound(geneIdx);
-      else if (population[i](geneIdx) > upperBound(geneIdx))
-        population[i](geneIdx) = upperBound(geneIdx);
-    }
-  }
+      individual =
+          arma::randu<BaseMatType>(iterate.n_rows, iterate.n_cols - 0.5) + iterate;
+      // Constrain all genes to be within bounds.
+      individual = arma::min(arma::max(individual, lowerBound), upperBound);
+  });
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
@@ -169,13 +163,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 1.3 Initialize the ideal point z.
   arma::Col<ElemType> idealPoint(numObjectives);
   idealPoint.fill(std::numeric_limits<ElemType>::max());
-  for (size_t objectiveIdx = 0; objectiveIdx < numObjectives; ++objectiveIdx)
-  {
-    for (size_t popIdx = 0;  popIdx < populationSize; ++popIdx)
-    {
-      idealPoint(objectiveIdx) = std::min(idealPoint(objectiveIdx), populationFitness[popIdx](objectiveIdx));
-    }
-  }
+
+  for (const arma::Col<ElemType>& individualFitness : populationFitness)
+    idealPoint = arma::min(idealPoint, individualFitness);
 
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
@@ -230,11 +220,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           std::vector<ElemType>{candidateFitness});
 
       // 2.4 Update of ideal point.
-      for (size_t idx = 0; idx < numObjectives; ++idx)
-      {
-        idealPoint(idx) = std::min(idealPoint(idx),
-            candidateFitness(idx));
-      }
+      idealPoint = arma::min(idealPoint, candidateFitness);
 
       // 2.5 Update of the population.
       size_t replaceCounter = 0;
@@ -333,48 +319,42 @@ MOEAD::MatingSelection(size_t subProblemIdx,
 
 //! Perform Polynomial mutation of the candidate.
 template<typename MatType>
-inline void MOEAD::Mutate(MatType& child,
+inline void MOEAD::Mutate(MatType& candidate,
                                                double mutationRate,
                                                const arma::vec& lowerBound,
                                                const arma::vec& upperBound)
 {
-  size_t numVariables = lowerBound.n_elem;
-  double rnd, delta1, delta2, mutationPower, deltaq;
-  double current, currentLower, currentUpper, value, upperDelta;
-
-  for (size_t j = 0; j < numVariables; ++j)
-  {
-    double determiner = arma::randu();
-    if (determiner <= mutationRate && lowerBound(j) != upperBound(j))
+    for (size_t geneIdx=0; geneIdx < numVariables; ++geneIdx)
     {
-      current = child[j];
-      currentLower = lowerBound(j);
-      currentUpper = upperBound(j);
-      delta1 = (current - currentLower) / (currentUpper - currentLower);
-      delta2 = (currentUpper - current) / (currentUpper - currentLower);
-      rnd = arma::randu();
-      mutationPower = 1.0 /( distributionIndex + 1.0 );
-      if (rnd < 0.5)
+      // Should this gene be mutated?
+      if (arma::randu() > mutationRate)
+        continue;
+
+      const double geneRange = upperBound[geneIdx] - lowerBound[geneIdx];
+      // Normalised distance from the bounds.
+      const double lowerDelta = (candidate[geneIdx] - lowerBound[geneIdx]) / geneRange;
+      const double upperDelta = (upperBound[geneIdx] - candidate[geneIdx]) / geneRange;
+      const double mutationPower = 1. / (perturbationIndex + 1.0);
+      const double value;
+      const double perturbationFactor;
+      const double rand = arma::randu();
+      if(rand < 0.5)
       {
-        upperDelta = 1.0 - delta1;
-        value = 2.0 * rnd + (1.0 - 2.0 * rnd) *
-            (std::pow(upperDelta, (distributionIndex + 1.0)));
-        deltaq = std::pow(value, mutationPower) - 1.0;
+        value = 2. * rand + (1. - 2. * rand) *
+            std::pow(upperDelta, perturbationIndex + 1.0);
+        perturbationFactor = std::pow(value, mutationPower) - 1.;
       }
       else
       {
-        upperDelta = 1.0 - delta2;
-        value = 2.0 * (1.0 - rnd) + 2.0 * (rnd - 0.5) *
-            (std::pow(upperDelta, (distributionIndex + 1.0)));
-        deltaq = 1.0 - (std::pow(value, mutationPower));
+        value = 2. * (1. - rand) + 2.*(rand - 0.5) *
+            std::pow(lowerDelta, perturbationIndex + 1.0);
+        perturbationFactor = 1. - std::pow(value, mutationPower);
       }
 
-      current += deltaq * (currentUpper - currentLower);
-      if (current < currentLower) current = currentLower;
-      if (current > currentUpper) current = currentUpper;
-      child[j] = current;
+      candidate[geneIdx] += perturbationFactor * geneRange;
     }
-  }
+    //! Enforce bounds.
+    candidate= arma::min(arma::max(candidate, lowerBound), upperBound);
 }
 
 //! Calculate the output for single objective function using the Tchebycheff
