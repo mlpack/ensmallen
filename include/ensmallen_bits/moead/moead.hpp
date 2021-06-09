@@ -203,8 +203,8 @@ class MOEAD {
    * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
   std::tuple<size_t, size_t> MatingSelection(size_t subProblemIdx,
-                                             const arma::umat& neighborSize,
-                                             bool sampleNeighbor);
+                                                                       const arma::umat& neighborSize,
+                                                                       bool sampleNeighbor);
 
   /**
    * Mutate the child formed by the crossover of two random members of the
@@ -218,21 +218,22 @@ class MOEAD {
    */
   template<typename MatType>
   void Mutate(MatType& child,
-              double mutationRate,
-              const arma::vec& lowerBound,
-              const arma::vec& upperBound);
+                      double mutationRate,
+                      const arma::vec& lowerBound,
+                      const arma::vec& upperBound);
 
   /**
    * Decompose the multi objective problem to a single objective problem.
    *
-   * @param weights Decomposition weights.
+   * @param subProblemWeight The Decomposition weight vector of the current subproblem.
    * @param idealPoint The reference point z for a decomposition problem.
    * @param candidateFitness The fitness value of the candidate.
    * @return The real value obtained from the decomposed function.
    */
-  double DecomposeObjectives(const arma::vec& weights,
-                             const arma::vec& idealPoint,
-                             const arma::vec& candidateFitness);
+  template<typename ElemType>
+  ElemType DecomposeObjectives(const arma::Col<ElemType>& subProblemWeight,
+                                                        const arma::Col<ElemType>& idealPoint,
+                                                        const arma::Col<ElemType>& candidateFitness);
 
   /**
    * Evaluate objectives for the elite population.
@@ -247,7 +248,8 @@ class MOEAD {
            typename MatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>&,
+  EvaluateObjectives(
+                     std::vector<MatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
                      std::vector<arma::Col<typename MatType::elem_type> >&);
 
@@ -255,7 +257,8 @@ class MOEAD {
            typename MatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>& population,
+  EvaluateObjectives(
+                     std::vector<MatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
                      std::vector<arma::Col<typename MatType::elem_type> >&
                      calculatedObjectives);
