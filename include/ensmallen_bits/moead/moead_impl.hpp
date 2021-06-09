@@ -150,8 +150,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   std::vector<BaseMatType> population(populationSize);
   for (BaseMatType& individual : population)
   {
-      individual =
-          arma::randu<BaseMatType>(iterate.n_rows, iterate.n_cols - 0.5) + iterate;
+      individual = arma::randu<BaseMatType>(
+          iterate.n_rows, iterate.n_cols) -0.5 + iterate;
 
       // Constrain all genes to be within bounds.
       individual = arma::min(arma::max(individual, castedLowerBound), castedUpperBound);
@@ -159,9 +159,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
-  std::vector<arma::Col<ElemType>> populationFitness;
-  populationFitness.resize(populationSize);
-
+  std::vector<arma::Col<ElemType>> populationFitness(populationSize);
+  std::fill(populationFitness.begin(), populationFitness.end(),
+      arma::Col<ElemType>(numObjectives, arma::fill::zeros));
   EvaluateObjectives(population, objectives, populationFitness);
 
   // 1.3 Initialize the ideal point z.
