@@ -171,7 +171,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   idealPoint.fill(std::numeric_limits<ElemType>::max());
   for (size_t objectiveIdx = 0; objectiveIdx < numObjectives; ++objectiveIdx)
   {
-    for (size_t popIdx = 0; j < popIdx; ++popIdx)
+    for (size_t popIdx = 0;  popIdx < populationSize; ++popIdx)
     {
       idealPoint(objectiveIdx) = std::min(idealPoint(objectiveIdx), populationFitness[popIdx](objectiveIdx));
     }
@@ -245,27 +245,49 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
       for (size_t idx : idxShuffle)
       {
+        // Preserve diversity by controlling replacement of neighbors
+        // by child solution.
         if (replaceCounter >= maxReplace)
           break;
 
         size_t pick = sampleNeighbor ? neighborIndices(idx, subProblemIdx) : idx;
 
-        double candidateDecomposition = DecomposeObjectives(
+        ElemType candidateDecomposition = DecomposeObjectives<ElemType>(
             weights.col(pick), idealPoint, candidateFitness);
-        double parentDecomposition = DecomposeObjectives(
-            weights.col(pick), idealPoint, populationFitness.col(pick));
+        ElemType parentDecomposition = DecomposeObjectives<ElemType>(
+            weights.col(pick), idealPoint, populationFitness[pick]);
 
         if (candidateDecomposition < parentDecomposition)
         {
           population[pick] = candidate;
           populationFitness[pick] = candidateFitness;
-          replaceCounter++;
+          ++replaceCounter;
         }
       }
     }
   }
 
-  bestFront = std::move(population);
+  // Set the candidates from the Pareto Set as the output.
+  paretoSet.resize(population[0].n_rows, population[0].n_cols, population.size());
+
+  // The Pareto Front is stored, can be obtained via ParetoSet() getter.
+  for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
+  {
+    paretoSet.slice(solutionIdx) =
+        arma::conv_to<arma::mat>::from(population[solutionIdx]);
+  }
+
+  EvaluateObjectives(population, objectives, populationFitness);
+  // Set the candidates from the Pareto Front as the output.
+  paretoFront.resize(populationFitness[0].n_rows, populationFitness[0].n_cols,
+      populationFitness.size());
+
+  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
+  for (size_t solutionIdx = 0; solutionIdx < populationFitness.size(); ++solutionIdx)
+  {
+    paretoFront.slice(solutionIdx) =
+        arma::conv_to<arma::mat>::from(populationFitness[solutionIdx]);
+  }
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
@@ -283,8 +305,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 //! Randomly chooses to select from parents or neighbors.
 inline std::tuple<size_t, size_t>
 MOEAD::MatingSelection(size_t subProblemIdx,
-                       const arma::umat& neighborIndices,
-                       bool sampleNeighbor)
+                                            const arma::umat& neighborIndices,
+                                            bool sampleNeighbor)
 {
 	size_t k, l;
 
@@ -312,9 +334,9 @@ MOEAD::MatingSelection(size_t subProblemIdx,
 //! Perform Polynomial mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& child,
-                          double mutationRate,
-                          const arma::vec& lowerBound,
-                          const arma::vec& upperBound)
+                                               double mutationRate,
+                                               const arma::vec& lowerBound,
+                                               const arma::vec& upperBound)
 {
   size_t numVariables = lowerBound.n_elem;
   double rnd, delta1, delta2, mutationPower, deltaq;
@@ -357,11 +379,12 @@ inline void MOEAD::Mutate(MatType& child,
 
 //! Calculate the output for single objective function using the Tchebycheff
 //! approach.
-inline double MOEAD::DecomposeObjectives(const arma::vec& weights,
-                                         const arma::vec& idealPoint,
-                                         const arma::vec& candidateFitness)
+template<typename ElemType>
+inline ElemType MOEAD::DecomposeObjectives(const arma::Col<ElemType>& subProblemWeight,
+                                                                                  const arma::Col<ElemType>& idealPoint,
+                                                                                  const arma::Col<ElemType>& candidateFitness)
 {
-  return arma::max(weights % arma::abs(candidateFitness - idealPoint));
+  return arma::max(subProblemWeight % arma::abs(candidateFitness - idealPoint));
 }
 
 //! No objectives to evaluate.
