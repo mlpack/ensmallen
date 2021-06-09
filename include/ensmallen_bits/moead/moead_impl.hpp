@@ -121,6 +121,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   numObjectives = sizeof...(ArbitraryFunctionType);
   size_t numVariables = iterate.n_rows;
 
+  //! Useful temporaries for float-like comparisons.
+  BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
+  BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+
   // Controls early termination of the optimization process.
   bool terminate = false;
 
@@ -134,7 +138,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   for (size_t i = 0; i < populationSize; ++i)
   {
     // Cache the distance between weights(i) and other weights.
-    arma::rowvec distances(populationSize);
+    arma::Row<ElemType> distances(populationSize);
     distances =
         arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
@@ -144,14 +148,14 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   // 1.2 Random generation of the initial population.
   std::vector<BaseMatType> population(populationSize);
-  std::generate(population.begin(), population.end(),
-      [this](BaseMatType& individual)
+  for (BaseMatType& individual : population)
   {
       individual =
           arma::randu<BaseMatType>(iterate.n_rows, iterate.n_cols - 0.5) + iterate;
+
       // Constrain all genes to be within bounds.
-      individual = arma::min(arma::max(individual, lowerBound), upperBound);
-  });
+      individual = arma::min(arma::max(individual, castedLowerBound), castedUpperBound);
+  }
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
@@ -185,7 +189,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       std::tie(r2, r3) = MatingSelection(subProblemIdx, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
-      // Mutation.
+      // Polynomial Mutation.
       BaseMatType candidate(iterate.n_rows, iterate.n_cols);
       double delta = arma::randu();
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
@@ -197,15 +201,15 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
                   population[r3](geneIdx));
 
           // Boundary conditions.
-          if (candidate(geneIdx) < lowerBound(geneIdx))
+          if (candidate(geneIdx) < castedLowerBound(geneIdx))
           {
-            candidate(geneIdx) = lowerBound(geneIdx) +
-                arma::randu() * (population[r1](geneIdx) - lowerBound(geneIdx));
+            candidate(geneIdx) = castedLowerBound(geneIdx) +
+                arma::randu() * (population[r1](geneIdx) - castedLowerBound(geneIdx));
           }
-          if (candidate(geneIdx) > upperBound(geneIdx))
+          if (candidate(geneIdx) > castedUpperBound(geneIdx))
           {
-            candidate(geneIdx) = upperBound(geneIdx) -
-                arma::randu() * (upperBound(geneIdx) - population[r1](geneIdx));
+            candidate(geneIdx) = castedUpperBound(geneIdx) -
+                arma::randu() * (castedUpperBound(geneIdx) - population[r1](geneIdx));
           }
         }
 
@@ -213,11 +217,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           candidate(geneIdx) = population[r1](geneIdx);
       }
 
-      Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
+      Mutate(candidate, 1.0 / static_cast<double>(numVariables), castedLowerBound, castedUpperBound);
 
       arma::Col<ElemType> candidateFitness(numObjectives);
-      EvaluateObjectives(std::vector<BaseMatType>{candidate}, objectives,
-          std::vector<ElemType>{candidateFitness});
+      //! Creating temp vectors to pass to EvaluateObjectives.
+      std::vector<BaseMatType> candidateContainer{ candidate };
+      std::vector<arma::Col<ElemType>> fitnessContainer { candidateFitness };
+      EvaluateObjectives(candidateContainer, objectives, fitnessContainer);
 
       // 2.4 Update of ideal point.
       idealPoint = arma::min(idealPoint, candidateFitness);
@@ -321,8 +327,8 @@ MOEAD::MatingSelection(size_t subProblemIdx,
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& candidate,
                                                double mutationRate,
-                                               const arma::vec& lowerBound,
-                                               const arma::vec& upperBound)
+                                               const MatType& lowerBound,
+                                               const MatType& upperBound)
 {
     size_t numVariables = candidate.n_rows;
     for (size_t geneIdx=0; geneIdx < numVariables; ++geneIdx)
@@ -336,9 +342,8 @@ inline void MOEAD::Mutate(MatType& candidate,
       const double lowerDelta = (candidate[geneIdx] - lowerBound[geneIdx]) / geneRange;
       const double upperDelta = (upperBound[geneIdx] - candidate[geneIdx]) / geneRange;
       const double mutationPower = 1. / (perturbationIndex + 1.0);
-      const double value;
-      const double perturbationFactor;
       const double rand = arma::randu();
+      double value, perturbationFactor;
       if(rand < 0.5)
       {
         value = 2. * rand + (1. - 2. * rand) *
