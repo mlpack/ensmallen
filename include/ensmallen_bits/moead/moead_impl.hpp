@@ -145,7 +145,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 1.2 Random generation of the initial population.
   std::vector<BaseMatType> population(populationSize);
   std::generate(population.begin(), population.end(),
-      [](BaseMatType& individual)
+      [this](BaseMatType& individual)
   {
       individual =
           arma::randu<BaseMatType>(iterate.n_rows, iterate.n_cols - 0.5) + iterate;
@@ -211,7 +211,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
         else
           candidate(geneIdx) = population[r1](geneIdx);
-        }
+      }
 
       Mutate(candidate, 1.0 / static_cast<double>(numVariables), lowerBound, upperBound);
 
@@ -250,8 +250,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           ++replaceCounter;
         }
       }
-    }
-  }
+    } // End of pass over all subproblems.
+  } // End of pass over all the generations.
 
   // Set the candidates from the Pareto Set as the output.
   paretoSet.resize(population[0].n_rows, population[0].n_cols, population.size());
@@ -324,6 +324,7 @@ inline void MOEAD::Mutate(MatType& candidate,
                                                const arma::vec& lowerBound,
                                                const arma::vec& upperBound)
 {
+    size_t numVariables = candidate.n_rows;
     for (size_t geneIdx=0; geneIdx < numVariables; ++geneIdx)
     {
       // Should this gene be mutated?
@@ -397,6 +398,7 @@ MOEAD::EvaluateObjectives(
                                                                calculatedObjectives);
   }
 }
-}
+
+}  // namespace ens
 
 #endif
