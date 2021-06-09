@@ -219,8 +219,8 @@ class MOEAD {
   template<typename MatType>
   void Mutate(MatType& child,
                       double mutationRate,
-                      const arma::vec& lowerBound,
-                      const arma::vec& upperBound);
+                      const MatType& lowerBound,
+                      const MatType& upperBound);
 
   /**
    * Decompose the multi objective problem to a single objective problem.
