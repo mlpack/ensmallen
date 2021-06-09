@@ -224,6 +224,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       std::vector<BaseMatType> candidateContainer{ candidate };
       std::vector<arma::Col<ElemType>> fitnessContainer { candidateFitness };
       EvaluateObjectives(candidateContainer, objectives, fitnessContainer);
+      candidateFitness = std::move(fitnessContainer[0]);
+      //! Flush out the dummy containers.
+      fitnessContainer.clear();
+      candidateContainer.clear();
 
       // 2.4 Update of ideal point.
       idealPoint = arma::min(idealPoint, candidateFitness);
@@ -396,7 +400,7 @@ MOEAD::EvaluateObjectives(
     std::tuple<ArbitraryFunctionType...>& objectives,
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
 {
-  for (size_t i = 0; i < populationSize; i++)
+  for (size_t i = 0; i < population.size(); i++)
   {
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
     EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,

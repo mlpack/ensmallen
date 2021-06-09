@@ -49,7 +49,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
@@ -110,7 +110,7 @@ TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
@@ -169,7 +169,7 @@ TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
@@ -223,7 +223,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
@@ -277,7 +277,7 @@ TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
@@ -338,7 +338,7 @@ TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
@@ -397,7 +397,7 @@ TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
@@ -451,7 +451,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
 
   MOEAD opt(
         150, // Population size.
-        1000,  // Max generations.
+        300,  // Max generations.
         1.0,  // Crossover probability.
         20, // Neighborhood size.
         20, // Perturbation index.
