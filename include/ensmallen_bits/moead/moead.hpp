@@ -215,6 +215,7 @@ class MOEAD {
    * @param mutationRate The probability of mutation.
    * @param lowerBound The lower bound on each variable in the matrix.
    * @param upperBound The upper bound on each variable in the matrix.
+   * @return The mutated child.
    */
   template<typename MatType>
   void Mutate(MatType& child,
