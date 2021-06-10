@@ -203,8 +203,8 @@ class MOEAD {
    * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
   std::tuple<size_t, size_t> MatingSelection(size_t subProblemIdx,
-                                                                       const arma::umat& neighborSize,
-                                                                       bool sampleNeighbor);
+                                             const arma::umat& neighborSize,
+                                             bool sampleNeighbor);
 
   /**
    * Mutate the child formed by the crossover of two random members of the
@@ -218,9 +218,9 @@ class MOEAD {
    */
   template<typename MatType>
   void Mutate(MatType& child,
-                      double mutationRate,
-                      const MatType& lowerBound,
-                      const MatType& upperBound);
+              double mutationRate,
+              const MatType& lowerBound,
+              const MatType& upperBound);
 
   /**
    * Decompose the multi objective problem to a single objective problem.
@@ -232,8 +232,8 @@ class MOEAD {
    */
   template<typename ElemType>
   ElemType DecomposeObjectives(const arma::Col<ElemType>& subProblemWeight,
-                                                        const arma::Col<ElemType>& idealPoint,
-                                                        const arma::Col<ElemType>& candidateFitness);
+                               const arma::Col<ElemType>& idealPoint,
+                               const arma::Col<ElemType>& candidateFitness);
 
   /**
    * Evaluate objectives for the elite population.
