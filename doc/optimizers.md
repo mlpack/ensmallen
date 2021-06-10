@@ -1568,8 +1568,8 @@ optimizer.Optimize(f, coordinates);
 MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
 objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
 subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
-algorithm uses Differential Crossover followed by polynomial mutation to create offsprings which are then
-decomposed using Tchebycheff's approach. A diversity preserving mechanism is also employed which produces
+algorithm uses Differential Crossover followed by Polynomial Mutation to create offsprings which are then
+decomposed to form a Single Objective Problem. A diversity preserving mechanism is also employed which encourages
 a varied set of solution.
 
 #### Constructors
@@ -1583,7 +1583,7 @@ a varied set of solution.
 | `size_t` | **`populationSize`** | The number of candidates in the population. | `150` |
 | `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `1000` |
 | `double` | **`crossoverProb`** | Probability that a crossover will occur. | `1.0` |
-| `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider for each weight.  | `20` |
+| `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider per weight vector.  | `20` |
 | `double` | **`distributionIndex`** | The crowding degree of the mutation. | `20` |
 | `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.9` |
 | `double` | **`differentialWeight`** | Amplification factor of the differentiation. | `0.5` |
@@ -1605,7 +1605,7 @@ Attributes of the optimizer may also be changed via the member methods
 SchafferFunctionN1<arma::mat> SCH;
 arma::vec lowerBound("-10 -10");
 arma::vec upperBound("10 10");
-MOEAD opt(150, 1000, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
+MOEAD opt(150, 300, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
@@ -1613,7 +1613,7 @@ std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj = opt.Optimize(objectives, coords);
 // Now obtain the best front.
-std::vector<arma::mat> bestFront = opt.Front();
+arma::cube bestFront = opt.ParetoFront();
 ```
 </details>
 
@@ -1678,7 +1678,7 @@ std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj = opt.Optimize(objectives, coords);
 // Now obtain the best front.
-std::vector<arma::mat> bestFront = opt.Front();
+arma::cube bestFront = opt.Front();
 ```
 
 </details>
