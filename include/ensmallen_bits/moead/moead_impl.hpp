@@ -186,7 +186,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       r1 = subProblemIdx;
       // Randomly choose to sample from the population or the neighbors.
       bool sampleNeighbor = arma::randu() < neighborProb;
-      std::tie(r2, r3) = MatingSelection(subProblemIdx, neighborIndices, sampleNeighbor);
+      std::tie(r2, r3) = 
+	      Selection(subProblemIdx, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Polynomial Mutation.
@@ -308,10 +309,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 //! Randomly chooses to select from parents or neighbors.
 inline std::tuple<size_t, size_t>
 MOEAD::MatingSelection(size_t subProblemIdx,
-                                            const arma::umat& neighborIndices,
-                                            bool sampleNeighbor)
+                       const arma::umat& neighborIndices,
+                       bool sampleNeighbor)
 {
-	size_t k, l;
+  size_t k, l;
 
   k = sampleNeighbor
       ? neighborIndices(
@@ -337,9 +338,9 @@ MOEAD::MatingSelection(size_t subProblemIdx,
 //! Perform Polynomial mutation of the candidate.
 template<typename MatType>
 inline void MOEAD::Mutate(MatType& candidate,
-                                               double mutationRate,
-                                               const MatType& lowerBound,
-                                               const MatType& upperBound)
+                          double mutationRate,
+                          const MatType& lowerBound,
+                          const MatType& upperBound)
 {
     size_t numVariables = candidate.n_rows;
     for (size_t geneIdx=0; geneIdx < numVariables; ++geneIdx)
@@ -378,8 +379,8 @@ inline void MOEAD::Mutate(MatType& candidate,
 //! approach.
 template<typename ElemType>
 inline ElemType MOEAD::DecomposeObjectives(const arma::Col<ElemType>& subProblemWeight,
-                                                                                  const arma::Col<ElemType>& idealPoint,
-                                                                                  const arma::Col<ElemType>& candidateFitness)
+                                           const arma::Col<ElemType>& idealPoint,
+                                           const arma::Col<ElemType>& candidateFitness)
 {
   return arma::max(subProblemWeight % arma::abs(candidateFitness - idealPoint));
 }
