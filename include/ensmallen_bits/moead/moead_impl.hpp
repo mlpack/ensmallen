@@ -24,7 +24,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const size_t maxGenerations,
                     const double crossoverProb,
                     const size_t neighborSize,
-                    const double perturbationIndex,
+                    const double distributionIndex,
                     const double neighborProb,
                     const double differentialWeight,
                     const size_t maxReplace,
@@ -34,7 +34,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
     neighborSize(neighborSize),
-    perturbationIndex(perturbationIndex),
+    distributionIndex(distributionIndex),
     neighborProb(neighborProb),
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
@@ -47,7 +47,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const size_t maxGenerations,
                     const double crossoverProb,
                     const size_t neighborSize,
-                    const double perturbationIndex,
+                    const double distributionIndex,
                     const double neighborProb,
                     const double differentialWeight,
                     const size_t maxReplace,
@@ -57,7 +57,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
     neighborSize(neighborSize),
-    perturbationIndex(perturbationIndex),
+    distributionIndex(distributionIndex),
     neighborProb(neighborProb),
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
@@ -345,19 +345,19 @@ inline void MOEAD::Mutate(MatType& candidate,
       // Normalised distance from the bounds.
       const double lowerDelta = (candidate[geneIdx] - lowerBound[geneIdx]) / geneRange;
       const double upperDelta = (upperBound[geneIdx] - candidate[geneIdx]) / geneRange;
-      const double mutationPower = 1. / (perturbationIndex + 1.0);
+      const double mutationPower = 1. / (distributionIndex + 1.0);
       const double rand = arma::randu();
       double value, perturbationFactor;
       if(rand < 0.5)
       {
         value = 2. * rand + (1. - 2. * rand) *
-            std::pow(upperDelta, perturbationIndex + 1.0);
+            std::pow(upperDelta, distributionIndex + 1.0);
         perturbationFactor = std::pow(value, mutationPower) - 1.;
       }
       else
       {
         value = 2. * (1. - rand) + 2.*(rand - 0.5) *
-            std::pow(lowerDelta, perturbationIndex + 1.0);
+            std::pow(lowerDelta, distributionIndex + 1.0);
         perturbationFactor = 1. - std::pow(value, mutationPower);
       }
 

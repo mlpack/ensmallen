@@ -61,7 +61,7 @@ class MOEAD {
    * @param crossoverProb The probability that a crossover will occur.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
-   * @param perturbationIndex The crowding degree of the mutation.
+   * @param distributionIndex The crowding degree of the mutation.
    * @param neighborProb The probability of sampling from neighbor.
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
@@ -75,7 +75,7 @@ class MOEAD {
         const size_t maxGenerations = 1000,
         const double crossoverProb = 1.0,
         const size_t neighborSize = 20,
-        const double perturbationIndex = 20,
+        const double distributionIndex = 20,
         const double neighborProb = 0.9,
         const double differentialWeight = 0.5,
         const size_t maxReplace = 2,
@@ -96,7 +96,7 @@ class MOEAD {
    * @param crossoverProb The probability that a crossover will occur.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
-   * @param perturbationIndex The crowding degree of the mutation.
+   * @param distributionIndex The crowding degree of the mutation.
    * @param neighborProb The probability of sampling from neighbor.
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
@@ -110,7 +110,7 @@ class MOEAD {
           const size_t maxGenerations = 1000,
           const double crossoverProb = 1.0,
           const size_t neighborSize = 20,
-          const double perturbationIndex = 20,
+          const double distributionIndex = 20,
           const double neighborProb = 0.9,
           const double differentialWeight = 0.5,
           const size_t maxReplace = 2,
@@ -155,10 +155,10 @@ class MOEAD {
   //! Modify the size of the weight neighbor.
   size_t& NeighborSize() { return neighborSize; }
 
-  //! Retrieve value of the perturbation index.
-  double PerturbationIndex() const { return perturbationIndex; }
-  //! Modify the value of the perturbation index.
-  double& PerturbationIndex() { return perturbationIndex; }
+  //! Retrieve value of the distribution index.
+  double DistributionIndex() const { return distributionIndex; }
+  //! Modify the value of the distribution index.
+  double& DistributionIndex() { return distributionIndex; }
 
   //! Retrieve value of neighbor probability.
   double NeighborProb() const { return neighborProb; }
@@ -277,7 +277,7 @@ class MOEAD {
 
   //! The crowding degree of the mutation. Higher value produces a mutant
   //! resembling its parent.
-  double perturbationIndex;
+  double distributionIndex;
 
   //! The probability that two elements will be chosen from the neighbor.
   double neighborProb;
