@@ -400,6 +400,18 @@ TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest]")
 }
 
 /**
+ * Make sure we invoke all callbacks (MOEA/D-DE).
+ */
+TEST_CASE("MOEADCallbacksFullFunctionTest", "[CallbackTest]")
+{
+  arma::vec lowerBound = {-1000};
+  arma::vec upperBound = {1000};
+  MOEAD optimizer(150, 300, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
+  CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
+      true, true, false, false, false, true);
+}
+
+/**
  * Make sure we invoke all callbacks (Lookahead).
  */
 TEST_CASE("LookaheadCallbacksFullFunctionTest", "[CallbacksTest]")

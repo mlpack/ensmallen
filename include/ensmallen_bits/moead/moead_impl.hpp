@@ -261,6 +261,13 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         }
       }
     } // End of pass over all subproblems.
+
+    //  The final population itself is the best front.
+    const arma::uvec frontIndices = arma::shuffle(
+        arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
+
+    terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
+        populationFitness, frontIndices, callbacks...);
   } // End of pass over all the generations.
 
   // Set the candidates from the Pareto Set as the output.
