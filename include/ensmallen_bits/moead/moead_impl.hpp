@@ -323,7 +323,9 @@ MOEAD::MatingSelection(size_t subProblemIdx,
       ? neighborIndices(
             arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
       : arma::randi(arma::distr_param(0, populationSize - 1u));
-
+  
+  //! If the sampled points are equal, then modify one of them
+  //! within reasonable bounds.
   if (k == l)
   {
     if (k == populationSize - 1u)
