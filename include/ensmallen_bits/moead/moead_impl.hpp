@@ -363,9 +363,9 @@ inline void MOEAD::Mutate(MatType& candidate,
       }
       else
       {
-        value = 2. * (1. - rand) + 2.*(rand - 0.5) *
+        value = 2.0 * (1.0 - rand) + 2.0 *(rand - 0.5) *
             std::pow(lowerDelta, distributionIndex + 1.0);
-        perturbationFactor = 1. - std::pow(value, mutationPower);
+        perturbationFactor = 1.0 - std::pow(value, mutationPower);
       }
 
       candidate[geneIdx] += perturbationFactor * geneRange;
