@@ -192,9 +192,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Polynomial Mutation.
       BaseMatType candidate(iterate.n_rows, iterate.n_cols);
-      double delta = arma::randu();
+      
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
       {
+	const double delta = arma::randu();
         if (delta < crossoverProb)
         {
           candidate(geneIdx) = population[r1](geneIdx) +
