@@ -247,7 +247,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         if (replaceCounter >= maxReplace)
           break;
 
-        size_t pick = sampleNeighbor ? neighborIndices(idx, subProblemIdx) : idx;
+        const size_t pick = sampleNeighbor ? neighborIndices(idx, subProblemIdx) : idx;
 
         ElemType candidateDecomposition = DecomposeObjectives<ElemType>(
             weights.col(pick), idealPoint, candidateFitness);
