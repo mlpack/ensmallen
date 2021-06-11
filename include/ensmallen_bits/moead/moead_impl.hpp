@@ -213,7 +213,6 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
                 arma::randu() * (castedUpperBound(geneIdx) - population[r1](geneIdx));
           }
         }
-
         else
           candidate(geneIdx) = population[r1](geneIdx);
       }
