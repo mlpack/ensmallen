@@ -342,7 +342,7 @@ inline void MOEAD::Mutate(MatType& candidate,
                           const MatType& upperBound)
 {
     size_t numVariables = candidate.n_rows;
-    for (size_t geneIdx=0; geneIdx < numVariables; ++geneIdx)
+    for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
     {
       // Should this gene be mutated?
       if (arma::randu() > mutationRate)
