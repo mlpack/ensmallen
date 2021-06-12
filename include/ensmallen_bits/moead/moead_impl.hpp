@@ -143,9 +143,9 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   arma::umat neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
-    // Cache the distance between weights(i) and other weights.
+    // Cache the distance between weights[i] and other weights.
     arma::Row<ElemType> distances =
-    		arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
+        arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
     // Ignore distance from self.
     neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
@@ -186,7 +186,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
     for (size_t subProblemIdx : shuffle)
     {
-      // 2.1 Randomly select two indices in neighborIndices(subProblemIdx) and use them
+      // 2.1 Randomly select two indices in neighborIndices[subProblemIdx] and use them
       // to make a child.
       size_t r1, r2, r3;
       r1 = subProblemIdx;
@@ -360,10 +360,10 @@ inline void MOEAD::Mutate(MatType& candidate,
       if (arma::randu() > mutationRate)
         continue;
 
-      const double geneRange = upperBound[geneIdx] - lowerBound[geneIdx];
+      const double geneRange = upperBound(geneIdx) - lowerBound(geneIdx);
       // Normalised distance from the bounds.
-      const double lowerDelta = (candidate[geneIdx] - lowerBound[geneIdx]) / geneRange;
-      const double upperDelta = (upperBound[geneIdx] - candidate[geneIdx]) / geneRange;
+      const double lowerDelta = (candidate(geneIdx) - lowerBound(geneIdx)) / geneRange;
+      const double upperDelta = (upperBound(geneIdx) - candidate(geneIdx)) / geneRange;
       const double mutationPower = 1. / (distributionIndex + 1.0);
       const double rand = arma::randu();
       double value, perturbationFactor;
@@ -380,7 +380,7 @@ inline void MOEAD::Mutate(MatType& candidate,
         perturbationFactor = 1.0 - std::pow(value, mutationPower);
       }
 
-      candidate[geneIdx] += perturbationFactor * geneRange;
+      candidate(geneIdx) += perturbationFactor * geneRange;
     }
     //! Enforce bounds.
     candidate= arma::min(arma::max(candidate, lowerBound), upperBound);
