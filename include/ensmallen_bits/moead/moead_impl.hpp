@@ -136,7 +136,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   bool terminate = false;
 
   // The weight matrix. Each vector represents a decomposition subproblem (M X N).
-  arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
+  BaseMatType weights(numObjectives, populationSize, arma::fill::randu);
   weights += epsilon; // Numerical stability
 
   // 1.1 Storing the indices of nearest neighbors of each weight vector.
