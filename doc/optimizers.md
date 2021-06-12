@@ -1581,7 +1581,7 @@ a varied set of solution.
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`populationSize`** | The number of candidates in the population. | `150` |
-| `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `1000` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `300` |
 | `double` | **`crossoverProb`** | Probability that a crossover will occur. | `1.0` |
 | `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.9` |
 | `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider per weight vector.  | `20` |
