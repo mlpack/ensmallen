@@ -1574,7 +1574,7 @@ a varied set of solution.
 
 #### Constructors
 * `MOEAD()`
-* `MOEAD(`_`populationSize, maxGenerations, crossoverProb, neighborSize, distributionIndex, neighborProb, differentialWeight, maxReplace, lowerBound, upperBound`_`)`
+* `MOEAD(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
 
 #### Attributes
 
@@ -1583,17 +1583,18 @@ a varied set of solution.
 | `size_t` | **`populationSize`** | The number of candidates in the population. | `150` |
 | `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `1000` |
 | `double` | **`crossoverProb`** | Probability that a crossover will occur. | `1.0` |
+| `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.9` |
 | `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider per weight vector.  | `20` |
 | `double` | **`distributionIndex`** | The crowding degree of the mutation. | `20` |
-| `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.9` |
 | `double` | **`differentialWeight`** | Amplification factor of the differentiation. | `0.5` |
-| `size_t` | **`maxReplace`** | The limit of solutions allowed to be replaced by a child. | `2` |
+| `size_t` | **`maxReplace`** | The limit of solutions allowed to be replaced by a child. | `2`|
+| `double` | **`epsilon`** | Handles numerical stability after weight initialization. | `1E-10`|
 | `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
 | `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
 
 Attributes of the optimizer may also be changed via the member methods
-`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `NeighborSize()`, `DistributionIndex()`,
-`NeighborProb()`, `DifferentialWeight()`, `MaxReplace()`, `LowerBound()` and `UpperBound()`.
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `NeighborProb()`, `NeighborSize()`, `DistributionIndex()`,
+`DifferentialWeight()`, `MaxReplace()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
 
 #### Examples:
 
@@ -1605,7 +1606,7 @@ Attributes of the optimizer may also be changed via the member methods
 SchafferFunctionN1<arma::mat> SCH;
 arma::vec lowerBound("-10 -10");
 arma::vec upperBound("10 10");
-MOEAD opt(150, 300, 1.0, 20, 20, 0.9, 0.5, 2, lowerBound, upperBound);
+MOEAD opt(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
