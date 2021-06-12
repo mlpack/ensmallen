@@ -202,7 +202,7 @@ class MOEAD {
    * @param neighborSize A matrix containing indices of the neighbors.
    * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
-  std::tuple<size_t, size_t> MatingSelection(size_t subProblemIdx,
+  std::tuple<size_t, size_t> Mating(size_t subProblemIdx,
                                              const arma::umat& neighborSize,
                                              bool sampleNeighbor);
 
