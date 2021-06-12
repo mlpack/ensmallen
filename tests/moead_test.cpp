@@ -56,6 +56,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );
@@ -117,6 +118,7 @@ TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );
@@ -176,6 +178,7 @@ TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );
@@ -230,6 +233,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );
@@ -284,6 +288,7 @@ TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );
@@ -345,6 +350,7 @@ TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );
@@ -404,6 +410,7 @@ TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );
@@ -458,6 +465,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
         0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
+        1E-10, // epsilon.
         lowerBound, // Lower bound.
         upperBound // Upper bound.
       );

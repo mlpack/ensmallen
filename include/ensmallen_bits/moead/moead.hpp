@@ -66,19 +66,21 @@ class MOEAD {
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
+   * @param epsilon Handle numerical stability after weight initialization.
    * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
   MOEAD(const size_t populationSize = 150,
-        const size_t maxGenerations = 1000,
+        const size_t maxGenerations = 300,
         const double crossoverProb = 1.0,
         const size_t neighborSize = 20,
         const double distributionIndex = 20,
         const double neighborProb = 0.9,
         const double differentialWeight = 0.5,
         const size_t maxReplace = 2,
+        const double epsilon = 1E-10,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -101,19 +103,21 @@ class MOEAD {
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
+   * @param epsilon Handle numerical stability after weight initialization.
    * @param lowerBound The lower bound on each variable of a member
    *    of the variable space.
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
     MOEAD(const size_t populationSize = 150,
-          const size_t maxGenerations = 1000,
+          const size_t maxGenerations = 300,
           const double crossoverProb = 1.0,
           const size_t neighborSize = 20,
           const double distributionIndex = 20,
           const double neighborProb = 0.9,
           const double differentialWeight = 0.5,
           const size_t maxReplace = 2,
+          const double epsilon = 1E-10,
           const double lowerBound = 0,
           const double upperBound = 1);
 
@@ -174,6 +178,11 @@ class MOEAD {
   size_t MaxReplace() const { return maxReplace; }
   //! Modify value of maxReplace.
   size_t& MaxReplace() { return maxReplace; }
+
+   //! Retrieve value of epsilon.
+  double Epsilon() const { return epsilon; }
+  //! Modify value of maxReplace.
+  double& Epsilon() { return epsilon; }
 
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
@@ -289,6 +298,10 @@ class MOEAD {
   //! Maximum number of childs which can replace the parent. Higher value
   //! leads to a loss of diversity.
   size_t maxReplace;
+
+  //! A small numeric value to be added to the weights after initialization.
+  //! Prevents zero value inside inited weights.
+  double epsilon;
 
   //! Lower bound on each variable in the variable space.
   arma::vec lowerBound;

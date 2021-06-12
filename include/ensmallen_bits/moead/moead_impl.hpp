@@ -28,6 +28,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double neighborProb,
                     const double differentialWeight,
                     const size_t maxReplace,
+                    const double epsilon,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
     populationSize(populationSize),
@@ -38,6 +39,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     neighborProb(neighborProb),
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
+    epsilon(epsilon),
     lowerBound(lowerBound),
     upperBound(upperBound),
     numObjectives(0)
@@ -51,6 +53,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
                     const double neighborProb,
                     const double differentialWeight,
                     const size_t maxReplace,
+                    const double epsilon,
                     const double lowerBound,
                     const double upperBound) :
     populationSize(populationSize),
@@ -61,6 +64,7 @@ inline MOEAD::MOEAD(const size_t populationSize,
     neighborProb(neighborProb),
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
+    epsilon(epsilon),
     lowerBound(lowerBound * arma::ones(1, 1)),
     upperBound(upperBound * arma::ones(1, 1)),
     numObjectives(0)
@@ -131,7 +135,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   arma::uvec shuffle;
   // The weight matrix. Each vector represents a decomposition subproblem (M X N).
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
-  weights += 1E-10; // Numerical stability
+  weights += epsilon; // Numerical stability
 
   // 1.1 Storing the indices of nearest neighbors of each weight vector.
   arma::umat neighborIndices(neighborSize, populationSize);
