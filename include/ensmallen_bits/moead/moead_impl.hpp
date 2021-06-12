@@ -136,15 +136,15 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   bool terminate = false;
 
   // The weight matrix. Each vector represents a decomposition subproblem (M X N).
-  BaseMatType weights(numObjectives, populationSize, arma::fill::randu);
-  weights += epsilon; // Numerical stability
+  const BaseMatType weights = BaseMatType(numObjectives, populationSize,
+      arma::fill::randu) + epsilon;
 
   // 1.1 Storing the indices of nearest neighbors of each weight vector.
   arma::umat neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
     // Cache the distance between weights[i] and other weights.
-    arma::Row<ElemType> distances =
+    const arma::Row<ElemType> distances =
         arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
     // Ignore distance from self.
@@ -212,14 +212,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           if (candidate(geneIdx) < castedLowerBound(geneIdx))
           {
             candidate(geneIdx) = castedLowerBound(geneIdx) +
-                arma::randu() * (population[r1](geneIdx) -
-                    castedLowerBound(geneIdx));
+                arma::randu() * (population[r1](geneIdx) - castedLowerBound(geneIdx));
           }
           if (candidate(geneIdx) > castedUpperBound(geneIdx))
           {
             candidate(geneIdx) = castedUpperBound(geneIdx) -
-                arma::randu() * (castedUpperBound(geneIdx) -
-                    population[r1](geneIdx));
+                arma::randu() * (castedUpperBound(geneIdx) - population[r1](geneIdx));
           }
         }
         else
