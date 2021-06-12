@@ -89,6 +89,11 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
+  // Make sure that we have the methods that we need.  Long name...
+  traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType...,
+      BaseMatType>();
+  RequireDenseFloatingPointType<BaseMatType>();
+
   if (neighborSize < 2)
   {
     throw std::invalid_argument(
