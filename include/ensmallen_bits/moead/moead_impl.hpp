@@ -369,7 +369,7 @@ inline void MOEAD::Mutate(MatType& candidate,
       double value, perturbationFactor;
       if (rand < 0.5)
       {
-        value = 2.0 * rand + (1.0 - 2. * rand) *
+        value = 2.0 * rand + (1.0 - 2.0 * rand) *
             std::pow(upperDelta, distributionIndex + 1.0);
         perturbationFactor = std::pow(value, mutationPower) - 1.0;
       }
