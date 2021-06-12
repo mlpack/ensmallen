@@ -145,7 +145,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   {
     // Cache the distance between weights(i) and other weights.
     arma::Row<ElemType> distances =
-        arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
+    		arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
     // Ignore distance from self.
     neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
@@ -155,11 +155,11 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   std::vector<BaseMatType> population(populationSize);
   for (BaseMatType& individual : population)
   {
-      individual = arma::randu<BaseMatType>(
-          iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+  	individual = arma::randu<BaseMatType>(
+    		iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
-      // Constrain all genes to be within bounds.
-      individual = arma::min(arma::max(individual, castedLowerBound), castedUpperBound);
+    // Constrain all genes to be within bounds.
+    individual = arma::min(arma::max(individual, castedLowerBound), castedUpperBound);
   }
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
@@ -193,7 +193,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // Randomly choose to sample from the population or the neighbors.
       const bool sampleNeighbor = arma::randu() < neighborProb;
       std::tie(r2, r3) =
-	        Mating(subProblemIdx, neighborIndices, sampleNeighbor);
+	    		Mating(subProblemIdx, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Polynomial Mutation.
@@ -319,8 +319,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 //! Randomly chooses to select from parents or neighbors.
 inline std::tuple<size_t, size_t>
 MOEAD::Mating(size_t subProblemIdx,
-                       const arma::umat& neighborIndices,
-                       bool sampleNeighbor)
+              const arma::umat& neighborIndices,
+              bool sampleNeighbor)
 {
   //! Indexes of two points from the sample space.
   size_t pointA = sampleNeighbor
