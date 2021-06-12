@@ -187,12 +187,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       // Randomly choose to sample from the population or the neighbors.
       bool sampleNeighbor = arma::randu() < neighborProb;
       std::tie(r2, r3) =
-	        MatingSelection(subProblemIdx, neighborIndices, sampleNeighbor);
+	        Mating(subProblemIdx, neighborIndices, sampleNeighbor);
 
       // 2.2 - 2.3 Reproduction and Repair: Differential Operator followed by
       // Polynomial Mutation.
       BaseMatType candidate(iterate.n_rows, iterate.n_cols);
-      
+
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
       {
 	const double delta = arma::randu();
@@ -308,30 +308,29 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
 //! Randomly chooses to select from parents or neighbors.
 inline std::tuple<size_t, size_t>
-MOEAD::MatingSelection(size_t subProblemIdx,
+MOEAD::Mating(size_t subProblemIdx,
                        const arma::umat& neighborIndices,
                        bool sampleNeighbor)
 {
-  size_t k, l;
-
-  k = sampleNeighbor
+  //! Indexes of two points from the sample space.
+  size_t pointA = sampleNeighbor
       ? neighborIndices(
             arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
       : arma::randi(arma::distr_param(0, populationSize - 1u));
 
-  l = sampleNeighbor
+  size_t pointB = sampleNeighbor
       ? neighborIndices(
             arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
       : arma::randi(arma::distr_param(0, populationSize - 1u));
-  
+
   //! If the sampled points are equal, then modify one of them
   //! within reasonable bounds.
-  if (k == l)
+  if (pointA == pointB)
   {
-    if (k == populationSize - 1u)
-      --k;
+    if (pointA == populationSize - 1u)
+      --pointA;
     else
-      ++k;
+      ++pointA;
   }
 
   return std::make_tuple(k, l);
