@@ -51,9 +51,9 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
@@ -113,9 +113,9 @@ TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
@@ -173,9 +173,9 @@ TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
@@ -228,9 +228,9 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
@@ -283,9 +283,9 @@ TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
@@ -345,9 +345,9 @@ TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
@@ -405,9 +405,9 @@ TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
@@ -460,9 +460,9 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
         20, // Neighborhood size.
         20, // Perturbation index.
-        0.9, // Probability of sampling from neighbor.
         0.5, // Differential weight.
         2, // Max childrens to replace parents.
         1E-10, // epsilon.
