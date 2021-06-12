@@ -333,7 +333,7 @@ MOEAD::Mating(size_t subProblemIdx,
       ++pointA;
   }
 
-  return std::make_tuple(k, l);
+  return std::make_tuple(pointA, pointB);
 }
 
 //! Perform Polynomial mutation of the candidate.
