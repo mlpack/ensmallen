@@ -122,17 +122,16 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
       "upperBound are not the same as the dimensions of iterate.");
 
-  numObjectives = sizeof...(ArbitraryFunctionType);
-  size_t numVariables = iterate.n_rows;
+  const size_t numObjectives = sizeof...(ArbitraryFunctionType);
+  const size_t numVariables = iterate.n_rows;
 
   //! Useful temporaries for float-like comparisons.
-  BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
-  BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
+  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
 
-  arma::uvec shuffle;
   // The weight matrix. Each vector represents a decomposition subproblem (M X N).
   arma::Mat<ElemType> weights(numObjectives, populationSize, arma::fill::randu);
   weights += epsilon; // Numerical stability
@@ -142,8 +141,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   for (size_t i = 0; i < populationSize; ++i)
   {
     // Cache the distance between weights(i) and other weights.
-    arma::Row<ElemType> distances(populationSize);
-    distances =
+    arma::Row<ElemType> distances =
         arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
     // Ignore distance from self.
@@ -180,7 +178,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   // 2 The main loop.
   for (size_t generation = 1; generation <= maxGenerations && !terminate; ++generation)
   {
-    shuffle = arma::shuffle(
+    // Shuffle indexes of subproblems.
+    const arma::uvec shuffle = arma::shuffle(
         arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
     for (size_t subProblemIdx : shuffle)
     {
@@ -189,7 +188,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       size_t r1, r2, r3;
       r1 = subProblemIdx;
       // Randomly choose to sample from the population or the neighbors.
-      bool sampleNeighbor = arma::randu() < neighborProb;
+      const bool sampleNeighbor = arma::randu() < neighborProb;
       std::tie(r2, r3) =
 	        Mating(subProblemIdx, neighborIndices, sampleNeighbor);
 
@@ -210,23 +209,26 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
           if (candidate(geneIdx) < castedLowerBound(geneIdx))
           {
             candidate(geneIdx) = castedLowerBound(geneIdx) +
-                arma::randu() * (population[r1](geneIdx) - castedLowerBound(geneIdx));
+                arma::randu() * (population[r1](geneIdx) -
+                    castedLowerBound(geneIdx));
           }
           if (candidate(geneIdx) > castedUpperBound(geneIdx))
           {
             candidate(geneIdx) = castedUpperBound(geneIdx) -
-                arma::randu() * (castedUpperBound(geneIdx) - population[r1](geneIdx));
+                arma::randu() * (castedUpperBound(geneIdx) -
+                    population[r1](geneIdx));
           }
         }
         else
           candidate(geneIdx) = population[r1](geneIdx);
       }
 
-      Mutate(candidate, 1.0 / static_cast<double>(numVariables), castedLowerBound, castedUpperBound);
+      Mutate(candidate, 1.0 / static_cast<double>(numVariables),
+          castedLowerBound, castedUpperBound);
 
       arma::Col<ElemType> candidateFitness(numObjectives);
       //! Creating temp vectors to pass to EvaluateObjectives.
-      std::vector<BaseMatType> candidateContainer{ candidate };
+      std::vector<BaseMatType> candidateContainer { candidate };
       std::vector<arma::Col<ElemType>> fitnessContainer { candidateFitness };
       EvaluateObjectives(candidateContainer, objectives, fitnessContainer);
       candidateFitness = std::move(fitnessContainer[0]);
@@ -238,10 +240,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       idealPoint = arma::min(idealPoint, candidateFitness);
 
       // 2.5 Update of the population.
-      size_t replaceCounter = 0;
-      size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
+      size_t replaceCounter {0};
+      const size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
-      arma::uvec idxShuffle = arma::shuffle(
+      const arma::uvec idxShuffle = arma::shuffle(
           arma::linspace<arma::uvec>(0, sampleSize - 1, sampleSize));
 
       for (size_t idx : idxShuffle)
@@ -251,11 +253,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         if (replaceCounter >= maxReplace)
           break;
 
-        const size_t pick = sampleNeighbor ? neighborIndices(idx, subProblemIdx) : idx;
+        const size_t pick = sampleNeighbor ?
+            neighborIndices(idx, subProblemIdx) : idx;
 
-        ElemType candidateDecomposition = DecomposeObjectives<ElemType>(
+        const ElemType candidateDecomposition = DecomposeObjectives<ElemType>(
             weights.col(pick), idealPoint, candidateFitness);
-        ElemType parentDecomposition = DecomposeObjectives<ElemType>(
+        const ElemType parentDecomposition = DecomposeObjectives<ElemType>(
             weights.col(pick), idealPoint, populationFitness[pick]);
 
         if (candidateDecomposition < parentDecomposition)
@@ -347,7 +350,7 @@ inline void MOEAD::Mutate(MatType& candidate,
                           const MatType& lowerBound,
                           const MatType& upperBound)
 {
-    size_t numVariables = candidate.n_rows;
+    const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
     {
       // Should this gene be mutated?

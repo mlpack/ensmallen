@@ -285,12 +285,12 @@ class MOEAD {
   //! Number of nearest neighbours of weights to consider.
   size_t neighborSize;
 
+  //! The probability that two elements will be chosen from the neighbor.
+  double neighborProb;
+
   //! The crowding degree of the mutation. Higher value produces a mutant
   //! resembling its parent.
   double distributionIndex;
-
-  //! The probability that two elements will be chosen from the neighbor.
-  double neighborProb;
 
   //! Amplification factor for differentiation.
   double differentialWeight;
@@ -308,9 +308,6 @@ class MOEAD {
 
   //! Upper bound on each variable in the variable space.
   arma::vec upperBound;
-
-  //! The number of objectives in multi objective optimisation problem.
-  size_t numObjectives;
 
   //! The set of all the Pareto optimal points.
   //! Stored after Optimize() is called.
