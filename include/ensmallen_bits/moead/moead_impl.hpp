@@ -367,7 +367,7 @@ inline void MOEAD::Mutate(MatType& candidate,
       const double mutationPower = 1. / (distributionIndex + 1.0);
       const double rand = arma::randu();
       double value, perturbationFactor;
-      if(rand < 0.5)
+      if (rand < 0.5)
       {
         value = 2.0 * rand + (1.0 - 2. * rand) *
             std::pow(upperDelta, distributionIndex + 1.0);
