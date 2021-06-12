@@ -59,10 +59,10 @@ class MOEAD {
    * @param populationSize The number of elements in the population.
    * @param maxGenerations The maximum number of generations allowed.
    * @param crossoverProb The probability that a crossover will occur.
+   * @param neighborProb The probability of sampling from neighbor.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
    * @param distributionIndex The crowding degree of the mutation.
-   * @param neighborProb The probability of sampling from neighbor.
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
@@ -75,9 +75,9 @@ class MOEAD {
   MOEAD(const size_t populationSize = 150,
         const size_t maxGenerations = 300,
         const double crossoverProb = 1.0,
+        const double neighborProb = 0.9,
         const size_t neighborSize = 20,
         const double distributionIndex = 20,
-        const double neighborProb = 0.9,
         const double differentialWeight = 0.5,
         const size_t maxReplace = 2,
         const double epsilon = 1E-10,
@@ -96,10 +96,10 @@ class MOEAD {
    * @param populationSize The number of elements in the population.
    * @param maxGenerations The maximum number of generations allowed.
    * @param crossoverProb The probability that a crossover will occur.
+   * @param neighborProb The probability of sampling from neighbor.
    * @param neighborSize The number of nearest neighbours of weights
    *    to find.
    * @param distributionIndex The crowding degree of the mutation.
-   * @param neighborProb The probability of sampling from neighbor.
    * @param differentialWeight A parameter used in the mutation of candidate
    *     solutions controls amplification factor of the differentiation.
    * @param maxReplace The limit of solutions allowed to be replaced by a child.
@@ -112,9 +112,9 @@ class MOEAD {
     MOEAD(const size_t populationSize = 150,
           const size_t maxGenerations = 300,
           const double crossoverProb = 1.0,
+          const double neighborProb = 0.9,
           const size_t neighborSize = 20,
           const double distributionIndex = 20,
-          const double neighborProb = 0.9,
           const double differentialWeight = 0.5,
           const size_t maxReplace = 2,
           const double epsilon = 1E-10,
@@ -282,11 +282,11 @@ class MOEAD {
   //! Probability of crossover between two members.
   double crossoverProb;
 
-  //! Number of nearest neighbours of weights to consider.
-  size_t neighborSize;
-
   //! The probability that two elements will be chosen from the neighbor.
   double neighborProb;
+
+  //! Number of nearest neighbours of weights to consider.
+  size_t neighborSize;
 
   //! The crowding degree of the mutation. Higher value produces a mutant
   //! resembling its parent.
