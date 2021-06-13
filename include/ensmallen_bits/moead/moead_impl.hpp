@@ -156,7 +156,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   for (BaseMatType& individual : population)
   {
   	individual = arma::randu<BaseMatType>(
-    		iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+        iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
     // Constrain all genes to be within bounds.
     individual = arma::min(arma::max(individual, castedLowerBound), castedUpperBound);
