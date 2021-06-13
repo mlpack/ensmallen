@@ -201,8 +201,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
       {
-	      const double delta = arma::randu();
-        if (delta < crossoverProb)
+        if (arma::randu() < crossoverProb)
         {
           candidate(geneIdx) = population[r1](geneIdx) +
               differentialWeight * (population[r2](geneIdx) -
