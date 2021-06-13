@@ -380,7 +380,7 @@ inline void MOEAD::Mutate(MatType& candidate,
       candidate(geneIdx) += perturbationFactor * geneRange;
     }
     //! Enforce bounds.
-    candidate= arma::min(arma::max(candidate, lowerBound), upperBound);
+    candidate = arma::min(arma::max(candidate, lowerBound), upperBound);
 }
 
 //! Calculate the output for single objective function using the Tchebycheff
