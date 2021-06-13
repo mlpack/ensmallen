@@ -212,8 +212,8 @@ class MOEAD {
    * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
   std::tuple<size_t, size_t> Mating(size_t subProblemIdx,
-                                             const arma::umat& neighborSize,
-                                             bool sampleNeighbor);
+                                     const arma::umat& neighborSize,
+                                     bool sampleNeighbor);
 
   /**
    * Mutate the child formed by the crossover of two random members of the
