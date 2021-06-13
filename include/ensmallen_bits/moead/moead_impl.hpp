@@ -240,7 +240,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
       idealPoint = arma::min(idealPoint, candidateFitness);
 
       // 2.5 Update of the population.
-      size_t replaceCounter {0};
+      size_t replaceCounter = 0;
       const size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
       const arma::uvec idxShuffle = arma::shuffle(
