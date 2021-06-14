@@ -47,7 +47,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  MOEAD opt(
+  MOEAD<> opt(
         150, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
@@ -96,405 +96,405 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
   REQUIRE(success == true);
 }
 
-/**
- * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
- * Tests for data of type double.
- */
-TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
-{
-  // This test can be a little flaky, so we try it a few times.
-  SchafferFunctionN1<arma::mat> SCH;
-  const arma::vec lowerBound = {-1000};
-  const arma::vec upperBound = {1000};
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+// /**
+//  * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
+//  * Tests for data of type double.
+//  */
+// TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
+// {
+//   // This test can be a little flaky, so we try it a few times.
+//   SchafferFunctionN1<arma::mat> SCH;
+//   const arma::vec lowerBound = {-1000};
+//   const arma::vec upperBound = {1000};
+//   const double expectedLowerBound = 0.0;
+//   const double expectedUpperBound = 2.0;
 
-  MOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
+//   MOEAD<> opt(
+//         150, // Population size.
+//         300,  // Max generations.
+//         1.0,  // Crossover probability.
+//         0.9, // Probability of sampling from neighbor.
+//         20, // Neighborhood size.
+//         20, // Perturbation index.
+//         0.5, // Differential weight.
+//         2, // Max childrens to replace parents.
+//         1E-10, // epsilon.
+//         lowerBound, // Lower bound.
+//         upperBound // Upper bound.
+//       );
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+//   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+//   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 
-  bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
-  {
-    arma::mat coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+//   bool success = false;
+//   for (size_t trial = 0; trial < 3; ++trial)
+//   {
+//     arma::mat coords = SCH.GetInitialPoint();
+//     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::cube paretoSet = opt.ParetoSet();
+//     opt.Optimize(objectives, coords);
+//     arma::cube paretoSet = opt.ParetoSet();
 
-    bool allInRange = true;
+//     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-    {
-      double val = arma::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
-      {
-        allInRange = false;
-        break;
-      }
-    }
+//     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+//     {
+//       double val = arma::as_scalar(paretoSet.slice(solutionIdx));
+//       if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
+//       {
+//         allInRange = false;
+//         break;
+//       }
+//     }
 
-    if (allInRange)
-    {
-      success = true;
-      break;
-    }
-  }
+//     if (allInRange)
+//     {
+//       success = true;
+//       break;
+//     }
+//   }
 
-  REQUIRE(success == true);
-}
+//   REQUIRE(success == true);
+// }
 
-/**
- * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
- * Tests for data of type double.
- */
-TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
-{
-  FonsecaFlemingFunction<arma::mat> FON;
-  const double lowerBound = -4;
-  const double upperBound = 4;
-  const double expectedLowerBound = -1.0 / sqrt(3);
-  const double expectedUpperBound = 1.0 / sqrt(3);
+// /**
+//  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
+//  * Tests for data of type double.
+//  */
+// TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
+// {
+//   FonsecaFlemingFunction<arma::mat> FON;
+//   const double lowerBound = -4;
+//   const double upperBound = 4;
+//   const double expectedLowerBound = -1.0 / sqrt(3);
+//   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  MOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+//   MOEAD<> opt(
+//         150, // Population size.
+//         300,  // Max generations.
+//         1.0,  // Crossover probability.
+//         0.9, // Probability of sampling from neighbor.
+//         20, // Neighborhood size.
+//         20, // Perturbation index.
+//         0.5, // Differential weight.
+//         2, // Max childrens to replace parents.
+//         1E-10, // epsilon.
+//         lowerBound, // Lower bound.
+//         upperBound // Upper bound.
+//       );
+//   typedef decltype(FON.objectiveA) ObjectiveTypeA;
+//   typedef decltype(FON.objectiveB) ObjectiveTypeB;
 
-  arma::mat coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+//   arma::mat coords = FON.GetInitialPoint();
+//   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::cube paretoSet = opt.ParetoSet();
+//   opt.Optimize(objectives, coords);
+//   arma::cube paretoSet = opt.ParetoSet();
 
-  bool allInRange = true;
+//   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-  {
-    const arma::mat solution = paretoSet.slice(solutionIdx);
-    double valX = arma::as_scalar(solution(0));
-    double valY = arma::as_scalar(solution(1));
-    double valZ = arma::as_scalar(solution(2));
+//   for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+//   {
+//     const arma::mat solution = paretoSet.slice(solutionIdx);
+//     double valX = arma::as_scalar(solution(0));
+//     double valY = arma::as_scalar(solution(1));
+//     double valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound))
-    {
-      allInRange = false;
-      break;
-    }
-  }
+//     if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound))
+//     {
+//       allInRange = false;
+//       break;
+//     }
+//   }
 
-  REQUIRE(allInRange);
-}
+//   REQUIRE(allInRange);
+// }
 
-/**
- * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
- * Tests for data of type double.
- */
-TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
-{
-  FonsecaFlemingFunction<arma::mat> FON;
-  const arma::vec lowerBound = {-4, -4, -4};
-  const arma::vec upperBound = {4, 4, 4};
-  const double expectedLowerBound = -1.0 / sqrt(3);
-  const double expectedUpperBound = 1.0 / sqrt(3);
+// /**
+//  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
+//  * Tests for data of type double.
+//  */
+// TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
+// {
+//   FonsecaFlemingFunction<arma::mat> FON;
+//   const arma::vec lowerBound = {-4, -4, -4};
+//   const arma::vec upperBound = {4, 4, 4};
+//   const double expectedLowerBound = -1.0 / sqrt(3);
+//   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  MOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+//   MOEAD<> opt(
+//         150, // Population size.
+//         300,  // Max generations.
+//         1.0,  // Crossover probability.
+//         0.9, // Probability of sampling from neighbor.
+//         20, // Neighborhood size.
+//         20, // Perturbation index.
+//         0.5, // Differential weight.
+//         2, // Max childrens to replace parents.
+//         1E-10, // epsilon.
+//         lowerBound, // Lower bound.
+//         upperBound // Upper bound.
+//       );
+//   typedef decltype(FON.objectiveA) ObjectiveTypeA;
+//   typedef decltype(FON.objectiveB) ObjectiveTypeB;
 
-  arma::mat coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+//   arma::mat coords = FON.GetInitialPoint();
+//   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::cube paretoSet = opt.ParetoSet();
+//   opt.Optimize(objectives, coords);
+//   arma::cube paretoSet = opt.ParetoSet();
 
-  bool allInRange = true;
+//   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-  {
-    const arma::mat solution = paretoSet.slice(solutionIdx);
-    double valX = arma::as_scalar(solution(0));
-    double valY = arma::as_scalar(solution(1));
-    double valZ = arma::as_scalar(solution(2));
+//   for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+//   {
+//     const arma::mat solution = paretoSet.slice(solutionIdx);
+//     double valX = arma::as_scalar(solution(0));
+//     double valY = arma::as_scalar(solution(1));
+//     double valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound))
-    {
-      allInRange = false;
-      break;
-    }
-  }
+//     if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound))
+//     {
+//       allInRange = false;
+//       break;
+//     }
+//   }
 
-  REQUIRE(allInRange);
-}
+//   REQUIRE(allInRange);
+// }
 
-/**
- * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
- * Tests for data of type float.
- */
-TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
-{
-  SchafferFunctionN1<arma::fmat> SCH;
-  const double lowerBound = -1000;
-  const double upperBound = 1000;
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+// /**
+//  * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
+//  * Tests for data of type float.
+//  */
+// TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
+// {
+//   SchafferFunctionN1<arma::fmat> SCH;
+//   const double lowerBound = -1000;
+//   const double upperBound = 1000;
+//   const double expectedLowerBound = 0.0;
+//   const double expectedUpperBound = 2.0;
 
-  MOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
+//   MOEAD<> opt(
+//         150, // Population size.
+//         300,  // Max generations.
+//         1.0,  // Crossover probability.
+//         0.9, // Probability of sampling from neighbor.
+//         20, // Neighborhood size.
+//         20, // Perturbation index.
+//         0.5, // Differential weight.
+//         2, // Max childrens to replace parents.
+//         1E-10, // epsilon.
+//         lowerBound, // Lower bound.
+//         upperBound // Upper bound.
+//       );
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+//   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+//   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 
-  // We allow a few trials in case of poor convergence.
-  bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
-  {
-    arma::fmat coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+//   // We allow a few trials in case of poor convergence.
+//   bool success = false;
+//   for (size_t trial = 0; trial < 3; ++trial)
+//   {
+//     arma::fmat coords = SCH.GetInitialPoint();
+//     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
+//     opt.Optimize(objectives, coords);
+//     arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
-    bool allInRange = true;
+//     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-    {
-      float val = arma::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
-      {
-        allInRange = false;
-        break;
-      }
-    }
+//     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+//     {
+//       float val = arma::as_scalar(paretoSet.slice(solutionIdx));
+//       if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
+//       {
+//         allInRange = false;
+//         break;
+//       }
+//     }
 
-    if (allInRange)
-    {
-      success = true;
-      break;
-    }
-  }
+//     if (allInRange)
+//     {
+//       success = true;
+//       break;
+//     }
+//   }
 
-  REQUIRE(success == true);
-}
+//   REQUIRE(success == true);
+// }
 
-/**
- * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
- * Tests for data of type float.
- */
-TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
-{
-  // This test can be a little flaky, so we try it a few times.
-  SchafferFunctionN1<arma::fmat> SCH;
-  const arma::vec lowerBound = {-1000};
-  const arma::vec upperBound = {1000};
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+// /**
+//  * Optimize for the Schaffer N.1 function using NSGA-II optimizer.
+//  * Tests for data of type float.
+//  */
+// TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
+// {
+//   // This test can be a little flaky, so we try it a few times.
+//   SchafferFunctionN1<arma::fmat> SCH;
+//   const arma::vec lowerBound = {-1000};
+//   const arma::vec upperBound = {1000};
+//   const double expectedLowerBound = 0.0;
+//   const double expectedUpperBound = 2.0;
 
-  MOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
+//   MOEAD<> opt(
+//         150, // Population size.
+//         300,  // Max generations.
+//         1.0,  // Crossover probability.
+//         0.9, // Probability of sampling from neighbor.
+//         20, // Neighborhood size.
+//         20, // Perturbation index.
+//         0.5, // Differential weight.
+//         2, // Max childrens to replace parents.
+//         1E-10, // epsilon.
+//         lowerBound, // Lower bound.
+//         upperBound // Upper bound.
+//       );
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+//   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+//   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 
-  bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
-  {
-    arma::fmat coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+//   bool success = false;
+//   for (size_t trial = 0; trial < 3; ++trial)
+//   {
+//     arma::fmat coords = SCH.GetInitialPoint();
+//     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
+//     opt.Optimize(objectives, coords);
+//     arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
-    bool allInRange = true;
+//     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-    {
-      float val = arma::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
-      {
-        allInRange = false;
-        break;
-      }
-    }
+//     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+//     {
+//       float val = arma::as_scalar(paretoSet.slice(solutionIdx));
+//       if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
+//       {
+//         allInRange = false;
+//         break;
+//       }
+//     }
 
-    if (allInRange)
-    {
-      success = true;
-      break;
-    }
-  }
+//     if (allInRange)
+//     {
+//       success = true;
+//       break;
+//     }
+//   }
 
-  REQUIRE(success == true);
-}
+//   REQUIRE(success == true);
+// }
 
-/**
- * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
- * Tests for data of type float.
- */
-TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
-{
-  FonsecaFlemingFunction<arma::fmat> FON;
-  const double lowerBound = -4;
-  const double upperBound = 4;
-  const float expectedLowerBound = -1.0 / sqrt(3);
-  const float expectedUpperBound = 1.0 / sqrt(3);
+// /**
+//  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
+//  * Tests for data of type float.
+//  */
+// TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
+// {
+//   FonsecaFlemingFunction<arma::fmat> FON;
+//   const double lowerBound = -4;
+//   const double upperBound = 4;
+//   const float expectedLowerBound = -1.0 / sqrt(3);
+//   const float expectedUpperBound = 1.0 / sqrt(3);
 
-  MOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+//   MOEAD<> opt(
+//         150, // Population size.
+//         300,  // Max generations.
+//         1.0,  // Crossover probability.
+//         0.9, // Probability of sampling from neighbor.
+//         20, // Neighborhood size.
+//         20, // Perturbation index.
+//         0.5, // Differential weight.
+//         2, // Max childrens to replace parents.
+//         1E-10, // epsilon.
+//         lowerBound, // Lower bound.
+//         upperBound // Upper bound.
+//       );
+//   typedef decltype(FON.objectiveA) ObjectiveTypeA;
+//   typedef decltype(FON.objectiveB) ObjectiveTypeB;
 
-  arma::fmat coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+//   arma::fmat coords = FON.GetInitialPoint();
+//   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
+//   opt.Optimize(objectives, coords);
+//   arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
-  bool allInRange = true;
+//   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-  {
-    const arma::fmat solution = paretoSet.slice(solutionIdx);
-    float valX = arma::as_scalar(solution(0));
-    float valY = arma::as_scalar(solution(1));
-    float valZ = arma::as_scalar(solution(2));
+//   for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+//   {
+//     const arma::fmat solution = paretoSet.slice(solutionIdx);
+//     float valX = arma::as_scalar(solution(0));
+//     float valY = arma::as_scalar(solution(1));
+//     float valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound))
-    {
-      allInRange = false;
-      break;
-    }
-  }
+//     if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound))
+//     {
+//       allInRange = false;
+//       break;
+//     }
+//   }
 
-  REQUIRE(allInRange);
-}
+//   REQUIRE(allInRange);
+// }
 
-/**
- * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
- * Tests for data of type float.
- */
-TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
-{
-  FonsecaFlemingFunction<arma::fmat> FON;
-  const arma::vec lowerBound = {-4, -4, -4};
-  const arma::vec upperBound = {4, 4, 4};
-  const float expectedLowerBound = -1.0 / sqrt(3);
-  const float expectedUpperBound = 1.0 / sqrt(3);
+// /**
+//  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
+//  * Tests for data of type float.
+//  */
+// TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
+// {
+//   FonsecaFlemingFunction<arma::fmat> FON;
+//   const arma::vec lowerBound = {-4, -4, -4};
+//   const arma::vec upperBound = {4, 4, 4};
+//   const float expectedLowerBound = -1.0 / sqrt(3);
+//   const float expectedUpperBound = 1.0 / sqrt(3);
 
-  MOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+//   MOEAD<> opt(
+//         150, // Population size.
+//         300,  // Max generations.
+//         1.0,  // Crossover probability.
+//         0.9, // Probability of sampling from neighbor.
+//         20, // Neighborhood size.
+//         20, // Perturbation index.
+//         0.5, // Differential weight.
+//         2, // Max childrens to replace parents.
+//         1E-10, // epsilon.
+//         lowerBound, // Lower bound.
+//         upperBound // Upper bound.
+//       );
+//   typedef decltype(FON.objectiveA) ObjectiveTypeA;
+//   typedef decltype(FON.objectiveB) ObjectiveTypeB;
 
-  arma::fmat coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+//   arma::fmat coords = FON.GetInitialPoint();
+//   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
+//   opt.Optimize(objectives, coords);
+//   arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
 
-  bool allInRange = true;
+//   bool allInRange = true;
 
-  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-  {
-    const arma::fmat solution = paretoSet.slice(solutionIdx);
-    float valX = arma::as_scalar(solution(0));
-    float valY = arma::as_scalar(solution(1));
-    float valZ = arma::as_scalar(solution(2));
+//   for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+//   {
+//     const arma::fmat solution = paretoSet.slice(solutionIdx);
+//     float valX = arma::as_scalar(solution(0));
+//     float valY = arma::as_scalar(solution(1));
+//     float valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound))
-    {
-      allInRange = false;
-      break;
-    }
-  }
+//     if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound) ||
+//         !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound))
+//     {
+//       allInRange = false;
+//       break;
+//     }
+//   }
 
-  REQUIRE(allInRange);
-}
+//   REQUIRE(allInRange);
+// }
