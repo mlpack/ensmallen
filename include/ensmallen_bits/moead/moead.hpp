@@ -18,6 +18,14 @@
 #ifndef ENSMALLEN_MOEAD_MOEAD_HPP
 #define ENSMALLEN_MOEAD_MOEAD_HPP
 
+//! Decomposition policies
+#include "decomposition_policies/tchebycheff_decomposition.hpp"
+#include "decomposition_policies/weighted_decomposition.hpp"
+#include "decomposition_policies/pbi_decomposition.hpp"
+
+//! Weight Init policies
+#include "weight_init_policies/uniform_init.hpp"
+#include "weight_init_policies/bbs_init.hpp"
 namespace ens {
 
 /**
@@ -47,6 +55,8 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
+template<typename InitPolicyType = BayesianBootstrap,
+         typename DecompPolicyType = Tchebycheff>
 class MOEAD {
  public:
   /**
@@ -82,7 +92,9 @@ class MOEAD {
         const size_t maxReplace = 2,
         const double epsilon = 1E-10,
         const arma::vec& lowerBound = arma::zeros(1, 1),
-        const arma::vec& upperBound = arma::ones(1, 1));
+        const arma::vec& upperBound = arma::ones(1, 1),
+        const InitPolicyType initPolicy =InitPolicyType(),
+        const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Constructor for the MOEA/D optimizer. This constructor is provides an
@@ -119,7 +131,9 @@ class MOEAD {
           const size_t maxReplace = 2,
           const double epsilon = 1E-10,
           const double lowerBound = 0,
-          const double upperBound = 1);
+          const double upperBound = 1,
+          const InitPolicyType initPolicy = InitPolicyType(),
+          const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Optimize a set of objectives. The initial population is generated
@@ -202,6 +216,15 @@ class MOEAD {
   //! `Optimize()` has been called.
   const arma::cube& ParetoFront() const { return paretoFront; }
 
+  //! Get the weight initialization policy.
+  const InitPolicyType& InitPolicy() const { return initPolicy; }
+  //! Modify the weight initialization policy.
+  InitPolicyType& InitPolicy() { return initPolicy; }
+
+  //! Get the weight decomposition policy.
+  const DecompPolicyType& DecompPolicy() const { return decompPolicy; }
+  //! Modify the weight decomposition policy.
+  DecompPolicyType& DecompPolicy() { return decompPolicy; }
 
  private:
   /**
@@ -231,19 +254,6 @@ class MOEAD {
               double mutationRate,
               const MatType& lowerBound,
               const MatType& upperBound);
-
-  /**
-   * Decompose the multi objective problem to a single objective problem.
-   *
-   * @param subProblemWeight The Decomposition weight vector of the current subproblem.
-   * @param idealPoint The reference point z for a decomposition problem.
-   * @param candidateFitness The fitness value of the candidate.
-   * @return The real value obtained from the decomposed function.
-   */
-  template<typename ElemType>
-  ElemType DecomposeObjectives(const arma::Col<ElemType>& subProblemWeight,
-                               const arma::Col<ElemType>& idealPoint,
-                               const arma::Col<ElemType>& candidateFitness);
 
   /**
    * Evaluate objectives for the elite population.
@@ -316,6 +326,12 @@ class MOEAD {
   //! The set of all the Pareto optimal objective vectors.
   //! Stored after Optimize() is called.
   arma::cube paretoFront;
+
+  //! Policy to initialize the reference directions (weights) matrix.
+  InitPolicyType initPolicy;
+
+  //! Policy to decompose the weights.
+  DecompPolicyType decompPolicy;
 };
 
 } // namespace ens
