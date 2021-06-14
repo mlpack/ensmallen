@@ -413,3 +413,41 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
 
   REQUIRE(allInRange);
 }
+
+/**
+ * Test against the first problem of ZDT Test Suite.  ZDT-1 is a 30 
+ * variable-2 objective problem with a convex Pareto Front.
+ * 
+ * NOTE: For the sake of runtime, only ZDT-1 is tested against the
+ * algorithm. Others have been tested separately.
+ */
+TEST_CASE("NSGA2ZDTONETest", "[NSGA2Test]")
+{
+  //! Parameters taken from original ZDT Paper.
+  ZDT1<> ZDT_ONE(100);
+  const double lowerBound = 0;
+  const double upperBound = 1;
+  const double tolerance = 1e-6;
+  const double mutationRate = 1e-2;
+  const double crossoverRate = 0.8;
+  const double strength = 1e-4;
+
+  NSGA2 opt(100, 250, crossoverRate, mutationRate, strength,
+    tolerance, lowerBound, upperBound);
+
+  typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
+
+  arma::mat coords = ZDT_ONE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_ONE.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+
+  //! Refer the ZDT_ONE implementation for g objective implementation.
+  //! The optimal g value is taken from the docs of ZDT_ONE.
+  size_t numVariables = coords.size();
+  double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+  double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
+
+  REQUIRE(g == Approx(1.0).margin(0.99));
+}
