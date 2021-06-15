@@ -26,19 +26,15 @@
 namespace ens {
 
 /**
- * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon
- * (Differential Variant)is a multiobjective optimization algorithm. This class
- * implements the said algorithm.
+ * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon - 
+ * Differential Variant) is a multiobjective optimization algorithm. This class 
+ * implements the said optimizer. 
  *
- * The algorithm works by generating a candidate population from a fixed starting point.
- * Reference directions are generated to guide the optimization process towards the Pareto Front.
- * Further, a decomposition function is defined to decompose the problem to a scalar optimization
- * objective. Utilizing genetic operators, offsprings are generated with better decomposition values
- * to replace the neighboring parent solutions.
- *
- * The algorithm allows to explictly control the diversity of the final solution via
- * a) Controlling the amount of neighboring solutions which can be replaced.
- * b) Configuring the distribution of the reference direction vectors.
+ * The algorithm works by generating a candidate population from a fixed starting point. 
+ * Reference directions are generated to guide the optimization process towards the Pareto Front. 
+ * Further, a decomposition function is defined to decompose the problem to a scalar optimization 
+ * objective. Utilizing genetic operators, offsprings are generated with better decomposition values 
+ * to replace the neighboring parent solutions. 
  *
  * For more information, see the following:
  * @code
