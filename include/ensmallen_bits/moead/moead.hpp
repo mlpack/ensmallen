@@ -3,11 +3,9 @@
  * @author Utkarsh Rai
  * @author Nanubala Gnana Sai
  *
- * MOEA/D, Multi Objective Evolutionary Algorithm based on Decompositon is a
- * multi objective optimization algorithm. It employs evolutionary algorithms,
- * to find better solutions by iterating on the previous solutions and
- * decomposition approaches, to convert the multi objective problem to a single
- * objective one, to find the best Pareto Front for the given problem.
+ * MOEA/D-DE is a multi objective optimization algorithm. MOEA/D-DE
+ * uses genetic algorithms along with a set of reference directions
+ * to drive the population towards the Optimal Front.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -24,36 +22,33 @@
 #include "decomposition_policies/pbi_decomposition.hpp"
 
 //! Weight Init policies
-#include "weight_init_policies/uniform_init.hpp"
 #include "weight_init_policies/bbs_init.hpp"
 namespace ens {
 
 /**
- * This class implements the MOEA/D algorithm with Differential Evolution
- * crossover. Step numbers used in different parts of the implementation
- * correspond to the step number used in the original algorithm by the author.
+ * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon
+ * (Differential Variant)is a multiobjective optimization algorithm. This class
+ * implements the said algorithm.
+ *
+ * The algorithm works by generating a candidate population from a fixed starting point.
+ * Reference directions are generated to guide the optimization process towards the Pareto Front.
+ * Further, a decomposition function is defined to decompose the problem to a scalar optimization
+ * objective. Utilizing genetic operators, offsprings are generated with better decomposition values
+ * to replace the neighboring parent solutions.
+ *
+ * The algorithm allows to explictly control the diversity of the final solution via
+ * a) Controlling the amount of neighboring solutions which can be replaced.
+ * b) Configuring the distribution of the reference direction vectors.
  *
  * For more information, see the following:
  * @code
- * @article{article,
- * author = {Zhang, Qingfu and Li, Hui},
- * year = {2008},
- * pages = {712 - 731},
- * title = {MOEA/D: A Multiobjective Evolutionary Algorithm Based on
- *    Decomposition},
- * journal = {Evolutionary Computation, IEEE Transactions on},
- *
- * @article{4633340,
- * author={H. {Li} and Q. {Zhang}},
- * year={2009},
- * pages={284-302},}
- * title={Multiobjective Optimization Problems With Complicated Pareto Sets, MOEA/D and NSGA-II},
- * journal={IEEE Transactions on Evolutionary Computation},
+ * @article{li2008multiobjective,
+ * title={Multiobjective optimization problems with complicated Pareto sets, MOEA/D and NSGA-II},
+ * author={Li, Hui and Zhang, Qingfu},
+ * journal={IEEE transactions on evolutionary computation},
+ * pages={284--302},
+ * year={2008},
  * @endcode
- *
- * MOEA/D can optimize arbitrary multi-objective functions. For more details,
- * see the documentation on function types included with this distribution or
- * on the ensmallen website.
  */
 template<typename InitPolicyType = BayesianBootstrap,
          typename DecompPolicyType = Tchebycheff>
