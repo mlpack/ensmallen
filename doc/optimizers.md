@@ -1563,6 +1563,66 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## MOEA/D-DE
+*An optimizer for arbitrary multi-objective functions.*
+MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
+objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
+subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
+algorithm uses Differential Crossover followed by Polynomial Mutation to create offsprings which are then
+decomposed to form a Single Objective Problem. A diversity preserving mechanism is also employed which encourages
+a varied set of solution.
+
+#### Constructors
+* `MOEAD()`
+* `MOEAD(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. | `150` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `300` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `1.0` |
+| `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.9` |
+| `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider per weight vector.  | `20` |
+| `double` | **`distributionIndex`** | The crowding degree of the mutation. | `20` |
+| `double` | **`differentialWeight`** | Amplification factor of the differentiation. | `0.5` |
+| `size_t` | **`maxReplace`** | The limit of solutions allowed to be replaced by a child. | `2`|
+| `double` | **`epsilon`** | Handles numerical stability after weight initialization. | `1E-10`|
+| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
+| `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `NeighborProb()`, `NeighborSize()`, `DistributionIndex()`,
+`DifferentialWeight()`, `MaxReplace()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SchafferFunctionN1<arma::mat> SCH;
+arma::vec lowerBound("-10 -10");
+arma::vec upperBound("10 10");
+MOEAD opt(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
+typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+arma::mat coords = SCH.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+// obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
+double obj = opt.Optimize(objectives, coords);
+// Now obtain the best front.
+arma::cube bestFront = opt.ParetoFront();
+```
+</details>
+
+#### See also
+* [MOEA/D-DE Algorithm](https://ieeexplore.ieee.org/document/4633340)
+* [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
+* [Multi-objective functions](#multi-objective-functions)
+
 ## NSGA2
 
 *An optimizer for arbitrary multi-objective functions.*
@@ -1619,7 +1679,7 @@ std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj = opt.Optimize(objectives, coords);
 // Now obtain the best front.
-std::vector<arma::mat> bestFront = opt.Front();
+arma::cube bestFront = opt.Front();
 ```
 
 </details>

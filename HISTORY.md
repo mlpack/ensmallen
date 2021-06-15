@@ -31,6 +31,9 @@
  * Add ZDT Test Suite
    ([#273](https://github.com/mlpack/ensmallen/pull/273)).
 
+ * Add MOEA-D/DE Optimizer
+   ([#269](https://github.com/mlpack/ensmallen/pull/269)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set
