@@ -1,5 +1,5 @@
 /**
- * @file constant_step.hpp
+ * @file weighted_decomposition.hpp
  * @author Nanubala Gnana Sai
  *
  * The Weighted Average Decomposition policy.
@@ -14,6 +14,21 @@
 
 namespace ens {
 
+/**
+ * The Weighted average method of decomposition. The working principle is to
+ * minimize the dot product between reference direction and the line connecting
+ * objective vector and ideal point.
+ *
+ * For more information, see the following:
+ * @code
+ * article{zhang2007moea,
+ * title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
+ * author={Zhang, Qingfu and Li, Hui},
+ * journal={IEEE Transactions on evolutionary computation},
+ * pages={712--731},
+ * year={2007}
+ * @endcode
+ */
 class WeightedAverage
 {
  public:

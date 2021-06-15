@@ -14,6 +14,25 @@
 
 namespace ens {
 
+/**
+ * Penalty Based Boundary Intersection (PBI) method is a weight decomposition method,
+ * it tries to find the intersection between bottom-most boundary of the attainable
+ * objective set with the reference directions.
+ *
+ * The goal is to minimize the distance between objective vectors with the ideal point
+ * along the reference direction. To handle equality constraints, a penalty parameter
+ * theta is used.
+ *
+ * For more information, see the following:
+ * @code
+ * article{zhang2007moea,
+ * title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
+ * author={Zhang, Qingfu and Li, Hui},
+ * journal={IEEE Transactions on evolutionary computation},
+ * pages={712--731},
+ * year={2007}
+ * @endcode
+ */
 class PenaltyBoundaryIntersection
 {
  public:
@@ -33,7 +52,7 @@ class PenaltyBoundaryIntersection
     const VecType referenceDirection = weight / arma::norm(weight, 1);
     //! Distance of F(x) from the idealPoint along the reference direction.
     const ElemType d1 = arma::dot(candidateFitness - idealPoint, referenceDirection);
-    //! Length of projection line of F(x) on provided weight vector.
+    //! Length of projection line of F(x) on the reference direction.
     const ElemType d2 = arma::norm(candidateFitness - (idealPoint + d1 * referenceDirection), 1);
 
     return d1 + static_cast<ElemType>(theta) * d2;
