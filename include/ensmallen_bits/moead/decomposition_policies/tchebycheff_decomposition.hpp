@@ -2,7 +2,7 @@
  * @file tchebycheff_decomposition.hpp
  * @author Nanubala Gnana Sai
  *
- * The Tchebycheff Weight Decomposition policy.
+ * The Tchebycheff Weight decomposition policy.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of

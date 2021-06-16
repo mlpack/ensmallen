@@ -2,7 +2,7 @@
  * @file weighted_decomposition.hpp
  * @author Nanubala Gnana Sai
  *
- * The Weighted Average Decomposition policy.
+ * The Weighted Average decomposition policy.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
