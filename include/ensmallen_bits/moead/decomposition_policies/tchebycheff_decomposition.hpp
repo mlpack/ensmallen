@@ -37,7 +37,7 @@ class Tchebycheff
 {
  public:
   /**
-   * Constructor for Tchebycheff decomposition policy
+   * Constructor for Tchebycheff decomposition policy.
    */
   Tchebycheff()
   {
@@ -46,6 +46,7 @@ class Tchebycheff
 
   /**
    * Decompose the weight vectors.
+   *
    * @tparam VecType The type of the vector used in the decommposition.
    * @param weight The weight vector corresponding to a subproblem.
    * @param idealPoint The reference point in the objective space.
