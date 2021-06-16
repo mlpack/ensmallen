@@ -2,7 +2,7 @@
  * @file pbi_decomposition.hpp
  * @author Nanubala Gnana Sai
  *
- * The Penalty Based Boundary Intersection(PBI) Decomposition policy.
+ * The Penalty Based Boundary Intersection (PBI) decomposition policy.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
