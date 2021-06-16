@@ -498,3 +498,48 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
 
   REQUIRE(allInRange);
 }
+
+/**
+ * Test against the first problem of ZDT Test Suite.  ZDT-1 is a 30 
+ * variable-2 objective problem with a convex Pareto Front.
+ * 
+ * NOTE: For the sake of runtime, only ZDT-1 is tested against the
+ * algorithm. Others have been tested separately.
+ */
+TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
+{
+  //! Parameters taken from original ZDT Paper.
+  ZDT1<> ZDT_ONE(100);
+  const double lowerBound = 0;
+  const double upperBound = 1;
+
+   MOEAD<> opt(
+        150, // Population size.
+        300,  // Max generations.
+        1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
+        20, // Neighborhood size.
+        20, // Perturbation index.
+        0.5, // Differential weight.
+        2, // Max childrens to replace parents.
+        1E-10, // epsilon.
+        lowerBound, // Lower bound.
+        upperBound // Upper bound.
+      );
+
+  typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
+
+  arma::mat coords = ZDT_ONE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_ONE.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+
+  //! Refer the ZDT_ONE implementation for g objective implementation.
+  //! The optimal g value is taken from the docs of ZDT_ONE.
+  size_t numVariables = coords.size();
+  double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+  double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
+
+  REQUIRE(g == Approx(1.0).margin(0.99));
+}
