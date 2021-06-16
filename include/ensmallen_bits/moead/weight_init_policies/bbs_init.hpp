@@ -17,7 +17,7 @@ namespace ens {
 /**
  * The Bayesian Bootstrap method for initializing weights. Samples are randomly picked from uniform 
  * distribution followed by sorting and finding adjacent difference. This gives you a list of 
- * numbers which is guaranteed to some upto 1.
+ * numbers which is guaranteed to sum up to 1.
  *
  * See this link for more: https://cs.stackexchange.com/a/3229
  * @code
