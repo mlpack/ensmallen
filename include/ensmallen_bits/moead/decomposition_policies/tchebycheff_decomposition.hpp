@@ -25,12 +25,12 @@ namespace ens {
  *
  * For more information, see the following:
  * @code
- * article{zhang2007moea,
- * title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
- * author={Zhang, Qingfu and Li, Hui},
- * journal={IEEE Transactions on evolutionary computation},
- * pages={712--731},
- * year={2007}
+ *   article{zhang2007moea,
+ *   title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
+ *   author={Zhang, Qingfu and Li, Hui},
+ *   journal={IEEE Transactions on evolutionary computation},
+ *   pages={712--731},
+ *   year={2007}
  * @endcode
  */
 class Tchebycheff
