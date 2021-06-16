@@ -59,11 +59,11 @@ class BayesianBootstrap
       MatType weights(numObjectives, numPoints);
       for (size_t pointIdx = 0; pointIdx < numPoints; ++pointIdx)
       {
-        VecType referenceDirection(numObjectives, arma::fill::randu);
-        referenceDirection(numObjectives - 1) = 1;
+        VecType referenceDirection(numObjectives + 1, arma::fill::randu);
+        referenceDirection(0) = 0;
+        referenceDirection(numObjectives) = 1;
         referenceDirection = arma::sort(referenceDirection);
-        std::adjacent_difference(referenceDirection.begin(), referenceDirection.end(),
-            referenceDirection.end());
+        referenceDirection = arma::diff(referenceDirection);
         weights.col(pointIdx) = std::move(referenceDirection) + epsilon;
       }
 
