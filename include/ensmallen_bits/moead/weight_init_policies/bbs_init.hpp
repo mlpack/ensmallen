@@ -23,9 +23,9 @@ class BayesianBootstrap
   }
 
   template<typename MatType>
-  MatType Generate(size_t numObjectives,
-                   size_t numPoints,
-                   double epsilon)
+  MatType Generate(const size_t numObjectives,
+                   const size_t numPoints,
+                   const double epsilon)
   {
       typedef typename MatType::elem_type ElemType;
       typedef typename arma::Col<ElemType> VecType;
