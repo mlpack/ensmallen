@@ -39,6 +39,7 @@ class PenaltyBoundaryIntersection
   /**
    * Constructor for Penalty Based Boundary Intersection decomposition
    * policy.
+   *
    * @param theta The penalty value.
    */
   PenaltyBoundaryIntersection(const double theta = 5) :
