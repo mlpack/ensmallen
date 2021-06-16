@@ -1,6 +1,5 @@
 /**
  * @file moead.hpp
- * @author Utkarsh Rai
  * @author Nanubala Gnana Sai
  *
  * MOEA/D-DE is a multi objective optimization algorithm. MOEA/D-DE
