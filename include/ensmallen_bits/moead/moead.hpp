@@ -16,7 +16,7 @@
 #ifndef ENSMALLEN_MOEAD_MOEAD_HPP
 #define ENSMALLEN_MOEAD_MOEAD_HPP
 
-//! Decomposition policies
+//! Decomposition policies.
 #include "decomposition_policies/tchebycheff_decomposition.hpp"
 #include "decomposition_policies/weighted_decomposition.hpp"
 #include "decomposition_policies/pbi_decomposition.hpp"
