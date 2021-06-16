@@ -14,14 +14,41 @@
 
 namespace ens {
 
+/**
+ * The Bayesian Bootstrap method for initializing weights. Samples are randomly picked from uniform 
+ * distribution followed by sorting and finding adjacent difference. This gives you a list of 
+ * numbers which is guaranteed to some upto 1.
+ *
+ * See this link for more: https://cs.stackexchange.com/a/3229
+ * @code
+ * @article{rubin1981bayesian,
+ *   title={The bayesian bootstrap},
+ *   author={Rubin, Donald B},
+ *   journal={The annals of statistics},
+ *   pages={130--134},
+ *   year={1981},
+ * @endcode
+ *
+ */
 class BayesianBootstrap
 {
  public:
+  /**
+   * Constructor for Bayesian Bootstrap policy.
+   */
   BayesianBootstrap()
   {
     /* Nothing to do. */
   }
 
+  /**
+   * Generate the reference direction matrix.
+   *
+   * @tparam MatType The type of the matrix used for constructing weights.
+   * @param numObjectives The dimensionality of objective space.
+   * @param numPoints The number of reference directions requested.
+   * @param epsilon Handle numerical stability after weight initialization.
+   */
   template<typename MatType>
   MatType Generate(const size_t numObjectives,
                    const size_t numPoints,
