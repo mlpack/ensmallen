@@ -411,7 +411,7 @@ EvaluateObjectives(
     std::tuple<ArbitraryFunctionType...>&,
     std::vector<arma::Col<typename MatType::elem_type> >&)
 {
-// Nothing to do here.
+ // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
