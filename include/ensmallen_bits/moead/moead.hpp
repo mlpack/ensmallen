@@ -21,7 +21,7 @@
 #include "decomposition_policies/weighted_decomposition.hpp"
 #include "decomposition_policies/pbi_decomposition.hpp"
 
-//! Weight Init policies
+//! Weight Init policies.
 #include "weight_init_policies/bbs_init.hpp"
 namespace ens {
 
