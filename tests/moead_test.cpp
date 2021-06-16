@@ -513,19 +513,19 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   const double lowerBound = 0;
   const double upperBound = 1;
 
-   DefaultMOEAD opt(
-        150, // Population size.
-        300,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
+  DefaultMOEAD opt(
+      150, // Population size.
+      300,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
 
   typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
   typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
