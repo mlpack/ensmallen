@@ -36,12 +36,24 @@ namespace ens {
 class PenaltyBoundaryIntersection
 {
  public:
+  /**
+   * Constructor for Penalty Based Boundary Intersection decomposition
+   * policy.
+   * @param theta The penalty value.
+   */
   PenaltyBoundaryIntersection(const double theta = 5) :
       theta(theta)
   {
     /* Nothing to do. */
   }
 
+  /**
+   * Decompose the weight vectors.
+   * @tparam VecType The type of the vector used in the decommposition.
+   * @param weight The weight vector corresponding to a subproblem.
+   * @param idealPoint The reference point in the objective space.
+   * @param candidateFitness The objective vector of the candidate.
+   */
   template<typename VecType>
   typename VecType::elem_type Apply(const VecType& weight,
                                     const VecType& idealPoint,
@@ -52,7 +64,7 @@ class PenaltyBoundaryIntersection
     const VecType referenceDirection = weight / arma::norm(weight, 1);
     //! Distance of F(x) from the idealPoint along the reference direction.
     const ElemType d1 = arma::dot(candidateFitness - idealPoint, referenceDirection);
-    //! Length of projection line of F(x) on the reference direction.
+    //! The perpendicular distance of F(x) from reference direction.
     const ElemType d2 = arma::norm(candidateFitness - (idealPoint + d1 * referenceDirection), 1);
 
     return d1 + static_cast<ElemType>(theta) * d2;

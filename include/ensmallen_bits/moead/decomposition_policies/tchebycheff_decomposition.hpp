@@ -25,7 +25,7 @@ namespace ens {
  *
  * For more information, see the following:
  * @code
- *   article{zhang2007moea,
+ * article{zhang2007moea,
  *   title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
  *   author={Zhang, Qingfu and Li, Hui},
  *   journal={IEEE Transactions on evolutionary computation},
@@ -36,11 +36,21 @@ namespace ens {
 class Tchebycheff
 {
  public:
+  /**
+   * Constructor for Tchebycheff decomposition policy
+   */
   Tchebycheff()
   {
     /* Nothing to do. */
   }
 
+  /**
+   * Decompose the weight vectors.
+   * @tparam VecType The type of the vector used in the decommposition.
+   * @param weight The weight vector corresponding to a subproblem.
+   * @param idealPoint The reference point in the objective space.
+   * @param candidateFitness The objective vector of the candidate.
+   */
   template<typename VecType>
   typename VecType::elem_type Apply(const VecType& weight,
                                     const VecType& idealPoint,
