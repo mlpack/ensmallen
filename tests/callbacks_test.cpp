@@ -406,7 +406,7 @@ TEST_CASE("MOEADCallbacksFullFunctionTest", "[CallbackTest]")
 {
   arma::vec lowerBound = {-1000};
   arma::vec upperBound = {1000};
-  MOEAD<> optimizer(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
+  DefaultMOEAD optimizer(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
   CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
       true, true, false, false, false, true);
 }

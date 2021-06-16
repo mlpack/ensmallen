@@ -325,6 +325,7 @@ class MOEAD {
   DecompPolicyType decompPolicy;
 };
 
+using DefaultMOEAD = MOEAD<BayesianBootstrap, Tchebycheff>;
 } // namespace ens
 
 // Include implementation.
