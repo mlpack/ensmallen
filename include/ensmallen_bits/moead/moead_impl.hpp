@@ -1,6 +1,5 @@
 /**
  * @file moead_impl.hpp
- * @author Utkarsh Rai
  * @author Nanubala Gnana Sai
  *
  * Implementation of the MOEA/D-DE algorithm. Used for multi-objective
