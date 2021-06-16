@@ -19,7 +19,6 @@ namespace ens {
  * distribution followed by sorting and finding adjacent difference. This gives you a list of 
  * numbers which is guaranteed to sum up to 1.
  *
- * See this link for more: https://cs.stackexchange.com/a/3229
  * @code
  * @article{rubin1981bayesian,
  *   title={The bayesian bootstrap},
