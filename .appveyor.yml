@@ -2,7 +2,6 @@ environment:
   ARMADILLO_DOWNLOAD: "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
   BLAS_LIBRARY: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a"
   BLAS_LIBRARY_DLL: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll"
-  APPVEYOR_RDP_PASSWORD: ASDzxc123!
 
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -17,7 +16,7 @@ environment:
       VSVER: Visual Studio 16 2019
       MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
 
-configuration: Debug
+configuration: Release
 
 install:
   - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
@@ -34,10 +33,10 @@ build_script:
     -DLAPACK_LIBRARY:FILEPATH=%BLAS_LIBRARY%
     -DCMAKE_PREFIX:FILEPATH="%APPVEYOR_BUILD_FOLDER%/armadillo"
     -DBUILD_SHARED_LIBS=OFF
-    -DCMAKE_BUILD_TYPE=Debug ..
+    -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "armadillo.sln"
-    /m /verbosity:quiet /p:Configuration=Debug;Platform=x64
+    /m /verbosity:quiet /p:Configuration=Release;Platform=x64
   - cd ../..
 
   # Now build ensmallen.
@@ -48,14 +47,11 @@ build_script:
     -DARMADILLO_LIBRARIES=%BLAS_LIBRARY%
     -DLAPACK_LIBRARY=%BLAS_LIBRARY%
     -DBLAS_LIBRARY=%BLAS_LIBRARY%
-    -DCMAKE_BUILD_TYPE=Debug ..
-  # - >
-    # "%MSBUILD%" "ensmallen.sln"
-    # /m /verbosity:minimal /nologo /p:BuildInParallel=true
+    -DCMAKE_BUILD_TYPE=Release ..
+  - >
+    "%MSBUILD%" "ensmallen.sln"
+    /m /verbosity:minimal /nologo /p:BuildInParallel=true
 
   # Run tests after copying libraries.
-# - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
-#  - ctest -C Release -V --output-on-failure .
-
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\
+  - ctest -C Release -V --output-on-failure .
