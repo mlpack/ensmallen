@@ -29,7 +29,7 @@ using namespace std;
 template<typename ElemType>
 bool IsInBounds(const ElemType& value, const ElemType& low, const ElemType& high)
 {
-  ElemType roundoff = 1e-4;
+  ElemType roundoff = 0.1;
   return !(value < (low - roundoff)) && !((high + roundoff) < value);
 }
 
