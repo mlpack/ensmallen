@@ -1595,8 +1595,10 @@ The following types are available:
 
 For convenience the following types can be used:
 
- * **`DefaultMOEAD`** (equivalent to `MOEAD<Uniform, Tchebycheff>`): utilizes Uniform method for weight iniitialization
+ * **`DefaultMOEAD`** (equivalent to `MOEAD<Uniform, Tchebycheff>`): utilizes Uniform method for weight initialization
  and Tchebycheff for weight decomposition.
+
+ * **`BBSMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes Bayesian Bootstrap method for weight initialization and Tchebycheff for weight decomposition.
 
 #### Attributes
 
