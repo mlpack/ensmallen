@@ -149,8 +149,8 @@ class Uniform
 
       if (point.size() + 1 == numObjectives)
       {
-        point.insert_rows(point.n_rows,
-            RowType(1).fill(delta * static_cast<ElemType>(beta)));
+        point.insert_rows(point.n_rows, RowType(1).fill(
+            delta * static_cast<ElemType>(beta)));
         weights.col(counter) = point + epsilon;
         ++counter;
       }
@@ -160,8 +160,8 @@ class Uniform
         for (size_t i = 0; i <= beta; ++i)
         {
           MatType pointClone(point);
-          pointClone.insert_rows(pointClone.n_rows,
-              RowType(1).fill(delta * static_cast<ElemType>(i)));
+          pointClone.insert_rows(pointClone.n_rows, RowType(1).fill(
+              delta * static_cast<ElemType>(i)));
           progressStack.push_back({pointClone, beta - i});
         }
       }
