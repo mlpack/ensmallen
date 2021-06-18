@@ -169,7 +169,6 @@ class Uniform
     }
   }
 
-
   /**
    * Generates the weight matrix after verifying the
    * validity of the parameters.
