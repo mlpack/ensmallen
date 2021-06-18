@@ -14,16 +14,43 @@
 
 namespace ens {
 
+/**
+ * The Uniform (Das Dennis) method for initializing weights. This algorithm guarantees
+ * that the distance between adjacent points would be uniform.
+ *
+ * For more information, see the following:
+ * @code
+ * article{zhang2007moea,
+ *   title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
+ *   author={Zhang, Qingfu and Li, Hui},
+ *   journal={IEEE Transactions on evolutionary computation},
+ *   pages={712--731},
+ *   year={2007}
+ * @endcode
+ */
 class Uniform
 {
  public:
+  /**
+   * Constructor for Uniform Weight Initializatoin Policy.
+   */
   Uniform()
   {
     /* Nothing to do. */
   }
 
+  /**
+   * Generate the reference direction matrix.
+   *
+   * @tparam MatType The type of the matrix used for constructing weights.
+   * @param numObjectives The dimensionality of objective space.
+   * @param numPoints The number of reference directions requested.
+   * @param epsilon Handle numerical stability after weight initialization.
+   */
   template<typename MatType>
-  MatType Generate(size_t numObjectives, size_t numPoints, double epsilon)
+  MatType Generate(size_t numObjectives,
+                   size_t numPoints,
+                   double epsilon)
   {
     size_t numPartitions  = FindNumParitions(numObjectives, numPoints);
     size_t validNumPoints = FindNumUniformPoints(numObjectives, numPartitions);
@@ -47,18 +74,30 @@ class Uniform
 
  private:
   /**
-   * Finds the number of points which can be sampled from the unit 
-   * simplex given the number of partitions.
+   * Finds the number of points which can be sampled uniformly from a 
+   * unit simplex given the number of partitions.
    */
   size_t FindNumUniformPoints(size_t numObjectives, size_t numPartitions)
   {
+    //! O(N) algorithm to calculate binomial coefficient.
     auto BinomialCoefficient =
-        [](size_t n, size_t k) -> double
+        [](size_t n, size_t k) -> size_t
         {
-          return std::tgamma(n + 1) / (std::tgamma(k + 1) * std::tgamma(n - k + 1));
+          size_t retval = 1;
+          // Since, C(n, k) = C(n, n - k).
+          if (k > n - k)
+            k = n - k;
+
+          // [n * (n - 1) * .... * (n - k + 1)] / [k * (k - 1) * .... * 1].
+          for (size_t i = 0; i < k; ++i)
+          {
+            retval *= (n - i);
+            retval /= (i + 1);
+          }
+
+          return retval;
         };
-    return static_cast<size_t>(BinomialCoefficient(
-        numObjectives + numPartitions - 1, numPartitions));
+    return BinomialCoefficient(numObjectives + numPartitions - 1, numPartitions);
   }
 
   /**
@@ -83,6 +122,9 @@ class Uniform
     return numPartitions - 1;
   }
 
+  /**
+   * A helper function for DasDennis
+   */
   template<typename AuxInfoStackType,
            typename MatType>
   void DasDennisHelper(AuxInfoStackType& progressStack,
@@ -124,16 +166,20 @@ class Uniform
         }
       }
     }
-  }
 
+
+  /**
+   * Generates the weight matrix after verifying the
+   * validity of the parameters.
+   */
   template <typename MatType>
   MatType DasDennis(const size_t numObjectives,
                     const size_t numPoints,
                     const size_t numPartitions,
                     const double epsilon)
   {
-    //! Holds auxillary information required for the recursion step. 
-    //! More specifically, holds the current point and beta value.
+    //! Holds auxillary information required for the helper function. 
+    //! Holds the current point and beta value.
     using AuxContainer = std::pair<MatType, size_t>;
 
     std::vector<AuxContainer> progressStack{};
