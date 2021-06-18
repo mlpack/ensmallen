@@ -140,7 +140,7 @@ class Uniform
     size_t counter = 0;
     const ElemType delta = 1.0 / (ElemType)numPartitions;
 
-    while (counter < numPoints and not progressStack.empty())
+    while (counter < numPoints && !progressStack.empty())
     {
       MatType point{};
       size_t beta{};
