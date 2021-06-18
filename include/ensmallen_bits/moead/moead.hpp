@@ -327,6 +327,7 @@ class MOEAD {
 };
 
 using DefaultMOEAD = MOEAD<BayesianBootstrap, Tchebycheff>;
+using DirichletMOEAD = MOEAD<Dirichlet, Tchebycheff>;
 } // namespace ens
 
 // Include implementation.
