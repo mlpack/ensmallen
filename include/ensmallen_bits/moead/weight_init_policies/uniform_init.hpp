@@ -19,6 +19,7 @@ namespace ens {
  * that the distance between adjacent points would be uniform.
  *
  * For more information, see the following:
+ *
  * @code
  * article{zhang2007moea,
  *   title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
