@@ -15,10 +15,9 @@
 namespace ens {
 
 /**
- * The Dirichlet method for initializing weights. Sampling a dirichlet distribution
- * with parameters set to one returns points lying on unit simplex with uniform
- * distribution.
- *
+ * The Dirichlet method for initializing weights. Sampling a 
+ * Dirichlet distribution with parameters set to one returns 
+ * point lying on unit simplex with uniform distribution.
  */
 class Dirichlet
 {

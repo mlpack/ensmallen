@@ -1598,6 +1598,9 @@ For convenience the following types can be used:
  * **`DefaultMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes BayesianBootstrap for weight init
  and Tchebycheff for weight decomposition.
 
+ * **`DirichletMOEAD`** (equivalent to `MOEAD<Dirichlet, Tchebycheff>`): utilizes Dirichlet sampling for weight init
+ and Tchebycheff for weight decomposition.
+
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
