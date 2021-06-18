@@ -1,6 +1,5 @@
 /**
  * @file moead_impl.hpp
- * @author Utkarsh Rai
  * @author Nanubala Gnana Sai
  *
  * Implementation of the MOEA/D-DE algorithm. Used for multi-objective
@@ -19,18 +18,21 @@
 #include <assert.h>
 
 namespace ens {
-
-inline MOEAD::MOEAD(const size_t populationSize,
-                    const size_t maxGenerations,
-                    const double crossoverProb,
-                    const double neighborProb,
-                    const size_t neighborSize,
-                    const double distributionIndex,
-                    const double differentialWeight,
-                    const size_t maxReplace,
-                    const double epsilon,
-                    const arma::vec& lowerBound,
-                    const arma::vec& upperBound) :
+template <typename InitPolicyType, typename DecompPolicyType>
+inline MOEAD<InitPolicyType, DecompPolicyType>::
+MOEAD(const size_t populationSize,
+      const size_t maxGenerations,
+      const double crossoverProb,
+      const double neighborProb,
+      const size_t neighborSize,
+      const double distributionIndex,
+      const double differentialWeight,
+      const size_t maxReplace,
+      const double epsilon,
+      const arma::vec& lowerBound,
+      const arma::vec& upperBound,
+      const InitPolicyType initPolicy,
+      const DecompPolicyType decompPolicy) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -41,20 +43,26 @@ inline MOEAD::MOEAD(const size_t populationSize,
     maxReplace(maxReplace),
     epsilon(epsilon),
     lowerBound(lowerBound),
-    upperBound(upperBound)
+    upperBound(upperBound),
+    initPolicy(initPolicy),
+    decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
 
-inline MOEAD::MOEAD(const size_t populationSize,
-                    const size_t maxGenerations,
-                    const double crossoverProb,
-                    const double neighborProb,
-                    const size_t neighborSize,
-                    const double distributionIndex,
-                    const double differentialWeight,
-                    const size_t maxReplace,
-                    const double epsilon,
-                    const double lowerBound,
-                    const double upperBound) :
+template <typename InitPolicyType, typename DecompPolicyType>
+inline MOEAD<InitPolicyType, DecompPolicyType>::
+MOEAD(const size_t populationSize,
+      const size_t maxGenerations,
+      const double crossoverProb,
+      const double neighborProb,
+      const size_t neighborSize,
+      const double distributionIndex,
+      const double differentialWeight,
+      const size_t maxReplace,
+      const double epsilon,
+      const double lowerBound,
+      const double upperBound,
+      const InitPolicyType initPolicy,
+      const DecompPolicyType decompPolicy) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -65,16 +73,20 @@ inline MOEAD::MOEAD(const size_t populationSize,
     maxReplace(maxReplace),
     epsilon(epsilon),
     lowerBound(lowerBound * arma::ones(1, 1)),
-    upperBound(upperBound * arma::ones(1, 1))
+    upperBound(upperBound * arma::ones(1, 1)),
+    initPolicy(initPolicy),
+    decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
 
 //! Optimize the function.
+template <typename InitPolicyType, typename DecompPolicyType>
 template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                            MatType& iterateIn,
-                                            CallbackTypes&&... callbacks)
+typename MatType::elem_type MOEAD<InitPolicyType, DecompPolicyType>::
+Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
+         MatType& iterateIn,
+         CallbackTypes&&... callbacks)
 {
   // Population Size must be at least 3 for MOEA/D-DE to work.
   if (populationSize < 3)
@@ -136,8 +148,8 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   bool terminate = false;
 
   // The weight matrix. Each vector represents a decomposition subproblem (M X N).
-  const BaseMatType weights = BaseMatType(numObjectives, populationSize,
-      arma::fill::randu) + epsilon;
+  const BaseMatType weights = initPolicy.template Generate<BaseMatType>(
+      numObjectives, populationSize, epsilon);
 
   // 1.1 Storing the indices of nearest neighbors of each weight vector.
   arma::umat neighborIndices(neighborSize, populationSize);
@@ -155,7 +167,7 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
   std::vector<BaseMatType> population(populationSize);
   for (BaseMatType& individual : population)
   {
-  	individual = arma::randu<BaseMatType>(
+    individual = arma::randu<BaseMatType>(
         iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
     // Constrain all genes to be within bounds.
@@ -256,10 +268,10 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
         const size_t pick = sampleNeighbor ?
             neighborIndices(idx, subProblemIdx) : idx;
 
-        const ElemType candidateDecomposition = DecomposeObjectives<ElemType>(
-            weights.col(pick), idealPoint, candidateFitness);
-        const ElemType parentDecomposition = DecomposeObjectives<ElemType>(
-            weights.col(pick), idealPoint, populationFitness[pick]);
+        const ElemType candidateDecomposition = decompPolicy.template
+            Apply<arma::Col<ElemType>>(weights.col(pick), idealPoint, candidateFitness);
+        const ElemType parentDecomposition =  decompPolicy.template
+            Apply<arma::Col<ElemType>>(weights.col(pick), idealPoint, populationFitness[pick]);
 
         if (candidateDecomposition < parentDecomposition)
         {
@@ -314,10 +326,12 @@ typename MatType::elem_type MOEAD::Optimize(std::tuple<ArbitraryFunctionType...>
 }
 
 //! Randomly chooses to select from parents or neighbors.
+template <typename InitPolicyType, typename DecompPolicyType>
 inline std::tuple<size_t, size_t>
-MOEAD::Mating(size_t subProblemIdx,
-              const arma::umat& neighborIndices,
-              bool sampleNeighbor)
+MOEAD<InitPolicyType, DecompPolicyType>::
+Mating(size_t subProblemIdx,
+       const arma::umat& neighborIndices,
+       bool sampleNeighbor)
 {
   //! Indexes of two points from the sample space.
   size_t pointA = sampleNeighbor
@@ -344,11 +358,13 @@ MOEAD::Mating(size_t subProblemIdx,
 }
 
 //! Perform Polynomial mutation of the candidate.
+template <typename InitPolicyType, typename DecompPolicyType>
 template<typename MatType>
-inline void MOEAD::Mutate(MatType& candidate,
-                          double mutationRate,
-                          const MatType& lowerBound,
-                          const MatType& upperBound)
+inline void MOEAD<InitPolicyType, DecompPolicyType>::
+Mutate(MatType& candidate,
+       double mutationRate,
+       const MatType& lowerBound,
+       const MatType& upperBound)
 {
     const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
@@ -383,35 +399,29 @@ inline void MOEAD::Mutate(MatType& candidate,
     candidate = arma::min(arma::max(candidate, lowerBound), upperBound);
 }
 
-//! Calculate the output for single objective function using the Tchebycheff
-//! approach.
-template<typename ElemType>
-inline ElemType MOEAD::DecomposeObjectives(const arma::Col<ElemType>& subProblemWeight,
-                                           const arma::Col<ElemType>& idealPoint,
-                                           const arma::Col<ElemType>& candidateFitness)
-{
-  return arma::max(subProblemWeight % arma::abs(candidateFitness - idealPoint));
-}
-
 //! No objectives to evaluate.
+template <typename InitPolicyType, typename DecompPolicyType>
 template<std::size_t I,
          typename MatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-MOEAD::EvaluateObjectives(
+MOEAD<InitPolicyType, DecompPolicyType>::
+EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
     std::vector<arma::Col<typename MatType::elem_type> >&)
 {
-  // Nothing to do here.
+ // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
+template <typename InitPolicyType, typename DecompPolicyType>
 template<std::size_t I,
          typename MatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-MOEAD::EvaluateObjectives(
+MOEAD<InitPolicyType, DecompPolicyType>::
+EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)

@@ -1,13 +1,10 @@
 /**
  * @file moead.hpp
- * @author Utkarsh Rai
  * @author Nanubala Gnana Sai
  *
- * MOEA/D, Multi Objective Evolutionary Algorithm based on Decompositon is a
- * multi objective optimization algorithm. It employs evolutionary algorithms,
- * to find better solutions by iterating on the previous solutions and
- * decomposition approaches, to convert the multi objective problem to a single
- * objective one, to find the best Pareto Front for the given problem.
+ * MOEA/D-DE is a multi objective optimization algorithm. MOEA/D-DE
+ * uses genetic algorithms along with a set of reference directions
+ * to drive the population towards the Optimal Front.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -18,35 +15,38 @@
 #ifndef ENSMALLEN_MOEAD_MOEAD_HPP
 #define ENSMALLEN_MOEAD_MOEAD_HPP
 
+//! Decomposition policies.
+#include "decomposition_policies/tchebycheff_decomposition.hpp"
+#include "decomposition_policies/weighted_decomposition.hpp"
+#include "decomposition_policies/pbi_decomposition.hpp"
+
+//! Weight initialization policies.
+#include "weight_init_policies/bbs_init.hpp"
 namespace ens {
 
 /**
- * This class implements the MOEA/D algorithm with Differential Evolution
- * crossover. Step numbers used in different parts of the implementation
- * correspond to the step number used in the original algorithm by the author.
+ * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon - 
+ * Differential Variant) is a multiobjective optimization algorithm. This class 
+ * implements the said optimizer. 
+ *
+ * The algorithm works by generating a candidate population from a fixed starting point. 
+ * Reference directions are generated to guide the optimization process towards the Pareto Front. 
+ * Further, a decomposition function is defined to decompose the problem to a scalar optimization 
+ * objective. Utilizing genetic operators, offsprings are generated with better decomposition values 
+ * to replace the neighboring parent solutions. 
  *
  * For more information, see the following:
  * @code
- * @article{article,
- * author = {Zhang, Qingfu and Li, Hui},
- * year = {2008},
- * pages = {712 - 731},
- * title = {MOEA/D: A Multiobjective Evolutionary Algorithm Based on
- *    Decomposition},
- * journal = {Evolutionary Computation, IEEE Transactions on},
- *
- * @article{4633340,
- * author={H. {Li} and Q. {Zhang}},
- * year={2009},
- * pages={284-302},}
- * title={Multiobjective Optimization Problems With Complicated Pareto Sets, MOEA/D and NSGA-II},
- * journal={IEEE Transactions on Evolutionary Computation},
+ * @article{li2008multiobjective,
+ *   title={Multiobjective optimization problems with complicated Pareto sets, MOEA/D and NSGA-II},
+ *   author={Li, Hui and Zhang, Qingfu},
+ *   journal={IEEE transactions on evolutionary computation},
+ *   pages={284--302},
+ *   year={2008},
  * @endcode
- *
- * MOEA/D can optimize arbitrary multi-objective functions. For more details,
- * see the documentation on function types included with this distribution or
- * on the ensmallen website.
  */
+template<typename InitPolicyType = BayesianBootstrap,
+         typename DecompPolicyType = Tchebycheff>
 class MOEAD {
  public:
   /**
@@ -82,7 +82,9 @@ class MOEAD {
         const size_t maxReplace = 2,
         const double epsilon = 1E-10,
         const arma::vec& lowerBound = arma::zeros(1, 1),
-        const arma::vec& upperBound = arma::ones(1, 1));
+        const arma::vec& upperBound = arma::ones(1, 1),
+        const InitPolicyType initPolicy = InitPolicyType(),
+        const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Constructor for the MOEA/D optimizer. This constructor is provides an
@@ -119,7 +121,9 @@ class MOEAD {
           const size_t maxReplace = 2,
           const double epsilon = 1E-10,
           const double lowerBound = 0,
-          const double upperBound = 1);
+          const double upperBound = 1,
+          const InitPolicyType initPolicy = InitPolicyType(),
+          const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Optimize a set of objectives. The initial population is generated
@@ -202,6 +206,15 @@ class MOEAD {
   //! `Optimize()` has been called.
   const arma::cube& ParetoFront() const { return paretoFront; }
 
+  //! Get the weight initialization policy.
+  const InitPolicyType& InitPolicy() const { return initPolicy; }
+  //! Modify the weight initialization policy.
+  InitPolicyType& InitPolicy() { return initPolicy; }
+
+  //! Get the weight decomposition policy.
+  const DecompPolicyType& DecompPolicy() const { return decompPolicy; }
+  //! Modify the weight decomposition policy.
+  DecompPolicyType& DecompPolicy() { return decompPolicy; }
 
  private:
   /**
@@ -212,8 +225,8 @@ class MOEAD {
    * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
   std::tuple<size_t, size_t> Mating(size_t subProblemIdx,
-                                     const arma::umat& neighborSize,
-                                     bool sampleNeighbor);
+                                    const arma::umat& neighborSize,
+                                    bool sampleNeighbor);
 
   /**
    * Mutate the child formed by the crossover of two random members of the
@@ -231,19 +244,6 @@ class MOEAD {
               double mutationRate,
               const MatType& lowerBound,
               const MatType& upperBound);
-
-  /**
-   * Decompose the multi objective problem to a single objective problem.
-   *
-   * @param subProblemWeight The Decomposition weight vector of the current subproblem.
-   * @param idealPoint The reference point z for a decomposition problem.
-   * @param candidateFitness The fitness value of the candidate.
-   * @return The real value obtained from the decomposed function.
-   */
-  template<typename ElemType>
-  ElemType DecomposeObjectives(const arma::Col<ElemType>& subProblemWeight,
-                               const arma::Col<ElemType>& idealPoint,
-                               const arma::Col<ElemType>& candidateFitness);
 
   /**
    * Evaluate objectives for the elite population.
@@ -316,8 +316,15 @@ class MOEAD {
   //! The set of all the Pareto optimal objective vectors.
   //! Stored after Optimize() is called.
   arma::cube paretoFront;
+
+  //! Policy to initialize the reference directions (weights) matrix.
+  InitPolicyType initPolicy;
+
+  //! Policy to decompose the weights.
+  DecompPolicyType decompPolicy;
 };
 
+using DefaultMOEAD = MOEAD<BayesianBootstrap, Tchebycheff>;
 } // namespace ens
 
 // Include implementation.

@@ -1573,8 +1573,29 @@ decomposed to form a Single Objective Problem. A diversity preserving mechanism 
 a varied set of solution.
 
 #### Constructors
-* `MOEAD()`
-* `MOEAD(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
+* `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>()`
+* `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
+
+The _`InitPolicyType`_ template parameter refers to the strategy used to
+initialize the reference directions.
+
+The following types are available:
+
+ * **`BayesianBootstrap`**
+
+The _`DecompPolicyType`_ template parameter refers to the strategy used to
+decompose the weight vectors to form a scalar objective function.
+
+The following types are available:
+
+ * **`Tchebycheff`**
+ * **`WeightedAverage`**
+ * **`PenaltyBoundaryIntersection`**
+
+For convenience the following types can be used:
+
+ * **`DefaultMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes BayesianBootstrap for weight init
+ and Tchebycheff for weight decomposition.
 
 #### Attributes
 
@@ -1591,10 +1612,12 @@ a varied set of solution.
 | `double` | **`epsilon`** | Handles numerical stability after weight initialization. | `1E-10`|
 | `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
 | `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
+| `InitPolicyType` | **`initPolicy`** | Instantiated init policy used to initialize weights. | `InitPolicyType()` |
+| `DecompPolicyType` | **`decompPolicy`** | Instantiated decomposition policy used to create scalar objective problem. | `DecompPolicyType()` |
 
 Attributes of the optimizer may also be changed via the member methods
 `PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `NeighborProb()`, `NeighborSize()`, `DistributionIndex()`,
-`DifferentialWeight()`, `MaxReplace()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
+`DifferentialWeight()`, `MaxReplace()`, `Epsilon()`, `LowerBound()`, `UpperBound()`, `InitPolicy()` and `DecompPolicy()`.
 
 #### Examples:
 
@@ -1606,7 +1629,7 @@ Attributes of the optimizer may also be changed via the member methods
 SchafferFunctionN1<arma::mat> SCH;
 arma::vec lowerBound("-10 -10");
 arma::vec upperBound("10 10");
-MOEAD opt(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
+DefaultMOEAD opt(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
