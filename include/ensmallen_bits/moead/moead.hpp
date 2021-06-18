@@ -22,6 +22,8 @@
 
 //! Weight initialization policies.
 #include "weight_init_policies/bbs_init.hpp"
+#include "weight_init_policies/dirichlet_init.hpp"
+
 namespace ens {
 
 /**
