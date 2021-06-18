@@ -78,7 +78,8 @@ class Uniform
    * Finds the number of points which can be sampled uniformly from a 
    * unit simplex given the number of partitions.
    */
-  size_t FindNumUniformPoints(size_t numObjectives, size_t numPartitions)
+  size_t FindNumUniformPoints(const size_t numObjectives,
+                              const size_t numPartitions)
   {
     //! O(N) algorithm to calculate binomial coefficient.
     auto BinomialCoefficient =
