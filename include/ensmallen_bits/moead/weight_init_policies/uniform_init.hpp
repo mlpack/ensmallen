@@ -166,6 +166,7 @@ class Uniform
         }
       }
     }
+  }
 
 
   /**
