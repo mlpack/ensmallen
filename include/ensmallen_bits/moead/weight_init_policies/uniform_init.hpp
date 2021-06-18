@@ -2,7 +2,7 @@
  * @file uniform_init.hpp
  * @author Nanubala Gnana Sai
  *
- * The Uniform(Das Dennis) methodology of Weight Initialization.
+ * The Uniform (Das Dennis) methodology of Weight Initialization.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -19,6 +19,7 @@ namespace ens {
  * that the distance between adjacent points would be uniform.
  *
  * For more information, see the following:
+ *
  * @code
  * article{zhang2007moea,
  *   title={MOEA/D: A multiobjective evolutionary algorithm based on decomposition},
@@ -77,7 +78,8 @@ class Uniform
    * Finds the number of points which can be sampled uniformly from a 
    * unit simplex given the number of partitions.
    */
-  size_t FindNumUniformPoints(size_t numObjectives, size_t numPartitions)
+  size_t FindNumUniformPoints(const size_t numObjectives,
+                              const size_t numPartitions)
   {
     //! O(N) algorithm to calculate binomial coefficient.
     auto BinomialCoefficient =
@@ -167,7 +169,6 @@ class Uniform
       }
     }
   }
-
 
   /**
    * Generates the weight matrix after verifying the
