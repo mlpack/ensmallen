@@ -1582,6 +1582,7 @@ initialize the reference directions.
 The following types are available:
 
  * **`BayesianBootstrap`**
+ * **`Dirichlet`**
 
 The _`DecompPolicyType`_ template parameter refers to the strategy used to
 decompose the weight vectors to form a scalar objective function.
