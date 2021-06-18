@@ -2,7 +2,7 @@
  * @file uniform_init.hpp
  * @author Nanubala Gnana Sai
  *
- * The Uniform(Das Dennis) methodology of Weight Initialization.
+ * The Uniform (Das Dennis) methodology of Weight Initialization.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
