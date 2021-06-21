@@ -63,8 +63,8 @@ class Uniform
       std::ostringstream oss;
       oss << "DasDennis::Generate(): " << "The requested numPoints " << numPoints
           << " cannot be generated uniformly.\n " << "Either choose numPoints as "
-          << validNumPoints << "(numPartition = " << numPartitions << ") or "
-          << "numPoints as " << nextValidNumPoints << "(numPartition = "
+          << validNumPoints << " (numPartition = " << numPartitions << ") or "
+          << "numPoints as " << nextValidNumPoints << " (numPartition = "
           << numPartitions + 1 << ").";
       throw std::logic_error(oss.str());
     }
