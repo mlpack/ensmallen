@@ -120,7 +120,7 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
-        arma::Col<ElemType> truncatedCoords = coords(arma::span(1, numVariables - 1));
+        MatType truncatedCoords = coords(arma::span(1, numVariables - 1), 0);
         ElemType sum = arma::accu(arma::square(truncatedCoords) -
             10. * arma::cos(4 * arma::datum::pi * truncatedCoords));
         ElemType g = 1. + 10 * static_cast<ElemType>(numVariables - 1) + sum;
