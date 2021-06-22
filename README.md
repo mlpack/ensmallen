@@ -40,13 +40,18 @@ sudo make install
 ### Testing
 
 If you would like to run the tests, once you have checked out the repository you
-can follow the steps below:
+can follow the steps below to build the tests:
 
 ```
 mkdir build
 cd build
 cmake ..
 make ensmallen_tests
+```
+
+Then, you can run the tests with CTest:
+
+```
 ctest .
 ```
 
