@@ -37,6 +37,9 @@
  * Introduce Policy Methods for MOEA/D-DE
    ([#293](https://github.com/mlpack/ensmallen/pull/293)).
 
+ * ZDT4 Evaluate Fix
+   ([#298](https://github.com/mlpack/ensmallen/pull/298)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set
