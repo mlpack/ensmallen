@@ -1,23 +1,5 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
- * Add instructions to the README for how to run tests
-   ([#297](https://github.com/mlpack/ensmallen/297)).
-
-### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
-###### 2021-03-24
- * Fix CNE test trials
-   ([#267](https://github.com/mlpack/ensmallen/pull/267)).
-
- * Update Catch2 to 2.13.4
-   ([#268](https://github.com/mlpack/ensmallen/pull/268)).
-
- * Fix typos in documentation
-   ([#270](https://github.com/mlpack/ensmallen/pull/270),
-    [#271](https://github.com/mlpack/ensmallen/pull/271)).
-
- * Add clarifying comments in problems/ implementations
-   ([#276](https://github.com/mlpack/ensmallen/pull/276)).
-
  * CheckArbitraryFunctionTypeAPI extended for MOO support
    ([#283](https://github.com/mlpack/ensmallen/pull/283)).
 
@@ -38,6 +20,24 @@
 
  * Introduce Policy Methods for MOEA/D-DE
    ([#293](https://github.com/mlpack/ensmallen/pull/293)).
+
+ * Add instructions to the README for how to run tests
+   ([#297](https://github.com/mlpack/ensmallen/297)).
+
+### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
+###### 2021-03-24
+ * Fix CNE test trials
+   ([#267](https://github.com/mlpack/ensmallen/pull/267)).
+
+ * Update Catch2 to 2.13.4
+   ([#268](https://github.com/mlpack/ensmallen/pull/268)).
+
+ * Fix typos in documentation
+   ([#270](https://github.com/mlpack/ensmallen/pull/270),
+    [#271](https://github.com/mlpack/ensmallen/pull/271)).
+
+ * Add clarifying comments in problems/ implementations
+   ([#276](https://github.com/mlpack/ensmallen/pull/276)).
 
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
