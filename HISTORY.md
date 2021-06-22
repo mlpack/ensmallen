@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Add instructions to the README for how to run tests
+   ([#297](https://github.com/mlpack/ensmallen/297)).
 
 ### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-24

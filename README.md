@@ -37,6 +37,20 @@ cmake ..
 sudo make install
 ```
 
+### Testing
+
+If you would like to run the tests, once you have checked out the repository you
+can follow the steps below:
+
+```
+mkdir build
+cd build
+cmake ..
+make ensmallen_tests
+ctest .
+```
+
+All of the tests are in the `tests/` subdirectory.
 
 ### Example Usage
 
