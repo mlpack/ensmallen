@@ -312,6 +312,9 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         arma::conv_to<arma::mat>::from(populationFitness[solutionIdx]);
   }
 
+  // Assign iterate to first element of the Pareto Set.
+  iterate = population[0];
+
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
   ElemType performance = std::numeric_limits<ElemType>::max();
