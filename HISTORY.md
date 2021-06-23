@@ -39,6 +39,10 @@
 
  * Add Das-Dennis weight initialization method
    ([#295](https://github.com/mlpack/ensmallen/pull/295)).
+   
+ * Add Dirichlet Weight Initialization
+   ([#296](https://github.com/mlpack/ensmallen/pull/296)).
+
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02
  * Fix test compilation issue when `ENS_USE_OPENMP` is set

@@ -1583,6 +1583,7 @@ The following types are available:
 
  * **`Uniform`**
  * **`BayesianBootstrap`**
+ * **`Dirichlet`**
 
 The _`DecompPolicyType`_ template parameter refers to the strategy used to
 decompose the weight vectors to form a scalar objective function.
@@ -1597,8 +1598,11 @@ For convenience the following types can be used:
 
  * **`DefaultMOEAD`** (equivalent to `MOEAD<Uniform, Tchebycheff>`): utilizes Uniform method for weight initialization
  and Tchebycheff for weight decomposition.
-
+ 
  * **`BBSMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes Bayesian Bootstrap method for weight initialization and Tchebycheff for weight decomposition.
+ 
+ * **`DirichletMOEAD`** (equivalent to `MOEAD<Dirichlet, Tchebycheff>`): utilizes Dirichlet sampling for weight init
+ and Tchebycheff for weight decomposition.
 
 #### Attributes
 
