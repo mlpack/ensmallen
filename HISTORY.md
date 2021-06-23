@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Improved installation and compilation instructions
+   ([#300](https://github.com/mlpack/ensmallen/pull/300)).
 
 ### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-24
