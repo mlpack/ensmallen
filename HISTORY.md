@@ -37,6 +37,9 @@
  * Introduce Policy Methods for MOEA/D-DE
    ([#293](https://github.com/mlpack/ensmallen/pull/293)).
 
+ * Add Das-Dennis weight initialization method
+   ([#295](https://github.com/mlpack/ensmallen/pull/295)).
+   
  * Add Dirichlet Weight Initialization
    ([#296](https://github.com/mlpack/ensmallen/pull/296)).
 
