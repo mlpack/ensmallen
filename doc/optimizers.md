@@ -1581,6 +1581,7 @@ initialize the reference directions.
 
 The following types are available:
 
+ * **`Uniform`**
  * **`BayesianBootstrap`**
  * **`Dirichlet`**
 
@@ -1595,11 +1596,13 @@ The following types are available:
 
 For convenience the following types can be used:
 
- * **`DefaultMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes BayesianBootstrap for weight init
+ * **`DefaultMOEAD`** (equivalent to `MOEAD<Uniform, Tchebycheff>`): utilizes Uniform method for weight initialization
  and Tchebycheff for weight decomposition.
 
  * **`DirichletMOEAD`** (equivalent to `MOEAD<Dirichlet, Tchebycheff>`): utilizes Dirichlet sampling for weight init
  and Tchebycheff for weight decomposition.
+ 
+ * **`BBSMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes Bayesian Bootstrap method for weight initialization and Tchebycheff for weight decomposition.
 
 #### Attributes
 
@@ -1633,7 +1636,7 @@ Attributes of the optimizer may also be changed via the member methods
 SchafferFunctionN1<arma::mat> SCH;
 arma::vec lowerBound("-10 -10");
 arma::vec upperBound("10 10");
-DefaultMOEAD opt(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
+DefaultMOEAD opt(300, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
