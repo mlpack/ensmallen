@@ -46,7 +46,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -108,7 +108,7 @@ TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -168,7 +168,7 @@ TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -223,7 +223,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -278,7 +278,7 @@ TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -340,7 +340,7 @@ TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -400,7 +400,7 @@ TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
   const float expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -455,7 +455,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
   const float expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -499,8 +499,8 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
 
 /**
  * Test against the first problem of ZDT Test Suite.  ZDT-1 is a 30 
- * variable-2 objective problem with a convex Pareto Front.
- * 
+ * variable-2 objective problem with a convex Pareto Front. 
+ *
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
  */
@@ -512,8 +512,8 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   const double upperBound = 1;
 
   DefaultMOEAD opt(
-      150, // Population size.
-      300,  // Max generations.
+      300, // Population size.
+      150,  // Max generations.
       1.0,  // Crossover probability.
       0.9, // Probability of sampling from neighbor.
       20, // Neighborhood size.
@@ -538,6 +538,5 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   size_t numVariables = coords.size();
   double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
   double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
-
   REQUIRE(g == Approx(1.0).margin(0.99));
 }
