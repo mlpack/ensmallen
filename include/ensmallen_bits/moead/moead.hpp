@@ -21,8 +21,9 @@
 #include "decomposition_policies/pbi_decomposition.hpp"
 
 //! Weight initialization policies.
-#include "weight_init_policies/bbs_init.hpp"
 #include "weight_init_policies/uniform_init.hpp"
+#include "weight_init_policies/bbs_init.hpp"
+#include "weight_init_policies/dirichlet_init.hpp"
 
 namespace ens {
 
@@ -328,6 +329,7 @@ class MOEAD {
 
 using DefaultMOEAD = MOEAD<Uniform, Tchebycheff>;
 using BBSMOEAD = MOEAD<BayesianBootstrap, Tchebycheff>;
+using DirichletMOEAD = MOEAD<Dirichlet, Tchebycheff>;
 } // namespace ens
 
 // Include implementation.
