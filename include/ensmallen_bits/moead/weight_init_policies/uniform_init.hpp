@@ -82,6 +82,7 @@ class Uniform
                               const size_t numPartitions)
   {
     //! O(N) algorithm to calculate binomial coefficient.
+    //! Source: https://www.geeksforgeeks.org/space-and-time-efficient-binomial-coefficient/
     auto BinomialCoefficient =
         [](size_t n, size_t k) -> size_t
         {
