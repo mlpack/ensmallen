@@ -22,17 +22,14 @@ gradient-free optimizers, and constrained optimization.
 
 ### Installation
 
-ensmallen can be installed in several ways.
+ensmallen can be installed in several ways: automatically or manually, with or without root access.
 
-A straightforward approach is to simply copy the `include/ensmallen.hpp` header ***and*** the associated `include/ensmallen_bits` directory to a location such as `/usr/include/` which is searched by your C++ compiler.
-If you can't use `sudo` or don't have write access to `/usr/include/`, use a directory within your own home directory (eg. `/home/blah/include/`).
-
-Installation can also be done with CMake 3.3+, which will also build the tests.
+Automatic installation is done with CMake 3.3+, which will check the requirements and also build the tests.
 If CMake is not already available on your system, it can be obtained from [cmake.org](https://cmake.org).
 If you are using an older system such as RHEL 7 or CentOS 7,
-an updated version of CMake is also available via the EPEL repository via the `cmake3` package.
+an updated version of CMake is also available via the EPEL repository (see the `cmake3` package).
 
-Example cmake based installation with root access:
+Example automatic installation with root access:
 
 ```
 mkdir build
@@ -41,16 +38,20 @@ cmake ..
 sudo make install
 ```
 
-Example cmake based installation without root access:
+Example automatic installation without root access, installing into `/home/blah/` (adapt as required):
 
 ```
 mkdir build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/home/blah/include/
+cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/home/blah/
 make install
 ```
 
-Change `/home/blah/include/` as required.  
+The above will create a directory named `/home/blah/include/` and place all ensmallen headers there.
+
+
+Manual installation involves simply copying the `include/ensmallen.hpp` header ***and*** the associated `include/ensmallen_bits` directory to a location such as `/usr/include/` which is searched by your C++ compiler.
+If you can't use `sudo` or don't have write access to `/usr/include/`, use a directory within your own home directory (eg. `/home/blah/include/`).
 
 
 ### Example Compilation
