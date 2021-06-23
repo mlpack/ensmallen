@@ -22,14 +22,14 @@ gradient-free optimizers, and constrained optimization.
 
 ### Installation
 
-ensmallen can be installed in several ways: automatically or manually, with or without root access.
+ensmallen can be installed in several ways: either manually or via cmake, with or without root access.
 
-Automatic installation is done with CMake 3.3+, which will check the requirements and also build the tests.
-If CMake is not already available on your system, it can be obtained from [cmake.org](https://cmake.org).
+The cmake based installation will check the requirements and also build the tests.
+If cmake 3.3 (or a later version) is not already available on your system, it can be obtained from [cmake.org](https://cmake.org).
 If you are using an older system such as RHEL 7 or CentOS 7,
-an updated version of CMake is also available via the EPEL repository (see the `cmake3` package).
+an updated version of cmake is also available via the EPEL repository (see the `cmake3` package).
 
-Example automatic installation with root access:
+Example cmake based installation with root access:
 
 ```
 mkdir build
@@ -38,7 +38,7 @@ cmake ..
 sudo make install
 ```
 
-Example automatic installation without root access, installing into `/home/blah/` (adapt as required):
+Example cmake based installation without root access, installing into `/home/blah/` (adapt as required):
 
 ```
 mkdir build
