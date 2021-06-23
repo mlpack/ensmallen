@@ -22,13 +22,17 @@ gradient-free optimizers, and constrained optimization.
 
 ### Installation
 
-ensmallen can be installed with CMake 3.3 or later.
-If CMake is not already available on your system, it can be obtained from https://cmake.org
+ensmallen can be installed in several ways.
 
+A straightforward approach is to simply copy the `include/ensmallen.hpp` header ***and*** the associated `include/ensmallen_bits` directory to a location such as `/usr/include/` which is searched by your C++ compiler.
+If you can't use `sudo` or don't have write access to `/usr/include/`, use a directory within your own home directory (eg. `/home/blah/include/`).
+
+Installation can also be done with CMake 3.3+, which will also build the tests.
+If CMake is not already available on your system, it can be obtained from [cmake.org](https://cmake.org).
 If you are using an older system such as RHEL 7 or CentOS 7,
 an updated version of CMake is also available via the EPEL repository via the `cmake3` package.
 
-Example installation:
+Example cmake based installation with root access:
 
 ```
 mkdir build
@@ -37,8 +41,30 @@ cmake ..
 sudo make install
 ```
 
+Example cmake based installation without root access:
 
-### Example Usage
+```
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/home/blah/include/
+make install
+```
+
+Change `/home/blah/include/` as required.  
+
+
+### Example Compilation
+
+If you have installed ensmallen in a standard location such as `/usr/include/`:
+
+    g++ prog.cpp -o prog -O2 -larmadillo
+    
+If you have installed ensmallen in a non-standard location, such as `/home/blah/include/`, you will need to make sure that your C++ compiler searches `/home/blah/include/` by explicitly specifying the directory as an argument/option. For example, using the `-I` switch in gcc and clang:
+
+    g++ prog.cpp -o prog -O2 -I /home/blah/include/ -larmadillo
+
+
+### Example Optimization
 
 See [`example.cpp`](example.cpp) for example usage of the L-BFGS optimizer in a linear regression setting.
 
@@ -48,7 +74,7 @@ See [`example.cpp`](example.cpp) for example usage of the L-BFGS optimizer in a 
 Unless stated otherwise, the source code for **ensmallen** is licensed under the
 3-clause BSD license (the "License").  A copy of the License is included in the
 "LICENSE.txt" file.  You may also obtain a copy of the License at
-http://opensource.org/licenses/BSD-3-Clause .
+http://opensource.org/licenses/BSD-3-Clause
 
 
 ### Citation
