@@ -22,14 +22,17 @@ using namespace std;
  * @param value The value being checked.
  * @param low The lower bound.
  * @param high The upper bound.
+ * @param roundoff To round off precision.
  * @tparam The type of elements in the population set.
  * @return true if value lies in the range [low, high].
  * @return false if value does not lie in the range [low, high].
  */
 template<typename ElemType>
-bool IsInBounds(const ElemType& value, const ElemType& low, const ElemType& high)
+bool IsInBounds(const ElemType& value,
+                const ElemType& low,
+                const ElemType& high,
+                const ElemType& roundoff)
 {
-  ElemType roundoff = 0.1;
   return !(value < (low - roundoff)) && !((high + roundoff) < value);
 }
 
@@ -46,7 +49,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -77,7 +80,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
       double val = arma::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.1))
       {
         allInRange = false;
         break;
@@ -108,7 +111,7 @@ TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -138,7 +141,7 @@ TEST_CASE("MOEADSchafferN1TestVectorDoubleBounds", "[MOEADTest]")
     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
       double val = arma::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound))
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.1))
       {
         allInRange = false;
         break;
@@ -168,7 +171,7 @@ TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -198,9 +201,9 @@ TEST_CASE("MOEADFonsecaFlemingDoubleTest", "[MOEADTest]")
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound))
+    if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound, 0.1))
     {
       allInRange = false;
       break;
@@ -223,7 +226,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
   const double expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -253,9 +256,9 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorDoubleBounds", "[MOEADTest]")
     double valY = arma::as_scalar(solution(1));
     double valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound))
+    if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound, 0.1))
     {
       allInRange = false;
       break;
@@ -278,7 +281,7 @@ TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -309,7 +312,7 @@ TEST_CASE("MOEADSchafferN1FloatTest", "[MOEADTest]")
     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
       float val = arma::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
+      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound, 0.1))
       {
         allInRange = false;
         break;
@@ -340,7 +343,7 @@ TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
   const double expectedUpperBound = 2.0;
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300, // Population size.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -370,7 +373,7 @@ TEST_CASE("MOEADSchafferN1TestVectorFloatBounds", "[MOEADTest]")
     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
     {
       float val = arma::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound))
+      if (!IsInBounds<float>(val, expectedLowerBound, expectedUpperBound, 0.1))
       {
         allInRange = false;
         break;
@@ -400,7 +403,7 @@ TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
   const float expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -430,9 +433,9 @@ TEST_CASE("MOEADFonsecaFlemingFloatTest", "[MOEADTest]")
     float valY = arma::as_scalar(solution(1));
     float valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound))
+    if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound, 0.1))
     {
       allInRange = false;
       break;
@@ -455,7 +458,7 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
   const float expectedUpperBound = 1.0 / sqrt(3);
 
   DefaultMOEAD opt(
-        150, // Population size.
+        300,  // Max generations.
         300,  // Max generations.
         1.0,  // Crossover probability.
         0.9, // Probability of sampling from neighbor.
@@ -485,9 +488,9 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
     float valY = arma::as_scalar(solution(1));
     float valZ = arma::as_scalar(solution(2));
 
-    if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound) ||
-        !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound))
+    if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound, 0.1) ||
+        !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound, 0.1))
     {
       allInRange = false;
       break;
@@ -499,8 +502,8 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
 
 /**
  * Test against the first problem of ZDT Test Suite.  ZDT-1 is a 30 
- * variable-2 objective problem with a convex Pareto Front.
- * 
+ * variable-2 objective problem with a convex Pareto Front. 
+ *
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
  */
@@ -512,8 +515,8 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   const double upperBound = 1;
 
   DefaultMOEAD opt(
-      150, // Population size.
-      300,  // Max generations.
+      300, // Population size.
+      150,  // Max generations.
       1.0,  // Crossover probability.
       0.9, // Probability of sampling from neighbor.
       20, // Neighborhood size.
@@ -538,6 +541,78 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   size_t numVariables = coords.size();
   double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
   double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
-
   REQUIRE(g == Approx(1.0).margin(0.99));
+}
+
+/**
+ * Check if the final population lies in the optimal region in variable space.
+ *
+ * @param paretoSet The final population in variable space.
+ */
+bool VariableBoundsCheck(const arma::cube& paretoSet)
+{
+  bool inBounds = true;
+  const arma::mat regions{
+    {0.0, 0.182228780, 0.4093136748,
+      0.6183967944, 0.8233317983},
+    {0.0830015349, 0.2577623634, 0.4538821041,
+      0.6525117038, 0.8518328654}
+  };
+
+  for (size_t pointIdx = 0; pointIdx < paretoSet.n_slices; ++pointIdx)
+  {
+    const arma::mat& point = paretoSet.slice(pointIdx);
+    const double firstVariable = point(0, 0);
+
+    const bool notInRegion0 = !IsInBounds<double>(firstVariable, regions(0, 0), regions(1, 0), 1e-2);
+    const bool notInRegion1 = !IsInBounds<double>(firstVariable, regions(0, 1), regions(1, 1), 1e-2);
+    const bool notInRegion2 = !IsInBounds<double>(firstVariable, regions(0, 2), regions(1, 2), 1e-2);
+    const bool notInRegion3 = !IsInBounds<double>(firstVariable, regions(0, 3), regions(1, 3), 1e-2);
+    const bool notInRegion4 = !IsInBounds<double>(firstVariable, regions(0, 4), regions(1, 4), 1e-2);
+
+    if (notInRegion0 && notInRegion1 && notInRegion2 && notInRegion3 && notInRegion4)
+    {
+      inBounds = false;
+      break;
+    }
+  }
+
+  return inBounds;
+}
+
+/**
+ * Test DirichletMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a 30 
+ * variable-2 objective problem with disconnected Pareto Fronts. 
+ */
+TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEADTest]")
+{
+  //! Parameters taken from original ZDT Paper.
+  ZDT3<> ZDT_THREE(300);
+  const double lowerBound = 0;
+  const double upperBound = 1;
+
+  DirichletMOEAD opt(
+      300, // Population size.
+      300,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
+
+  typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+
+  arma::mat coords = ZDT_THREE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+
+  const arma::cube& finalPopulation = opt.ParetoSet();
+  REQUIRE(VariableBoundsCheck(finalPopulation));
 }
