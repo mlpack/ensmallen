@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Improved installation and compilation instructions
+   ([#300](https://github.com/mlpack/ensmallen/pull/300)).
+
  * CheckArbitraryFunctionTypeAPI extended for MOO support
    ([#283](https://github.com/mlpack/ensmallen/pull/283)).
 
