@@ -21,7 +21,10 @@
 #include "decomposition_policies/pbi_decomposition.hpp"
 
 //! Weight initialization policies.
+#include "weight_init_policies/uniform_init.hpp"
 #include "weight_init_policies/bbs_init.hpp"
+#include "weight_init_policies/dirichlet_init.hpp"
+
 namespace ens {
 
 /**
@@ -45,7 +48,7 @@ namespace ens {
  *   year={2008},
  * @endcode
  */
-template<typename InitPolicyType = BayesianBootstrap,
+template<typename InitPolicyType = Uniform,
          typename DecompPolicyType = Tchebycheff>
 class MOEAD {
  public:
@@ -72,8 +75,8 @@ class MOEAD {
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-  MOEAD(const size_t populationSize = 150,
-        const size_t maxGenerations = 300,
+  MOEAD(const size_t populationSize = 300,
+        const size_t maxGenerations = 500,
         const double crossoverProb = 1.0,
         const double neighborProb = 0.9,
         const size_t neighborSize = 20,
@@ -111,8 +114,8 @@ class MOEAD {
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-    MOEAD(const size_t populationSize = 150,
-          const size_t maxGenerations = 300,
+    MOEAD(const size_t populationSize = 300,
+          const size_t maxGenerations = 500,
           const double crossoverProb = 1.0,
           const double neighborProb = 0.9,
           const size_t neighborSize = 20,
@@ -324,7 +327,9 @@ class MOEAD {
   DecompPolicyType decompPolicy;
 };
 
-using DefaultMOEAD = MOEAD<BayesianBootstrap, Tchebycheff>;
+using DefaultMOEAD = MOEAD<Uniform, Tchebycheff>;
+using BBSMOEAD = MOEAD<BayesianBootstrap, Tchebycheff>;
+using DirichletMOEAD = MOEAD<Dirichlet, Tchebycheff>;
 } // namespace ens
 
 // Include implementation.
