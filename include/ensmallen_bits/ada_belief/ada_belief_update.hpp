@@ -44,7 +44,7 @@ class AdaBeliefUpdate
    * @param beta1 The exponential decay rate for the 1st moment estimates.
    * @param beta2 The exponential decay rate for the 2nd moment estimates.
    */
-  AdaBeliefUpdate(const double epsilon = 1e-12,
+  AdaBeliefUpdate(const double epsilon = 1e-8,
                   const double beta1 = 0.9,
                   const double beta2 = 0.999) :
     epsilon(epsilon),
@@ -118,7 +118,7 @@ class AdaBeliefUpdate
       m += (1 - parent.beta1) * gradient;
 
       s *= parent.beta2;
-      s += (1 - parent.beta2) * arma::pow(gradient - m, 2.0);
+      s += (1 - parent.beta2) * arma::pow(gradient - m, 2.0) + parent.epsilon;
 
       const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
           parent.iteration);
@@ -126,9 +126,8 @@ class AdaBeliefUpdate
           parent.iteration);
 
       // And update the iterate.
-      iterate -= (stepSize / biasCorrection1) * m /
-          (arma::sqrt(s + parent.epsilon) / (std::sqrt(biasCorrection2) +
-          parent.epsilon));
+      iterate -= ((m / biasCorrection1) * stepSize) / (arma::sqrt(s /
+          biasCorrection2) + parent.epsilon);
     }
 
    private:
@@ -149,7 +148,7 @@ class AdaBeliefUpdate
   // The xponential decay rate for the 1st moment estimates.
   double beta1;
 
-  // The xponential decay rate for the 2nd moment estimates.
+  // The exponential decay rate for the 2nd moment estimates.
   double beta2;
 
   // The number of iterations.
