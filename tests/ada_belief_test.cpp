@@ -20,7 +20,7 @@ using namespace ens::test;
  */
 TEST_CASE("AdaBeliefSphereFunctionTest", "[AdaBeliefTest]")
 {
-  AdaBelief optimizer(0.5, 2, 0.7, 0.999, 1e-12, 500000, 1e-3, false);
+  AdaBelief optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
   FunctionTest<SphereFunction>(optimizer, 0.5, 0.1);
 }
 
@@ -29,7 +29,7 @@ TEST_CASE("AdaBeliefSphereFunctionTest", "[AdaBeliefTest]")
  */
 TEST_CASE("AdaBeliefSphereFunctionTestFMat", "[AdaBeliefTest]")
 {
-  AdaBelief optimizer(0.5, 2, 0.7, 0.999, 1e-12, 500000, 1e-3, false);
+  AdaBelief optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
   FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
 }
 
@@ -38,7 +38,7 @@ TEST_CASE("AdaBeliefSphereFunctionTestFMat", "[AdaBeliefTest]")
  */
 TEST_CASE("AdaBeliefMcCormickFunctionTest", "[AdaBeliefTest]")
 {
-  AdaBelief optimizer(0.5, 1, 0.7, 0.999, 1e-12, 500000, 1e-5, false);
+  AdaBelief optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
   FunctionTest<McCormickFunction>(optimizer, 0.5, 0.1);
 }
 
@@ -66,6 +66,6 @@ TEST_CASE("AdaBeliefLogisticRegressionFMatTest", "[AdaBeliefTest]")
   LogisticRegression<arma::fmat> lr(shuffledData, shuffledResponses, 0.5);
 
   AdaBelief optimizer;
-  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
+  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.003, 0.006);
 }
 
