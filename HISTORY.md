@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Add AdaBelief optimizer
+    ([#233](https://github.com/mlpack/ensmallen/pull/233)).
+
  * Improved installation and compilation instructions
    ([#300](https://github.com/mlpack/ensmallen/pull/300)).
 
