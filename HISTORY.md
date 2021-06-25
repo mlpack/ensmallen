@@ -3,6 +3,36 @@
  * Add AdaBelief optimizer
     ([#233](https://github.com/mlpack/ensmallen/pull/233)).
 
+ * Improved installation and compilation instructions
+   ([#300](https://github.com/mlpack/ensmallen/pull/300)).
+
+ * CheckArbitraryFunctionTypeAPI extended for MOO support
+   ([#283](https://github.com/mlpack/ensmallen/pull/283)).
+
+ * Refactor NSGA2
+   ([#263](https://github.com/mlpack/ensmallen/pull/263)).
+
+ * Add Indicators for Multiobjective optimizers
+   ([#285](https://github.com/mlpack/ensmallen/pull/285)).
+
+ * Make Callback flexible for MultiObjective Optimizers
+   ([#289](https://github.com/mlpack/ensmallen/pull/289)).
+
+ * Add ZDT Test Suite
+   ([#273](https://github.com/mlpack/ensmallen/pull/273)).
+
+ * Add MOEA-D/DE Optimizer
+   ([#269](https://github.com/mlpack/ensmallen/pull/269)).
+
+ * Introduce Policy Methods for MOEA/D-DE
+   ([#293](https://github.com/mlpack/ensmallen/pull/293)).
+
+ * Add Das-Dennis weight initialization method
+   ([#295](https://github.com/mlpack/ensmallen/pull/295)).
+   
+ * Add Dirichlet Weight Initialization
+   ([#296](https://github.com/mlpack/ensmallen/pull/296)).
+
 ### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-24
  * Fix CNE test trials
@@ -17,12 +47,6 @@
 
  * Add clarifying comments in problems/ implementations
    ([#276](https://github.com/mlpack/ensmallen/pull/276)).
-
- * CheckArbitraryFunctionTypeAPI extended for MOO support
-   ([#283](https://github.com/mlpack/ensmallen/pull/283)).
-
- * Refactor NSGA2
-   ([#263](https://github.com/mlpack/ensmallen/pull/263)).
 
 ### ensmallen 2.16.1: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-02

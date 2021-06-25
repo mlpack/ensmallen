@@ -1,6 +1,7 @@
 /**
  * @file nsga2_impl.hpp
  * @author Sayan Goswami
+ * @author Nanubala Gnana Sai
  *
  * Implementation of the NSGA-II algorithm. Used for multi-objective
  * optimization problems on arbitrary functions.
@@ -154,7 +155,6 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {
     Info << "NSGA2: iteration " << generation << "." << std::endl;
-    terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
 
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
@@ -201,24 +201,34 @@ typename MatType::elem_type NSGA2::Optimize(
     // Yield a new population P_{t+1} of size populationSize.
     // Discards unfit population from the R_{t} to yield P_{t+1}.
     population.resize(populationSize);
+
+    terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
+        calculatedObjectives, fronts, callbacks...);
   }
 
-  // Set the candidates from the best front as the output.
-  std::vector<BaseMatType> front;
+  // Set the candidates from the Pareto Set as the output.
+  paretoSet.resize(population[0].n_rows, population[0].n_cols, fronts[0].size());
+  // The Pareto Set is stored, can be obtained via ParetoSet() getter.
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
+    paretoSet.slice(solutionIdx) =
+      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+  }
 
-  for (size_t f: fronts[0])
-    front.push_back(population[f]);
+  // Calculate the objectives of the surviving population.
+  EvaluateObjectives(population, objectives, calculatedObjectives);
+  // Set the candidates from the Pareto Front as the output.
+  paretoFront.resize(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
+      fronts[0].size());
+  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
+    paretoFront.slice(solutionIdx) =
+      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+  }
 
-  bestFront.resize(front.size());
-  // bestFront is stored, can be obtained by the Front() getter.
-  std::transform(front.begin(), front.end(), bestFront.begin(),
-    [&](const BaseMatType& individual)
-      {
-        return arma::conv_to<arma::mat>::from(individual);
-      });
-
-  // Assign iterate to first element of the best front.
-  iterate = front[0];
+  // Assign iterate to first element of the Pareto Set.
+  iterate = population[fronts[0][0]];
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
