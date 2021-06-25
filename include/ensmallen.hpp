@@ -65,6 +65,8 @@
 
 #include "ensmallen_bits/utility/any.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
+#include "ensmallen_bits/utility/indicators/epsilon.hpp"
+#include "ensmallen_bits/utility/indicators/igd_plus.hpp"
 
 // Contains traits, must be placed before report callback.
 #include "ensmallen_bits/function.hpp" // TODO: should move to function/
@@ -74,6 +76,7 @@
 #include "ensmallen_bits/callbacks/early_stop_at_min_loss.hpp"
 #include "ensmallen_bits/callbacks/print_loss.hpp"
 #include "ensmallen_bits/callbacks/progress_bar.hpp"
+#include "ensmallen_bits/callbacks/query_front.hpp"
 #include "ensmallen_bits/callbacks/report.hpp"
 #include "ensmallen_bits/callbacks/store_best_coordinates.hpp"
 #include "ensmallen_bits/callbacks/timer_stop.hpp"
@@ -101,6 +104,7 @@
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
 #include "ensmallen_bits/lookahead/lookahead.hpp"
+#include "ensmallen_bits/moead/moead.hpp"
 #include "ensmallen_bits/nsga2/nsga2.hpp"
 #include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"

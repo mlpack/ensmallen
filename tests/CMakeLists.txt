@@ -24,6 +24,7 @@ set(ENSMALLEN_TESTS_SOURCES
     line_search_test.cpp
     lookahead_test.cpp
     lrsdp_test.cpp
+    moead_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp
     nsga2_test.cpp
