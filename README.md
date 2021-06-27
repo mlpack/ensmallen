@@ -26,7 +26,7 @@ ensmallen can be installed in several ways: either manually or via cmake,
 with or without root access.
 
 The cmake based installation will check the requirements 
-and also build the tests. If cmake 3.3 (or a later version) 
+and optionally build the tests. If cmake 3.3 (or a later version) 
 is not already available on your system, it can be obtained 
 from [cmake.org](https://cmake.org). If you are using an older 
 system such as RHEL 7 or CentOS 7, an updated version of cmake 
@@ -54,6 +54,14 @@ make install
 The above will create a directory named `/home/blah/include/` 
 and place all ensmallen headers there.
 
+To optionally build and run the tests
+(after running cmake as above),
+use the following additional commands:
+
+```
+make ensmallen_tests
+./ensmallen_tests --durations yes
+````
 
 Manual installation involves simply copying the `include/ensmallen.hpp` header 
 ***and*** the associated `include/ensmallen_bits` directory to a location 
