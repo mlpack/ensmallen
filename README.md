@@ -61,7 +61,7 @@ use the following additional commands:
 ```
 make ensmallen_tests
 ./ensmallen_tests --durations yes
-````
+```
 
 Manual installation involves simply copying the `include/ensmallen.hpp` header 
 ***and*** the associated `include/ensmallen_bits` directory to a location 
