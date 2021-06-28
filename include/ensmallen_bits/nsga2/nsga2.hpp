@@ -51,7 +51,8 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-class NSGA2 {
+class NSGA2
+{
  public:
   /**
    * Constructor for the NSGA2 optimizer.
@@ -176,6 +177,25 @@ class NSGA2 {
   //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
   //! `Optimize()` has been called.
   const arma::cube& ParetoFront() const { return paretoFront; }
+
+  /**
+   * Retrieve the best front (the Pareto frontier).  This returns an empty
+   * vector until `Optimize()` has been called.  Note that this function is
+   * deprecated and will be removed in ensmallen 3.10.0!  Use `ParetoFront()` instead.
+   */
+  ens_deprecated const std::vector<arma::mat>& Front()
+  {
+    if (rcFront.size() == 0)
+    {
+      // Match the old return format.
+      for (size_t i = 0; i < paretoFront.n_slices; ++i)
+      {
+        rcFront.push_back(arma::mat(paretoFront.slice(i)));
+      }
+    }
+
+    return rcFront;
+  }
 
  private:
   /**
@@ -356,6 +376,11 @@ class NSGA2 {
   //! The set of all the Pareto optimal objective vectors.
   //! Stored after Optimize() is called.
   arma::cube paretoFront;
+
+  //! A different representation of the Pareto front, for reverse compatibility
+  //! purposes.  This can be removed when ensmallen 3.10.0 is released!  (Along
+  //! with `Front()`.)  This is only populated when `Front()` is called.
+  std::vector<arma::mat> rcFront;
 };
 
 } // namespace ens

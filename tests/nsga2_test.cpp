@@ -59,7 +59,7 @@ TEST_CASE("NSGA2SchafferN1DoubleTest", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::cube paretoSet= opt.ParetoSet();
+    arma::cube paretoSet = opt.ParetoSet();
 
     bool allInRange = true;
 
@@ -108,7 +108,7 @@ TEST_CASE("NSGA2SchafferN1TestVectorDoubleBounds", "[NSGA2Test]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::cube paretoSet= opt.ParetoSet();
+    arma::cube paretoSet = opt.ParetoSet();
 
     bool allInRange = true;
 
@@ -450,4 +450,38 @@ TEST_CASE("NSGA2ZDTONETest", "[NSGA2Test]")
   double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
 
   REQUIRE(g == Approx(1.0).margin(0.99));
+}
+
+/**
+ * Ensure that the reverse-compatible Front() function works.
+ *
+ * This test can be removed when Front() is removed.
+ */
+TEST_CASE("NSGA2FrontTest", "[NSGA2Test]")
+{
+  SchafferFunctionN1<arma::mat> SCH;
+  const double lowerBound = -1000;
+  const double upperBound = 1000;
+  const double expectedLowerBound = 0.0;
+  const double expectedUpperBound = 2.0;
+
+  NSGA2 opt(20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+
+  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+  arma::mat coords = SCH.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+  arma::cube paretoFront = opt.ParetoFront();
+
+  std::vector<arma::mat> rcFront = opt.Front();
+
+  REQUIRE(paretoFront.n_slices == rcFront.size());
+  for (size_t i = 0; i < paretoFront.n_slices; ++i)
+  {
+    arma::mat paretoM = paretoFront.slice(i);
+    CheckMatrices(paretoM, rcFront[i]);
+  }
 }
