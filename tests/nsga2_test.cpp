@@ -455,7 +455,7 @@ TEST_CASE("NSGA2ZDTONETest", "[NSGA2Test]")
 /**
  * Ensure that the reverse-compatible Front() function works.
  *
- * This test can be removed when Front() is removed.
+ * This test can be removed when Front() is removed, in ensmallen 3.x.
  */
 TEST_CASE("NSGA2FrontTest", "[NSGA2Test]")
 {
