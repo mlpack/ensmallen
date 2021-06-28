@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Disable building the tests by default for faster installation
+   ([#303](https://github.com/mlpack/ensmallen/pull/303)).
+
  * Improved installation and compilation instructions
    ([#300](https://github.com/mlpack/ensmallen/pull/300)).
 
