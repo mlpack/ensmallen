@@ -462,8 +462,6 @@ TEST_CASE("NSGA2FrontTest", "[NSGA2Test]")
   SchafferFunctionN1<arma::mat> SCH;
   const double lowerBound = -1000;
   const double upperBound = 1000;
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
 
   NSGA2 opt(20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
