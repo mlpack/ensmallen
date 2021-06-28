@@ -181,7 +181,8 @@ class NSGA2
   /**
    * Retrieve the best front (the Pareto frontier).  This returns an empty
    * vector until `Optimize()` has been called.  Note that this function is
-   * deprecated and will be removed in ensmallen 3.10.0!  Use `ParetoFront()` instead.
+   * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
+   * instead.
    */
   ens_deprecated const std::vector<arma::mat>& Front()
   {
@@ -378,7 +379,7 @@ class NSGA2
   arma::cube paretoFront;
 
   //! A different representation of the Pareto front, for reverse compatibility
-  //! purposes.  This can be removed when ensmallen 3.10.0 is released!  (Along
+  //! purposes.  This can be removed when ensmallen 3.x is released!  (Along
   //! with `Front()`.)  This is only populated when `Front()` is called.
   std::vector<arma::mat> rcFront;
 };
