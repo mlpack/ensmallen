@@ -227,6 +227,10 @@ typename MatType::elem_type NSGA2::Optimize(
       arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
   }
 
+  // Clear rcFront, in case it is later requested by the user for reverse
+  // compatibility reasons.
+  rcFront.clear();
+
   // Assign iterate to first element of the Pareto Set.
   iterate = population[fronts[0][0]];
 
