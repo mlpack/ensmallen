@@ -10,7 +10,8 @@
    ([#283](https://github.com/mlpack/ensmallen/pull/283)).
 
  * Refactor NSGA2
-   ([#263](https://github.com/mlpack/ensmallen/pull/263)).
+   ([#263](https://github.com/mlpack/ensmallen/pull/263),
+   [#304](https://github.com/mlpack/ensmallen/pull/304)).
 
  * Add Indicators for Multiobjective optimizers
    ([#285](https://github.com/mlpack/ensmallen/pull/285)).
@@ -29,7 +30,7 @@
 
  * Add Das-Dennis weight initialization method
    ([#295](https://github.com/mlpack/ensmallen/pull/295)).
-   
+
  * Add Dirichlet Weight Initialization
    ([#296](https://github.com/mlpack/ensmallen/pull/296)).
 
