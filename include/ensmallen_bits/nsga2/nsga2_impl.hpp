@@ -154,7 +154,7 @@ typename MatType::elem_type NSGA2::Optimize(
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
     std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
-    		arma::Col<ElemType>(numObjectives, arma::fill::zeros));
+        arma::Col<ElemType>(numObjectives, arma::fill::zeros));
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
