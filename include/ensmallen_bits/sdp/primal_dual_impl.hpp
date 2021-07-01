@@ -303,7 +303,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
 
   eInvFaSparseT.set_size(n2bar, sdp.NumSparseConstraints());
   eInvFaDenseT.set_size(n2bar, sdp.NumDenseConstraints());
-  m.set_size(sdp.NumConstraints(), sdp.NumConstraints());
+  m.zeros(sdp.NumConstraints(), sdp.NumConstraints());
 
   // Controls early termination of the optimization process.
   bool terminate = false;
