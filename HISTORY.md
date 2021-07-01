@@ -1,5 +1,9 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Modify matrix initialisation to take into account
+   default element zeroing in Armadillo 10.5
+   ([#303](https://github.com/mlpack/ensmallen/pull/305)).
+
  * Disable building the tests by default for faster installation
    ([#303](https://github.com/mlpack/ensmallen/pull/303)).
 
