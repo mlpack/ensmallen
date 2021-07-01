@@ -114,7 +114,7 @@ class SchwefelFunction
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const
   {
-    MatType result(initialPoint.n_rows, initialPoint.n_cols);
+    MatType result(initialPoint.n_rows, initialPoint.n_cols, arma::fill::none);
     result.fill(420.9687);
     return result;
   }
