@@ -120,7 +120,7 @@ typename MatType::elem_type NSGA2::Optimize(
   // Initialised during non-dominated sorting.
   std::vector<size_t> ranks;
 
-    //! Useful temporaries for float-like comparisons.
+  //! Useful temporaries for float-like comparisons.
   const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
   const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
 
