@@ -291,7 +291,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   } // End of pass over all the generations.
 
   // Set the candidates from the Pareto Set as the output.
-  paretoSet.resize(population[0].n_rows, population[0].n_cols, population.size());
+  paretoSet.set_size(population[0].n_rows, population[0].n_cols, population.size());
 
   // The Pareto Front is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
@@ -301,7 +301,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   }
 
   // Set the candidates from the Pareto Front as the output.
-  paretoFront.resize(populationFitness[0].n_rows, populationFitness[0].n_cols,
+  paretoFront.set_size(populationFitness[0].n_rows, populationFitness[0].n_cols,
       populationFitness.size());
 
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
