@@ -300,7 +300,6 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         arma::conv_to<arma::mat>::from(population[solutionIdx]);
   }
 
-  EvaluateObjectives(population, objectives, populationFitness);
   // Set the candidates from the Pareto Front as the output.
   paretoFront.resize(populationFitness[0].n_rows, populationFitness[0].n_cols,
       populationFitness.size());
