@@ -237,8 +237,8 @@ class NSGA2
    */
   template<typename MatType>
   void BinaryTournamentSelection(std::vector<MatType>& population,
-                                 const arma::vec& lowerBound,
-                                 const arma::vec& upperBound);
+                                 const MatType& lowerBound,
+                                 const MatType& upperBound);
 
   /**
    * Crossover two parents to create a pair of new children.
@@ -266,8 +266,8 @@ class NSGA2
    */
   template<typename MatType>
   void Mutate(MatType& child,
-              const arma::vec& lowerBound,
-              const arma::vec& upperBound);
+              const MatType& lowerBound,
+              const MatType& upperBound);
 
   /**
    * Sort the candidate population using their domination count and the set of
