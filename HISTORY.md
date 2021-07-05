@@ -1,14 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
- * Modify matrix initialisation to take into account
-   default element zeroing in Armadillo 10.5
-   ([#305](https://github.com/mlpack/ensmallen/pull/305)).
-
- * Disable building the tests by default for faster installation
-   ([#303](https://github.com/mlpack/ensmallen/pull/303)).
-
- * Improved installation and compilation instructions
-   ([#300](https://github.com/mlpack/ensmallen/pull/300)).
+### ensmallen 2.17.0: "25 Din Mein Paisa Double"
+###### 2021-05-07
 
  * CheckArbitraryFunctionTypeAPI extended for MOO support
    ([#283](https://github.com/mlpack/ensmallen/pull/283)).
@@ -37,6 +28,16 @@
 
  * Add Dirichlet Weight Initialization
    ([#296](https://github.com/mlpack/ensmallen/pull/296)).
+
+ * Improved installation and compilation instructions
+   ([#300](https://github.com/mlpack/ensmallen/pull/300)).
+
+ * Disable building the tests by default for faster installation
+   ([#303](https://github.com/mlpack/ensmallen/pull/303)).
+
+ * Modify matrix initialisation to take into account
+   default element zeroing in Armadillo 10.5
+   ([#305](https://github.com/mlpack/ensmallen/pull/305)).
 
 ### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-24
