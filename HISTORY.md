@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.17.0: "Pachis Din Me Pesa Double"
 ###### 2021-07-06
  * CheckArbitraryFunctionTypeAPI extended for MOO support
