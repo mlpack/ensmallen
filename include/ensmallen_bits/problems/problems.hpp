@@ -28,6 +28,7 @@
 #include "logistic_regression_function.hpp"
 #include "matyas_function.hpp"
 #include "mc_cormick_function.hpp"
+#include "nist.hpp"
 #include "rastrigin_function.hpp"
 #include "rosenbrock_function.hpp"
 #include "rosenbrock_wood_function.hpp"
