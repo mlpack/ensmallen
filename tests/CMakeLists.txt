@@ -21,6 +21,7 @@ set(ENSMALLEN_TESTS_SOURCES
     katyusha_test.cpp
     lbfgs_test.cpp
     line_search_test.cpp
+    lmcma_test.cpp
     lookahead_test.cpp
     lrsdp_test.cpp
     moead_test.cpp
@@ -45,7 +46,7 @@ set(ENSMALLEN_TESTS_SOURCES
     svrg_test.cpp
     swats_test.cpp
     wn_grad_test.cpp
-)
+    )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 add_executable(ensmallen_tests EXCLUDE_FROM_ALL ${ENSMALLEN_TESTS_SOURCES})
