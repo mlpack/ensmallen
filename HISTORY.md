@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Add gradient value clipping and gradient norm scaling callback
+   ([#315](https://github.com/mlpack/ensmallen/pull/315)).
 
 ### ensmallen 2.17.0: "Pachis Din Me Pesa Double"
 ###### 2021-07-06
