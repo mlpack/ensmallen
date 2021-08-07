@@ -803,7 +803,7 @@ TEST_CASE("GradClipByValueCallbackTest", "[CallbacksTest]")
   std::string line;
   bool gradientInfo = false;
   double gradient = 1;
-  while(std::getline(stream, line, '\n'))
+  while (std::getline(stream, line, '\n'))
   {
     if (gradientInfo)
     {
