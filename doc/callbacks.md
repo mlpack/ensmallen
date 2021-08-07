@@ -136,13 +136,42 @@ EarlyStopAtMinLoss cb(
       // You could also, e.g., print the validation loss here to watch it converge.
       return lrfValidation.Evaluate(coordinates);
     });
-    
+
 arma::mat coordinates = lrfTrain.GetInitialPoint();
 SMORMS3 smorms3;
 smorms3.Optimize(lrfTrain, coordinates, cb);
 ```
 
 </details>
+
+### GradClipByValue
+
+Clips the gradient to a specified min and max.
+
+#### Constructors
+
+ * `EarlyStopAtMinLoss(`_`min, max`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`min`** | The minimum value to clip to. | |
+| `double` | **`max`** | The maximum value to clip to. | |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, GradClipByValue(0, 1.3));
+```
 
 ### PrintLoss
 
@@ -208,7 +237,7 @@ optimizer.Optimize(f, coordinates, ProgressBar());
 
 </details>
 
-### Report 
+### Report
 
 Callback that prints a optimizer report to stdout or a specified output stream.
 
