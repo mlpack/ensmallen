@@ -783,3 +783,40 @@ TEST_CASE("ReportCallbackTest", "[CallbacksTest]")
   aug.Optimize(f3, coordinates, Report(0.1, stream));
   REQUIRE(stream.str().length() > 0);
 }
+
+/**
+ * Make sure the GradClipByValue callback will clip the gradient.
+ */
+TEST_CASE("GradClipByValueCallbackTest", "[CallbacksTest]")
+{
+  SGDTestFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+
+  StandardSGD s(0.0003, 1, 10, 1e-9, true);
+
+  std::stringstream stream;
+  s.Optimize(f, coordinates, GradClipByValue(0, 0), Report(0.1, stream));
+
+  // We don't store the gradient during the optimization process, so we use the
+  // output of the Report callback function to check if the gradient is
+  // clipped.
+  std::string line;
+  bool gradientInfo = false;
+  double gradient = 1;
+  while(std::getline(stream, line, '\n'))
+  {
+    if (gradientInfo)
+    {
+      size_t iter;
+      double loss, lossChange, stepSize, totalTime;
+
+      std::stringstream stream(line);
+      stream >> iter >> loss >> lossChange >> gradient >> stepSize >> totalTime;
+      break;
+    }
+
+    gradientInfo = line.find("|gradient|") != std::string::npos;
+  }
+
+  REQUIRE(gradient == 0);
+}
