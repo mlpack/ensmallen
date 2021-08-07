@@ -144,13 +144,43 @@ smorms3.Optimize(lrfTrain, coordinates, cb);
 
 </details>
 
+### GradClipByNorm
+
+Given the gradient, and a maximum norm value, the callback normalizes the
+gradient so that its L2-norm is less than or equal to the given maximum norm
+value.
+
+#### Constructors
+
+ * `GradClipByNorm(`_`maxNorm`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`maxNorm`** | The maximum clipping value. | |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, GradClipByNorm(0.3));
+```
+
 ### GradClipByValue
 
 Clips the gradient to a specified min and max.
 
 #### Constructors
 
- * `EarlyStopAtMinLoss(`_`min, max`_`)`
+ * `GradClipByValue(`_`min, max`_`)`
 
 #### Attributes
 
