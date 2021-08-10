@@ -3,6 +3,9 @@
  * Add gradient value clipping and gradient norm scaling callback
    ([#315](https://github.com/mlpack/ensmallen/pull/315)).
 
+ * Remove superfluous CMake option to build the tests
+   ([#313](https://github.com/mlpack/ensmallen/pull/313)).
+
 ### ensmallen 2.17.0: "Pachis Din Me Pesa Double"
 ###### 2021-07-06
  * CheckArbitraryFunctionTypeAPI extended for MOO support
