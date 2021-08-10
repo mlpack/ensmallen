@@ -44,8 +44,7 @@ class GradClipByValue
                 const MatType& /* coordinates */,
                 MatType& gradient)
   {
-    for (size_t i = 0; i < gradient.n_elem; ++i)
-      gradient(i) = std::max(lower, std::min(gradient(i), upper));
+    gradient = arma::clamp(gradient, lower, upper);
   }
 
  private:
