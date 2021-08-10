@@ -146,9 +146,21 @@ smorms3.Optimize(lrfTrain, coordinates, cb);
 
 ### GradClipByNorm
 
-Given the gradient, and a maximum norm value, the callback normalizes the
-gradient so that its L2-norm is less than or equal to the given maximum norm
-value.
+One difficulty with optimization is that large parameter gradients can lead an
+optimizer to update the parameters strongly into a region where the loss
+function is much greater, effectively undoing much of the work done to get to
+the current solution. Such large updates during the optimization can cause a
+numerical overflow or underflow, often referred to as "exploding gradients." The
+exploding gradient problem can be caused by: Choosing the wrong learning rate
+which leads to huge updates in the gradients.  Failing to scale a data set
+leading to very large differences between data points.  Applying a loss function
+that computes very large error values.
+
+A common answer to the exploding gradients problem is to change the derivative
+of the error before applying the update step.  One option is to clip the norm
+`||g||` of the gradient `g` before a parameter update. So given the gradient,
+and a maximum norm value, the callback normalizes the gradient so that its
+L2-norm is less than or equal to the given maximum norm value.
 
 #### Constructors
 
@@ -176,7 +188,19 @@ optimizer.Optimize(f, coordinates, GradClipByNorm(0.3));
 
 ### GradClipByValue
 
-Clips the gradient to a specified min and max.
+One difficulty with optimization is that large parameter gradients can lead an
+optimizer to update the parameters strongly into a region where the loss
+function is much greater, effectively undoing much of the work done to get to
+the current solution. Such large updates during the optimization can cause a
+numerical overflow or underflow, often referred to as "exploding gradients." The
+exploding gradient problem can be caused by: Choosing the wrong learning rate
+which leads to huge updates in the gradients.  Failing to scale a data set
+leading to very large differences between data points.  Applying a loss function
+that computes very large error values.
+
+A common answer to the exploding gradients problem is to change the derivative
+of the error before applying the update step.  One option is to clip the
+parameter gradient element-wise before a parameter update.
 
 #### Constructors
 
