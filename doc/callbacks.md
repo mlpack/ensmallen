@@ -150,7 +150,7 @@ One difficulty with optimization is that large parameter gradients can lead an
 optimizer to update the parameters strongly into a region where the loss
 function is much greater, effectively undoing much of the work done to get to
 the current solution. Such large updates during the optimization can cause a
-numerical overflow or underflow, often referred to as "exploding gradients." The
+numerical overflow or underflow, often referred to as "exploding gradients". The
 exploding gradient problem can be caused by: Choosing the wrong learning rate
 which leads to huge updates in the gradients.  Failing to scale a data set
 leading to very large differences between data points.  Applying a loss function
@@ -192,7 +192,7 @@ One difficulty with optimization is that large parameter gradients can lead an
 optimizer to update the parameters strongly into a region where the loss
 function is much greater, effectively undoing much of the work done to get to
 the current solution. Such large updates during the optimization can cause a
-numerical overflow or underflow, often referred to as "exploding gradients." The
+numerical overflow or underflow, often referred to as "exploding gradients". The
 exploding gradient problem can be caused by: Choosing the wrong learning rate
 which leads to huge updates in the gradients.  Failing to scale a data set
 leading to very large differences between data points.  Applying a loss function
