@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Add gradient value clipping and gradient norm scaling callback
+   ([#315](https://github.com/mlpack/ensmallen/pull/315)).
+
  * Remove superfluous CMake option to build the tests
    ([#313](https://github.com/mlpack/ensmallen/pull/313)).
 

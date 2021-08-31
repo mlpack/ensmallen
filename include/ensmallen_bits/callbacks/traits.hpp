@@ -88,6 +88,15 @@ struct TypedForms
                             const MatType&,
                             const MatType&);
 
+  //! This is the form of a bool Gradient() callback method where the gradient
+  //! is modifiable.
+  template<typename CallbackType>
+  using GradientBoolModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            MatType&);
+
   //! This is the form of a void Gradient() callback method.
   template<typename CallbackType>
   using GradientVoidForm =
@@ -95,6 +104,15 @@ struct TypedForms
                             FunctionType&,
                             const MatType&,
                             const MatType&);
+
+  //! This is the form of a void Gradient() callback method where the gradient
+  //! is modifiable.
+  template<typename CallbackType>
+  using GradientVoidModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            MatType&);
 
   //! This is the form of a bool GradientConstraint() callback method.
   template<typename CallbackType>
@@ -105,6 +123,16 @@ struct TypedForms
                             const size_t,
                             const MatType&);
 
+  //! This is the form of a bool GradientConstraint() callback method where the
+  //! gradient is modifiable.
+  template<typename CallbackType>
+  using GradientConstraintBoolModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            MatType&);
+
   //! This is the form of a void GradientConstraint() callback method.
   template<typename CallbackType>
   using GradientConstraintVoidForm =
@@ -113,6 +141,16 @@ struct TypedForms
                             const MatType&,
                             const size_t,
                             const MatType&);
+
+  //! This is the form of a void GradientConstraint() callback method where the
+  //! gradient is modifiable.
+  template<typename CallbackType>
+  using GradientConstraintVoidModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            MatType&);
 
   //! This is the form of a bool BeginOptimization() callback method.
   template<typename CallbackType>
@@ -230,9 +268,9 @@ struct HasEvaluateSignature
 {
   const static bool value =
       HasEvaluate<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateBoolForm>::value ||
+          FunctionType, MatType>::template EvaluateBoolForm>::value ||
       HasEvaluate<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateVoidForm>::value;
+          FunctionType, MatType>::template EvaluateVoidForm>::value;
 };
 
 //! Utility struct, check if either void EvaluateConstraint() or
@@ -245,9 +283,9 @@ struct HasEvaluateConstraintSignature
 {
   const static bool value =
       HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateConstraintBoolForm>::value ||
+          FunctionType, MatType>::template EvaluateConstraintBoolForm>::value ||
       HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateConstraintVoidForm>::value;
+          FunctionType, MatType>::template EvaluateConstraintVoidForm>::value;
 };
 
 //! Utility struct, check if either void Gradient() or bool Gradient()
@@ -261,9 +299,15 @@ struct HasGradientSignature
 {
   const static bool value =
       HasGradient<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType, Gradient>::template GradientBoolForm>::value ||
+          FunctionType, MatType, Gradient>::template GradientBoolForm>::value ||
       HasGradient<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType, Gradient>::template GradientVoidForm>::value;
+          FunctionType, MatType,
+          Gradient>::template GradientBoolModifiableForm>::value ||
+      HasGradient<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType, Gradient>::template GradientVoidForm>::value ||
+      HasGradient<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType,
+          Gradient>::template GradientVoidModifiableForm>::value;
 };
 
 //! Utility struct, check if either void GradientConstraint() or
