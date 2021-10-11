@@ -2,16 +2,15 @@
   <a href="http://ensmallen.org/"><img src="http://ensmallen.org/img/ensmallen_text.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="ensmallen: a C++ header-only library for numerical optimization"></a>
 </h2>
 
-**ensmallen** is a C++ header-only library for numerical optimization.
+**ensmallen** is a high-quality C++ library for non-linear numerical optimization.
+
+ensmallen provides many types of optimizers that can be used
+for virtually any numerical optimization task.
+This includes gradient descent techniques, gradient-free optimizers,
+and constrained optimization.
+ensmallen also allows optional callbacks to customize the optimization process.
 
 Documentation and downloads: http://ensmallen.org
-
-ensmallen provides a simple set of abstractions for writing an objective
-function to optimize. It also provides a large set of standard and cutting-edge
-optimizers that can be used for virtually any numerical optimization task.
-These include full-batch gradient descent techniques, small-batch techniques,
-gradient-free optimizers, and constrained optimization.
-
 
 ### Requirements
 
