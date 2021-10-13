@@ -32,7 +32,7 @@ class EarlyStopAtMinLossType
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLossType<MatType>(const size_t patienceIn = 10) :
+  EarlyStopAtMinLossType(const size_t patienceIn = 10) :
       callbackUsed(false), 
       patience(patienceIn), 
       bestObjective(std::numeric_limits<double>::max()),
@@ -47,7 +47,7 @@ class EarlyStopAtMinLossType
    * @param patienceIn The number of epochs to wait after the minimum loss has
    *    been reached or no improvement has been made (Default: 10).
    */
-  EarlyStopAtMinLossType<MatType>(
+  EarlyStopAtMinLossType(
       std::function<double(const MatType&)> func,
       const size_t patienceIn = 10)
     : callbackUsed(true), 
