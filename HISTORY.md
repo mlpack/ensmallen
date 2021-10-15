@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.18.0: "Fairmount Bagel"
+###### 2021-10-14
  * Add gradient value clipping and gradient norm scaling callback
    ([#315](https://github.com/mlpack/ensmallen/pull/315)).
 
