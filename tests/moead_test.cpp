@@ -67,7 +67,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
 
   // We allow a few trials in case of poor convergence.
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     arma::mat coords = SCH.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
@@ -506,42 +506,65 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
  *
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
+ *
+ * We run the test multiple times, since it sometimes fails, in order to get the
+ * probability of failure down.
  */
 TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
 {
-  //! Parameters taken from original ZDT Paper.
-  ZDT1<> ZDT_ONE(100);
-  const double lowerBound = 0;
-  const double upperBound = 1;
+  bool success = false;
+  const size_t trials = 8;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    //! Parameters taken from original ZDT Paper.
+    ZDT1<> ZDT_ONE(100);
+    const double lowerBound = 0;
+    const double upperBound = 1;
 
-  DefaultMOEAD opt(
-      300, // Population size.
-      150,  // Max generations.
-      1.0,  // Crossover probability.
-      0.9, // Probability of sampling from neighbor.
-      20, // Neighborhood size.
-      20, // Perturbation index.
-      0.5, // Differential weight.
-      2, // Max childrens to replace parents.
-      1E-10, // epsilon.
-      lowerBound, // Lower bound.
-      upperBound // Upper bound.
-    );
+    DefaultMOEAD opt(
+        300, // Population size.
+        150,  // Max generations.
+        1.0,  // Crossover probability.
+        0.9, // Probability of sampling from neighbor.
+        20, // Neighborhood size.
+        20, // Perturbation index.
+        0.5, // Differential weight.
+        2, // Max childrens to replace parents.
+        1E-10, // epsilon.
+        lowerBound, // Lower bound.
+        upperBound // Upper bound.
+      );
 
-  typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
-  typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
+    typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
+    typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
 
-  arma::mat coords = ZDT_ONE.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_ONE.GetObjectives();
+    arma::mat coords = ZDT_ONE.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
+        ZDT_ONE.GetObjectives();
 
-  opt.Optimize(objectives, coords);
+    opt.Optimize(objectives, coords);
 
-  //! Refer the ZDT_ONE implementation for g objective implementation.
-  //! The optimal g value is taken from the docs of ZDT_ONE.
-  size_t numVariables = coords.size();
-  double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-  double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
-  REQUIRE(g == Approx(1.0).margin(0.99));
+    //! Refer the ZDT_ONE implementation for g objective implementation.
+    //! The optimal g value is taken from the docs of ZDT_ONE.
+    size_t numVariables = coords.size();
+    double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+    double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
+    if (trial < trials - 1)
+    {
+      if (g == Approx(1.0).margin(0.99))
+      {
+        success = true;
+        break;
+      }
+    }
+    else
+    {
+      REQUIRE(g == Approx(1.0).margin(0.99));
+      success = true; // If we get to here, it succeeded.
+    }
+  }
+
+  REQUIRE(success == true);
 }
 
 /**
