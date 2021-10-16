@@ -12,6 +12,9 @@
  * Update Catch2 to 2.13.7
    ([#322](https://github.com/mlpack/ensmallen/pull/322)).
 
+ * Fix MOEAD test stability
+   ([#327](https://github.com/mlpack/ensmallen/pull/327)).
+
 ### ensmallen 2.17.0: "Pachis Din Me Pesa Double"
 ###### 2021-07-06
  * CheckArbitraryFunctionTypeAPI extended for MOO support
