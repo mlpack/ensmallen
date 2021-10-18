@@ -512,32 +512,32 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
  */
 TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
 {
+  //! Parameters taken from original ZDT Paper.
+  ZDT1<> ZDT_ONE(100);
+  const double lowerBound = 0;
+  const double upperBound = 1;
+
+  DefaultMOEAD opt(
+      300, // Population size.
+      150,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
+
+  typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
+
   bool success = false;
   const size_t trials = 8;
   for (size_t trial = 0; trial < trials; ++trial)
   {
-    //! Parameters taken from original ZDT Paper.
-    ZDT1<> ZDT_ONE(100);
-    const double lowerBound = 0;
-    const double upperBound = 1;
-
-    DefaultMOEAD opt(
-        300, // Population size.
-        150,  // Max generations.
-        1.0,  // Crossover probability.
-        0.9, // Probability of sampling from neighbor.
-        20, // Neighborhood size.
-        20, // Perturbation index.
-        0.5, // Differential weight.
-        2, // Max childrens to replace parents.
-        1E-10, // epsilon.
-        lowerBound, // Lower bound.
-        upperBound // Upper bound.
-      );
-
-    typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
-    typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
-
     arma::mat coords = ZDT_ONE.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
         ZDT_ONE.GetObjectives();
