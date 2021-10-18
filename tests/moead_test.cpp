@@ -516,7 +516,6 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   ZDT1<> ZDT_ONE(100);
   const double lowerBound = 0;
   const double upperBound = 1;
-  double g = DBL_MAX;
 
   DefaultMOEAD opt(
       300, // Population size.
@@ -548,7 +547,7 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
     //! The optimal g value is taken from the docs of ZDT_ONE.
     size_t numVariables = coords.size();
     double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-    g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
+    const double g = 1.0 + 9.0 * sum / (static_cast<double>(numVariables - 1));
     if (trial < trials - 1 && g != Approx(1.0).margin(0.99))
       continue;
 
