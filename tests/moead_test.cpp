@@ -516,6 +516,7 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   ZDT1<> ZDT_ONE(100);
   const double lowerBound = 0;
   const double upperBound = 1;
+  double g = DBL_MAX;
 
   DefaultMOEAD opt(
       300, // Population size.
@@ -534,7 +535,6 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
   typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
 
-  bool success = false;
   const size_t trials = 8;
   for (size_t trial = 0; trial < trials; ++trial)
   {
@@ -548,23 +548,13 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
     //! The optimal g value is taken from the docs of ZDT_ONE.
     size_t numVariables = coords.size();
     double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-    double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
-    if (trial < trials - 1)
-    {
-      if (g == Approx(1.0).margin(0.99))
-      {
-        success = true;
-        break;
-      }
-    }
-    else
-    {
-      REQUIRE(g == Approx(1.0).margin(0.99));
-      success = true; // If we get to here, it succeeded.
-    }
-  }
+    g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
+    if (trial < trials - 1 && g != Approx(1.0).margin(0.99))
+      continue;
 
-  REQUIRE(success == true);
+    REQUIRE(g == Approx(1.0).margin(0.99));
+    break;
+  }
 }
 
 /**
