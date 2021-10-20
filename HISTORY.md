@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.18.0: "Fairmount Bagel"
 ###### 2021-10-20
  * Add gradient value clipping and gradient norm scaling callback
