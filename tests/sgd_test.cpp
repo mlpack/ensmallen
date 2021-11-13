@@ -70,6 +70,7 @@ TEST_CASE("GeneralizedRosenbrockTestFloat", "[SGDTest]")
       REQUIRE(result == Approx(0.0).margin(1e-5));
       for (size_t j = 0; j < i; ++j)
         REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
+      break;
     }
   }
 }
