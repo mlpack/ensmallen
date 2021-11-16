@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Accelerate SGD test time
+   ([#330](https://github.com/mlpack/ensmallen/pull/300)).
 
 ### ensmallen 2.18.0: "Fairmount Bagel"
 ###### 2021-10-20
