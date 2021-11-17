@@ -3,6 +3,10 @@
  * Accelerate SGD test time
    ([#330](https://github.com/mlpack/ensmallen/pull/300)).
 
+ * Fix potential infinite loop in CMAES
+   ([#331](https://github.com/mlpack/ensmallen/pull/331)).
+
+
 ### ensmallen 2.18.0: "Fairmount Bagel"
 ###### 2021-10-20
  * Add gradient value clipping and gradient norm scaling callback

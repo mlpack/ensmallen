@@ -159,7 +159,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     // add a small value and try again.
     BaseMatType covLower;
     while (!arma::chol(covLower, C[idx0], "lower"))
-      C[idx0].diag() += 1e-16;
+      C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
     for (size_t j = 0; j < lambda; ++j)
     {
