@@ -56,6 +56,12 @@ if(USE_OPENMP)
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
+# Find Bandicoot and link it.
+find_package(Bandicoot 0.100.0 REQUIRED)
+target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
+set(USE_COOT "1")
+add_definitions(-DUSE_COOT)
+
 # Find Armadillo and link it.
 find_package(Armadillo 8.400.0 REQUIRED)
 target_link_libraries(ensmallen INTERFACE Armadillo::Armadillo)

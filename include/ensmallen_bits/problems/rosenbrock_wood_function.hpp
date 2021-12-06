@@ -109,7 +109,7 @@ class RosenbrockWoodFunction
   arma::mat initialPoint;
 
   //! Locally-stored Generalized-Rosenbrock function.
-  GeneralizedRosenbrockFunction rf;
+  GeneralizedRosenbrockFunction<> rf;
 
   //! Locally-stored Wood function.
   WoodFunction wf;

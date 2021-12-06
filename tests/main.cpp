@@ -9,14 +9,22 @@
  */
 
 #include <iostream>
+
+#define USE_COOT
+#define COOT_DEFAULT_BACKEND CUDA_BACKEND
+#define COOT_USE_U64S64
+#define ENS_PRINT_INFO
+#define ENS_PRINT_WARN
 #include <ensmallen.hpp>
 
-//#define CATCH_CONFIG_MAIN  // catch.hpp will define main()
-#define CATCH_CONFIG_RUNNER  // we will define main()
+// We will define main().
+#define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
 
 int main(int argc, char** argv)
 {
+  coot::get_rt().init(true);
+
   Catch::Session session;
   const int returnCode = session.applyCommandLine(argc, argv);
   // Check for a command line error.
@@ -25,6 +33,7 @@ int main(int argc, char** argv)
 
   std::cout << "ensmallen version: " << ens::version::as_string() << std::endl;
   std::cout << "armadillo version: " << arma::arma_version::as_string() << std::endl;
+  std::cout << "bandicoot version: " << coot::coot_version::as_string() << std::endl;
 
   // Use Catch2 command-line to set the random seed.
   // -rng-seed <'time'|number>

@@ -19,10 +19,12 @@
 namespace ens {
 namespace test {
 
-inline GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(
+template<typename MatType, typename LabelsType>
+GeneralizedRosenbrockFunction<
+    MatType, LabelsType>::GeneralizedRosenbrockFunction(
     const size_t n) :
     n(n),
-    visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
+    visitationOrder(linspace<LabelsType>(0, n - 1, n))
 
 {
   initialPoint.set_size(n, 1);
@@ -39,14 +41,15 @@ inline GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(
   }
 }
 
-inline void GeneralizedRosenbrockFunction::Shuffle()
+template<typename MatType, typename LabelsType>
+void GeneralizedRosenbrockFunction<MatType, LabelsType>::Shuffle()
 {
-  visitationOrder = arma::shuffle(arma::linspace<arma::Row<size_t>>(0, n - 2,
-      n - 1));
+  shuffle(linspace<LabelsType>(0, n - 2, n - 1));
 }
 
-template<typename MatType>
-typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
+template<typename MatType, typename LabelsType>
+typename MatType::elem_type GeneralizedRosenbrockFunction<
+    MatType, LabelsType>::Evaluate(
     const MatType& coordinates,
     const size_t begin,
     const size_t batchSize) const
@@ -62,8 +65,9 @@ typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
   return objective;
 }
 
-template<typename MatType>
-typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
+template<typename MatType, typename LabelsType>
+typename MatType::elem_type GeneralizedRosenbrockFunction<
+    MatType, LabelsType>::Evaluate(
     const MatType& coordinates) const
 {
   typename MatType::elem_type fval = 0;
@@ -76,8 +80,9 @@ typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
   return fval;
 }
 
-template<typename MatType, typename GradType>
-inline void GeneralizedRosenbrockFunction::Gradient(
+template<typename MatType, typename LabelsType>
+template<typename GradType>
+void GeneralizedRosenbrockFunction<MatType, LabelsType>::Gradient(
     const MatType& coordinates,
     const size_t begin,
     GradType& gradient,
@@ -93,8 +98,9 @@ inline void GeneralizedRosenbrockFunction::Gradient(
   }
 }
 
-template<typename MatType, typename GradType>
-inline void GeneralizedRosenbrockFunction::Gradient(
+template<typename MatType, typename LabelsType>
+template<typename GradType>
+void GeneralizedRosenbrockFunction<MatType, LabelsType>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const
 {

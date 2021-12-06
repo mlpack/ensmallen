@@ -21,6 +21,7 @@
   #define ARMA_USE_CXX11
 #endif
 
+#include <bandicoot>
 #include <armadillo>
 
 #if !defined(ARMA_USE_CXX11)
@@ -65,6 +66,10 @@
 
 #include "ensmallen_bits/utility/any.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
+#include "ensmallen_bits/utility/coot_traits.hpp"
+#include "ensmallen_bits/utility/conv_to.hpp"
+#include "ensmallen_bits/utility/linspace.hpp"
+#include "ensmallen_bits/utility/shuffle.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"
 #include "ensmallen_bits/utility/indicators/igd_plus.hpp"
 

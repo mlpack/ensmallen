@@ -42,6 +42,7 @@ namespace test {
  * }
  * @endcode
  */
+template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>>
 class GeneralizedRosenbrockFunction
 {
  public:
@@ -68,7 +69,6 @@ class GeneralizedRosenbrockFunction
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
-  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates,
                                        const size_t begin,
                                        const size_t batchSize = 1) const;
@@ -78,7 +78,6 @@ class GeneralizedRosenbrockFunction
    *
    * @param coordinates The function coordinates.
    */
-  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
@@ -89,7 +88,7 @@ class GeneralizedRosenbrockFunction
    * @param gradient The function gradient.
    * @param batchSize Number of points to process.
    */
-  template<typename MatType, typename GradType>
+  template<typename GradType>
   void Gradient(const MatType& coordinates,
                 const size_t begin,
                 GradType& gradient,
@@ -101,7 +100,7 @@ class GeneralizedRosenbrockFunction
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  template<typename MatType, typename GradType>
+  template<typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient) const;
 
   // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
@@ -110,17 +109,17 @@ class GeneralizedRosenbrockFunction
   // infrastructure.
 
   //! Get the starting point.
-  template<typename MatType = arma::mat>
   const MatType GetInitialPoint() const
   {
-    return arma::conv_to<MatType>::from(initialPoint);
+    return initialPoint;
   }
 
   //! Get the final point.
-  template<typename MatType = arma::mat>
   const MatType GetFinalPoint() const
   {
-    return arma::ones<MatType>(initialPoint.n_rows, initialPoint.n_cols);
+    MatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
+    finalPoint.ones();
+    return finalPoint;
   }
 
   //! Get the final objective.
@@ -128,13 +127,13 @@ class GeneralizedRosenbrockFunction
 
  private:
   //! Locally-stored Initial point.
-  arma::mat initialPoint;
+  MatType initialPoint;
 
-  //! //! Number of dimensions for the function.
+  //! Number of dimensions for the function.
   size_t n;
 
   //! For shuffling.
-  arma::Row<size_t> visitationOrder;
+  LabelsType visitationOrder;
 };
 
 } // namespace test

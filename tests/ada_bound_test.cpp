@@ -113,3 +113,15 @@ TEST_CASE("AMSBoundSphereFunctionTestSpMatDenseGradient", "[AdaBoundTest]")
 }
 
 #endif
+
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("AdaBoundSphereFunctionTest", "[AdaBound]",
+    coot::mat, coot::fmat)
+{
+  AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
+      1e-3, false);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
+}
+
+#endif
