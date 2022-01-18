@@ -218,6 +218,15 @@ TEST_CASE("PadamLogisticRegressionTest", "[AdamTest]")
 }
 
 /**
+ * Run RAdam on logistic regression and make sure the results are acceptable.
+ */
+TEST_CASE("RAdamLogisticRegressionTest", "[AdamTest]")
+{
+  RAdam optimizer;
+  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+}
+
+/**
  * Run QHAdam on logistic regression and make sure the results are acceptable.
  */
 TEST_CASE("QHAdamLogisticRegressionTest", "[AdamTest]")
