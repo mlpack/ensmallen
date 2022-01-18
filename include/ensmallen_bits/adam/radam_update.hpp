@@ -126,12 +126,10 @@ class RAdamUpdate
 			
 			if (pt > 5.0)
 			{
-				const GradType lt = std::sqrt(biasCorrection2) / 
-						arma::sqrt(v + parent.epsilon);
 				const double rt = std::sqrt((pt - 4.0) * (pt - 2.0) * parent.pinf / 
 						((parent.pinf - 4.0) * (parent.pinf - 2.0) * pt));
-				iterate -= (stepSize * rt / biasCorrection1) *
-						m * lt;
+				iterate -= (stepSize * rt * std::sqrt(biasCorrection2) / biasCorrection1) *
+						m / (arma::sqrt(v) + parent.epsilon);
 			}
 			else
 			{
