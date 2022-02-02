@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Update Catch2 to 2.13.8
+  ([#336](https://github.com/mlpack/ensmallen/pull/336)).
 
 ### ensmallen 2.18.1: "Fairmount Bagel"
 ###### 2021-11-19
