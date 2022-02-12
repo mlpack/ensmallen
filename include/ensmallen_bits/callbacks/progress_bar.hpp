@@ -216,10 +216,10 @@ class ProgressBar
         output << ".";
       }
     }
-
-    const size_t stepTime = epochTimer.toc() / (double) epochSize * 1000;
-    output << "] " << progress << "% - " << (size_t) epochTimer.toc() % 60
-        << "s " << stepTime << "ms/step " << "- loss: " << objective  <<  "\n";
+    const double epochTimerElapsed = epochTimer.toc();
+    const size_t stepTime = epochTimerElapsed / (double) epochSize * 1000;
+    output << "] " << progress << "% - " << epochTimerElapsed
+        << "s/epoch; " << stepTime << "ms/step; loss: " << objective  <<  "\n";
     output.flush();
   }
 

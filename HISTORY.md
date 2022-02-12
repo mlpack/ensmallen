@@ -3,6 +3,9 @@
  * Update Catch2 to 2.13.8
   ([#336](https://github.com/mlpack/ensmallen/pull/336)).
 
+ * Fix epoch timing output
+  ([#337](https://github.com/mlpack/ensmallen/pull/337)).
+
 ### ensmallen 2.18.1: "Fairmount Bagel"
 ###### 2021-11-19
  * Accelerate SGD test time
