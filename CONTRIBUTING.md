@@ -22,7 +22,7 @@ merge, to ensure that:
 
 Please do make sure that if you contribute a new optimizer or other new
 functionality, that you've added some tests in the `tests/` directory.  And if
-you are fixing a bug, it's always nice to include a test case if possible to so
+you are fixing a bug, it's always nice to include a test case if possible so
 that the bug won't happen again.
 
 ## Build/test process
@@ -100,7 +100,7 @@ vcpkg install ensmallen:x64-windows
 
 This section describes how to build the **ensmallen** tests from source. **ensmallen** uses CMake as its build system and [Catch2](https://github.com/catchorg/Catch2) as the unit test framework.
 
-First, clone the source code from Github and change into the cloned directory. Or alternatively, you can download the latest relese from the [website](http://ensmallen.org) and extract it.
+First, clone the source code from Github and change into the cloned directory. Alternatively, you can download the latest release from the [website](http://ensmallen.org) and extract it.
 
 ```bash
 $ git clone https://github.com/mlpack/ensmallen
@@ -108,8 +108,8 @@ $ cd ensmallen
 
 # - or -
 
-$ wget http://ensmallen.org/files/ensmallen-2.14.2.tar.gz
-$ tar -xvzpf ensmallen-2.14.2.tar.gz
+$ wget http://ensmallen.org/files/ensmallen-2.18.1.tar.gz
+$ tar -xvzpf ensmallen-2.18.1.tar.gz
 $ cd ensmallen-latest
 ```
 
