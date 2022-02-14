@@ -22,24 +22,8 @@ using namespace ens::test;
  */
 TEST_CASE("WNGradLogisticRegressionTest","[WNGradTest]")
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
-
   WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
-  arma::mat coordinates = lr.GetInitialPoint();
-  optimizer.Optimize(lr, coordinates);
-
-  // Ensure that the error is close to zero.
-  const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
-
-  const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-      coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
 }
 
 /**
@@ -47,14 +31,8 @@ TEST_CASE("WNGradLogisticRegressionTest","[WNGradTest]")
  */
 TEST_CASE("WNGradSphereFunctionTest","[WNGradTest]")
 {
-  SphereFunction f(2);
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction>(optimizer, 1.0, 0.1);
 }
 
 /**
@@ -62,14 +40,8 @@ TEST_CASE("WNGradSphereFunctionTest","[WNGradTest]")
  */
 TEST_CASE("WNGradStyblinskiTangFunctionTest","[WNGradTest]")
 {
-  StyblinskiTangFunction f(2);
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  FunctionTest<StyblinskiTangFunction>(optimizer, 0.3, 0.03);
 }
 
 /**
@@ -77,14 +49,8 @@ TEST_CASE("WNGradStyblinskiTangFunctionTest","[WNGradTest]")
  */
 TEST_CASE("WNGradStyblinskiTangFunctionFMatTest", "[WNGradTest]")
 {
-  StyblinskiTangFunction f(2);
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 3.0, 0.3);
 }
 
 /**
@@ -92,12 +58,6 @@ TEST_CASE("WNGradStyblinskiTangFunctionFMatTest", "[WNGradTest]")
  */
 TEST_CASE("WNGradStyblinskiTangFunctionSpMatTest", "[WNGradTest]")
 {
-  StyblinskiTangFunction f(2);
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
-  REQUIRE(coordinates(1) == Approx(-2.9).epsilon(0.01)); // 1% error tolerance.
+  FunctionTest<StyblinskiTangFunction, arma::sp_mat>(optimizer, 0.3, 0.03);
 }

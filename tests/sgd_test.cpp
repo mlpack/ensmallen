@@ -12,27 +12,12 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
 using namespace std;
 using namespace arma;
 using namespace ens;
 using namespace ens::test;
-
-TEST_CASE("SimpleSGDTestFunction", "[SGDTest]")
-{
-  SGDTestFunction f;
-  VanillaUpdate vanillaUpdate;
-  StandardSGD s(0.0003, 1, 5000000, 1e-9, true, vanillaUpdate, NoDecay(), true,
-      true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  double result = s.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-7));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-7));
-}
 
 TEST_CASE("GeneralizedRosenbrockTest", "[SGDTest]")
 {
@@ -55,21 +40,6 @@ TEST_CASE("GeneralizedRosenbrockTest", "[SGDTest]")
   }
 }
 
-TEST_CASE("SimpleSGDTestFunctionFloat", "[SGDTest]")
-{
-  SGDTestFunction f;
-  StandardSGD s(0.0003, 1, 5000000, 1e-9, true);
-  s.ExactObjective() = true;
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  float result = s.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(-1.0).epsilon(0.0005));
-  REQUIRE(coordinates(0) == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-5));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-5));
-}
-
 TEST_CASE("GeneralizedRosenbrockTestFloat", "[SGDTest]")
 {
   // Loop over several variants.
@@ -78,13 +48,29 @@ TEST_CASE("GeneralizedRosenbrockTestFloat", "[SGDTest]")
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
-    StandardSGD s(0.001, 1, 0, 1e-15, true);
+    // Allow a few trials.
+    for (size_t trial = 0; trial < 5; ++trial)
+    {
+      StandardSGD s(0.001, 1, 0, 1e-15, true);
 
-    arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-    float result = s.Optimize(f, coordinates);
+      arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+      float result = s.Optimize(f, coordinates);
 
-    REQUIRE(result == Approx(0.0).margin(1e-5));
-    for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
+      if (trial != 4)
+      {
+        if (result != Approx(0.0).margin(1e-5))
+          continue;
+        for (size_t j = 0; j < i; ++j)
+        {
+          if (coordinates(j) != Approx(1.0).epsilon(1e-3))
+            continue;
+        }
+      }
+
+      REQUIRE(result == Approx(0.0).margin(1e-5));
+      for (size_t j = 0; j < i; ++j)
+        REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
+      break;
+    }
   }
 }
