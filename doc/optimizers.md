@@ -2933,9 +2933,8 @@ optimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [Quasi-Hyperbolic Momentum and Adam For Deep Learning](https://arxiv.org/pdf/1810.06801.pdf)
+ * [Adaptive Methods for Nonconvex Optimization](https://papers.nips.cc/paper/8186-adaptive-methods-for-nonconvex-optimization)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
  * [Adam](#adam)
- * [Adaptive Methods for Nonconvex Optimization](https://papers.nips.cc/paper/8186-adaptive-methods-for-nonconvex-optimization)
  * [Differentiable separable functions](#differentiable-separable-functions)
