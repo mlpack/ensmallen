@@ -2891,9 +2891,10 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
-Yogi is an optimization algorithm based on Adam with more fine grained
-effective learning rate control, and has similar theoretical guarantees on
-convergence as Adam.
+Yogi is an optimization algorithm based on Adam with more fine-grained effective
+learning rate control, which uses additive updates instead of multiplicative
+updates for the moving average of the squared gradient. In addition, Yogi has
+similar theoretical guarantees on convergence as Adam.
 
 #### Constructors
 
