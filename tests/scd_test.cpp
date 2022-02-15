@@ -46,22 +46,8 @@ TEST_CASE("DisjointFeatureTest", "[SCDTest]")
 {
   // The test function for parallel SGD should work with SCD, as the gradients
   // of the individual functions are projections into the ith dimension.
-  SparseTestFunction f;
   SCD<> s(0.4);
-
-  arma::mat iterate = f.GetInitialPoint<arma::mat>();
-
-  double result = s.Optimize(f, iterate);
-
-  // The final value of the objective function should be close to the optimal
-  // value, that is the sum of values at the vertices of the parabolas.
-  REQUIRE(result == Approx(123.75).epsilon(0.0001));
-
-  // The co-ordinates should be the vertices of the parabolas.
-  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.0002));
-  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.0002));
-  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.0002));
-  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.0002));
+  FunctionTest<SparseTestFunction>(s, 0.01, 0.001);
 }
 
 /**
@@ -73,22 +59,8 @@ TEST_CASE("DisjointFeatureFMatTest", "[SCDTest]")
 {
   // The test function for parallel SGD should work with SCD, as the gradients
   // of the individual functions are projections into the ith dimension.
-  SparseTestFunction f;
   SCD<> s(0.4);
-
-  arma::fmat iterate = f.GetInitialPoint<arma::fmat>();
-
-  float result = s.Optimize(f, iterate);
-
-  // The final value of the objective function should be close to the optimal
-  // value, that is the sum of values at the vertices of the parabolas.
-  REQUIRE(result == Approx(123.75).epsilon(0.01));
-
-  // The co-ordinates should be the vertices of the parabolas.
-  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.02));
-  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.02));
-  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.02));
-  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.02));
+  FunctionTest<SparseTestFunction, arma::fmat>(s, 0.2, 0.02);
 }
 
 /**
@@ -100,22 +72,8 @@ TEST_CASE("DisjointFeatureSpMatTest", "[SCDTest]")
 {
   // The test function for parallel SGD should work with SCD, as the gradients
   // of the individual functions are projections into the ith dimension.
-  SparseTestFunction f;
   SCD<> s(0.4);
-
-  arma::sp_mat iterate = f.GetInitialPoint<arma::sp_mat>();
-
-  double result = s.Optimize(f, iterate);
-
-  // The final value of the objective function should be close to the optimal
-  // value, that is the sum of values at the vertices of the parabolas.
-  REQUIRE(result == Approx(123.75).epsilon(0.0001));
-
-  // The co-ordinates should be the vertices of the parabolas.
-  REQUIRE(iterate(0) == Approx(2.0).epsilon(0.0002));
-  REQUIRE(iterate(1) == Approx(1.0).epsilon(0.0002));
-  REQUIRE(iterate(2) == Approx(1.5).epsilon(0.0002));
-  REQUIRE(iterate(3) == Approx(4.0).epsilon(0.0002));
+  FunctionTest<SparseTestFunction, arma::sp_mat>(s, 0.01, 0.001);
 }
 
 /**
@@ -238,7 +196,7 @@ TEST_CASE("SoftmaxRegressionFunctionPartialGradientTest", "[SCDTest]")
 
   // Create random class labels.
   arma::Row<size_t> labels = arma::randi<arma::Row<size_t> >(
-      points, arma::distr_param(0, numClasses));
+      points, arma::distr_param(0, numClasses - 1));
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.

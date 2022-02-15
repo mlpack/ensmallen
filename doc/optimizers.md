@@ -431,12 +431,12 @@ optimizer uses [L-BFGS](#l-bfgs).
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `1000` |
-| `double` | **`penaltyThresholdFactor`** | When penalty threshold is updated, set it to this multiplied by the penalty. | `10.0` |
-| `double` | **`sigmaUpdateFactor`** | When sigma is updated, multiply it by this. | `0.25` |
+| `double` | **`penaltyThresholdFactor`** | When penalty threshold is updated, set it to this multiplied by the penalty. | `0.25` |
+| `double` | **`sigmaUpdateFactor`** | When sigma is updated, multiply it by this. | `10.0` |
 | `L_BFGS&` | **`lbfgs`** | Internal l-bfgs optimizer. | `L_BFGS()` |
 
 The attributes of the optimizer may also be modified via the member methods
-`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `L_BFGS()`.
+`MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `LBFGS()`.
 
 <details open>
 <summary>Click to collapse/expand example code.
@@ -1705,6 +1705,96 @@ optimizer.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## MOEA/D-DE
+*An optimizer for arbitrary multi-objective functions.*
+MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
+objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
+subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
+algorithm uses Differential Crossover followed by Polynomial Mutation to create offsprings which are then
+decomposed to form a Single Objective Problem. A diversity preserving mechanism is also employed which encourages
+a varied set of solution.
+
+#### Constructors
+* `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>()`
+* `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
+
+The _`InitPolicyType`_ template parameter refers to the strategy used to
+initialize the reference directions.
+
+The following types are available:
+
+ * **`Uniform`**
+ * **`BayesianBootstrap`**
+ * **`Dirichlet`**
+
+The _`DecompPolicyType`_ template parameter refers to the strategy used to
+decompose the weight vectors to form a scalar objective function.
+
+The following types are available:
+
+ * **`Tchebycheff`**
+ * **`WeightedAverage`**
+ * **`PenaltyBoundaryIntersection`**
+
+For convenience the following types can be used:
+
+ * **`DefaultMOEAD`** (equivalent to `MOEAD<Uniform, Tchebycheff>`): utilizes Uniform method for weight initialization
+ and Tchebycheff for weight decomposition.
+ 
+ * **`BBSMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes Bayesian Bootstrap method for weight initialization and Tchebycheff for weight decomposition.
+ 
+ * **`DirichletMOEAD`** (equivalent to `MOEAD<Dirichlet, Tchebycheff>`): utilizes Dirichlet sampling for weight init
+ and Tchebycheff for weight decomposition.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. | `150` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed. | `300` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `1.0` |
+| `double` | **`neighborProb`** | The probability of sampling from neighbor. | `0.9` |
+| `size_t` | **`neighborSize`** | The number of nearest-neighbours to consider per weight vector.  | `20` |
+| `double` | **`distributionIndex`** | The crowding degree of the mutation. | `20` |
+| `double` | **`differentialWeight`** | Amplification factor of the differentiation. | `0.5` |
+| `size_t` | **`maxReplace`** | The limit of solutions allowed to be replaced by a child. | `2`|
+| `double` | **`epsilon`** | Handles numerical stability after weight initialization. | `1E-10`|
+| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
+| `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
+| `InitPolicyType` | **`initPolicy`** | Instantiated init policy used to initialize weights. | `InitPolicyType()` |
+| `DecompPolicyType` | **`decompPolicy`** | Instantiated decomposition policy used to create scalar objective problem. | `DecompPolicyType()` |
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `NeighborProb()`, `NeighborSize()`, `DistributionIndex()`,
+`DifferentialWeight()`, `MaxReplace()`, `Epsilon()`, `LowerBound()`, `UpperBound()`, `InitPolicy()` and `DecompPolicy()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SchafferFunctionN1<arma::mat> SCH;
+arma::vec lowerBound("-10 -10");
+arma::vec upperBound("10 10");
+DefaultMOEAD opt(300, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
+typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+arma::mat coords = SCH.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+// obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
+double obj = opt.Optimize(objectives, coords);
+// Now obtain the best front.
+arma::cube bestFront = opt.ParetoFront();
+```
+</details>
+
+#### See also
+* [MOEA/D-DE Algorithm](https://ieeexplore.ieee.org/document/4633340)
+* [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
+* [Multi-objective functions](#multi-objective-functions)
+
 ## NSGA2
 
 *An optimizer for arbitrary multi-objective functions.*
@@ -1761,7 +1851,7 @@ std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj = opt.Optimize(objectives, coords);
 // Now obtain the best front.
-std::vector<arma::mat> bestFront = opt.Front();
+arma::cube bestFront = opt.Front();
 ```
 
 </details>

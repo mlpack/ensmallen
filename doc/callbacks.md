@@ -136,13 +136,96 @@ EarlyStopAtMinLoss cb(
       // You could also, e.g., print the validation loss here to watch it converge.
       return lrfValidation.Evaluate(coordinates);
     });
-    
+
 arma::mat coordinates = lrfTrain.GetInitialPoint();
 SMORMS3 smorms3;
 smorms3.Optimize(lrfTrain, coordinates, cb);
 ```
 
 </details>
+
+### GradClipByNorm
+
+One difficulty with optimization is that large parameter gradients can lead an
+optimizer to update the parameters strongly into a region where the loss
+function is much greater, effectively undoing much of the work done to get to
+the current solution. Such large updates during the optimization can cause a
+numerical overflow or underflow, often referred to as "exploding gradients". The
+exploding gradient problem can be caused by: Choosing the wrong learning rate
+which leads to huge updates in the gradients.  Failing to scale a data set
+leading to very large differences between data points.  Applying a loss function
+that computes very large error values.
+
+A common answer to the exploding gradients problem is to change the derivative
+of the error before applying the update step.  One option is to clip the norm
+`||g||` of the gradient `g` before a parameter update. So given the gradient,
+and a maximum norm value, the callback normalizes the gradient so that its
+L2-norm is less than or equal to the given maximum norm value.
+
+#### Constructors
+
+ * `GradClipByNorm(`_`maxNorm`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`maxNorm`** | The maximum clipping value. | |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, GradClipByNorm(0.3));
+```
+
+### GradClipByValue
+
+One difficulty with optimization is that large parameter gradients can lead an
+optimizer to update the parameters strongly into a region where the loss
+function is much greater, effectively undoing much of the work done to get to
+the current solution. Such large updates during the optimization can cause a
+numerical overflow or underflow, often referred to as "exploding gradients". The
+exploding gradient problem can be caused by: Choosing the wrong learning rate
+which leads to huge updates in the gradients.  Failing to scale a data set
+leading to very large differences between data points.  Applying a loss function
+that computes very large error values.
+
+A common answer to the exploding gradients problem is to change the derivative
+of the error before applying the update step.  One option is to clip the
+parameter gradient element-wise before a parameter update.
+
+#### Constructors
+
+ * `GradClipByValue(`_`min, max`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`min`** | The minimum value to clip to. | |
+| `double` | **`max`** | The maximum value to clip to. | |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, GradClipByValue(0, 1.3));
+```
 
 ### PrintLoss
 
@@ -208,7 +291,7 @@ optimizer.Optimize(f, coordinates, ProgressBar());
 
 </details>
 
-### Report 
+### Report
 
 Callback that prints a optimizer report to stdout or a specified output stream.
 
@@ -471,6 +554,23 @@ an estimate depending on `exactObjective` value.
 | `MatType` | **`coordinates`** | The current function parameter. |
 | `size_t` | **`epoch`** | The index of the current epoch. |
 | `double` | **`objective`** | Objective value of the current point. |
+
+### GenerationalStepTaken
+
+Called after the evolution of a single generation. Intended specifically for
+MultiObjective Optimizers.
+
+ * `GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** |
+|----------|----------|-----------------|
+| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
+| `FunctionType` | **`function`** | The function to be optimized. |
+| `MatType` | **`coordinates`** | The current function parameter. |
+| `ObjectivesVecType` | **`objectives`** | The set of calculated objectives so far. |
+| `IndicesType` | **`frontIndices`** | The indices of the members belonging to Pareto Front. |
 
 ## Custom Callbacks
 

@@ -1,6 +1,7 @@
 /**
  * @file nsga2.hpp
  * @author Sayan Goswami
+ * @author Nanubala Gnana Sai
  *
  * NSGA-II is a multi-objective optimization algorithm, widely used in
  * many real-world applications. NSGA-II generates offsprings using
@@ -50,7 +51,8 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-class NSGA2 {
+class NSGA2
+{
  public:
   /**
    * Constructor for the NSGA2 optimizer.
@@ -168,9 +170,33 @@ class NSGA2 {
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the best front (the Pareto frontier).  This returns an empty vector until `Optimize()`
-  //! has been called.
-  const std::vector<arma::mat>& Front() const { return bestFront; }
+  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
+  //! until `Optimize()` has been called.
+  const arma::cube& ParetoSet() const { return paretoSet; }
+
+  //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
+  //! `Optimize()` has been called.
+  const arma::cube& ParetoFront() const { return paretoFront; }
+
+  /**
+   * Retrieve the best front (the Pareto frontier).  This returns an empty
+   * vector until `Optimize()` has been called.  Note that this function is
+   * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
+   * instead.
+   */
+  ens_deprecated const std::vector<arma::mat>& Front()
+  {
+    if (rcFront.size() == 0)
+    {
+      // Match the old return format.
+      for (size_t i = 0; i < paretoFront.n_slices; ++i)
+      {
+        rcFront.push_back(arma::mat(paretoFront.slice(i)));
+      }
+    }
+
+    return rcFront;
+  }
 
  private:
   /**
@@ -188,7 +214,7 @@ class NSGA2 {
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<double> >&);
+                     std::vector<arma::Col<typename MatType::elem_type> >&);
 
   template<std::size_t I = 0,
            typename MatType,
@@ -196,7 +222,8 @@ class NSGA2 {
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<double> >& calculatedObjectives);
+                     std::vector<arma::Col<typename MatType::elem_type> >&
+                     calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -210,8 +237,8 @@ class NSGA2 {
    */
   template<typename MatType>
   void BinaryTournamentSelection(std::vector<MatType>& population,
-                                 const arma::vec& lowerBound,
-                                 const arma::vec& upperBound);
+                                 const MatType& lowerBound,
+                                 const MatType& upperBound);
 
   /**
    * Crossover two parents to create a pair of new children.
@@ -239,8 +266,8 @@ class NSGA2 {
    */
   template<typename MatType>
   void Mutate(MatType& child,
-              const arma::vec& lowerBound,
-              const arma::vec& upperBound);
+              const MatType& lowerBound,
+              const MatType& upperBound);
 
   /**
    * Sort the candidate population using their domination count and the set of
@@ -281,11 +308,15 @@ class NSGA2 {
    * Assigns crowding distance metric for sorting.
    *
    * @param front The previously generated Pareto fronts.
-   * @param objectives The set of objectives.
-   * @param crowdingDistance The previously calculated objectives.
+   * @param calculatedObjectives The previously calculated objectives.
+   * @param crowdingDistance The crowding distance for each individual in
+   *    the population.
    */
-  void CrowdingDistanceAssignment(const std::vector<size_t>& front,
-                                  std::vector<double>& crowdingDistance);
+  template <typename MatType>
+  void CrowdingDistanceAssignment(
+      const std::vector<size_t>& front,
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      std::vector<typename MatType::elem_type>& crowdingDistance);
 
   /**
    * The operator used in the crowding distance based sorting.
@@ -299,13 +330,15 @@ class NSGA2 {
    * @param idxQ The index of the second cadidate from the elite population
    *     being sorted.
    * @param ranks The previously calculated ranks.
-   * @param crowdingDistance The previously calculated objectives.
+   * @param crowdingDistance The crowding distance for each individual in
+   *    the population.
    * @return true if the first candidate is preferred, otherwise, false.
    */
+  template<typename MatType>
   bool CrowdingOperator(size_t idxP,
                         size_t idxQ,
                         const std::vector<size_t>& ranks,
-                        const std::vector<double>& crowdingDistance);
+                        const std::vector<typename MatType::elem_type>& crowdingDistance);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
@@ -337,8 +370,18 @@ class NSGA2 {
   //! Upper bound of the initial swarm.
   arma::vec upperBound;
 
-  //! Best front, stored after Optimize() is called.
-  std::vector<arma::mat> bestFront;
+  //! The set of all the Pareto optimal points.
+  //! Stored after Optimize() is called.
+  arma::cube paretoSet;
+
+  //! The set of all the Pareto optimal objective vectors.
+  //! Stored after Optimize() is called.
+  arma::cube paretoFront;
+
+  //! A different representation of the Pareto front, for reverse compatibility
+  //! purposes.  This can be removed when ensmallen 3.x is released!  (Along
+  //! with `Front()`.)  This is only populated when `Front()` is called.
+  std::vector<arma::mat> rcFront;
 };
 
 } // namespace ens

@@ -42,5 +42,10 @@
 #include "styblinski_tang_function.hpp"
 #include "three_hump_camel_function.hpp"
 #include "wood_function.hpp"
+#include "zdt/zdt1_function.hpp"
+#include "zdt/zdt2_function.hpp"
+#include "zdt/zdt3_function.hpp"
+#include "zdt/zdt4_function.hpp"
+#include "zdt/zdt6_function.hpp"
 
 #endif
