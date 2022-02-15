@@ -761,6 +761,19 @@ total contribution of a gradient to all future updates.
 Note that the `DemonAdam` class is based on
 the `DemonAdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = AdamUpdate`.
 
+For convenience the following typedefs have been defined:
+
+ * `DemonAdaMax` (equivalent to `DemonAdamType<AdaMaxUpdate>`): DemonAdam that
+   uses the AdaMax update rule.
+ * `DemonAMSGrad` (equivalent to `DemonAdamType<AMSGradUpdate>`): DemonAdam that
+   uses the AMSGrad update rule.
+ * `DemonNadam` (equivalent to `DemonAdamType<NadamUpdate>`): DemonAdam that
+   uses the Nadam update rule.
+ * `NadamUpdate` (equivalent to `DemonAdamType<NadaMaxUpdate>`): DemonAdam that
+   uses the NadaMax update rule.
+ * `DemonOptimisticAdam` (equivalent to `DemonAdamType<OptimisticAdamUpdate>`):
+   DemonAdam that uses the OptimisticAdam update rule.
+
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
@@ -810,6 +823,22 @@ optimizer.Optimize(f, coordinates);
 
 DemonSGD is an SGD based optimizer. DemonSGD is motivated by decaying the total
 contribution of a gradient to all future updates.
+
+For convenience ensmallen implements various Adam based versions of the Demon
+optimizer:
+
+ * `DemonAdam` (equivalent to `DemonAdamType<AdamUpdate>`): DemonAdam that uses
+   the Adam update rule.
+ * `DemonAdaMax` (equivalent to `DemonAdamType<AdaMaxUpdate>`): DemonAdam that
+   uses the AdaMax update rule.
+ * `DemonAMSGrad` (equivalent to `DemonAdamType<AMSGradUpdate>`): DemonAdam that
+   uses the AMSGrad update rule.
+ * `DemonNadam` (equivalent to `DemonAdamType<NadamUpdate>`): DemonAdam that
+   uses the Nadam update rule.
+ * `NadamUpdate` (equivalent to `DemonAdamType<NadaMaxUpdate>`): DemonAdam that
+   uses the NadaMax update rule.
+ * `DemonOptimisticAdam` (equivalent to `DemonAdamType<OptimisticAdamUpdate>`):
+   DemonAdam that uses the OptimisticAdam update rule.
 
 #### Constructors
 
