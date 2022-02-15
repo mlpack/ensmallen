@@ -18,7 +18,7 @@ namespace ens {
 
 /**
  * DemonAdam automatically decays momentum, motivated by decaying the total
- * contribution of a gradient to all future updates. 
+ * contribution of a gradient to all future updates.
  *
  * For more information, see the following.
  *
@@ -59,7 +59,7 @@ class DemonAdamUpdate
     assert(momentumIterations != 0 && "The number of iterations before the "
         "momentum will decay is zero, make sure the max iterations and "
         "batch size parameter is set correctly. "
-        "Default: momentumIterations = maxIterations * batchSize.");
+        "Default: momentumIterations = maxIterations / batchSize.");
   }
 
   //! Get the momentum coefficient.
