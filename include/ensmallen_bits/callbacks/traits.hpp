@@ -37,6 +37,8 @@ ENS_HAS_EXACT_METHOD_FORM(BeginEpoch, HasBeginEpoch)
 ENS_HAS_EXACT_METHOD_FORM(EndEpoch, HasEndEpoch)
 //! Detect an StepTaken() method.
 ENS_HAS_EXACT_METHOD_FORM(StepTaken, HasStepTaken)
+//! Detect an GenerationalStepTaken() method.
+ENS_HAS_EXACT_METHOD_FORM(GenerationalStepTaken, HasGenerationalStepTaken)
 
 template<typename OptimizerType,
          typename FunctionType,
@@ -86,6 +88,15 @@ struct TypedForms
                             const MatType&,
                             const MatType&);
 
+  //! This is the form of a bool Gradient() callback method where the gradient
+  //! is modifiable.
+  template<typename CallbackType>
+  using GradientBoolModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            MatType&);
+
   //! This is the form of a void Gradient() callback method.
   template<typename CallbackType>
   using GradientVoidForm =
@@ -93,6 +104,15 @@ struct TypedForms
                             FunctionType&,
                             const MatType&,
                             const MatType&);
+
+  //! This is the form of a void Gradient() callback method where the gradient
+  //! is modifiable.
+  template<typename CallbackType>
+  using GradientVoidModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            MatType&);
 
   //! This is the form of a bool GradientConstraint() callback method.
   template<typename CallbackType>
@@ -103,6 +123,16 @@ struct TypedForms
                             const size_t,
                             const MatType&);
 
+  //! This is the form of a bool GradientConstraint() callback method where the
+  //! gradient is modifiable.
+  template<typename CallbackType>
+  using GradientConstraintBoolModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            MatType&);
+
   //! This is the form of a void GradientConstraint() callback method.
   template<typename CallbackType>
   using GradientConstraintVoidForm =
@@ -111,6 +141,16 @@ struct TypedForms
                             const MatType&,
                             const size_t,
                             const MatType&);
+
+  //! This is the form of a void GradientConstraint() callback method where the
+  //! gradient is modifiable.
+  template<typename CallbackType>
+  using GradientConstraintVoidModifiableForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const size_t,
+                            MatType&);
 
   //! This is the form of a bool BeginOptimization() callback method.
   template<typename CallbackType>
@@ -228,9 +268,9 @@ struct HasEvaluateSignature
 {
   const static bool value =
       HasEvaluate<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateBoolForm>::value ||
+          FunctionType, MatType>::template EvaluateBoolForm>::value ||
       HasEvaluate<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateVoidForm>::value;
+          FunctionType, MatType>::template EvaluateVoidForm>::value;
 };
 
 //! Utility struct, check if either void EvaluateConstraint() or
@@ -243,9 +283,9 @@ struct HasEvaluateConstraintSignature
 {
   const static bool value =
       HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateConstraintBoolForm>::value ||
+          FunctionType, MatType>::template EvaluateConstraintBoolForm>::value ||
       HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType>::template EvaluateConstraintVoidForm>::value;
+          FunctionType, MatType>::template EvaluateConstraintVoidForm>::value;
 };
 
 //! Utility struct, check if either void Gradient() or bool Gradient()
@@ -259,9 +299,15 @@ struct HasGradientSignature
 {
   const static bool value =
       HasGradient<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType, Gradient>::template GradientBoolForm>::value ||
+          FunctionType, MatType, Gradient>::template GradientBoolForm>::value ||
       HasGradient<CallbackType, TypedForms<OptimizerType,
-      FunctionType, MatType, Gradient>::template GradientVoidForm>::value;
+          FunctionType, MatType,
+          Gradient>::template GradientBoolModifiableForm>::value ||
+      HasGradient<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType, Gradient>::template GradientVoidForm>::value ||
+      HasGradient<CallbackType, TypedForms<OptimizerType,
+          FunctionType, MatType,
+          Gradient>::template GradientVoidModifiableForm>::value;
 };
 
 //! Utility struct, check if either void GradientConstraint() or
@@ -365,6 +411,69 @@ struct HasStepTakenSignature
          FunctionType, MatType>::template StepTakenVoidForm>::value;
 };
 
+//! A utility struct for Typed Forms required in
+//! callbacks for MultiObjective Optimizers.
+template<typename OptimizerType,
+         typename FunctionType,
+         typename MatType,
+         typename ObjectivesVecType,
+         typename IndicesType,
+         typename GradType = MatType>
+struct MOOTypedForms
+{
+  //! This is the form of a bool GenerationalStepTaken() for MOO callback method.
+  template<typename CallbackType>
+  using GenerationalStepTakenBoolForm =
+      bool(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const ObjectivesVecType&,
+                            const IndicesType&);
+
+  //! This is the form of a void StepTaken() for MOO callback method.
+  template<typename CallbackType>
+  using GenerationalStepTakenVoidForm =
+      void(CallbackType::*)(OptimizerType&,
+                            FunctionType&,
+                            const MatType&,
+                            const ObjectivesVecType&,
+                            const IndicesType&);
+};
+
+//! Utility struct, check if either void StepTaken() or bool StepTaken() exists.
+//! Specialization for Multiobjective case.
+template<typename CallbackType,
+         typename OptimizerType,
+         typename FunctionType,
+         typename ObjectivesVecType,
+         typename IndicesType,
+         typename MatType>
+ struct HasGenerationalStepTakenSignature
+{
+  const static bool hasBool =
+    HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        FunctionType, MatType, ObjectivesVecType, IndicesType>::
+        template GenerationalStepTakenBoolForm>::value &&
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        FunctionType, MatType, ObjectivesVecType, IndicesType>::
+        template GenerationalStepTakenVoidForm>::value;
+
+  const static bool hasVoid =
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        FunctionType, MatType, ObjectivesVecType, IndicesType>::
+        template GenerationalStepTakenBoolForm>::value &&
+    HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        FunctionType, MatType, ObjectivesVecType, IndicesType>::
+        template GenerationalStepTakenVoidForm>::value;
+
+  const static bool hasNone =
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        FunctionType, MatType, ObjectivesVecType, IndicesType>::
+        template GenerationalStepTakenBoolForm>::value &&
+    !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
+        FunctionType, MatType, ObjectivesVecType, IndicesType>::
+        template GenerationalStepTakenVoidForm>::value;
+};
 } // namespace traits
 } // namespace callbacks
 } // namespace ens

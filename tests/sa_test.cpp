@@ -12,6 +12,7 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -47,33 +48,19 @@ TEST_CASE("SAGeneralizedRosenbrockTest","[SATest]")
 // The Rosenbrock function is a simple function to optimize.
 TEST_CASE("SARosenbrockTest", "[SATest]")
 {
-  RosenbrockFunction f;
   ExponentialSchedule schedule;
   // The convergence is very sensitive to the choices of maxMove and initMove.
   SA<> sa(schedule, 1000000, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
-  arma::mat coordinates = f.GetInitialPoint();
-
-  const double result = sa.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(0.0).margin(1e-5));
-  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-4));
-  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-4));
+  FunctionTest<RosenbrockFunction>(sa, 0.01, 0.001);
 }
 
 // The Rosenbrock function is a simple function to optimize.  Use arma::fmat.
 TEST_CASE("SARosenbrockFMatTest", "[SATest]")
 {
-  RosenbrockFunction f;
   ExponentialSchedule schedule;
   // The convergence is very sensitive to the choices of maxMove and initMove.
   SA<> sa(schedule, 1000000, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-
-  const float result = sa.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(0.0).margin(1e-3));
-  REQUIRE(coordinates(0) == Approx(1.0).epsilon(1e-2));
-  REQUIRE(coordinates(1) == Approx(1.0).epsilon(1e-2));
+  FunctionTest<RosenbrockFunction, arma::fmat>(sa, 0.1, 0.01);
 }
 
 /**
@@ -85,27 +72,9 @@ TEST_CASE("RastrigrinFunctionTest", "[SATest]")
   // Simulated annealing isn't guaranteed to converge (except in very specific
   // situations).  If this works 1 of 4 times, I'm fine with that.  All I want
   // to know is that this implementation will escape from local minima.
-  size_t successes = 0;
-
-  for (size_t trial = 0; trial < 4; ++trial)
-  {
-    RastriginFunction f(2);
-    ExponentialSchedule schedule;
-    // The convergence is very sensitive to the choices of maxMove and initMove.
-    // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
-    SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
-    arma::mat coordinates = f.GetInitialPoint();
-
-    const double result = sa.Optimize(f, coordinates);
-
-    if ((std::abs(result) < 1e-3) &&
-        (std::abs(coordinates(0)) < 1e-3) &&
-        (std::abs(coordinates(1)) < 1e-3))
-    {
-      ++successes;
-      break; // No need to continue.
-    }
-  }
-
-  REQUIRE(successes >= 1);
+  ExponentialSchedule schedule;
+  // The convergence is very sensitive to the choices of maxMove and initMove.
+  // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
+  SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
+  FunctionTest<RastriginFunction>(sa, 0.01, 0.001, 4);
 }
