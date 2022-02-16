@@ -1,6 +1,6 @@
 /**
  * @file yogi_update.hpp
- * @author Marcus Edel 
+ * @author Marcus Edel
  *
  * Implements the Yogi Optimizer. Yogi is a variant of Adam with more fine
  * grained effective learning rate control.
@@ -120,8 +120,8 @@ class YogiUpdate
 
       m *= parent.beta1;
       m += (1 - parent.beta1) * gradient;
-      
-      const MatType gSquared = gradient % gradient;
+
+      const MatType gSquared = arma::square(gradient);
       v -= (1 - parent.beta2) * arma::sign(v - gSquared) % gSquared;
 
       // And update the iterate.
