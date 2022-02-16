@@ -10,9 +10,6 @@
 
  * Fix epoch timing output
   ([#337](https://github.com/mlpack/ensmallen/pull/337)).
-  
- * Add Yogi optimizer
-    ([#232](https://github.com/mlpack/ensmallen/pull/232)).
 
 ### ensmallen 2.18.1: "Fairmount Bagel"
 ###### 2021-11-19
