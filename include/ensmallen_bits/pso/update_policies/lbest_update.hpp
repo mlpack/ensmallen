@@ -73,7 +73,8 @@ class LBestUpdate
      *
      * @param parent Instantiated parent class.
      */
-     Policy(const LBestUpdate& /* parent */) { /* Do nothing. */ }
+     Policy(const LBestUpdate& /* parent */) : n(0)
+     { /* Do nothing. */ }
 
      /**
       * The Initialize method is called by PSO Optimizer method before the

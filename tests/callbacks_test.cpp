@@ -33,7 +33,8 @@ class CompleteCallbackTestFunction
       calledEndOptimization(false),
       calledEvaluateConstraint(false),
       calledGradientConstraint(false),
-      calledStepTaken(false)
+      calledStepTaken(false),
+      calledGenerationalStepTaken(false)
   { }
 
   template<typename OptimizerType, typename FunctionType, typename MatType>
@@ -106,6 +107,18 @@ class CompleteCallbackTestFunction
                  MatType& /* coordinates */)
   { calledStepTaken = true; }
 
+    template<typename OptimizerType,
+             typename FunctionType,
+             typename MatType,
+             typename ObjectivesVecType,
+             typename IndicesType>
+    void GenerationalStepTaken(OptimizerType& /* optimizer */,
+                               FunctionType& /* function */,
+                               MatType& /* coordinates */,
+                               ObjectivesVecType& /* objectives */,
+                               IndicesType& /* frontIndices */)
+    { calledGenerationalStepTaken = true; }
+
   bool calledEvaluate;
   bool calledGradient;
   bool calledBeginEpoch;
@@ -115,6 +128,7 @@ class CompleteCallbackTestFunction
   bool calledEvaluateConstraint;
   bool calledGradientConstraint;
   bool calledStepTaken;
+  bool calledGenerationalStepTaken;
 };
 
 template<typename OptimizerType>
@@ -162,7 +176,8 @@ void CallbacksFullMultiobjectiveFunctionTest(OptimizerType& optimizer,
                                              bool calledEndOptimization,
                                              bool calledEvaluateConstraint,
                                              bool calledGradientConstraint,
-                                             bool calledStepTaken)
+                                             bool calledStepTaken,
+                                             bool calledGenerationalStepTaken)
 {
   SchafferFunctionN1<arma::mat> SCH;
 
@@ -185,6 +200,7 @@ void CallbacksFullMultiobjectiveFunctionTest(OptimizerType& optimizer,
   REQUIRE(cb.calledEvaluateConstraint == calledEvaluateConstraint);
   REQUIRE(cb.calledGradientConstraint == calledGradientConstraint);
   REQUIRE(cb.calledStepTaken == calledStepTaken);
+  REQUIRE(cb.calledGenerationalStepTaken == calledGenerationalStepTaken);
 }
 
 template<typename OptimizerType>
@@ -380,7 +396,19 @@ TEST_CASE("NSGA2CallbacksFullFunctionTest", "[CallbackTest]")
   arma::vec upperBound = {1000};
   NSGA2 optimizer(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
   CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
-      true, true, false, false, true);
+      true, true, false, false, false, true);
+}
+
+/**
+ * Make sure we invoke all callbacks (MOEA/D-DE).
+ */
+TEST_CASE("MOEADCallbacksFullFunctionTest", "[CallbackTest]")
+{
+  arma::vec lowerBound = {-1000};
+  arma::vec upperBound = {1000};
+  DefaultMOEAD optimizer(150, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
+  CallbacksFullMultiobjectiveFunctionTest(optimizer, false, false, false, false,
+      true, true, false, false, false, true);
 }
 
 /**
@@ -712,4 +740,119 @@ TEST_CASE("ProgressBarCallbackEpochTest", "[CallbacksTest]")
   std::stringstream stream;
   s.Optimize(f, coordinates, ProgressBar(10, stream));
   REQUIRE(stream.str().find("Epoch 1/1") != std::string::npos);
+}
+
+/**
+ * Make sure the Report callback will show the report on the specified
+ * output stream.
+ */
+TEST_CASE("ReportCallbackTest", "[CallbacksTest]")
+{
+  std::stringstream stream;
+
+  SGDTestFunction f0;
+  StandardSGD s(0.0003, 1, 10000, 1e-9, true);
+
+  arma::mat coordinates = f0.GetInitialPoint();
+  s.Optimize(f0, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  RosenbrockWoodFunction f1;
+  L_BFGS lbfgs;
+  lbfgs.MaxIterations() = 100;
+
+  coordinates = f1.GetInitialPoint();
+  lbfgs.Optimize(f1, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  SchafferFunctionN2 f2;
+  CNE cne;
+  cne.MaxGenerations() = 100;
+
+  coordinates = f2.GetInitialPoint();
+  cne.Optimize(f2, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+
+  stream.str("");
+  AugLagrangianTestFunction f3;
+  AugLagrangian aug;
+
+  coordinates = f3.GetInitialPoint();
+  aug.Optimize(f3, coordinates, Report(0.1, stream));
+  REQUIRE(stream.str().length() > 0);
+}
+
+/**
+ * Make sure the GradClipByNorm callback will clip the gradient.
+ */
+TEST_CASE("GradClipByNormCallbackTest", "[CallbacksTest]")
+{
+  SGDTestFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+
+  StandardSGD s(0.0003, 1, 10, 1e-9, true);
+
+  std::stringstream stream;
+  s.Optimize(f, coordinates, GradClipByNorm(0.5), Report(0.1, stream));
+
+  // We don't store the gradient during the optimization process, so we use the
+  // output of the Report callback function to check if the gradient is
+  // clipped.
+  std::string line;
+  bool gradientInfo = false;
+  double gradient = 1;
+  while (std::getline(stream, line, '\n'))
+  {
+    if (gradientInfo)
+    {
+      size_t iter;
+      double loss, lossChange, stepSize, totalTime;
+
+      std::stringstream stream(line);
+      stream >> iter >> loss >> lossChange >> gradient >> stepSize >> totalTime;
+      break;
+    }
+
+    gradientInfo = line.find("|gradient|") != std::string::npos;
+  }
+
+  REQUIRE(gradient == 0.5);
+}
+/**
+ * Make sure the GradClipByValue callback will clip the gradient.
+ */
+TEST_CASE("GradClipByValueCallbackTest", "[CallbacksTest]")
+{
+  SGDTestFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+
+  StandardSGD s(0.0003, 1, 10, 1e-9, true);
+
+  std::stringstream stream;
+  s.Optimize(f, coordinates, GradClipByValue(0, 0), Report(0.1, stream));
+
+  // We don't store the gradient during the optimization process, so we use the
+  // output of the Report callback function to check if the gradient is
+  // clipped.
+  std::string line;
+  bool gradientInfo = false;
+  double gradient = 1;
+  while (std::getline(stream, line, '\n'))
+  {
+    if (gradientInfo)
+    {
+      size_t iter;
+      double loss, lossChange, stepSize, totalTime;
+
+      std::stringstream stream(line);
+      stream >> iter >> loss >> lossChange >> gradient >> stepSize >> totalTime;
+      break;
+    }
+
+    gradientInfo = line.find("|gradient|") != std::string::npos;
+  }
+
+  REQUIRE(gradient == 0);
 }

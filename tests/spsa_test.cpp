@@ -24,14 +24,8 @@ using namespace ens::test;
  */
 TEST_CASE("SPSASphereFunctionTest", "[SPSATest]")
 {
-  SphereFunction f(2);
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction>(optimizer, 1.0, 0.1);
 }
 
 /**
@@ -39,14 +33,8 @@ TEST_CASE("SPSASphereFunctionTest", "[SPSATest]")
  */
 TEST_CASE("SPSASphereFunctionFMatTest", "[SPSATest]")
 {
-  SphereFunction f(2);
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0f).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0f).margin(0.1));
+  FunctionTest<SphereFunction, arma::fmat>(optimizer, 1.0, 0.1);
 }
 
 /**
@@ -54,14 +42,8 @@ TEST_CASE("SPSASphereFunctionFMatTest", "[SPSATest]")
  */
 TEST_CASE("SPSASphereFunctionSpMatTest", "[SPSATest]")
 {
-  SphereFunction f(2);
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 1.0, 0.1);
 }
 
 /**
@@ -69,17 +51,8 @@ TEST_CASE("SPSASphereFunctionSpMatTest", "[SPSATest]")
  */
 TEST_CASE("SPSAMatyasFunctionTest", "[SPSATest]")
 {
-  MatyasFunction f;
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  // 3% error tolerance.
-  REQUIRE((std::trunc(100.0 * coordinates(0)) / 100.0) ==
-      Approx(0.0).epsilon(0.003));
-  REQUIRE((std::trunc(100.0 * coordinates(1)) / 100.0) ==
-      Approx(0.0).epsilon(0.003));
+  FunctionTest<MatyasFunction>(optimizer, 0.1, 0.01);
 }
 
 /**
@@ -87,31 +60,8 @@ TEST_CASE("SPSAMatyasFunctionTest", "[SPSATest]")
  */
 TEST_CASE("SPSALogisticRegressionTest", "[SPSATest]")
 {
-  arma::mat data, testData, shuffledData;
-  bool success = false;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
-
-  for (size_t trial = 0; trial < 6; ++trial)
-  {
-    LogisticRegressionTestData(data, testData, shuffledData,
-        responses, testResponses, shuffledResponses);
-    LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
-
-    SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
-    arma::mat coordinates = lr.GetInitialPoint();
-    optimizer.Optimize(lr, coordinates);
-
-    // Ensure that the error is close to zero.
-    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
-    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
-        coordinates);
-    if (acc == Approx(100.0).epsilon(0.003) &&
-        testAcc == Approx(100.0).epsilon(0.006))
-      success = true;
-
-    if (success)
-      break;
-  }
-
-  REQUIRE(success == true);
+  // We allow 10 trials, because SPSA is definitely not guaranteed to
+  // converge.
+  SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
+  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 10);
 }

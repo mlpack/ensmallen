@@ -93,7 +93,7 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
   std::vector<BaseMatType> population;
   for (size_t i = 0 ; i < populationSize; ++i)
   {
-    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
+    population.push_back(arma::randn<BaseMatType>(iterate.n_rows,
         iterate.n_cols) + iterate);
   }
 

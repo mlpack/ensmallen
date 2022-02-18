@@ -55,7 +55,7 @@ class StoreBestCoordinates
   //! Get the best coordinates.
   ModelMatType const& BestCoordinates() const { return bestCoordinates; }
   //! Modify the best coordinates.
-  ModelMatType& BestCoordinatesl() { return bestCoordinates; }
+  ModelMatType& BestCoordinates() { return bestCoordinates; }
 
   //! Get the best objective.
   double const& BestObjective() const { return bestObjective; }

@@ -52,7 +52,8 @@ class SPALeRAStepsize
                   const double adaptRate = 3.10e-8) :
       alpha(alpha),
       epsilon(epsilon),
-      adaptRate(adaptRate)
+      adaptRate(adaptRate),
+      lambda(0)
   {
     /* Nothing to do here. */
   }

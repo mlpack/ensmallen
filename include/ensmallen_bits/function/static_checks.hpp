@@ -387,6 +387,25 @@ inline void CheckArbitraryFunctionTypeAPI()
 #endif
 }
 
+template<typename FunctionType, typename... RemainingTypes>
+typename std::enable_if<(sizeof...(RemainingTypes) > 1), void>::type
+CheckArbitraryFunctionTypeAPI()
+{
+#ifndef ENS_DISABLE_TYPE_CHECKS
+  constexpr size_t size = sizeof...(RemainingTypes);
+  using TupleType = typename std::tuple<RemainingTypes...>;
+  using MatType = typename std::tuple_element<size - 1, TupleType>::type;
+
+  static_assert(CheckEvaluate<FunctionType, MatType, MatType>::value,
+      "One of the provided FunctionType does not have a correct definition of Evaluate(). "
+      "Please check that the corresponding FunctionType fully satisfies the requirements "
+      "of the ArbitraryFunctionType API; see the optimizer tutorial for "
+      "more details.");
+
+  CheckArbitraryFunctionTypeAPI<RemainingTypes...>();
+#endif
+}
+
 /**
  * Perform checks for the ResolvableFunctionType API.
  */
