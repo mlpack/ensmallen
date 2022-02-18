@@ -1,6 +1,9 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
-* Add AdaBelief optimizer
+ * Add Yogi optimizer
+    ([#232](https://github.com/mlpack/ensmallen/pull/232)).
+
+ * Add AdaBelief optimizer
   ([#233](https://github.com/mlpack/ensmallen/pull/233)).
 
 ### ensmallen 2.18.2: "Fairmount Bagel"
