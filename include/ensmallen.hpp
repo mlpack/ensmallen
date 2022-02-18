@@ -133,5 +133,6 @@
 #include "ensmallen_bits/svrg/svrg.hpp"
 #include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
+#include "ensmallen_bits/yogi/yogi.hpp"
 
 #endif
