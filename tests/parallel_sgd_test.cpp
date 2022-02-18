@@ -30,8 +30,6 @@ using namespace ens::test;
  */
 TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
 {
-  SparseTestFunction f;
-
   ConstantStep decayPolicy(0.4);
 
   // The batch size for this test should be chosen according to the threads
@@ -40,6 +38,7 @@ TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
 
   size_t threadsAvailable = omp_get_max_threads();
 
+  SparseTestFunction f;
   for (size_t i = threadsAvailable; i > 0; --i)
   {
     omp_set_num_threads(i);
@@ -47,19 +46,7 @@ TEST_CASE("SimpleParallelSGDTest", "[ParallelSGDTest]")
     size_t batchSize = std::ceil((float) f.NumFunctions() / i);
 
     ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, true, decayPolicy);
-
-    arma::mat coordinates = f.GetInitialPoint<arma::mat>();
-    double result = s.Optimize(f, coordinates);
-
-    // The final value of the objective function should be close to the optimal
-    // value, that is the sum of values at the vertices of the parabolas.
-    REQUIRE(result == Approx(123.75).epsilon(0.0001));
-
-    // The co-ordinates should be the vertices of the parabolas.
-    REQUIRE(coordinates(0) == Approx(2.0).epsilon(0.0002));
-    REQUIRE(coordinates(1) == Approx(1.0).epsilon(0.0002));
-    REQUIRE(coordinates(2) == Approx(1.5).epsilon(0.0002));
-    REQUIRE(coordinates(3) == Approx(4.0).epsilon(0.0002));
+    FunctionTest<SparseTestFunction>(s, 0.01, 0.001);
   }
 }
 

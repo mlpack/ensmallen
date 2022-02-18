@@ -136,13 +136,96 @@ EarlyStopAtMinLoss cb(
       // You could also, e.g., print the validation loss here to watch it converge.
       return lrfValidation.Evaluate(coordinates);
     });
-    
+
 arma::mat coordinates = lrfTrain.GetInitialPoint();
 SMORMS3 smorms3;
 smorms3.Optimize(lrfTrain, coordinates, cb);
 ```
 
 </details>
+
+### GradClipByNorm
+
+One difficulty with optimization is that large parameter gradients can lead an
+optimizer to update the parameters strongly into a region where the loss
+function is much greater, effectively undoing much of the work done to get to
+the current solution. Such large updates during the optimization can cause a
+numerical overflow or underflow, often referred to as "exploding gradients". The
+exploding gradient problem can be caused by: Choosing the wrong learning rate
+which leads to huge updates in the gradients.  Failing to scale a data set
+leading to very large differences between data points.  Applying a loss function
+that computes very large error values.
+
+A common answer to the exploding gradients problem is to change the derivative
+of the error before applying the update step.  One option is to clip the norm
+`||g||` of the gradient `g` before a parameter update. So given the gradient,
+and a maximum norm value, the callback normalizes the gradient so that its
+L2-norm is less than or equal to the given maximum norm value.
+
+#### Constructors
+
+ * `GradClipByNorm(`_`maxNorm`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`maxNorm`** | The maximum clipping value. | |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, GradClipByNorm(0.3));
+```
+
+### GradClipByValue
+
+One difficulty with optimization is that large parameter gradients can lead an
+optimizer to update the parameters strongly into a region where the loss
+function is much greater, effectively undoing much of the work done to get to
+the current solution. Such large updates during the optimization can cause a
+numerical overflow or underflow, often referred to as "exploding gradients". The
+exploding gradient problem can be caused by: Choosing the wrong learning rate
+which leads to huge updates in the gradients.  Failing to scale a data set
+leading to very large differences between data points.  Applying a loss function
+that computes very large error values.
+
+A common answer to the exploding gradients problem is to change the derivative
+of the error before applying the update step.  One option is to clip the
+parameter gradient element-wise before a parameter update.
+
+#### Constructors
+
+ * `GradClipByValue(`_`min, max`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`min`** | The minimum value to clip to. | |
+| `double` | **`max`** | The maximum value to clip to. | |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, GradClipByValue(0, 1.3));
+```
 
 ### PrintLoss
 
@@ -208,6 +291,95 @@ optimizer.Optimize(f, coordinates, ProgressBar());
 
 </details>
 
+### Report
+
+Callback that prints a optimizer report to stdout or a specified output stream.
+
+#### Constructors
+
+ * `Report()`
+ * `Report(`_`iterationsPercentage`_`)`
+ * `Report(`_`iterationsPercentage, output`_`)`
+ * `Report(`_`iterationsPercentage, output, outputMatrixSize`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`iterationsPercentage`** | The number of iterations to report in percent, between [0, 1]. | `0.1` |
+| `std::ostream` | **`output`** | Ostream which receives output from this object. | `stdout` |
+| `size_t` | **`outputMatrixSize`** | The number of values to output for the function coordinates. | `4` |
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates, Report(0.1));
+```
+
+<details open>
+<summary>Click to collapse/expand example output.
+</summary>
+
+```
+Optimization Report
+--------------------------------------------------------------------------------
+
+Initial Coordinates:
+  -1.2000   1.0000
+
+Final coordinates:
+  -1.0490   1.1070
+
+iter          loss          loss change   |gradient|    step size     total time
+0             24.2          0             233           1             4.27e-05
+100           8.6           15.6          104           1             0.000215
+200           5.26          3.35          48.7          1             0.000373
+300           4.49          0.767         23.4          1             0.000533
+400           4.31          0.181         11.3          1             0.000689
+500           4.27          0.0431        5.4           1             0.000846
+600           4.26          0.012         2.86          1             0.00101
+700           4.25          0.00734       2.09          1             0.00117
+800           4.24          0.00971       1.95          1             0.00132
+900           4.22          0.0146        1.91          1             0.00148
+
+--------------------------------------------------------------------------------
+
+Version:
+ensmallen:                    2.13.0 (Automatically Automated Automation)
+armadillo:                    9.900.1 (Nocturnal Misbehaviour)
+
+Function:
+Number of functions:          1
+Coordinates rows:             2
+Coordinates columns:          1
+
+Loss:
+Initial                       24.2
+Final                         4.2
+Change                        20
+
+Optimizer:
+Maximum iterations:           1000
+Reached maximum iterations:   true
+Batchsize:                    1
+Iterations:                   1000
+Number of epochs:             1001
+Initial step size:            1
+Final step size:              1
+Coordinates max. norm:        233
+Evaluate calls:               1000
+Gradient calls:               1000
+Time (in seconds):            0.00163
+```
+
 ### StoreBestCoordinates
 
 Callback that stores the model parameter after every epoch if the objective
@@ -242,7 +414,7 @@ StoreBestCoordinates<arma::mat> cb;
 optimizer.Optimize(f, coordinates, cb);
 
 std::cout << "The optimized model found by AdaDelta has the "
-      << "parameters " << cb.BestCoordinatest();
+      << "parameters " << cb.BestCoordinates();
 ```
 
 </details>
@@ -382,6 +554,23 @@ an estimate depending on `exactObjective` value.
 | `MatType` | **`coordinates`** | The current function parameter. |
 | `size_t` | **`epoch`** | The index of the current epoch. |
 | `double` | **`objective`** | Objective value of the current point. |
+
+### GenerationalStepTaken
+
+Called after the evolution of a single generation. Intended specifically for
+MultiObjective Optimizers.
+
+ * `GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** |
+|----------|----------|-----------------|
+| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
+| `FunctionType` | **`function`** | The function to be optimized. |
+| `MatType` | **`coordinates`** | The current function parameter. |
+| `ObjectivesVecType` | **`objectives`** | The set of calculated objectives so far. |
+| `IndicesType` | **`frontIndices`** | The indices of the members belonging to Pareto Front. |
 
 ## Custom Callbacks
 

@@ -57,10 +57,6 @@ class CrossInTrayFunction
   //! Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
-  //! Get the starting point.
-  template<typename MatType = arma::mat>
-  MatType GetInitialPoint() const { return MatType("0; 0"); }
-
   /*
    * Evaluate a function for a particular batch-size.
    *
@@ -80,6 +76,14 @@ class CrossInTrayFunction
    */
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
+
+  // Note: GetInitialPoint() is not required for using ensmallen to optimize
+  // this function!  It is specifically used as a convenience just for
+  // ensmallen's testing infrastructure.
+
+  //! Get the starting point.
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const { return MatType("0; 0"); }
 };
 
 } // namespace test

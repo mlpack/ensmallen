@@ -1,6 +1,7 @@
 /**
  * @file nsga2_impl.hpp
  * @author Sayan Goswami
+ * @author Nanubala Gnana Sai
  *
  * Implementation of the NSGA-II algorithm. Used for multi-objective
  * optimization problems on arbitrary functions.
@@ -27,6 +28,8 @@ inline NSGA2::NSGA2(const size_t populationSize,
                     const double epsilon,
                     const arma::vec& lowerBound,
                     const arma::vec& upperBound) :
+    numObjectives(0),
+    numVariables(0),
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -45,6 +48,8 @@ inline NSGA2::NSGA2(const size_t populationSize,
                     const double epsilon,
                     const double lowerBound,
                     const double upperBound) :
+    numObjectives(0),
+    numVariables(0),
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -61,7 +66,7 @@ template<typename MatType,
          typename... CallbackTypes>
 typename MatType::elem_type NSGA2::Optimize(
     std::tuple<ArbitraryFunctionType...>& objectives,
-    MatType& iterate,
+    MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
   // Make sure for evolution to work at least four candidates are present.
@@ -71,11 +76,22 @@ typename MatType::elem_type NSGA2::Optimize(
         " least 4, and, a multiple of 4!");
   }
 
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  // Make sure that we have the methods that we need.  Long name...
+  traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType...,
+      BaseMatType>();
+  RequireDenseFloatingPointType<BaseMatType>();
+
   // Check if lower bound is a vector of a single dimension.
   if (lowerBound.n_rows == 1)
     lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
 
-  // Check if lower bound is a vector of a single dimension.
+  // Check if upper bound is a vector of a single dimension.
   if (upperBound.n_rows == 1)
     upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
 
@@ -85,28 +101,28 @@ typename MatType::elem_type NSGA2::Optimize(
   assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
       "upperBound are not the same as the dimensions of iterate.");
 
-  // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-
   numObjectives = sizeof...(ArbitraryFunctionType);
   numVariables = iterate.n_rows;
 
   // Cache calculated objectives.
-  std::vector<arma::Col<ElemType> > calculatedObjectives;
-  // Pre-allocate space for the calculated objectives.
-  calculatedObjectives.resize(populationSize);
+  std::vector<arma::Col<ElemType> > calculatedObjectives(populationSize);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
-  std::vector<MatType> population;
+  std::vector<BaseMatType> population;
   population.reserve(2 * populationSize + 1);
 
   // Pareto fronts, initialized during non-dominated sorting.
+  // Stores indices of population belonging to a certain front.
   std::vector<std::vector<size_t> > fronts;
   // Initialised in CrowdingDistanceAssignment.
-  std::vector<double> crowdingDistance;
+  std::vector<ElemType> crowdingDistance;
   // Initialised during non-dominated sorting.
   std::vector<size_t> ranks;
+
+  //! Useful temporaries for float-like comparisons.
+  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
+  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -115,16 +131,14 @@ typename MatType::elem_type NSGA2::Optimize(
   // starting point.
   for (size_t i = 0; i < populationSize; i++)
   {
-    population.push_back(arma::randu<MatType>(iterate.n_rows,
+    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
         iterate.n_cols) - 0.5 + iterate);
+
+    // Constrain all genes to be within bounds.
+    population[i] = arma::min(arma::max(population[i], castedLowerBound), castedUpperBound);
   }
 
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
-
-  // Evaluate the fitness before optimization.
-  for (size_t i = 0; i < population.size(); i++)
-    calculatedObjectives[i] = arma::Col<ElemType>(numObjectives, arma::fill::zeros);
-  EvaluateObjectives(population, objectives, calculatedObjectives);
 
   // Iterate until maximum number of generations is obtained.
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
@@ -132,70 +146,88 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {
     Info << "NSGA2: iteration " << generation << "." << std::endl;
-    terminate |= Callback::StepTaken(*this, objectives, iterate, callbacks...);
 
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
-    BinaryTournamentSelection(population, lowerBound, upperBound);
+    BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
 
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
-    for (size_t i = 0; i < population.size(); i++)
-      calculatedObjectives[i] = arma::Col<ElemType>(numObjectives, arma::fill::zeros);
+    std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
+        arma::Col<ElemType>(numObjectives, arma::fill::zeros));
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
     ranks.resize(population.size());
-    FastNonDominatedSort<MatType>(fronts, ranks, calculatedObjectives);
+    FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
 
     // Perform crowding distance assignment.
     crowdingDistance.resize(population.size());
-
+    std::fill(crowdingDistance.begin(), crowdingDistance.end(), 0.);
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
-      CrowdingDistanceAssignment(fronts[fNum], crowdingDistance);
+      CrowdingDistanceAssignment<BaseMatType>(
+          fronts[fNum], calculatedObjectives, crowdingDistance);
     }
 
     // Sort based on crowding distance.
     std::sort(population.begin(), population.end(),
-              [this, ranks, crowdingDistance, population](MatType candidateP,
-                                                          MatType candidateQ)
-              {
-                size_t idxP, idxQ;
-                for (size_t i = 0; i < population.size(); i++)
-                {
-                  if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
-                    idxP = i;
+      [this, ranks, crowdingDistance, population]
+        (BaseMatType candidateP, BaseMatType candidateQ)
+          {
+            size_t idxP{}, idxQ{};
+            for (size_t i = 0; i < population.size(); i++)
+            {
+              if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
+                idxP = i;
 
-                  if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
-                    idxQ = i;
-                }
+              if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
+                idxQ = i;
+            }
 
-                return CrowdingOperator(idxP, idxQ, ranks, crowdingDistance);
-              }
+            return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks, crowdingDistance);
+          }
     );
 
     // Yield a new population P_{t+1} of size populationSize.
+    // Discards unfit population from the R_{t} to yield P_{t+1}.
     population.resize(populationSize);
+
+    terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
+        calculatedObjectives, fronts, callbacks...);
   }
 
-  // Set the candidates from the best front as the output.
-  std::vector<MatType> front;
+  // Set the candidates from the Pareto Set as the output.
+  paretoSet.set_size(population[0].n_rows, population[0].n_cols, fronts[0].size());
+  // The Pareto Set is stored, can be obtained via ParetoSet() getter.
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
+    paretoSet.slice(solutionIdx) =
+      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+  }
 
-  for (size_t f: fronts[0])
-    front.push_back(population[f]);
+  // Set the candidates from the Pareto Front as the output.
+  paretoFront.set_size(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
+      fronts[0].size());
+  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
+    paretoFront.slice(solutionIdx) =
+      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+  }
 
-  // bestFront is stored, can be obtained by the Front() getter.
-  bestFront = front;
+  // Clear rcFront, in case it is later requested by the user for reverse
+  // compatibility reasons.
+  rcFront.clear();
 
-  // Assign iterate to first element of the best front.
-  iterate = bestFront[0];
+  // Assign iterate to first element of the Pareto Set.
+  iterate = population[fronts[0][0]];
 
   Callback::EndOptimization(*this, objectives, iterate, callbacks...);
 
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for(arma::Col<ElemType> objective: calculatedObjectives)
+  for (const arma::Col<ElemType>& objective: calculatedObjectives)
     if (arma::accu(objective) < performance)
       performance = arma::accu(objective);
 
@@ -210,7 +242,7 @@ typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    std::vector<arma::Col<double> >&)
+    std::vector<arma::Col<typename MatType::elem_type> >&)
 {
   // Nothing to do here.
 }
@@ -223,7 +255,7 @@ typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    std::vector<arma::Col<double> >& calculatedObjectives)
+    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
 {
   for (size_t i = 0; i < populationSize; i++)
   {
@@ -236,8 +268,8 @@ NSGA2::EvaluateObjectives(
 //! Reproduce and generate new candidates.
 template<typename MatType>
 inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
-                                             const arma::vec& lowerBound,
-                                             const arma::vec& upperBound)
+                                             const MatType& lowerBound,
+                                             const MatType& upperBound)
 {
   std::vector<MatType> children;
 
@@ -292,20 +324,14 @@ inline void NSGA2::Crossover(MatType& childA,
 //! Perform mutation of the candidates weights with some noise.
 template<typename MatType>
 inline void NSGA2::Mutate(MatType& child,
-                          const arma::vec& lowerBound,
-                          const arma::vec& upperBound)
+                          const MatType& lowerBound,
+                          const MatType& upperBound)
 {
   child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
       (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 
   // Constrain all genes to be between bounds.
-  for (size_t idx = 0; idx < numVariables; idx++)
-  {
-    if (child[idx] < lowerBound(idx))
-      child[idx] = lowerBound(idx);
-    else if (child[idx] > upperBound(idx))
-      child[idx] = upperBound(idx);
-  }
+  child = arma::min(arma::max(child, lowerBound), upperBound);
 }
 
 //! Sort population into Pareto fronts.
@@ -344,7 +370,7 @@ inline void NSGA2::FastNonDominatedSort(
 
   size_t i = 0;
 
-  while (fronts[i].size() > 0)
+  while (!fronts[i].empty())
   {
     std::vector<size_t> nextFront;
 
@@ -365,6 +391,8 @@ inline void NSGA2::FastNonDominatedSort(
     i++;
     fronts.push_back(nextFront);
   }
+  // Remove the empty final set.
+  fronts.pop_back();
 }
 
 //! Check if a candidate Pareto dominates another candidate.
@@ -393,37 +421,59 @@ inline bool NSGA2::Dominates(
 }
 
 //! Assign crowding distance to the population.
-inline void NSGA2::CrowdingDistanceAssignment(const std::vector<size_t>& front,
-                                              std::vector<double>& crowdingDistance)
+template <typename MatType>
+inline void NSGA2::CrowdingDistanceAssignment(
+	const std::vector<size_t>& front,
+	std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+	std::vector<typename MatType::elem_type>& crowdingDistance)
 {
-  if (front.size() > 0)
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+
+  size_t fSize = front.size();
+  // Stores the sorted indices of the fronts.
+  arma::uvec sortedIdx  = arma::regspace<arma::uvec>(0, 1, fSize - 1);
+
+  for (size_t m = 0; m < numObjectives; m++)
   {
-    for (size_t elem: front)
-      crowdingDistance[elem] = 0;
+    // Cache fValues of individuals for current objective.
+    arma::Col<ElemType> fValues(fSize);
+    std::transform(front.begin(), front.end(), fValues.begin(),
+      [&](const size_t& individual)
+        {
+          return calculatedObjectives[individual](m);
+        });
 
-    size_t fSize = front.size();
+    // Sort front indices by ascending fValues for current objective.
+    std::sort(sortedIdx.begin(), sortedIdx.end(),
+      [&](const size_t& frontIdxA, const size_t& frontIdxB)
+        {
+          return (fValues(frontIdxA) < fValues(frontIdxB));
+        });
 
-    for (size_t m = 0; m < numObjectives; m++)
+    crowdingDistance[front[sortedIdx(0)]] =
+        std::numeric_limits<ElemType>::max();
+    crowdingDistance[front[sortedIdx(fSize - 1)]] =
+        std::numeric_limits<ElemType>::max();
+    ElemType minFval = fValues(sortedIdx(0));
+    ElemType maxFval = fValues(sortedIdx(fSize - 1));
+    ElemType scale =
+        std::abs(maxFval - minFval) == 0. ? 1. : std::abs(maxFval - minFval);
+
+    for (size_t i = 1; i < fSize - 1; i++)
     {
-      crowdingDistance[front[0]] = std::numeric_limits<double>::max();
-      crowdingDistance[front[fSize - 1]] = std::numeric_limits<double>::max();
-
-      for (size_t i = 1; i < fSize - 1 ; i++)
-      {
-        crowdingDistance[front[i]] += (crowdingDistance[front[i - 1]] -
-            crowdingDistance[front[i + 1]]) /
-            (std::numeric_limits<double>::max() -
-            std::numeric_limits<double>::min());
-      }
+      crowdingDistance[front[sortedIdx(i)]] +=
+          (fValues(sortedIdx(i + 1)) - fValues(sortedIdx(i - 1))) / scale;
     }
   }
 }
 
 //! Comparator for crowding distance based sorting.
+template<typename MatType>
 inline bool NSGA2::CrowdingOperator(size_t idxP,
                                     size_t idxQ,
                                     const std::vector<size_t>& ranks,
-                                    const std::vector<double>& crowdingDistance)
+                                    const std::vector<typename MatType::elem_type>& crowdingDistance)
 {
   if (ranks[idxP] < ranks[idxQ])
     return true;
