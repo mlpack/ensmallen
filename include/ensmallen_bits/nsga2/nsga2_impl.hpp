@@ -105,9 +105,7 @@ typename MatType::elem_type NSGA2::Optimize(
   numVariables = iterate.n_rows;
 
   // Cache calculated objectives.
-  std::vector<arma::Col<ElemType> > calculatedObjectives;
-  // Pre-allocate space for the calculated objectives.
-  calculatedObjectives.resize(populationSize);
+  std::vector<arma::Col<ElemType> > calculatedObjectives(populationSize);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
@@ -122,6 +120,10 @@ typename MatType::elem_type NSGA2::Optimize(
   // Initialised during non-dominated sorting.
   std::vector<size_t> ranks;
 
+  //! Useful temporaries for float-like comparisons.
+  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
+  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+
   // Controls early termination of the optimization process.
   bool terminate = false;
 
@@ -132,22 +134,11 @@ typename MatType::elem_type NSGA2::Optimize(
     population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
         iterate.n_cols) - 0.5 + iterate);
 
-    // Constrain all genes to be between bounds.
-    for (size_t geneIdx = 0; geneIdx < numVariables; geneIdx++)
-    {
-      if (population[i](geneIdx) < lowerBound(geneIdx))
-        population[i](geneIdx) = lowerBound(geneIdx);
-      else if (population[i](geneIdx) > upperBound(geneIdx))
-        population[i](geneIdx) = upperBound(geneIdx);
-    }
+    // Constrain all genes to be within bounds.
+    population[i] = arma::min(arma::max(population[i], castedLowerBound), castedUpperBound);
   }
 
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
-
-  // Evaluate the fitness before optimization.
-  for (size_t i = 0; i < population.size(); i++)
-    calculatedObjectives[i] = arma::Col<ElemType>(numObjectives, arma::fill::zeros);
-  EvaluateObjectives(population, objectives, calculatedObjectives);
 
   // Iterate until maximum number of generations is obtained.
   terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
@@ -158,12 +149,12 @@ typename MatType::elem_type NSGA2::Optimize(
 
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
-    BinaryTournamentSelection(population, lowerBound, upperBound);
+    BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
 
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
-    for (size_t i = 0; i < population.size(); i++)
-      calculatedObjectives[i] = arma::Col<ElemType>(numObjectives, arma::fill::zeros);
+    std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
+        arma::Col<ElemType>(numObjectives, arma::fill::zeros));
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
@@ -207,7 +198,7 @@ typename MatType::elem_type NSGA2::Optimize(
   }
 
   // Set the candidates from the Pareto Set as the output.
-  paretoSet.resize(population[0].n_rows, population[0].n_cols, fronts[0].size());
+  paretoSet.set_size(population[0].n_rows, population[0].n_cols, fronts[0].size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
@@ -215,10 +206,8 @@ typename MatType::elem_type NSGA2::Optimize(
       arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
   }
 
-  // Calculate the objectives of the surviving population.
-  EvaluateObjectives(population, objectives, calculatedObjectives);
   // Set the candidates from the Pareto Front as the output.
-  paretoFront.resize(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
+  paretoFront.set_size(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
       fronts[0].size());
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
@@ -226,6 +215,10 @@ typename MatType::elem_type NSGA2::Optimize(
     paretoFront.slice(solutionIdx) =
       arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
   }
+
+  // Clear rcFront, in case it is later requested by the user for reverse
+  // compatibility reasons.
+  rcFront.clear();
 
   // Assign iterate to first element of the Pareto Set.
   iterate = population[fronts[0][0]];
@@ -275,8 +268,8 @@ NSGA2::EvaluateObjectives(
 //! Reproduce and generate new candidates.
 template<typename MatType>
 inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
-                                             const arma::vec& lowerBound,
-                                             const arma::vec& upperBound)
+                                             const MatType& lowerBound,
+                                             const MatType& upperBound)
 {
   std::vector<MatType> children;
 
@@ -331,20 +324,14 @@ inline void NSGA2::Crossover(MatType& childA,
 //! Perform mutation of the candidates weights with some noise.
 template<typename MatType>
 inline void NSGA2::Mutate(MatType& child,
-                          const arma::vec& lowerBound,
-                          const arma::vec& upperBound)
+                          const MatType& lowerBound,
+                          const MatType& upperBound)
 {
   child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
       (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 
   // Constrain all genes to be between bounds.
-  for (size_t idx = 0; idx < numVariables; idx++)
-  {
-    if (child[idx] < lowerBound(idx))
-      child[idx] = lowerBound(idx);
-    else if (child[idx] > upperBound(idx))
-      child[idx] = upperBound(idx);
-  }
+  child = arma::min(arma::max(child, lowerBound), upperBound);
 }
 
 //! Sort population into Pareto fronts.
