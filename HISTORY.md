@@ -3,6 +3,9 @@
 * Added DemonSGD and DemonAdam optimizers
    ([#211](https://github.com/mlpack/ensmallen/pull/211)).
 
+ * Add Yogi optimizer
+    ([#232](https://github.com/mlpack/ensmallen/pull/232)).
+
 ### ensmallen 2.18.2: "Fairmount Bagel"
 ###### 2022-02-13
  * Update Catch2 to 2.13.8
