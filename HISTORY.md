@@ -1,16 +1,55 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
- * Add AdaBelief optimizer
-    ([#233](https://github.com/mlpack/ensmallen/pull/233)).
+* Add AdaBelief optimizer
+  ([#233](https://github.com/mlpack/ensmallen/pull/233)).
 
- * Improved installation and compilation instructions
-   ([#300](https://github.com/mlpack/ensmallen/pull/300)).
+### ensmallen 2.18.2: "Fairmount Bagel"
+###### 2022-02-13
+ * Update Catch2 to 2.13.8
+  ([#336](https://github.com/mlpack/ensmallen/pull/336)).
 
+ * Fix epoch timing output
+  ([#337](https://github.com/mlpack/ensmallen/pull/337)).
+
+### ensmallen 2.18.1: "Fairmount Bagel"
+###### 2021-11-19
+ * Accelerate SGD test time
+   ([#330](https://github.com/mlpack/ensmallen/pull/300)).
+
+ * Fix potential infinite loop in CMAES
+   ([#331](https://github.com/mlpack/ensmallen/pull/331)).
+
+ * Fix SCD partial gradient test
+   ([#332](https://github.com/mlpack/ensmallen/pull/332)).
+
+### ensmallen 2.18.0: "Fairmount Bagel"
+###### 2021-10-20
+ * Add gradient value clipping and gradient norm scaling callback
+   ([#315](https://github.com/mlpack/ensmallen/pull/315)).
+
+ * Remove superfluous CMake option to build the tests
+   ([#313](https://github.com/mlpack/ensmallen/pull/313)).
+
+ * Bump minimum Armadillo version to 9.800
+   ([#318](https://github.com/mlpack/ensmallen/pull/318)).
+
+ * Update Catch2 to 2.13.7
+   ([#322](https://github.com/mlpack/ensmallen/pull/322)).
+
+ * Remove redundant template argument for C++20 compatibility
+   ([#324](https://github.com/mlpack/ensmallen/pull/324)).
+
+ * Fix MOEAD test stability
+   ([#327](https://github.com/mlpack/ensmallen/pull/327)).
+
+### ensmallen 2.17.0: "Pachis Din Me Pesa Double"
+###### 2021-07-06
  * CheckArbitraryFunctionTypeAPI extended for MOO support
    ([#283](https://github.com/mlpack/ensmallen/pull/283)).
 
  * Refactor NSGA2
-   ([#263](https://github.com/mlpack/ensmallen/pull/263)).
+   ([#263](https://github.com/mlpack/ensmallen/pull/263),
+   [#304](https://github.com/mlpack/ensmallen/pull/304)).
 
  * Add Indicators for Multiobjective optimizers
    ([#285](https://github.com/mlpack/ensmallen/pull/285)).
@@ -29,9 +68,19 @@
 
  * Add Das-Dennis weight initialization method
    ([#295](https://github.com/mlpack/ensmallen/pull/295)).
-   
+
  * Add Dirichlet Weight Initialization
    ([#296](https://github.com/mlpack/ensmallen/pull/296)).
+
+ * Improved installation and compilation instructions
+   ([#300](https://github.com/mlpack/ensmallen/pull/300)).
+
+ * Disable building the tests by default for faster installation
+   ([#303](https://github.com/mlpack/ensmallen/pull/303)).
+
+ * Modify matrix initialisation to take into account
+   default element zeroing in Armadillo 10.5
+   ([#305](https://github.com/mlpack/ensmallen/pull/305)).
 
 ### ensmallen 2.16.2: "Severely Dented Can Of Polyurethane"
 ###### 2021-03-24

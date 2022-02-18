@@ -162,8 +162,8 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
         "solve KKT system.");
   }
 
-  MatType subTerm(aSparse.n_cols, 1);
-  subTerm.zeros();
+  MatType subTerm(aSparse.n_cols, 1, arma::fill::zeros);
+  
   if (aSparse.n_rows)
   {
     dySparse = dy(arma::span(0, aSparse.n_rows - 1), 0);
@@ -303,7 +303,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
 
   eInvFaSparseT.set_size(n2bar, sdp.NumSparseConstraints());
   eInvFaDenseT.set_size(n2bar, sdp.NumDenseConstraints());
-  m.set_size(sdp.NumConstraints(), sdp.NumConstraints());
+  m.zeros(sdp.NumConstraints(), sdp.NumConstraints());
 
   // Controls early termination of the optimization process.
   bool terminate = false;

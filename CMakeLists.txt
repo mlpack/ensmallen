@@ -2,12 +2,11 @@
 # just installs the headers to the install location, and optionally builds the
 # test program.
 cmake_minimum_required(VERSION 3.3.2)
-project(ensmallen 
+project(ensmallen
         LANGUAGES C CXX)
 
 # Configurable options for CMake.
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
-option(BUILD_TESTS "Build tests." ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
@@ -58,7 +57,7 @@ if(USE_OPENMP)
 endif()
 
 # Find Armadillo and link it.
-find_package(Armadillo 8.400.0 REQUIRED)
+find_package(Armadillo 9.800.0 REQUIRED)
 target_link_libraries(ensmallen INTERFACE Armadillo::Armadillo)
 
 # Set helper variables for creating the version, config and target files.
@@ -96,6 +95,4 @@ install(FILES ${CMAKE_SOURCE_DIR}/include/ensmallen.hpp
 
 # Enable testing and build tests.
 enable_testing()
-if (BUILD_TESTS)
-  add_subdirectory(tests)
-endif()
+add_subdirectory(tests)
