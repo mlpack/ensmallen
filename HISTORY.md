@@ -1,5 +1,11 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Add Yogi optimizer
+    ([#232](https://github.com/mlpack/ensmallen/pull/232)).
+
+ * Add AdaBelief optimizer
+  ([#233](https://github.com/mlpack/ensmallen/pull/233)).
+
  * Add AdaSqrt optimizer
    ([#234](https://github.com/mlpack/ensmallen/pull/234)).
 

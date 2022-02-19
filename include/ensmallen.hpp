@@ -85,6 +85,7 @@
 
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
+#include "ensmallen_bits/ada_belief/ada_belief.hpp"
 #include "ensmallen_bits/ada_bound/ada_bound.hpp"
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
@@ -132,5 +133,6 @@
 #include "ensmallen_bits/svrg/svrg.hpp"
 #include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
+#include "ensmallen_bits/yogi/yogi.hpp"
 
 #endif
