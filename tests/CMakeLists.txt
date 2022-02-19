@@ -1,6 +1,7 @@
 # The tests that need to be compiled.
 set(ENSMALLEN_TESTS_SOURCES
     main.cpp
+    ada_belief_test.cpp
     ada_bound_test.cpp
     ada_delta_test.cpp
     ada_grad_test.cpp
