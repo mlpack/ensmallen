@@ -16,60 +16,19 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Tests the Adagrad optimizer using a simple test function.
+ * Run AdaSqrt on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("SimpleAdaGradTestFunction", "[AdaGradTest]")
+TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrtTest]")
 {
-  SGDTestFunction f;
-  AdaGrad optimizer(0.99, 1, 1e-8, 5000000, 1e-9, true);
-
-  arma::mat coordinates = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.003));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.003));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(0.003));
+  AdaSqrt optimizer(0.99, 32, 1e-8, 5000000, 1e-9, true);
+  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
 }
 
 /**
- * Run AdaGrad on logistic regression and make sure the results are acceptable.
+ * Run AdaSqrt on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGradTest]")
+TEST_CASE("AdaSqrtLogisticRegressionTestFMat", "[AdaSqrtTest]")
 {
-  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest(adagrad, 0.003, 0.006);
-}
-
-/**
- * Tests the Adagrad optimizer using a simple test function with arma::fmat.
- */
-TEST_CASE("SimpleAdaGradTestFunctionFMat", "[AdaGradTest]")
-{
-  size_t trials = 3;
-  SGDTestFunction f;
-  arma::fmat coordinates;
-
-  for (size_t i = 0; i < trials; ++i)
-  {
-    coordinates = f.GetInitialPoint<arma::fmat>();
-
-    AdaGrad optimizer(0.99, 1, 1e-8, 5000000, 1e-9, true);
-    optimizer.Optimize(f, coordinates);
-
-    if (arma::max(arma::vectorise(arma::abs(coordinates))) < 0.01f)
-      break;
-  }
-
-  REQUIRE(coordinates(0) == Approx(0.0f).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(0.0f).margin(0.01));
-  REQUIRE(coordinates(2) == Approx(0.0f).margin(0.01));
-}
-
-/**
- * Run AdaGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaGradLogisticRegressionTestFMat", "[AdaGradTest]")
-{
-  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest<arma::fmat>(adagrad, 0.003, 0.006);
+  AdaSqrt optimizer(0.99, 32, 1e-8, 5000000, 1e-9, true);
+  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.003, 0.006);
 }
