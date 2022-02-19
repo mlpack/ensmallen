@@ -554,6 +554,7 @@ Each of the implemented methods is allowed to have additional cv-modifiers
 
 The following optimizers can be used with differentiable separable functions:
 
+ - [AdaBelief](#adabelief)
  - [AdaBound](#adabound)
  - [AdaDelta](#adadelta)
  - [AdaGrad](#adagrad)
