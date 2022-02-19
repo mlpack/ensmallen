@@ -1,8 +1,6 @@
 /**
- * @file ada_grad_test.cpp
- * @author Abhinav Moudgil
+ * @file ada_sqrt_test.cpp
  * @author Marcus Edel
- * @author Conrad Sanderson
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
