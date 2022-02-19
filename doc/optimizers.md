@@ -1,3 +1,61 @@
+## AdaBelief
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaBelief uses a different denominator from Adam, and is orthogonal to other
+techniques such as recification, decoupled weight decay. The intuition for
+AdaBelief is to adapt the stepsize according to the "belief" in the current
+gradient direction.
+
+#### Constructors
+
+ * `AdaBelief()`
+ * `AdaBelief(`_`stepSize, batchSize`_`)`
+ * `AdaBelief(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AdaBelief(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | The exponential decay rate for the 1st moment estimates. | `0.9` |
+| `double` | **`beta2`** | The exponential decay rate for the 2nd moment estimates. | `0.999` |
+| `double` | **`epsilon`** | A small constant for numerical stability. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+AdaBelief optimizer(0.001, 32, 0.9, 0.999, 1e-12, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients](https://arxiv.org/abs/2010.07468)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## AdaBound
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -267,7 +325,7 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples
@@ -3033,4 +3091,57 @@ optimizer.Optimize(f, coordinates);
  * [WNGrad: Learn the Learning Rate in Gradient Descent](https://arxiv.org/abs/1803.02865)
  * [SGD](#standard-sgd)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## Yogi
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Yogi is an optimization algorithm based on Adam with more fine-grained effective
+learning rate control, which uses additive updates instead of multiplicative
+updates for the moving average of the squared gradient. In addition, Yogi has
+similar theoretical guarantees on convergence as Adam.
+
+#### Constructors
+
+ * `Yogi()`
+ * `Yogi(`_`stepSize, batchSize`_`)`
+ * `Yogi(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations`_`)`
+ * `Yogi(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+Yogi optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [Adaptive Methods for Nonconvex Optimization](https://papers.nips.cc/paper/8186-adaptive-methods-for-nonconvex-optimization)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adam](#adam)
  * [Differentiable separable functions](#differentiable-separable-functions)

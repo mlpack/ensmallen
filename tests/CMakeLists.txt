@@ -1,6 +1,7 @@
 # The tests that need to be compiled.
 set(ENSMALLEN_TESTS_SOURCES
     main.cpp
+    ada_belief_test.cpp
     ada_bound_test.cpp
     ada_delta_test.cpp
     ada_grad_test.cpp
@@ -46,6 +47,7 @@ set(ENSMALLEN_TESTS_SOURCES
     svrg_test.cpp
     swats_test.cpp
     wn_grad_test.cpp
+    yogi_test.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
