@@ -14,7 +14,7 @@
 #define ENSMALLEN_ADA_SQRT_ADA_SQRT_HPP
 
 #include <ensmallen_bits/sgd/sgd.hpp>
-#include "ada_sqrt_update.hpp"
+#include <ensmallen_bits/ada_sqrt/ada_sqrt_update.hpp>
 
 namespace ens {
 
