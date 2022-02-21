@@ -12,9 +12,6 @@
 #ifndef ENSMALLEN_ADA_SQRT_ADA_SQRT_IMPL_HPP
 #define ENSMALLEN_ADA_SQRT_ADA_SQRT_IMPL_HPP
 
-// In case it hasn't been included yet.
-#include "ada_sqrt.hpp"
-
 namespace ens {
 
 inline AdaSqrt::AdaSqrt(const double stepSize,
