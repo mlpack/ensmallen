@@ -97,7 +97,7 @@ class AdaSqrtUpdate
     {
       ++parent.iteration;
 
-      squaredGradient += (gradient % gradient);
+      squaredGradient += arma::square(gradient);
 
       iterate -= stepSize * std::sqrt(parent.iteration) * gradient /
           (squaredGradient + parent.epsilon);
