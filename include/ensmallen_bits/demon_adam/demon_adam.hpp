@@ -12,19 +12,20 @@
 #ifndef ENSMALLEN_DEMON_ADAM_DEMON_ADAM_HPP
 #define ENSMALLEN_DEMON_ADAM_DEMON_ADAM_HPP
 
-#include <ensmallen_bits/sgd/sgd.hpp>
-#include "demon_adam_update.hpp"
+#include "../sgd/sgd.hpp"
 #include "../adam/adam_update.hpp"
 #include "../adam/adamax_update.hpp"
 #include "../adam/amsgrad_update.hpp"
 #include "../adam/nadam_update.hpp"
 #include "../adam/nadamax_update.hpp"
 #include "../adam/optimisticadam_update.hpp"
+#include "demon_adam_update.hpp"
+
 namespace ens {
 
 /**
  * DemonAdam automatically decays momentum, motivated by decaying the total
- * contribution of a gradient to all future updates. 
+ * contribution of a gradient to all future updates.
  *
  * For more information, see the following.
  *
@@ -44,7 +45,7 @@ namespace ens {
  * @tparam UpdateRule Adam optimizer update rule to be used.
  */
 template<typename UpdateRule = AdamUpdate>
-class DemonAdamType 
+class DemonAdamType
 {
  public:
   /**
@@ -156,7 +157,7 @@ class DemonAdamType
   //! Modify the momentum iteration number.
   size_t& MomentumIterations()
   { return optimizer.UpdatePolicy().MomentumIterations(); }
-  
+
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).

@@ -16,7 +16,7 @@ namespace ens {
 
 /**
  * DemonSGD automatically decays momentum, motivated by decaying the total
- * contribution of a gradient to all future updates. 
+ * contribution of a gradient to all future updates.
  *
  * For more information, see the following.
  *

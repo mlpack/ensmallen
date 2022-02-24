@@ -12,14 +12,14 @@
 #ifndef ENSMALLEN_DEMON_SGD_DEMON_SGD_HPP
 #define ENSMALLEN_DEMON_SGD_DEMON_SGD_HPP
 
-#include <ensmallen_bits/sgd/sgd.hpp>
+#include "../sgd/sgd.hpp"
 #include "demon_sgd_update.hpp"
 
 namespace ens {
 
 /**
  * DemonSGD automatically decays momentum, motivated by decaying the total
- * contribution of a gradient to all future updates. 
+ * contribution of a gradient to all future updates.
  *
  * For more information, see the following.
  *
@@ -36,7 +36,7 @@ namespace ens {
  * see the documentation on function types include with this distribution or on
  * the ensmallen website.
  */
-class DemonSGD 
+class DemonSGD
 {
  public:
   /**
@@ -140,7 +140,7 @@ class DemonSGD
   //! Modify the momentum iteration number.
   size_t& MomentumIterations()
   { return optimizer.UpdatePolicy().MomentumIterations(); }
-  
+
   //! Get the maximum number of iterations (0 indicates no limit).
   size_t MaxIterations() const { return optimizer.MaxIterations(); }
   //! Modify the maximum number of iterations (0 indicates no limit).
