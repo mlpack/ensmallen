@@ -21,7 +21,7 @@ using namespace ens::test;
  */
 TEST_CASE("DemonSGDLogisticRegressionTest", "[DemonSGDTest]")
 {
-  DemonSGD optimizer(0.8, 32, 0.9, 100000, 1e-9, true, true, true);
+  DemonSGD optimizer(0.5, 32, 0.9, 100000, 1e-9, true, true, true);
   LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 3);
 }
 
