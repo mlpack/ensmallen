@@ -20,7 +20,7 @@ using namespace ens::test;
  */
 TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrtTest]")
 {
-  AdaSqrt optimizer(0.99, 32, 1e-8, 5000000, 1e-9, true);
+  AdaSqrt optimizer(0.01, 32, 1e-8, 5000000, 1e-9, true);
   LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
 }
 
@@ -29,6 +29,6 @@ TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrtTest]")
  */
 TEST_CASE("AdaSqrtLogisticRegressionTestFMat", "[AdaSqrtTest]")
 {
-  AdaSqrt optimizer(0.99, 32, 1e-8, 5000000, 1e-9, true);
+  AdaSqrt optimizer(0.01, 32, 1e-8, 5000000, 1e-9, true);
   LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.003, 0.006);
 }
