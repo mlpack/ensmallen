@@ -94,7 +94,7 @@ TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
 TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
 {
   HimmelblauFunction f;
-  CNE optimizer(450, 1500, 0.3, 0.3, 0.3, 1e-7);
+  CNE optimizer(650, 3000, 0.3, 0.3, 0.3, 1e-7);
 
   arma::mat coordinates = arma::mat("2; 1");
   optimizer.Optimize(f, coordinates);
