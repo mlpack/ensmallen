@@ -6,6 +6,9 @@
  * Add AdaBelief optimizer
   ([#233](https://github.com/mlpack/ensmallen/pull/233)).
 
+ * Add AdaSqrt optimizer
+   ([#234](https://github.com/mlpack/ensmallen/pull/234)).
+
 ### ensmallen 2.18.2: "Fairmount Bagel"
 ###### 2022-02-13
  * Update Catch2 to 2.13.8
