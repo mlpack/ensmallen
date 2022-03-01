@@ -89,6 +89,7 @@
 #include "ensmallen_bits/ada_bound/ada_bound.hpp"
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
+#include "ensmallen_bits/ada_sqrt/ada_sqrt.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
 #include "ensmallen_bits/qhadam/qhadam.hpp"
 #include "ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp"

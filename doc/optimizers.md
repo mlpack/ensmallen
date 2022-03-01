@@ -233,6 +233,64 @@ optimizer.Optimize(f, coordinates);
  * [AdaDelta](#adadelta)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## AdaSqrt
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaSqrt is an optimizer with parameter-specific learning rates, which are
+adapted relative to how frequently a parameter gets updated during training.
+Larger updates for more sparse parameters and smaller updates for less sparse
+parameters. AdaSqrt, removes the square root in the denominator and scales the
+learning rate by sqrt(T).
+
+#### Constructors
+
+ - `AdaSqrt()`
+ - `AdaSqrt(`_`stepSize`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `size_t` | **`batchSize`** | Number of points to process in one step. | `32` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+Attributes of the optimizer may also be changed via the member methods
+`StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
+`Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaSqrt optimizer(1.0, 1, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
+ * [AdaGrad in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#AdaGrad)
+ * [AdaDelta](#adadelta)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## Adam
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*

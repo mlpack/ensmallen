@@ -5,6 +5,7 @@ set(ENSMALLEN_TESTS_SOURCES
     ada_bound_test.cpp
     ada_delta_test.cpp
     ada_grad_test.cpp
+    ada_sqrt_test.cpp
     adam_test.cpp
     aug_lagrangian_test.cpp
     bigbatch_sgd_test.cpp
