@@ -21,9 +21,9 @@ using namespace ens::test;
  */
 TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdamTest]")
 {
-  DemonAdam optimizer(0.5, 10, 0.9, 0.9, 0.999, 1e-8,
+  DemonAdam optimizer(0.2, 32, 0.9, 0.9, 0.999, 1e-8,
       10000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 3);
+  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 6);
 }
 
 /**
