@@ -50,8 +50,7 @@ class PadamUpdate
       epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
-      partial(partial),
-      iteration(0)
+      partial(partial)
   {
     // Nothing to do.
   }
@@ -76,11 +75,6 @@ class PadamUpdate
   //! Modify the partial adaptive parameter.
   double& Partial() { return partial; }
 
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
-
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
    * template class with two template arguments: MatType and GradType.  This is
@@ -100,7 +94,8 @@ class PadamUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(PadamUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
@@ -119,7 +114,7 @@ class PadamUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       // And update the iterate.
       m *= parent.beta1;
@@ -128,10 +123,8 @@ class PadamUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
-          parent.iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
-          parent.iteration);
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       // Element wise maximum of past and present squared gradients.
       vImproved = arma::max(vImproved, v);
@@ -152,6 +145,9 @@ class PadamUpdate
 
     //! The optimal sqaured gradient value.
     GradType vImproved;
+
+    //! The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -166,9 +162,6 @@ class PadamUpdate
 
   //! Partial adaptive parameter.
   double partial;
-
-  //! The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens
