@@ -47,8 +47,7 @@ class AMSGradUpdate
                 const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+    beta2(beta2)
   {
     // Nothing to do.
   }
@@ -67,11 +66,6 @@ class AMSGradUpdate
   double Beta2() const { return beta2; }
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
-
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
 
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
@@ -92,7 +86,8 @@ class AMSGradUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(AMSGradUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
@@ -111,7 +106,7 @@ class AMSGradUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       // And update the iterate.
       m *= parent.beta1;
@@ -120,10 +115,8 @@ class AMSGradUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
-          parent.iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
-          parent.iteration);
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       // Element wise maximum of past and present squared gradients.
       vImproved = arma::max(vImproved, v);
@@ -144,6 +137,9 @@ class AMSGradUpdate
 
     // The optimal squared gradient value.
     GradType vImproved;
+
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -155,9 +151,6 @@ class AMSGradUpdate
 
   // The second moment coefficient.
   double beta2;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens
