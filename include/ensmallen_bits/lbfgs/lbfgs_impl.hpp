@@ -79,7 +79,7 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
 {
   typedef typename CubeType::elem_type CubeElemType;
 
-  double scalingFactor = 1.0;
+  double scalingFactor;
   if (iterationNum > 0)
   {
     int previousPos = (iterationNum - 1) % numBasis;
@@ -378,7 +378,7 @@ L_BFGS::Optimize(FunctionType& function,
   terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
         functionValue, gradient, callbacks...);
 
-  ElemType prevFunctionValue = functionValue;
+  ElemType prevFunctionValue;
 
   // The main optimization loop.
   terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
