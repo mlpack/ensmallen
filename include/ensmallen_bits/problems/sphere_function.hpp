@@ -17,7 +17,7 @@ namespace test {
 
 /**
  * The Sphere function, defined by
- *
+ * Ahmed Abdelatty
  * \f[
  * f(x) = \sum_{i=1}^{d} x_i^2
  * \f]
