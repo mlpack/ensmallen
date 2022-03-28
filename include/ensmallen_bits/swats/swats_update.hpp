@@ -50,7 +50,6 @@ class SWATSUpdate
     epsilon(epsilon),
     beta1(beta1),
     beta2(beta2),
-    iteration(0),
     phaseSGD(false),
     sgdRate(0),
     sgdLambda(0)
@@ -72,11 +71,6 @@ class SWATSUpdate
   double Beta2() const { return beta2; }
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
-
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
 
   //! Get whether the current phase is SGD.
   bool PhaseSGD() const { return phaseSGD; }
@@ -111,7 +105,8 @@ class SWATSUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(SWATSUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
@@ -131,7 +126,7 @@ class SWATSUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       if (parent.phaseSGD)
       {
@@ -150,10 +145,8 @@ class SWATSUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
-          parent.iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
-          parent.iteration);
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       GradType delta = stepSize * m / biasCorrection1 /
           (arma::sqrt(v / biasCorrection2) + parent.epsilon);
@@ -167,8 +160,7 @@ class SWATSUpdate
             (1 - parent.beta2) * rate;
         parent.sgdRate = parent.sgdLambda / biasCorrection2;
 
-        if (std::abs(parent.sgdRate - rate) < parent.epsilon &&
-            parent.iteration > 1)
+        if (std::abs(parent.sgdRate - rate) < parent.epsilon && iteration > 1)
         {
           parent.phaseSGD = true;
           v.zeros();
@@ -188,6 +180,9 @@ class SWATSUpdate
 
     //! The exponential moving average of squared gradient values (SGD).
     GradType sgdV;
+
+    //! The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -199,9 +194,6 @@ class SWATSUpdate
 
   //! The second moment coefficient.
   double beta2;
-
-  //! The number of iterations.
-  size_t iteration;
 
   //! Wether to use the SGD or Adam update rule.
   bool phaseSGD;

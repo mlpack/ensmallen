@@ -39,7 +39,7 @@ class AdaSqrtUpdate
    * @param epsilon The epsilon value used to initialise the squared gradient
    *        parameter.
    */
-  AdaSqrtUpdate(const double epsilon = 1e-8) : epsilon(epsilon), iteration(0)
+  AdaSqrtUpdate(const double epsilon = 1e-8) : epsilon(epsilon)
   {
     // Nothing to do.
   }
@@ -48,11 +48,6 @@ class AdaSqrtUpdate
   double Epsilon() const { return epsilon; }
   //! Modify the value used to initialise the squared gradient parameter.
   double& Epsilon() { return epsilon; }
-
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
 
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
@@ -76,7 +71,8 @@ class AdaSqrtUpdate
      */
     Policy(AdaSqrtUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
-        squaredGradient(rows, cols)
+        squaredGradient(rows, cols),
+        iteration(0)
     {
       // Initialize an empty matrix for sum of squares of parameter gradient.
       squaredGradient.zeros();
@@ -95,11 +91,11 @@ class AdaSqrtUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      ++parent.iteration;
+      ++iteration;
 
       squaredGradient += arma::square(gradient);
 
-      iterate -= stepSize * std::sqrt(parent.iteration) * gradient /
+      iterate -= stepSize * std::sqrt(iteration) * gradient /
           (squaredGradient + parent.epsilon);
     }
 
@@ -108,14 +104,13 @@ class AdaSqrtUpdate
     AdaSqrtUpdate& parent;
     // The squared gradient matrix.
     GradType squaredGradient;
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
   // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens

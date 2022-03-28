@@ -49,8 +49,7 @@ class AdaBeliefUpdate
                   const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+    beta2(beta2)
   {
     // Nothing to do.
   }
@@ -69,11 +68,6 @@ class AdaBeliefUpdate
   double Beta2() const { return beta2; }
   //! Modify the exponential decay rate for the 2nd moment estimates.
   double& Beta2() { return beta2; }
-
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
 
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
@@ -94,7 +88,8 @@ class AdaBeliefUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(AdaBeliefUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        iteration(0)
     {
       m.zeros(rows, cols);
       s.zeros(rows, cols);
@@ -112,7 +107,7 @@ class AdaBeliefUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       m *= parent.beta1;
       m += (1 - parent.beta1) * gradient;
@@ -120,10 +115,8 @@ class AdaBeliefUpdate
       s *= parent.beta2;
       s += (1 - parent.beta2) * arma::pow(gradient - m, 2.0) + parent.epsilon;
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
-          parent.iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
-          parent.iteration);
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       // And update the iterate.
       iterate -= ((m / biasCorrection1) * stepSize) / (arma::sqrt(s /
@@ -139,6 +132,9 @@ class AdaBeliefUpdate
 
     // The exponential moving average of squared gradient values.
     GradType s;
+
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -150,9 +146,6 @@ class AdaBeliefUpdate
 
   // The exponential decay rate for the 2nd moment estimates.
   double beta2;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens
