@@ -85,9 +85,11 @@
 
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
+#include "ensmallen_bits/ada_belief/ada_belief.hpp"
 #include "ensmallen_bits/ada_bound/ada_bound.hpp"
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
+#include "ensmallen_bits/ada_sqrt/ada_sqrt.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
 #include "ensmallen_bits/demon_adam/demon_adam.hpp"
 #include "ensmallen_bits/demon_sgd/demon_sgd.hpp"

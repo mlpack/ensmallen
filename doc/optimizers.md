@@ -1,3 +1,61 @@
+## AdaBelief
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaBelief uses a different denominator from Adam, and is orthogonal to other
+techniques such as recification, decoupled weight decay. The intuition for
+AdaBelief is to adapt the stepsize according to the "belief" in the current
+gradient direction.
+
+#### Constructors
+
+ * `AdaBelief()`
+ * `AdaBelief(`_`stepSize, batchSize`_`)`
+ * `AdaBelief(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AdaBelief(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | The exponential decay rate for the 1st moment estimates. | `0.9` |
+| `double` | **`beta2`** | The exponential decay rate for the 2nd moment estimates. | `0.999` |
+| `double` | **`epsilon`** | A small constant for numerical stability. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+AdaBelief optimizer(0.001, 32, 0.9, 0.999, 1e-12, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients](https://arxiv.org/abs/2010.07468)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## AdaBound
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -175,6 +233,64 @@ optimizer.Optimize(f, coordinates);
  * [AdaDelta](#adadelta)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## AdaSqrt
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaSqrt is an optimizer with parameter-specific learning rates, which are
+adapted relative to how frequently a parameter gets updated during training.
+Larger updates for more sparse parameters and smaller updates for less sparse
+parameters. AdaSqrt, removes the square root in the denominator and scales the
+learning rate by sqrt(T).
+
+#### Constructors
+
+ - `AdaSqrt()`
+ - `AdaSqrt(`_`stepSize`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `size_t` | **`batchSize`** | Number of points to process in one step. | `32` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+Attributes of the optimizer may also be changed via the member methods
+`StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
+`Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaSqrt optimizer(1.0, 1, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
+ * [AdaGrad in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#AdaGrad)
+ * [AdaDelta](#adadelta)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## Adam
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -209,7 +325,7 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples

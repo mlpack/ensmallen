@@ -56,8 +56,7 @@ class AdaBoundUpdate
     gamma(gamma),
     epsilon(epsilon),
     beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+    beta2(beta2)
   {
     // Nothing to do.
   }
@@ -87,11 +86,6 @@ class AdaBoundUpdate
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
 
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
-
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
    * template class with two template arguments: MatType and GradType.  This is
@@ -111,7 +105,7 @@ class AdaBoundUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(AdaBoundUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent), first(true), initialStepSize(0)
+        parent(parent), first(true), initialStepSize(0), iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
@@ -139,7 +133,7 @@ class AdaBoundUpdate
       }
 
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       // Decay the first and second moment running average coefficient.
       m *= parent.beta1;
@@ -148,16 +142,12 @@ class AdaBoundUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const ElemType biasCorrection1 = 1.0 - std::pow(parent.beta1,
-          parent.iteration);
-      const ElemType biasCorrection2 = 1.0 - std::pow(parent.beta2,
-          parent.iteration);
+      const ElemType biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
+      const ElemType biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       const ElemType fl = parent.finalLr * stepSize / initialStepSize;
-      const ElemType lower = fl * (1.0 - 1.0 / (parent.gamma *
-          parent.iteration + 1));
-      const ElemType upper = fl * (1.0 + 1.0 / (parent.gamma *
-          parent.iteration));
+      const ElemType lower = fl * (1.0 - 1.0 / (parent.gamma * iteration + 1));
+      const ElemType upper = fl * (1.0 + 1.0 / (parent.gamma * iteration));
 
        // Applies bounds on actual learning rate.
       iterate -= arma::clamp((stepSize *
@@ -180,6 +170,9 @@ class AdaBoundUpdate
 
     // The initial (Adam) learning rate.
     double initialStepSize;
+
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -197,9 +190,6 @@ class AdaBoundUpdate
 
   // The second moment coefficient.
   double beta2;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens

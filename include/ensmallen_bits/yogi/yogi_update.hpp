@@ -53,8 +53,7 @@ class YogiUpdate
              const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+    beta2(beta2)
   {
     // Nothing to do.
   }
@@ -73,11 +72,6 @@ class YogiUpdate
   double Beta2() const { return beta2; }
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
-
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
 
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
@@ -115,16 +109,13 @@ class YogiUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      // Increment the iteration counter variable.
-      ++parent.iteration;
-
       m *= parent.beta1;
       m += (1 - parent.beta1) * gradient;
 
       const MatType gSquared = arma::square(gradient);
       v -= (1 - parent.beta2) * arma::sign(v - gSquared) % gSquared;
 
-      // And update the iterate.
+      // Now update the iterate.
       iterate -= stepSize * m / (arma::sqrt(v) + parent.epsilon);
     }
 
@@ -148,9 +139,6 @@ class YogiUpdate
 
   // The second moment coefficient.
   double beta2;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens

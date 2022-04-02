@@ -50,8 +50,7 @@ class NadaMaxUpdate
       epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
-      scheduleDecay(scheduleDecay),
-      iteration(0)
+      scheduleDecay(scheduleDecay)
   {
     // Nothing to do.
   }
@@ -76,11 +75,6 @@ class NadaMaxUpdate
   //! Modify the decay parameter for decay coefficients
   double& ScheduleDecay() { return scheduleDecay; }
 
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
-
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
    * template class with two template arguments: MatType and GradType.  This is
@@ -101,7 +95,8 @@ class NadaMaxUpdate
      */
     Policy(NadaMaxUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
-        cumBeta1(1)
+        cumBeta1(1),
+        iteration(0)
     {
       m.zeros(rows, cols);
       u.zeros(rows, cols);
@@ -119,7 +114,7 @@ class NadaMaxUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       // And update the iterate.
       m *= parent.beta1;
@@ -128,10 +123,10 @@ class NadaMaxUpdate
       u = arma::max(u * parent.beta2, arma::abs(gradient));
 
       double beta1T = parent.beta1 * (1 - (0.5 *
-          std::pow(0.96, parent.iteration * parent.scheduleDecay)));
+          std::pow(0.96, iteration * parent.scheduleDecay)));
 
       double beta1T1 = parent.beta1 * (1 - (0.5 *
-          std::pow(0.96, (parent.iteration + 1) * parent.scheduleDecay)));
+          std::pow(0.96, (iteration + 1) * parent.scheduleDecay)));
 
       cumBeta1 *= beta1T;
 
@@ -158,6 +153,9 @@ class NadaMaxUpdate
 
     // The cumulative product of decay coefficients.
     double cumBeta1;
+
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -172,9 +170,6 @@ class NadaMaxUpdate
 
   // The decay parameter for decay coefficients.
   double scheduleDecay;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens

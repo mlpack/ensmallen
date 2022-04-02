@@ -178,7 +178,6 @@ SPALeRASGD<DecayPolicyType>::Optimize(
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
     overallObjective += currentObjective;
-    currentObjective /= effectiveBatchSize;
 
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)

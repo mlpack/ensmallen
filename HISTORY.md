@@ -3,8 +3,17 @@
 * Added DemonSGD and DemonAdam optimizers
    ([#211](https://github.com/mlpack/ensmallen/pull/211)).
 
+ * Fix bug with Adam-like optimizers not resetting when `resetPolicy` is `true`.
+   ([#340](https://github.com/mlpack/ensmallen/pull/340)).
+
  * Add Yogi optimizer
-    ([#232](https://github.com/mlpack/ensmallen/pull/232)).
+   ([#232](https://github.com/mlpack/ensmallen/pull/232)).
+
+ * Add AdaBelief optimizer
+   ([#233](https://github.com/mlpack/ensmallen/pull/233)).
+
+ * Add AdaSqrt optimizer
+   ([#234](https://github.com/mlpack/ensmallen/pull/234)).
 
 ### ensmallen 2.18.2: "Fairmount Bagel"
 ###### 2022-02-13
