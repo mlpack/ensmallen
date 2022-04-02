@@ -54,8 +54,7 @@ class QHAdamUpdate
     beta1(beta1),
     beta2(beta2),
     v1(v1),
-    v2(v2),
-    iteration(0)
+    v2(v2)
   {
     // Nothing to do.
   }
@@ -74,11 +73,6 @@ class QHAdamUpdate
   double Beta2() const { return beta2; }
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
-
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
 
   //! Get the first quasi-hyperbolic term.
   double V1() const { return v1; }
@@ -109,7 +103,8 @@ class QHAdamUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(QHAdamUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
@@ -127,7 +122,7 @@ class QHAdamUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       // And update the iterate.
       m *= parent.beta1;
@@ -136,10 +131,8 @@ class QHAdamUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
-          parent.iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
-          parent.iteration);
+      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       GradType mDash = m / biasCorrection1;
       GradType vDash = v / biasCorrection2;
@@ -160,6 +153,9 @@ class QHAdamUpdate
 
     // The exponential moving average of squared gradient values.
     GradType v;
+
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -177,9 +173,6 @@ class QHAdamUpdate
 
   // The second quasi-hyperbolic term.
   double v2;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens

@@ -322,3 +322,25 @@ TEST_CASE("AdamThreeHumpCamelFunctionTest", "[AdamTest]")
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
   FunctionTest<ThreeHumpCamelFunction>(optimizer, 0.1, 0.01);
 }
+
+/**
+ * Test that multiple runs of the Adam optimizer result in the exact same
+ * result.  This specifically tests that the update policy is successfully
+ * reset at the start of each optimization.
+ */
+TEST_CASE("AdamResetPolicyTest", "[AdamTest]")
+{
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 5, 1e-3, false);
+  optimizer.ResetPolicy() = true;
+
+  SphereFunction f(2);
+
+  arma::mat coordinatesA = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinatesA);
+
+  // A second run should produce the exact same results.
+  arma::mat coordinatesB = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinatesB);
+
+  CheckMatrices(coordinatesA, coordinatesB);
+}

@@ -70,7 +70,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   ElemType energy = function.Evaluate(iterate);
   Callback::Evaluate(*this, function, iterate, energy, callbacks...);
 
-  ElemType oldEnergy = energy;
+  ElemType oldEnergy;
 
   size_t idx = 0;
   size_t sweepCounter = 0;
