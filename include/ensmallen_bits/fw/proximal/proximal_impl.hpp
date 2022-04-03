@@ -53,7 +53,7 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
     if (nu > 0)
       break;
   }
-  double theta = (simplexSum(rho) - tau) / rho;
+  const double theta = (simplexSum(rho) - tau) / rho;
 
   // Threshold on absolute value of v with theta.
   for (arma::uword j = 0; j < simplexSol.n_rows; j++)

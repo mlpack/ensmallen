@@ -51,8 +51,7 @@ class OptimisticAdamUpdate
                        const double beta2 = 0.999) :
     epsilon(epsilon),
     beta1(beta1),
-    beta2(beta2),
-    iteration(0)
+    beta2(beta2)
   {
     // Nothing to do.
   }
@@ -71,11 +70,6 @@ class OptimisticAdamUpdate
   double Beta2() const { return beta2; }
   //! Modify the second moment coefficient.
   double& Beta2() { return beta2; }
-
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
 
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
@@ -96,7 +90,8 @@ class OptimisticAdamUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(OptimisticAdamUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
@@ -115,7 +110,7 @@ class OptimisticAdamUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       // And update the iterate.
       m *= parent.beta1;
@@ -124,13 +119,10 @@ class OptimisticAdamUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * arma::square(gradient);
 
-      GradType mCorrected = m / (1.0 - std::pow(parent.beta1,
-          parent.iteration));
-      GradType vCorrected = v / (1.0 - std::pow(parent.beta2,
-          parent.iteration));
+      GradType mCorrected = m / (1.0 - std::pow(parent.beta1, iteration));
+      GradType vCorrected = v / (1.0 - std::pow(parent.beta2, iteration));
 
-      GradType update = mCorrected /
-          (arma::sqrt(vCorrected) + parent.epsilon);
+      GradType update = mCorrected / (arma::sqrt(vCorrected) + parent.epsilon);
 
       iterate -= (2 * stepSize * update - stepSize * g);
 
@@ -149,6 +141,9 @@ class OptimisticAdamUpdate
 
     // The previous update.
     GradType g;
+
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -160,9 +155,6 @@ class OptimisticAdamUpdate
 
   // The second moment coefficient.
   double beta2;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens
