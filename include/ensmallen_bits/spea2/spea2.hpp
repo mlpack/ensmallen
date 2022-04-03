@@ -84,12 +84,7 @@ class SPEA2
   //! `Optimize()` has been called.
   const arma::cube& ParetoFront() const { return paretoFront; }
 
-  /**
-   * Retrieve the best front (the Pareto frontier).  This returns an empty
-   * vector until `Optimize()` has been called.  Note that this function is
-   * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
-   * instead.
-   */
+  
   ens_deprecated const std::vector<arma::mat>& Front()
   {
     if (rcFront.size() == 0)
@@ -142,35 +137,6 @@ class SPEA2
               const MatType& lowerBound,
               const MatType& upperBound);
 
-  /**
-   * Sort the candidate population using their domination count and the set of
-   * dominated nodes.
-   *
-   * @tparam MatType Type of matrix to optimize.
-   * @param fronts The population is sorted into these Pareto fronts. The first
-   *     front is the best, the second worse and so on.
-   * @param ranks The assigned ranks, used for crowding distance based sorting.
-   * @param calculatedObjectives The previously calculated objectives.
-   */
-  template<typename MatType>
-  void FastNonDominatedSort(
-      std::vector<std::vector<size_t> >& fronts,
-      std::vector<size_t>& ranks,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
-
-  /**
-   * Operator to check if one candidate Pareto-dominates the other.
-   *
-   * A candidate is said to dominate the other if it is at least as good as the
-   * other candidate for all the objectives and there exists at least one
-   * objective for which it is strictly better than the other candidate.
-   *
-   * @tparam MatType Type of matrix to optimize.
-   * @param calculatedObjectives The previously calculated objectives.
-   * @param candidateP The candidate being compared from the elite population.
-   * @param candidateQ The candidate being compared against.
-   * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
-   */
   template<typename MatType>
   bool Dominates(
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
