@@ -145,8 +145,8 @@ class SPEA2
 
   template <typename MatType>
   void FitnessAssignment(
-      const std::vector<size_t>& front,
-      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      std::vector<MatType>& population,
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedStrengths,
       std::vector<typename MatType::elem_type>& fitness);
   template<typename MatType>
   bool FitnessOperator(size_t idxP,
@@ -154,6 +154,10 @@ class SPEA2
                         const std::vector<size_t>& ranks,
                         const std::vector<typename MatType::elem_type>& fitness);
 
+  template <typename MatType>
+  calculateStrength(
+      std::vector<MatType>& population,
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedStrengths);
   //! The number of objectives being optimised for.
   size_t numObjectives;
 
