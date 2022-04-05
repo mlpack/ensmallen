@@ -11,6 +11,9 @@
 
  * Add AdaSqrt optimizer
    ([#234](https://github.com/mlpack/ensmallen/pull/234)).
+   
+ * Bump check for minimum supported version of Armadillo
+   ([#342](https://github.com/mlpack/ensmallen/pull/342)).
 
 ### ensmallen 2.18.2: "Fairmount Bagel"
 ###### 2022-02-13
