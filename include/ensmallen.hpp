@@ -29,8 +29,8 @@
   #error "please enable C++11/C++14 mode in your compiler"
 #endif
 
-#if ((ARMA_VERSION_MAJOR < 8) || ((ARMA_VERSION_MAJOR == 8) && (ARMA_VERSION_MINOR < 400)))
-  #error "need Armadillo version 8.400 or later"
+#if ((ARMA_VERSION_MAJOR < 9) || ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR < 800)))
+  #error "need Armadillo version 9.800 or later"
 #endif
 
 #include <cctype>
