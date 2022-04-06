@@ -91,6 +91,8 @@
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
 #include "ensmallen_bits/ada_sqrt/ada_sqrt.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
+#include "ensmallen_bits/demon_adam/demon_adam.hpp"
+#include "ensmallen_bits/demon_sgd/demon_sgd.hpp"
 #include "ensmallen_bits/qhadam/qhadam.hpp"
 #include "ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp"
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"

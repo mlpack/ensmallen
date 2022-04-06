@@ -13,6 +13,8 @@ set(ENSMALLEN_TESTS_SOURCES
     cmaes_test.cpp
     cne_test.cpp
     de_test.cpp
+    demon_adam_test.cpp
+    demon_sgd_test.cpp
     eve_test.cpp
     frankwolfe_test.cpp
     ftml_test.cpp
