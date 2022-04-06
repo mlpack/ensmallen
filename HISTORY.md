@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+* Added DemonSGD and DemonAdam optimizers
+   ([#211](https://github.com/mlpack/ensmallen/pull/211)).
+
  * Fix bug with Adam-like optimizers not resetting when `resetPolicy` is `true`.
    ([#340](https://github.com/mlpack/ensmallen/pull/340)).
 
