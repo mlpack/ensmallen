@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.19.0: "Eight Ball Deluxe"
 ###### 2022-04-06
 * Added DemonSGD and DemonAdam optimizers
