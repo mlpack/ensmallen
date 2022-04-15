@@ -49,7 +49,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value ||
+                        coot::is_coot_type<GradType>::value,
 typename MatType::elem_type>::type
 Eve::Optimize(SeparableFunctionType& function,
               MatType& iterateIn,
@@ -146,7 +147,7 @@ Eve::Optimize(SeparableFunctionType& function,
     lastObjective = objective;
 
     iterate -= stepSize / dt * (m / biasCorrection1) /
-        (arma::sqrt(v / biasCorrection2) + epsilon);
+        (sqrt(v / biasCorrection2) + epsilon);
 
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 

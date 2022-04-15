@@ -16,36 +16,20 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("RMSPropLogisticRegressionTest", "[rmsprop]")
+TEMPLATE_TEST_CASE("RMSPropLogisticRegressionTest", "[RMSProp]",
+    arma::mat, arma::fmat)
 {
   RMSProp optimizer;
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer, 0.003, 0.006);
 }
 
-/**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
- * Use arma::fmat.
- */
-TEST_CASE("RMSPropLogisticRegressionFMatTest", "[rmsprop]")
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("RMSPropLogisticRegressionTest", "[RMSProp]",
+    coot::mat, coot::fmat)
 {
   RMSProp optimizer;
-  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.003, 0.006);
-}
-
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-/**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
- * Use arma::sp_mat.
- */
-TEST_CASE("RMSPropLogisticRegressionSpMatTest", "[rmsprop]")
-{
-  RMSProp optimizer;
-  LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer, 0.003, 0.006);
 }
 
 #endif

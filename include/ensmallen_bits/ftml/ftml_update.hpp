@@ -118,14 +118,14 @@ class FTMLUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1,
+      const double biasCorrection1 = 1.0 - pow(parent.beta1,
           parent.iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
+      const double biasCorrection2 = 1.0 - pow(parent.beta2,
           parent.iteration);
 
       MatType sigma = -parent.beta1 * d;
       d = biasCorrection1 / stepSize *
-        (arma::sqrt(v / biasCorrection2) + parent.epsilon);
+        (sqrt(v / biasCorrection2) + parent.epsilon);
       sigma += d;
 
       z *= parent.beta1;

@@ -69,6 +69,8 @@
 #include "ensmallen_bits/utility/coot_traits.hpp"
 #include "ensmallen_bits/utility/conv_to.hpp"
 #include "ensmallen_bits/utility/linspace.hpp"
+#include "ensmallen_bits/utility/randi.hpp"
+#include "ensmallen_bits/utility/randu.hpp"
 #include "ensmallen_bits/utility/shuffle.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"
 #include "ensmallen_bits/utility/indicators/igd_plus.hpp"
@@ -79,6 +81,8 @@
 // Callbacks.
 #include "ensmallen_bits/callbacks/callbacks.hpp"
 #include "ensmallen_bits/callbacks/early_stop_at_min_loss.hpp"
+#include "ensmallen_bits/callbacks/grad_clip_by_norm.hpp"
+#include "ensmallen_bits/callbacks/grad_clip_by_value.hpp"
 #include "ensmallen_bits/callbacks/print_loss.hpp"
 #include "ensmallen_bits/callbacks/progress_bar.hpp"
 #include "ensmallen_bits/callbacks/query_front.hpp"

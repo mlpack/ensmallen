@@ -16,14 +16,15 @@
 using namespace ens;
 using namespace ens::test;
 
-TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
+TEMPLATE_TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGD]",
+    arma::mat, arma::fmat)
 {
-  SGDTestFunction f;
+  SGDTestFunction<arma::Col<size_t>> f;
   MomentumUpdate momentumUpdate(0.7);
   MomentumSGD s(0.0003, 1, 2500000, 1e-9, true, momentumUpdate, NoDecay(), true,
       true);
 
-  arma::mat coordinates = f.GetInitialPoint();
+  TestType coordinates = f.GetInitialPoint<TestType>();
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(-1.0).epsilon(0.0015));
@@ -32,12 +33,12 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
   REQUIRE(coordinates(2) == Approx(0.0).margin(1e-6));
 
   // Compare with SGD with vanilla update.
-  SGDTestFunction f1;
+  SGDTestFunction<arma::Col<size_t>> f1;
   VanillaUpdate vanillaUpdate;
   StandardSGD s1(0.0003, 1, 2500000, 1e-9, true, vanillaUpdate, NoDecay(), true,
       true);
 
-  arma::mat coordinates1 = f1.GetInitialPoint();
+  TestType coordinates1 = f1.GetInitialPoint<TestType>();
   double result1 = s1.Optimize(f1, coordinates1);
 
   // Result doesn't converge in 2500000 iterations.
@@ -49,18 +50,19 @@ TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGDTest]")
   REQUIRE(result < result1);
 }
 
-TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGDTest]")
+TEMPLATE_TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGD]",
+    arma::mat)
 {
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
+    GeneralizedRosenbrockFunction<TestType, arma::Row<size_t>> f(i);
     MomentumUpdate momentumUpdate(0.4);
     MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate, NoDecay(),
         true, true);
 
-    arma::mat coordinates = f.GetInitialPoint();
+    TestType coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -69,18 +71,18 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGDTest]")
   }
 }
 
-// Use arma::fmat.
-TEST_CASE("MomentumSGDGeneralizedRosenbrockFMatTest", "[MomentumSGDTest]")
+TEMPLATE_TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGD]",
+    arma::fmat)
 {
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
+    GeneralizedRosenbrockFunction<TestType, arma::Row<size_t>> f(i);
     MomentumUpdate momentumUpdate(0.1);
     MomentumSGD s(0.0002, 1, 10000000, 1e-15, true, momentumUpdate);
 
-    arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
+    TestType coordinates = f.GetInitialPoint();
     float result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-2));
@@ -89,18 +91,18 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockFMatTest", "[MomentumSGDTest]")
   }
 }
 
-// Use arma::sp_mat.
-TEST_CASE("MomentumSGDGeneralizedRosenbrockSpMatTest", "[MomentumSGDTest]")
+TEMPLATE_TEST_CASE("MomentumSGDGeneralizedRosenbrockTest",
+    "[MomentumSGD]", arma::sp_mat)
 {
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
+    GeneralizedRosenbrockFunction<TestType, arma::Row<size_t>> f(i);
     MomentumUpdate momentumUpdate(0.4);
     MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate);
 
-    arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+    TestType coordinates = f.GetInitialPoint();
     double result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -108,3 +110,88 @@ TEST_CASE("MomentumSGDGeneralizedRosenbrockSpMatTest", "[MomentumSGDTest]")
       REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
   }
 }
+
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGD]",
+    coot::mat, coot::fmat)
+{
+  typedef typename TestType::elem_type eT;
+
+  SGDTestFunction<coot::Col<size_t>> f;
+  MomentumUpdate momentumUpdate(0.7);
+  MomentumSGD s(0.0003, 1, 2500000, 1e-9, true, momentumUpdate, NoDecay(), true,
+      true);
+
+  TestType coordinates = f.GetInitialPoint<TestType>();
+  double result = s.Optimize(f, coordinates);
+
+  REQUIRE(result == Approx(-1.0).epsilon(0.0015));
+  REQUIRE(eT(coordinates(0)) == Approx(0.0).margin(0.015));
+  REQUIRE(eT(coordinates(1)) == Approx(0.0).margin(1e-6));
+  REQUIRE(eT(coordinates(2)) == Approx(0.0).margin(1e-6));
+
+  // Compare with SGD with vanilla update.
+  SGDTestFunction<coot::Col<size_t>> f1;
+  VanillaUpdate vanillaUpdate;
+  StandardSGD s1(0.0003, 1, 2500000, 1e-9, true, vanillaUpdate, NoDecay(), true,
+      true);
+
+  TestType coordinates1 = f1.GetInitialPoint<TestType>();
+  double result1 = s1.Optimize(f1, coordinates1);
+
+  // Result doesn't converge in 2500000 iterations.
+  REQUIRE((result1 + 1.0) > 0.05);
+  REQUIRE(eT(coordinates1(0)) >= 0.015);
+  REQUIRE(eT(coordinates1(1)) == Approx(0.0).margin(1e-6));
+  REQUIRE(eT(coordinates1(2)) == Approx(0.0).margin(1e-6));
+
+  REQUIRE(result < result1);
+}
+
+TEMPLATE_TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGD]",
+    coot::mat)
+{
+  typedef typename TestType::elem_type eT;
+
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction<TestType, coot::Row<size_t>> f(i);
+    MomentumUpdate momentumUpdate(0.4);
+    MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate, NoDecay(),
+        true, true);
+
+    TestType coordinates = f.GetInitialPoint();
+    double result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-4));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(eT(coordinates(j)) == Approx(1.0).epsilon(1e-5));
+  }
+}
+
+TEMPLATE_TEST_CASE("MomentumSGDGeneralizedRosenbrockTest", "[MomentumSGD]",
+    coot::fmat)
+{
+  typedef typename TestType::elem_type eT;
+
+  // Loop over several variants.
+  for (size_t i = 10; i < 50; i += 5)
+  {
+    // Create the generalized Rosenbrock function.
+    GeneralizedRosenbrockFunction<TestType, coot::Row<size_t>> f(i);
+    MomentumUpdate momentumUpdate(0.1);
+    MomentumSGD s(0.0002, 1, 10000000, 1e-15, true, momentumUpdate);
+
+    TestType coordinates = f.GetInitialPoint();
+    float result = s.Optimize(f, coordinates);
+
+    REQUIRE(result == Approx(0.0).margin(1e-2));
+    for (size_t j = 0; j < i; ++j)
+      REQUIRE(eT(coordinates(j)) == Approx(1.0).epsilon(1e-3));
+  }
+}
+
+#endif

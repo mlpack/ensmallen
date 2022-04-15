@@ -148,7 +148,7 @@ class NadamUpdate
        */
       iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
           + (beta1T1 / biasCorrection3) * m) * sqrt(biasCorrection2))
-          / (arma::sqrt(v) + parent.epsilon);
+          / (sqrt(v) + parent.epsilon);
     }
 
    private:

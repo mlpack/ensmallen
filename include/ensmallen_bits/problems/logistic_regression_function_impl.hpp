@@ -95,7 +95,7 @@ typename MatType::elem_type
 LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
     const MatType& parameters) const
 {
-  // The objective function is the log-likelihood function (w is the parameters
+// The objective function is the log-likelihood function (w is the parameters
   // vector for the model; y is the responses; x is the predictors; sig() is the
   // sigmoid function):
   //   f(w) = sum(y log(sig(w'x)) + (1 - y) log(sig(1 - w'x))).
@@ -106,14 +106,14 @@ LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
   // For the regularization, we ignore the first term, which is the intercept
   // term and take every term except the last one in the decision variable.
   const ElemType regularization = 0.5 * lambda *
-      dot(parameters.tail_cols(parameters.n_elem - 1),
-          parameters.tail_cols(parameters.n_elem - 1));
+      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+      parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
-  const MatType sigmoid = 1.0 / (1.0 +
-      exp(-(parameters(0, 0) +
-            parameters.tail_cols(parameters.n_elem - 1) * predictors)));
+  const arma::Row<ElemType> sigmoid = 1.0 / (1.0 +
+      arma::exp(-(parameters(0, 0) +
+                parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   // Assemble full objective function.  Often the objective function and the
   // regularization as given are divided by the number of features, but this
@@ -121,12 +121,46 @@ LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
   // terms for computational efficiency.  Note that the conversion causes some
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
-  const ElemType result = accu(arma::log(1.0 -
-      conv_to<arma::Row<MatType>>::from(responses) + sigmoid %
-      (2 * conv_to<MatType>::from(responses) - 1.0)));
+  const ElemType result = arma::accu(arma::log(1.0 -
+      arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoid %
+      (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
+
+
+  /* // The objective function is the log-likelihood function (w is the parameters */
+  /* // vector for the model; y is the responses; x is the predictors; sig() is the */
+  /* // sigmoid function): */
+  /* //   f(w) = sum(y log(sig(w'x)) + (1 - y) log(sig(1 - w'x))). */
+  /* // We want to minimize this function.  L2-regularization is just lambda */
+  /* // multiplied by the squared l2-norm of the parameters then divided by two. */
+  /* typedef typename MatType::elem_type ElemType; */
+
+  /* // For the regularization, we ignore the first term, which is the intercept */
+  /* // term and take every term except the last one in the decision variable. */
+  /* const ElemType regularization = 0.5 * lambda * */
+  /*     dot(parameters.tail_cols(parameters.n_elem - 1), */
+  /*         parameters.tail_cols(parameters.n_elem - 1)); */
+
+  /* // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and */
+  /* // does not need to be multiplied by any of the predictors. */
+  /* const MatType sigmoid = 1.0 / (1.0 + */
+  /*     exp(-(parameters(0, 0) + */
+  /*           parameters.tail_cols(parameters.n_elem - 1) * predictors))); */
+
+  /* // Assemble full objective function.  Often the objective function and the */
+  /* // regularization as given are divided by the number of features, but this */
+  /* // doesn't actually affect the optimization result, so we'll just ignore those */
+  /* // terms for computational efficiency.  Note that the conversion causes some */
+  /* // copy and slowdown, but this is so negligible compared to the rest of the */
+  /* // calculation it is not worth optimizing for. */
+  /* typedef typename ForwardMatRowType<MatType>::RowType RowType; */
+  /* const ElemType result = accu(log(1.0 - */
+  /*     conv_to<RowType>::from(responses) + sigmoid % */
+  /*     (2 * conv_to<RowType>::from(responses) - 1.0))); */
+
+  /* return regularization - result; */
 }
 
 /**
@@ -208,7 +242,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1);
   // Calculating the sigmoid function values.
-  const MatType sigmoids = 1.0 / (1.0 + arma::exp(-exponents));
+  const MatType sigmoids = 1.0 / (1.0 + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   gradient[0] = -accu(conv_to<MatType>::from(
@@ -224,10 +258,11 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
  * function with respect to the individual features in the parameter.
  */
 template <typename MatType, typename LabelsType>
+template<typename ElemType>
 void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
     const MatType& parameters,
     const size_t j,
-    arma::sp_mat& gradient) const
+    arma::SpMat<ElemType>& gradient) const
 {
   const MatType diffs = responses -
       (1 / (1 + exp(-parameters(0, 0) -
@@ -312,6 +347,7 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
                 predictors.cols(begin, begin + batchSize - 1))));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
+
   gradient[0] = -accu(conv_to<MatType>::from(
       responses.subvec(begin, begin + batchSize - 1)) - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
@@ -328,45 +364,18 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
 }
 
 template<typename MatType, typename LabelsType>
-void ClassifyImpl(
-    const MatType& dataset,
-    LabelsType& labels,
-    const MatType& parameters,
-    const double decisionBoundary,
-    typename std::enable_if<coot::is_coot_type<MatType>::value>::type* = 0)
-{
-  // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
-  // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = coot::conv_to<LabelsType>::from((1.0 /
-      (1.0 + exp(-parameters(0) -
-      parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
-      (1.0 - decisionBoundary));
-}
-
-template<typename MatType, typename LabelsType>
-void ClassifyImpl(
-    const MatType& dataset,
-    LabelsType& labels,
-    const MatType& parameters,
-    const double decisionBoundary,
-    typename std::enable_if<arma::is_arma_type<MatType>::value>::type* = 0)
-{
-  // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
-  // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = arma::conv_to<LabelsType>::from((1.0 /
-      (1.0 + exp(-parameters(0) -
-      parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
-      (1.0 - decisionBoundary));
-}
-
-template<typename MatType, typename LabelsType>
 void LogisticRegressionFunction<MatType, LabelsType>::Classify(
     const MatType& dataset,
     LabelsType& labels,
     const MatType& parameters,
     const double decisionBoundary) const
 {
-  ClassifyImpl(dataset, labels, parameters, decisionBoundary);
+  // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
+  // term correctly sets an offset so that floor() returns 0 or 1 correctly.
+  labels = conv_to<LabelsType>::from((1.0 /
+      (1.0 + exp(-parameters(0) -
+      parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
+      (1.0 - decisionBoundary));
 }
 
 template<typename MatType, typename LabelsType>

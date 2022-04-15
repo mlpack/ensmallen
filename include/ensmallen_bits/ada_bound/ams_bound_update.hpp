@@ -149,9 +149,9 @@ class AMSBoundUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const ElemType biasCorrection1 = 1.0 - std::pow(parent.beta1,
+      const ElemType biasCorrection1 = 1.0 - pow(parent.beta1,
           parent.iteration);
-      const ElemType biasCorrection2 = 1.0 - std::pow(parent.beta2,
+      const ElemType biasCorrection2 = 1.0 - pow(parent.beta2,
           parent.iteration);
 
       const ElemType fl = parent.finalLr * stepSize / initialStepSize;
@@ -161,12 +161,12 @@ class AMSBoundUpdate
           parent.iteration));
 
       // Element wise maximum of past and present squared gradients.
-      vImproved = arma::max(vImproved, v);
+      vImproved = max(vImproved, v);
 
       // Applies bounds on actual learning rate.
-      iterate -= arma::clamp((stepSize *
-          std::sqrt(biasCorrection2) / biasCorrection1) /
-          (arma::sqrt(vImproved) + parent.epsilon),  lower, upper) % m;
+      iterate -= clamp((stepSize *
+          sqrt(biasCorrection2) / biasCorrection1) /
+          (sqrt(vImproved) + parent.epsilon),  lower, upper) % m;
     }
 
    private:

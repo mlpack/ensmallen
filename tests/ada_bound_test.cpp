@@ -15,93 +15,58 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Test the AdaBound optimizer on the Sphere function.
- */
-TEST_CASE("AdaBoundSphereFunctionTest", "[AdaBoundTest]")
+TEMPLATE_TEST_CASE("AdaBoundSphereFunctionTest", "[AdaBound]",
+    arma::mat, arma::fmat)
 {
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-  FunctionTest<SphereFunction>(optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the AdaBound optimizer on the Sphere function with arma::fmat.
- */
-TEST_CASE("AdaBoundSphereFunctionTestFMat", "[AdaBoundTest]")
-{
-  AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
-      1e-3, false);
-  FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
-}
-
-/**
- * Test the AMSBound optimizer on the Sphere function.
- */
-TEST_CASE("AMSBoundSphereFunctionTest", "[AdaBoundTest]")
+TEMPLATE_TEST_CASE("AMSBoundSphereFunctionTest", "[AdaBound]",
+    arma::mat, arma::fmat)
 {
   AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-  FunctionTest<SphereFunction, arma::mat>(optimizer, 0.5, 0.1);
-}
-
-/**
- * Test the AMSBound optimizer on the Sphere function with arma::fmat.
- */
-TEST_CASE("AMSBoundphereFunctionTestFMat", "[AdaBoundTest]")
-{
-  AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
-      1e-3, false);
-  FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
 }
 
 #if ARMA_VERSION_MAJOR > 9 ||\
     (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
 
-/**
- * Test the AdaBound optimizer on the Sphere function with arma::sp_mat.
- */
-TEST_CASE("AdaBoundSphereFunctionTestSpMat", "[AdaBoundTest]")
+TEST_CASE("AdaBoundSphereFunctionTestSpMat", "[AdaBound]")
 {
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction<>, arma::sp_mat>(optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the AdaBound optimizer on the Sphere function with arma::sp_mat but a
- * dense (arma::mat) gradient.
- */
-TEST_CASE("AdaBoundSphereFunctionTestSpMatDenseGradient", "[AdaBoundTest]")
+TEST_CASE("AdaBoundSphereFunctionTestSpMatDenseGradient", "[AdaBound]")
 {
-  SphereFunction f(2);
+  SphereFunction<> f(2);
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
 
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  arma::sp_mat coordinates = arma::conv_to<arma::sp_mat>::from(
+      f.GetInitialPoint());
   optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
 
   REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
   REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
-/**
- * Test the AMSBound optimizer on the Sphere function with arma::sp_mat.
- */
-TEST_CASE("AMSBoundSphereFunctionTestSpMat", "[AdaBoundTest]")
+TEST_CASE("AMSBoundSphereFunctionTestSpMat", "[AdaBound]")
 {
   AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction<>, arma::sp_mat>(optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the AMSBound optimizer on the Sphere function with arma::sp_mat but a
- * dense (arma::mat) gradient.
- */
-TEST_CASE("AMSBoundSphereFunctionTestSpMatDenseGradient", "[AdaBoundTest]")
+TEST_CASE("AMSBoundSphereFunctionTestSpMatDenseGradient", "[AdaBound]")
 {
-  SphereFunction f(2);
+  SphereFunction<> f(2);
   AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
 
@@ -121,7 +86,16 @@ TEMPLATE_TEST_CASE("AdaBoundSphereFunctionTest", "[AdaBound]",
 {
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
-  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
 }
 
+TEMPLATE_TEST_CASE("AMSBoundSphereFunctionTest", "[AdaBound]",
+    coot::mat, coot::fmat)
+{
+  AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
+      1e-3, false);
+  FunctionTest<SphereFunction<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
+}
 #endif

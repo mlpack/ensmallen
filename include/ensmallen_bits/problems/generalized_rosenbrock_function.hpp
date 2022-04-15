@@ -109,15 +109,17 @@ class GeneralizedRosenbrockFunction
   // infrastructure.
 
   //! Get the starting point.
-  const MatType GetInitialPoint() const
+  template<typename InputMatType = MatType>
+  const InputMatType GetInitialPoint() const
   {
-    return initialPoint;
+    return conv_to<InputMatType>::from(initialPoint);
   }
 
   //! Get the final point.
-  const MatType GetFinalPoint() const
+  template<typename InputMatType = MatType>
+  const InputMatType GetFinalPoint() const
   {
-    MatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
+    InputMatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
     finalPoint.ones();
     return finalPoint;
   }

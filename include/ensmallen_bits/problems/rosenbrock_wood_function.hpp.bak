@@ -87,18 +87,18 @@ class RosenbrockWoodFunction
   // infrastructure.
 
   //! Get the starting point.
-  template<typename MatTypeIn = arma::mat>
+  template<typename InMatType = MatType>
   const MatType GetInitialPoint() const
   {
-    return conv_to<MatType>::from(initialPoint);
+    return conv_to<InMatType>::from(initialPoint);
   }
 
   //! Get the final point.
-  template<typename MatTypeIn = arma::mat>
+  template<typename InMatType = MatType>
   MatType GetFinalPoint() const
   {
-    MatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
-    finalPoint.fill(1);
+    InMatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
+    finalPoint.zeros();
     return finalPoint;
   }
 

@@ -44,7 +44,7 @@ GeneralizedRosenbrockFunction<
 template<typename MatType, typename LabelsType>
 void GeneralizedRosenbrockFunction<MatType, LabelsType>::Shuffle()
 {
-  shuffle(linspace<LabelsType>(0, n - 2, n - 1));
+  visitationOrder = shuffle(linspace<LabelsType>(0, n - 2, n - 1));
 }
 
 template<typename MatType, typename LabelsType>

@@ -69,12 +69,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  BaseMatType w = std::log(mu + 0.5) - arma::log(
-      arma::linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
-  w /= arma::accu(w);
+  BaseMatType w = std::log(mu + 0.5) - log(
+      linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
+  w /= accu(w);
 
   // Number of effective solutions.
-  const double muEffective = 1 / arma::accu(arma::pow(w, 2));
+  const double muEffective = 1 / accu(pow(w, 2));
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
@@ -99,7 +99,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows,
       iterate.n_cols));
-  mPosition[0] = lowerBound + arma::randu<BaseMatType>(
+  mPosition[0] = randu<BaseMatType>(iterate.n_rows, iterate.n_cols);
+  mPosition[0] = lowerBound + randu<BaseMatType>(
       iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
 
   BaseMatType step(iterate.n_rows, iterate.n_cols);
@@ -135,13 +136,15 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   C[0].eye();
 
   // Covariance matrix parameters.
-  arma::Col<ElemType> eigval; // TODO: might need a more general type.
+  typedef typename ForwardColType<MatType>::ColType ColType;
+  ColType eigval;
   BaseMatType eigvec;
   BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
   eigvalZero.zeros();
 
   // The current visitation order (sorted by population objectives).
-  arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
+  typedef typename ForwardColType<MatType, size_t>::ColType UVecType;
+  UVecType idx = linspace<UVecType>(0, lambda - 1, lambda);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -158,159 +161,161 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType covLower;
-    while (!arma::chol(covLower, C[idx0], "lower"))
-      C[idx0].diag() += 1e-16;
+    arma::chol(covLower, C[idx0], "lower");
+    /* while (!arma::chol(covLower, C[idx0], "lower")) */
+    /*   C[idx0].diag() += std::numeric_limits<ElemType>::epsilon(); */
 
     for (size_t j = 0; j < lambda; ++j)
     {
-      if (iterate.n_rows > iterate.n_cols)
-      {
-        pStep[idx(j)] = covLower *
-            arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
-      }
-      else
-      {
-        pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
-            * covLower;
-      }
+/*       if (iterate.n_rows > iterate.n_cols) */
+/*       { */
+/*         pStep[idx(j)] = covLower * */
+/*             arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols); */
+/*       } */
+/*       else */
+/*       { */
+/*         pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols) */
+/*             * covLower; */
+/*       } */
 
-      pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
+/*       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)]; */
 
-      // Calculate the objective function.
-      pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          pPosition[idx(j)], callbacks...);
+/*       // Calculate the objective function. */
+/*       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize, */
+/*           pPosition[idx(j)], callbacks...); */
+/*     } */
+
+/*     // Sort population. */
+/*     idx = arma::sort_index(pObjective); */
+
+/*     step = w(0) * pStep[idx(0)]; */
+/*     for (size_t j = 1; j < mu; ++j) */
+/*       step += w(j) * pStep[idx(j)]; */
+
+/*     mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step; */
+
+/*     // Calculate the objective function. */
+/*     currentObjective = selectionPolicy.Select(function, batchSize, */
+/*         mPosition[idx1], callbacks...); */
+
+/*     // Update best parameters. */
+/*     if (currentObjective < overallObjective) */
+/*     { */
+/*       overallObjective = currentObjective; */
+/*       iterate = mPosition[idx1]; */
+
+/*       terminate |= Callback::StepTaken(*this, function, iterate, callbacks...); */
     }
 
-    // Sort population.
-    idx = arma::sort_index(pObjective);
+/*     // Update Step Size. */
+/*     if (iterate.n_rows > iterate.n_cols) */
+/*     { */
+/*       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt( */
+/*           cs * (2 - cs) * muEffective) * covLower.t() * step; */
+/*     } */
+/*     else */
+/*     { */
+/*       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt( */
+/*           cs * (2 - cs) * muEffective) * step * covLower.t(); */
+/*     } */
 
-    step = w(0) * pStep[idx(0)];
-    for (size_t j = 1; j < mu; ++j)
-      step += w(j) * pStep[idx(j)];
+/*     const ElemType psNorm = arma::norm(ps[idx1]); */
+/*     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * ( psNorm / enn - 1)); */
 
-    mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
+/*     // Update covariance matrix. */
+/*     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h) */
+/*     { */
+/*       pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) * */
+/*         muEffective) * step; */
 
-    // Calculate the objective function.
-    currentObjective = selectionPolicy.Select(function, batchSize,
-        mPosition[idx1], callbacks...);
+/*       if (iterate.n_rows > iterate.n_cols) */
+/*       { */
+/*         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * */
+/*           (pc[idx1] * pc[idx1].t()); */
+/*       } */
+/*       else */
+/*       { */
+/*         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * */
+/*           (pc[idx1].t() * pc[idx1]); */
+/*       } */
+/*     } */
+/*     else */
+/*     { */
+/*       pc[idx1] = (1 - cc) * pc[idx0]; */
 
-    // Update best parameters.
-    if (currentObjective < overallObjective)
-    {
-      overallObjective = currentObjective;
-      iterate = mPosition[idx1];
+/*       if (iterate.n_rows > iterate.n_cols) */
+/*       { */
+/*         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * (pc[idx1] * */
+/*             pc[idx1].t() + (cc * (2 - cc)) * C[idx0]); */
+/*       } */
+/*       else */
+/*       { */
+/*         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * */
+/*             (pc[idx1].t() * pc[idx1] + (cc * (2 - cc)) * C[idx0]); */
+/*       } */
+/*     } */
 
-      terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
-    }
+/*     if (iterate.n_rows > iterate.n_cols) */
+/*     { */
+/*       for (size_t j = 0; j < mu; ++j) */
+/*       { */
+/*         C[idx1] = C[idx1] + cmu * w(j) * */
+/*             pStep[idx(j)] * pStep[idx(j)].t(); */
+/*       } */
+/*     } */
+/*     else */
+/*     { */
+/*       for (size_t j = 0; j < mu; ++j) */
+/*       { */
+/*         C[idx1] = C[idx1] + cmu * w(j) * */
+/*             pStep[idx(j)].t() * pStep[idx(j)]; */
+/*       } */
+/*     } */
 
-    // Update Step Size.
-    if (iterate.n_rows > iterate.n_cols)
-    {
-      ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
-          cs * (2 - cs) * muEffective) * covLower.t() * step;
-    }
-    else
-    {
-      ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
-          cs * (2 - cs) * muEffective) * step * covLower.t();
-    }
+/*     arma::eig_sym(eigval, eigvec, C[idx1]); */
+/*     const arma::uvec negativeEigval = arma::find(eigval < 0, 1); */
+/*     if (!negativeEigval.is_empty()) */
+/*     { */
+/*       if (negativeEigval(0) == 0) */
+/*       { */
+/*         C[idx1].zeros(); */
+/*       } */
+/*       else */
+/*       { */
+/*         C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) * */
+/*             arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) * */
+/*             eigvec.cols(0, negativeEigval(0) - 1).t(); */
+/*       } */
+/*     } */
 
-    const ElemType psNorm = arma::norm(ps[idx1]);
-    sigma(idx1) = sigma(idx0) * std::exp(cs / ds * ( psNorm / enn - 1));
+/*     // Output current objective function. */
+/*     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective */
+/*         << "." << std::endl; */
 
-    // Update covariance matrix.
-    if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
-    {
-      pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) *
-        muEffective) * step;
+/*     if (std::isnan(overallObjective) || std::isinf(overallObjective)) */
+/*     { */
+/*       Warn << "CMA-ES: converged to " << overallObjective << "; " */
+/*           << "terminating with failure.  Try a smaller step size?" << std::endl; */
 
-      if (iterate.n_rows > iterate.n_cols)
-      {
-        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
-          (pc[idx1] * pc[idx1].t());
-      }
-      else
-      {
-        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
-          (pc[idx1].t() * pc[idx1]);
-      }
-    }
-    else
-    {
-      pc[idx1] = (1 - cc) * pc[idx0];
+/*       Callback::EndOptimization(*this, function, iterate, callbacks...); */
+/*       return overallObjective; */
+/*     } */
 
-      if (iterate.n_rows > iterate.n_cols)
-      {
-        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * (pc[idx1] *
-            pc[idx1].t() + (cc * (2 - cc)) * C[idx0]);
-      }
-      else
-      {
-        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
-            (pc[idx1].t() * pc[idx1] + (cc * (2 - cc)) * C[idx0]);
-      }
-    }
+/*     if (std::abs(lastObjective - overallObjective) < tolerance) */
+/*     { */
+/*       Info << "CMA-ES: minimized within tolerance " << tolerance << "; " */
+/*           << "terminating optimization." << std::endl; */
 
-    if (iterate.n_rows > iterate.n_cols)
-    {
-      for (size_t j = 0; j < mu; ++j)
-      {
-        C[idx1] = C[idx1] + cmu * w(j) *
-            pStep[idx(j)] * pStep[idx(j)].t();
-      }
-    }
-    else
-    {
-      for (size_t j = 0; j < mu; ++j)
-      {
-        C[idx1] = C[idx1] + cmu * w(j) *
-            pStep[idx(j)].t() * pStep[idx(j)];
-      }
-    }
+/*       Callback::EndOptimization(*this, function, iterate, callbacks...); */
+/*       return overallObjective; */
+/*     } */
 
-    arma::eig_sym(eigval, eigvec, C[idx1]);
-    const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
-    if (!negativeEigval.is_empty())
-    {
-      if (negativeEigval(0) == 0)
-      {
-        C[idx1].zeros();
-      }
-      else
-      {
-        C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
-            arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
-            eigvec.cols(0, negativeEigval(0) - 1).t();
-      }
-    }
-
-    // Output current objective function.
-    Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
-        << "." << std::endl;
-
-    if (std::isnan(overallObjective) || std::isinf(overallObjective))
-    {
-      Warn << "CMA-ES: converged to " << overallObjective << "; "
-          << "terminating with failure.  Try a smaller step size?" << std::endl;
-
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
-    }
-
-    if (std::abs(lastObjective - overallObjective) < tolerance)
-    {
-      Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
-          << "terminating optimization." << std::endl;
-
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
-    }
-
-    lastObjective = overallObjective;
+/*     lastObjective = overallObjective; */
   }
 
-  Callback::EndOptimization(*this, function, iterate, callbacks...);
-  return overallObjective;
+/*   Callback::EndOptimization(*this, function, iterate, callbacks...); */
+/*   return overallObjective; */
+  return 0;
 }
 
 } // namespace ens

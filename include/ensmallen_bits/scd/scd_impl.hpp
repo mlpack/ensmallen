@@ -39,7 +39,8 @@ template <typename ResolvableFunctionType,
           typename MatType,
           typename GradType,
           typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value ||
+                        coot::is_coot_type<GradType>::value,
 typename MatType::elem_type>::type
 SCD<DescentPolicyType>::Optimize(
     ResolvableFunctionType& function,
@@ -83,7 +84,8 @@ SCD<DescentPolicyType>::Optimize(
         gradient, callbacks...);
 
     // Update the decision variable with the partial gradient.
-    iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);
+    /* iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx); */
+    iterate.col(featureIdx) -= gradient.col(featureIdx);
     terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
 
     // Check for convergence.

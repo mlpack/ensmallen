@@ -21,7 +21,7 @@ namespace ens {
 namespace test {
 
 template<typename MatType, typename LabelsType>
-RosenbrockWoodFunction<MatType, LabelsType>::RosenbrockWoodFunction() :
+inline RosenbrockWoodFunction<MatType, LabelsType>::RosenbrockWoodFunction() :
     rf(4), wf()
 {
   initialPoint.set_size(4, 2);
@@ -30,17 +30,17 @@ RosenbrockWoodFunction<MatType, LabelsType>::RosenbrockWoodFunction() :
 }
 
 template<typename MatType, typename LabelsType>
-void RosenbrockWoodFunction<MatType, LabelsType>::Shuffle()
+inline void RosenbrockWoodFunction<MatType, LabelsType>::Shuffle()
 { /* Nothing to do here */ }
 
 template<typename MatType, typename LabelsType>
 typename MatType::elem_type RosenbrockWoodFunction<
     MatType, LabelsType>::Evaluate(
-    const MatType& coordinates,
-    const size_t /* begin */,
-    const size_t /* batchSize */) const
+        const MatType& coordinates,
+        const size_t /* begin */,
+        const size_t /* batchSize */) const
 {
-  return rf.Evaluate(MatType(coordinates.col(0))) +
+  return rf.Evaluate(coordinates.col(0)) +
       wf.Evaluate(MatType(coordinates.col(1)));
 }
 
@@ -53,17 +53,15 @@ typename MatType::elem_type RosenbrockWoodFunction<
 
 template<typename MatType, typename LabelsType>
 template<typename GradType>
-void RosenbrockWoodFunction<MatType, LabelsType>::Gradient(
+inline void RosenbrockWoodFunction<MatType, LabelsType>::Gradient(
     const MatType& coordinates,
     const size_t /* begin */,
     GradType& gradient,
     const size_t /* batchSize */) const
 {
-  // Convenience typedef.
-  typedef typename ForwardColType<MatType>::ColType ColType;
-
   gradient.set_size(4, 2);
 
+  typedef typename ForwardMatColType<MatType>::ColType ColType;
   ColType grf(4);
   ColType gwf(4);
 
@@ -77,7 +75,8 @@ void RosenbrockWoodFunction<MatType, LabelsType>::Gradient(
 template<typename MatType, typename LabelsType>
 template<typename GradType>
 inline void RosenbrockWoodFunction<MatType, LabelsType>::Gradient(
-    const MatType& coordinates, GradType& gradient) const
+    const MatType& coordinates,
+    GradType& gradient) const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

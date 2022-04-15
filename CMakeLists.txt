@@ -63,7 +63,7 @@ set(USE_COOT "1")
 add_definitions(-DUSE_COOT)
 
 # Find Armadillo and link it.
-find_package(Armadillo 8.400.0 REQUIRED)
+find_package(Armadillo 9.800.0 REQUIRED)
 target_link_libraries(ensmallen INTERFACE Armadillo::Armadillo)
 
 # Set helper variables for creating the version, config and target files.

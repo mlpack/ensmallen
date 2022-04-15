@@ -46,6 +46,157 @@ struct MatTypeTraits<arma::SpRow<eT>>
 };
 
 /**
+ * Get the Cube type based on the given matrix type (i.e. arma::Mat, returns a
+ * arma::Cube, coot::Mat returns a coot::Cube.
+ */
+
+template<typename MatType>
+struct ForwardMatCubeType
+{
+  typedef MatType CubeType;
+};
+
+template<typename eT>
+struct ForwardMatCubeType<arma::Mat<eT>>
+{
+  typedef arma::Cube<eT> CubeType;
+};
+
+template<typename eT>
+struct ForwardMatCubeType<arma::SpMat<eT>>
+{
+  typedef arma::Cube<eT> CubeType;
+};
+
+template<typename eT>
+struct ForwardMatCubeType<coot::Mat<eT>>
+{
+  typedef coot::Cube<eT> CubeType;
+};
+
+/**
+ * Get the Cube type based on the given matrix type (i.e. arma::Mat, returns a
+ * arma::Cube, coot::Mat returns a coot::Cube.
+ */
+
+template<typename CubeType>
+struct ForwardCubeMatType
+{
+  typedef CubeType MatType;
+};
+
+template<typename eT>
+struct ForwardCubeMatType<arma::Cube<eT>>
+{
+  typedef arma::Mat<eT> MatType;
+};
+
+template<typename eT>
+struct ForwardCubeMatType<coot::Cube<eT>>
+{
+  typedef coot::Mat<eT> MatType;
+};
+
+/**
+ * Get the Mat type based on the given matrix type (i.e. arma::Mat, returns a
+ * arma::Cube, coot::Mat returns a coot::Cube.
+ */
+
+template<typename SpMatType>
+struct ForwardSpMatMatType
+{
+  typedef SpMatType MatType;
+};
+
+template<typename eT>
+struct ForwardSpMatMatType<arma::SpMat<eT>>
+{
+  typedef arma::Mat<eT> MatType;
+};
+
+/**
+ * Get the Mat type based on the given matrix type (i.e. arma::Cube, returns a
+ * arma::Mat, coot::Cube returns a coot::Mat.
+ */
+
+template<typename CubeType>
+struct ForwardCubeColType
+{
+  typedef CubeType ColType;
+};
+
+template<typename eT>
+struct ForwardCubeColType<arma::Cube<eT>>
+{
+  typedef arma::Col<eT> ColType;
+};
+
+template<typename eT>
+struct ForwardCubeColType<coot::Cube<eT>>
+{
+  typedef coot::Col<eT> ColType;
+};
+
+/**
+ * Get the Mat type based on the given matrix type (i.e. arma::Cube, returns a
+ * arma::Mat, coot::Cube returns a coot::Mat.
+ */
+
+template<typename MatType, typename ElemType = typename MatType::elem_type>
+struct ForwardColType
+{
+  typedef typename std::conditional<IsArmaType<MatType>::value,
+      arma::Col<ElemType>, coot::Col<ElemType>>::type ColType;
+};
+
+/* template<typename eT> */
+/* struct ForwardMatColType<arma::Mat<eT>> */
+/* { */
+/*   typedef arma::Col<eT> ColType; */
+/* }; */
+
+/* template<typename eT> */
+/* struct ForwardMatColType<arma::SpMat<eT>> */
+/* { */
+/*   typedef arma::Col<eT> ColType; */
+/* }; */
+
+/* template<typename eT> */
+/* struct ForwardMatColType<coot::Mat<eT>> */
+/* { */
+/*   typedef coot::Col<eT> ColType; */
+/* }; */
+
+/**
+ * Get the Mat type based on the given matrix type (i.e. arma::Cube, returns a
+ * arma::Mat, coot::Cube returns a coot::Mat.
+ */
+
+template<typename MatType>
+struct ForwardMatRowType
+{
+  typedef MatType RowType;
+};
+
+template<typename eT>
+struct ForwardMatRowType<arma::Mat<eT>>
+{
+  typedef arma::Row<eT> RowType;
+};
+
+template<typename eT>
+struct ForwardMatRowType<arma::SpMat<eT>>
+{
+  typedef arma::Row<eT> RowType;
+};
+
+template<typename eT>
+struct ForwardMatRowType<coot::Mat<eT>>
+{
+  typedef coot::Row<eT> RowType;
+};
+
+/**
  * Disable usage of arma::subviews and related types for optimizers.  It might
  * be nice to also explicitly disable Armadillo expressions, but we'll hope for
  * now nobody even tries that, since those aren't even lvalues and thus can't

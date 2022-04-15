@@ -21,7 +21,7 @@ template<typename MatType>
 inline typename MatType::elem_type GDTestFunction::Evaluate(
     const MatType& coordinates) const
 {
-  MatType temp = arma::trans(coordinates) * coordinates;
+  MatType temp = trans(coordinates) * coordinates;
   return temp(0, 0);
 }
 

@@ -46,8 +46,10 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   // Population matrix. Each column is a candidate.
   std::vector<BaseMatType> population;
   population.resize(populationSize);
+
   // Vector of fitness values corresponding to each candidate.
-  arma::Col<ElemType> fitnessValues;
+  typedef typename ForwardColType<MatType>::ColType ColType;
+  ColType fitnessValues;
 
   // Make sure that we have the methods that we need.  Long name...
   traits::CheckArbitraryFunctionTypeAPI<
@@ -101,13 +103,13 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
       size_t l = 0, m = 0;
       do
       {
-        l = arma::randi<arma::uword>(arma::distr_param(0, populationSize - 1));
+        l = rand() % populationSize;
       }
       while (l == member);
 
       do
       {
-        m = arma::randi<arma::uword>(arma::distr_param(0, populationSize - 1));
+        m = rand() % populationSize;
       }
       while (m == member && m == l);
 
@@ -116,12 +118,13 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
           (population[l] - population[m]);
 
       // Perform crossover.
-      const BaseMatType cr = arma::randu<BaseMatType>(iterate.n_rows);
+      BaseMatType cr;
+      cr.randu(iterate.n_rows, 1);
       for (size_t it = 0; it < iterate.n_rows; it++)
       {
         if (cr[it] >= crossoverRate)
         {
-          mutant[it] = iterate[it];
+          mutant(it) = ElemType(iterate(it));
         }
       }
 

@@ -21,38 +21,49 @@ using namespace ens::test;
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
+TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]")
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTest<arma::mat, arma::Row<size_t>>(cmaes, 0.003, 0.006, 5);
 }
 
 /**
  * Run CMA-ES with the random selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
-{
-  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
-}
+/* TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]") */
+/* { */
+/*   ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3); */
+/*   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5); */
+/* } */
 
 /**
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.  Use arma::fmat.
  */
-TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
-{
-  CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
-}
+/* TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]") */
+/* { */
+/*   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3); */
+/*   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5); */
+/* } */
 
 /**
  * Run CMA-ES with the random selection policy on logistic regression and
  * make sure the results are acceptable.  Use arma::fmat.
  */
-TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
+/* TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]") */
+/* { */
+/*   ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3); */
+/*   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5); */
+/* } */
+
+
+#ifdef USE_COOT
+
+TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]")
 {
-  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
+  CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  LogisticRegressionFunctionTest<coot::mat, coot::Row<size_t>>(cmaes, 0.003, 0.006, 5);
 }
+
+#endif

@@ -19,10 +19,11 @@ using namespace ens::test;
 /*
  * Test that the step size resets after a specified number of epochs.
  */
-TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
+TEMPLATE_TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsembles]",
+    arma::mat)
 {
   const double stepSize = 0.5;
-  arma::mat iterate;
+  TestType iterate;
 
   // Now run cyclical decay policy with a couple of multiplicators and initial
   // restarts.
@@ -34,7 +35,7 @@ TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
 
       SnapshotEnsembles snapshotEnsembles(restart,
           double(mult), stepSize, 1000, 2);
-      SnapshotEnsembles::Policy<arma::mat, arma::mat> p(snapshotEnsembles);
+      SnapshotEnsembles::Policy<TestType, TestType> p(snapshotEnsembles);
 
       snapshotEnsembles.EpochBatches() = 10 / (double)1000;
       // Create all restart epochs.
@@ -57,49 +58,71 @@ TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
   }
 }
 
-/**
- * Run SGDR with snapshot ensembles on logistic regression and make sure the
- * results are acceptable.
- */
-TEST_CASE("SnapshotEnsemblesLogisticRegressionTest","[SnapshotEnsemblesTest]")
+TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
+    "[SnapshotEnsembles]", arma::mat)
 {
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest(sgdr, 0.003, 0.006);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+        sgdr, 0.003, 0.006);
   }
 }
 
-/**
- * Run SGDR with snapshot ensembles on logistic regression and make sure the
- * results are acceptable.  Use arma::fmat.
- */
-TEST_CASE("SnapshotEnsemblesLogisticRegressionFMatTest","[SnapshotEnsemblesTest]")
+TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
+    "[SnapshotEnsembles]", arma::fmat)
 {
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest<arma::fmat>(sgdr, 0.03, 0.06, 3);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+        sgdr, 0.03, 0.06, 3);
   }
 }
 
 #if ARMA_VERSION_MAJOR > 9 ||\
     (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
 
-/**
- * Run SGDR with snapshot ensembles on logistic regression and make sure the
- * results are acceptable.  Use arma::sp_mat.
- */
-TEST_CASE("SnapshotEnsemblesLogisticRegressionSpMatTest",
-          "[SnapshotEnsemblesTest]")
+/* TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionSpMatTest", */
+/*     "[SnapshotEnsembles]", arma::sp_mat) */
+/* { */
+/*   // Run SGDR with snapshot ensembles on a couple of batch sizes. */
+/*   for (size_t batchSize = 5; batchSize < 50; batchSize += 5) */
+/*   { */
+/*     SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3); */
+/*     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>( */
+/*         sgdr, 0.003, 0.006); */
+/*   } */
+/* } */
+
+#endif
+
+
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
+    "[SnapshotEnsembles]", coot::mat)
 {
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  for (size_t batchSize = 25; batchSize < 30; batchSize += 5)
   {
     SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest<arma::sp_mat>(sgdr, 0.003, 0.006);
+    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+        sgdr, 0.003, 0.006);
+  }
+}
+
+TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
+    "[SnapshotEnsembles]", coot::fmat)
+{
+  // Run SGDR with snapshot ensembles on a couple of batch sizes.
+  for (size_t batchSize = 25; batchSize < 30; batchSize += 5)
+  {
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+        sgdr, 0.03, 0.06, 3);
   }
 }
 

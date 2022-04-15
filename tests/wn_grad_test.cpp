@@ -17,47 +17,60 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run WNGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("WNGradLogisticRegressionTest","[WNGradTest]")
+TEMPLATE_TEST_CASE("WNGradLogisticRegressionTest", "[WNGrad]",
+    arma::mat, arma::fmat)
 {
   WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      optimizer, 0.003, 0.006);
 }
 
-/**
- * Test the WNGrad optimizer on the Sphere function.
- */
-TEST_CASE("WNGradSphereFunctionTest","[WNGradTest]")
+TEMPLATE_TEST_CASE("WNGradSphereFunctionTest", "[WNGrad]",
+    arma::mat, arma::fmat)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<SphereFunction>(optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 1.0, 0.1);
 }
 
-/**
- * Test the WNGrad optimizer on the StyblinskiTangFunction.
- */
-TEST_CASE("WNGradStyblinskiTangFunctionTest","[WNGradTest]")
+TEMPLATE_TEST_CASE("WNGradStyblinskiTangFunctionTest", "[WNGrad]",
+    arma::mat, arma::fmat)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction>(optimizer, 0.3, 0.03);
+  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 0.3, 0.03);
 }
 
-/**
- * Test the WNGrad optimizer on the StyblinskiTangFunction.  Use arma::fmat.
- */
-TEST_CASE("WNGradStyblinskiTangFunctionFMatTest", "[WNGradTest]")
+TEST_CASE("WNGradStyblinskiTangFunctionSpMatTest", "[WNGrad]")
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 3.0, 0.3);
+  FunctionTest<StyblinskiTangFunction<>, arma::sp_mat>(optimizer, 0.3, 0.03);
 }
 
-/**
- * Test the WNGrad optimizer on the StyblinskiTangFunction.  Use arma::sp_mat.
- */
-TEST_CASE("WNGradStyblinskiTangFunctionSpMatTest", "[WNGradTest]")
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("WNGradLogisticRegressionTest", "[WNGrad]",
+    coot::mat, coot::fmat)
+{
+  WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.003, 0.006);
+}
+
+TEMPLATE_TEST_CASE("WNGradSphereFunctionTest", "[WNGrad]",
+    coot::mat, coot::fmat)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::sp_mat>(optimizer, 0.3, 0.03);
+  FunctionTest<SphereFunction<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 1.0, 0.1);
 }
+
+TEMPLATE_TEST_CASE("WNGradStyblinskiTangFunctionTest", "[WNGrad]",
+    coot::mat, coot::fmat)
+{
+  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
+  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 0.3, 0.03);
+}
+
+#endif

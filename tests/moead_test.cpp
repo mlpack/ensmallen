@@ -67,7 +67,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
 
   // We allow a few trials in case of poor convergence.
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     arma::mat coords = SCH.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
@@ -506,6 +506,9 @@ TEST_CASE("MOEADFonsecaFlemingTestVectorFloatBounds", "[MOEADTest]")
  *
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
+ *
+ * We run the test multiple times, since it sometimes fails, in order to get the
+ * probability of failure down.
  */
 TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
 {
@@ -531,17 +534,26 @@ TEST_CASE("MOEADZDTONETest", "[MOEADTest]")
   typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
   typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
 
-  arma::mat coords = ZDT_ONE.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_ONE.GetObjectives();
+  const size_t trials = 8;
+  for (size_t trial = 0; trial < trials; ++trial)
+  {
+    arma::mat coords = ZDT_ONE.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
+        ZDT_ONE.GetObjectives();
 
-  opt.Optimize(objectives, coords);
+    opt.Optimize(objectives, coords);
 
-  //! Refer the ZDT_ONE implementation for g objective implementation.
-  //! The optimal g value is taken from the docs of ZDT_ONE.
-  size_t numVariables = coords.size();
-  double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-  double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
-  REQUIRE(g == Approx(1.0).margin(0.99));
+    //! Refer the ZDT_ONE implementation for g objective implementation.
+    //! The optimal g value is taken from the docs of ZDT_ONE.
+    size_t numVariables = coords.size();
+    double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+    const double g = 1.0 + 9.0 * sum / (static_cast<double>(numVariables - 1));
+    if (trial < trials - 1 && g != Approx(1.0).margin(0.99))
+      continue;
+
+    REQUIRE(g == Approx(1.0).margin(0.99));
+    break;
+  }
 }
 
 /**

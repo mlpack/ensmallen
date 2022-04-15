@@ -148,9 +148,9 @@ class AdaBoundUpdate
       v *= parent.beta2;
       v += (1 - parent.beta2) * (gradient % gradient);
 
-      const ElemType biasCorrection1 = 1.0 - std::pow(parent.beta1,
+      const ElemType biasCorrection1 = 1.0 - pow(parent.beta1,
           parent.iteration);
-      const ElemType biasCorrection2 = 1.0 - std::pow(parent.beta2,
+      const ElemType biasCorrection2 = 1.0 - pow(parent.beta2,
           parent.iteration);
 
       const ElemType fl = parent.finalLr * stepSize / initialStepSize;
@@ -159,9 +159,9 @@ class AdaBoundUpdate
       const ElemType upper = fl * (1.0 + 1.0 / (parent.gamma *
           parent.iteration));
 
-       // Applies bounds on actual learning rate.
-      iterate -= arma::clamp((stepSize *
-          std::sqrt(biasCorrection2) / biasCorrection1) / (arma::sqrt(v) +
+      // Applies bounds on actual learning rate.
+      iterate -= clamp((stepSize *
+          sqrt(biasCorrection2) / biasCorrection1) / (sqrt(v) +
           parent.epsilon), lower, upper) % m;
     }
 

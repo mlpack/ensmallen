@@ -130,9 +130,10 @@ class LogisticRegressionFunction
    *    be computed.
    * @param gradient Sparse matrix to output gradient into.
    */
+  template<typename ElemType>
   void PartialGradient(const MatType& parameters,
                        const size_t j,
-                       arma::sp_mat& gradient) const;
+                       arma::SpMat<ElemType>& gradient) const;
 
   /**
    * Evaluate the objective function and gradient of the logistic regression

@@ -106,6 +106,88 @@ inline void CheckMatrices(const MatType& a,
   }
 }
 
+template<typename FunctionType, typename OptimizerType, typename PointType>
+bool TestOptimizer(FunctionType& f,
+                   OptimizerType& optimizer,
+                   PointType& point,
+                   const PointType& expectedResult,
+                   const double coordinateMargin,
+                   const double expectedObjective,
+                   const double objectiveMargin,
+                   const bool mustSucceed = true)
+{
+  const double objective = optimizer.Optimize(f, point);
+
+  typedef typename PointType::elem_type eT;
+
+  if (mustSucceed)
+  {
+    REQUIRE(objective == Approx(expectedObjective).margin(objectiveMargin));
+    for (size_t i = 0; i < point.n_elem; ++i)
+    {
+      REQUIRE(eT(point[i]) == Approx(expectedResult[i]).margin(coordinateMargin));
+    }
+  }
+  else
+  {
+    if (objective != Approx(expectedObjective).margin(objectiveMargin))
+      return false;
+
+    for (size_t i = 0; i < point.n_elem; ++i)
+    {
+      if (eT(point[i]) != Approx(expectedResult[i]).margin(coordinateMargin))
+        return false;
+    }
+  }
+
+  return true;
+}
+
+// This runs a test multiple times, but does not do any special behavior between
+// runs.
+template<typename FunctionType, typename OptimizerType, typename PointType>
+void MultipleTrialOptimizerTest(FunctionType& f,
+                                OptimizerType& optimizer,
+                                PointType& initialPoint,
+                                const PointType& expectedResult,
+                                const double coordinateMargin,
+                                const double expectedObjective,
+                                const double objectiveMargin,
+                                const size_t trials = 1)
+{
+  for (size_t t = 0; t < trials; ++t)
+  {
+    PointType coordinates(initialPoint);
+
+    // Only force success on the last trial.
+    bool result = TestOptimizer(f, optimizer, coordinates, expectedResult,
+        coordinateMargin, expectedObjective, objectiveMargin,
+        (t == (trials - 1)));
+    if (result && t != (trials - 1))
+    {
+      // Just make sure at least something was tested for reporting purposes.
+      REQUIRE(result == true);
+      return;
+    }
+  }
+}
+
+template<typename FunctionType,
+         typename MatType = arma::mat,
+         typename OptimizerType = ens::StandardSGD>
+void FunctionTest(OptimizerType& optimizer,
+                  const double objectiveMargin = 0.01,
+                  const double coordinateMargin = 0.001,
+                  const size_t trials = 1)
+{
+  FunctionType f;
+  MatType initialPoint = f.template GetInitialPoint<MatType>();
+  MatType expectedResult = f.template GetFinalPoint<MatType>();
+
+  MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedResult,
+      coordinateMargin, f.GetFinalObjective(), objectiveMargin, trials);
+}
+
 template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>,
     typename OptimizerType>
 void LogisticRegressionFunctionTest(OptimizerType& optimizer,
@@ -129,21 +211,21 @@ void LogisticRegressionFunctionTest(OptimizerType& optimizer,
 
     optimizer.Optimize(lr, coordinates);
 
-    /* const double acc = lr.ComputeAccuracy(data, responses, coordinates); */
-    /* const double testAcc = lr.ComputeAccuracy(testData, testResponses, */
-    /*     coordinates); */
+    const double acc = lr.ComputeAccuracy(data, responses, coordinates);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
 
-/*     // Provide a shortcut to try again if we're not on the last trial. */
-/*     if (i != (trials - 1)) */
-/*     { */
-/*       if (acc != Approx(100.0).epsilon(trainAccuracyTolerance)) */
-/*         continue; */
-/*       if (testAcc != Approx(100.0).epsilon(testAccuracyTolerance)) */
-/*         continue; */
-/*     } */
+    // Provide a shortcut to try again if we're not on the last trial.
+    if (i != (trials - 1))
+    {
+      if (acc != Approx(100.0).epsilon(trainAccuracyTolerance))
+        continue;
+      if (testAcc != Approx(100.0).epsilon(testAccuracyTolerance))
+        continue;
+    }
 
-/*     REQUIRE(acc == Approx(100.0).epsilon(trainAccuracyTolerance)); */
-/*     REQUIRE(testAcc == Approx(100.0).epsilon(testAccuracyTolerance)); */
+    REQUIRE(acc == Approx(100.0).epsilon(trainAccuracyTolerance));
+    REQUIRE(testAcc == Approx(100.0).epsilon(testAccuracyTolerance));
     break;
   }
 }

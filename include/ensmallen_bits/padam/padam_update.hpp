@@ -134,10 +134,10 @@ class PadamUpdate
           parent.iteration);
 
       // Element wise maximum of past and present squared gradients.
-      vImproved = arma::max(vImproved, v);
+      vImproved = max(vImproved, v);
 
       iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-          m / arma::pow(vImproved + parent.epsilon, parent.partial);
+          m / pow(vImproved + parent.epsilon, parent.partial);
     }
 
    private:
