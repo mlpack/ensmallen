@@ -15,6 +15,7 @@
 #include "colville_function.hpp"
 #include "cross_in_tray_function.hpp"
 #include "drop_wave_function.hpp"
+#include "dtlz1.hpp"
 #include "easom_function.hpp"
 #include "eggholder_function.hpp"
 #include "fonseca_fleming_function.hpp"
