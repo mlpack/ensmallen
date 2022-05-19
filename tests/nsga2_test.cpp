@@ -471,8 +471,6 @@ TEST_CASE("NSGA2DTLZONETest", "[NSGA2Test]")
 
   Objective objective = DTLZ_ONE.GetObjectives();
 
-  cout << "Starting optimization." << endl;
-
   opt.Optimize1(objective, coords);
 
   bool check = true;
