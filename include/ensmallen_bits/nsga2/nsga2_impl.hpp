@@ -234,6 +234,180 @@ typename MatType::elem_type NSGA2::Optimize(
   return performance;
 }
 
+template<typename MatType,
+         typename ArbitraryFunctionType,
+         typename... CallbackTypes>
+typename MatType::elem_type NSGA2::Optimize1(
+    ArbitraryFunctionType& objectives,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
+{
+  // Make sure for evolution to work at least four candidates are present.
+  if (populationSize < 4 && populationSize % 4 != 0)
+  {
+    throw std::logic_error("NSGA2::Optimize(): population size should be at"
+        " least 4, and, a multiple of 4!");
+  }
+
+  // Convenience typedefs.
+  typedef typename MatType::elem_type ElemType;
+  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  BaseMatType& iterate = (BaseMatType&) iterateIn;
+
+  //Make sure that we have the methods that we need.  Long name...
+  //traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
+    //BaseMatType>();
+  //RequireDenseFloatingPointType<BaseMatType>();
+
+  // Check if lower bound is a vector of a single dimension.
+  if (lowerBound.n_rows == 1)
+    lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+
+  // Check if upper bound is a vector of a single dimension.
+  if (upperBound.n_rows == 1)
+    upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+
+  // Check the dimensions of lowerBound and upperBound.
+  assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
+      "lowerBound are not the same as the dimensions of iterate.");
+  assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
+      "upperBound are not the same as the dimensions of iterate.");
+
+  numObjectives = objectives.GetNumObjectives();
+  numVariables = iterate.n_rows;
+
+  // Cache calculated objectives.
+  std::vector<arma::Col<ElemType> > calculatedObjectives(populationSize);
+
+  // Population size reserved to 2 * populationSize + 1 to accommodate
+  // for the size of intermediate candidate population.
+  std::vector<BaseMatType> population;
+  population.reserve(2 * populationSize + 1);
+
+  // Pareto fronts, initialized during non-dominated sorting.
+  // Stores indices of population belonging to a certain front.
+  std::vector<std::vector<size_t> > fronts;
+  // Initialised in CrowdingDistanceAssignment.
+  std::vector<ElemType> crowdingDistance;
+  // Initialised during non-dominated sorting.
+  std::vector<size_t> ranks;
+
+  //! Useful temporaries for float-like comparisons.
+  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
+  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+
+  // Controls early termination of the optimization process.
+  bool terminate = false;
+
+  // Generate the population based on a uniform distribution around the given
+  // starting point.
+  for (size_t i = 0; i < populationSize; i++)
+  {
+    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
+        iterate.n_cols) - 0.5 + iterate);
+
+    // Constrain all genes to be within bounds.
+    population[i] = arma::min(arma::max(population[i], castedLowerBound), castedUpperBound);
+  }
+
+  Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
+
+  // Iterate until maximum number of generations is obtained.
+  terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
+
+  for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
+  {
+    Info << "NSGA2: iteration " << generation << "." << std::endl;
+
+    // Create new population of candidate from the present elite population.
+    // Have P_t, generate G_t using P_t.
+    BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
+
+    // Evaluate the objectives for the new population.
+    calculatedObjectives.resize(population.size());
+    std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
+        arma::Col<ElemType>(numObjectives, arma::fill::zeros));
+    EvaluateObjectives1(population, objectives, calculatedObjectives);
+
+    // Perform fast non dominated sort on P_t ∪ G_t.
+    ranks.resize(population.size());
+    FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
+
+    // Perform crowding distance assignment.
+    crowdingDistance.resize(population.size());
+    std::fill(crowdingDistance.begin(), crowdingDistance.end(), 0.);
+    for (size_t fNum = 0; fNum < fronts.size(); fNum++)
+    {
+      CrowdingDistanceAssignment<BaseMatType>(
+          fronts[fNum], calculatedObjectives, crowdingDistance);
+    }
+
+    // Sort based on crowding distance.
+    std::sort(population.begin(), population.end(),
+      [this, ranks, crowdingDistance, population]
+        (BaseMatType candidateP, BaseMatType candidateQ)
+          {
+            size_t idxP{}, idxQ{};
+            for (size_t i = 0; i < population.size(); i++)
+            {
+              if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
+                idxP = i;
+
+              if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
+                idxQ = i;
+            }
+
+            return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks, crowdingDistance);
+          }
+    );
+
+    // Yield a new population P_{t+1} of size populationSize.
+    // Discards unfit population from the R_{t} to yield P_{t+1}.
+    population.resize(populationSize);
+
+    terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
+        calculatedObjectives, fronts, callbacks...);
+  }
+
+  // Set the candidates from the Pareto Set as the output.
+  paretoSet.set_size(population[0].n_rows, population[0].n_cols, fronts[0].size());
+  // The Pareto Set is stored, can be obtained via ParetoSet() getter.
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
+    paretoSet.slice(solutionIdx) =
+      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+  }
+
+  // Set the candidates from the Pareto Front as the output.
+  paretoFront.set_size(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
+      fronts[0].size());
+  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
+  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  {
+    paretoFront.slice(solutionIdx) =
+      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+  }
+
+  // Clear rcFront, in case it is later requested by the user for reverse
+  // compatibility reasons.
+  rcFront.clear();
+
+  // Assign iterate to first element of the Pareto Set.
+  iterate = population[fronts[0][0]];
+
+  Callback::EndOptimization(*this, objectives, iterate, callbacks...);
+
+  ElemType performance = std::numeric_limits<ElemType>::max();
+
+  for (const arma::Col<ElemType>& objective: calculatedObjectives)
+    if (arma::accu(objective) < performance)
+      performance = arma::accu(objective);
+
+  return performance;
+}
+
+
 //! No objectives to evaluate.
 template<std::size_t I,
          typename MatType,
@@ -246,6 +420,18 @@ NSGA2::EvaluateObjectives(
 {
   // Nothing to do here.
 }
+template<std::size_t I,
+         typename MatType,
+         typename ArbitraryFunctionType>
+typename std::enable_if<I == 1, void>::type
+NSGA2::EvaluateObjectives1(
+    std::vector<MatType>&,
+    ArbitraryFunctionType&,
+    std::vector<arma::Col<typename MatType::elem_type> >&)
+{
+  // Nothing to do here.
+}
+
 
 //! Evaluate the objectives for the entire population.
 template<std::size_t I,
@@ -264,6 +450,23 @@ NSGA2::EvaluateObjectives(
                                                                calculatedObjectives);
   }
 }
+template<std::size_t I,
+         typename MatType,
+         typename ArbitraryFunctionType>
+typename std::enable_if<I < 1, void>::type
+NSGA2::EvaluateObjectives1(
+    std::vector<MatType>& population,
+    ArbitraryFunctionType& objectives,
+    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
+{
+  for (size_t i = 0; i < populationSize; i++)
+  {
+    calculatedObjectives[i] = objectives.Evaluate(population[i]);
+    EvaluateObjectives1<I+1, MatType, ArbitraryFunctionType>(population, objectives,
+                                                               calculatedObjectives);
+  }
+}
+
 
 //! Reproduce and generate new candidates.
 template<typename MatType>
