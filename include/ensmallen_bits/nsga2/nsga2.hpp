@@ -54,6 +54,7 @@ namespace ens {
 class NSGA2
 {
  public:
+   size_t numObjectives;
   /**
    * Constructor for the NSGA2 optimizer.
    *
@@ -130,6 +131,13 @@ class NSGA2
      MatType& iterate,
      CallbackTypes&&... callbacks);
 
+     template<typename MatType,
+              typename ArbitraryFunctionType,
+              typename... CallbackTypes>
+     typename MatType::elem_type Optimize1(
+        ArbitraryFunctionType& objectives,
+        MatType& iterate,
+        CallbackTypes&&... callbacks);
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
   //! Modify the population size.
@@ -216,6 +224,14 @@ class NSGA2
                      std::tuple<ArbitraryFunctionType...>&,
                      std::vector<arma::Col<typename MatType::elem_type> >&);
 
+                     template<std::size_t I = 0,
+                              typename MatType,
+                              typename ArbitraryFunctionType>
+                     typename std::enable_if<I == 1, void>::type
+                     EvaluateObjectives1(std::vector<MatType>&,
+                                        ArbitraryFunctionType&,
+                                        std::vector<arma::Col<typename MatType::elem_type> >&);
+
   template<std::size_t I = 0,
            typename MatType,
            typename ...ArbitraryFunctionType>
@@ -224,6 +240,15 @@ class NSGA2
                      std::tuple<ArbitraryFunctionType...>& objectives,
                      std::vector<arma::Col<typename MatType::elem_type> >&
                      calculatedObjectives);
+
+                     template<std::size_t I = 0,
+                              typename MatType,
+                              typename ArbitraryFunctionType>
+                     typename std::enable_if<I < 1, void>::type
+                     EvaluateObjectives1(std::vector<MatType>& population,
+                                        ArbitraryFunctionType& objectives,
+                                        std::vector<arma::Col<typename MatType::elem_type> >&
+                                        calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -341,7 +366,6 @@ class NSGA2
                         const std::vector<typename MatType::elem_type>& crowdingDistance);
 
   //! The number of objectives being optimised for.
-  size_t numObjectives;
 
   //! The numbeer of variables used per objectives.
   size_t numVariables;
