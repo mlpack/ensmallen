@@ -415,9 +415,9 @@ TEST_CASE("NSGA2FonsecaFlemingTestVectorFloatBounds", "[NSGA2Test]")
 }
 
 /**
- * Test against the first problem of ZDT Test Suite.  ZDT-1 is a 30 
+ * Test against the first problem of ZDT Test Suite.  ZDT-1 is a 30
  * variable-2 objective problem with a convex Pareto Front.
- * 
+ *
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
  */
@@ -450,6 +450,42 @@ TEST_CASE("NSGA2ZDTONETest", "[NSGA2Test]")
   double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
 
   REQUIRE(g == Approx(1.0).margin(0.99));
+}
+TEST_CASE("NSGA2DTLZONETest", "[NSGA2Test]")
+{
+  DTLZ1<> DTLZ_ONE(7, 3);
+
+  const double lowerBound = 0;
+  const double upperBound = 1;
+  const double tolerance = 1e-6;
+  const double mutationRate = 1e-2;
+  const double crossoverRate = 0.8;
+  const double strength = 1e-4;
+
+  typedef decltype(DTLZ_ONE.objective) Objective;
+
+  NSGA2 opt(100, 250, crossoverRate, mutationRate, strength,
+    tolerance, lowerBound, upperBound);
+
+  arma::mat coords = DTLZ_ONE.GetInitialPoint();
+
+  Objective objective = DTLZ_ONE.GetObjectives();
+
+  cout << "Starting optimization." << endl;
+
+  opt.Optimize1(objective, coords);
+
+  bool check = true;
+
+
+
+  for (size_t i=0; i < coords.size(); i++)
+  {
+    check &= coords(i)==Approx(0.5).margin(0.99);
+    if (!check) break;
+  }
+
+  REQUIRE(check == true);
 }
 
 /**
