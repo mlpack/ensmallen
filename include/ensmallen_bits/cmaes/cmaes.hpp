@@ -1,8 +1,8 @@
 /**
- * @file cmaes.hpp
- * @author Marcus Edel
+ * @file cmaes_hoang.hpp
+ * @author Marcus Edel 
  * @author Kartik Nighania
- *
+ * @author John Hoang
  * Definition of the Covariance Matrix Adaptation Evolution Strategy as proposed
  * by N. Hansen et al. in "Completely Derandomized Self-Adaptation in Evolution
  * Strategies".
@@ -12,11 +12,12 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #ifndef ENSMALLEN_CMAES_CMAES_HPP
 #define ENSMALLEN_CMAES_CMAES_HPP
 
-#include "full_selection.hpp"
-#include "random_selection.hpp"
+#include "selection_policies/full_selection.hpp"
+#include "selection_policies/random_selection.hpp"
 
 namespace ens {
 
@@ -75,6 +76,7 @@ class CMAES
         const size_t batchSize = 32,
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
+        const size_t negativeWeight = 1,
         const SelectionPolicyType& selectionPolicy = SelectionPolicyType());
 
   /**
@@ -132,27 +134,34 @@ class CMAES
   //! Modify the selection policy.
   SelectionPolicyType& SelectionPolicy() { return selectionPolicy; }
 
- private:
-  //! Population size.
-  size_t lambda;
+  //! Get the tolerance for termination.
+  size_t NegativeWeight() const { return negativeWeight; }
+  //! Modify the tolerance for termination.
+  size_t& NegativeWeight() { return negativeWeight; }
 
-  //! Lower bound of decision variables.
-  double lowerBound;
+  private:
+    //! Population size.
+    size_t lambda;
 
-  //! Upper bound of decision variables
-  double upperBound;
+    //! Lower bound of decision variables.
+    double lowerBound;
 
-  //! The batch size for processing.
-  size_t batchSize;
+    //! Upper bound of decision variables
+    double upperBound;
 
-  //! The maximum number of allowed iterations.
-  size_t maxIterations;
+    //! The batch size for processing.
+    size_t batchSize;
 
-  //! The tolerance for termination.
-  double tolerance;
+    //! The maximum number of allowed iterations.
+    size_t maxIterations;
 
-  //! The selection policy used to calculate the objective.
-  SelectionPolicyType selectionPolicy;
+    //! The tolerance for termination.
+    double tolerance;
+
+    //! The selection policy used to calculate the objective.
+    SelectionPolicyType selectionPolicy; 
+
+    size_t negativeWeight;
 };
 
 /**
@@ -163,7 +172,6 @@ using ApproxCMAES = CMAES<SelectionPolicyType>;
 
 } // namespace ens
 
-// Include implementation.
 #include "cmaes_impl.hpp"
 
 #endif
