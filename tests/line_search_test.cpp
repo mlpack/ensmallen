@@ -23,8 +23,7 @@ using namespace ens::test;
 TEST_CASE("FuncFWTest", "[LineSearchTest]")
 {
   mat x1 = zeros<mat>(3, 1);
-  mat x2;
-  x2 << 0.2 << 0.4 << 0.6;
+  mat x2 = { 0.2, 0.4, 0.6 };
   x2 = x2.t();
 
   TestFuncFW<> f;
@@ -44,8 +43,7 @@ TEST_CASE("FuncFWTest", "[LineSearchTest]")
 TEST_CASE("FuncFWFMatTest", "[LineSearchTest]")
 {
   fmat x1 = zeros<fmat>(3, 1);
-  fmat x2;
-  x2 << 0.2 << 0.4 << 0.6;
+  fmat x2 = { 0.2, 0.4, 0.6 };
   x2 = x2.t();
 
   TestFuncFW<arma::fmat> f;
