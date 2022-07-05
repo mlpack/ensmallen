@@ -59,7 +59,7 @@ class DefaultWeight{
    *  @param c1 
    *  @param cmu
    */
-  arma::Row<double>Generate(const size_t dim,
+  arma::Row<double> Generate(const size_t dim,
                             const double c1,
                             const double cmu)
   {

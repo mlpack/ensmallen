@@ -28,6 +28,7 @@ namespace ens{
        * @brief Construct a new CMAparameters object
        * @param N Starting point dimension
        * @param lambda The population(Offspring sampled in each step) size 
+       * @param weightPolicy Policy generate the recombination weights
        */
       template<typename WeightPolicyType>  
       CMAparameters(
@@ -85,7 +86,6 @@ namespace ens{
       double cm; /**< learning rate for the mean. */
       double alphacov; /**< = 2 (active CMA only) */
 
-      WeightPolicyType weightPolicy;
   };
 }
 
