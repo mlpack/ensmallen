@@ -62,7 +62,6 @@ namespace ens{
           const double alpha_posdef_negative = (1 - c1 - cmu) / (dim * cmu);
           weights.cols(idx_neg, lambda-1) = w.cols(idx_neg, lambda-1) * 
             std::min(std::min(alpha_mu_negative, alpha_mueff_negative), alpha_posdef_negative) / sumNeg;
-          
         } 
         else 
         {
