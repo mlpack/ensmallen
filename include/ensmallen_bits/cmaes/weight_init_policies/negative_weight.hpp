@@ -95,7 +95,7 @@ class NegativeWeight{
       }
     }
     mu_eff_neg = NegativeEff(weights);
-    Checking()
+    Checking();
     return weights;
   }
   /**
@@ -113,11 +113,11 @@ class NegativeWeight{
     assert(weights(mu-1) > 0 && 0 >= weights(mu));
     assert(0.999 < arma::accu(weights.cols(0, mu-1)) && arma::accu(weights.cols(0, mu-1)) < 1.001);
 
-    double mu_eff_chk = std::pow(arma:accu(weights.cols(0, mu-1)), 2) / arma::accu(arma::pow(weights.cols(0, mu-1), 2));
-    double mu_neg_eff_chk = std::pow(arma:accu(weights.cols(mu, len-1)), 2) / arma::accu(arma::pow(weights.cols(mu, len-1), 2));
+    double mu_eff_chk = std::pow(arma::accu(weights.cols(0, mu-1)), 2) / arma::accu(arma::pow(weights.cols(0, mu-1), 2));
+    double mu_neg_eff_chk = std::pow(arma::accu(weights.cols(mu, len-1)), 2) / arma::accu(arma::pow(weights.cols(mu, len-1), 2));
 
     assert(mu_eff / 1.001 < mu_eff_chk && mu_eff_chk < mu_eff * 1.001);
-    assert(mu_eff_negative / 1.001 < mu_eff_negative_chk && mu_eff_negative_chk < mu_eff_negative * 1.001);
+    assert(mu_eff_neg / 1.001 < mu_neg_eff_chk && mu_neg_eff_chk < mu_eff_neg * 1.001);
   }
 
   double NegativeEff(const arma::Row<double>& weights)
@@ -135,8 +135,8 @@ class NegativeWeight{
   }
   // Return variance-effective before the Generate function is called since c1 and cmu is 
   // calculated beforehand 
-  size_t Mu_eff() const { return mu_eff; }
-  size_t& Mu_eff() { return mu_eff; }
+  double Mu_eff() const { return mu_eff; }
+  double& Mu_eff() { return mu_eff; }
 
   // These functions might be unnecessary since Generate function is already return the desired weights 
   arma::Row<double> Weights() const { return weights; }

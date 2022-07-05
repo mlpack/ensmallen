@@ -33,10 +33,10 @@ namespace ens{
       template<typename WeightPolicyType>  
       CMAparameters(
         const size_t N,
-        const size_t lambda,
-        const WeightPolicyType& weightPolicy) : 
+        const size_t population,
+        WeightPolicyType& weightPolicy) : 
         dim(N),
-        lambda(lambda)
+        lambda(population)
       {
         chi = std::sqrt(dim)*(1.0 - 1.0 / (4.0 * dim) + 1.0 / (21 * std::pow(dim, 2)));
         if(lambda == 0)
@@ -45,7 +45,7 @@ namespace ens{
         mu = std::round(lambda/2);
 
         weightPolicy.GenerateRaw(lambda);
-        mu_eff = weightsPolicy.MuEff();
+        mu_eff = weightPolicy.Mu_eff();
 
         // Strategy parameter setting: Adaption
         cc = (4.0 + mu_eff/dim)/(4.0 + dim+2*mu_eff/dim);

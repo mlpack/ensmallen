@@ -68,19 +68,19 @@ class DefaultWeight{
 
   // Return variance-effective before the Generate function is called since c1 and cmu is 
   // calculated beforehand 
-  size_t Mu_eff() const { return mu_eff; }
-  size_t& Mu_eff() { return mu_eff; }
+  double Mu_eff() const { return mu_eff; }
+  double& Mu_eff() { return mu_eff; }
 
   // These functions might be unnecessary since Generate function is already return the desired weights 
-  arma::Row<double>Weights() const { return weights; }
+  arma::Row<double> Weights() const { return weights; }
   arma::Row<double> Weights() { return weights; }
 
   private:
     size_t len;
     size_t mu;
-    size_t mu_eff;
-    size_t mu_eff_negative;
-    arma::Row<double> weights
+    double mu_eff;
+    double mu_eff_neg;
+    arma::Row<double> weights;
 };
 
 } // namespace ens

@@ -179,12 +179,12 @@ Optimize(SeparableFunctionType &function,
     if (iterate.n_rows > iterate.n_cols)
     {
       ps[idx1] = (1 - params.csigma) * ps[idx0] + std::sqrt(
-          params.csigma * (2 - params.csigma) * params.muw) * covLower.t() * step;
+          params.csigma * (2 - params.csigma) * params.mu_eff) * covLower.t() * step;
     }
     else
     {
       ps[idx1] = (1 - params.csigma) * ps[idx0] + std::sqrt(
-          params.csigma * (2 - params.csigma) * params.muw) * step * covLower.t();
+          params.csigma * (2 - params.csigma) * params.mu_eff) * step * covLower.t();
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
@@ -193,7 +193,7 @@ Optimize(SeparableFunctionType &function,
 
     // Update covariance matrix.
     sigma(idx1) = sigma(idx0) * std::exp(params.csigma / params.dsigma * ( psNorm / params.chi - 1));
-    pc[idx1] = (1 - params.cc) * pc[idx0] + hs * std::sqrt(params.cc * (2 - params.cc) * params.muw) * step; 
+    pc[idx1] = (1 - params.cc) * pc[idx0] + hs * std::sqrt(params.cc * (2 - params.cc) * params.mu_eff) * step; 
     C[idx1] = (1 + params.c1 * deltahs - params.c1 - params.cmu * arma::accu(params.weights)) * C[idx0];
   
     if (iterate.n_rows > iterate.n_cols)
