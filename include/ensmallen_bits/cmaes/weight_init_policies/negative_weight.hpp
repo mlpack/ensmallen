@@ -35,7 +35,8 @@ class NegativeWeight{
   void GenerateRaw(const size_t lambda)
   {
     // Checking the length of the weights vector
-    assert(len < 2 && "Number of weights must be >= 2");
+    len = lambda;
+    assert(len >= 2 && "Number of weights must be >= 2");
     weights = std::log((len + 1) / 2) - arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
     
     assert(weights(0) > 0 && "The first weight must be >0");
