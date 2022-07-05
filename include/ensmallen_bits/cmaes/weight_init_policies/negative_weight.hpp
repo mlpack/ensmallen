@@ -15,23 +15,28 @@
 
 namespace ens{
 
-template<typename MatType>
 class NegativeWeight{
-
-typedef typename MatType::elem_type ElemType;
-typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType; 
 
  public:
   /**
    * Constructor
    * 
    */
+  NegativeWeight()
+  {
+    // Doing nothing
+  }
   
-  NegativeWeight(const size_t len) : len(len)
+  /**
+   * This function will generate raw weights and mu_eff first 
+   * 
+   * @param lambda The length of raw weights 
+   */
+  void GenerateRaw(const size_t lambda)
   {
     // Checking the length of the weights vector
     assert(len < 2 && "Number of weights must be >= 2");
-    weights = std::log((len + 1) / 2) - arma::log(arma::linspace<arma::Row<ElemType>>(0, len - 1, len) + 1.0);
+    weights = std::log((len + 1) / 2) - arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
     
     assert(weights(0) > 0 && "The first weight must be >0");
     assert(weights(len-1) <= 0 && "The last weight must be <= 0");
@@ -58,7 +63,7 @@ typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
    *  @param c1 
    *  @param cmu
    */
-  arma::Row<ElemType> Generate(const size_t dim,
+  arma::Row<double> Generate(const size_t dim,
                                const double c1,
                                const double cmu)
   {
@@ -115,7 +120,7 @@ typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
     assert(mu_eff_negative / 1.001 < mu_eff_negative_chk && mu_eff_negative_chk < mu_eff_negative * 1.001);
   }
 
-  double NegativeEff(const arma::Row<ElemType>& weights)
+  double NegativeEff(const arma::Row<double>& weights)
   {
     double sumNeg = 0.0, sumNegSquare = 0.0;
     for(size_t i = 0; i < weights.n_elem; ++i) 
@@ -134,15 +139,15 @@ typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   size_t& Mu_eff() { return mu_eff; }
 
   // These functions might be unnecessary since Generate function is already return the desired weights 
-  arma::Row<ElemType> Weights() const { return weights; }
-  arma::Row<ElemType>& Weights() { return weights; }
+  arma::Row<double> Weights() const { return weights; }
+  arma::Row<double>& Weights() { return weights; }
 
   private:
     size_t len;
     size_t mu;
     double mu_eff;
     double mu_eff_neg;
-    arma::Row<ElemType> weights;
+    arma::Row<double> weights;
 };
 
 } // namespace ens

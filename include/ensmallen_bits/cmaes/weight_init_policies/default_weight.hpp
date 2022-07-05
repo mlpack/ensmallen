@@ -15,21 +15,28 @@
 
 namespace ens{
 
-template<typename MatType>
 class DefaultWeight{
-
-typedef typename MatType::elem_type ElemType;
-typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType; 
 
  public:
   /**
    * Constructor
    * 
    */
-  DefaultWeight(const size_t len) : len(len)
+  DefaultWeight()
   {
+    // Doing nothing
+  }
+
+  /**
+   * This function will generate raw weights and mu_eff first 
+   * 
+   * @param lambda The length of raw weights 
+   */
+  void GenerateRaw(const size_t lambda)
+  {
+    len = lambda;
     mu = std::round(len/2);
-    weights = std::log(mu + 0.5) - arma::log(arma::linspace<arma::Row<ElemType>>(0, len - 1, len) + 1.0);
+    weights = std::log(mu + 0.5) - arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
     for(size_t i = mu; i < len; ++i)
     {
       weights(i) = 0;
@@ -41,8 +48,9 @@ typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
     {
       weights(i) /= sumPos;
     }
-    mu_eff = 1 / arma::accu(arma::pow(weights.cols(0, mu-1), 2));
+    mu_eff = 1 / arma::accu(arma::pow(weights.cols(0, mu-1), 2)); 
   }
+
   /**
    * Generate default weight for new population
    * 
@@ -51,10 +59,9 @@ typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
    *  @param c1 
    *  @param cmu
    */
-  template<typename ElemType> 
-  arma::Row<ElemType> Generate(const size_t dim,
-                               const double c1,
-                               const double cmu)
+  arma::Row<double>Generate(const size_t dim,
+                            const double c1,
+                            const double cmu)
   {
     return weights;
   }
@@ -65,15 +72,15 @@ typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   size_t& Mu_eff() { return mu_eff; }
 
   // These functions might be unnecessary since Generate function is already return the desired weights 
-  arma::Row<ElemType> Weights() const { return weights; }
-  arma::Row<ElemType>& Weights() { return weights; }
+  arma::Row<double>Weights() const { return weights; }
+  arma::Row<double> Weights() { return weights; }
 
   private:
     size_t len;
     size_t mu;
     size_t mu_eff;
     size_t mu_eff_negative;
-    arma::Row<ElemType> weights
+    arma::Row<double> weights
 };
 
 } // namespace ens

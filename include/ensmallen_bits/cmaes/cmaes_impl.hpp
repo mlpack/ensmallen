@@ -22,34 +22,38 @@
 
 namespace ens {
 
-template<typename SelectionPolicyType>
-CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
-                                  const double lowerBound,
-                                  const double upperBound,
-                                  const size_t batchSize,
-                                  const size_t maxIterations,
-                                  const double tolerance,
-                                  const size_t negativeWeight,
-                                  const SelectionPolicyType& selectionPolicy) :
-    lambda(lambda),
-    lowerBound(lowerBound),
-    upperBound(upperBound),
-    batchSize(batchSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    negativeWeight(negativeWeight),
-    selectionPolicy(selectionPolicy)
+template <typename SelectionPolicyType,
+          typename WeightPolicyType>
+CMAES<SelectionPolicyType, WeightPolicyType>::
+CMAES(const size_t lambda,
+      const double lowerBound,
+      const double upperBound,
+      const size_t batchSize,
+      const size_t maxIterations,
+      const double tolerance,
+      const SelectionPolicyType& selectionPolicy,
+      const WeightPolicyType& weightPolicy) :
+      lambda(lambda),
+      lowerBound(lowerBound),
+      upperBound(upperBound),
+      batchSize(batchSize),
+      maxIterations(maxIterations),
+      tolerance(tolerance),
+      selectionPolicy(selectionPolicy),
+      weightPolicy(weightPolicy)
 { /* Nothing to do. */ }
+  
 
 //! Optimize the function (minimize).
-template<typename SelectionPolicyType>
-template<typename SeparableFunctionType,
-         typename MatType,
-         typename... CallbackTypes>
-typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
-    SeparableFunctionType& function,
-    MatType& iterateIn,
-    CallbackTypes&&... callbacks)
+template <typename SelectionPolicyType,
+          typename WeightPolicyType>
+template <typename SeparableFunctionType,
+          typename MatType,
+          typename... CallbackTypes>
+typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
+Optimize(SeparableFunctionType &function,
+          MatType &iterateIn,
+          CallbackTypes &&...callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -62,7 +66,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
   // Intantiated the algorithm params
-  CMAparameters<MatType> params(iterate.n_elem, lambda, negativeWeight);
+  CMAparameters params(iterate.n_elem, lambda, weightPolicy);
 
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
   sigma(0) = 0.3 * (upperBound - lowerBound);
@@ -195,9 +199,10 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     if (iterate.n_rows > iterate.n_cols)
     {
       C[idx1] = C[idx1] + params.c1 * (pc[idx1] * pc[idx1].t());
-      for (size_t j = 0; j < params.offsprings; ++j)
+      for (size_t j = 0; j < params.lambda; ++j)
       {
         if(params.weights(j) < 0) params.weights(j) *= params.dim/std::pow(arma::norm(z[j]), 2);
+        if(params.weights(j) == 0) break;
         C[idx1] = C[idx1] + params.cmu * params.weights(j) *
             pStep[idx(j)] * pStep[idx(j)].t();
       }
@@ -208,6 +213,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       for (size_t j = 0; j < params.offsprings; ++j)
       {
         if(params.weights(j) < 0) params.weights(j) *= params.dim/std::pow(arma::norm(z[j]), 2);
+        if(params.weights(j) == 0) break;
         C[idx1] = C[idx1] + params.cmu * params.weights(j) *
             pStep[idx(j)].t() * pStep[idx(j)];
       }
