@@ -16,9 +16,13 @@
 #ifndef ENSMALLEN_CMAES_CMAES_HPP
 #define ENSMALLEN_CMAES_CMAES_HPP
 
+//! Selection Policy
 #include "selection_policies/full_selection.hpp"
 #include "selection_policies/random_selection.hpp"
 
+//! Weight initialization policies.
+#include "weight_init_policies/default_weight.hpp"
+#include "weight_init_policies/negative_weight.hpp"
 namespace ens {
 
 /**
@@ -47,8 +51,10 @@ namespace ens {
  * ensmallen website.
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
+ * @tparam WeightPolicy The weight initialization strategy 
  */
-template<typename SelectionPolicyType = FullSelection>
+template<typename SelectionPolicyType = FullSelection,
+         typename WeightPolicyType = DefaultWeight>
 class CMAES
 {
  public:
@@ -69,6 +75,7 @@ class CMAES
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
+   * @param weightPolicy Instantiated weight initialization policy applying on offsprings in each iteration
    */
   CMAES(const size_t lambda = 0,
         const double lowerBound = -10,
@@ -76,8 +83,8 @@ class CMAES
         const size_t batchSize = 32,
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
-        const size_t negativeWeight = 1,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType());
+        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+        const WeightPolicyType& weightPolicy = WeightPolicyType());
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -98,7 +105,6 @@ class CMAES
   typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks);
-
   //! Get the population size.
   size_t PopulationSize() const { return lambda; }
   //! Modify the population size.
@@ -134,10 +140,10 @@ class CMAES
   //! Modify the selection policy.
   SelectionPolicyType& SelectionPolicy() { return selectionPolicy; }
 
-  //! Get the tolerance for termination.
-  size_t NegativeWeight() const { return negativeWeight; }
-  //! Modify the tolerance for termination.
-  size_t& NegativeWeight() { return negativeWeight; }
+  //! Get the weight policy.
+  const WeightPolicyType& WeightPolicy() const { return weightPolicy; }
+  //! Modify the weight policy.
+  WeightPolicyType& WeightPolicy() { return weightPolicy; }
 
   private:
     //! Population size.
@@ -161,14 +167,31 @@ class CMAES
     //! The selection policy used to calculate the objective.
     SelectionPolicyType selectionPolicy; 
 
-    size_t negativeWeight;
+    // The weight initialization policy
+    WeightPolicyType weightPolicy;
 };
 
 /**
  * Convenient typedef for CMAES approximation.
  */
-template<typename SelectionPolicyType = RandomSelection>
-using ApproxCMAES = CMAES<SelectionPolicyType>;
+
+using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight>;
+
+using ApproxCMAES = CMAES<RandomSelection, DefaultWeight>;
+
+using ActiveCMAES = CMAES<FullSelection, NegativeWeight>;
+
+// template<typename SelectionPolicyType = RandomSelection,
+//          typename WeightPolicyType = DefaultWeight>
+// using ApproxCMAES = CMAES<SelectionPolicyType, DefaultWeight>;
+
+// template<typename SelectionPolicyType = RandomSelection,
+//          typename WeightPolicyType = NegativeWeight>
+// using ActiveApproxCMAES = CMAES<SelectionPolicyType, DefaultWeight>;
+
+// template<typename SelectionPolicyType = FullSelection,
+//          typename WeightPolicyType = NegativeWeight>
+// using ActiveCMAES = CMAES<RandomSelection, DefaultWeight>;
 
 } // namespace ens
 
