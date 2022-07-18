@@ -61,7 +61,7 @@ namespace ens{
         dsigma = 1 + csigma + 2 * std::max(std::sqrt((mu_eff-1)/(dim+1)) - 1, 0.0);
         hsigma = (1.4 + 2.0 / (dim + 1.0)) * chi;
 
-      };
+      }
 
       size_t dim;
       size_t lambda;

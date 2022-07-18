@@ -32,8 +32,8 @@ int main(int argc, char** argv)
   // if the keyword 'time' is provided then the result of calling std::time(0)
   // is used.
   const size_t seed = session.config().rngSeed();
-  srand((unsigned int) seed);
-  arma::arma_rng::set_seed(seed);
+  srand(time(NULL));
+  arma::arma_rng::set_seed(time(NULL));
 
   return session.run();
 }
