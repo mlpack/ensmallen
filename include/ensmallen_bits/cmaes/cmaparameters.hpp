@@ -24,7 +24,7 @@ namespace ens{
     // To do list: different parameters constructor for various improvements or
     // usage or parameters tuning
       CMAparameters() {}; // doing nothing
-      /**
+      /** 
        * @brief Construct a new CMAparameters object
        * @param N Starting point dimension
        * @param lambda The population(Offspring sampled in each step) size 

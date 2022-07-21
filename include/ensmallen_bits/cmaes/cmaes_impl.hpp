@@ -32,7 +32,7 @@ CMAES(const size_t lambda,
       const size_t maxIterations,
       const double tolerance,
       const SelectionPolicyType& selectionPolicy,
-      const WeightPolicyType& weightPolicy:
+      const WeightPolicyType& weightPolicy):
       lambda(lambda),
       lowerBound(lowerBound),
       upperBound(upperBound),
@@ -104,8 +104,8 @@ Optimize(SeparableFunctionType &function,
   std::vector<BaseMatType> pc = ps;
   std::vector<BaseMatType> C(2, BaseMatType(iterate.n_elem, iterate.n_elem));
   C[0].eye();
-  BaseMatType B(iterate.n_rows, iterate.n_cols); B.eye();
-  BaseMatType D(iterate.n_rows, iterate.n_cols); D.eye();
+  BaseMatType B(iterate.n_elem, iterate.n_elem); B.eye();
+  BaseMatType D(iterate.n_elem, iterate.n_elem); D.eye();
 
   // The current visitation order (sorted by population objectives).
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
@@ -122,7 +122,7 @@ Optimize(SeparableFunctionType &function,
     // To keep track of where we are.
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
-ƒ
+
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType BD = B*D;
@@ -159,9 +159,10 @@ Optimize(SeparableFunctionType &function,
     step = weights(0) * pStep[idx(0)];
     stepz = weights(0) * z[idx(0)];
     for (size_t j = 1; j < mu; ++j)
+    {
       step += weights(j) * pStep[idx(j)];
       stepz += weights(j) * z[idx(j)];
-
+    }
     mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
 
     // Calculate the objective function.
@@ -289,7 +290,7 @@ Optimize(SeparableFunctionType &function,
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
   template<typename MatType>
-  CMAES<SelectionPolicyType, WeightPolicyType>::
+  inline void CMAES<SelectionPolicyType, WeightPolicyType>::
   initialize(MatType& iterate)
   {
     chi = std::sqrt(iterate.n_elem)*(1.0 - 1.0 / (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
@@ -321,7 +322,7 @@ Optimize(SeparableFunctionType &function,
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
   template<typename MatType>
-  CMAES<SelectionPolicyType, WeightPolicyType>::
+  inline void CMAES<SelectionPolicyType, WeightPolicyType>::
   stop()
   {
 
@@ -331,7 +332,7 @@ Optimize(SeparableFunctionType &function,
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
   template<typename MatType>
-  CMAES<SelectionPolicyType, WeightPolicyType>::
+  inline void CMAES<SelectionPolicyType, WeightPolicyType>::
   ask()
   {
 
@@ -341,7 +342,7 @@ Optimize(SeparableFunctionType &function,
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
   template<typename MatType>
-  CMAES<SelectionPolicyType, WeightPolicyType>::
+  inline void CMAES<SelectionPolicyType, WeightPolicyType>::
   update()
   {
 

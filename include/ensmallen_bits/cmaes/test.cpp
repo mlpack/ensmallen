@@ -35,7 +35,10 @@ int main(int argc, char ** argv)
   size_t iters; 
   std::cout << "Typing the number of iterations: " << std::endl; 
   std::cin >> iters; 
-  ens::CMAES cmaes(0, -10, 10, 32, 1000, 1e-5);
+  ens::CMAES cmaes1(0, -10, 10, 32, 1000, 1e-5);
+  ens::ActiveCMAES cmaes2(0, -10, 10, 32, 1000, 1e-5);
+  ens::ApproxCMAES cmaes3(0, -10, 10, 32, 1000, 1e-5);
+  ens::ActiveApproxCMAES cmaes4(0, -10, 10, 32, 1000, 1e-5);
   double total_time = 0.0;
   for(size_t i = 0; i < iters; ++i){
     arma::wall_clock clock;
@@ -44,11 +47,53 @@ int main(int argc, char ** argv)
     arma::mat params(300, 1, arma::fill::randn);
     LinearRegressionFunction lrf(data, responses);
     clock.tic();
-    cmaes.Optimize(lrf, params);
+    cmaes1.Optimize(lrf, params);
     total_time += clock.toc();
+    double aver_time = total_time/iters;
+    std::cout << "The optimized linear regression model found by CMAES has the "
+      << aver_time << std::endl;
   }
-  double aver_time = total_time/iters;
-  std::cout << "The optimized linear regression model found by CMAES has the "
-     << aver_time << std::endl;
+  total_time = 0;
+  for(size_t i = 0; i < iters; ++i){
+    arma::wall_clock clock;
+    arma::mat data(300, 10000, arma::fill::randn);
+    arma::rowvec responses(10000, arma::fill::randn);
+    arma::mat params(300, 1, arma::fill::randn);
+    LinearRegressionFunction lrf(data, responses);
+    clock.tic();
+    cmaes2.Optimize(lrf, params);
+    total_time += clock.toc();
+    double aver_time = total_time/iters;
+    std::cout << "The optimized linear regression model found by CMAES has the "
+      << aver_time << std::endl;
+  }
+  total_time = 0;
+  for(size_t i = 0; i < iters; ++i){
+    arma::wall_clock clock;
+    arma::mat data(300, 10000, arma::fill::randn);
+    arma::rowvec responses(10000, arma::fill::randn);
+    arma::mat params(300, 1, arma::fill::randn);
+    LinearRegressionFunction lrf(data, responses);
+    clock.tic();
+    cmaes3.Optimize(lrf, params);
+    total_time += clock.toc();
+    double aver_time = total_time/iters;
+    std::cout << "The optimized linear regression model found by CMAES has the "
+      << aver_time << std::endl;
+  }
+  total_time = 0;
+  for(size_t i = 0; i < iters; ++i){
+    arma::wall_clock clock;
+    arma::mat data(300, 10000, arma::fill::randn);
+    arma::rowvec responses(10000, arma::fill::randn);
+    arma::mat params(300, 1, arma::fill::randn);
+    LinearRegressionFunction lrf(data, responses);
+    clock.tic();
+    cmaes4.Optimize(lrf, params);
+    total_time += clock.toc();
+    double aver_time = total_time/iters;
+    std::cout << "The optimized linear regression model found by CMAES has the "
+      << aver_time << std::endl;
+  }
 }
 

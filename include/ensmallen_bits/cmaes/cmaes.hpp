@@ -146,18 +146,22 @@ class CMAES
   WeightPolicyType& WeightPolicy() { return weightPolicy; }
 
   private:
-		//! Initializing the parameters function
-		void intialize;
+    //! Initializing the parameters function
+    template<typename MatType>
+    void initialize(MatType& iterate);
 
     //! Stop criterias
-    void stop;
+    template<typename MatType>
+    void stop();
 
     //! Get a list of sampled candidate solutions
-    void ask;
+    template<typename MatType>
+    void ask();
 
     //! Update the algorithm's parameters
-    void update;
-    
+    template<typename MatType>
+    void update();
+
     //! Population size.
     size_t lambda;
 
@@ -176,8 +180,8 @@ class CMAES
     //! The tolerance for termination.
     double tolerance;
 
-    //! parameters class which hold all the needed parameters
-    CMAparameters params;
+    // //! parameters class which hold all the needed parameters
+    // CMAparameters params;
     
     //! The selection policy used to calculate the objective.
     SelectionPolicyType selectionPolicy; 
