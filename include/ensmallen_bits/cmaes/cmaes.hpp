@@ -146,6 +146,9 @@ class CMAES
   WeightPolicyType& WeightPolicy() { return weightPolicy; }
 
   private:
+		//! Initializing the parameters function
+		void intialize;
+
     //! Stop criterias
     void stop;
 
@@ -181,6 +184,34 @@ class CMAES
 
     // The weight initialization policy
     WeightPolicyType weightPolicy;
+
+    size_t mu; /**< number of candidate solutions used to update the distribution parameters. */
+    size_t offsprings;
+    // TODO: might need a more general type
+    arma::Row<double> weights; /**< offsprings weighting scheme. */
+    double csigma; /**< cumulation constant for step size. */
+    double c1; /**< covariance matrix learning rate for the rank one update using pc. */
+    double cmu; /**< covariance matrix learning reate for the rank mu update. */
+    double cc; /**< cumulation constant for pc. */
+    double mu_eff; /**< \sum^\mu _weights .*/
+    double dsigma; /**< step size damping factor. */
+    double alphamu;
+    // computed once at init for speeding up operations.
+    double fact_ps;
+    double fact_pc;
+    double chi; /**< norm of N(0,I) */
+    double hsigma;
+
+    // active cma.
+    double cm; /**< learning rate for the mean. */
+    double alphacov; /**< = 2 (active CMA only) */
+
+    // stopping criteria parameters
+    size_t countval;
+    // size_t maxIterations;
+    // double tolerance
+    
+
 };
 
 /**

@@ -32,7 +32,7 @@ CMAES(const size_t lambda,
       const size_t maxIterations,
       const double tolerance,
       const SelectionPolicyType& selectionPolicy,
-      const WeightPolicyType& weightPolicy) :
+      const WeightPolicyType& weightPolicy:
       lambda(lambda),
       lowerBound(lowerBound),
       upperBound(upperBound),
@@ -66,17 +66,15 @@ Optimize(SeparableFunctionType &function,
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
   // Intantiated the algorithm params
-  params = CMAparameters(iterate.n_elem, lambda, weightPolicy);
+  initialize(iterate);
 
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
   sigma(0) = 0.3 * (upperBound - lowerBound);
 
   std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows, iterate.n_cols));
+  // This causing 
   mPosition[0] = lowerBound + arma::randu<BaseMatType>(
       iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
-
-  BaseMatType step(iterate.n_rows, iterate.n_cols);
-  step.zeros();
 
   // Calculate the first objective function.
   size_t numFunctions = function.NumFunctions();
@@ -96,29 +94,26 @@ Optimize(SeparableFunctionType &function,
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   // Population parameters.
-  std::vector<BaseMatType> pStep(params.lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
+  std::vector<BaseMatType> pStep(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
   /**< pPosition is vector of x_i(g) with x_i(g) is either a column or row vector but we generalize the type of data here) */
-  std::vector<BaseMatType> pPosition(params.lambda, BaseMatType(iterate.n_rows, iterate.n_cols)); 
-  BaseMatType pObjective(params.lambda, 1); // pObjective is vector-shaped.
+  std::vector<BaseMatType> pPosition(lambda, BaseMatType(iterate.n_rows, iterate.n_cols)); 
+  BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
   std::vector<BaseMatType> ps(2, BaseMatType(iterate.n_rows, iterate.n_cols));
   ps[0].zeros();
   ps[1].zeros();
   std::vector<BaseMatType> pc = ps;
-  std::vector<BaseMatType> C(2, BaseMatType(params.dim, params.dim));
+  std::vector<BaseMatType> C(2, BaseMatType(iterate.n_elem, iterate.n_elem));
   C[0].eye();
-
-  // Covariance matrix parameters.
-  arma::Col<ElemType> eigval; // TODO: might need a more general type.
-  BaseMatType eigvec;
-  BaseMatType eigvalZero(params.dim, 1); // eigvalZero is vector-shaped.
-  eigvalZero.zeros();
+  BaseMatType B(iterate.n_rows, iterate.n_cols); B.eye();
+  BaseMatType D(iterate.n_rows, iterate.n_cols); D.eye();
 
   // The current visitation order (sorted by population objectives).
-  arma::uvec idx = arma::linspace<arma::uvec>(0, params.lambda - 1, params.lambda);
+  arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
-
+  size_t eigenval = 0;
+  size_t countval = 0;
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, function, iterate,
       callbacks...);
@@ -127,24 +122,23 @@ Optimize(SeparableFunctionType &function,
     // To keep track of where we are.
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
-
+ƒ
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
-    BaseMatType covLower;
-    while (!arma::chol(covLower, C[idx0], "lower"))
-      C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
-    std::vector<BaseMatType> z(params.lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
-    for (size_t j = 0; j < params.lambda; ++j)
+    BaseMatType BD = B*D;
+    std::vector<BaseMatType> z(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
+    for (size_t j = 0; j < lambda; ++j)
     {
+      countval++;
       if (iterate.n_rows > iterate.n_cols)
       {
         z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
-        pStep[idx(j)] = covLower * z[j];
+        pStep[idx(j)] = BD * z[j];
       }
       else
       {
         z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
-        pStep[idx(j)] = z[j] * covLower;
+        pStep[idx(j)] = z[j] * BD;
       }
 
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
@@ -156,9 +150,17 @@ Optimize(SeparableFunctionType &function,
 
     // Sort population.
     idx = arma::sort_index(pObjective);
-    step = params.weights(0) * pStep[idx(0)];
-    for (size_t j = 1; j < params.mu; ++j)
-      step += params.weights(j) * pStep[idx(j)];
+    
+    BaseMatType step(iterate.n_rows, iterate.n_cols); 
+    step.zeros();
+    BaseMatType stepz(iterate.n_rows, iterate.n_cols);
+    stepz.zeros();
+
+    step = weights(0) * pStep[idx(0)];
+    stepz = weights(0) * z[idx(0)];
+    for (size_t j = 1; j < mu; ++j)
+      step += weights(j) * pStep[idx(j)];
+      stepz += weights(j) * z[idx(j)];
 
     mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
 
@@ -176,64 +178,84 @@ Optimize(SeparableFunctionType &function,
     }
 
     // Update Step Size.
+
     if (iterate.n_rows > iterate.n_cols)
     {
-      ps[idx1] = (1 - params.csigma) * ps[idx0] + std::sqrt(
-          params.csigma * (2 - params.csigma) * params.mu_eff) * covLower.t() * step;
+      ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
+          csigma * (2 - csigma) * mu_eff) * B * stepz;
     }
     else
     {
-      ps[idx1] = (1 - params.csigma) * ps[idx0] + std::sqrt(
-          params.csigma * (2 - params.csigma) * params.mu_eff) * step * covLower.t();
+      ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
+          csigma * (2 - csigma) * mu_eff) * stepz * B;
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
-    const size_t hs = (psNorm / sqrt(1 - std::pow(1 - params.csigma, 2 * i)) < params.hsigma) ? 1 : 0;
-    const double deltahs = (1 - hs) * params.cc * (2 - params.cc);
+    const size_t hs = (psNorm / sqrt(1 - std::pow(1 - csigma, 2 * i)) < hsigma) ? 1 : 0;
+    const double deltahs = (1 - hs) * cc * (2 - cc);
 
     // Update covariance matrix.
-    sigma(idx1) = sigma(idx0) * std::exp(params.csigma / params.dsigma * ( psNorm / params.chi - 1));
-    pc[idx1] = (1 - params.cc) * pc[idx0] + hs * std::sqrt(params.cc * (2 - params.cc) * params.mu_eff) * step; 
-    C[idx1] = (1 + params.c1 * deltahs - params.c1 - params.cmu * arma::accu(params.weights)) * C[idx0];
+    sigma(idx1) = sigma(idx0) * std::exp(csigma / dsigma * ( psNorm / chi - 1));
+    pc[idx1] = (1 - cc) * pc[idx0] + hs * std::sqrt(cc * (2 - cc) * mu_eff) * step; 
+    C[idx1] = (1 + c1 * deltahs - c1 - cmu * arma::accu(weights)) * C[idx0];
   
     if (iterate.n_rows > iterate.n_cols)
     {
-      C[idx1] = C[idx1] + params.c1 * (pc[idx1] * pc[idx1].t());
-      for (size_t j = 0; j < params.lambda; ++j)
+      C[idx1] = C[idx1] + c1 * (pc[idx1] * pc[idx1].t());
+      for (size_t j = 0; j < lambda; ++j)
       {
-        if(params.weights(j) < 0) params.weights(j) *= params.dim/std::pow(arma::norm(z[j]), 2);
-        if(params.weights(j) == 0) break;
-        C[idx1] = C[idx1] + params.cmu * params.weights(j) *
+
+        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
+        if(weights(j) == 0) break;
+        C[idx1] = C[idx1] + cmu * weights(j) *
             pStep[idx(j)] * pStep[idx(j)].t();
       }
     }
     else
     {
-      C[idx1] = C[idx1] + params.c1 * (pc[idx1].t() * pc[idx1]);
-      for (size_t j = 0; j < params.offsprings; ++j)
+      C[idx1] = C[idx1] + c1 * (pc[idx1].t() * pc[idx1]);
+      for (size_t j = 0; j < offsprings; ++j)
       {
-        if(params.weights(j) < 0) params.weights(j) *= params.dim/std::pow(arma::norm(z[j]), 2);
-        if(params.weights(j) == 0) break;
-        C[idx1] = C[idx1] + params.cmu * params.weights(j) *
+        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
+        if(weights(j) == 0) break;
+        C[idx1] = C[idx1] + cmu * weights(j) *
             pStep[idx(j)].t() * pStep[idx(j)];
       }
     }
 
-    arma::eig_sym(eigval, eigvec, C[idx1]);
-    const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
-    if (!negativeEigval.is_empty())
+    // Covariance matrix parameters.
+    arma::Col<ElemType> eigval; // TODO: might need a more general type.
+    BaseMatType eigvec;
+    BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
+    eigvalZero.zeros();
+
+    if(countval - eigenval > lambda/((c1+cmu)*iterate.n_elem*10))
     {
-      if (negativeEigval(0) == 0)
-      {
-        C[idx1].zeros();
-      }
-      else
-      {
-        C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
-            arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
-            eigvec.cols(0, negativeEigval(0) - 1).t();
-      }
+      eigenval = countval;
+      C[idx1] = arma::trimatu(C[idx1]) + arma::trimatu(C[idx1]).t();
+      arma::eig_sym(eigval, eigvec, C[idx1]);
+      B = eigvec;
+      D = arma::diagmat(arma::sqrt(eigval));
     }
+    // This part will enforce covariance matrix to be positive definites for (Symmetric and all eigen values are positive)
+    // eigval storing all the eigen values of C[idx1] after the covariance update
+    // eigvec storing all the eigen vectors of C[idx1] after the covariance update
+    // Securing positive defitniness characterization of covariance matrix for next loop cholesky
+    // arma::eig_sym(eigval, eigvec, C[idx1]);
+    // const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
+    // if (!negativeEigval.is_empty())
+    // {
+    //   if (negativeEigval(0) == 0)
+    //   {
+    //     C[idx1].zeros();
+    //   }
+    //   else
+    //   {
+    //     C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
+    //         arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
+    //         eigvec.cols(0, negativeEigval(0) - 1).t();
+    //   }
+    // }
 
     // Output current objective function. So this is the termination criteria 
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
@@ -263,20 +285,53 @@ Optimize(SeparableFunctionType &function,
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
+  //! Initialize parameters
+  template <typename SelectionPolicyType,
+            typename WeightPolicyType>
+  template<typename MatType>
+  CMAES<SelectionPolicyType, WeightPolicyType>::
+  initialize(MatType& iterate)
+  {
+    chi = std::sqrt(iterate.n_elem)*(1.0 - 1.0 / (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
+    if(lambda == 0)
+      lambda = (4+std::round(3*std::log(iterate.n_elem)))*10;
+  
+    mu = std::round(lambda/2);
+
+    weightPolicy.GenerateRaw(lambda);
+    mu_eff = weightPolicy.Mu_eff();
+
+    // Strategy parameter setting: Adaption
+    cc = (4.0 + mu_eff/iterate.n_elem)/(4.0 + iterate.n_elem+2*mu_eff/iterate.n_elem);
+    csigma = (mu_eff + 2.0)/(iterate.n_elem+mu_eff+5.0);
+    c1 = 2 / (std::pow(iterate.n_elem+1.3, 2) + mu_eff);
+    alphacov = 2.0;
+    cmu = 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / (std::pow(iterate.n_elem+2.0, 2) + alphacov*mu_eff/2);
+    cmu = std::min(1.0 - c1, cmu);
+
+    weights = weightPolicy.Generate(iterate.n_elem, c1, cmu);
+
+    // Controlling
+    dsigma = 1 + csigma + 2 * std::max(std::sqrt((mu_eff-1)/(iterate.n_elem+1)) - 1, 0.0);
+    hsigma = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * chi;
+  
+  }
 
   //! Stop criterias
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
-  typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
+  template<typename MatType>
+  CMAES<SelectionPolicyType, WeightPolicyType>::
   stop()
   {
-    
+
   }
   
   //! Get a list of sampled candidate solutions
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
-  typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
+  template<typename MatType>
+  CMAES<SelectionPolicyType, WeightPolicyType>::
   ask()
   {
 
@@ -285,11 +340,15 @@ Optimize(SeparableFunctionType &function,
   //! Update the algorithm's parameters
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
-  typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
+  template<typename MatType>
+  CMAES<SelectionPolicyType, WeightPolicyType>::
   update()
   {
 
   }
+
+  //! Eigen Decomposition covariance matrix C
+
 } // namespace ens
 
 #endif
