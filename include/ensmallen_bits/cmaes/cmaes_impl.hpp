@@ -66,7 +66,7 @@ Optimize(SeparableFunctionType &function,
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
   // Intantiated the algorithm params
-  CMAparameters params(iterate.n_elem, lambda, weightPolicy);
+  params = CMAparameters(iterate.n_elem, lambda, weightPolicy);
 
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
   sigma(0) = 0.3 * (upperBound - lowerBound);
@@ -235,7 +235,7 @@ Optimize(SeparableFunctionType &function,
       }
     }
 
-    // Output current objective function.
+    // Output current objective function. So this is the termination criteria 
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
         << "." << std::endl;
 
@@ -264,6 +264,32 @@ Optimize(SeparableFunctionType &function,
   return overallObjective;
 }
 
+  //! Stop criterias
+  template <typename SelectionPolicyType,
+            typename WeightPolicyType>
+  typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
+  stop()
+  {
+    
+  }
+  
+  //! Get a list of sampled candidate solutions
+  template <typename SelectionPolicyType,
+            typename WeightPolicyType>
+  typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
+  ask()
+  {
+
+  }
+
+  //! Update the algorithm's parameters
+  template <typename SelectionPolicyType,
+            typename WeightPolicyType>
+  typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
+  update()
+  {
+
+  }
 } // namespace ens
 
 #endif

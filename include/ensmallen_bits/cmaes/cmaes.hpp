@@ -146,6 +146,15 @@ class CMAES
   WeightPolicyType& WeightPolicy() { return weightPolicy; }
 
   private:
+    //! Stop criterias
+    void stop;
+
+    //! Get a list of sampled candidate solutions
+    void ask;
+
+    //! Update the algorithm's parameters
+    void update;
+    
     //! Population size.
     size_t lambda;
 
@@ -164,6 +173,9 @@ class CMAES
     //! The tolerance for termination.
     double tolerance;
 
+    //! parameters class which hold all the needed parameters
+    CMAparameters params;
+    
     //! The selection policy used to calculate the objective.
     SelectionPolicyType selectionPolicy; 
 

@@ -86,6 +86,10 @@ namespace ens{
       double cm; /**< learning rate for the mean. */
       double alphacov; /**< = 2 (active CMA only) */
 
+      // stopping criteria parameters
+      size_t countval;
+      size_t maxfevals;
+      
   };
 }
 

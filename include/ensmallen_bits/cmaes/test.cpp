@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
   size_t iters; 
   std::cout << "Typing the number of iterations: " << std::endl; 
   std::cin >> iters; 
-  ens::CMAES cmaes(0, -10, 10, 32, 1000, 1e-5);
+  ens::ActiveApproxCMAES cmaes(0, -10, 10, 32, 1000, 1e-5);
   double total_time = 0.0;
   for(size_t i = 0; i < iters; ++i){
     arma::wall_clock clock;
