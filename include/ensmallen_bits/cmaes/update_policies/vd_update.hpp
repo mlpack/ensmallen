@@ -1,5 +1,5 @@
 /**
- * @file fine_update.hpp
+ * @file vd_update.hpp
  * @author John Hoang 
  * 
  * Vanila update the distribution's paramters
@@ -10,19 +10,19 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  * 
  */
-#ifndef ENSMALLEN_CMAES_FINE_UPDATE_HPP
-#define ENSMALLEN_CMAES_FINE_UPDATE_HPP
+#ifndef ENSMALLEN_CMAES_VANILA_VD_HPP
+#define ENSMALLEN_CMAES_VANILA_VD_HPP
 
 namespace ens{
 
-class FineUpdate{
+class VDUpdate{
 
  public:
   /**
    * Constructor
    * 
    */
-  FineUpdate()
+  VDUpdate()
   {
     // Doing nothing
   }
