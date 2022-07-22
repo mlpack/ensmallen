@@ -138,7 +138,7 @@ Optimize(SeparableFunctionType &function,
       else
       {
         z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
-        pStep[idx(j)] = z[j] * BD;
+        pStep[idx(j)] = z[j] * BD.t();
       }
 
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
@@ -188,7 +188,7 @@ Optimize(SeparableFunctionType &function,
     else
     {
       ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * stepz * B;
+          csigma * (2 - csigma) * mu_eff) * stepz * B.t();
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
