@@ -33,6 +33,7 @@ class LinearRegressionFunction
 int main(int argc, char ** argv)
 {
   size_t iters; 
+  size_t dim = 100;
   std::cout << "Typing the number of iterations: " << std::endl; 
   std::cin >> iters; 
   ens::CMAES cmaes1(0, -10, 10, 32, 1000, 1e-5);
@@ -42,9 +43,9 @@ int main(int argc, char ** argv)
   double total_time = 0.0;
   for(size_t i = 0; i < iters; ++i){
     arma::wall_clock clock;
-    arma::mat data(300, 10000, arma::fill::randn);
+    arma::mat data(dim, 10000, arma::fill::randn);
     arma::rowvec responses(10000, arma::fill::randn);
-    arma::mat params(300, 1, arma::fill::randn);
+    arma::mat params(dim, 1, arma::fill::randn);
     LinearRegressionFunction lrf(data, responses);
     clock.tic();
     cmaes1.Optimize(lrf, params);
@@ -56,9 +57,9 @@ int main(int argc, char ** argv)
   total_time = 0;
   for(size_t i = 0; i < iters; ++i){
     arma::wall_clock clock;
-    arma::mat data(300, 10000, arma::fill::randn);
+    arma::mat data(dim, 10000, arma::fill::randn);
     arma::rowvec responses(10000, arma::fill::randn);
-    arma::mat params(300, 1, arma::fill::randn);
+    arma::mat params(dim, 1, arma::fill::randn);
     LinearRegressionFunction lrf(data, responses);
     clock.tic();
     cmaes2.Optimize(lrf, params);
@@ -70,9 +71,9 @@ int main(int argc, char ** argv)
   total_time = 0;
   for(size_t i = 0; i < iters; ++i){
     arma::wall_clock clock;
-    arma::mat data(300, 10000, arma::fill::randn);
+    arma::mat data(dim, 10000, arma::fill::randn);
     arma::rowvec responses(10000, arma::fill::randn);
-    arma::mat params(300, 1, arma::fill::randn);
+    arma::mat params(dim, 1, arma::fill::randn);
     LinearRegressionFunction lrf(data, responses);
     clock.tic();
     cmaes3.Optimize(lrf, params);
@@ -84,9 +85,9 @@ int main(int argc, char ** argv)
   total_time = 0;
   for(size_t i = 0; i < iters; ++i){
     arma::wall_clock clock;
-    arma::mat data(300, 10000, arma::fill::randn);
+    arma::mat data(dim, 10000, arma::fill::randn);
     arma::rowvec responses(10000, arma::fill::randn);
-    arma::mat params(300, 1, arma::fill::randn);
+    arma::mat params(dim, 1, arma::fill::randn);
     LinearRegressionFunction lrf(data, responses);
     clock.tic();
     cmaes4.Optimize(lrf, params);

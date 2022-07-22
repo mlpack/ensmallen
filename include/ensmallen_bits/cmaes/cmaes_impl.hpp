@@ -125,6 +125,10 @@ Optimize(SeparableFunctionType &function,
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
+    BaseMatType choles;
+    while(!(arma::chol(choles, C[idx0], "lower")))
+      C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
+
     BaseMatType BD = B*D;
     std::vector<BaseMatType> z(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
     for (size_t j = 0; j < lambda; ++j)
@@ -138,9 +142,18 @@ Optimize(SeparableFunctionType &function,
       else
       {
         z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
-        pStep[idx(j)] = z[j] * BD;
+        pStep[idx(j)] = z[j] * BD.t();
       }
-
+      // if (iterate.n_rows > iterate.n_cols)
+      // {
+      //   z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+      //   pStep[idx(j)] = covLower * z[j];
+      // }
+      // else
+      // {
+      //   z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+      //   pStep[idx(j)] = z[j] * covLower;
+      // }
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
       // Calculate the objective function.
@@ -179,7 +192,18 @@ Optimize(SeparableFunctionType &function,
     }
 
     // Update Step Size.
+    // if (iterate.n_rows > iterate.n_cols)
+    // {
+    //   ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
+    //       csigma * (2 - csigma) * mu_eff) * choles.t() * step;
+    // }
+    // else
+    // {
+    //   ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
+    //       csigma * (2 - csigma) * mu_eff) * step * choles.t();
+    // }
 
+    // Update Step Size.
     if (iterate.n_rows > iterate.n_cols)
     {
       ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
@@ -188,41 +212,10 @@ Optimize(SeparableFunctionType &function,
     else
     {
       ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * stepz * B;
+          csigma * (2 - csigma) * mu_eff) * stepz * B.t();
     }
 
-    const ElemType psNorm = arma::norm(ps[idx1]);
-    const size_t hs = (psNorm / sqrt(1 - std::pow(1 - csigma, 2 * i)) < hsigma) ? 1 : 0;
-    const double deltahs = (1 - hs) * cc * (2 - cc);
-
-    // Update covariance matrix.
-    sigma(idx1) = sigma(idx0) * std::exp(csigma / dsigma * ( psNorm / chi - 1));
-    pc[idx1] = (1 - cc) * pc[idx0] + hs * std::sqrt(cc * (2 - cc) * mu_eff) * step; 
-    C[idx1] = (1 + c1 * deltahs - c1 - cmu * arma::accu(weights)) * C[idx0];
-  
-    if (iterate.n_rows > iterate.n_cols)
-    {
-      C[idx1] = C[idx1] + c1 * (pc[idx1] * pc[idx1].t());
-      for (size_t j = 0; j < lambda; ++j)
-      {
-
-        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
-        if(weights(j) == 0) break;
-        C[idx1] = C[idx1] + cmu * weights(j) *
-            pStep[idx(j)] * pStep[idx(j)].t();
-      }
-    }
-    else
-    {
-      C[idx1] = C[idx1] + c1 * (pc[idx1].t() * pc[idx1]);
-      for (size_t j = 0; j < offsprings; ++j)
-      {
-        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
-        if(weights(j) == 0) break;
-        C[idx1] = C[idx1] + cmu * weights(j) *
-            pStep[idx(j)].t() * pStep[idx(j)];
-      }
-    }
+    // Update part which it used to placed
 
     // Covariance matrix parameters.
     arma::Col<ElemType> eigval; // TODO: might need a more general type.
@@ -341,11 +334,43 @@ Optimize(SeparableFunctionType &function,
   //! Update the algorithm's parameters
   template <typename SelectionPolicyType,
             typename WeightPolicyType>
-  template<typename MatType>
+  template<typename BaseMatType>
   inline void CMAES<SelectionPolicyType, WeightPolicyType>::
   update()
-  {
+  {    
+    const ElemType psNorm = arma::norm(ps[idx1]);
+    const size_t hs = (psNorm / sqrt(1 - std::pow(1 - csigma, 2 * i)) < hsigma) ? 1 : 0;
+    const double deltahs = (1 - hs) * cc * (2 - cc);
 
+    // Update covariance matrix.
+    sigma(idx1) = sigma(idx0) * std::exp(csigma / dsigma * ( psNorm / chi - 1));
+    pc[idx1] = (1 - cc) * pc[idx0] + hs * std::sqrt(cc * (2 - cc) * mu_eff) * step; 
+
+    C[idx1] = (1 + c1 * deltahs - c1 - cmu * arma::accu(weights)) * C[idx0];
+  
+    if (iterate.n_rows > iterate.n_cols)
+    {
+      C[idx1] = C[idx1] + c1 * (pc[idx1] * pc[idx1].t());
+      for (size_t j = 0; j < lambda; ++j)
+      {
+
+        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
+        if(weights(j) == 0) break;
+        C[idx1] = C[idx1] + cmu * weights(j) *
+            pStep[idx(j)] * pStep[idx(j)].t();
+      }
+    }
+    else
+    {
+      C[idx1] = C[idx1] + c1 * (pc[idx1].t() * pc[idx1]);
+      for (size_t j = 0; j < offsprings; ++j)
+      {
+        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
+        if(weights(j) == 0) break;
+        C[idx1] = C[idx1] + cmu * weights(j) *
+            pStep[idx(j)].t() * pStep[idx(j)];
+      }
+    }
   }
 
   //! Eigen Decomposition covariance matrix C

@@ -159,7 +159,7 @@ class CMAES
     void ask();
 
     //! Update the algorithm's parameters
-    template<typename MatType>
+    template<typename BaseMatType>
     void update();
 
     //! Population size.
