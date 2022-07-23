@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+* Avoid deprecation warnings in Armadillo 11.2+
+   ([#347](https://github.com/mlpack/ensmallen/pull/347)).
 
 ### ensmallen 2.19.0: "Eight Ball Deluxe"
 ###### 2022-04-06
