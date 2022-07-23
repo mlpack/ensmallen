@@ -33,7 +33,7 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
  */
 TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 {
-  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -53,7 +53,7 @@ TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
  */
 TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
-  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 //////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
  */
 TEST_CASE("ActiveCMAESLogisticRegressionTest", "[CMAESTest]")
 {
-  ActiveCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -73,7 +73,7 @@ TEST_CASE("ActiveCMAESLogisticRegressionTest", "[CMAESTest]")
  */
 TEST_CASE("ActiveApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 {
-  ActiveApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  ActiveApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -83,7 +83,7 @@ TEST_CASE("ActiveApproxCMAESLogisticRegressionTest", "[CMAESTest]")
  */
 TEST_CASE("ActiveCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
-  ActiveCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 
@@ -93,6 +93,6 @@ TEST_CASE("ActiveCMAESLogisticRegressionFMatTest", "[CMAESTest]")
  */
 TEST_CASE("ActiveApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
-  ActiveApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  ActiveApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
