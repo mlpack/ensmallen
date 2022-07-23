@@ -1060,7 +1060,6 @@ tests/CMakeFiles/ensmallen_tests.dir/de_test.cpp.o: \
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/tests/../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/tests/../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/tests/../include/ensmallen_bits/cmaes/cmaes.hpp \
- /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/tests/../include/ensmallen_bits/cmaes/cmaparameters.hpp \
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/tests/../include/ensmallen_bits/cne/cne.hpp \
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/tests/../include/ensmallen_bits/cne/cne_impl.hpp \
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/tests/../include/ensmallen_bits/cne/cne.hpp \

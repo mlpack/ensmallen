@@ -51072,6 +51072,10 @@ tests/CMakeFiles/ensmallen_tests.dir/sgd_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -53566,6 +53570,10 @@ tests/CMakeFiles/ensmallen_tests.dir/smorms3_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -54811,6 +54819,10 @@ tests/CMakeFiles/ensmallen_tests.dir/snapshot_ensembles.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -56056,6 +56068,10 @@ tests/CMakeFiles/ensmallen_tests.dir/spalera_sgd_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -57301,6 +57317,10 @@ tests/CMakeFiles/ensmallen_tests.dir/spsa_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -58546,6 +58566,10 @@ tests/CMakeFiles/ensmallen_tests.dir/svrg_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -59791,6 +59815,10 @@ tests/CMakeFiles/ensmallen_tests.dir/swats_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -61036,6 +61064,10 @@ tests/CMakeFiles/ensmallen_tests.dir/wn_grad_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp
@@ -62281,6 +62313,10 @@ tests/CMakeFiles/ensmallen_tests.dir/yogi_test.cpp.o
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/fine_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/vd_update.hpp
+ /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/update_policies/sep_update.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes_impl.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaes.hpp
  /Users/johntoro/Documents/Projects/gsoc/ensmallen_pr/include/ensmallen_bits/cmaes/cmaparameters.hpp

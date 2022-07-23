@@ -51031,6 +51031,10 @@ tests/CMakeFiles/ensmallen_tests.dir/sgd_test.cpp.o: ../tests/sgd_test.cpp \
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -53523,6 +53527,10 @@ tests/CMakeFiles/ensmallen_tests.dir/smorms3_test.cpp.o: ../tests/smorms3_test.c
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -54767,6 +54775,10 @@ tests/CMakeFiles/ensmallen_tests.dir/snapshot_ensembles.cpp.o: ../tests/snapshot
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -56011,6 +56023,10 @@ tests/CMakeFiles/ensmallen_tests.dir/spalera_sgd_test.cpp.o: ../tests/spalera_sg
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -57255,6 +57271,10 @@ tests/CMakeFiles/ensmallen_tests.dir/spsa_test.cpp.o: ../tests/spsa_test.cpp \
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -58499,6 +58519,10 @@ tests/CMakeFiles/ensmallen_tests.dir/svrg_test.cpp.o: ../tests/svrg_test.cpp \
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -59743,6 +59767,10 @@ tests/CMakeFiles/ensmallen_tests.dir/swats_test.cpp.o: ../tests/swats_test.cpp \
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -60987,6 +61015,10 @@ tests/CMakeFiles/ensmallen_tests.dir/wn_grad_test.cpp.o: ../tests/wn_grad_test.c
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
@@ -62231,6 +62263,10 @@ tests/CMakeFiles/ensmallen_tests.dir/yogi_test.cpp.o: ../tests/yogi_test.cpp \
   ../include/ensmallen_bits/cmaes/selection_policies/random_selection.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/default_weight.hpp \
   ../include/ensmallen_bits/cmaes/weight_init_policies/negative_weight.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/fine_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vanila_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/vd_update.hpp \
+  ../include/ensmallen_bits/cmaes/update_policies/sep_update.hpp \
   ../include/ensmallen_bits/cmaes/cmaes_impl.hpp \
   ../include/ensmallen_bits/cmaes/cmaes.hpp \
   ../include/ensmallen_bits/cmaes/cmaparameters.hpp \
