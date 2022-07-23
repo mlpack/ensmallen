@@ -37,23 +37,23 @@ class FineUpdate{
    * @param stepz vector of z[j]*weights(j)
    * @param mu_eff weights effective  
    */
-  template<typename MatType, typename BaseMatType;>
+  template<typename MatType, typename BaseMatType>
   MatType updatePC(
     MatType& iterate, 
     BaseMatType& ps, 
-    BaseMatType B,
-    BaseMatType stepz,
+    BaseMatType& B,
+    BaseMatType& stepz,
     double mu_eff)
   {
     double csigma = (mu_eff + 2.0)/(iterate.n_elem+mu_eff+5.0);;
     if (iterate.n_rows > iterate.n_cols)
     {
-      ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
+      ps = (1 - csigma) * ps + std::sqrt(
           csigma * (2 - csigma) * mu_eff) * B * stepz;
     }
     else
     {
-      ps[idx1] = (1 - csigma) * ps[idx0] + std::sqrt(
+      ps = (1 - csigma) * ps + std::sqrt(
           csigma * (2 - csigma) * mu_eff) * stepz * B.t();
     }  
     return ps;

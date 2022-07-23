@@ -23,6 +23,12 @@
 //! Weight initialization policies.
 #include "weight_init_policies/default_weight.hpp"
 #include "weight_init_policies/negative_weight.hpp"
+
+//! Update Policies
+#include "update_policies/fine_update.hpp"
+#include "update_policies/vanila_update.hpp"
+#include "update_policies/vd_update.hpp"
+#include "update_policies/sep_update.hpp"
 namespace ens {
 
 /**
@@ -52,9 +58,11 @@ namespace ens {
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
  * @tparam WeightPolicy The weight initialization strategy 
+ * @tparam UpdatePolicy The update 
  */
 template<typename SelectionPolicyType = FullSelection,
-         typename WeightPolicyType = DefaultWeight>
+         typename WeightPolicyType = DefaultWeight,
+         typename UpdatePolicyType = VanilaUpdate>
 class CMAES
 {
  public:
@@ -84,7 +92,8 @@ class CMAES
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
         const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        const WeightPolicyType& weightPolicy = WeightPolicyType());
+        const WeightPolicyType& weightPolicy = WeightPolicyType(),
+        const UpdatePolicyType& updatePolicy = UpdatePolicyType());
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -145,6 +154,11 @@ class CMAES
   //! Modify the weight policy.
   WeightPolicyType& WeightPolicy() { return weightPolicy; }
 
+  //! Get the update policy.
+  const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
   private:
     //! Initializing the parameters function
     template<typename MatType>
@@ -159,8 +173,21 @@ class CMAES
     void ask();
 
     //! Update the algorithm's parameters
-    template<typename BaseMatType>
-    void update();
+    template<typename MatType, typename BaseMatType>
+    void update(
+      MatType &iterate,
+      BaseMatType &ps, 
+      BaseMatType &pc, 
+      BaseMatType &sigma, 
+      std::vector<BaseMatType> &pStep,
+      BaseMatType &C,
+      BaseMatType &B,
+      BaseMatType &stepz,
+      BaseMatType &step,
+      arma::uvec &idx,
+      std::vector<BaseMatType> &z,
+      size_t i
+    );
 
     //! Population size.
     size_t lambda;
@@ -189,6 +216,9 @@ class CMAES
     // The weight initialization policy
     WeightPolicyType weightPolicy;
 
+    // The update policy 
+    UpdatePolicyType updatePolicy;
+
     size_t mu; /**< number of candidate solutions used to update the distribution parameters. */
     size_t offsprings;
     // TODO: might need a more general type
@@ -215,6 +245,7 @@ class CMAES
     // size_t maxIterations;
     // double tolerance
     
+    //Updating covariance matrix 
 
 };
 

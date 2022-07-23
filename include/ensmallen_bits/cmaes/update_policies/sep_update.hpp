@@ -15,7 +15,7 @@
 
 namespace ens{
 
-template<typename MatType>
+template<typename MatType, typename BaseMatType>
 class SepUpdate{
 
  public:
