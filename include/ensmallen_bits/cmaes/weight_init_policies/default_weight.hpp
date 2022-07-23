@@ -35,20 +35,21 @@ class DefaultWeight{
   void GenerateRaw(const size_t lambda)
   {
     len = lambda;
-    mu = std::round(len/2);
-    weights = std::log(mu + 0.5) - arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
+    mu = std::round(len / 2);
+    weights = std::log(mu + 0.5) - 
+        arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
     for(size_t i = mu; i < len; ++i)
     {
       weights(i) = 0;
     }
     assert(weights(mu-1) > 0);
-    double sumPos = arma::accu(weights.cols(0, mu-1));
+    double sumPos = arma::accu(weights.cols(0, mu - 1));
     // positive weights sum to one
     for(size_t i = 0; i < mu; ++i)
     {
       weights(i) /= sumPos;
     }
-    mu_eff = 1 / arma::accu(arma::pow(weights.cols(0, mu-1), 2)); 
+    muEff = 1 / arma::accu(arma::pow(weights.cols(0, mu - 1), 2)); 
   }
 
   /**
@@ -59,17 +60,17 @@ class DefaultWeight{
    *  @param c1 
    *  @param cmu
    */
-  arma::Row<double> Generate(const size_t dim,
-                            const double c1,
-                            const double cmu)
+  arma::Row<double> Generate(const size_t /** dim **/,
+                             const double /** c1 **/,
+                             const double /** cmu **/)
   {
     return weights;
   }
 
   // Return variance-effective before the Generate function is called since c1 and cmu is 
   // calculated beforehand 
-  double Mu_eff() const { return mu_eff; }
-  double& Mu_eff() { return mu_eff; }
+  double MuEff() const { return muEff; }
+  double& MuEff() { return muEff; }
 
   // These functions might be unnecessary since Generate function is already return the desired weights 
   arma::Row<double> Weights() const { return weights; }
@@ -78,8 +79,8 @@ class DefaultWeight{
   private:
     size_t len;
     size_t mu;
-    double mu_eff;
-    double mu_eff_neg;
+    double muEff;
+    double muEffNeg;
     arma::Row<double> weights;
 };
 

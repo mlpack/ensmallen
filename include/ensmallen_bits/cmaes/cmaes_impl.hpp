@@ -17,7 +17,6 @@
 
 // In case it hasn't been included yet.
 #include "cmaes.hpp"
-#include "cmaparameters.hpp"
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {
@@ -197,7 +196,7 @@ Optimize(SeparableFunctionType &function,
     BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
     eigvalZero.zeros();
 
-    if(countval - eigenval > lambda/((c1+cmu)*iterate.n_elem*10))
+    if (countval - eigenval > lambda / ((c1 + cmu) * iterate.n_elem * 10))
     {
       eigenval = countval;
       C = arma::trimatu(C) + arma::trimatu(C).t();
@@ -261,27 +260,30 @@ Optimize(SeparableFunctionType &function,
   inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
   initialize(MatType& iterate)
   {
-    chi = std::sqrt(iterate.n_elem)*(1.0 - 1.0 / (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
+    chi = std::sqrt(iterate.n_elem)*(1.0 - 1.0 / (4.0 * iterate.n_elem) + 
+        1.0 / (21 * std::pow(iterate.n_elem, 2)));
     if(lambda == 0)
-      lambda = (4+std::round(3*std::log(iterate.n_elem)))*10;
+      lambda = (4 + std::round(3 * std::log(iterate.n_elem))) * 10;
   
-    mu = std::round(lambda/2);
+    mu = std::round(lambda / 2);
 
     weightPolicy.GenerateRaw(lambda);
-    mu_eff = weightPolicy.Mu_eff();
+    mu_eff = weightPolicy.MuEff();
 
     // Strategy parameter setting: Adaption
-    cc = (4.0 + mu_eff/iterate.n_elem)/(4.0 + iterate.n_elem+2*mu_eff/iterate.n_elem);
-    csigma = (mu_eff + 2.0)/(iterate.n_elem+mu_eff+5.0);
-    c1 = 2 / (std::pow(iterate.n_elem+1.3, 2) + mu_eff);
+    cc = (4.0 + mu_eff / iterate.n_elem) / (4.0 + iterate.n_elem + 2 * mu_eff / iterate.n_elem);
+    csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
+    c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + mu_eff);
     alphacov = 2.0;
-    cmu = 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / (std::pow(iterate.n_elem+2.0, 2) + alphacov*mu_eff/2);
+    cmu = 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / 
+        (std::pow(iterate.n_elem + 2.0, 2) + alphacov * mu_eff / 2);
     cmu = std::min(1.0 - c1, cmu);
 
     weights = weightPolicy.Generate(iterate.n_elem, c1, cmu);
 
     // Controlling
-    dsigma = 1 + csigma + 2 * std::max(std::sqrt((mu_eff-1)/(iterate.n_elem+1)) - 1, 0.0);
+    dsigma = 1 + csigma + 2 * 
+        std::max(std::sqrt((mu_eff-1)/(iterate.n_elem+1)) - 1, 0.0);
     hsigma = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * chi;
   
   }
@@ -314,20 +316,18 @@ Optimize(SeparableFunctionType &function,
             typename UpdatePolicyType>
   template<typename MatType, typename BaseMatType>
   inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
-  update(
-    MatType &iterate,
-    BaseMatType &ps, 
-    BaseMatType &pc, 
-    BaseMatType &sigma, 
-    std::vector<BaseMatType> &pStep,
-    BaseMatType &C,
-    BaseMatType &B,
-    BaseMatType &stepz,
-    BaseMatType &step,
-    arma::uvec &idx,
-    std::vector<BaseMatType> &z,
-    size_t i
-    )
+  update(MatType& iterate,
+         BaseMatType& ps, 
+         BaseMatType& pc, 
+         BaseMatType& sigma, 
+         std::vector<BaseMatType>& pStep,
+         BaseMatType& C,
+         BaseMatType& B,
+         BaseMatType& stepz,
+         BaseMatType& step,
+         arma::uvec& idx,
+         std::vector<BaseMatType>& z,
+         size_t i)
   {      
     typedef typename MatType::elem_type ElemType;
     const size_t idx0 = (i - 1) % 2;
@@ -337,15 +337,15 @@ Optimize(SeparableFunctionType &function,
 
     ElemType psNorm = arma::norm(ps);
     size_t hs = (psNorm / sqrt(1 - std::pow(1 - csigma, 2 * i)) < hsigma) ? 1 : 0;
-    double deltahs = (1 - hs) * cc * (2 - cc);
 
     // Update sigma.
-    sigma(idx1) = sigma(idx0) * std::exp(csigma / dsigma * ( psNorm / chi - 1));
+    sigma(idx1) = sigma(idx0) * std::exp(csigma / dsigma * (psNorm / chi - 1));
 
     // Update pc 
     pc = updatePolicy.updatePS(cc, pc, hs, mu_eff, step);
 
-    //Update covariance matrixs
+    //Update covariance matrix
+    double deltahs = (1 - hs) * cc * (2 - cc);
     C = (1 + c1 * deltahs - c1 - cmu * arma::accu(weights)) * C;
     if (iterate.n_rows > iterate.n_cols)
     {
@@ -353,8 +353,9 @@ Optimize(SeparableFunctionType &function,
       for (size_t j = 0; j < lambda; ++j)
       {
 
-        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
-        if(weights(j) == 0) break;
+        if (weights(j) < 0) weights(j) *= iterate.n_elem / 
+            std::pow(arma::norm(z[j]), 2);
+        if (weights(j) == 0) break;
         C = C + cmu * weights(j) *
             pStep[idx(j)] * pStep[idx(j)].t();
       }
@@ -364,8 +365,9 @@ Optimize(SeparableFunctionType &function,
       C = C + c1 * (pc.t() * pc);
       for (size_t j = 0; j < lambda; ++j)
       {
-        if(weights(j) < 0) weights(j) *= iterate.n_elem/std::pow(arma::norm(z[j]), 2);
-        if(weights(j) == 0) break;
+        if (weights(j) < 0) weights(j) *= iterate.n_elem / 
+            std::pow(arma::norm(z[j]), 2);
+        if (weights(j) == 0) break;
         C = C + cmu * weights(j) *
             pStep[idx(j)].t() * pStep[idx(j)];
       }

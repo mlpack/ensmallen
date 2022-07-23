@@ -45,7 +45,7 @@ class FineUpdate{
     BaseMatType& stepz,
     double mu_eff)
   {
-    double csigma = (mu_eff + 2.0)/(iterate.n_elem+mu_eff+5.0);;
+    double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
     if (iterate.n_rows > iterate.n_cols)
     {
       ps = (1 - csigma) * ps + std::sqrt(
