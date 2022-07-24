@@ -98,7 +98,8 @@ Optimize(SeparableFunctionType &function,
 
   // Population parameters.
   std::vector<BaseMatType> pStep(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
-  /**< pPosition is vector of x_i(g) with x_i(g) is either a column or row vector but we generalize the type of data here) */
+  // pPosition is vector of x_i(g) with x_i(g) 
+  // is either a column or row vector but we generalize the type of data here)
   std::vector<BaseMatType> pPosition(lambda, BaseMatType(iterate.n_rows, iterate.n_cols)); 
   BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
 
