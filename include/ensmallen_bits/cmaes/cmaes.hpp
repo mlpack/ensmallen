@@ -23,6 +23,15 @@
 //! Weight initialization policies.
 #include "weight_init_policies/default_weight.hpp"
 #include "weight_init_policies/negative_weight.hpp"
+<<<<<<< HEAD
+=======
+
+//! Update Policies
+#include "update_policies/fine_update.hpp"
+#include "update_policies/vanila_update.hpp"
+#include "update_policies/vd_update.hpp"
+#include "update_policies/sep_update.hpp"
+>>>>>>> pullReq346
 namespace ens {
 
 /**
@@ -52,9 +61,17 @@ namespace ens {
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
  * @tparam WeightPolicy The weight initialization strategy 
+<<<<<<< HEAD
  */
 template<typename SelectionPolicyType = FullSelection,
          typename WeightPolicyType = DefaultWeight>
+=======
+ * @tparam UpdatePolicy The update 
+ */
+template<typename SelectionPolicyType = FullSelection,
+         typename WeightPolicyType = DefaultWeight,
+         typename UpdatePolicyType = VanilaUpdate>
+>>>>>>> pullReq346
 class CMAES
 {
  public:
@@ -84,7 +101,12 @@ class CMAES
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
         const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+<<<<<<< HEAD
         const WeightPolicyType& weightPolicy = WeightPolicyType());
+=======
+        const WeightPolicyType& weightPolicy = WeightPolicyType(),
+        const UpdatePolicyType& updatePolicy = UpdatePolicyType());
+>>>>>>> pullReq346
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -145,30 +167,93 @@ class CMAES
   //! Modify the weight policy.
   WeightPolicyType& WeightPolicy() { return weightPolicy; }
 
-  private:
-    //! Population size.
-    size_t lambda;
+  //! Get the update policy.
+  const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
-    //! Lower bound of decision variables.
-    double lowerBound;
+ private:
+  //! Initializing the parameters function
+  template<typename MatType>
+  void initialize(MatType& iterate);
 
-    //! Upper bound of decision variables
-    double upperBound;
+  //! Stop criterias
+  template<typename MatType>
+  void stop();
 
-    //! The batch size for processing.
-    size_t batchSize;
+  //! Get a list of sampled candidate solutions
+  template<typename MatType>
+  void ask();
 
-    //! The maximum number of allowed iterations.
-    size_t maxIterations;
+  //! Update the algorithm's parameters
+  template<typename MatType, typename BaseMatType>
+  void update(MatType& iterate,
+              BaseMatType& ps, 
+              BaseMatType& pc, 
+              BaseMatType& sigma, 
+              std::vector<BaseMatType>& pStep,
+              BaseMatType& C,
+              BaseMatType& B,
+              BaseMatType& stepz,
+              BaseMatType& step,
+              arma::uvec& idx,
+              std::vector<BaseMatType>& z,
+              size_t i);
+  //! Population size.
+  size_t lambda;
 
-    //! The tolerance for termination.
-    double tolerance;
+  //! Lower bound of decision variables.
+  double lowerBound;
 
-    //! The selection policy used to calculate the objective.
-    SelectionPolicyType selectionPolicy; 
+  //! Upper bound of decision variables
+  double upperBound;
 
+  //! The batch size for processing.
+  size_t batchSize;
+
+  //! The maximum number of allowed iterations.
+  size_t maxIterations;
+
+  //! The tolerance for termination.
+  double tolerance;
+
+  //! The selection policy used to calculate the objective.
+  SelectionPolicyType selectionPolicy; 
+
+  // The weight initialization policy
+  WeightPolicyType weightPolicy;
+
+  // The update policy 
+  UpdatePolicyType updatePolicy;
+
+  size_t mu; // number of candidate solutions used to update the distribution parameters.
+  size_t offsprings;
+  // TODO: might need a more general type
+  arma::Row<double> weights; // offsprings weighting scheme.
+  double csigma; // cumulation constant for step size. 
+  double c1; // covariance matrix learning rate for the rank one update using pc. 
+  double cmu; // covariance matrix learning reate for the rank mu update. 
+  double cc; // cumulation constant for pc. 
+  double mu_eff; // \sum^\mu _weights.
+  double dsigma; // step size damping factor. 
+  double alphamu;
+
+  // computed once at init for speeding up operations.
+  double chi; // norm of N(0,I) 
+  double hsigma;
+
+  // active cma.
+  double cm; //learning rate for the mean. 
+  double alphacov; // = 2 (active CMA only) 
+
+  // stopping criteria parameters
+  size_t countval;
+
+<<<<<<< HEAD
     // The weight initialization policy
     WeightPolicyType weightPolicy;
+=======
+>>>>>>> pullReq346
 };
 
 /**
@@ -180,6 +265,7 @@ using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight>;
 using ApproxCMAES = CMAES<RandomSelection, DefaultWeight>;
 
 using ActiveCMAES = CMAES<FullSelection, NegativeWeight>;
+<<<<<<< HEAD
 
 // template<typename SelectionPolicyType = RandomSelection,
 //          typename WeightPolicyType = DefaultWeight>
@@ -192,6 +278,8 @@ using ActiveCMAES = CMAES<FullSelection, NegativeWeight>;
 // template<typename SelectionPolicyType = FullSelection,
 //          typename WeightPolicyType = NegativeWeight>
 // using ActiveCMAES = CMAES<RandomSelection, DefaultWeight>;
+=======
+>>>>>>> pullReq346
 
 } // namespace ens
 

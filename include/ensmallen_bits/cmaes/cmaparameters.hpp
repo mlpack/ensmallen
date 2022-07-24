@@ -24,7 +24,7 @@ namespace ens{
     // To do list: different parameters constructor for various improvements or
     // usage or parameters tuning
       CMAparameters() {}; // doing nothing
-      /**
+      /** 
        * @brief Construct a new CMAparameters object
        * @param N Starting point dimension
        * @param lambda The population(Offspring sampled in each step) size 
@@ -86,6 +86,13 @@ namespace ens{
       double cm; /**< learning rate for the mean. */
       double alphacov; /**< = 2 (active CMA only) */
 
+<<<<<<< HEAD
+=======
+      // stopping criteria parameters
+      size_t countval;
+      size_t maxfevals;
+      
+>>>>>>> pullReq346
   };
 }
 
