@@ -198,7 +198,6 @@ void LogisticRegressionFunctionTest(OptimizerType& optimizer,
     MatType coordinates = lr.GetInitialPoint();
 
     optimizer.Optimize(lr, coordinates);
-    // Put things i want here
     const double acc = lr.ComputeAccuracy(data, responses, coordinates);
     const double testAcc = lr.ComputeAccuracy(testData, testResponses,
         coordinates);
