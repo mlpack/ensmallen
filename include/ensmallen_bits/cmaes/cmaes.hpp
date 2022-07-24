@@ -23,15 +23,12 @@
 //! Weight initialization policies.
 #include "weight_init_policies/default_weight.hpp"
 #include "weight_init_policies/negative_weight.hpp"
-<<<<<<< HEAD
-=======
 
 //! Update Policies
 #include "update_policies/fine_update.hpp"
 #include "update_policies/vanila_update.hpp"
 #include "update_policies/vd_update.hpp"
 #include "update_policies/sep_update.hpp"
->>>>>>> pullReq346
 namespace ens {
 
 /**
@@ -64,17 +61,11 @@ namespace ens {
 <<<<<<< HEAD
  */
 template<typename SelectionPolicyType = FullSelection,
-         typename WeightPolicyType = DefaultWeight>
-=======
- * @tparam UpdatePolicy The update 
- */
-template<typename SelectionPolicyType = FullSelection,
          typename WeightPolicyType = DefaultWeight,
          typename UpdatePolicyType = VanilaUpdate>
 >>>>>>> pullReq346
 class CMAES
 {
- public:
   /**
    * Construct the CMA-ES optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
@@ -101,12 +92,8 @@ class CMAES
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
         const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-<<<<<<< HEAD
-        const WeightPolicyType& weightPolicy = WeightPolicyType());
-=======
         const WeightPolicyType& weightPolicy = WeightPolicyType(),
         const UpdatePolicyType& updatePolicy = UpdatePolicyType());
->>>>>>> pullReq346
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -249,11 +236,6 @@ class CMAES
   // stopping criteria parameters
   size_t countval;
 
-<<<<<<< HEAD
-    // The weight initialization policy
-    WeightPolicyType weightPolicy;
-=======
->>>>>>> pullReq346
 };
 
 /**
@@ -265,21 +247,6 @@ using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight>;
 using ApproxCMAES = CMAES<RandomSelection, DefaultWeight>;
 
 using ActiveCMAES = CMAES<FullSelection, NegativeWeight>;
-<<<<<<< HEAD
-
-// template<typename SelectionPolicyType = RandomSelection,
-//          typename WeightPolicyType = DefaultWeight>
-// using ApproxCMAES = CMAES<SelectionPolicyType, DefaultWeight>;
-
-// template<typename SelectionPolicyType = RandomSelection,
-//          typename WeightPolicyType = NegativeWeight>
-// using ActiveApproxCMAES = CMAES<SelectionPolicyType, DefaultWeight>;
-
-// template<typename SelectionPolicyType = FullSelection,
-//          typename WeightPolicyType = NegativeWeight>
-// using ActiveCMAES = CMAES<RandomSelection, DefaultWeight>;
-=======
->>>>>>> pullReq346
 
 } // namespace ens
 

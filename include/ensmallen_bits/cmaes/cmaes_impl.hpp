@@ -21,16 +21,10 @@
 
 namespace ens {
 
-<<<<<<< HEAD
 template <typename SelectionPolicyType,
-          typename WeightPolicyType>
-CMAES<SelectionPolicyType, WeightPolicyType>::
-=======
-  template <typename SelectionPolicyType,
-            typename WeightPolicyType,
-            typename UpdatePolicyType>
+          typename WeightPolicyType,
+          typename UpdatePolicyType>
 CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
->>>>>>> pullReq346
 CMAES(const size_t lambda,
       const double lowerBound,
       const double upperBound,
@@ -38,12 +32,8 @@ CMAES(const size_t lambda,
       const size_t maxIterations,
       const double tolerance,
       const SelectionPolicyType& selectionPolicy,
-<<<<<<< HEAD
-      const WeightPolicyType& weightPolicy) :
-=======
       const WeightPolicyType& weightPolicy,
       const UpdatePolicyType& updatePolicy):
->>>>>>> pullReq346
       lambda(lambda),
       lowerBound(lowerBound),
       upperBound(upperBound),
@@ -51,24 +41,12 @@ CMAES(const size_t lambda,
       maxIterations(maxIterations),
       tolerance(tolerance),
       selectionPolicy(selectionPolicy),
-<<<<<<< HEAD
-      weightPolicy(weightPolicy)
-=======
       weightPolicy(weightPolicy),
       updatePolicy(updatePolicy)
->>>>>>> pullReq346
 { /* Nothing to do. */ }
   
 
 //! Optimize the function (minimize).
-<<<<<<< HEAD
-template <typename SelectionPolicyType,
-          typename WeightPolicyType>
-template <typename SeparableFunctionType,
-          typename MatType,
-          typename... CallbackTypes>
-typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType>::
-=======
   template <typename SelectionPolicyType,
             typename WeightPolicyType,
             typename UpdatePolicyType>
@@ -76,7 +54,6 @@ template <typename SeparableFunctionType,
           typename MatType,
           typename... CallbackTypes>
 typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
->>>>>>> pullReq346
 Optimize(SeparableFunctionType &function,
           MatType &iterateIn,
           CallbackTypes &&...callbacks)
@@ -92,11 +69,7 @@ Optimize(SeparableFunctionType &function,
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
   // Intantiated the algorithm params
-<<<<<<< HEAD
-  CMAparameters params(iterate.n_elem, lambda, weightPolicy);
-=======
   initialize(iterate);
->>>>>>> pullReq346
 
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
   sigma(0) = 0.3 * (upperBound - lowerBound);
@@ -212,50 +185,6 @@ Optimize(SeparableFunctionType &function,
       terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
     }
 
-<<<<<<< HEAD
-    // Update Step Size.
-    if (iterate.n_rows > iterate.n_cols)
-    {
-      ps[idx1] = (1 - params.csigma) * ps[idx0] + std::sqrt(
-          params.csigma * (2 - params.csigma) * params.mu_eff) * covLower.t() * step;
-    }
-    else
-    {
-      ps[idx1] = (1 - params.csigma) * ps[idx0] + std::sqrt(
-          params.csigma * (2 - params.csigma) * params.mu_eff) * step * covLower.t();
-    }
-
-    const ElemType psNorm = arma::norm(ps[idx1]);
-    const size_t hs = (psNorm / sqrt(1 - std::pow(1 - params.csigma, 2 * i)) < params.hsigma) ? 1 : 0;
-    const double deltahs = (1 - hs) * params.cc * (2 - params.cc);
-
-    // Update covariance matrix.
-    sigma(idx1) = sigma(idx0) * std::exp(params.csigma / params.dsigma * ( psNorm / params.chi - 1));
-    pc[idx1] = (1 - params.cc) * pc[idx0] + hs * std::sqrt(params.cc * (2 - params.cc) * params.mu_eff) * step; 
-    C[idx1] = (1 + params.c1 * deltahs - params.c1 - params.cmu * arma::accu(params.weights)) * C[idx0];
-  
-    if (iterate.n_rows > iterate.n_cols)
-    {
-      C[idx1] = C[idx1] + params.c1 * (pc[idx1] * pc[idx1].t());
-      for (size_t j = 0; j < params.lambda; ++j)
-      {
-        if(params.weights(j) < 0) params.weights(j) *= params.dim/std::pow(arma::norm(z[j]), 2);
-        if(params.weights(j) == 0) break;
-        C[idx1] = C[idx1] + params.cmu * params.weights(j) *
-            pStep[idx(j)] * pStep[idx(j)].t();
-      }
-    }
-    else
-    {
-      C[idx1] = C[idx1] + params.c1 * (pc[idx1].t() * pc[idx1]);
-      for (size_t j = 0; j < params.offsprings; ++j)
-      {
-        if(params.weights(j) < 0) params.weights(j) *= params.dim/std::pow(arma::norm(z[j]), 2);
-        if(params.weights(j) == 0) break;
-        C[idx1] = C[idx1] + params.cmu * params.weights(j) *
-            pStep[idx(j)].t() * pStep[idx(j)];
-      }
-=======
     // Update part which it used to placed
     update(iterate, ps, pc, sigma, pStep, C, B, stepz, step, idx, z, i);
     
@@ -274,7 +203,6 @@ Optimize(SeparableFunctionType &function,
       arma::eig_sym(eigval, eigvec, C);
       B = eigvec;
       D = arma::diagmat(arma::sqrt(eigval));
->>>>>>> pullReq346
     }
     // This part will enforce covariance matrix to be positive definites for (Symmetric and all eigen values are positive)
     // eigval storing all the eigen values of C[idx1] after the covariance update

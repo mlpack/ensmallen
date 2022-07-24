@@ -44,7 +44,6 @@ class NegativeWeight{
     assert(weights(len-1) <= 0 && "The last weight must be <= 0");
     // mu is expected a half of len(allias of lambda in CMAparameters class)
     mu = 0;
-<<<<<<< HEAD
     for(size_t i = 0; i < len; ++i)
     {
       if(weights(i) > 0) mu++;
@@ -55,7 +54,6 @@ class NegativeWeight{
       weights(i) /= sumPos;
     }
     muEff = 1 / arma::accu(arma::pow(weights.cols(0, mu-1), 2));
->>>>>>> pullReq346
   }
 
   /**
@@ -78,20 +76,18 @@ class NegativeWeight{
     const double alphaPosdefNegative = (1 - c1 - cmu) / (dim * cmu);
     double factor = std::min(alphaMuNegative, alphaPosdefNegative); 
 
-    for(size_t i = mu; i < len; ++i)
+    for (size_t i = mu; i < len; ++i)
     {
       weights(i) *= factor;
       weights(i) /= sumNeg; 
     } 
 
-<<<<<<< HEAD
     const double alpha_mu_eff_negative = 1 + 2 * NegativeEff(weights) / (mu_eff + 2);
-    if(std::abs(arma::accu(weights.cols(mu, len-1))) >= -std::abs(alpha_mu_eff_negative))
+    if (std::abs(arma::accu(weights.cols(mu, len-1))) >= -std::abs(alpha_mu_eff_negative))
     {
       factor = abs(alpha_mu_eff_negative) / std::abs(arma::accu(weights.cols(mu, len-1)));
       {
         for (size_t i = mu; i < len; ++i)
->>>>>>> pullReq346
         {
           weights(i) *= factor;
         }
@@ -107,9 +103,8 @@ class NegativeWeight{
   {
     assert(weights(0) > 0);
     assert(weights(len-1) < 0);
-  double NegativeEff(const arma::Row<double>& weights)
+    double NegativeEff(const arma::Row<double>& weights)
     double sumNeg = 0.0, sumNegSquare = 0.0;
-<<<<<<< HEAD
     for(size_t i = 0; i < weights.n_elem; ++i) 
     {
       if(weights(i) < 0)
@@ -121,13 +116,8 @@ class NegativeWeight{
   }
   // Return variance-effective before the Generate function is called since c1 and cmu is 
   // calculated beforehand 
-<<<<<<< HEAD
-  double Mu_eff() const { return mu_eff; }
-  double& Mu_eff() { return mu_eff; }
-=======
   double MuEff() const { return muEff; }
   double& MuEff() { return muEff; }
->>>>>>> pullReq346
 
   // These functions might be unnecessary since Generate function is already return the desired weights 
   arma::Row<double> Weights() const { return weights; }
@@ -136,10 +126,8 @@ class NegativeWeight{
   private:
     size_t len;
     size_t mu;
-=======
     double muEff;
     double muEffNeg;
->>>>>>> pullReq346
     arma::Row<double> weights;
 };
 
