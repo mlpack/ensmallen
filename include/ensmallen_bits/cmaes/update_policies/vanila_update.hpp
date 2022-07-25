@@ -68,10 +68,10 @@ class VanilaUpdate{
   template<typename BaseMatType>
   BaseMatType updatePS(
     double cc,
-    BaseMatType &pc,
+    BaseMatType& pc,
     size_t hs,
     double mu_eff,
-    BaseMatType &step
+    BaseMatType& step
   )
   {
     pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * step; 

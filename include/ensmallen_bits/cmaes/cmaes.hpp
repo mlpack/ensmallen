@@ -25,10 +25,7 @@
 #include "weight_init_policies/negative_weight.hpp"
 
 //! Update Policies
-#include "update_policies/fine_update.hpp"
 #include "update_policies/vanila_update.hpp"
-#include "update_policies/vd_update.hpp"
-#include "update_policies/sep_update.hpp"
 namespace ens {
 
 /**
@@ -63,7 +60,7 @@ namespace ens {
 template<typename SelectionPolicyType = FullSelection,
          typename WeightPolicyType = DefaultWeight,
          typename UpdatePolicyType = VanilaUpdate>
->>>>>>> pullReq346
+
 class CMAES
 {
   /**
@@ -163,14 +160,6 @@ class CMAES
   //! Initializing the parameters function
   template<typename MatType>
   void initialize(MatType& iterate);
-
-  //! Stop criterias
-  template<typename MatType>
-  void stop();
-
-  //! Get a list of sampled candidate solutions
-  template<typename MatType>
-  void ask();
 
   //! Update the algorithm's parameters
   template<typename MatType, typename BaseMatType>

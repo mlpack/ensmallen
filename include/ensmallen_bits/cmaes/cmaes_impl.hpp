@@ -126,13 +126,7 @@ Optimize(SeparableFunctionType &function,
     // To keep track of where we are.
     const size_t idx0 = (i - 1) % 2;
     const size_t idx1 = i % 2;
-
-    // Perform Cholesky decomposition. If the matrix is not positive definite,
-    // add a small value and try again.
-    // BaseMatType choles;
-    // while(!(arma::chol(choles, C[idx0], "lower")))
-    //   C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
-
+    
     BaseMatType BD = B*D;
     std::vector<BaseMatType> z(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
     for (size_t j = 0; j < lambda; ++j)
@@ -189,7 +183,6 @@ Optimize(SeparableFunctionType &function,
     // Update part which it used to placed
     update(iterate, ps, pc, sigma, pStep, C, B, stepz, step, idx, z, i);
     
-    
     //! Eigen Decomposition covariance matrix C
     // Covariance matrix parameters.
     arma::Col<ElemType> eigval; // TODO: might need a more general type.
@@ -205,25 +198,6 @@ Optimize(SeparableFunctionType &function,
       B = eigvec;
       D = arma::diagmat(arma::sqrt(eigval));
     }
-    // This part will enforce covariance matrix to be positive definites for (Symmetric and all eigen values are positive)
-    // eigval storing all the eigen values of C[idx1] after the covariance update
-    // eigvec storing all the eigen vectors of C[idx1] after the covariance update
-    // Securing positive defitniness characterization of covariance matrix for next loop cholesky
-    // arma::eig_sym(eigval, eigvec, C[idx1]);
-    // const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
-    // if (!negativeEigval.is_empty())
-    // {
-    //   if (negativeEigval(0) == 0)
-    //   {
-    //     C[idx1].zeros();
-    //   }
-    //   else
-    //   {
-    //     C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
-    //         arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
-    //         eigvec.cols(0, negativeEigval(0) - 1).t();
-    //   }
-    // }
 
     // Output current objective function. So this is the termination criteria 
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
@@ -287,28 +261,6 @@ Optimize(SeparableFunctionType &function,
         std::max(std::sqrt((mu_eff-1)/(iterate.n_elem+1)) - 1, 0.0);
     hsigma = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * chi;
   
-  }
-
-  //! Stop criterias
-  template <typename SelectionPolicyType,
-            typename WeightPolicyType,
-            typename UpdatePolicyType>
-  template<typename MatType>
-  inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
-  stop()
-  {
-
-  }
-  
-  //! Get a list of sampled candidate solutions
-  template <typename SelectionPolicyType,
-            typename WeightPolicyType,
-            typename UpdatePolicyType>
-  template<typename MatType>
-  inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
-  ask()
-  {
-
   }
 
   //! Update the algorithm's parameters
