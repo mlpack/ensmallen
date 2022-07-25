@@ -55,7 +55,6 @@ namespace ens {
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
  * @tparam WeightPolicy The weight initialization strategy 
-<<<<<<< HEAD
  */
 template<typename SelectionPolicyType = FullSelection,
          typename WeightPolicyType = DefaultWeight,
@@ -63,6 +62,7 @@ template<typename SelectionPolicyType = FullSelection,
 
 class CMAES
 {
+ public:
   /**
    * Construct the CMA-ES optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
@@ -81,6 +81,7 @@ class CMAES
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
    * @param weightPolicy Instantiated weight initialization policy applying on offsprings in each iteration
+   * @param updatePolicy Instantiated update parameters policy 
    */
   CMAES(const size_t lambda = 0,
         const double lowerBound = -10,
@@ -175,6 +176,7 @@ class CMAES
               arma::uvec& idx,
               std::vector<BaseMatType>& z,
               size_t i);
+
   //! Population size.
   size_t lambda;
 
@@ -201,7 +203,8 @@ class CMAES
 
   // The update policy 
   UpdatePolicyType updatePolicy;
-
+  
+ private:
   size_t mu; // number of candidate solutions used to update the distribution parameters.
   size_t offsprings;
   // TODO: might need a more general type
@@ -231,11 +234,11 @@ class CMAES
  * Convenient typedef for CMAES approximation.
  */
 
-using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight>;
+using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight, VanilaUpdate>;
 
-using ApproxCMAES = CMAES<RandomSelection, DefaultWeight>;
+using ApproxCMAES = CMAES<RandomSelection, DefaultWeight, VanilaUpdate>;
 
-using ActiveCMAES = CMAES<FullSelection, NegativeWeight>;
+using ActiveCMAES = CMAES<FullSelection, NegativeWeight, VanilaUpdate>;
 
 } // namespace ens
 

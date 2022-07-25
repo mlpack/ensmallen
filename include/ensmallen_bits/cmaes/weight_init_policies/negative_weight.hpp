@@ -15,8 +15,8 @@
 
 namespace ens{
 
-class NegativeWeight{
-
+class NegativeWeight
+{
  public:
   /**
    * Constructor
@@ -44,19 +44,21 @@ class NegativeWeight{
     assert(weights(len-1) <= 0 && "The last weight must be <= 0");
     // mu is expected a half of len(allias of lambda in CMAparameters class)
     mu = 0;
-    for(size_t i = 0; i < len; ++i)
+    for (size_t i = 0; i < len; ++i)
     {
-      if(weights(i) > 0) mu++;
+      if (weights(i) > 0) mu++;
+    }
     double sumPos = arma::accu(weights.cols(0, mu - 1));
     // positive weights sum to one
     for (size_t i = 0; i < mu; ++i)
     {
       weights(i) /= sumPos;
     }
-    muEff = 1 / arma::accu(arma::pow(weights.cols(0, mu-1), 2));
+    muEff = 1 / arma::accu(arma::pow(weights.cols(0, mu - 1), 2));
   }
 
   /**
+   * Generate negative weight for new population
    * 
    *  @tparam ElemType The type of elements in weight vector
    *  @param dim Dimension of iterate variable
@@ -82,16 +84,18 @@ class NegativeWeight{
       weights(i) /= sumNeg; 
     } 
 
-    const double alpha_mu_eff_negative = 1 + 2 * NegativeEff(weights) / (mu_eff + 2);
-    if (std::abs(arma::accu(weights.cols(mu, len-1))) >= -std::abs(alpha_mu_eff_negative))
+    const double alphaMuEffNegative = 1 + 2 * NegativeEff(weights) / (muEff + 2);
+    if (std::abs(arma::accu(weights.cols(mu, len-1))) >= -std::abs(alphaMuEffNegative))
     {
-      factor = abs(alpha_mu_eff_negative) / std::abs(arma::accu(weights.cols(mu, len-1)));
+      factor = abs(alphaMuEffNegative) / std::abs(arma::accu(weights.cols(mu, len-1)));
+      if (factor < 1)
       {
         for (size_t i = mu; i < len; ++i)
         {
           weights(i) *= factor;
         }
       }
+    }
     muEffNeg = NegativeEff(weights);
     Checking();
     return weights;
@@ -103,14 +107,33 @@ class NegativeWeight{
   {
     assert(weights(0) > 0);
     assert(weights(len-1) < 0);
-    double NegativeEff(const arma::Row<double>& weights)
-    double sumNeg = 0.0, sumNegSquare = 0.0;
-    for(size_t i = 0; i < weights.n_elem; ++i) 
+    for (size_t i = 0; i < len - 1; ++i)
     {
-      if(weights(i) < 0)
+      assert(weights(i) > weights(i+1));
+    }
+    assert(mu > 0);
+    assert(weights(mu - 1) > 0 && 0 >= weights(mu));
+    assert(0.999 < arma::accu(weights.cols(0, mu - 1)) && arma::accu(weights.cols(0, mu - 1)) < 1.001);
+
+    double muEffChk = std::pow(arma::accu(weights.cols(0, mu - 1)), 2) / 
+        arma::accu(arma::pow(weights.cols(0, mu - 1), 2));
+    double muNegEffChk = std::pow(arma::accu(weights.cols(mu, len - 1)), 2) / 
+        arma::accu(arma::pow(weights.cols(mu, len - 1), 2));
+
+    assert(muEff / 1.001 < muEffChk && muEffChk < muEff * 1.001);
+    assert(muEffNeg / 1.001 < muNegEffChk && muNegEffChk < muEffNeg * 1.001);
+  }
+
+  double NegativeEff(const arma::Row<double>& weights)
+  {
+    double sumNeg = 0.0, sumNegSquare = 0.0;
+    for (size_t i = 0; i < weights.n_elem; ++i) 
+    {
+      if (weights(i) < 0)
       {
         sumNeg += std::abs(weights(i));
         sumNegSquare += std::pow(weights(i), 2);
+      } 
     }
     return std::pow(sumNeg, 2) / sumNegSquare;
   }
@@ -123,12 +146,12 @@ class NegativeWeight{
   arma::Row<double> Weights() const { return weights; }
   arma::Row<double>& Weights() { return weights; }
 
-  private:
-    size_t len;
-    size_t mu;
-    double muEff;
-    double muEffNeg;
-    arma::Row<double> weights;
+ private:
+  size_t len;
+  size_t mu;
+  double muEff;
+  double muEffNeg;
+  arma::Row<double> weights;
 };
 
 } // namespace ens

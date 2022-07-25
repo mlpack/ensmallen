@@ -13,10 +13,10 @@
 #ifndef ENSMALLEN_CMAES_VANILA_UPDATE_HPP
 #define ENSMALLEN_CMAES_VANILA_UPDATE_HPP
 
-namespace ens{
+namespace ens {
 
-class VanilaUpdate{
-
+class VanilaUpdate
+{
  public:
   /**
    * Constructor
@@ -85,10 +85,8 @@ class VanilaUpdate{
    */
   void updateC()
   {
-
+    
   }
-
-  private:
 
 };
 

@@ -15,7 +15,8 @@
 
 namespace ens{
 
-class DefaultWeight{
+class DefaultWeight
+{
 
  public:
   /**
@@ -36,16 +37,15 @@ class DefaultWeight{
   {
     len = lambda;
     mu = std::round(len / 2);
-    weights = std::log(mu + 0.5) - 
-        arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
-    for(size_t i = mu; i < len; ++i)
+    weights = std::log(mu + 0.5) - arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
+    for (size_t i = mu; i < len; ++i)
     {
       weights(i) = 0;
     }
     assert(weights(mu-1) > 0);
     double sumPos = arma::accu(weights.cols(0, mu - 1));
     // positive weights sum to one
-    for(size_t i = 0; i < mu; ++i)
+    for (size_t i = 0; i < mu; ++i)
     {
       weights(i) /= sumPos;
     }
@@ -76,12 +76,12 @@ class DefaultWeight{
   arma::Row<double> Weights() const { return weights; }
   arma::Row<double> Weights() { return weights; }
 
-  private:
-    size_t len;
-    size_t mu;
-    double muEff;
-    double muEffNeg;
-    arma::Row<double> weights;
+ private:
+  size_t len;
+  size_t mu;
+  double muEff;
+  double muEffNeg;
+  arma::Row<double> weights;
 };
 
 } // namespace ens
