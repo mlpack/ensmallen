@@ -42,7 +42,7 @@ class DefaultWeight
     {
       weights(i) = 0;
     }
-    assert(weights(mu-1) > 0);
+    assert(weights(mu - 1) > 0);
     double sumPos = arma::accu(weights.cols(0, mu - 1));
     // positive weights sum to one
     for (size_t i = 0; i < mu; ++i)

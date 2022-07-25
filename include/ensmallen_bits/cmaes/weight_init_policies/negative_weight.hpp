@@ -41,7 +41,7 @@ class NegativeWeight
         arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
     
     assert(weights(0) > 0 && "The first weight must be >0");
-    assert(weights(len-1) <= 0 && "The last weight must be <= 0");
+    assert(weights(len - 1) <= 0 && "The last weight must be <= 0");
     // mu is expected a half of len(allias of lambda in CMAparameters class)
     mu = 0;
     for (size_t i = 0; i < len; ++i)
@@ -72,7 +72,7 @@ class NegativeWeight
     if(c1 > 10 * cmu)
       std::cout << "Warning: c1/cmu seems to assume a too large value for negative weight setting" << std::endl;
         
-    double sumNeg = std::abs(arma::accu(weights.cols(mu, len-1)));
+    double sumNeg = std::abs(arma::accu(weights.cols(mu, len - 1)));
 
     const double alphaMuNegative = 1 + c1/cmu;
     const double alphaPosdefNegative = (1 - c1 - cmu) / (dim * cmu);
@@ -87,7 +87,7 @@ class NegativeWeight
     const double alphaMuEffNegative = 1 + 2 * NegativeEff(weights) / (muEff + 2);
     if (std::abs(arma::accu(weights.cols(mu, len-1))) >= -std::abs(alphaMuEffNegative))
     {
-      factor = abs(alphaMuEffNegative) / std::abs(arma::accu(weights.cols(mu, len-1)));
+      factor = abs(alphaMuEffNegative) / std::abs(arma::accu(weights.cols(mu, len - 1)));
       if (factor < 1)
       {
         for (size_t i = mu; i < len; ++i)
@@ -106,7 +106,7 @@ class NegativeWeight
   void Checking()
   {
     assert(weights(0) > 0);
-    assert(weights(len-1) < 0);
+    assert(weights(len - 1) < 0);
     for (size_t i = 0; i < len - 1; ++i)
     {
       assert(weights(i) > weights(i+1));
