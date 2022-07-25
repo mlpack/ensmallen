@@ -286,7 +286,7 @@ update(MatType& iterate,
   const size_t idx0 = (i - 1) % 2;
   const size_t idx1 = i % 2;
 
-  ps = updatePolicy.updatePC(iterate, ps, B, stepz, mu_eff);
+  ps = updatePolicy.updatePs(iterate, ps, B, stepz, mu_eff);
 
   ElemType psNorm = arma::norm(ps);
   size_t hs = (psNorm / sqrt(1 - std::pow(1 - csigma, 2 * i)) < hsigma) ? 1 : 0;
@@ -295,36 +295,11 @@ update(MatType& iterate,
   sigma(idx1) = sigma(idx0) * std::exp(csigma / dsigma * (psNorm / chi - 1));
 
   // Update pc 
-  pc = updatePolicy.updatePS(cc, pc, hs, mu_eff, step);
+  pc = updatePolicy.updatePc(cc, pc, hs, mu_eff, step);
 
   //Update covariance matrix
-  double deltahs = (1 - hs) * cc * (2 - cc);
-  C = (1 + c1 * deltahs - c1 - cmu * arma::accu(weights)) * C;
-  if (iterate.n_rows > iterate.n_cols)
-  {
-    C = C + c1 * (pc * pc.t());
-    for (size_t j = 0; j < lambda; ++j)
-    {
-
-      if (weights(j) < 0) weights(j) *= iterate.n_elem / 
-          std::pow(arma::norm(z[j]), 2);
-      if (weights(j) == 0) break;
-      C = C + cmu * weights(j) *
-          pStep[idx(j)] * pStep[idx(j)].t();
-    }
-  }
-  else
-  {
-    C = C + c1 * (pc.t() * pc);
-    for (size_t j = 0; j < lambda; ++j)
-    {
-      if (weights(j) < 0) weights(j) *= iterate.n_elem / 
-          std::pow(arma::norm(z[j]), 2);
-      if (weights(j) == 0) break;
-      C = C + cmu * weights(j) *
-          pStep[idx(j)].t() * pStep[idx(j)];
-    }
-  }
+  C = updatePolicy.updateC(iterate, cc, c1, cmu, mu_eff, lambda, 
+      hs, C, pc, idx, z, pStep, weights, step);
 }
 
 } // namespace ens
