@@ -22,6 +22,7 @@ template<typename MatType = arma::mat, typename OptimizerType>
 void LogisticRegressionFunctionTestReal(OptimizerType& optimizer,
                                         const double trainAccuracyTolerance,
                                         const double testAccuracyTolerance,
+                                        const std::string dataset_path,
                                         const size_t trials = 1,
                                         const double split_ratio = 0.8)
 {
@@ -29,7 +30,7 @@ void LogisticRegressionFunctionTestReal(OptimizerType& optimizer,
   arma::Row<size_t> responses, testResponses, shuffledResponses;
 
   // Load the dataset
-  if (data.load("data/titanic.csv", arma::csv_ascii) == false)
+  if (data.load(dataset_path, arma::csv_ascii) == false)
   {
     FAIL("couldn't load data");
     return;
@@ -87,6 +88,78 @@ void LogisticRegressionFunctionTestReal(OptimizerType& optimizer,
   }
 }
 
+template<typename MatType = arma::mat, typename OptimizerType>
+void LogisticRegressionFunctionTestRealM(OptimizerType& optimizer,
+                                        const double trainAccuracyTolerance,
+                                        const double testAccuracyTolerance,
+                                        const std::string dataset_path,
+                                        const size_t dim = 200,
+                                        const size_t trials = 1,
+                                        const double split_ratio = 0.8)
+{
+  MatType data, testData, shuffledData;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
+
+  // Load the dataset
+  if (data.load(dataset_path, arma::csv_ascii) == false)
+  {
+    FAIL("couldn't load data");
+    return;
+  }
+  
+  data = data.t();
+  size_t n_row = data.n_rows;
+  std::cout << data.n_rows << " " << data.n_cols << std::endl;
+  responses = arma::conv_to<arma::Row<size_t>>::from(data.row(0));
+  data = data.rows(1, std::min(dim, n_row)-1);
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 
+      data.n_cols - 1, data.n_cols)); 
+  size_t idx = data.n_cols * split_ratio;
+
+  shuffledData = MatType(data.n_rows, idx);
+  shuffledResponses = arma::Row<size_t>(idx);
+
+  testData = MatType(data.n_rows, data.n_cols-idx);
+  testResponses = arma::Row<size_t>(data.n_cols-idx);
+
+  for (size_t i = 0; i < idx; ++i)
+  {
+    shuffledData.col(i) = data.col(indices(i));
+    shuffledResponses.col(i) = responses.col(indices(i));
+  }
+  
+  for (size_t i = idx; i < data.n_cols; ++i)
+  {
+    testData.col(i-idx) = data.col(indices(i));
+    testResponses.col(i-idx) = responses.col(indices(i));
+  }
+
+  ens::test::LogisticRegression<MatType> lr(data, responses, 0.5);
+  arma::wall_clock clock;
+  double bestT = 0.0; double bestAcc = 0.0; double bestTestAcc = 0.0;
+  for (size_t i = 0; i < trials; ++i)
+  {
+    double lapsT = 0.0;
+    MatType coordinates = lr.GetInitialPoint();
+    clock.tic();
+    optimizer.Optimize(lr, coordinates);
+    lapsT += clock.toc();
+    const double acc = lr.ComputeAccuracy(shuffledData, shuffledResponses, 
+        coordinates);
+    const double testAcc = lr.ComputeAccuracy(testData, testResponses,
+        coordinates);
+
+    bestAcc = acc; bestTestAcc = testAcc; bestT = lapsT;    
+    // Provide a shortcut to try again if we're not on the last trial.
+    if (acc < bestAcc)
+      continue;
+    if (testAcc < bestTestAcc)
+      continue;
+    bestAcc = acc; bestTestAcc = testAcc; bestT = lapsT;    
+  }
+  std::cout << "following results: " << std::endl;
+  std::cout << bestAcc << " " << bestTestAcc << " " << bestT << std::endl;
+}
 /**
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
@@ -137,7 +210,7 @@ TEST_CASE("ActiveApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 TEST_CASE("CMAESTitanicTest", "[CMAESTest]")
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
 }
 
 /**
@@ -150,7 +223,7 @@ TEST_CASE("CMAESTitanicTest", "[CMAESTest]")
 TEST_CASE("ApproxCMAESTitanicTest", "[CMAESTest]")
 {
   ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
 }
 
 /**
@@ -163,7 +236,7 @@ TEST_CASE("ApproxCMAESTitanicTest", "[CMAESTest]")
 TEST_CASE("ActiveCMAESTitanicTest", "[CMAESTest]")
 {
   ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
 }
 
 /**
@@ -176,5 +249,35 @@ TEST_CASE("ActiveCMAESTitanicTest", "[CMAESTest]")
 TEST_CASE("ActiveApproxCMAESTitanicTest", "[CMAESTest]")
 {
   ActiveApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
+}
+
+/**
+ * Run Active CMA-ES with the random selection policy on titanic dataset and 
+ * using logistic regression algorithm
+ * 
+ * See more on dataset at https://www.kaggle.com/competitions/titanic/data
+ * Make sure the results are acceptable.
+ */
+TEST_CASE("CMAESMadelonTest", "[CMAESTest]")
+{
+  CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  LogisticRegressionFunctionTestRealM(cmaes, 0.003, 0.006, "data/gisette.csv", 5000, 1);
+}
+TEST_CASE("ApproxCMAESMadelonTest", "[CMAESTest]")
+{
+  ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
+  LogisticRegressionFunctionTestRealM(cmaes, 0.003, 0.006, "data/gisette.csv", 5000, 1);
+}
+
+TEST_CASE("ActiveCMAESMadelonTest", "[CMAESTest]")
+{
+  ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
+  LogisticRegressionFunctionTestRealM(cmaes, 0.003, 0.006, "data/gisette.csv", 5000, 1);
+}
+
+TEST_CASE("ActiveApproxCMAESMadelonTest", "[CMAESTest]")
+{
+  ActiveApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
+  LogisticRegressionFunctionTestRealM(cmaes, 0.003, 0.006, "data/gisette.csv", 5000, 1);
 }

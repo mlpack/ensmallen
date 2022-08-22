@@ -299,7 +299,7 @@ update(MatType& iterate,
 
   //Update covariance matrix
   C = updatePolicy.updateC(iterate, cc, c1, cmu, mu_eff, lambda, 
-      hs, C, pc, idx, z, pStep, weights, step);
+      hs, C, pc, idx, z, pStep, weights);
 }
 
 } // namespace ens

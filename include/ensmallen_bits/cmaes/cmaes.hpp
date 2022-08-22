@@ -26,6 +26,7 @@
 
 //! Update Policies
 #include "update_policies/vanila_update.hpp"
+#include "update_policies/sep_update.hpp"
 namespace ens {
 
 /**
@@ -240,6 +241,7 @@ using ApproxCMAES = CMAES<RandomSelection, DefaultWeight, VanilaUpdate>;
 
 using ActiveCMAES = CMAES<FullSelection, NegativeWeight, VanilaUpdate>;
 
+using SepCMAES = CMAES<FullSelection, NegativeWeight, SepUpdate>;
 } // namespace ens
 
 #include "cmaes_impl.hpp"
