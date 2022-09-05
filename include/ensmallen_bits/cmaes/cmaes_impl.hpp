@@ -71,12 +71,12 @@ Optimize(SeparableFunctionType &function,
   // Intantiated the algorithm params
   initialize(iterate);
 
-  BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  sigma(0) = 0.3 * (upperBound - lowerBound);
+  double sigma;
+  sigma = 0.3 * (upperBound - lowerBound);
 
-  std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows, iterate.n_cols));
-  // This causing 
-  mPosition[0] = lowerBound + arma::randu<BaseMatType>(
+  BaseMatType mCandidate(iterate.n_rows, iterate.n_cols);
+  
+  mCandidate = lowerBound + arma::randu<BaseMatType>(
       iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
 
   // Calculate the first objective function.
@@ -85,11 +85,11 @@ Optimize(SeparableFunctionType &function,
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-    const ElemType objective = function.Evaluate(mPosition[0], f,
+    const ElemType objective = function.Evaluate(mCandidate[0], f,
         effectiveBatchSize);
     currentObjective += objective;
 
-    Callback::Evaluate(*this, function, mPosition[0], objective,
+    Callback::Evaluate(*this, function, mCandidate[0], objective,
         callbacks...);
   }
 
@@ -97,19 +97,29 @@ Optimize(SeparableFunctionType &function,
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   // Population parameters.
-  std::vector<BaseMatType> pStep(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
-  // pPosition is vector of x_i(g) with x_i(g) 
+  std::vector<BaseMatType> z(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
+  std::vector<BaseMatType> y(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
+  // candidates is vector of x_i(g) with x_i(g) 
   // is either a column or row vector but we generalize the type of data here)
-  std::vector<BaseMatType> pPosition(lambda, BaseMatType(iterate.n_rows, iterate.n_cols)); 
+  std::vector<BaseMatType> candidates(lambda, BaseMatType(iterate.n_rows, iterate.n_cols)); 
   BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
 
   BaseMatType ps(iterate.n_rows, iterate.n_cols);
   ps.zeros();
   BaseMatType pc = ps;
+
+  // Sep and Vd update parameters
+  BaseMatType sepCov(iterate.n_rows, iterate.n_cols, fill:value(1.0));
+  BaseMatType sepCovsqinv = sepCov;
+  // v ~ N(0, I/d)
+  BaseMatType v = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols) / std::sqrt(iterate.n_elem);
+
+  // Vanilda update parameters 
   BaseMatType C(iterate.n_elem, iterate.n_elem);
   C.eye();
   BaseMatType B(iterate.n_elem, iterate.n_elem); B.eye();
   BaseMatType D(iterate.n_elem, iterate.n_elem); D.eye();
+  BaseMatType BD = B*D;
 
   // The current visitation order (sorted by population objectives).
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
@@ -122,68 +132,44 @@ Optimize(SeparableFunctionType &function,
   terminate |= Callback::BeginOptimization(*this, function, iterate,
       callbacks...);
   for (size_t i = 1; i < maxIterations && !terminate; ++i)
-  {
-    // To keep track of where we are.
-    const size_t idx0 = (i - 1) % 2;
-    const size_t idx1 = i % 2;
-    
-    BaseMatType BD = B*D;
-    std::vector<BaseMatType> z(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
+  { 
+    candidates = updatePolicy.samplePop(sigma, lambda, iterate, z, y, mCandidate, 
+        B, D, sepCovsqinv, sepCov, C);
+
+    // Evaluate the sampled canidates
     for (size_t j = 0; j < lambda; ++j)
     {
       countval++;
-      if (iterate.n_rows > iterate.n_cols)
-      {
-        z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
-        pStep[idx(j)] = BD * z[j];
-      }
-      else
-      {
-        z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
-        pStep[idx(j)] = z[j] * BD.t();
-      }
-      
-      pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
-
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          pPosition[idx(j)], callbacks...);
+          candidates[idx(j)], callbacks...);
     }
-
     // Sort population.
     idx = arma::sort_index(pObjective);
-    
-    BaseMatType step(iterate.n_rows, iterate.n_cols); 
-    step.zeros();
-    BaseMatType stepz(iterate.n_rows, iterate.n_cols);
-    stepz.zeros();
 
-    step = weights(0) * pStep[idx(0)];
-    stepz = weights(0) * z[idx(0)];
-    for (size_t j = 1; j < mu; ++j)
+    mCandidate.zeros(); // Reset the mean
+    // update mCandidate
+    for (size_t j = 0; j < mu; ++j)
     {
-      step += weights(j) * pStep[idx(j)];
-      stepz += weights(j) * z[idx(j)];
+      mCandidate += weights(j) * candidates[idx(j)];
     }
-    mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
-
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
-        mPosition[idx1], callbacks...);
+        mCandidate, callbacks...);
 
     // Update best parameters.
     if (currentObjective < overallObjective)
     {
       overallObjective = currentObjective;
-      iterate = mPosition[idx1];
+      iterate = mCandidate;
 
       terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
     }
 
     // Update part which it used to placed
-    update(iterate, ps, pc, sigma, pStep, C, B, stepz, step, idx, z, i);
+    update(iterate, ps, pc, sigma, z, y, mCandidate, B, D, sepCovsqinv, sepCov, idx, C);
     
-    //! Eigen Decomposition covariance matrix C
+    //! Eigen DecomCandidate covariance matrix C
     // Covariance matrix parameters.
     arma::Col<ElemType> eigval; // TODO: might need a more general type.
     BaseMatType eigvec;
@@ -273,33 +259,41 @@ update(MatType& iterate,
        BaseMatType& ps, 
        BaseMatType& pc, 
        BaseMatType& sigma, 
-       std::vector<BaseMatType>& pStep,
-       BaseMatType& C,
-       BaseMatType& B,
-       BaseMatType& stepz,
-       BaseMatType& step,
-       arma::uvec& idx,
        std::vector<BaseMatType>& z,
-       size_t i)
-{      
-  typedef typename MatType::elem_type ElemType;
-  const size_t idx0 = (i - 1) % 2;
-  const size_t idx1 = i % 2;
+       std::vector<BaseMatType>& y,
+       BaseMatType& B,
+       BaseMatType& D,
+       BaseMatType& sepCovsqinv,
+       BaseMatType& sepCov,  
+       arma::uvec& idx
+       BaseMatType& C)
+{     
+  // Reusable variables
+  BaseMatType step(iterate.n_rows, iterate.n_cols); 
+  step.zeros();
+  BaseMatType stepz(iterate.n_rows, iterate.n_cols);
+  stepz.zeros();
+
+  for (size_t j = 0; j < mu; ++j)
+  {
+    step += weights(j) * y[idx(j)];
+    stepz += weights(j) * z[idx(j)];
+  }
 
   ps = updatePolicy.updatePs(iterate, ps, B, stepz, mu_eff);
 
-  ElemType psNorm = arma::norm(ps);
+  double psNorm = arma::norm(ps);
   size_t hs = (psNorm / sqrt(1 - std::pow(1 - csigma, 2 * i)) < hsigma) ? 1 : 0;
 
   // Update sigma.
-  sigma(idx1) = sigma(idx0) * std::exp(csigma / dsigma * (psNorm / chi - 1));
+  sigma = sigma * std::exp(csigma / dsigma * (psNorm / chi - 1));
 
   // Update pc 
   pc = updatePolicy.updatePc(cc, pc, hs, mu_eff, step);
 
   //Update covariance matrix
   C = updatePolicy.updateC(iterate, cc, c1, cmu, mu_eff, lambda, 
-      hs, C, pc, idx, z, pStep, weights);
+      hs, C, pc, idx, z, y, weights);
 }
 
 } // namespace ens

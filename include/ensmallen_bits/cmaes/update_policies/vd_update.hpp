@@ -27,6 +27,34 @@ class VDUpdate{
     // Doing nothing
   }
 
+  template<typename MatType, typename BaseMatType>
+  std::vector<BaseMatType> samplePop(
+    double sigma
+    size_t lambda,
+    MatType& iterate,
+    std::vector<BaseMatType> z,
+    std::vector<BaseMatType> y,
+    BaseMatType mCandidate,
+    BaseMatType B,
+    BaseMatType D, 
+    BaseMatType sepCovsqinv,
+    BaseMatType sepCov,
+    BaseMatType C)
+  {
+    double sqv = arma::accu(arma::pow(v, 2));
+    double fact = std::sqrt(1 + sqv) - 1;
+	  BaseMatType vbar = v / std::sqrt(sqv);
+    for (size_t j = 0; j < lambda; ++j)
+    {
+      // z_j ~ N(0, I)
+      z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+      // y_j ~ N(0, I + vv^t)
+      y[j] = z[j] + fact * vbar * arma::dot(vbar, z[j]);
+      // x_j ~ N(x_mean, sigma * D(I+vv^t)D)
+      candidates[j] = mCandidate + sigma * (sepCov % y[j]);
+    }
+    return candidates;
+  }
   /**
    * This function will update ps-step size control vector variable
    * 
@@ -42,20 +70,23 @@ class VDUpdate{
     MatType& iterate, 
     BaseMatType& ps, 
     BaseMatType& B,
-    BaseMatType& stepz,
+    BaseMatType& sepCovsqinv,
+    BaseMatType& v,
+    std::vector<BaseMatType>& /** z **/,
+    std::vector<BaseMatType>& y,
     double mu_eff)
   {
-    double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
-    if (iterate.n_rows > iterate.n_cols)
+    BaseMatType step(iterate.n_rows, iterate.n_cols);
+    step.zeros();
+
+    for (size_t j = 0; j < mu; ++j)
     {
-      ps = (1 - csigma) * ps + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * B * stepz;
+      step += weights(j) * y[idx(j)];
     }
-    else
-    {
-      ps = (1 - csigma) * ps + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * stepz * B.t();
-    }  
+    double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
+    BaseMatType upTerm = BaseMatType(iterate.n_rows, iterate.n_cols, fill:value(1.0));
+    ps = (1 - csigma) * ps + std::sqrt(csigma * (2 - csigma) * mu_eff) * 
+        ((1 / arma::sqrt(upTerm + v%v)) % (sepCovsqinv % step));
     return ps;
   }
 
@@ -71,8 +102,16 @@ class VDUpdate{
     BaseMatType& pc,
     size_t hs,
     double mu_eff,
-    BaseMatType& step)
+    std::vector<BaseMatType>& y)
   {
+    BaseMatType step(iterate.n_rows, iterate.n_cols);
+    step.zeros();
+
+    for (size_t j = 0; j < mu; ++j)
+    {
+      step += weights(j) * y[idx(j)];
+    }
+
     pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * step; 
     return pc;
   }
@@ -95,37 +134,70 @@ class VDUpdate{
     BaseMatType& pc,
     arma::uvec& idx,
     std::vector<BaseMatType>& z,
-    std::vector<BaseMatType>& pStep,
-    arma::Row<double>& weights)
+    std::vector<BaseMatType>& y,
+    arma::Row<double>& weights
+    BaseMatType& sepCov,
+    BaseMatType& sepCovsqinv,
+    BaseMatType& v)
   {
-    double deltahs = (1 - hs) * cc * (2 - cc);
-    C = (1 + c1 * deltahs - c1 - cmu * arma::accu(weights)) * C;
-    if (iterate.n_rows > iterate.n_cols)
-    {
-      C = C + c1 * (pc * pc.t());
-      for (size_t j = 0; j < lambda; ++j)
-      {
+    size_t mu = std::round(lambda / 2);
+    double sqv = arma::accu(arma::pow(v, 2));
+    BaseMatType vbar = v / sqrt(sqv);
+    BaseMatType vbarbar = vbar % vbar;
 
-        if (weights(j) < 0) weights(j) *= iterate.n_elem / 
-            std::pow(arma::norm(z[j]), 2);
-        if (weights(j) == 0) break;
-        C = C + cmu * weights(j) *
-            pStep[idx(j)] * pStep[idx(j)].t();
-      }
-    }
-    else
+    bool update = cmu + c1 * hs > 0;
+    if (update)
     {
-      C = C + c1 * (pc.t() * pc);
-      for (size_t j = 0; j < lambda; ++j)
+      double gammav = 1.0 + sqv;
+      double alpha = std::sqrt(sqv*sqv + (2 - 1.0/std::sqrt(gammav))*gammav / 
+          arma::max(vbarbar)) / (2.0 + sqv); // Eq(7)
+      alpha = std::min(1.0, alpha);
+      double b = -(1 - alpha*alpha) * sqv * sqv / gammav + 2.0*alpha*alpha;
+      BaseMatType A = BaseMatType(iterate.n_rows, iterate.n_cols, fill:value(2.0)) - 
+          (b + 2*alpha*alpha) * vbarbar;
+      
+      BaseMatType ym = sepCovsqinv % pc; // Dimension is same with y(i)
+      arma::uvec yvbar(mu, fill::value(0.0));
+
+      std::vector<BaseMatType> pvec(mu, BaseMatType(iterate.n_row, iterate.n_col));
+      std::vector<BaseMatType> qvec = pvec;
+
+      std::vector<BaseMatType> pone = pvec;
+      std::vector<BaseMatType> qone = pvec;
+
+      for (size_t i = 0; i < mu; i++)
       {
-        if (weights(j) < 0) weights(j) *= iterate.n_elem / 
-            std::pow(arma::norm(z[j]), 2);
-        if (weights(j) == 0) break;
-        C = C + cmu * weights(j) *
-            pStep[idx(j)].t() * pStep[idx(j)];
+        yvbar(i) = dot(vbar, y[idx(i)]);
+        pvec(i) = y[idx(i)] % y[idx(i)] - (sqv / gammav) * (yvbar(i) * vbar) % y[idx(i)];
+        pvec(i) = (pvec(i) - BaseMatType(iterate.n_row, iterate.n_col, fill::value(1.0))) * weight(idx(i));
+        qvec(i) = (yvbar(i) * y[idx(i)] - 0.5 * (yvbar(i) * yvbar(i) + gammav) * vbar) * weight(idx(i));
+
+        pone(i) = ym % ym - (sqv / gammav) * (yvbar(i) * vbar) % ym;
+        pone(i) = (pone(i) - BaseMatType(iterate.n_row, iterate.n_col, fill::value(1.0))) * weight(idx(i));
+        qone(i) = (yvbar(i) * ym - 0.5 * (yvbar(i) * yvbar(i) + gammav) * vbar) * weight(idx(i));
       }
-    }    
-    return C;
+      for (size_t i = 0; i < mu; i++)
+      {
+        if (hs)
+        {
+          pvec = cmu * pvec + c1 * pone;
+          qvec = cmu * qvec + c1 * qone;
+        }
+        else
+        {
+          pvec = _cmu * pvec;
+          qvec = cmu * qvec;
+        }
+      }
+
+      double nu = dot(vbar, qvec(0)); // maximum value
+      std::vector<BaseMatType> rvec(mu, BaseMatType(iterate.n_row, iterate.n_col)); 
+      for (size_t i = 0; i < mu; i++)
+      {
+        rvec(i) = pvec(i) - (alpha/gammav) * ((2.0+sqv) * (vbar % qvec(i)) - sqv*nu*vbarbar);
+      }
+      nu = arma::pow(A, -1) % vbarbar;
+    }
   }
 
 };

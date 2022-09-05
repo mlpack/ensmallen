@@ -26,7 +26,35 @@ class SepUpdate{
   {
     // Doing nothing
   }
-
+  
+  template<typename MatType, typename BaseMatType>
+  std::vector<BaseMatType> samplePop(
+    double sigma
+    size_t lambda,
+    MatType& iterate,
+    std::vector<BaseMatType> z,
+    std::vector<BaseMatType> y,
+    BaseMatType mCandidate,
+    BaseMatType B,
+    BaseMatType D, 
+    BaseMatType sepCovsqinv,
+    BaseMatType sepCov,
+    BaseMatType C)
+  {
+    double sqv = arma::accu(arma::pow(v, 2));
+    double fact = std::sqrt(1 + sqv) - 1;
+	  BaseMatType vbar = v / std::sqrt(sqv);
+    for (size_t j = 0; j < lambda; ++j)
+    {
+      // z_j ~ N(0, I)
+      z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+      // y_j ~ N(0, I + vv^t)
+      y[j] = z[j] + fact * vbar * arma::dot(vbar, z[j]);
+      // x_j ~ N(x_mean, sigma * D(I+vv^t)D)
+      candidates[j] = mCandidate + sigma * (sepCov % y[j]);
+    }
+    return candidates;
+  }
   /**
    * This function will update ps-step size control vector variable
    * 
@@ -42,9 +70,19 @@ class SepUpdate{
     MatType& iterate, 
     BaseMatType& ps, 
     BaseMatType& B,
-    BaseMatType& stepz,
+    BaseMatType& /** sepCovsqinv **/,
+    BaseMatType& /** v **/,
+    std::vector<BaseMatType>& z,
+    std::vector<BaseMatType>& /** y **/,
     double mu_eff)
   {
+    BaseMatType stepz(iterate.n_rows, iterate.n_cols);
+    stepz.zeros();
+
+    for (size_t j = 0; j < mu; ++j)
+    {
+      stepz += weights(j) * z[idx(j)];
+    }
     double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
     if (iterate.n_rows > iterate.n_cols)
     {
@@ -71,8 +109,16 @@ class SepUpdate{
     BaseMatType& pc,
     size_t hs,
     double mu_eff,
-    BaseMatType& step)
+    std::vector<BaseMatType>& y)
   {
+    BaseMatType step(iterate.n_rows, iterate.n_cols);
+    step.zeros();
+
+    for (size_t j = 0; j < mu; ++j)
+    {
+      step += weights(j) * y[idx(j)];
+    }
+    
     pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * step; 
     return pc;
   }
@@ -95,8 +141,11 @@ class SepUpdate{
     BaseMatType& pc,
     arma::uvec& idx,
     std::vector<BaseMatType>& z,
-    std::vector<BaseMatType>& pStep,
-    arma::Row<double>& weights)
+    std::vector<BaseMatType>& y,
+    arma::Row<double>& weights,
+    BaseMatType& sepCov,
+    BaseMatType& /** sepCovsqinv **/,
+    BaseMatType& /** v **/)
   {
     double mu_cov = mu_eff; // default value;
     double c_cov = 1/mu_cov * 2/iterate.n_elem + (1 - 1/mu_cov) * 
@@ -108,8 +157,8 @@ class SepUpdate{
       if (weights(j) < 0) weights(j) *= iterate.n_elem / 
           std::pow(arma::norm(z[j]), 2);
       if (weights(j) == 0) break;
-      C.diag() += + c_cov * (1-1/mu_cov) * weights(j) * 
-          arma::pow(pStep[idx(j)], 2);
+      C.diag() += c_cov * (1-1/mu_cov) * weights(j) * 
+          arma::pow(y[idx(j)], 2);
     }
     return C;
   }
