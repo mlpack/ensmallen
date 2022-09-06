@@ -106,7 +106,7 @@ Optimize(SeparableFunctionType &function,
   ps.zeros();
   BaseMatType pc = ps;
   // Sep and Vd update parameters
-  BaseMatType sepCov(iterate.n_rows, iterate.n_cols, arma::fill::value(1.0));
+  BaseMatType sepCov(iterate.n_rows, iterate.n_cols, arma::fill::ones);
   BaseMatType sepCovinv = sepCov;
   // v ~ N(0, I/d)
   BaseMatType v = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols) / std::sqrt(iterate.n_elem);
