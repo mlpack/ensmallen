@@ -27,6 +27,7 @@
 //! Update Policies
 #include "update_policies/vanila_update.hpp"
 #include "update_policies/sep_update.hpp"
+#include "update_policies/vd_update.hpp"
 namespace ens {
 
 /**
@@ -56,6 +57,7 @@ namespace ens {
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
  * @tparam WeightPolicy The weight initialization strategy 
+ * @tparam UpdatePolicyType The update parameters strategy
  */
 template<typename SelectionPolicyType = FullSelection,
          typename WeightPolicyType = DefaultWeight,
@@ -161,22 +163,25 @@ class CMAES
  private:
   //! Initializing the parameters function
   template<typename MatType>
-  void initialize(MatType& iterate);
+  void initialize(MatType& iterate,
+                  const double lower_bound,
+                  const double upper_bound);
 
   //! Update the algorithm's parameters
   template<typename MatType, typename BaseMatType>
   void update(MatType& iterate,
               BaseMatType& ps, 
               BaseMatType& pc, 
-              BaseMatType& sigma, 
-              std::vector<BaseMatType>& pStep,
-              BaseMatType& C,
-              BaseMatType& B,
-              BaseMatType& stepz,
-              BaseMatType& step,
-              arma::uvec& idx,
+              double sigma, 
               std::vector<BaseMatType>& z,
-              size_t i);
+              std::vector<BaseMatType>& y,
+              BaseMatType& B,
+              BaseMatType& D,
+              BaseMatType& C,
+              BaseMatType& sepCovinv,
+              BaseMatType& sepCov,  
+              BaseMatType& v,
+              arma::uvec& idx);
 
   //! Population size.
   size_t lambda;
@@ -207,7 +212,6 @@ class CMAES
   
  private:
   size_t mu; // number of candidate solutions used to update the distribution parameters.
-  size_t offsprings;
   // TODO: might need a more general type
   arma::Row<double> weights; // offsprings weighting scheme.
   double csigma; // cumulation constant for step size. 
@@ -217,6 +221,7 @@ class CMAES
   double mu_eff; // \sum^\mu _weights.
   double dsigma; // step size damping factor. 
   double alphamu;
+  double sigma; 
 
   // computed once at init for speeding up operations.
   double chi; // norm of N(0,I) 
@@ -228,20 +233,23 @@ class CMAES
 
   // stopping criteria parameters
   size_t countval;
-
+  size_t eigenval;
+  size_t niter;
 };
 
 /**
  * Convenient typedef for CMAES approximation.
  */
 
-using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight, VanilaUpdate>;
-
 using ApproxCMAES = CMAES<RandomSelection, DefaultWeight, VanilaUpdate>;
 
 using ActiveCMAES = CMAES<FullSelection, NegativeWeight, VanilaUpdate>;
 
-using SepCMAES = CMAES<FullSelection, NegativeWeight, SepUpdate>;
+using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight, VanilaUpdate>;
+
+using SepCMAES = CMAES<FullSelection, DefaultWeight, SepUpdate>;
+
+using VDCMAES = CMAES<FullSelection, DefaultWeight, VDUpdate>;
 } // namespace ens
 
 #include "cmaes_impl.hpp"

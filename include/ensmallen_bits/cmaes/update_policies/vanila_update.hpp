@@ -28,13 +28,66 @@ class VanilaUpdate
   }
 
   /**
+   * This function will sample z[j] firstly from Gaussian distribution, transformed it
+   * into new child under new distribution by multiplying square root of covariance matrix
+   * 
+   * @tparam MatType runtime matrix type
+   * @tparam BaseMatType runtime base matrix type - either rowvector or column otherwise Mat
+   * @param sigma step-size 
+   * @param lambda population size, sample size, number of offspring
+   * @param iterate on-going optimizing point
+   * @param z storing container for new sampled candidates ~ N(0,I)
+   * @param y storing container for new transformed candidates 
+   * @param candidates storing container for new candidates following updated distribution
+   * @param mCandidate current population's mean vector
+   * @param B orthogonal basis matrix: results of eigendecomposing covariance matrix = B*D^2*B.t()
+   * @param D a diagonal matrix. The diagonal elements of D are square roots of eigenvalues of C
+   * @param idx uvec vector - the sorted indices of candidates vector according to their fitness/obejctive 
+   */
+  template<typename MatType, typename BaseMatType>
+  std::vector<BaseMatType> samplePop(
+    double sigma,
+    size_t lambda,
+    MatType& iterate,
+    std::vector<BaseMatType>& z,
+    std::vector<BaseMatType>& y,
+    std::vector<BaseMatType>& candidates,
+    BaseMatType mCandidate,
+    BaseMatType& B,
+    BaseMatType& D, 
+    BaseMatType& /** sepCovinv **/,
+    BaseMatType& /** sepCov **/,
+    BaseMatType& /** v **/,
+    arma::uvec& idx)
+  {
+    BaseMatType BD = B*D;
+    for (size_t j = 0; j < lambda; ++j)
+    {
+      // z_j ~ N(0, I)
+      if(iterate.n_rows > iterate.n_cols)
+      {
+        z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+        y[idx(j)] = BD * z[j];
+      } 
+      else  
+      {
+        z[j] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+        y[idx(j)] = z[j] * BD.t();
+      }
+      candidates[idx(j)] = mCandidate + sigma * y[idx(j)];
+    }
+    return candidates;
+  }
+
+  /**
    * This function will update ps-step size control vector variable
    * 
    * @tparam MatType runtime matrix type 
+   * @tparam BaseMatType runtime base matrix type - either rowvector or column otherwise Mat
    * @param iterate on-going optimizing point
-   * @param ps step size control vector variable
+   * @param ps step size control vector variable - needed update
    * @param B orthogonal basis matrix: results of eigendecomposing covariance matrix = B*D^2*B.t()
-   * @param stepz vector of z[j]*weights(j)
+   * @param stepZ vector of z[j]*weights(j)
    * @param mu_eff weights effective  
    */
   template<typename MatType, typename BaseMatType>
@@ -42,28 +95,35 @@ class VanilaUpdate
     MatType& iterate, 
     BaseMatType& ps, 
     BaseMatType& B,
-    BaseMatType& stepz,
+    BaseMatType& /** sepCovinv **/,
+    BaseMatType& /** v **/,
+    BaseMatType& stepZ,
+    BaseMatType& /** stepY **/,
     double mu_eff)
   {
     double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
     if (iterate.n_rows > iterate.n_cols)
     {
       ps = (1 - csigma) * ps + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * B * stepz;
+          csigma * (2 - csigma) * mu_eff) * B * stepZ;
     }
     else
     {
       ps = (1 - csigma) * ps + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * stepz * B.t();
+          csigma * (2 - csigma) * mu_eff) * stepZ * B.t();
     }  
     return ps;
   }
 
   /**
-   * This function will update pSigma
+   * This function will update pc - evolution path vector 
    * 
-   * @tparam MatType runtime matrix type 
-   * @param 
+   * @tparam BaseMatType runtime base matrix type - either rowvector or column otherwise Mat
+   * @param cc learning rate for cumulation for the rank-one update of the covariance matrix
+   * @param pc evolution path - needed update 
+   * @param hs binary number prevent update pc if |ps| too large - refer to its formulate
+   * @param mu_eff weights effective
+   * @param stepY vector of y[j]*weights(j)
    */
   template<typename BaseMatType>
   BaseMatType updatePc(
@@ -71,33 +131,57 @@ class VanilaUpdate
     BaseMatType& pc,
     size_t hs,
     double mu_eff,
-    BaseMatType& step)
+    BaseMatType& stepY)
   {
-    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * step; 
+    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * stepY; 
     return pc;
   }
 
   /**
-   * This function will update pSigma
+   * This function will update covariance matrix C
    * 
-   * @param 
+   * @tparam MatType runtime matrix type
+   * @tparam BaseMatType runtime base matrix type - either rowvector or column otherwise Mat
+   * @param iterate on-going optimizing point
+   * @param cc learning rate for cumulation for the rank-one update of the covariance matrix
+   * @param c1 learning rate for the rank-one update of the covariance matrix update
+   * @param cmu  learning rate for the rank-µ update of the covariance matrix update
+   * @param lambda population size, sample size, number of offspring
+   * @param hs binary number prevent update pc if |ps| too large - refer to its formulate
+   * @param C covariance matrix
+   * @param B orthogonal basis matrix: results of eigendecomposing covariance matrix = B*D^2*B.t()
+   * @param D a diagonal matrix. The diagonal elements of D are square roots of eigenvalues of C
+   * @param pc evolution path - needed update 
+   * @param idx uvec vector - the sorted indices of candidates vector according to their fitness/obejctive 
+   * @param z vector of lambda sampled candidates ~ N(0,I)
+   * @param y vector of lambda transformed candidates from z
+   * @param weights vector of weights of candidates in mutation process
+   * @param eigenval 
+   * @param countval number of passed iteration
    */
   template<typename MatType, typename BaseMatType>
-  BaseMatType updateC(
+  void updateC(
     MatType& iterate,
     double cc,
     double c1,
     double cmu,
-    double mu_eff,
+    double /** mu_eff **/,
     size_t lambda,
     size_t hs,
     BaseMatType& C,
+    BaseMatType& B,
+    BaseMatType& D,
     BaseMatType& pc,
     arma::uvec& idx,
     std::vector<BaseMatType>& z,
-    std::vector<BaseMatType>& pStep,
+    std::vector<BaseMatType>& y,
     arma::Row<double>& weights,
-    BaseMatType& step)
+    BaseMatType& /** sepCov **/,
+    BaseMatType& /** sepCovinv **/,
+    BaseMatType& /** v **/,
+    size_t& eigenval,
+    size_t& countval)
+  
   {
     double deltahs = (1 - hs) * cc * (2 - cc);
     C = (1 + c1 * deltahs - c1 - cmu * arma::accu(weights)) * C;
@@ -111,7 +195,7 @@ class VanilaUpdate
             std::pow(arma::norm(z[j]), 2);
         if (weights(j) == 0) break;
         C = C + cmu * weights(j) *
-            pStep[idx(j)] * pStep[idx(j)].t();
+            y[idx(j)] * y[idx(j)].t();
       }
     }
     else
@@ -123,10 +207,24 @@ class VanilaUpdate
             std::pow(arma::norm(z[j]), 2);
         if (weights(j) == 0) break;
         C = C + cmu * weights(j) *
-            pStep[idx(j)].t() * pStep[idx(j)];
+            y[idx(j)].t() * y[idx(j)];
       }
-    }    
-    return C;
+    }  
+    typedef typename MatType::elem_type ElemType;
+    // To ensure that new result covariance matrix is positive definite
+    arma::Col<ElemType> eigval; // TODO: might need a more general type.
+    BaseMatType eigvec;
+    BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
+    eigvalZero.zeros();
+
+    if (countval - eigenval > lambda / ((c1 + cmu) * iterate.n_elem * 10))
+    {
+      eigenval = countval;
+      C = arma::trimatu(C) + arma::trimatu(C).t();
+      arma::eig_sym(eigval, eigvec, C);
+      B = eigvec;
+      D = arma::diagmat(arma::sqrt(eigval));
+    }  
   }
 
 };
