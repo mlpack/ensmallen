@@ -104,7 +104,7 @@ class VDUpdate{
     double mu_eff)
   {
     double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
-    BaseMatType upTerm = BaseMatType(iterate.n_rows, iterate.n_cols, arma::fill::value(1.0));
+    BaseMatType upTerm = BaseMatType(iterate.n_rows, iterate.n_cols, arma::fill::ones);
     ps = (1 - csigma) * ps + std::sqrt(csigma * (2 - csigma) * mu_eff) * 
         ((1 / arma::sqrt(upTerm + v%v)) % (sepCovinv % stepY));
     return ps;
@@ -179,7 +179,7 @@ class VDUpdate{
     BaseMatType vbar = v / std::sqrt(sqv);
     BaseMatType vbarbar = vbar % vbar;
     // Useful matrix
-    BaseMatType idenMat(iterate.n_rows, iterate.n_cols, arma::fill::value(1.0));
+    BaseMatType idenMat(iterate.n_rows, iterate.n_cols, arma::fill::ones);
 
     // New setting for VD update - Effective when dimension is large
     double cfactor = std::max((iterate.n_elem - 5.0) / 6.0, 0.5);
@@ -200,12 +200,12 @@ class VDUpdate{
       BaseMatType A = 2.0 * idenMat - (b + 2.0 * alpha*alpha) * vbarbar;
       
       BaseMatType ym = sepCovinv % pc; // Dimension is same with y(i)
-      arma::uvec yvbar(mu, arma::fill::value(0.0));
+      arma::uvec yvbar(mu, arma::fill::zeros);
 
       std::vector<BaseMatType> pmat(mu, BaseMatType(iterate.n_rows, iterate.n_cols));
       std::vector<BaseMatType> qmat = pmat;
 
-      BaseMatType pvec(iterate.n_rows, iterate.n_cols, arma::fill::value(0.0));
+      BaseMatType pvec(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
       BaseMatType qvec = pvec;
       BaseMatType ponevec = pvec;
       BaseMatType qonevec = pvec;
