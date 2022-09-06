@@ -70,6 +70,7 @@ Optimize(SeparableFunctionType &function,
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Intantiated the algorithm params
+  double sigma = 0.3 * (upperBound - lowerBound);
   initialize(iterate, lowerBound, upperBound);
 
   BaseMatType mCandidate(iterate.n_rows, iterate.n_cols);
@@ -219,7 +220,6 @@ initialize(MatType& iterate,
   mu_eff = weightPolicy.MuEff();
 
   // Strategy parameter setting: Adaption
-  sigma = 0.3 * (upperBound - lowerBound);
   cc = (4.0 + mu_eff / iterate.n_elem) / (4.0 + iterate.n_elem + 2 * mu_eff / iterate.n_elem);
   csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
   c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + mu_eff);
@@ -246,7 +246,7 @@ inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
 update(MatType& iterate,
        BaseMatType& ps, 
        BaseMatType& pc, 
-       double sigma, 
+       double& sigma, 
        std::vector<BaseMatType>& z,
        std::vector<BaseMatType>& y,
        BaseMatType& B,

@@ -172,7 +172,7 @@ class CMAES
   void update(MatType& iterate,
               BaseMatType& ps, 
               BaseMatType& pc, 
-              double sigma, 
+              double& sigma, 
               std::vector<BaseMatType>& z,
               std::vector<BaseMatType>& y,
               BaseMatType& B,
@@ -221,7 +221,6 @@ class CMAES
   double mu_eff; // \sum^\mu _weights.
   double dsigma; // step size damping factor. 
   double alphamu;
-  double sigma; 
 
   // computed once at init for speeding up operations.
   double chi; // norm of N(0,I) 
