@@ -1,8 +1,8 @@
 /**
- * @file cmaes.hpp
- * @author Marcus Edel
+ * @file cmaes_hoang.hpp
+ * @author Marcus Edel 
  * @author Kartik Nighania
- *
+ * @author John Hoang
  * Definition of the Covariance Matrix Adaptation Evolution Strategy as proposed
  * by N. Hansen et al. in "Completely Derandomized Self-Adaptation in Evolution
  * Strategies".
@@ -12,12 +12,21 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
 #ifndef ENSMALLEN_CMAES_CMAES_HPP
 #define ENSMALLEN_CMAES_CMAES_HPP
 
-#include "full_selection.hpp"
-#include "random_selection.hpp"
+//! Selection Policy
+#include "selection_policies/full_selection.hpp"
+#include "selection_policies/random_selection.hpp"
 
+//! Weight initialization policies.
+#include "weight_init_policies/default_weight.hpp"
+#include "weight_init_policies/negative_weight.hpp"
+
+//! Update Policies
+#include "update_policies/vanila_update.hpp"
+#include "update_policies/sep_update.hpp"
 namespace ens {
 
 /**
@@ -46,8 +55,12 @@ namespace ens {
  * ensmallen website.
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
+ * @tparam WeightPolicy The weight initialization strategy 
  */
-template<typename SelectionPolicyType = FullSelection>
+template<typename SelectionPolicyType = FullSelection,
+         typename WeightPolicyType = DefaultWeight,
+         typename UpdatePolicyType = VanilaUpdate>
+
 class CMAES
 {
  public:
@@ -68,6 +81,8 @@ class CMAES
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
+   * @param weightPolicy Instantiated weight initialization policy applying on offsprings in each iteration
+   * @param updatePolicy Instantiated update parameters policy 
    */
   CMAES(const size_t lambda = 0,
         const double lowerBound = -10,
@@ -75,7 +90,9 @@ class CMAES
         const size_t batchSize = 32,
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType());
+        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+        const WeightPolicyType& weightPolicy = WeightPolicyType(),
+        const UpdatePolicyType& updatePolicy = UpdatePolicyType());
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -96,7 +113,6 @@ class CMAES
   typename MatType::elem_type Optimize(SeparableFunctionType& function,
                                        MatType& iterate,
                                        CallbackTypes&&... callbacks);
-
   //! Get the population size.
   size_t PopulationSize() const { return lambda; }
   //! Modify the population size.
@@ -132,7 +148,36 @@ class CMAES
   //! Modify the selection policy.
   SelectionPolicyType& SelectionPolicy() { return selectionPolicy; }
 
+  //! Get the weight policy.
+  const WeightPolicyType& WeightPolicy() const { return weightPolicy; }
+  //! Modify the weight policy.
+  WeightPolicyType& WeightPolicy() { return weightPolicy; }
+
+  //! Get the update policy.
+  const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
  private:
+  //! Initializing the parameters function
+  template<typename MatType>
+  void initialize(MatType& iterate);
+
+  //! Update the algorithm's parameters
+  template<typename MatType, typename BaseMatType>
+  void update(MatType& iterate,
+              BaseMatType& ps, 
+              BaseMatType& pc, 
+              BaseMatType& sigma, 
+              std::vector<BaseMatType>& pStep,
+              BaseMatType& C,
+              BaseMatType& B,
+              BaseMatType& stepz,
+              BaseMatType& step,
+              arma::uvec& idx,
+              std::vector<BaseMatType>& z,
+              size_t i);
+
   //! Population size.
   size_t lambda;
 
@@ -152,18 +197,53 @@ class CMAES
   double tolerance;
 
   //! The selection policy used to calculate the objective.
-  SelectionPolicyType selectionPolicy;
+  SelectionPolicyType selectionPolicy; 
+
+  // The weight initialization policy
+  WeightPolicyType weightPolicy;
+
+  // The update policy 
+  UpdatePolicyType updatePolicy;
+  
+ private:
+  size_t mu; // number of candidate solutions used to update the distribution parameters.
+  size_t offsprings;
+  // TODO: might need a more general type
+  arma::Row<double> weights; // offsprings weighting scheme.
+  double csigma; // cumulation constant for step size. 
+  double c1; // covariance matrix learning rate for the rank one update using pc. 
+  double cmu; // covariance matrix learning reate for the rank mu update. 
+  double cc; // cumulation constant for pc. 
+  double mu_eff; // \sum^\mu _weights.
+  double dsigma; // step size damping factor. 
+  double alphamu;
+
+  // computed once at init for speeding up operations.
+  double chi; // norm of N(0,I) 
+  double hsigma;
+
+  // active cma.
+  double cm; //learning rate for the mean. 
+  double alphacov; // = 2 (active CMA only) 
+
+  // stopping criteria parameters
+  size_t countval;
+
 };
 
 /**
  * Convenient typedef for CMAES approximation.
  */
-template<typename SelectionPolicyType = RandomSelection>
-using ApproxCMAES = CMAES<SelectionPolicyType>;
 
+using ActiveApproxCMAES = CMAES<RandomSelection, NegativeWeight, VanilaUpdate>;
+
+using ApproxCMAES = CMAES<RandomSelection, DefaultWeight, VanilaUpdate>;
+
+using ActiveCMAES = CMAES<FullSelection, NegativeWeight, VanilaUpdate>;
+
+using SepCMAES = CMAES<FullSelection, NegativeWeight, SepUpdate>;
 } // namespace ens
 
-// Include implementation.
 #include "cmaes_impl.hpp"
 
 #endif
