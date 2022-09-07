@@ -71,6 +71,19 @@ class SepUpdate{
   }
 
   /**
+   * This function is not needed - vanila update not need to rescale param
+   */
+  template<typename MatType>
+  void rescaleParam(MatType& /** iterate **/,
+                    double& /** c1 **/,
+                    double& /** cmu **/,
+                    double& /** csigma **/,
+                    double& /** mu_eff **/)
+  {
+    // Doing nothing
+  }
+
+  /**
    * This function will update ps-step size control vector variable
    * 
    * @tparam MatType runtime matrix type 

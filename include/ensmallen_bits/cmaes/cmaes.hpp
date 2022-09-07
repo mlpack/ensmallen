@@ -163,9 +163,7 @@ class CMAES
  private:
   //! Initializing the parameters function
   template<typename MatType>
-  void initialize(MatType& iterate,
-                  const double lower_bound,
-                  const double upper_bound);
+  void initialize(MatType& iterate);
 
   //! Update the algorithm's parameters
   template<typename MatType, typename BaseMatType>

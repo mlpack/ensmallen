@@ -107,7 +107,6 @@ void LogisticRegressionFunctionTestRealM(OptimizerType& optimizer,
   
   data = data.t();
   size_t n_row = data.n_rows;
-  std::cout << data.n_rows << " " << data.n_cols << std::endl;
   responses = arma::conv_to<arma::Row<size_t>>::from(data.row(0));
   data = data.rows(1, std::min(dim, n_row)-1);
   arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 
@@ -275,33 +274,33 @@ TEST_CASE("VDCMAESTitanicTest", "[CMAESTest]")
 
 
 // Benchmarking purposes
-TEST_CASE("CMAESGisetteTest", "[CMAESTest]")
+TEST_CASE("CMAESmadelonTest", "")
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
 }
-TEST_CASE("ApproxCMAESGisetteTest", "[CMAESTest]")
+TEST_CASE("ApproxCMAESmadelonTest", "")
 {
   ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
 }
-TEST_CASE("ActiveCMAESGisetteTest", "[CMAESTest]")
+TEST_CASE("ActiveCMAESmadelonTest", "")
 {
   ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
 }
-TEST_CASE("ActiveApproxCMAESGisetteTest", "[CMAESTest]")
+TEST_CASE("ActiveApproxCMAESmadelonTest", "")
 {
   ActiveApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
 }
-TEST_CASE("SepCMAESGisetteTest", "[CMAESTest]")
+TEST_CASE("SepCMAESmadelonTest", "")
 {
   SepCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
 }
-TEST_CASE("VDCMAESGisetteTest", "[CMAESTest]")
+TEST_CASE("VDCMAESmadelonTest", "")
 {
   VDCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
 }

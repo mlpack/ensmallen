@@ -82,6 +82,32 @@ class VDUpdate{
   }
 
   /**
+   * This function will rescale the learning rate parameters for Vd-Update
+   * 
+   * @tparam MatType runtime matrix type
+   * @tparam BaseMatType runtime base matrix type - either rowvector or column otherwise Mat
+   * @param iterate on-going optimizing point
+   * @param c1 learning rate for the rank-one update of the covariance matrix update
+   * @param cmu  learning rate for the rank-µ update of the covariance matrix update
+   * @param csigma learning rate for step-size control
+   * @param mu_eff effective of weights vector  
+   */
+  template<typename MatType>
+  void rescaleParam(MatType& iterate,
+                    double& c1,
+                    double& cmu,
+                    double& csigma,
+                    double& mu_eff)
+  {
+    // New setting for VD update - Effective when dimension is large
+    double cfactor = std::max((iterate.n_elem - 5.0) / 6.0, 0.5);
+    c1 = cfactor * c1; 
+    cmu = std::min(1 - c1, cfactor * 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / 
+        (std::pow(iterate.n_elem + 2.0, 2) + mu_eff));
+    csigma = std::sqrt(mu_eff) / (2*(std::sqrt(iterate.n_elem) + std::sqrt(mu_eff)));
+  }
+  
+  /**
    * This function will update ps-step size control vector variable
    * 
    * @tparam MatType runtime matrix type 
@@ -141,6 +167,7 @@ class VDUpdate{
    * @param iterate on-going optimizing point
    * @param c1 learning rate for the rank-one update of the covariance matrix update
    * @param cmu  learning rate for the rank-µ update of the covariance matrix update
+   * @param mu_eff effective of weights vector
    * @param lambda population size, sample size, number of offspring
    * @param hs binary number prevent update pc if |ps| too large - refer to its formulate
    * @param pc evolution path - needed update 
@@ -157,7 +184,7 @@ class VDUpdate{
     double /** cc **/,
     double c1,
     double cmu,
-    double mu_eff,
+    double /** mu_eff **/,
     size_t lambda,
     size_t hs,
     BaseMatType& /** C **/,
@@ -181,11 +208,6 @@ class VDUpdate{
     // Useful matrix
     BaseMatType idenMat(iterate.n_rows, iterate.n_cols, arma::fill::ones);
 
-    // New setting for VD update - Effective when dimension is large
-    double cfactor = std::max((iterate.n_elem - 5.0) / 6.0, 0.5);
-    c1 = cfactor * c1; 
-    cmu = std::min(1 - c1, cfactor * 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / 
-        (std::pow(iterate.n_elem + 2.0, 2) + mu_eff));
     // TODO: changing csigma as in the paper too: \sqrt(mu_eff)/(2(dim + \sqrt(mu_eff))) -
     // problem: csigma is out of this scope function
     if ((cmu + c1) > 0)

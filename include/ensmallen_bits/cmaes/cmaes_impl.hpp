@@ -71,7 +71,7 @@ Optimize(SeparableFunctionType &function,
 
   // Intantiated the algorithm params
   double sigma = 0.3 * (upperBound - lowerBound);
-  initialize(iterate, lowerBound, upperBound);
+  initialize(iterate);
 
   BaseMatType mCandidate(iterate.n_rows, iterate.n_cols);
   
@@ -201,9 +201,7 @@ template <typename SelectionPolicyType,
           typename UpdatePolicyType>
 template<typename MatType>
 inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
-initialize(MatType& iterate,
-           const double lowerBound,
-           const double upperBound)
+initialize(MatType& iterate)
 {
   niter = 0;
   countval = 0;
@@ -271,7 +269,8 @@ update(MatType& iterate,
 
   double psNorm = arma::norm(ps);
   size_t hs = (psNorm < hsigma*sqrt(1.0 - std::pow(1.0 - csigma, 2.0 * (niter+1)))) ? 1 : 0;
-
+  // Rescale parameters c1, cmu, csigma for vd-update
+  updatePolicy.rescaleParam(iterate, c1, cmu, csigma, mu_eff);
   // Update sigma.
   sigma = sigma * std::exp(csigma / dsigma * (psNorm / chi - 1));
 

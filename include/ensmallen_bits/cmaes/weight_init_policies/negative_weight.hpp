@@ -22,7 +22,8 @@ class NegativeWeight
    * Constructor
    * 
    */
-  NegativeWeight()
+  NegativeWeight(bool test = false):
+                 test(test)
   {
     // Doing nothing
   }
@@ -97,7 +98,10 @@ class NegativeWeight
       }
     }
     muEffNeg = NegativeEff(weights);
-    Checking();
+    if (test) 
+    { 
+      Checking();
+    }
     return weights;
   }
   /**
@@ -147,6 +151,7 @@ class NegativeWeight
   arma::Row<double>& Weights() { return weights; }
 
  private:
+  bool test;
   size_t len;
   size_t mu;
   double muEff;
