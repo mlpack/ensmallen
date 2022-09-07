@@ -277,30 +277,30 @@ TEST_CASE("VDCMAESTitanicTest", "[CMAESTest]")
 TEST_CASE("CMAESGisetteTest", "")
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
 }
 TEST_CASE("ApproxCMAESGisetteTest", "")
 {
   ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
 }
 TEST_CASE("ActiveCMAESGisetteTest", "")
 {
   ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
 }
 TEST_CASE("ActiveApproxCMAESGisetteTest", "")
 {
   ActiveApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
 }
 TEST_CASE("SepCMAESGisetteTest", "")
 {
   SepCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
 }
 TEST_CASE("VDCMAESGisetteTest", "")
 {
   VDCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 5000, 1);
 }
