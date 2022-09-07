@@ -274,33 +274,33 @@ TEST_CASE("VDCMAESTitanicTest", "[CMAESTest]")
 
 
 // Benchmarking purposes
-TEST_CASE("CMAESmadelonTest", "")
+TEST_CASE("CMAESGisetteTest", "")
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
 }
-TEST_CASE("ApproxCMAESmadelonTest", "")
+TEST_CASE("ApproxCMAESGisetteTest", "")
 {
   ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
 }
-TEST_CASE("ActiveCMAESmadelonTest", "")
+TEST_CASE("ActiveCMAESGisetteTest", "")
 {
   ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
 }
-TEST_CASE("ActiveApproxCMAESmadelonTest", "")
+TEST_CASE("ActiveApproxCMAESGisetteTest", "")
 {
   ActiveApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
 }
-TEST_CASE("SepCMAESmadelonTest", "")
+TEST_CASE("SepCMAESGisetteTest", "")
 {
   SepCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
 }
-TEST_CASE("VDCMAESmadelonTest", "")
+TEST_CASE("VDCMAESGisetteTest", "")
 {
   VDCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestRealM(cmaes, "data/madelon.csv", 10, 1);
+  LogisticRegressionFunctionTestRealM(cmaes, "data/gisette.csv", 10, 1);
 }
