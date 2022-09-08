@@ -19,12 +19,13 @@ using namespace ens;
 using namespace ens::test;
 
 template<typename MatType = arma::mat, typename OptimizerType>
-void LogisticRegressionFunctionTestReal(OptimizerType& optimizer,
-                                        const double trainAccuracyTolerance,
-                                        const double testAccuracyTolerance,
-                                        const std::string dataset_path,
-                                        const size_t trials = 1,
-                                        const double split_ratio = 0.8)
+void LogisticRgressionGisetteData(OptimizerType& optimizer,
+                                  const double trainAccuracyTolerance,
+                                  const double testAccuracyTolerance,
+                                  const std::string dataset_path,
+                                  const size_t trials = 1,
+                                  const size_t dim = 1000,
+                                  const double split_ratio = 0.8)
 {
   MatType data, testData, shuffledData;
   arma::Row<size_t> responses, testResponses, shuffledResponses;
@@ -37,9 +38,9 @@ void LogisticRegressionFunctionTestReal(OptimizerType& optimizer,
   }
   
   data = data.t();
+  size_t n_row = data.n_rows;
   responses = arma::conv_to<arma::Row<size_t>>::from(data.row(0));
-  data = data.rows(1, data.n_rows-1);
-
+  data = data.rows(1, std::min(dim, n_row)-1);
   arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 
       data.n_cols - 1, data.n_cols)); 
   size_t idx = data.n_cols * split_ratio;
@@ -63,27 +64,25 @@ void LogisticRegressionFunctionTestReal(OptimizerType& optimizer,
   }
 
   ens::test::LogisticRegression<MatType> lr(data, responses, 0.5);
-
   for (size_t i = 0; i < trials; ++i)
   {
     MatType coordinates = lr.GetInitialPoint();
     optimizer.Optimize(lr, coordinates);
-
     const double acc = lr.ComputeAccuracy(shuffledData, shuffledResponses, 
         coordinates);
     const double testAcc = lr.ComputeAccuracy(testData, testResponses,
         coordinates);
-
+  
     // Provide a shortcut to try again if we're not on the last trial.
     if (i != (trials - 1))
     {
-      if (acc != Approx(60.393258427).epsilon(trainAccuracyTolerance))
+      if (acc != Approx(50.0).epsilon(trainAccuracyTolerance))
         continue;
-      if (testAcc != Approx(66.4804).epsilon(testAccuracyTolerance))
+      if (testAcc != Approx(50.0).epsilon(testAccuracyTolerance))
         continue;
     }
-    REQUIRE(acc == Approx(60.393258427).epsilon(trainAccuracyTolerance));
-    REQUIRE(testAcc == Approx(66.4804).epsilon(testAccuracyTolerance));
+    REQUIRE(acc == Approx(100.0).epsilon(trainAccuracyTolerance));
+    REQUIRE(testAcc == Approx(100.0).epsilon(testAccuracyTolerance));
     break;
   }
 }
@@ -139,66 +138,66 @@ TEST_CASE("VDCMAESLogisticRegressionTest", "[CMAESTest]")
 }
 
 /**
- * Run CMA-ES with the full selection policy on titanic dataset and 
+ * Run CMA-ES with the full selection policy on Gisette dataset and 
  * using logistic regression algorithm
  * 
- * See more on dataset at https://www.kaggle.com/competitions/titanic/data
+ * See more on dataset at https://archive.ics.uci.edu/ml/datasets/Gisette 
  * Make sure the results are acceptable.
  */
-TEST_CASE("CMAESTitanicTest", "[CMAESTest]")
+TEST_CASE("CMAESGisetteTest", "[CMAESTest]")
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
+  LogisticRgressionGisetteData(cmaes, 1.0, 1.0, "data/gisette.csv", 5);
 }
 
 /**
- * Run CMA-ES with the random selection policy on titanic dataset and 
+ * Run CMA-ES with the random selection policy on Gisette dataset and 
  * using logistic regression algorithm
  * 
- * See more on dataset at https://www.kaggle.com/competitions/titanic/data
+ * See more on dataset at https://archive.ics.uci.edu/ml/datasets/Gisette 
  * Make sure the results are acceptable.
  */
-TEST_CASE("ApproxCMAESTitanicTest", "[CMAESTest]")
+TEST_CASE("ApproxCMAESGisetteTest", "[CMAESTest]")
 {
   ApproxCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
+  LogisticRgressionGisetteData(cmaes, 1.0, 1.0, "data/gisette.csv", 5);
 }
 
 /**
- * Run Active CMA-ES with the full selection policy on titanic dataset and 
+ * Run Active CMA-ES with the full selection policy on Gisette dataset and 
  * using logistic regression algorithm
  * 
- * See more on dataset at https://www.kaggle.com/competitions/titanic/data
+ * See more on dataset at https://archive.ics.uci.edu/ml/datasets/Gisette
  * Make sure the results are acceptable.
  */
-TEST_CASE("ActiveCMAESTitanicTest", "[CMAESTest]")
+TEST_CASE("ActiveCMAESGisetteTest", "[CMAESTest]")
 {
   ActiveCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
+  LogisticRgressionGisetteData(cmaes, 1.0, 1.0, "data/gisette.csv", 5);
 }
 
 /**
- * Run Sep-CMA-ES with the full selection policy on titanic dataset and 
+ * Run Sep-CMA-ES with the full selection policy on Gisette dataset and 
  * using logistic regression algorithm
  * 
- * See more on dataset at https://www.kaggle.com/competitions/titanic/data
+ * See more on dataset at https://archive.ics.uci.edu/ml/datasets/Gisette 
  * Make sure the results are acceptable.
  */
-TEST_CASE("SepCMAESTitanicTest", "[CMAESTest]")
+TEST_CASE("SepCMAESGisetteTest", "[CMAESTest]")
 {
   SepCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
+  LogisticRgressionGisetteData(cmaes, 1.0, 1.0, "data/gisette.csv", 5);
 }
 
 /**
- * Run Vd-CMA-ES with the full selection policy on titanic dataset and 
+ * Run Vd-CMA-ES with the full selection policy on Gisette dataset and 
  * using logistic regression algorithm
  * 
- * See more on dataset at https://www.kaggle.com/competitions/titanic/data
+ * See more on dataset at https://archive.ics.uci.edu/ml/datasets/Gisette 
  * Make sure the results are acceptable.
  */
-TEST_CASE("VDCMAESTitanicTest", "[CMAESTest]")
+TEST_CASE("VDCMAESGisetteTest", "[CMAESTest]")
 {
   VDCMAES cmaes(0, -1, 1, 32, 200, 1e-3);
-  LogisticRegressionFunctionTestReal(cmaes, 0.003, 0.006, "data/titanic.csv", 5);
+  LogisticRgressionGisetteData(cmaes, 1.0, 1.0, "data/gisette.csv", 5);
 }
