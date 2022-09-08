@@ -1,10 +1,10 @@
 /**
  * @file vd_update.hpp
  * @author John Hoang 
+ * 
  * VD-CMA: Linear Time/Space Comparison-based Natural Gradient Optimization
  * The covariance matrix is limited as C = D * (I + v*v^t) * D,
  * where D is a diagonal, v is a vector.
- * 
  * Reference
  * ---------
  * Youhei Akimoto, Anne Auger, and Nikolaus Hansen.

@@ -1,8 +1,9 @@
 /**
- * @file cmaes_hoang.hpp
- * @author Marcus Edel 
+ * @file cmaes.hpp
+ * @author Marcus Edel
  * @author Kartik Nighania
  * @author John Hoang
+ * 
  * Definition of the Covariance Matrix Adaptation Evolution Strategy as proposed
  * by N. Hansen et al. in "Completely Derandomized Self-Adaptation in Evolution
  * Strategies".

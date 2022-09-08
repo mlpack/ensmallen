@@ -1,6 +1,7 @@
 /**
  * @file sep_update.hpp
  * @author John Hoang 
+ * 
  * Sep-CMA: The covariance matrix is limited as a diagonal vector only C = D^2 with D is a vector
  * as proposed in Raymond Ros et al. in "A Simple Modification in CMA-ES Achieving Linear
  * Time and Space Complexitys".
