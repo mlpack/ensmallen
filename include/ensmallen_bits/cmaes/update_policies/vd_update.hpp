@@ -215,8 +215,8 @@ class VDUpdate{
     double sqv = arma::accu(arma::pow(v, 2));
     BaseMatType vbar = v / std::sqrt(sqv);
     BaseMatType vbarbar = vbar % vbar;
-    // Useful matrix.
-    BaseMatType idenMat(iterate.n_rows, iterate.n_cols, arma::fill::ones);
+    // Useful identity matrix.
+    BaseMatType idMat = arma::eye<BaseMatType>(iterate.n_rows, iterate.n_cols);
 
     if ((cmu + c1) > 0)
     {
@@ -227,7 +227,7 @@ class VDUpdate{
       alpha = std::min(1.0, std::sqrt(alpha) / (2.0 + sqv));
       double b = -(1 - alpha*alpha) * sqv * sqv / gammav + 2.0 * alpha*alpha;
 
-      BaseMatType A = 2.0 * idenMat - (b + 2.0 * alpha*alpha) * vbarbar;
+      BaseMatType A = 2.0 * idMat - (b + 2.0 * alpha*alpha) * vbarbar;
       
       BaseMatType ym = sepCovinv % pc; // Dimension is same with y(i).
       arma::uvec yvbar(mu, arma::fill::zeros);
@@ -245,7 +245,7 @@ class VDUpdate{
         yvbar(i) = dot(vbar, y[idx(i)]);
         pmat[i] = y[idx(i)] % y[idx(i)] - (sqv / gammav * yvbar(i)) * (vbar % y
             [idx(i)]);
-        pmat[i] = (pmat[i] - idenMat) * weights(idx(i));
+        pmat[i] = (pmat[i] - idMat) * weights(idx(i));
         pvec += pmat[i];
         qmat[i] = (yvbar(i) * y[idx(i)] - 0.5 * (yvbar(i) * yvbar(i) + gammav) 
             * vbar) * weights(idx(i));
@@ -254,7 +254,7 @@ class VDUpdate{
       // ponevec and qonevec shape is same like iterate.
       double ymvbar = arma::dot(vbar, ym);
 
-      ponevec = ym % ym - (sqv / gammav) * ymvbar * (vbar % ym) - idenMat;
+      ponevec = ym % ym - (sqv / gammav) * ymvbar * (vbar % ym) - idMat;
       qonevec = ymvbar * ym - 0.5 * (ymvbar * ymvbar + gammav) * vbar;
 
       pvec = cmu * pvec + hs * c1 * ponevec;

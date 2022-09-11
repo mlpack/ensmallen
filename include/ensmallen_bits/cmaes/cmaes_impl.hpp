@@ -119,10 +119,9 @@ Optimize(SeparableFunctionType &function,
       std::sqrt(iterate.n_elem);
 
   // Vanilda update parameters.
-  BaseMatType C(iterate.n_elem, iterate.n_elem);
-  C.eye();
-  BaseMatType B(iterate.n_elem, iterate.n_elem); B.eye();
-  BaseMatType D(iterate.n_elem, iterate.n_elem); D.eye();
+  BaseMatType C = arma::eye<BaseMatType>(iterate.n_elem, iterate.n_elem);
+  BaseMatType B = arma::eye<BaseMatType>(iterate.n_elem, iterate.n_elem);
+  BaseMatType D = arma::eye<BaseMatType>(iterate.n_elem, iterate.n_elem);
   // The current visitation order (sorted by population objectives).
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
 
