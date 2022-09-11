@@ -70,10 +70,11 @@ class NegativeWeight
                              const double c1,
                              const double cmu)
   {
-    if(c1 > 10 * cmu)
-      std::cout << "Warning: c1/cmu seems to assume a too large value for 
-          negative weight setting" << std::endl;
-        
+    if (c1 > 10 * cmu) 
+    {
+      std::cout << "Warning: c1/cmu seems to assume a too large value for"
+          << "negative weight setting" << std::endl;
+    }   
     double sumNeg = std::abs(arma::accu(weights.cols(mu, len - 1)));
 
     const double alphaMuNegative = 1 + c1/cmu;
