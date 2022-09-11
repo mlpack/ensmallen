@@ -1,14 +1,13 @@
 /**
  * @file default_weight.hpp
  * @author John Hoang 
- * 
+ *
  * Default initialization weight
- * 
+ *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- * 
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information. 
  */
 #ifndef ENSMALLEN_CMAES_DEFAULT_WEIGHT_HPP
 #define ENSMALLEN_CMAES_DEFAULT_WEIGHT_HPP
@@ -21,23 +20,24 @@ class DefaultWeight
  public:
   /**
    * Constructor
-   * 
+   *
    */
   DefaultWeight()
   {
-    // Doing nothing
+    // Doing nothing.
   }
 
   /**
-   * This function will generate raw weights and mu_eff first 
-   * 
-   * @param lambda The length of raw weights 
+   * This function will generate raw weights and mu_eff first.
+   *
+   * @param lambda The length of raw weights.
    */
   void GenerateRaw(const size_t lambda)
   {
     len = lambda;
     mu = std::round(len / 2);
-    weights = std::log(mu + 0.5) - arma::log(arma::linspace<arma::Row<double> >(0, len - 1, len) + 1.0);
+    weights = std::log(mu + 0.5) - 
+        arma::log(arma::linspace<arma::Row<double>>(0, len - 1, len) + 1.0);
     for (size_t i = mu; i < len; ++i)
     {
       weights(i) = 0;
@@ -53,12 +53,12 @@ class DefaultWeight
   }
 
   /**
-   * Generate default weight for new population
-   * 
-   *  @tparam ElemType The type of elements in weight vector
-   *  @param dim Dimension of iterate variable
-   *  @param c1 
-   *  @param cmu
+   * Generate default weight for new population.
+   *
+   * @tparam ElemType The type of elements in weight vector.
+   * @param dim Dimension of iterate variable.
+   * @param c1
+   * @param cmu
    */
   arma::Row<double> Generate(const size_t /** dim **/,
                              const double /** c1 **/,
@@ -67,12 +67,13 @@ class DefaultWeight
     return weights;
   }
 
-  // Return variance-effective before the Generate function is called since c1 and cmu is 
-  // calculated beforehand 
+  // Return variance-effective before the Generate function is called since c1 
+  // and cmu is calculated beforehand.
   double MuEff() const { return muEff; }
   double& MuEff() { return muEff; }
 
-  // These functions might be unnecessary since Generate function is already return the desired weights 
+  // These functions might be unnecessary since Generate function is already 
+  // return the desired weights.
   arma::Row<double> Weights() const { return weights; }
   arma::Row<double> Weights() { return weights; }
 

@@ -20,22 +20,22 @@ class NegativeWeight
  public:
   /**
    * Constructor
-   * 
+   *
    */
   NegativeWeight(bool test = false):
                  test(test)
   {
-    // Doing nothing
+    // Doing nothing.
   }
   
   /**
-   * This function will generate raw weights and muEff first 
-   * 
-   * @param lambda The length of raw weights 
+   * This function will generate raw weights and muEff first.
+   *
+   * @param lambda The length of raw weights.
    */
   void GenerateRaw(const size_t lambda)
   {
-    // Checking the length of the weights vector
+    // Checking the length of the weights vector.
     len = lambda;
     assert(len >= 2 && "Number of weights must be >= 2");
     weights = std::log((len + 1) / 2) - 
@@ -43,14 +43,14 @@ class NegativeWeight
     
     assert(weights(0) > 0 && "The first weight must be >0");
     assert(weights(len - 1) <= 0 && "The last weight must be <= 0");
-    // mu is expected a half of len(allias of lambda in CMAparameters class)
+    // mu is expected a half of len(allias of lambda in CMAparameters class).
     mu = 0;
     for (size_t i = 0; i < len; ++i)
     {
       if (weights(i) > 0) mu++;
     }
     double sumPos = arma::accu(weights.cols(0, mu - 1));
-    // positive weights sum to one
+    // Positive weights sum to one.
     for (size_t i = 0; i < mu; ++i)
     {
       weights(i) /= sumPos;
@@ -59,19 +59,20 @@ class NegativeWeight
   }
 
   /**
-   * Generate negative weight for new population
-   * 
-   *  @tparam ElemType The type of elements in weight vector
-   *  @param dim Dimension of iterate variable
-   *  @param c1 
-   *  @param cmu
+   * Generate negative weight for new population.
+   *
+   * @tparam ElemType The type of elements in weight vector.
+   * @param dim Dimension of iterate variable.
+   * @param c1
+   * @param cmu
    */
   arma::Row<double> Generate(const size_t dim,
                              const double c1,
                              const double cmu)
   {
     if(c1 > 10 * cmu)
-      std::cout << "Warning: c1/cmu seems to assume a too large value for negative weight setting" << std::endl;
+      std::cout << "Warning: c1/cmu seems to assume a too large value for 
+          negative weight setting" << std::endl;
         
     double sumNeg = std::abs(arma::accu(weights.cols(mu, len - 1)));
 
@@ -82,13 +83,15 @@ class NegativeWeight
     for (size_t i = mu; i < len; ++i)
     {
       weights(i) *= factor;
-      weights(i) /= sumNeg; 
+      weights(i) /= sumNeg;
     } 
 
-    const double alphaMuEffNegative = 1 + 2 * NegativeEff(weights) / (muEff + 2);
-    if (std::abs(arma::accu(weights.cols(mu, len-1))) >= -std::abs(alphaMuEffNegative))
+    double alphaMuEffNegative = 1 + 2 * NegativeEff(weights) / (muEff + 2);
+    if (std::abs(arma::accu(weights.cols(mu, len-1))) >= 
+        -std::abs(alphaMuEffNegative))
     {
-      factor = abs(alphaMuEffNegative) / std::abs(arma::accu(weights.cols(mu, len - 1)));
+      factor = abs(alphaMuEffNegative) / 
+          std::abs(arma::accu(weights.cols(mu, len - 1)));
       if (factor < 1)
       {
         for (size_t i = mu; i < len; ++i)
@@ -105,7 +108,7 @@ class NegativeWeight
     return weights;
   }
   /**
-   * This function will check all the conditions that the weights vector has to stastify
+   * function will check all the conditions weights vector has to stastify.
    */
   void Checking()
   {
@@ -117,7 +120,8 @@ class NegativeWeight
     }
     assert(mu > 0);
     assert(weights(mu - 1) > 0 && 0 >= weights(mu));
-    assert(0.999 < arma::accu(weights.cols(0, mu - 1)) && arma::accu(weights.cols(0, mu - 1)) < 1.001);
+    assert(0.999 < arma::accu(weights.cols(0, mu - 1)) && 
+        arma::accu(weights.cols(0, mu - 1)) < 1.001);
 
     double muEffChk = std::pow(arma::accu(weights.cols(0, mu - 1)), 2) / 
         arma::accu(arma::pow(weights.cols(0, mu - 1), 2));
@@ -141,12 +145,13 @@ class NegativeWeight
     }
     return std::pow(sumNeg, 2) / sumNegSquare;
   }
-  // Return variance-effective before the Generate function is called since c1 and cmu is 
-  // calculated beforehand 
+  // Return variance-effective before the Generate function is called since 
+  // c1 and cmu is calculated beforehand.
   double MuEff() const { return muEff; }
   double& MuEff() { return muEff; }
 
-  // These functions might be unnecessary since Generate function is already return the desired weights 
+  // These functions might be unnecessary since Generate function is already 
+  // return the desired weights.
   arma::Row<double> Weights() const { return weights; }
   arma::Row<double>& Weights() { return weights; }
 

@@ -3,7 +3,7 @@
  * @author Marcus Edel
  * @author Kartik Nighania
  * @author John Hoang
- * 
+ *
  * Definition of the Covariance Matrix Adaptation Evolution Strategy as proposed
  * by N. Hansen et al. in "Completely Derandomized Self-Adaptation in Evolution
  * Strategies".
@@ -57,8 +57,8 @@ namespace ens {
  * ensmallen website.
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
- * @tparam WeightPolicy The weight initialization strategy 
- * @tparam UpdatePolicyType The update parameters strategy
+ * @tparam WeightPolicy The weight initialization strategy.
+ * @tparam UpdatePolicyType The update parameters strategy.
  */
 template<typename SelectionPolicyType = FullSelection,
          typename WeightPolicyType = DefaultWeight,
@@ -84,8 +84,9 @@ class CMAES
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
-   * @param weightPolicy Instantiated weight initialization policy applying on offsprings in each iteration
-   * @param updatePolicy Instantiated update parameters policy 
+   * @param weightPolicy Instantiated weight initialization policy applying on 
+   * offsprings in each iteration.
+   * @param updatePolicy Instantiated update parameters policy.
    */
   CMAES(const size_t lambda = 0,
         const double lowerBound = -10,
@@ -158,17 +159,17 @@ class CMAES
 
   //! Get the update policy.
   const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
-  //! Modify the update policy
+  //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
  private:
-  //! Initializing the parameters function
+  //! Initializing the parameters function.
   template<typename MatType>
-  void initialize(MatType& iterate);
+  void Initialize(MatType& iterate);
 
-  //! Update the algorithm's parameters
+  //! Update the algorithm's parameters.
   template<typename MatType, typename BaseMatType>
-  void update(MatType& iterate,
+  void Update(MatType& iterate,
               BaseMatType& ps, 
               BaseMatType& pc, 
               double& sigma, 
@@ -188,7 +189,7 @@ class CMAES
   //! Lower bound of decision variables.
   double lowerBound;
 
-  //! Upper bound of decision variables
+  //! Upper bound of decision variables.
   double upperBound;
 
   //! The batch size for processing.
@@ -203,18 +204,18 @@ class CMAES
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy; 
 
-  // The weight initialization policy
+  // The weight initialization policy.
   WeightPolicyType weightPolicy;
 
-  // The update policy 
+  // The update policy.
   UpdatePolicyType updatePolicy;
   
  private:
-  size_t mu; // number of candidate solutions used to update the distribution parameters.
-  // TODO: might need a more general type
+  size_t mu; // number of candidate solutions.
+  // TODO: might need a more general type.
   arma::Row<double> weights; // offsprings weighting scheme.
-  double csigma; // cumulation constant for step size. 
-  double c1; // covariance matrix learning rate for the rank one update using pc. 
+  double csigma; // cumulation constant for step size.
+  double c1; // learning rate of the rank one update using pc.
   double cmu; // covariance matrix learning reate for the rank mu update. 
   double cc; // cumulation constant for pc. 
   double mu_eff; // \sum^\mu _weights.
@@ -222,14 +223,14 @@ class CMAES
   double alphamu;
 
   // computed once at init for speeding up operations.
-  double chi; // norm of N(0,I) 
+  double chi; // norm of N(0,I).
   double hsigma;
 
   // active cma.
-  double cm; //learning rate for the mean. 
-  double alphacov; // = 2 (active CMA only) 
+  double cm; //learning rate for the mean.
+  double alphacov; // = 2 (active CMA only).
 
-  // stopping criteria parameters
+  // stopping criteria parameters.
   size_t countval;
   size_t eigenval;
   size_t niter;

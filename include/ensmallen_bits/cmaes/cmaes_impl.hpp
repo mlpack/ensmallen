@@ -3,7 +3,7 @@
  * @author Marcus Edel
  * @author Kartik Nighania
  * @author John Hoang
- * 
+ *
  * Implementation of the Covariance Matrix Adaptation Evolution Strategy as
  * proposed by N. Hansen et al. in "Completely Derandomized Self-Adaptation in
  * Evolution Strategies".
@@ -54,7 +54,8 @@ template <typename SelectionPolicyType,
 template <typename SeparableFunctionType,
           typename MatType,
           typename... CallbackTypes>
-typename MatType::elem_type CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
+typename MatType::elem_type 
+    CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
 Optimize(SeparableFunctionType &function,
           MatType &iterateIn,
           CallbackTypes &&...callbacks)
@@ -70,9 +71,9 @@ Optimize(SeparableFunctionType &function,
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
-  // Intantiated the algorithm params
+  // Intantiated the algorithm parameters.
   double sigma = 0.3 * (upperBound - lowerBound);
-  initialize(iterate);
+  Initialize(iterate);
 
   BaseMatType mCandidate(iterate.n_rows, iterate.n_cols);
   
@@ -97,23 +98,27 @@ Optimize(SeparableFunctionType &function,
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
 
   // Population parameters.
-  std::vector<BaseMatType> z(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
-  std::vector<BaseMatType> y(lambda, BaseMatType(iterate.n_rows, iterate.n_cols));
+  std::vector<BaseMatType> z(lambda, 
+      BaseMatType(iterate.n_rows, iterate.n_cols));
+  std::vector<BaseMatType> y(lambda, 
+      BaseMatType(iterate.n_rows, iterate.n_cols));
   // candidates is vector of x_i(g) with x_i(g) 
-  // is either a column or row vector but we generalize the type of data here)
-  std::vector<BaseMatType> candidates(lambda, BaseMatType(iterate.n_rows, iterate.n_cols)); 
+  // is either a column or row vector but we generalize the type of data here).
+  std::vector<BaseMatType> candidates(lambda, 
+      BaseMatType(iterate.n_rows, iterate.n_cols)); 
   BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
 
   BaseMatType ps(iterate.n_rows, iterate.n_cols);
   ps.zeros();
   BaseMatType pc = ps;
-  // Sep and Vd update parameters
+  // Sep and Vd update parameters.
   BaseMatType sepCov(iterate.n_rows, iterate.n_cols, arma::fill::ones);
   BaseMatType sepCovinv = sepCov;
-  // v ~ N(0, I/d)
-  BaseMatType v = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols) / std::sqrt(iterate.n_elem);
+  // v ~ N(0, I/d).
+  BaseMatType v = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols) / 
+      std::sqrt(iterate.n_elem);
 
-  // Vanilda update parameters 
+  // Vanilda update parameters.
   BaseMatType C(iterate.n_elem, iterate.n_elem);
   C.eye();
   BaseMatType B(iterate.n_elem, iterate.n_elem); B.eye();
@@ -129,11 +134,11 @@ Optimize(SeparableFunctionType &function,
   for (size_t i = 1; i < maxIterations && !terminate; ++i)
   { 
     niter++;
-    // Sampling population from current parameters
-    candidates = updatePolicy.samplePop(sigma, lambda, iterate, z, y, candidates, mCandidate, 
-        B, D, sepCovinv, sepCov, v, idx);
+    // Sampling population from current parameters.
+    candidates = updatePolicy.SamplePop(sigma, lambda, iterate, z, y, 
+        candidates, mCandidate, B, D, sepCovinv, sepCov, v, idx);
 
-    // Evaluate the sampled canidates
+    // Evaluate the sampled canidate.
     for (size_t j = 0; j < lambda; ++j)
     {
       countval++;
@@ -146,7 +151,7 @@ Optimize(SeparableFunctionType &function,
     idx = arma::sort_index(pObjective);
 
     mCandidate.zeros(); // Reset the mean
-    // update mCandidate
+    // update mCandidate.
     for (size_t j = 0; j < mu; ++j)
     {
       mCandidate += weights(j) * candidates[idx(j)];
@@ -164,10 +169,10 @@ Optimize(SeparableFunctionType &function,
       terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
     }
 
-    // Update new parameters for sampling distribution
-    update(iterate, ps, pc, sigma, z, y, B, D, C, sepCovinv, sepCov, v, idx);
+    // Update new parameters for sampling distribution.
+    Update(iterate, ps, pc, sigma, z, y, B, D, C, sepCovinv, sepCov, v, idx);
 
-    // Output current objective function. So this is the termination criteria 
+    // Output current objective function. So this is the termination criteria
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
         << "." << std::endl;
 
@@ -196,13 +201,13 @@ Optimize(SeparableFunctionType &function,
   return overallObjective;
 }
 
-//! Initialize parameters
+//! Initialize parameters.
 template <typename SelectionPolicyType,
           typename WeightPolicyType,
           typename UpdatePolicyType>
 template<typename MatType>
 inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
-initialize(MatType& iterate)
+Initialize(MatType& iterate)
 {
   niter = 0;
   countval = 0;
@@ -214,12 +219,13 @@ initialize(MatType& iterate)
 
   mu = std::round(lambda / 2);
 
-  // Generate raw weights first to compute mu_effective
+  // Generate raw weights first to compute mu_effective.
   weightPolicy.GenerateRaw(lambda);
   mu_eff = weightPolicy.MuEff();
 
-  // Strategy parameter setting: Adaption
-  cc = (4.0 + mu_eff / iterate.n_elem) / (4.0 + iterate.n_elem + 2 * mu_eff / iterate.n_elem);
+  // Strategy parameter setting: Adaption.
+  cc = (4.0 + mu_eff / iterate.n_elem) / 
+      (4.0 + iterate.n_elem + 2 * mu_eff / iterate.n_elem);
   csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
   c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + mu_eff);
   alphacov = 2.0;
@@ -227,22 +233,22 @@ initialize(MatType& iterate)
       (std::pow(iterate.n_elem + 2.0, 2) + alphacov * mu_eff / 2);
   cmu = std::min(1.0 - c1, cmu);
 
-  // Finalize the weights vector by computed paramters
+  // Finalize the weights vector by computed paramters.
   weights = weightPolicy.Generate(iterate.n_elem, c1, cmu);
 
-  // Controlling
+  // Controlling.
   dsigma = 1 + csigma + 2 * 
       std::max(std::sqrt((mu_eff-1)/(iterate.n_elem+1)) - 1, 0.0);
   hsigma = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * chi;
 }
 
-//! Update the algorithm's parameters
+//! Update the algorithm's parameters.
 template <typename SelectionPolicyType,
           typename WeightPolicyType,
           typename UpdatePolicyType>
 template<typename MatType, typename BaseMatType>
 inline void CMAES<SelectionPolicyType, WeightPolicyType, UpdatePolicyType>::
-update(MatType& iterate,
+Update(MatType& iterate,
        BaseMatType& ps, 
        BaseMatType& pc, 
        double& sigma, 
@@ -256,7 +262,7 @@ update(MatType& iterate,
        BaseMatType& v,
        arma::uvec& idx)
 {     
-  // Reusable variables
+  // Reusable variables.
   BaseMatType stepY(iterate.n_rows, iterate.n_cols);
   stepY.zeros();
   BaseMatType stepZ(iterate.n_rows, iterate.n_cols);
@@ -266,20 +272,22 @@ update(MatType& iterate,
     stepZ += weights(j) * z[idx(j)];
     stepY += weights(j) * y[idx(j)];
   }
-  ps = updatePolicy.updatePs(iterate, ps, B, sepCovinv, v, stepZ, stepY, mu_eff);
+  ps = updatePolicy.UpdatePs(iterate, ps, B, sepCovinv, 
+      v, stepZ, stepY, mu_eff);
 
   double psNorm = arma::norm(ps);
-  size_t hs = (psNorm < hsigma*sqrt(1.0 - std::pow(1.0 - csigma, 2.0 * (niter+1)))) ? 1 : 0;
-  // Rescale parameters c1, cmu, csigma for vd-update
-  updatePolicy.rescaleParam(iterate, c1, cmu, csigma, mu_eff);
+  size_t hs = (psNorm < hsigma*sqrt(1.0 - 
+      std::pow(1.0 - csigma, 2.0 * (niter+1)))) ? 1 : 0;
+  // Rescale parameters c1, cmu, csigma for vd-update.
+  updatePolicy.RescaleParam(iterate, c1, cmu, csigma, mu_eff);
   // Update sigma.
   sigma = sigma * std::exp(csigma / dsigma * (psNorm / chi - 1));
 
-  // Update pc 
-  pc = updatePolicy.updatePc(cc, pc, hs, mu_eff, stepY);
+  // Update pc.
+  pc = updatePolicy.UpdatePc(cc, pc, hs, mu_eff, stepY);
 
   //Update covariance matrix
-  updatePolicy.updateC(iterate, cc, c1, cmu, mu_eff, lambda, 
+  updatePolicy.UpdateC(iterate, cc, c1, cmu, mu_eff, lambda, 
       hs, C, B, D, pc, idx, z, y, weights, sepCov, sepCovinv, v,
       eigenval, countval);
 }
