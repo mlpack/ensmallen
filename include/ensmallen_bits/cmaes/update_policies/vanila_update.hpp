@@ -92,7 +92,7 @@ class VanilaUpdate
                     double& /** c1 **/,
                     double& /** cmu **/,
                     double& /** csigma **/,
-                    double& /** mu_eff **/)
+                    double& /** mueff **/)
   {
     // Doing nothing.
   }
@@ -107,7 +107,7 @@ class VanilaUpdate
    * @param ps step size control vector variable - needed update.
    * @param B results of eigendecomposing covariance matrix = B*D^2*B.t().
    * @param stepZ vector of z[j]*weights(j).
-   * @param mu_eff weights effective.
+   * @param mueff weights effective.
    */
   template<typename MatType, typename BaseMatType>
   MatType UpdatePs(
@@ -118,18 +118,18 @@ class VanilaUpdate
     BaseMatType& /** v **/,
     BaseMatType& stepZ,
     BaseMatType& /** stepY **/,
-    double mu_eff)
+    double mueff)
   {
-    double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
+    double csigma = (mueff + 2.0) / (iterate.n_elem + mueff + 5.0);
     if (iterate.n_rows > iterate.n_cols)
     {
       ps = (1 - csigma) * ps + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * B * stepZ;
+          csigma * (2 - csigma) * mueff) * B * stepZ;
     }
     else
     {
       ps = (1 - csigma) * ps + std::sqrt(
-          csigma * (2 - csigma) * mu_eff) * stepZ * B.t();
+          csigma * (2 - csigma) * mueff) * stepZ * B.t();
     }  
     return ps;
   }
@@ -142,7 +142,7 @@ class VanilaUpdate
    * @param cc learning rate for cumulation of the rank-one update.
    * @param pc evolution path - needed update.
    * @param hs binary number prevent update pc if |ps| too large.
-   * @param mu_eff weights effective.
+   * @param mueff weights effective.
    * @param stepY vector of y[j]*weights(j).
    */
   template<typename BaseMatType>
@@ -150,10 +150,10 @@ class VanilaUpdate
     double cc,
     BaseMatType& pc,
     size_t hs,
-    double mu_eff,
+    double mueff,
     BaseMatType& stepY)
   {
-    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * stepY;
+    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mueff) * stepY;
     return pc;
   }
 
@@ -187,7 +187,7 @@ class VanilaUpdate
     double cc,
     double c1,
     double cmu,
-    double /** mu_eff **/,
+    double /** mueff **/,
     size_t lambda,
     size_t hs,
     BaseMatType& C,

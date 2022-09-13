@@ -83,7 +83,7 @@ class SepUpdate{
                     double& /** c1 **/,
                     double& /** cmu **/,
                     double& /** csigma **/,
-                    double& /** mu_eff **/)
+                    double& /** mueff **/)
   {
     // Doing nothing.
   }
@@ -97,7 +97,7 @@ class SepUpdate{
    * @param iterate on-going optimizing point.
    * @param ps step size control vector variable - needed update.
    * @param stepZ vector of z[j]*weights(j).
-   * @param mu_eff weights effective.
+   * @param mueff weights effective.
    */
   template<typename MatType, typename BaseMatType>
   MatType UpdatePs(
@@ -108,12 +108,12 @@ class SepUpdate{
     BaseMatType& /** v **/,
     BaseMatType& stepZ,
     BaseMatType& /** stepY **/,
-    double mu_eff)
+    double mueff)
   {
-    double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
+    double csigma = (mueff + 2.0) / (iterate.n_elem + mueff + 5.0);
     // B effectively I.
     ps = (1 - csigma) * ps + std::sqrt(
-        csigma * (2 - csigma) * mu_eff) * stepZ;
+        csigma * (2 - csigma) * mueff) * stepZ;
     return ps;
   }
 
@@ -126,7 +126,7 @@ class SepUpdate{
    *    update of the covariance matrix.
    * @param pc evolution path - needed update.
    * @param hs binary number prevent update pc if |ps| too large.
-   * @param mu_eff weights effective.
+   * @param mueff weights effective.
    * @param stepY vector of y[j]*weights(j).
    */
   template<typename BaseMatType>
@@ -134,10 +134,10 @@ class SepUpdate{
     double cc,
     BaseMatType& pc,
     size_t hs,
-    double mu_eff,
+    double mueff,
     BaseMatType& stepY)
   {
-    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * stepY;
+    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mueff) * stepY;
     return pc;
   }
 
@@ -150,7 +150,7 @@ class SepUpdate{
    * @tparam BaseMatType runtime base matrix type - either 
    *    rowvector or column otherwise Mat.
    * @param iterate on-going optimizing point.
-   * @param mu_eff weights effective.
+   * @param mueff weights effective.
    * @param lambda population size, sample size, number of offspring.
    * @param pc evolution path - needed update.
    * @param idx uvec vector - the sorted indices of candidates vector 
@@ -167,7 +167,7 @@ class SepUpdate{
     double /** cc **/,
     double /** c1 **/,
     double /** cmu **/,
-    double mu_eff,
+    double mueff,
     size_t lambda,
     size_t /** hs **/,
     BaseMatType& /** C **/,
@@ -184,33 +184,33 @@ class SepUpdate{
     size_t& /** eigenval **/,
     size_t& /** countval **/)
   {
-    mu_cov = mu_eff; // default value.
-    c_cov = 1/mu_cov * 2/iterate.n_elem + (1 - 1/mu_cov) * std::min(1.0, 
-        (2*mu_cov) / (std::pow(iterate.n_elem+2, 2) + mu_cov)); 
+    mucov = mueff; // default value.
+    ccov = 1/mucov * 2/iterate.n_elem + (1 - 1/mucov) * std::min(1.0, 
+        (2*mucov) / (std::pow(iterate.n_elem+2, 2) + mucov)); 
 
-    sepCov = (1-c_cov) * sepCov + 1/mu_cov * c_cov * arma::pow(pc, 2);
+    sepCov = (1-ccov) * sepCov + 1/mucov * ccov * arma::pow(pc, 2);
     for (size_t j = 0; j < lambda; ++j)
     {
       if (weights(j) < 0) weights(j) *= iterate.n_elem / 
           std::pow(arma::norm(z[j]), 2);
       if (weights(j) == 0) break;
-      sepCov = sepCov + c_cov * (1-1/mu_cov) * weights(j) * 
+      sepCov = sepCov + ccov * (1-1/mucov) * weights(j) * 
           arma::pow(y[idx(j)], 2);
     }
     sepCovinv = arma::sqrt(sepCov);
   }
 
   // Return the modified effective-variance of sep-CMAES.
-  double Mu_cov() const { return mu_cov; }
-  double& Mu_cov() { return mu_cov; }
+  double MuCov() const { return mucov; }
+  double& MuCov() { return mucov; }
 
   // Return learning rate for covariance matrix update.
-  double C_cov() const { return c_cov; }
-  double& C_cov() { return c_cov; }
+  double Ccov() const { return ccov; }
+  double& Ccov() { return ccov; }
 
  private:
-  double c_cov;
-  double mu_cov;
+  double ccov;
+  double mucov;
 };
 
 } // namespace ens

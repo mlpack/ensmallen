@@ -28,7 +28,7 @@ class DefaultWeight
   }
 
   /**
-   * This function will generate raw weights and mu_eff first.
+   * This function will generate raw weights and mueff first.
    *
    * @param lambda The length of raw weights.
    */

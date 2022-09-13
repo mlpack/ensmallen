@@ -218,7 +218,7 @@ class CMAES
   double c1; // learning rate of the rank one update using pc.
   double cmu; // covariance matrix learning reate for the rank mu update. 
   double cc; // cumulation constant for pc. 
-  double mu_eff; // \sum^\mu _weights.
+  double mueff; // \sum^\mu _weights.
   double dsigma; // step size damping factor. 
   double alphamu;
 

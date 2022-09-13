@@ -22,8 +22,7 @@ class NegativeWeight
    * Constructor
    *
    */
-  NegativeWeight(bool test = false):
-                 test(test)
+  NegativeWeight(bool test = false) : test(test)
   {
     // Doing nothing.
   }
@@ -77,7 +76,7 @@ class NegativeWeight
     }   
     double sumNeg = std::abs(arma::accu(weights.cols(mu, len - 1)));
 
-    const double alphaMuNegative = 1 + c1/cmu;
+    const double alphaMuNegative = 1 + c1 / cmu;
     const double alphaPosdefNegative = (1 - c1 - cmu) / (dim * cmu);
     double factor = std::min(alphaMuNegative, alphaPosdefNegative); 
 

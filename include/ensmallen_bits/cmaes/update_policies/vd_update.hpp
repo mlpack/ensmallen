@@ -95,22 +95,22 @@ class VDUpdate{
    * @param c1 learning rate for the rank-one update.
    * @param cmu  learning rate for the rank-µ update.
    * @param csigma learning rate for step-size control.
-   * @param mu_eff effective of weights vector.
+   * @param mueff effective of weights vector.
    */
   template<typename MatType>
   void RescaleParam(MatType& iterate,
                     double& c1,
                     double& cmu,
                     double& csigma,
-                    double& mu_eff)
+                    double& mueff)
   {
     // New setting for VD update - Effective when dimension is large.
     double cfactor = std::max((iterate.n_elem - 5.0) / 6.0, 0.5);
     c1 = cfactor * c1;
-    cmu = std::min(1 - c1, cfactor * 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / 
-        (std::pow(iterate.n_elem + 2.0, 2) + mu_eff));
-    csigma = std::sqrt(mu_eff) / (2*(std::sqrt(iterate.n_elem) + std::sqrt
-        (mu_eff)));
+    cmu = std::min(1 - c1, cfactor * 2.0 * (mueff - 2.0 + 1.0 / mueff) / 
+        (std::pow(iterate.n_elem + 2.0, 2) + mueff));
+    csigma = std::sqrt(mueff) / (2*(std::sqrt(iterate.n_elem) + std::sqrt
+        (mueff)));
   }
   
   /**
@@ -122,7 +122,7 @@ class VDUpdate{
    * @param sepCovinv Root square of sepCov - for sampling purpose.
    * @param v new introduced parameter vector in VD-CMAES C = D(I+vv.t())D.
    * @param stepY vector of y[j]*weights(j).
-   * @param mu_eff weights effective.
+   * @param mueff weights effective.
    */
   template<typename MatType, typename BaseMatType>
   MatType UpdatePs(
@@ -133,11 +133,11 @@ class VDUpdate{
     BaseMatType& v,
     BaseMatType& /** stepZ **/,
     BaseMatType& stepY,
-    double mu_eff)
+    double mueff)
   {
-    double csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
+    double csigma = (mueff + 2.0) / (iterate.n_elem + mueff + 5.0);
     BaseMatType upTerm = BaseMatType(iterate.n_rows, iterate.n_cols, arma::fill::ones);
-    ps = (1 - csigma) * ps + std::sqrt(csigma * (2 - csigma) * mu_eff) * 
+    ps = (1 - csigma) * ps + std::sqrt(csigma * (2 - csigma) * mueff) * 
         ((1 / arma::sqrt(upTerm + v%v)) % (sepCovinv % stepY));
     return ps;
   }
@@ -150,7 +150,7 @@ class VDUpdate{
    * @param cc learning rate for cumulation of the rank-one update.
    * @param pc evolution path - needed update.
    * @param hs binary number prevent update pc if |ps| too large.
-   * @param mu_eff weights effective.
+   * @param mueff weights effective.
    * @param stepY vector of y[j]*weights(j).
    */
   template<typename BaseMatType>
@@ -158,10 +158,10 @@ class VDUpdate{
     double cc,
     BaseMatType& pc,
     size_t hs,
-    double mu_eff,
+    double mueff,
     BaseMatType& stepY)
   {
-    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mu_eff) * stepY;
+    pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mueff) * stepY;
     return pc;
   }
 
@@ -176,7 +176,7 @@ class VDUpdate{
    * @param iterate on-going optimizing point.
    * @param c1 learning rate for the rank-one update.
    * @param cmu  learning rate for the rank-µ update.
-   * @param mu_eff effective of weights vector.
+   * @param mueff effective of weights vector.
    * @param lambda population size, sample size, number of offspring.
    * @param hs binary number prevent update pc if |ps| too large.
    * @param pc evolution path - needed update.
@@ -194,7 +194,7 @@ class VDUpdate{
     double /** cc **/,
     double c1,
     double cmu,
-    double /** mu_eff **/,
+    double /** mueff **/,
     size_t lambda,
     size_t hs,
     BaseMatType& /** C **/,
@@ -222,17 +222,19 @@ class VDUpdate{
     {
       double gammav = 1.0 + sqv;
       double maxvbarbar = arma::max(arma::conv_to<arma::uvec>::from(vbarbar));
-      double alpha = sqv*sqv + (2.0 - 1.0/std::sqrt(gammav)) * gammav / 
-          maxvbarbar; // Eq(7)
+      double alpha = arma::pow(sqv, 2) + (2.0 - 1.0/std::sqrt(gammav)) * 
+          gammav / maxvbarbar; // Eq(7)
       alpha = std::min(1.0, std::sqrt(alpha) / (2.0 + sqv));
-      double b = -(1 - alpha*alpha) * sqv * sqv / gammav + 2.0 * alpha*alpha;
+      double b = -(1 - arma::pow(alpha, 2)) * arma::pow(sqv, 2) / gammav + 2.0 
+          * arma::pow(alpha, 2);
 
-      BaseMatType A = 2.0 * idMat - (b + 2.0 * alpha*alpha) * vbarbar;
+      BaseMatType A = 2.0 * idMat - (b + 2.0 * arma::pow(alpha, 2)) * vbarbar;
       
       BaseMatType ym = sepCovinv % pc; // Dimension is same with y(i).
       arma::uvec yvbar(mu, arma::fill::zeros);
 
-      std::vector<BaseMatType> pmat(mu, BaseMatType(iterate.n_rows, iterate.n_cols));
+      std::vector<BaseMatType> pmat(mu, 
+          BaseMatType(iterate.n_rows, iterate.n_cols));
       std::vector<BaseMatType> qmat = pmat;
 
       BaseMatType pvec(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
@@ -284,7 +286,7 @@ class VDUpdate{
       
       v = v + upfactor * ngv;
       sepCov = sepCov + upfactor * ngd;
-      sepCovinv = arma::pow(sepCov, -1);
+      sepCovinv = 1 / sepCov;
     }
   }
 

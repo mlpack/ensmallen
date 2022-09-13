@@ -149,8 +149,8 @@ Optimize(SeparableFunctionType &function,
     // Sort population.
     idx = arma::sort_index(pObjective);
 
-    mCandidate.zeros(); // Reset the mean
-    // update mCandidate.
+    mCandidate.zeros();
+    // Update mCandidate.
     for (size_t j = 0; j < mu; ++j)
     {
       mCandidate += weights(j) * candidates[idx(j)];
@@ -171,7 +171,7 @@ Optimize(SeparableFunctionType &function,
     // Update new parameters for sampling distribution.
     Update(iterate, ps, pc, sigma, z, y, B, D, C, sepCovinv, sepCov, v, idx);
 
-    // Output current objective function. So this is the termination criteria
+    // Output current objective function. So this is the termination criteria.
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
         << "." << std::endl;
 
@@ -211,25 +211,25 @@ Initialize(MatType& iterate)
   niter = 0;
   countval = 0;
   eigenval = 0;
-  chi = std::sqrt(iterate.n_elem)*(1.0 - 1.0 / (4.0 * iterate.n_elem) + 
+  chi = std::sqrt(iterate.n_elem) * (1.0 - 1.0 / (4.0 * iterate.n_elem) + 
       1.0 / (21 * std::pow(iterate.n_elem, 2)));
   if(lambda == 0)
     lambda = (4 + std::round(3 * std::log(iterate.n_elem))) * 10;
 
   mu = std::round(lambda / 2);
 
-  // Generate raw weights first to compute mu_effective.
+  // Generate raw weights first to compute mueffective.
   weightPolicy.GenerateRaw(lambda);
-  mu_eff = weightPolicy.MuEff();
+  mueff = weightPolicy.MuEff();
 
   // Strategy parameter setting: Adaption.
-  cc = (4.0 + mu_eff / iterate.n_elem) / 
-      (4.0 + iterate.n_elem + 2 * mu_eff / iterate.n_elem);
-  csigma = (mu_eff + 2.0) / (iterate.n_elem + mu_eff + 5.0);
-  c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + mu_eff);
+  cc = (4.0 + mueff / iterate.n_elem) / 
+      (4.0 + iterate.n_elem + 2 * mueff / iterate.n_elem);
+  csigma = (mueff + 2.0) / (iterate.n_elem + mueff + 5.0);
+  c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + mueff);
   alphacov = 2.0;
-  cmu = 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / 
-      (std::pow(iterate.n_elem + 2.0, 2) + alphacov * mu_eff / 2);
+  cmu = 2.0 * (mueff - 2.0 + 1.0 / mueff) / 
+      (std::pow(iterate.n_elem + 2.0, 2) + alphacov * mueff / 2);
   cmu = std::min(1.0 - c1, cmu);
 
   // Finalize the weights vector by computed paramters.
@@ -237,7 +237,7 @@ Initialize(MatType& iterate)
 
   // Controlling.
   dsigma = 1 + csigma + 2 * 
-      std::max(std::sqrt((mu_eff-1)/(iterate.n_elem+1)) - 1, 0.0);
+      std::max(std::sqrt((mueff-1)/(iterate.n_elem+1)) - 1, 0.0);
   hsigma = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * chi;
 }
 
@@ -272,21 +272,21 @@ Update(MatType& iterate,
     stepY += weights(j) * y[idx(j)];
   }
   ps = updatePolicy.UpdatePs(iterate, ps, B, sepCovinv, 
-      v, stepZ, stepY, mu_eff);
+      v, stepZ, stepY, mueff);
 
   double psNorm = arma::norm(ps);
   size_t hs = (psNorm < hsigma*sqrt(1.0 - 
       std::pow(1.0 - csigma, 2.0 * (niter+1)))) ? 1 : 0;
   // Rescale parameters c1, cmu, csigma for vd-update.
-  updatePolicy.RescaleParam(iterate, c1, cmu, csigma, mu_eff);
+  updatePolicy.RescaleParam(iterate, c1, cmu, csigma, mueff);
   // Update sigma.
   sigma = sigma * std::exp(csigma / dsigma * (psNorm / chi - 1));
 
   // Update pc.
-  pc = updatePolicy.UpdatePc(cc, pc, hs, mu_eff, stepY);
+  pc = updatePolicy.UpdatePc(cc, pc, hs, mueff, stepY);
 
   //Update covariance matrix
-  updatePolicy.UpdateC(iterate, cc, c1, cmu, mu_eff, lambda, 
+  updatePolicy.UpdateC(iterate, cc, c1, cmu, mueff, lambda, 
       hs, C, B, D, pc, idx, z, y, weights, sepCov, sepCovinv, v,
       eigenval, countval);
 }
