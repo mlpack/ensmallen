@@ -109,7 +109,7 @@ class VDUpdate{
     c1 = cfactor * c1;
     cmu = std::min(1 - c1, cfactor * 2.0 * (mueff - 2.0 + 1.0 / mueff) / 
         (std::pow(iterate.n_elem + 2.0, 2) + mueff));
-    csigma = std::sqrt(mueff) / (2*(std::sqrt(iterate.n_elem) + std::sqrt
+    csigma = std::sqrt(mueff) / (2 * (std::sqrt(iterate.n_elem) + std::sqrt
         (mueff)));
   }
   
@@ -222,13 +222,13 @@ class VDUpdate{
     {
       double gammav = 1.0 + sqv;
       double maxvbarbar = arma::max(arma::conv_to<arma::uvec>::from(vbarbar));
-      double alpha = arma::pow(sqv, 2) + (2.0 - 1.0/std::sqrt(gammav)) * 
+      double alpha = sqv * sqv + (2.0 - 1.0 / std::sqrt(gammav)) * 
           gammav / maxvbarbar; // Eq(7)
       alpha = std::min(1.0, std::sqrt(alpha) / (2.0 + sqv));
-      double b = -(1 - arma::pow(alpha, 2)) * arma::pow(sqv, 2) / gammav + 2.0 
-          * arma::pow(alpha, 2);
+      double b = -(1 - alpha * alpha) * sqv * sqv / gammav + 2.0 
+          * alpha * alpha;
 
-      BaseMatType A = 2.0 * idMat - (b + 2.0 * arma::pow(alpha, 2)) * vbarbar;
+      BaseMatType A = 2.0 * idMat - (b + 2.0 * alpha * alpha) * vbarbar;
       
       BaseMatType ym = sepCovinv % pc; // Dimension is same with y(i).
       arma::uvec yvbar(mu, arma::fill::zeros);
@@ -265,7 +265,7 @@ class VDUpdate{
       BaseMatType Ainvbb = vbarbar / A;
       // Reusable variable.
       double nu = arma::dot(vbar, qvec);
-      BaseMatType rvec = pvec - (alpha/gammav) * ((2.0 + sqv) * (vbar % qvec)
+      BaseMatType rvec = pvec - (alpha / gammav) * ((2.0 + sqv) * (vbar % qvec)
           - sqv * nu * vbarbar);
 
       double nu2 = arma::dot(Ainvbb, vbarbar);
@@ -273,7 +273,7 @@ class VDUpdate{
           (1.0 + b * nu2)) * Ainvbb;
 
       nu = arma::dot(svec, vbarbar);
-      BaseMatType ngv = (qvec - alpha * ((2+sqv) * (vbar % svec) - nu * vbar))
+      BaseMatType ngv = (qvec - alpha * ((2 + sqv) * (vbar % svec) - nu * vbar))
           / std::sqrt(sqv);
       BaseMatType ngd = sepCov % svec;
 

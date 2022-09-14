@@ -276,7 +276,7 @@ Update(MatType& iterate,
 
   double psNorm = arma::norm(ps);
   size_t hs = (psNorm < hsigma*sqrt(1.0 - 
-      std::pow(1.0 - csigma, 2.0 * (niter+1)))) ? 1 : 0;
+      std::pow(1.0 - csigma, 2.0 * (niter + 1)))) ? 1 : 0;
   // Rescale parameters c1, cmu, csigma for vd-update.
   updatePolicy.RescaleParam(iterate, c1, cmu, csigma, mueff);
   // Update sigma.

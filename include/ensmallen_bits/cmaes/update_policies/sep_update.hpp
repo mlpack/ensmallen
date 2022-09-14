@@ -185,16 +185,16 @@ class SepUpdate{
     size_t& /** countval **/)
   {
     mucov = mueff; // default value.
-    ccov = 1/mucov * 2/iterate.n_elem + (1 - 1/mucov) * std::min(1.0, 
-        (2*mucov) / (std::pow(iterate.n_elem+2, 2) + mucov)); 
+    ccov = 1 / mucov * 2 / iterate.n_elem + (1 - 1 / mucov) * std::min(1.0, 
+        (2 * mucov) / (std::pow(iterate.n_elem+2, 2) + mucov)); 
 
-    sepCov = (1-ccov) * sepCov + 1/mucov * ccov * arma::pow(pc, 2);
+    sepCov = (1 - ccov) * sepCov + 1 / mucov * ccov * arma::pow(pc, 2);
     for (size_t j = 0; j < lambda; ++j)
     {
       if (weights(j) < 0) weights(j) *= iterate.n_elem / 
           std::pow(arma::norm(z[j]), 2);
       if (weights(j) == 0) break;
-      sepCov = sepCov + ccov * (1-1/mucov) * weights(j) * 
+      sepCov = sepCov + ccov * (1 - 1 / mucov) * weights(j) * 
           arma::pow(y[idx(j)], 2);
     }
     sepCovinv = arma::sqrt(sepCov);
