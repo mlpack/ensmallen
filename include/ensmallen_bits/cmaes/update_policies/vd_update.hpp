@@ -135,7 +135,8 @@ class VDUpdate{
                    double mueff)
   {
     double csigma = (mueff + 2.0) / (iterate.n_elem + mueff + 5.0);
-    BaseMatType upTerm = BaseMatType(iterate.n_rows, iterate.n_cols, arma::fill::ones);
+    BaseMatType upTerm = arma::ones<BaseMatType>(
+        iterate.n_rows, iterate.n_cols);
     ps = (1 - csigma) * ps + std::sqrt(csigma * (2 - csigma) * mueff) * 
         ((1 / arma::sqrt(upTerm + v%v)) % (sepCovinv % stepY));
     return ps;
@@ -235,7 +236,8 @@ class VDUpdate{
           BaseMatType(iterate.n_rows, iterate.n_cols));
       std::vector<BaseMatType> qmat = pmat;
 
-      BaseMatType pvec(iterate.n_rows, iterate.n_cols, arma::fill::zeros);
+      BaseMatType pvec = arma::zeros<BaseMatType>(
+          iterate.n_rows, iterate.n_cols);
       BaseMatType qvec = pvec;
       BaseMatType ponevec = pvec;
       BaseMatType qonevec = pvec;

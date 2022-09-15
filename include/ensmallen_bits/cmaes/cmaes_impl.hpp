@@ -108,8 +108,7 @@ Optimize(SeparableFunctionType &function,
       BaseMatType(iterate.n_rows, iterate.n_cols)); 
   BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
 
-  BaseMatType ps(iterate.n_rows, iterate.n_cols);
-  ps.zeros();
+  BaseMatType ps = arma::zeros<BaseMatType>(iterate.n_rows, iterate.n_cols);
   BaseMatType pc = ps;
   // Sep and Vd update parameters.
   BaseMatType sepCov(iterate.n_rows, iterate.n_cols, arma::fill::ones);
@@ -262,10 +261,8 @@ Update(MatType& iterate,
        arma::uvec& idx)
 {     
   // Reusable variables.
-  BaseMatType stepY = arma::eye<BaseMatType>(iterate.n_elem, iterate.n_elem);
-  stepY.zeros();
-  BaseMatType stepZ(iterate.n_rows, iterate.n_cols);
-  stepZ.zeros();
+  BaseMatType stepY = arma::zeros<BaseMatType>(iterate.n_rows, iterate.n_cols);
+  BaseMatType stepZ = arma::zeros<BaseMatType>(iterate.n_rows, iterate.n_cols);
   for (size_t j = 0; j < mu; ++j)
   {
     stepZ += weights(j) * z[idx(j)];
