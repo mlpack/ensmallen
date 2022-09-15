@@ -41,8 +41,6 @@ class SepUpdate{
    * @param iterate on-going optimizing point.
    * @param z storing container for new sampled candidates ~ N(0,I).
    * @param y storing container for new transformed candidates.
-   * @param candidates storing container for new candidates following 
-   *    updated distribution.
    * @param mCandidate current population's mean vector.
    * @param sepCovinv Root square of sepCov - for sampling purpose.
    * @param idx the sorted indices of candidates vector 

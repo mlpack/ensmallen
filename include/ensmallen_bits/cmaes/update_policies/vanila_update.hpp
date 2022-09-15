@@ -234,8 +234,6 @@ class VanilaUpdate
     // To ensure that new result covariance matrix is positive definite.
     arma::Col<ElemType> eigval; // TODO: might need a more general type.
     BaseMatType eigvec;
-    BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
-    eigvalZero.zeros();
 
     if (countval - eigenval > lambda / ((c1 + cmu) * iterate.n_elem * 10))
     {
