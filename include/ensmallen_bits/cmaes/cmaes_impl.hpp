@@ -220,7 +220,7 @@ Initialize(MatType& iterate)
 
   // Generate raw weights first to compute mueffective.
   weightPolicy.GenerateRaw(lambda);
-  mueff = weightPolicy.MuEff();
+  mueff = weightPolicy.Mueff();
 
   // Strategy parameter setting: Adaption.
   cc = (4.0 + mueff / iterate.n_elem) / 

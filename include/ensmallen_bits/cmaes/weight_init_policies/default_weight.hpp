@@ -78,7 +78,6 @@ class DefaultWeight
   arma::Row<double> Weights() { return weights; }
 
  private:
-  size_t len;
   size_t len; // The size of weight vector
   size_t mu; // NUmber of candidate solutions
   double mueff; // Effective of weights vector. 
