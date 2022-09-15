@@ -28,7 +28,7 @@ class NegativeWeight
   }
   
   /**
-   * This function will generate raw weights and muEff first.
+   * This function will generate raw weights and mueff first.
    *
    * @param lambda The length of raw weights.
    */
@@ -54,7 +54,7 @@ class NegativeWeight
     {
       weights(i) /= sumPos;
     }
-    muEff = 1 / arma::accu(arma::pow(weights.cols(0, mu - 1), 2));
+    mueff = 1 / arma::accu(arma::pow(weights.cols(0, mu - 1), 2));
   }
 
   /**
@@ -86,11 +86,11 @@ class NegativeWeight
       weights(i) /= sumNeg;
     } 
 
-    double alphaMuEffNegative = 1 + 2 * NegativeEff(weights) / (muEff + 2);
+    double alphamueffNegative = 1 + 2 * NegativeEff(weights) / (mueff + 2);
     if (std::abs(arma::accu(weights.cols(mu, len-1))) >= 
-        -std::abs(alphaMuEffNegative))
+        -std::abs(alphamueffNegative))
     {
-      factor = abs(alphaMuEffNegative) / 
+      factor = abs(alphamueffNegative) / 
           std::abs(arma::accu(weights.cols(mu, len - 1)));
       if (factor < 1)
       {
@@ -100,7 +100,7 @@ class NegativeWeight
         }
       }
     }
-    muEffNeg = NegativeEff(weights);
+    mueffNeg = NegativeEff(weights);
     if (test) 
     { 
       Checking();
@@ -123,13 +123,13 @@ class NegativeWeight
     assert(0.999 < arma::accu(weights.cols(0, mu - 1)) && 
         arma::accu(weights.cols(0, mu - 1)) < 1.001);
 
-    double muEffChk = std::pow(arma::accu(weights.cols(0, mu - 1)), 2) / 
+    double mueffChk = std::pow(arma::accu(weights.cols(0, mu - 1)), 2) / 
         arma::accu(arma::pow(weights.cols(0, mu - 1), 2));
     double muNegEffChk = std::pow(arma::accu(weights.cols(mu, len - 1)), 2) / 
         arma::accu(arma::pow(weights.cols(mu, len - 1), 2));
 
-    assert(muEff / 1.001 < muEffChk && muEffChk < muEff * 1.001);
-    assert(muEffNeg / 1.001 < muNegEffChk && muNegEffChk < muEffNeg * 1.001);
+    assert(mueff / 1.001 < mueffChk && mueffChk < mueff * 1.001);
+    assert(mueffNeg / 1.001 < muNegEffChk && muNegEffChk < mueffNeg * 1.001);
   }
 
   double NegativeEff(const arma::Row<double>& weights)
@@ -147,8 +147,8 @@ class NegativeWeight
   }
   // Return variance-effective before the Generate function is called since 
   // c1 and cmu is calculated beforehand.
-  double MuEff() const { return muEff; }
-  double& MuEff() { return muEff; }
+  double Mueff() const { return mueff; }
+  double& Mueff() { return mueff; }
 
   // These functions might be unnecessary since Generate function is already 
   // return the desired weights.
@@ -156,12 +156,12 @@ class NegativeWeight
   arma::Row<double>& Weights() { return weights; }
 
  private:
-  bool test;
-  size_t len;
-  size_t mu;
-  double muEff;
-  double muEffNeg;
-  arma::Row<double> weights;
+  bool test; // Test mode bool variable
+  size_t len; // The size of weight vector
+  size_t mu; // NUmber of candidate solutions
+  double mueff; // Effective of weights vector. 
+  double mueffNeg; // Effective of negative weights only
+  arma::Row<double> weights; // Vector stored weights in mutation stage
 };
 
 } // namespace ens

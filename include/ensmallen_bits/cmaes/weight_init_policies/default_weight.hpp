@@ -49,7 +49,7 @@ class DefaultWeight
     {
       weights(i) /= sumPos;
     }
-    muEff = 1 / arma::accu(arma::pow(weights.cols(0, mu - 1), 2)); 
+    mueff = 1 / arma::accu(arma::pow(weights.cols(0, mu - 1), 2)); 
   }
 
   /**
@@ -69,8 +69,8 @@ class DefaultWeight
 
   // Return variance-effective before the Generate function is called since c1 
   // and cmu is calculated beforehand.
-  double MuEff() const { return muEff; }
-  double& MuEff() { return muEff; }
+  double Mueff() const { return mueff; }
+  double& Mueff() { return mueff; }
 
   // These functions might be unnecessary since Generate function is already 
   // return the desired weights.
@@ -79,10 +79,11 @@ class DefaultWeight
 
  private:
   size_t len;
-  size_t mu;
-  double muEff;
-  double muEffNeg;
-  arma::Row<double> weights;
+  size_t len; // The size of weight vector
+  size_t mu; // NUmber of candidate solutions
+  double mueff; // Effective of weights vector. 
+  double mueffNeg; // Effective of negative weights only
+  arma::Row<double> weights; // Vector stored weights in mutation stage
 };
 
 } // namespace ens

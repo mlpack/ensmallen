@@ -262,7 +262,7 @@ Update(MatType& iterate,
        arma::uvec& idx)
 {     
   // Reusable variables.
-  BaseMatType stepY(iterate.n_rows, iterate.n_cols);
+  BaseMatType stepY = arma::eye<BaseMatType>(iterate.n_elem, iterate.n_elem);
   stepY.zeros();
   BaseMatType stepZ(iterate.n_rows, iterate.n_cols);
   stepZ.zeros();

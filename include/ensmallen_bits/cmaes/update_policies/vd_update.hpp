@@ -56,19 +56,19 @@ class VDUpdate{
    */
   template<typename MatType, typename BaseMatType>
   std::vector<BaseMatType> SamplePop(
-    double sigma,
-    size_t lambda,
-    MatType& iterate,
-    std::vector<BaseMatType>& z,
-    std::vector<BaseMatType>& y,
-    std::vector<BaseMatType>& candidates,
-    BaseMatType mCandidate,
-    BaseMatType& /** B **/,
-    BaseMatType& /** D **/,
-    BaseMatType& /** sepCovinv **/,
-    BaseMatType& sepCov,
-    BaseMatType& v,
-    arma::uvec& idx)
+      double sigma,
+      size_t lambda,
+      MatType& iterate,
+      std::vector<BaseMatType>& z,
+      std::vector<BaseMatType>& y,
+      std::vector<BaseMatType>& candidates,
+      BaseMatType mCandidate,
+      BaseMatType& /** B **/,
+      BaseMatType& /** D **/,
+      BaseMatType& /** sepCovinv **/,
+      BaseMatType& sepCov,
+      BaseMatType& v,
+      arma::uvec& idx)
   {
     double sqv = arma::accu(arma::pow(v, 2));
     double fact = std::sqrt(1 + sqv) - 1.0;
@@ -125,15 +125,14 @@ class VDUpdate{
    * @param mueff weights effective.
    */
   template<typename MatType, typename BaseMatType>
-  MatType UpdatePs(
-    MatType& iterate,
-    BaseMatType& ps,
-    BaseMatType& /** B **/,
-    BaseMatType& sepCovinv,
-    BaseMatType& v,
-    BaseMatType& /** stepZ **/,
-    BaseMatType& stepY,
-    double mueff)
+  MatType UpdatePs(MatType& iterate,
+                   BaseMatType& ps,
+                   BaseMatType& /** B **/,
+                   BaseMatType& sepCovinv,
+                   BaseMatType& v,
+                   BaseMatType& /** stepZ **/,
+                   BaseMatType& stepY,
+                   double mueff)
   {
     double csigma = (mueff + 2.0) / (iterate.n_elem + mueff + 5.0);
     BaseMatType upTerm = BaseMatType(iterate.n_rows, iterate.n_cols, arma::fill::ones);
@@ -154,12 +153,11 @@ class VDUpdate{
    * @param stepY vector of y[j]*weights(j).
    */
   template<typename BaseMatType>
-  BaseMatType UpdatePc(
-    double cc,
-    BaseMatType& pc,
-    size_t hs,
-    double mueff,
-    BaseMatType& stepY)
+  BaseMatType UpdatePc(double cc,
+                       BaseMatType& pc,
+                       size_t hs,
+                       double mueff,
+                       BaseMatType& stepY)
   {
     pc = (1 - cc) * pc + hs * std::sqrt(cc * (2 - cc) * mueff) * stepY;
     return pc;
@@ -190,26 +188,26 @@ class VDUpdate{
    */
   template<typename MatType, typename BaseMatType>
   void UpdateC(
-    MatType& iterate,
-    double /** cc **/,
-    double c1,
-    double cmu,
-    double /** mueff **/,
-    size_t lambda,
-    size_t hs,
-    BaseMatType& /** C **/,
-    BaseMatType& /** B **/,
-    BaseMatType& /** D **/,
-    BaseMatType& pc,
-    arma::uvec& idx,
-    std::vector<BaseMatType>& /** z **/,
-    std::vector<BaseMatType>& y,
-    arma::Row<double>& weights,
-    BaseMatType& sepCov,
-    BaseMatType& sepCovinv,
-    BaseMatType& v,
-    size_t& /** eigenval **/,
-    size_t& /** countval **/)
+      MatType& iterate,
+      double /** cc **/,
+      double c1,
+      double cmu,
+      double /** mueff **/,
+      size_t lambda,
+      size_t hs,
+      BaseMatType& /** C **/,
+      BaseMatType& /** B **/,
+      BaseMatType& /** D **/,
+      BaseMatType& pc,
+      arma::uvec& idx,
+      std::vector<BaseMatType>& /** z **/,
+      std::vector<BaseMatType>& y,
+      arma::Row<double>& weights,
+      BaseMatType& sepCov,
+      BaseMatType& sepCovinv,
+      BaseMatType& v,
+      size_t& /** eigenval **/,
+      size_t& /** countval **/)
   {
     size_t mu = std::round(lambda / 2);
     double sqv = arma::accu(arma::pow(v, 2));
