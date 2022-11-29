@@ -21,7 +21,7 @@ using namespace ens::test;
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]")
+TEMPLATE_TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]", arma::mat)
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest<arma::mat, arma::Row<size_t>>(cmaes, 0.003, 0.006, 5);
@@ -60,7 +60,7 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]")
 
 #ifdef USE_COOT
 
-TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]")
+TEMPLATE_TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]", coot::fmat)
 {
   CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest<coot::mat, coot::Row<size_t>>(cmaes, 0.003, 0.006, 5);

@@ -70,6 +70,7 @@
 #include "ensmallen_bits/utility/conv_to.hpp"
 #include "ensmallen_bits/utility/linspace.hpp"
 #include "ensmallen_bits/utility/randi.hpp"
+#include "ensmallen_bits/utility/randn.hpp"
 #include "ensmallen_bits/utility/randu.hpp"
 #include "ensmallen_bits/utility/shuffle.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"

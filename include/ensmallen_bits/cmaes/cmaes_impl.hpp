@@ -161,32 +161,31 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType covLower;
-    arma::chol(covLower, C[idx0], "lower");
-    /* while (!arma::chol(covLower, C[idx0], "lower")) */
-    /*   C[idx0].diag() += std::numeric_limits<ElemType>::epsilon(); */
+    while (!chol(covLower, C[idx0], "lower"))
+      C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
     for (size_t j = 0; j < lambda; ++j)
     {
-/*       if (iterate.n_rows > iterate.n_cols) */
-/*       { */
-/*         pStep[idx(j)] = covLower * */
-/*             arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols); */
-/*       } */
-/*       else */
-/*       { */
-/*         pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols) */
-/*             * covLower; */
-/*       } */
+      if (iterate.n_rows > iterate.n_cols)
+      {
+        pStep[idx(j)] = covLower *
+            randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+      }
+      else
+      {
+        pStep[idx(j)] = randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
+            * covLower;
+      }
 
-/*       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)]; */
+      pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
-/*       // Calculate the objective function. */
-/*       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize, */
-/*           pPosition[idx(j)], callbacks...); */
-/*     } */
+      // Calculate the objective function.
+      pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
+          pPosition[idx(j)], callbacks...);
+    }
 
-/*     // Sort population. */
-/*     idx = arma::sort_index(pObjective); */
+    // Sort population.
+    idx = sort_index(pObjective);
 
 /*     step = w(0) * pStep[idx(0)]; */
 /*     for (size_t j = 1; j < mu; ++j) */
@@ -205,7 +204,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 /*       iterate = mPosition[idx1]; */
 
 /*       terminate |= Callback::StepTaken(*this, function, iterate, callbacks...); */
-    }
+    /* } */
 
 /*     // Update Step Size. */
 /*     if (iterate.n_rows > iterate.n_cols) */
