@@ -178,6 +178,7 @@ class SDP
   void GetInitialPoints(MatType& coordinates,
                         MatType& ySparse,
                         MatType& yDense,
+                        MatType& yLinearOperators,
                         MatType& dualCoordinates) const;
 
  private:

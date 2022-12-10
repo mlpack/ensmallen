@@ -127,11 +127,13 @@ void SDP<ObjectiveMatrixType,
          BVectorType>::GetInitialPoints(MatType& coordinates,
                                         MatType& ySparse,
                                         MatType& yDense,
+                                        MatType& yLinearOperators,
                                         MatType& dualCoordinates) const
 {
   coordinates = arma::eye<MatType>(c.n_rows, c.n_rows);
   ySparse = arma::ones<MatType>(NumSparseConstraints(), 1);
   yDense = arma::ones<MatType>(NumDenseConstraints(), 1);
+  yLinearOperators = arma::ones<MatType>(NumLinearOperatorConstraints(), 1);
   dualCoordinates = arma::eye<MatType>(c.n_rows, c.n_rows);
 }
 
