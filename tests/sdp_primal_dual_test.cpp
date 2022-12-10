@@ -238,8 +238,9 @@ static bool CheckKKT(const SDPType& sdp,
 static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
 {
   arma::mat X, Z;
-  arma::mat ysparse, ydense;
+  arma::mat ysparse, ydense, yLinearOperators;
   ydense.set_size(0);
+  yLinearOperators.set_size(0);
 
   // strictly feasible starting point
   X.eye(sdp.N(), sdp.N());
@@ -248,15 +249,16 @@ static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
 
   PrimalDualSolver solver;
 
-  solver.Optimize(sdp, X, ysparse, ydense, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, yLinearOperators, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
 static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
 {
   arma::mat X, Z;
-  arma::mat ysparse, ydense;
+  arma::mat ysparse, ydense, yLinearOperators;
   ydense.set_size(0);
+  yLinearOperators.set_size(0);
 
   // infeasible, but positive starting point
   X = arma::eye<arma::mat>(sdp.N(), sdp.N());
@@ -264,7 +266,7 @@ static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
   Z.eye(sdp.N(), sdp.N());
 
   PrimalDualSolver solver;
-  solver.Optimize(sdp, X, ysparse, ydense, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, yLinearOperators, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
@@ -295,9 +297,9 @@ TEST_CASE("DeprecatedSmallLovaszThetaSdp", "[SdpPrimalDualTest]")
   PrimalDualSolver solver;
 
   arma::mat X, Z;
-  arma::mat ysparse, ydense;
-  sdp.GetInitialPoints(X, ysparse, ydense, Z);
-  solver.Optimize(sdp, X, ysparse, ydense, Z);
+  arma::mat ysparse, ydense, yLinearOperators;
+  sdp.GetInitialPoints(X, ysparse, ydense, yLinearOperators, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, yLinearOperators, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
@@ -309,9 +311,9 @@ TEST_CASE("SmallLovaszThetaSdp", "[SdpPrimalDualTest]")
 
   PrimalDualSolver solver;
 
-  arma::mat X, Z, ysparse, ydense;
-  sdp.GetInitialPoints(X, ysparse, ydense, Z);
-  solver.Optimize(sdp, X, ysparse, ydense, Z);
+  arma::mat X, Z, ysparse, ydense, yLinearOperators;
+  sdp.GetInitialPoints(X, ysparse, ydense, yLinearOperators, Z);
+  solver.Optimize(sdp, X, ysparse, ydense, yLinearOperators, Z);
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
@@ -444,9 +446,9 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
     const auto sdp0 = ConstructLogChebychevApproxSdp(A0, b0);
     PrimalDualSolver solver0;
     arma::mat X0, Z0;
-    arma::mat ysparse0, ydense0;
-    sdp0.GetInitialPoints(X0, ysparse0, ydense0, Z0);
-    solver0.Optimize(sdp0, X0, ysparse0, ydense0, Z0);
+    arma::mat ysparse0, ydense0, yLinearOperators0;
+    sdp0.GetInitialPoints(X0, ysparse0, ydense0, yLinearOperators0, Z0);
+    solver0.Optimize(sdp0, X0, ysparse0, ydense0, yLinearOperators0, Z0);
     success = CheckKKT(sdp0, X0, ysparse0, ydense0, Z0);
     if (success)
       break;
@@ -464,9 +466,9 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
     const auto sdp1 = ConstructLogChebychevApproxSdp(A1, b1);
     PrimalDualSolver solver1;
     arma::mat X1, Z1;
-    arma::mat ysparse1, ydense1;
-    sdp1.GetInitialPoints(X1, ysparse1, ydense1, Z1);
-    solver1.Optimize(sdp1, X1, ysparse1, ydense1, Z1);
+    arma::mat ysparse1, ydense1, yLinearOperators1;
+    sdp1.GetInitialPoints(X1, ysparse1, ydense1, yLinearOperators1, Z1);
+    solver1.Optimize(sdp1, X1, ysparse1, ydense1, yLinearOperators1, Z1);
     success = CheckKKT(sdp1, X1, ysparse1, ydense1, Z1);
     if (success)
       break;
@@ -578,9 +580,9 @@ TEST_CASE("CorrelationCoeffToySdp","[SdpPrimalDualTest]")
 
   PrimalDualSolver solver;
   arma::mat X, Z;
-  arma::mat ysparse, ydense;
-  sdp.GetInitialPoints(X, ysparse, ydense, Z);
-  const double obj = solver.Optimize(sdp, X, ysparse, ydense, Z);
+  arma::mat ysparse, ydense, yLinearOperators;
+  sdp.GetInitialPoints(X, ysparse, ydense, yLinearOperators, Z);
+  const double obj = solver.Optimize(sdp, X, ysparse, ydense, yLinearOperators, Z);
   bool success = CheckKKT(sdp, X, ysparse, ydense, Z);
   REQUIRE(success == true);
   REQUIRE(obj == Approx(2 * (-0.978)).epsilon(1e-5));
