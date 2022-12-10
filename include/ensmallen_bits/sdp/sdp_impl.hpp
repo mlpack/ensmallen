@@ -28,7 +28,9 @@ SDP<ObjectiveMatrixType,
     sparseA(),
     sparseB(),
     denseA(),
-    denseB()
+    denseB(),
+    linearOperators(),
+    linearOperatorsB()
 { /* Nothing to do. */ }
 
 template<typename ObjectiveMatrixType,
@@ -40,12 +42,16 @@ SDP<ObjectiveMatrixType,
     SparseConstraintMatrixType,
     BVectorType>::SDP(const size_t n,
                       const size_t numSparseConstraints,
-                      const size_t numDenseConstraints) :
+                      const size_t numDenseConstraints,
+                      const size_t numLinearOperatorConstraints) :
     c(n, n),
     sparseA(numSparseConstraints),
     sparseB(numSparseConstraints),
     denseA(numDenseConstraints),
-    denseB(numDenseConstraints)
+    denseB(numDenseConstraints),
+    linearOperators(numLinearOperatorConstraints),
+    linearOperatorsB(numLinearOperatorConstraints)
+
 {
   for (size_t i = 0; i < numSparseConstraints; i++)
     sparseA[i].zeros(n, n);
@@ -81,7 +87,16 @@ bool SDP<ObjectiveMatrixType,
     math::Svec(DenseA()[i], sa);
     A.row(NumSparseConstraints() + i) = sa.t();
   }
-
+  for (size_t i = 0; i < NumLinearOperatorConstraints(); i++)
+  {
+    DenseConstraintMatrixType sa, lo;
+    lo.zeros(N(), N());
+    math::convertToMatrix<typename ObjectiveMatrixType::elem_type,
+        DenseConstraintMatrixType>(LinearOperators()[i],
+            lo);
+    math::Svec(lo, sa);
+    A.row(NumSparseConstraints()+ NumDenseConstraints() + i) = sa.t();
+  }
   const DenseConstraintMatrixType s = arma::svd(A);
   return s(s.n_elem - 1) > 1e-5;
 }

@@ -32,6 +32,21 @@ template <typename SDPType>
 class LRSDP
 {
  public:
+/**
+* Create an LRSDP to be optimized.  The solution will end up being a matrix
+* of size (rows) x (rank).  To construct each constraint and the objective
+* function, use the function SDP() in order to access the SDPType object
+* associated with this optimizer.
+*
+* @param numSparseConstraints Number of sparse constraints in the problem.
+* @param numDenseConstraints Number of dense constraints in the problem.
+* @param initialPoint Initial point of the optimization.
+* @param maxIterations Maximum number of iterations.
+*/
+LRSDP(const size_t numSparseConstraints,
+      const size_t numDenseConstraints,
+      const arma::Mat<typename SDPType::ElemType>& initialPoint,
+      const size_t maxIterations = 1000);
   /**
    * Create an LRSDP to be optimized.  The solution will end up being a matrix
    * of size (rows) x (rank).  To construct each constraint and the objective
@@ -40,11 +55,14 @@ class LRSDP
    *
    * @param numSparseConstraints Number of sparse constraints in the problem.
    * @param numDenseConstraints Number of dense constraints in the problem.
+   * @param numLinearOperatorConstraints Number of general linear operator 
+     constraints in the problem.
    * @param initialPoint Initial point of the optimization.
    * @param maxIterations Maximum number of iterations.
    */
   LRSDP(const size_t numSparseConstraints,
         const size_t numDenseConstraints,
+        const size_t numLinearOperatorConstraints,
         const arma::Mat<typename SDPType::ElemType>& initialPoint,
         const size_t maxIterations = 1000);
 
@@ -53,16 +71,15 @@ class LRSDP
    * given initial point.  Note that the SDP may be modified later by calling
    * SDP() to access the object.
    *
-   * TODO: this is currently not implemented.
    *
    * @param sdp SDP to be solved.
    * @param initialPoint Initial point of the optimization.
    * @param maxIterations Maximum number of iterations.
    *
+   */
   LRSDP(const SDPType& sdp,
         const arma::mat& initialPoint,
         const size_t maxIterations = 1000);
-   */
 
   /**
    * Optimize the LRSDP and return the final objective value.  The given

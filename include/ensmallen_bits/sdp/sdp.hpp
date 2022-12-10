@@ -20,11 +20,18 @@ namespace ens {
  *     s.t.   dot(Ai, X) = bi, i=1,...,m, X >= 0
  *
  * This representation allows the constraint matrices Ai to be specified as
- * either dense matrices (arma::mat) or sparse matrices (arma::sp_mat).  After
- * initializing the SDP object, you will need to set the constraints yourself,
- * via the SparseA(), SparseB(), DenseA(), DenseB(), and C() functions.  Note
- * that for each matrix you add to either SparseA() or DenseA(), you must add
- * the corresponding b value to the corresponding vector SparseB() or DenseB().
+ * either dense matrices (arma::mat) or sparse matrices (arma::sp_mat). 
+ * General linear operators are to be specified as std::function objects.
+ * Each of these functions must take a matrix as input and return a real 
+ * number. The matrix input and number output must be of types
+ * arma::Mat<typename ObjectiveMatrixType::elem_type> and
+ * ObjectiveMatrixType::elem_type respectively (see template parameters). 
+ * After initializing the SDP object, you will need to set 
+ * the constraints yourself, via the SparseA(), SparseB(), DenseA(), DenseB(),
+ * LinearOperatorsA(), LinearOperatorsB(), and C() functions. 
+ * Note that for each matrix you add to either SparseA(), DenseA(), or
+ * LinearOperatorsA() you must add the corresponding b value to the 
+ * corresponding vector SparseB(), DenseB(), or LinearOperatorsB().
  *
  * The objective matrix (C) may be stored as either dense or sparse depending on
  * the ObjectiveMatrixType parameter.
@@ -54,28 +61,33 @@ class SDP
 
   /**
    * Initialize this SDP to an empty state.  To add constraints, you will have
-   * to modify the constraints via the SparseA(), DenseA(), SparseB(), DenseB(),
-   * and C() functions.  For the sake of speed, there is no error checking, so
-   * if you specify an invalid SDP, whatever solver you use will gladly try to
-   * solve it!  (And it will probably crash horribly.)
+   * to modify the constraints via the SparseA(), DenseA(), LinearOperatorsA(),
+   * SparseB(), DenseB(), LinearOperatorsB() and C() functions.  For the sake 
+   * of speed, there is no error checking, so if you specify an invalid SDP, 
+   * whatever solver you use will gladly try to solve it!  (And it will probably 
+   * crash horribly.)
    */
   SDP();
 
   /**
    * Initialize this SDP to one which structurally has size n.  To set the
    * constraints you will still need to access through SparseA(), DenseA(),
-   * SparseB(), DenseB(), and C().  Consider using move semantics to keep things
-   * fast.  As with the previous constructor, there is no error checking for the
-   * sake of speed, so if you build an invalid SDP, whatever solver you use will
+   * LinearOperatorsA(), SparseB(), DenseB(), LinearOperatorsB() and C().  
+   * Consider using move semantics to keep things fast.  As with the 
+   * previous constructor, there is no error checking for the sake of 
+   * speed, so if you build an invalid SDP, whatever solver you use will
    * gladly try to solve it!  (And it will probably crash horribly.)
    *
    * @param n Number of rows (and columns) in the objective matrix C.
    * @param numSparseConstraints Number of sparse constraints.
    * @param numDenseConstraints Number of dense constraints.
+   * @param numLinearOperatorConstraints Number of general linear operator
+   * constraints.
    */
   SDP(const size_t n,
       const size_t numSparseConstraints,
-      const size_t numDenseConstraints);
+      const size_t numDenseConstraints,
+      const size_t numLinearOperatorConstraints = 0);
 
   //! Return number of rows and columns in the objective matrix C.
   size_t N() const { return c.n_rows; }
@@ -88,9 +100,12 @@ class SDP
   //! Return the number of dense constraints (constraints with dense Ai) in the
   //! SDP.
   size_t NumDenseConstraints() const { return denseB.n_elem; }
+  //! Return the number of general linear operator constraints 
+  //! (constraints represented as functions) in the SDP.
+  size_t NumLinearOperatorConstraints() const { return linearOperatorsB.n_elem; }
 
   //! Return the total number of constraints in the SDP.
-  size_t NumConstraints() const { return sparseB.n_elem + denseB.n_elem; }
+  size_t NumConstraints() const { return sparseB.n_elem + denseB.n_elem + linearOperatorsB.n_elem; }
 
   //! Modify the sparse objective function matrix (sparseC).
   ObjectiveMatrixType& C() { return c; }
@@ -115,6 +130,23 @@ class SDP
   //! constraints).
   std::vector<DenseConstraintMatrixType>& DenseA() { return denseA; }
 
+
+  //! Return the vector of linear operator functions (which correspond to the general
+  //! linear operator constraints).
+  const std::vector<std::function<
+      typename ObjectiveMatrixType::elem_type(
+          arma::Mat<typename ObjectiveMatrixType::elem_type>)>>& 
+      LinearOperators() const
+  { return linearOperators; }
+
+  //! Modify the vector of linear operator functions (which correspond to the general
+  //! linear operator constraints).
+  std::vector<std::function<
+      typename ObjectiveMatrixType::elem_type(
+          arma::Mat<typename ObjectiveMatrixType::elem_type>)>>& 
+      LinearOperators()
+  { return linearOperators; }
+
   //! Return the vector of sparse B values.
   const BVectorType& SparseB() const { return sparseB; }
   //! Modify the vector of sparse B values.
@@ -124,6 +156,11 @@ class SDP
   const BVectorType& DenseB() const { return denseB; }
   //! Modify the vector of dense B values.
   BVectorType& DenseB() { return denseB; }
+
+  //! Return the vector of Linear operator B values.
+  const BVectorType& LinearOperatorsB() const { return linearOperatorsB; }
+  //! Modify the vector of Linear operator B values.
+  BVectorType& LinearOperatorsB() { return linearOperatorsB; }
 
   /**
    * Check whether or not the constraint matrices are linearly independent.
@@ -149,13 +186,25 @@ class SDP
 
   //! A_i for each sparse constraint.
   std::vector<SparseConstraintMatrixType> sparseA;
+
   //! b_i for each sparse constraint.
   BVectorType sparseB;
 
   //! A_i for each dense constraint.
   std::vector<DenseConstraintMatrixType> denseA;
+
   //! b_i for each dense constraint.
   BVectorType denseB;
+  
+  //! General linear operator constraints.
+  std::vector<std::function<
+      typename ObjectiveMatrixType::elem_type(
+          arma::Mat<typename ObjectiveMatrixType::elem_type>)>> 
+      linearOperators;
+
+  //! b_i for each linear operator constraint.
+  BVectorType linearOperatorsB;
+
 };
 
 } // namespace ens

@@ -74,6 +74,7 @@ class PrimalDualSolver
    * @param coordinates The initial primal SDP coordinates to optimize.
    * @param ySparse The initial ySparse to optimize.
    * @param yDense The initial yDense to optimize.
+   * @param yDense The initial yLinearOperators to optimize.
    * @param dualCoordinates The initial dual SDP coordinates to optimize.
    * @param callbacks Callback functions.
    */
@@ -82,6 +83,7 @@ class PrimalDualSolver
                                        MatType& coordinates,
                                        MatType& ySparse,
                                        MatType& yDense,
+                                       MatType& yLinearOperators,
                                        MatType& dualCoordinates,
                                        CallbackTypes&&... callbacks);
 

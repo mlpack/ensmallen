@@ -48,14 +48,16 @@ class LRSDPFunction
    * constraints. Note n_cols of the initialPoint specifies the rank.
    *
    * Set the A_x, B_x, and C_x  matrices for each constraint using the A_x(),
-   * B_x(), and C_x() functions, for x in {sparse, dense}.
+   * B_x(), and C_x() functions, for x in {sparse, dense, linearOperator}.
    *
    * @param numSparseConstraints
    * @param numDenseConstraints
+   * @param numLinearOperatorConstraints
    * @param initialPoint
    */
   LRSDPFunction(const size_t numSparseConstraints,
                 const size_t numDenseConstraints,
+                const size_t numLinearOperatorConstraints,
                 const arma::Mat<typename SDPType::ElemType>& initialPoint);
 
   /**
@@ -118,6 +120,12 @@ class LRSDPFunction
     return rrt.As<typename std::remove_reference<MatType>::type>();
   }
 
+  // Cache constarint matrices of the general linear operators 
+  // stored as functions.
+  const std::vector<arma::Mat<typename SDPType::ElemType>> LoA() const {
+      return loA;
+  }
+
   //! Modify R*R^T matrix.
   template<typename MatType>
   MatType& RRT()
@@ -137,6 +145,9 @@ class LRSDPFunction
 
   //! Cache R*R^T matrix.
   Any rrt;
+
+  //! Cache linear operators in matrix form
+  std::vector<arma::Mat<typename SDPType::ElemType>> loA;
 };
 
 // Declare specializations in lrsdp_function.cpp.

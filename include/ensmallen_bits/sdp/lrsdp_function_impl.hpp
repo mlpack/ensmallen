@@ -23,7 +23,8 @@ LRSDPFunction<SDPType>::LRSDPFunction(
     const SDPType& sdp,
     const arma::Mat<typename SDPType::ElemType>& initialPoint):
     sdp(sdp),
-    initialPoint(initialPoint)
+    initialPoint(initialPoint),
+    loA(sdp.NumLinearOperatorConstraints())
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
   {
@@ -31,14 +32,24 @@ LRSDPFunction<SDPType>::LRSDPFunction(
         << "more columns than rows.  It may be more efficient to find the "
         << "transposed solution." << std::endl;
   }
+
+  for (size_t i = 0; i < sdp.NumLinearOperatorConstraints(); i++)
+  {
+      loA[i].zeros(sdp.N(), sdp.N());
+      math::convertToMatrix<typename SDPType::ElemType,
+          typename SDPType::DenseConstraintType>(sdp.LinearOperators()[i], 
+              loA[i]);
+  }
 }
 
 template<typename SDPType>
 LRSDPFunction<SDPType>::LRSDPFunction(
     const size_t numSparseConstraints,
     const size_t numDenseConstraints,
+    const size_t numLinearOperatorConstraints,
     const arma::Mat<typename SDPType::ElemType>& initialPoint):
-    sdp(initialPoint.n_rows, numSparseConstraints, numDenseConstraints),
+    sdp(initialPoint.n_rows, numSparseConstraints, numDenseConstraints, 
+        numLinearOperatorConstraints),
     initialPoint(initialPoint)
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
@@ -91,11 +102,18 @@ typename MatType::elem_type LRSDPFunction<SDPType>::EvaluateConstraint(
     return accu(SDP().SparseA()[index] % rrt.As<MatType>()) -
         SDP().SparseB()[index];
   }
-  const size_t index1 = index - SDP().NumSparseConstraints();
+  else if (index < SDP().NumSparseConstraints() + SDP().NumDenseConstraints()) {
+      const size_t index1 = index - SDP().NumSparseConstraints();
 
-  // For computation optimization we will be taking R^T * A first.
-  return trace((trans(coordinates) * SDP().DenseA()[index1]) * coordinates)
-                 - SDP().DenseB()[index1];
+      // For computation optimization we will be taking R^T * A first.
+      return trace((trans(coordinates) * SDP().DenseA()[index1]) * coordinates)
+          - SDP().DenseB()[index1];
+  }
+
+  const size_t index2 = index - SDP().NumSparseConstraints() 
+      - SDP().NumDenseConstraints();
+  return SDP().LinearOperators()[index2](RRT<arma::Mat<typename SDPType::ElemType>>())
+      - SDP().LinearOperatorsB()[index2];
 }
 
 template<typename SDPType>
@@ -124,7 +142,7 @@ void UpdateRRT(LRSDPFunction<SDPType>& function,
 //! used with an LRSDPFunction.
 template <typename MatrixType, typename VecType, typename MatType>
 static inline void
-UpdateObjective(typename MatType::elem_type& objective,
+UpdateObjectiveFromMatrixConstraints(typename MatType::elem_type& objective,
                 const MatType& rrt,
                 const std::vector<MatrixType>& ais,
                 const VecType& bis,
@@ -143,12 +161,35 @@ UpdateObjective(typename MatType::elem_type& objective,
     objective += (sigma / 2.) * constraint * constraint;
   }
 }
+template <typename ElemType, typename VecType, typename MatType>
+static inline void
+UpdateObjectiveFromLinearOperatorConstraints(
+    typename MatType::elem_type& objective,
+    const MatType& rrt,
+    const std::vector<std::function<ElemType(
+           arma::Mat<ElemType>)>>& ais,
+    const VecType& bis,
+    const arma::vec& lambda,
+    const size_t lambdaOffset,
+    const double sigma)
+{
+    for (size_t i = 0; i < ais.size(); ++i)
+    {
+        // Take the trace subtracted by the b_i.
+        // Here taking R^T * A first is not recommended as we are already
+        // using pre-computed R * R^T. Taking R^T * A first will result in increase
+        // in number of computations.
+        const double constraint = ais[i](rrt) - bis[i];
+        objective -= (lambda[lambdaOffset + i] * constraint);
+        objective += (sigma / 2.) * constraint * constraint;
+    }
+}
 
 //! Utility function for calculating part of the gradient when AugLagrangian is
 //! used with an LRSDPFunction.
 template <typename MatrixType, typename VecType, typename MatType>
 static inline void
-UpdateGradient(MatType& s,
+UpdateGradientFromMatrixConstraints(MatType& s,
                const MatType& rrt,
                const std::vector<MatrixType>& ais,
                const VecType& bis,
@@ -165,6 +206,28 @@ UpdateGradient(MatType& s,
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
   }
+}
+template <typename ElemType, typename VecType, typename MatType>
+static inline void
+UpdateGradientFromLinearOperatorConstraints(MatType& s,
+    const MatType& rrt,
+    const std::vector<std::function<ElemType(
+        arma::Mat<ElemType>)>>&ais,
+    const VecType& bis,
+    const arma::vec& lambda,
+    const size_t lambdaOffset,
+    const double sigma,
+    const std::vector<arma::Mat<ElemType>> loA)
+{
+    for (size_t i = 0; i < ais.size(); ++i)
+    {
+        // Here taking R^T * A first is not recommended as we are already
+        // using pre-computed R * R^T. Taking R^T * A first will result in increase
+        // in number of computations.
+        const double constraint = ais[i](rrt) - bis[i];
+        const double y = lambda[lambdaOffset + i] - sigma * constraint;
+        s -= y * loA[i];
+    }
 }
 
 template<typename SDPType, typename MatType>
@@ -211,11 +274,18 @@ EvaluateImpl(LRSDPFunction<SDPType>& function,
       trace((trans(coordinates) * function.SDP().C()) * coordinates);
 
   // Now each constraint.
-  UpdateObjective(objective, function.template RRT<MatType>(),
+  UpdateObjectiveFromMatrixConstraints(
+      objective, function.template RRT<MatType>(),
       function.SDP().SparseA(), function.SDP().SparseB(), lambda, 0, sigma);
-  UpdateObjective(objective, function.template RRT<MatType>(),
+  UpdateObjectiveFromMatrixConstraints(
+      objective, function.template RRT<MatType>(),
       function.SDP().DenseA(), function.SDP().DenseB(), lambda,
       function.SDP().NumSparseConstraints(), sigma);
+  UpdateObjectiveFromLinearOperatorConstraints(
+      objective, function.template RRT<arma::Mat<typename SDPType::ElemType>>(),
+      function.SDP().LinearOperators(), function.SDP().LinearOperatorsB(), 
+      lambda, function.SDP().NumSparseConstraints() + 
+      function.SDP().NumDenseConstraints(), sigma);
 
   return objective;
 }
@@ -238,12 +308,17 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
   const MatType& rrt = function.template RRT<MatType>();
   MatType s(function.SDP().C());
 
-  UpdateGradient(
+  UpdateGradientFromMatrixConstraints(
       s, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
       lambda, 0, sigma);
-  UpdateGradient(
+  UpdateGradientFromMatrixConstraints(
       s, rrt, function.SDP().DenseA(), function.SDP().DenseB(),
       lambda, function.SDP().NumSparseConstraints(), sigma);
+  UpdateGradientFromLinearOperatorConstraints(
+      s, function.template RRT<arma::Mat<typename SDPType::ElemType>>(), 
+      function.SDP().LinearOperators(),
+      function.SDP().LinearOperatorsB(), lambda, 
+      function.SDP().NumDenseConstraints(), sigma, function.LoA());
 
   gradient = 2 * s * coordinates;
 }

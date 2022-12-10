@@ -19,10 +19,30 @@ namespace ens {
 
 template<typename SDPType>
 LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
+    const size_t numDenseConstraints,
+    const arma::Mat<typename SDPType::ElemType>& initialPoint,
+    const size_t maxIterations) :
+    function(numSparseConstraints, numDenseConstraints,
+        0, initialPoint),
+    maxIterations(maxIterations)
+{ }
+
+template<typename SDPType>
+LRSDP<SDPType>::LRSDP(const size_t numSparseConstraints,
                       const size_t numDenseConstraints,
+                      const size_t numLinearOperatorConstraints,
                       const arma::Mat<typename SDPType::ElemType>& initialPoint,
                       const size_t maxIterations) :
-    function(numSparseConstraints, numDenseConstraints, initialPoint),
+    function(numSparseConstraints, numDenseConstraints, 
+        numLinearOperatorConstraints, initialPoint),
+    maxIterations(maxIterations)
+{ }
+
+template<typename SDPType>
+LRSDP<SDPType>::LRSDP(const SDPType& sdp,
+    const arma::mat& initialPoint,
+    const size_t maxIterations):
+    function(sdp, initialPoint),
     maxIterations(maxIterations)
 { }
 

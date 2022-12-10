@@ -15,6 +15,38 @@
 namespace ens {
 namespace math {
 
+/**
+* Matrix representation of a general Linear operator representated 
+* by a function/method.
+*
+* @param input Input function.
+* @param output The matrix representation.
+*/
+template<typename ElemType, typename MatBType>
+inline void convertToMatrix(std::function<ElemType(arma::Mat<ElemType>)> input, 
+                            MatBType& output)
+{
+    const size_t n = output.n_rows;
+
+    arma::Mat<ElemType> tempInputCoordinates;
+    tempInputCoordinates.zeros(n, n);
+
+    size_t idx = 0;
+    for (size_t i = 0; i < n; i++)
+    {
+        if (i > 0) tempInputCoordinates(i - 1, n - 1) = 0;
+        for (size_t j = i; j < n; j++)
+        {
+            if (j > i) tempInputCoordinates(i, j - 1) = 0;
+            tempInputCoordinates(i, j) = 1;
+            if (i == j)
+                output(i, j) = input(tempInputCoordinates);
+            else
+                output(i, j) = output(j, i) = 0.5 * arma::datum::sqrt2 * input(tempInputCoordinates);
+        }
+    }
+}
+
 inline size_t SvecIndex(size_t i, size_t j, size_t n)
 {
   if (i > j)
@@ -108,6 +140,8 @@ inline void Smat(const MatAType& input, MatBType& output)
     }
   }
 }
+
+
 
 /**
  * If A is a symmetric matrix, then SymKronId returns an operator Op such that

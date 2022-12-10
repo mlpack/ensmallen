@@ -33,6 +33,8 @@
 #include "lin_alg.hpp"
 
 namespace ens {
+
+
 inline PrimalDualSolver::PrimalDualSolver(const size_t maxIterations,
                                           const double tau,
                                           const double normXzTol,
@@ -116,7 +118,8 @@ SolveLyapunov(MatType& x, const AType& a, const BType& h)
  *
  *     A  = [ Asparse ]
  *          [ Adense  ]
- *     dy = [ dysparse  dydense ]
+ *          [ AlinearOperator ]
+ *     dy = [ dysparse  dydense dylinearOperator ]
  *     E  = Z sym I
  *     F  = X sym I
  *
@@ -127,6 +130,7 @@ template<typename MatType,
 static inline void
 SolveKKTSystem(const SparseConstraintType& aSparse,
                const DenseConstraintType& aDense,
+               const DenseConstraintType& aLinearOperators,
                const MatType& dualCoordinates,
                const MatType& m,
                const MatType& fMat,
@@ -136,6 +140,7 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
                MatType& dsX,
                MatType& dySparse,
                MatType& dyDense,
+               MatType& dyLinearOperators,
                MatType& dsZ)
 {
   MatType frdRcMat, eInvFrdRcMat, eInvFrdATdyRcMat, frdATdyRcMat;
@@ -150,11 +155,16 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   math::Svec(eInvFrdRcMat, eInvFrdRc);
 
   MatType rhs = rp;
-  const size_t numConstraints = aSparse.n_rows + aDense.n_rows;
+  const size_t numConstraints = aSparse.n_rows + aDense.n_rows + 
+      aLinearOperators.n_rows;
   if (aSparse.n_rows)
     rhs(arma::span(0, aSparse.n_rows - 1), 0) += aSparse * eInvFrdRc;
   if (aDense.n_rows)
-    rhs(arma::span(aSparse.n_rows, numConstraints - 1), 0) += aDense * eInvFrdRc;
+    rhs(arma::span(aSparse.n_rows, aSparse.n_rows + aDense.n_rows - 1), 0) += 
+      aDense * eInvFrdRc;
+  if (aLinearOperators.n_rows)
+      rhs(arma::span(aSparse.n_rows + aDense.n_rows, numConstraints - 1), 0) += 
+          aLinearOperators * eInvFrdRc;
 
   if (!arma::solve(dy, m, rhs, arma::solve_opts::fast))
   {
@@ -169,10 +179,19 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
     dySparse = dy(arma::span(0, aSparse.n_rows - 1), 0);
     subTerm += aSparse.t() * dySparse;
   }
+
   if (aDense.n_rows)
   {
-    dyDense = dy(arma::span(aSparse.n_rows, numConstraints - 1), 0);
+    dyDense = dy(arma::span(aSparse.n_rows, 
+        aSparse.n_rows + aDense.n_rows - 1), 0);
     subTerm += aDense.t() * dyDense;
+  }
+
+  if (aLinearOperators.n_rows)
+  {
+      dyLinearOperators = dy(arma::span(aSparse.n_rows + aDense.n_rows, 
+          numConstraints - 1), 0);
+      subTerm += aLinearOperators.t() * dyLinearOperators;
   }
 
   // Compute dx from (2.13)
@@ -195,9 +214,12 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
   // Initialize the other parameters and then call the other overload.
   MatType ySparse(arma::ones<MatType>(sdp.NumSparseConstraints(), 1));
   MatType yDense(arma::ones<MatType>(sdp.NumDenseConstraints(), 1));
+  MatType yLinearOperators(arma::ones<MatType>(
+      sdp.NumLinearOperatorConstraints(), 1));
   MatType z(arma::eye<MatType>(sdp.N(), sdp.N()));
 
-  return Optimize(sdp, coordinates, ySparse, yDense, z, callbacks...);
+  return Optimize(sdp, coordinates, ySparse, yDense, 
+      yLinearOperators, z, callbacks...);
 }
 
 template<typename SDPType, typename MatType, typename... CallbackTypes>
@@ -206,6 +228,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     MatType& coordinates,
     MatType& ySparse,
     MatType& yDense,
+    MatType& yLinearOperators,
     MatType& dualCoordinates,
     CallbackTypes&&... callbacks)
 {
@@ -243,10 +266,23 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
         " one column.");
   }
 
+  if (yLinearOperators.n_rows != sdp.NumLinearOperatorConstraints())
+  {
+    throw std::logic_error("PrimalDualSolver::Optimize(): yLinearOperators" 
+        " needs to have the same length as the number of linear operator" 
+        " constraints.");
+  }
+
+  if (yLinearOperators.n_cols != 1)
+  {
+    throw std::logic_error("PrimalDualSolver::Optimize(): yLinearOperators"
+        " must have only one column.");
+  }
+
   if (yDense.n_rows != sdp.NumDenseConstraints())
   {
-    throw std::logic_error("PrimalDualSolver::Optimize(): yDense needs to have "
-        "the same length as the number of dense constraints.");
+      throw std::logic_error("PrimalDualSolver::Optimize(): yDense needs to have "
+          "the same length as the number of dense constraints.");
   }
 
   if (dualCoordinates.n_rows != sdp.N() || dualCoordinates.n_cols != sdp.N())
@@ -263,6 +299,18 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
 
   const size_t n = sdp.N();
   const size_t n2bar = sdp.N2bar();
+
+  // Cache constarint dense matrices of the general linear operators 
+  // stored as functions.
+  std::vector<typename SDPType::DenseConstraintType> 
+      loA(sdp.NumLinearOperatorConstraints());
+  for (size_t i = 0; i < sdp.NumLinearOperatorConstraints(); i++)
+  {
+      loA[i].zeros(n, n);
+      math::convertToMatrix<typename SDPType::ElemType,
+          typename SDPType::DenseConstraintType>(sdp.LinearOperators()[i], 
+              loA[i]);
+  }
 
   // Form the A matrix in (2.7). Note we explicitly handle
   // sparse and dense constraints separately.
@@ -286,23 +334,33 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     aDense.row(i) = aiDense.t();
   }
 
+  typename SDPType::DenseConstraintType aLinearOperators(
+    sdp.NumLinearOperatorConstraints(), n2bar);
+  typename SDPType::DenseConstraintType aiLinearOperator;
+  for (size_t i = 0; i < sdp.NumLinearOperatorConstraints(); i++)
+  {
+    math::Svec(loA[i], aiLinearOperator);
+    aLinearOperators.row(i) = aiLinearOperator.t();
+  }
+
   typename SDPType::ObjectiveType sc;
   math::Svec(sdp.C(), sc);
 
-  MatType sx, sz, dySparse, dyDense, dsx, dsz, dX, dZ;
+  MatType sx, sz, dySparse, dyDense, dyLinearOperators, dsx, dsz, dX, dZ;
 
   math::Svec(coordinates, sx);
   math::Svec(dualCoordinates, sz);
 
   MatType rp, rd, rc, gk;
 
-  MatType rcMat, fMat, eInvFaSparseT, eInvFaDenseT, gkMat,
-      m, dualCheck;
+  MatType rcMat, fMat, eInvFaSparseT, eInvFaDenseT, eInvFaLinearOperatorsT, 
+      gkMat, m, dualCheck;
 
   rp.set_size(sdp.NumConstraints(), 1);
 
   eInvFaSparseT.set_size(n2bar, sdp.NumSparseConstraints());
   eInvFaDenseT.set_size(n2bar, sdp.NumDenseConstraints());
+  eInvFaLinearOperatorsT.set_size(n2bar, sdp.NumLinearOperatorConstraints());
   m.zeros(sdp.NumConstraints(), sdp.NumConstraints());
 
   // Controls early termination of the optimization process.
@@ -311,6 +369,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
   typename SDPType::ElemType primalObj = 0., alpha, beta;
   terminate |= Callback::BeginOptimization(*this, sdp, coordinates,
       callbacks...);
+
   for (size_t iteration = 1; iteration != maxIterations && !terminate;
       iteration++)
   {
@@ -320,6 +379,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     // the KKT system again. Empirically, this PC step has been shown to
     // significantly reduce the number of required iterations (and is used
     // by most practical solver implementations).
+
     if (sdp.NumSparseConstraints())
     {
       rp(arma::span(0, sdp.NumSparseConstraints() - 1), 0) =
@@ -327,12 +387,21 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     }
     if (sdp.NumDenseConstraints())
     {
-      rp(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1), 0) =
+      rp(arma::span(sdp.NumSparseConstraints(), sdp.NumSparseConstraints() 
+          + sdp.NumDenseConstraints() - 1), 0) =
           sdp.DenseB() - aDense * sx;
     }
 
+    if (sdp.NumLinearOperatorConstraints())
+    {
+      rp(arma::span(sdp.NumSparseConstraints()+sdp.NumDenseConstraints(), 
+          sdp.NumConstraints() - 1), 0) =
+            sdp.LinearOperatorsB() - aLinearOperators * sx;
+    }
+
     // Rd = C - Z - smat A^T y
-    rd = sc - sz - aSparse.t() * ySparse - aDense.t() * yDense;
+    rd = sc - sz - aSparse.t() * ySparse - aDense.t() * yDense - 
+        aLinearOperators.t() * yLinearOperators;
 
     math::SymKronId(coordinates, fMat);
 
@@ -354,42 +423,104 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
       eInvFaDenseT.col(i) = gk;
     }
 
+    for (size_t i = 0; i < sdp.NumLinearOperatorConstraints(); i++)
+    {
+        SolveLyapunov(gkMat, dualCoordinates, coordinates * loA[i] +
+            loA[i] * coordinates);
+        math::Svec(gkMat, gk);
+        eInvFaLinearOperatorsT.col(i) = gk;
+    }
+
     // Form the M = A E^(-1) F A^T matrix (2.15)
     //
-    // Since we split A up into its sparse and dense components,
-    // we have to handle each block separately.
+    // Since we split A up into its sparse, dense, and linear 
+    // operator components, we have to handle each block separately.
+
     if (sdp.NumSparseConstraints())
     {
       m.submat(arma::span(0, sdp.NumSparseConstraints() - 1),
                arma::span(0, sdp.NumSparseConstraints() - 1)) =
           aSparse * eInvFaSparseT;
+
       if (sdp.NumDenseConstraints())
       {
         m.submat(arma::span(0, sdp.NumSparseConstraints() - 1),
                  arma::span(sdp.NumSparseConstraints(),
-                            sdp.NumConstraints() - 1)) =
+                            sdp.NumSparseConstraints()+ 
+                            sdp.NumDenseConstraints() - 1)) =
             aSparse * eInvFaDenseT;
+      }
+
+      if (sdp.NumLinearOperatorConstraints())
+      {
+          m.submat(arma::span(0, sdp.NumSparseConstraints() - 1),
+                   arma::span(sdp.NumSparseConstraints() +
+                              sdp.NumDenseConstraints(),
+                              sdp.NumConstraints() - 1)) =
+            aSparse * eInvFaLinearOperatorsT;
       }
     }
     if (sdp.NumDenseConstraints())
     {
-      if (sdp.NumSparseConstraints())
-      {
+        if (sdp.NumSparseConstraints())
+        {
+            m.submat(arma::span(sdp.NumSparseConstraints(),
+                                sdp.NumSparseConstraints() +
+                                sdp.NumDenseConstraints() - 1),
+                     arma::span(0, sdp.NumSparseConstraints() - 1)) =
+                aDense * eInvFaSparseT;
+        }
+
         m.submat(arma::span(sdp.NumSparseConstraints(),
+                            sdp.NumSparseConstraints() +
+                            sdp.NumDenseConstraints() - 1),
+                 arma::span(sdp.NumSparseConstraints(),
+                            sdp.NumSparseConstraints() +
+                            sdp.NumDenseConstraints() - 1)) =
+            aDense * eInvFaDenseT;
+
+        if (sdp.NumLinearOperatorConstraints())
+        {
+            m.submat(arma::span(sdp.NumSparseConstraints(),
+                                sdp.NumSparseConstraints() +
+                                sdp.NumDenseConstraints() - 1),
+                     arma::span(sdp.NumSparseConstraints() +
+                                sdp.NumDenseConstraints(),
+                                sdp.NumConstraints() - 1)) =
+                aDense * eInvFaLinearOperatorsT;
+        }
+    }
+
+    if (sdp.NumLinearOperatorConstraints())
+    {
+        if (sdp.NumSparseConstraints())
+        {
+            m.submat(arma::span(sdp.NumSparseConstraints() +
+                                sdp.NumDenseConstraints(),
+                                sdp.NumConstraints() - 1),
+                     arma::span(0, sdp.NumSparseConstraints() - 1)) =
+                aLinearOperators * eInvFaSparseT;
+        }
+        if (sdp.NumDenseConstraints()) {
+            m.submat(arma::span(sdp.NumSparseConstraints() +
+                                sdp.NumDenseConstraints(),
+                                sdp.NumConstraints() - 1),
+                     arma::span(sdp.NumSparseConstraints(),
+                                sdp.NumSparseConstraints() +
+                                sdp.NumDenseConstraints() - 1)) =
+                 aLinearOperators * eInvFaDenseT;
+        }
+
+        m.submat(arma::span(sdp.NumSparseConstraints() +
+                            sdp.NumDenseConstraints(),
                             sdp.NumConstraints() - 1),
-                 arma::span(0,
-                            sdp.NumSparseConstraints() - 1)) =
-            aDense * eInvFaSparseT;
-      }
-      m.submat(arma::span(sdp.NumSparseConstraints(),
-                          sdp.NumConstraints() - 1),
-               arma::span(sdp.NumSparseConstraints(),
-                          sdp.NumConstraints() - 1)) =
-          aDense * eInvFaDenseT;
+                 arma::span(sdp.NumSparseConstraints() +
+                            sdp.NumDenseConstraints(),
+                            sdp.NumConstraints() - 1)) =
+             aLinearOperators * eInvFaLinearOperatorsT;
     }
 
     const typename MatType::elem_type sxdotsz = arma::dot(sx, sz);
-
     // TODO(stephentu): computing these alphahats should take advantage of
     // the cholesky decomposition of X and Z which we should have available
     // when we use more efficient methods above.
@@ -397,8 +528,10 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     // This solves step (1) of Section 7, the "predictor" step.
     rcMat = -0.5 * (coordinates * dualCoordinates + dualCoordinates * coordinates);
     math::Svec(rcMat, rc);
-    SolveKKTSystem(aSparse, aDense, dualCoordinates, m, fMat, rp, rd, rc, dsx,
-        dySparse, dyDense, dsz);
+
+    SolveKKTSystem(aSparse, aDense, aLinearOperators, dualCoordinates, m, fMat, rp, rd, rc, dsx,
+        dySparse, dyDense, dyLinearOperators, dsz);
+
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
 
@@ -436,8 +569,11 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
          dX * dZ +
          dZ * dX);
     math::Svec(rcMat, rc);
-    SolveKKTSystem(aSparse, aDense, dualCoordinates, m, fMat, rp, rd, rc, dsx,
-        dySparse, dyDense, dsz);
+
+    SolveKKTSystem(aSparse, aDense, aLinearOperators, dualCoordinates, 
+        m, fMat, rp, rd, rc, dsx,
+        dySparse, dyDense, dyLinearOperators, dsz);
+
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
     if (!Alpha(coordinates, dX, tau, alpha))
@@ -462,10 +598,14 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     terminate |= Callback::StepTaken(*this, sdp, coordinates, callbacks...);
 
     math::Svec(coordinates, sx);
+
     if (dySparse.n_cols != 0)
       ySparse += beta * dySparse;
     if (dyDense.n_cols != 0)
       yDense += beta * dyDense;
+    if (dyLinearOperators.n_cols != 0)
+      yLinearOperators += beta * dyLinearOperators;
+
     dualCoordinates += beta * dZ;
     math::Svec(dualCoordinates, sz);
 
@@ -484,8 +624,11 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     const double sparsePrimalInfeas = arma::norm(sdp.SparseB() - aSparse * sx,
         2);
     const double densePrimalInfeas = arma::norm(sdp.DenseB() - aDense * sx, 2);
+    const double linearOperatorPrimalInfeas = arma::norm(sdp.LinearOperatorsB() - 
+        aLinearOperators * sx, 2);
     const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
-        densePrimalInfeas * densePrimalInfeas);
+        densePrimalInfeas * densePrimalInfeas + 
+        linearOperatorPrimalInfeas * linearOperatorPrimalInfeas);
 
     primalObj = arma::dot(sdp.C(), coordinates);
 
@@ -498,11 +641,16 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
 
     // TODO(stephentu): this dual check is quite expensive,
     // maybe make it optional?
+    // 
+
     dualCheck = dualCoordinates - sdp.C();
     for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
       dualCheck += ySparse(i) * sdp.SparseA()[i];
     for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
       dualCheck += yDense(i) * sdp.DenseA()[i];
+    for (size_t i = 0; i < sdp.NumLinearOperatorConstraints(); i++)
+      dualCheck += yLinearOperators(i) * loA[i];
+
     const double dualInfeas = arma::norm(dualCheck, "fro");
 
     if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol &&
