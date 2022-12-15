@@ -120,7 +120,7 @@ class LRSDPFunction
     return rrt.As<typename std::remove_reference<MatType>::type>();
   }
 
-  // Cache constarint matrices of the general linear operators 
+  // Cache constraint matrices of the general linear operators 
   // stored as functions.
   const std::vector<arma::Mat<typename SDPType::ElemType>> LoA() const {
       return loA;
