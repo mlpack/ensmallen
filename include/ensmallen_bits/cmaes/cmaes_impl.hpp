@@ -22,31 +22,32 @@
 
 namespace ens {
 
-template<typename SelectionPolicyType>
-CMAES<SelectionPolicyType>::CMAES(const size_t lambda,
-                                  const double lowerBound,
-                                  const double upperBound,
+template<typename SelectionPolicyType, typename TransformationPolicyType>
+CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
+                                  const TransformationPolicyType& 
+                                        transformationPolicy,
                                   const size_t batchSize,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy) :
     lambda(lambda),
-    lowerBound(lowerBound),
-    upperBound(upperBound),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
-    selectionPolicy(selectionPolicy)
+    selectionPolicy(selectionPolicy),
+    transformationPolicy(transformationPolicy)
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-template<typename SelectionPolicyType>
+template<typename SelectionPolicyType, typename TransformationPolicyType>
 template<typename SeparableFunctionType,
          typename MatType,
          typename... CallbackTypes>
-typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
+typename MatType::elem_type CMAES<SelectionPolicyType, 
+  TransformationPolicyType>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
+    double stepSizeIn,
     CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
@@ -78,7 +79,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  sigma(0) = 0.3 * (upperBound - lowerBound);
+  sigma(0) = stepSizeIn; //0.3 * (upperBound - lowerBound);
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
@@ -99,8 +100,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
   std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows,
       iterate.n_cols));
-  mPosition[0] = lowerBound + arma::randu<BaseMatType>(
-      iterate.n_rows, iterate.n_cols) * (upperBound - lowerBound);
+  mPosition[0] = iterate;
 
   BaseMatType step(iterate.n_rows, iterate.n_cols);
   step.zeros();
@@ -110,11 +110,13 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-    const ElemType objective = function.Evaluate(mPosition[0], f,
+    const ElemType objective = 
+        function.Evaluate(transformationPolicy.Transform(mPosition[0]), f,
         effectiveBatchSize);
     currentObjective += objective;
 
-    Callback::Evaluate(*this, function, mPosition[0], objective,
+    Callback::Evaluate(*this, function, 
+      transformationPolicy.Transform(mPosition[0]), objective,
         callbacks...);
   }
 
@@ -146,10 +148,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
   // Controls early termination of the optimization process.
   bool terminate = false;
 
+  BaseMatType transformedIterate = transformationPolicy.Transform(iterate);
+
   // Now iterate!
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
-  for (size_t i = 1; i < maxIterations && !terminate; ++i)
+  terminate |= Callback::BeginOptimization(*this, function, 
+    transformedIterate, callbacks...);
+  for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
     // To keep track of where we are.
     const size_t idx0 = (i - 1) % 2;
@@ -161,6 +165,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     while (!arma::chol(covLower, C[idx0], "lower"))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
+    arma::eig_sym(eigval, eigvec, C[idx0]);
+
     for (size_t j = 0; j < lambda; ++j)
     {
       if (iterate.n_rows > iterate.n_cols)
@@ -171,14 +177,14 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       else
       {
         pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
-            * covLower;
+            * covLower.t();
       }
 
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          pPosition[idx(j)], callbacks...);
+        transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
     }
 
     // Sort population.
@@ -192,7 +198,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
 
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
-        mPosition[idx1], callbacks...);
+      transformationPolicy.Transform(mPosition[idx1]), callbacks...);
 
     // Update best parameters.
     if (currentObjective < overallObjective)
@@ -200,19 +206,23 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       overallObjective = currentObjective;
       iterate = mPosition[idx1];
 
-      terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
+      transformedIterate = transformationPolicy.Transform(iterate);
+      terminate |= Callback::StepTaken(*this, function, 
+        transformedIterate, callbacks...);
     }
 
     // Update Step Size.
     if (iterate.n_rows > iterate.n_cols)
     {
       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
-          cs * (2 - cs) * muEffective) * covLower.t() * step;
+          cs * (2 - cs) * muEffective) * 
+          eigvec * diagmat(1 / eigval) * eigvec.t() * step;
     }
     else
     {
       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
-          cs * (2 - cs) * muEffective) * step * covLower.t();
+          cs * (2 - cs) * muEffective) * step * 
+        eigvec * diagmat(1 / eigval) * eigvec.t();
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
@@ -293,6 +303,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       Warn << "CMA-ES: converged to " << overallObjective << "; "
           << "terminating with failure.  Try a smaller step size?" << std::endl;
 
+      iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
@@ -302,6 +313,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
       Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
+      iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
@@ -309,6 +321,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType>::Optimize(
     lastObjective = overallObjective;
   }
 
+  iterate = transformationPolicy.Transform(iterate);
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return overallObjective;
 }
