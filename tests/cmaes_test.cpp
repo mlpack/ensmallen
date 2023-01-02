@@ -23,7 +23,11 @@ using namespace ens::test;
  */
 TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
 {
-  CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  arma::mat lb(1, 1, arma::fill::value(-1));
+  arma::mat ub(1, 1, arma::fill::value(1));
+  BoundaryBoxConstraint b(lb, ub);
+
+  CMAES cmaes(0, b, 32, 200, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -33,7 +37,11 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
  */
 TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 {
-  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  arma::mat lb(1, 1, arma::fill::value(-1));
+  arma::mat ub(1, 1, arma::fill::value(1));
+  BoundaryBoxConstraint b(lb, ub);
+
+  ApproxCMAES<BoundaryBoxConstraint<arma::mat>> cmaes(0, b, 32, 200, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -43,7 +51,11 @@ TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
  */
 TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
-  CMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  arma::fmat lb(1, 1, arma::fill::value(-1));
+  arma::fmat ub(1, 1, arma::fill::value(1));
+  BoundaryBoxConstraint b(lb, ub);
+
+  CMAES cmaes(0, b, 32, 200, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 
@@ -53,6 +65,10 @@ TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
  */
 TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
-  ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3);
+  arma::fmat lb(1, 1, arma::fill::value(-1));
+  arma::fmat ub(1, 1, arma::fill::value(1));
+  BoundaryBoxConstraint b(lb, ub);
+
+  ApproxCMAES<BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 32, 200, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
