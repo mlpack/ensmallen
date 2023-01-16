@@ -23,7 +23,7 @@ using namespace ens::test;
  * This test uses the deprecated constructor and therefore can be removed 
  * in a future version of ensmallen.
  */
-TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
+TEST_CASE("CMAESDeprecatedConstructorLogisticRegressionTest", "[CMAESTest]")
 {
   CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, -1, 1, 32, 200, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
