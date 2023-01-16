@@ -12,47 +12,69 @@
  */
 
 namespace ens {
-  /**
-  * More often than not, coordinates must be bounded by some constraints.
-  * In a particular case, the domain of a specific function is restricted 
-  * by boundaries.
-  * The implemented transformation transforms given coordinates into a region 
-  * bounded by the given lower and upper bounds (a box). First, the 
-  * coordinates are shifted into a feasible preimage bounded by lower_bound - al 
-  * and upper_bound + au where al and au and calculated internally. 
-  * These shifted coordinates are then transformed into coordinates bounded by 
-  * lower_bound and upper_bound. It is an identity transformation in between 
-  * the lower and upper bounds.
-  * The inverse transformation transforms the coordinates back to the preimage.
-  * 
-  * For more information, check the original implementation in C by N. Hansen:
-  * https://github.com/CMA-ES/c-cmaes/blob/master/src/boundary_transformation.c
-  *
-  * @tparam MatType The matrix type of the coordinates and bounds.
-  */
+
+/**
+ * More often than not, coordinates must be bounded by some constraints.
+ * In a particular case, the domain of a specific function is restricted 
+ * by boundaries.
+ * The implemented transformation transforms given coordinates into a region 
+ * bounded by the given lower and upper bounds (a box). First, the 
+ * coordinates are shifted into a feasible preimage bounded by lowerBound - al 
+ * and upperBound + au where al and au and calculated internally. 
+ * These shifted coordinates are then transformed into coordinates bounded by 
+ * lower_bound and upper_bound. It is an identity transformation in between 
+ * the lower and upper bounds.
+ * The inverse transformation transforms the coordinates back to the preimage.
+ * 
+ * For more information, check the original implementation in C by N. Hansen:
+ * https://github.com/CMA-ES/c-cmaes/blob/master/src/boundary_transformation.c
+ *
+ * @tparam MatType The matrix type of the coordinates and bounds.
+ */
 template<typename MatType = arma::mat>
 class BoundaryBoxConstraint
 {
 public:
+
   /**
-  * Construct the boundary box constraint poilcy.
-  *
-  * @param lowerBound The lower bound of the coordinates.
-  * @param upperBound The upper bound of the coordinates.
-  */
+   * Construct the boundary box constraint policy.
+   */
+  BoundaryBoxConstraint()
+  { /* Nothing to do. */ }
+
+  /**
+   * Construct the boundary box constraint policy.
+   *
+   * @param lowerBound The lower bound of the coordinates.
+   * @param upperBound The upper bound of the coordinates.
+   */
   BoundaryBoxConstraint(const MatType& lowerBound,
-    const MatType& upperBound):
-    lowerBound(lowerBound),
-    upperBound(upperBound)
-  {}
+                        const MatType& upperBound) :
+      lowerBound(lowerBound),
+      upperBound(upperBound)
+  {
+
+  }
   
   /**
-  * Map the given coordinates to the range 
-  * [lowerBound, upperBound]
-  *
-  * @param x Given coordinates.
-  * @return Transformed coordinates.
-  */
+   * Construct the boundary box constraint policy.
+   *
+   * @param lowerBound The lower bound (for every dimension) of the coordinates.
+   * @param upperBound The upper bound (for every dimension) of the coordinates.
+   */
+  BoundaryBoxConstraint(const double lowerBound,
+                        const double upperBound) :
+      lowerBound({ (typename MatType::elem_type) lowerBound }),
+      upperBound({ (typename MatType::elem_type) upperBound })
+  {}
+
+  /**
+   * Map the given coordinates to the range 
+   * [lowerBound, upperBound]
+   *
+   * @param x Given coordinates.
+   * @return Transformed coordinates.
+   */
   MatType Transform(const MatType& x)
   {
     typedef typename MatType::elem_type ElemType;
@@ -111,12 +133,21 @@ public:
   }
 
   /**
-  * Map the given coordinates back to the preimage, 
-  * which is bounded by [lowerBound - al, upperBound + au].
-  *
-  * @param y Given coordinates.
-  * @return Transformed coordinates.
-  */
+   * Return a suitable initial step size.
+   *
+   * @return initial step size.
+   */
+  typename MatType::elem_type initialStepSize() {
+    return 0.3*arma::min(arma::min(upperBound - lowerBound));
+  }
+
+  /**
+   * Map the given coordinates back to the preimage, 
+   * which is bounded by [lowerBound - al, upperBound + au].
+   *
+   * @param y Given coordinates.
+   * @return Transformed coordinates.
+
   MatType Inverse(const MatType& y)
   {
     typedef typename MatType::elem_type ElemType;
@@ -148,6 +179,8 @@ public:
 
     return x;
   }
+  */
+
   //! Get the lower bound of decision variables.
   MatType LowerBound() const { return lowerBound; }
   //! Modify the lower bound of decision variables.
@@ -159,7 +192,10 @@ public:
   MatType& UpperBound() { return upperBound; }
 
 private:
+  //! Upper bound of decision variables.
   MatType upperBound;
+
+  //! Lower bound of decision variables.
   MatType lowerBound;
 };
 

@@ -48,8 +48,9 @@ namespace ens {
  * ensmallen website.
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
- * @tparam transformationPolicy The transformation strategy used to 
- *       map cooridnates to the desired domain.
+ * @tparam TransformationPolicy The transformation strategy used to 
+ *       map decision variables to the desired domain during fitness evaluation
+ *       and termination. Use EmptyTransformation if the domain isn't bounded.
  */
 template<typename SelectionPolicyType = FullSelection,
          typename TransformationPolicyType = EmptyTransformation<>>
@@ -66,13 +67,14 @@ class CMAES
    *
    * @param lambda The population size (0 use the default size).
    * @param transformationPolicy Instantiated transformation policy used to 
-   *     map the cooridnates to the desired domain.
+   *     map the coordinates to the desired domain.
    * @param batchSize Batch size to use for the objective calculation.
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
+   * @param stepSize Starting sigma/step size (will be modified).
    */
   CMAES(const size_t lambda = 0,
         const TransformationPolicyType& 
@@ -80,7 +82,37 @@ class CMAES
         const size_t batchSize = 32,
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType());
+        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+        double stepSize = 0);
+
+  /**
+   * Construct the CMA-ES optimizer with the given function and parameters 
+   * (including lower and upper bounds). The defaults here are not necessarily 
+   * good for the given problem, so it is suggested that the values used be 
+   * tailored to the task at hand.  The maximum number of iterations refers to 
+   * the maximum number of points that are processed (i.e., one iteration 
+   * equals one point; one iteration does not equal one pass over the dataset). 
+   * This constructor is deprecated.
+   * 
+   * @param lambda The population size(0 use the default size).
+   * @param lowerBound Lower bound of decision variables.
+   * @param upperBound Upper bound of decision variables.
+   * @param batchSize Batch size to use for the objective calculation.
+   * @param maxIterations Maximum number of iterations allowed(0 means no
+      limit).
+   * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param selectionPolicy Instantiated selection policy used to calculate the
+   * objective.
+   * @param stepSize Starting sigma/step size (will be modified).
+   */
+  CMAES(const size_t lambda = 0,
+        const double lowerBound = -10,
+        const double upperBound = 10,
+        const size_t batchSize = 32,
+        const size_t maxIterations = 1000,
+        const double tolerance = 1e-5,
+        const SelectionPolicyType & selectionPolicy = SelectionPolicyType(),
+        double stepSize = 1);
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -92,7 +124,6 @@ class CMAES
    * @tparam CallbackTypes Types of callback functions.
    * @param function Function to optimize.
    * @param iterate Starting point (will be modified).
-   * @param stepSize Starting sigma/step size (will be modified).
    * @param callbacks Callback functions.
    * @return Objective value of the final point.
    */
@@ -101,7 +132,6 @@ class CMAES
       typename... CallbackTypes>
       typename MatType::elem_type Optimize(SeparableFunctionType& function,
           MatType& iterate,
-          double stepSize = 0.6,
           CallbackTypes&&... callbacks);
 
   //! Get the population size.
@@ -136,6 +166,13 @@ class CMAES
   TransformationPolicyType& TransformationPolicy() 
   { return transformationPolicy; }
 
+  //! Get the step size.
+  double StepSize() const
+  { return stepSize; }
+  //! Modify the step size.
+  double& StepSize()
+  { return stepSize; }
+
  private:
   //! Population size.
   size_t lambda;
@@ -152,7 +189,11 @@ class CMAES
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy;
 
+  //! The transformationPolicy used to map coordinates to the suitable domain
+  //! while evaluating fitness. 
   TransformationPolicyType transformationPolicy;
+
+  double stepSize;
 };
 
 /**

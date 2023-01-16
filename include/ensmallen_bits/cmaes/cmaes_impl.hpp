@@ -20,6 +20,25 @@
 
 #include <ensmallen_bits/function.hpp>
 
+/*
+ This partial specialization is used to throw an exception when the
+ TransformationPolicyType is EmptyTransformation and call a
+ constructor with paramters 'lowerBound' and 'upperBound' otherwise.
+*/
+template<typename T1, typename T2>
+struct notEmptyTransformation : std::true_type {
+  void assign(T1& obj, double lowerBound, double upperBound) {
+    obj = T1(lowerBound, upperBound);
+  }
+};
+
+template<template<typename...> typename T, typename... A, typename... B>
+struct notEmptyTransformation<T<A...>, T<B...>> : std::false_type {
+  void assign(T<A...>& obj, double lowerBound, double upperBound) {
+    throw std::logic_error("TransformationPolicyType is EmptyTransformation");
+  }
+};
+
 namespace ens {
 
 template<typename SelectionPolicyType, typename TransformationPolicyType>
@@ -29,14 +48,39 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const size_t batchSize,
                                   const size_t maxIterations,
                                   const double tolerance,
-                                  const SelectionPolicyType& selectionPolicy) :
+                                  const SelectionPolicyType& selectionPolicy,
+                                  double stepSizeIn) :
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
-    transformationPolicy(transformationPolicy)
+    transformationPolicy(transformationPolicy),
+    stepSize(stepSizeIn)
 { /* Nothing to do. */ }
+
+template<typename SelectionPolicyType, typename TransformationPolicyType>
+CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
+                                  const double lowerBound,
+                                  const double upperBound,
+                                  const size_t batchSize,
+                                  const size_t maxIterations,
+                                  const double tolerance,
+                                  const SelectionPolicyType& selectionPolicy,
+                                  double stepSizeIn) :
+    lambda(lambda),
+    batchSize(batchSize),
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    selectionPolicy(selectionPolicy),
+    stepSize(stepSizeIn)
+{
+  Warn << "This is a deprecated constructor and will be removed in a "
+    "future version of ensmallen" << std::endl;
+  notEmptyTransformation<TransformationPolicyType, EmptyTransformation<>> d;
+  d.assign(transformationPolicy, lowerBound, upperBound);
+}
+
 
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType, typename TransformationPolicyType>
@@ -47,7 +91,6 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   TransformationPolicyType>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
-    double stepSizeIn,
     CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
@@ -79,7 +122,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  sigma(0) = stepSizeIn; //0.3 * (upperBound - lowerBound);
+  if (stepSize == 0) sigma(0) = transformationPolicy.initialStepSize();
+  else sigma(0) = stepSize;
+
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
@@ -105,18 +150,18 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   BaseMatType step(iterate.n_rows, iterate.n_cols);
   step.zeros();
 
+  BaseMatType transformedIterate = transformationPolicy.Transform(iterate);
+
   // Calculate the first objective function.
   ElemType currentObjective = 0;
   for (size_t f = 0; f < numFunctions; f += batchSize)
   {
     const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-    const ElemType objective = 
-        function.Evaluate(transformationPolicy.Transform(mPosition[0]), f,
+    const ElemType objective = function.Evaluate(transformedIterate, f,
         effectiveBatchSize);
     currentObjective += objective;
 
-    Callback::Evaluate(*this, function, 
-      transformationPolicy.Transform(mPosition[0]), objective,
+    Callback::Evaluate(*this, function, transformedIterate, objective,
         callbacks...);
   }
 
@@ -147,8 +192,6 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Controls early termination of the optimization process.
   bool terminate = false;
-
-  BaseMatType transformedIterate = transformationPolicy.Transform(iterate);
 
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, function, 
@@ -184,7 +227,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-        transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
+          transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
     }
 
     // Sort population.
@@ -198,7 +241,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
-      transformationPolicy.Transform(mPosition[idx1]), callbacks...);
+        transformationPolicy.Transform(mPosition[idx1]), callbacks...);
 
     // Update best parameters.
     if (currentObjective < overallObjective)
@@ -208,7 +251,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
       transformedIterate = transformationPolicy.Transform(iterate);
       terminate |= Callback::StepTaken(*this, function, 
-        transformedIterate, callbacks...);
+          transformedIterate, callbacks...);
     }
 
     // Update Step Size.
