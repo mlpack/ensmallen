@@ -24,7 +24,6 @@ namespace ens {
  * These shifted coordinates are then transformed into coordinates bounded by 
  * lower_bound and upper_bound. It is an identity transformation in between 
  * the lower and upper bounds.
- * The inverse transformation transforms the coordinates back to the preimage.
  * 
  * For more information, check the original implementation in C by N. Hansen:
  * https://github.com/CMA-ES/c-cmaes/blob/master/src/boundary_transformation.c
@@ -131,55 +130,6 @@ public:
 
     return y;
   }
-
-  /**
-   * Return a suitable initial step size.
-   *
-   * @return initial step size.
-   */
-  typename MatType::elem_type initialStepSize() {
-    return 0.3*arma::min(arma::min(upperBound - lowerBound));
-  }
-
-  /**
-   * Map the given coordinates back to the preimage, 
-   * which is bounded by [lowerBound - al, upperBound + au].
-   *
-   * @param y Given coordinates.
-   * @return Transformed coordinates.
-
-  MatType Inverse(const MatType& y)
-  {
-    typedef typename MatType::elem_type ElemType;
-    double diff, al, au;
-    size_t Bi, Bj;
-    MatType x = y;
-    for (size_t i = 0; i < y.n_rows; i++)
-    {
-      Bi = (i < lowerBound.n_rows) ? i : (lowerBound.n_rows - 1);
-      for (size_t j = 0; j < y.n_cols; j++)
-      {
-        Bj = (j < lowerBound.n_cols) ? j : (lowerBound.n_cols - 1);
-
-        diff = (upperBound(Bi, Bj) - lowerBound(Bi, Bj)) / 2.0;
-        al = std::min(diff, (1 + std::abs(lowerBound(Bi, Bj))) / 20.0);
-        au = std::min(diff, (1 + std::abs(upperBound(Bi, Bj))) / 20.0);
-        if (x(i, j) < lowerBound(Bi, Bj) + al)
-        {
-          x(i, j) = (ElemType)(lowerBound(Bi, Bj) - al) + 2 *
-            std::sqrt(std::abs(al * (x(i, j) - lowerBound(Bi, Bj))));
-        }
-        else if (x(i, j) > upperBound(Bi, Bj) - au)
-        {
-          x(i, j) = (ElemType)(upperBound(Bi, Bj) + au) - 2 *
-            std::sqrt(std::abs(au * (upperBound(Bi, Bj) - x(i, j))));
-        }
-      }
-    }
-
-    return x;
-  }
-  */
 
   //! Get the lower bound of decision variables.
   MatType LowerBound() const { return lowerBound; }

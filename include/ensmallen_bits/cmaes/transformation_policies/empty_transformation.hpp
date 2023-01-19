@@ -40,14 +40,5 @@ public:
 	 */
 	typename MatType::elem_type initialStepSize() { return 1; }
 
-	/**
-	 * Inverse transformtion (effectively no transformation).
-	 *
-	 * @param y Input coordinates.
-	 * @return Transformed coordinates (the coordinates themselves).
-
-	MatType Inverse(const MatType& y) { return y; }
-	*/
 };
-
 } // namespace ens
