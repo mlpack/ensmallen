@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.19.1: "Eight Ball Deluxe"
 ###### 2023-01-30
 * Avoid deprecation warnings in Armadillo 11.2+
