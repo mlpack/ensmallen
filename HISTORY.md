@@ -1,14 +1,16 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix CNE test tolerances
+   ([#360](https://github.com/mlpack/ensmallen/pull/360)).
 
 ### ensmallen 2.19.1: "Eight Ball Deluxe"
 ###### 2023-01-30
-* Avoid deprecation warnings in Armadillo 11.2+
+ * Avoid deprecation warnings in Armadillo 11.2+
    ([#347](https://github.com/mlpack/ensmallen/pull/347)).
 
 ### ensmallen 2.19.0: "Eight Ball Deluxe"
 ###### 2022-04-06
-* Added DemonSGD and DemonAdam optimizers
+ * Added DemonSGD and DemonAdam optimizers
    ([#211](https://github.com/mlpack/ensmallen/pull/211)).
 
  * Fix bug with Adam-like optimizers not resetting when `resetPolicy` is `true`.
