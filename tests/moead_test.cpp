@@ -628,3 +628,80 @@ TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEADTest]")
   const arma::cube& finalPopulation = opt.ParetoSet();
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
+
+
+
+/**
+ * Test BBSMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a 30 
+ * variable-2 objective problem with disconnected Pareto Fronts. 
+ */
+TEST_CASE("MOEADBBSMOEDZDT3Test", "[MOEADTest]")
+{
+  //! Parameters taken from original ZDT Paper.
+  ZDT3<> ZDT_THREE(300);
+  const double lowerBound = 0;
+  const double upperBound = 1;
+
+  BBSMOEAD opt(
+      300, // Population size.
+      300,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
+
+  typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+
+  arma::mat coords = ZDT_THREE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+
+  const arma::cube& finalPopulation = opt.ParetoSet();
+  REQUIRE(VariableBoundsCheck(finalPopulation));
+}
+
+
+/**
+ * Test DefaultMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a 30 
+ * variable-2 objective problem with disconnected Pareto Fronts. 
+ */
+TEST_CASE("MOEADDEFAULTZDT3Test", "[MOEADTest]")
+{
+  //! Parameters taken from original ZDT Paper.
+  ZDT3<> ZDT_THREE(300);
+  const double lowerBound = 0;
+  const double upperBound = 1;
+
+  DefaultMOEAD opt(
+      300, // Population size.
+      300,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
+
+  typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+
+  arma::mat coords = ZDT_THREE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
+
+  opt.Optimize(objectives, coords);
+
+  const arma::cube& finalPopulation = opt.ParetoSet();
+  REQUIRE(VariableBoundsCheck(finalPopulation));
+}
