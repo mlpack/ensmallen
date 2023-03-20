@@ -668,7 +668,6 @@ TEST_CASE("MOEADBBSMOEDZDT3Test", "[MOEADTest]")
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
 
-
 /**
  * Test DefaultMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a 30 
  * variable-2 objective problem with disconnected Pareto Fronts. 
