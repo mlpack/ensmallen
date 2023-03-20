@@ -29,9 +29,8 @@ algorithm to address this issue, by using a different approach to maintain diver
 namespace ens {
 
 /**
- * This class implements the MOEA/D algorithm with Differential Evolution
- * crossover. Step numbers used in different parts of the implementation
- * correspond to the step number used in the original algorithm by the author.
+ * This class implements the Generation MOEA/D algorithm with Differential Evolution
+ * crossover. 
  *
  * 
  */
