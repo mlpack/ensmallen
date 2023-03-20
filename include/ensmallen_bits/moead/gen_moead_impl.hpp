@@ -39,14 +39,14 @@ class gen_moead{
 
 
 public:
-    int population;
+    int population_size;
     int number_generations;
     int number_divisions;
     vector<double> lower_bounds;
     vector<double> upper_bounds;
 
     gen_moead(int pop_size, int num_generations, int num_divisions, vector<double> lower_bounds, vector<double> upper_bounds):
-    population(pop_size),
+    population_size(pop_size),
     number_generations(num_generations),
     number_divisions(num_divisions),
     lower_bounds(lower_bounds),
@@ -80,9 +80,9 @@ vector<double> scalarizing_function(vector<vector<double>> objectives, vector<do
 // Define the Generation MOEA/D algorithm
 vector<vector<double>> genmoead_algorithm() {
     // Initialize the population
-    vector<vector<double>> population(population, vector<double>(2));
+    vector<vector<double>> population(population_size, vector<double>(2));
     std::default_random_engine generator;
-    for (int i = 0; i < population; i++) {
+    for (int i = 0; i < population_size; i++) {
         for (int j = 0; j < 2; j++) {
             std::uniform_real_distribution<double> distribution(lower_bounds[j], upper_bounds[j]);
             population[i][j] = distribution(generator);
@@ -97,15 +97,15 @@ vector<vector<double>> genmoead_algorithm() {
     // Iterate over generations
     for (int gen = 0; gen < number_generations; gen++) {
         // Evaluate the population
-        vector<vector<double>> objectives(population, vector<double>(2));
-        for (int i = 0; i < population; i++) {
+        vector<vector<double>> objectives(population_size, vector<double>(2));
+        for (int i = 0; i < population_size; i++) {
             objectives[i] = problem_function(population[i]);
         }
         // Iterate over subproblems
         for (int i = 0; i < number_divisions; i++) {
             // Select the parents
             vector<int> parent_indices(2);
-            std::uniform_int_distribution<int> distribution(0, population - 1);
+            std::uniform_int_distribution<int> distribution(0, population_size - 1);
             parent_indices[0] = distribution(generator);
             parent_indices[1] = distribution(generator);
             vector<double> parent1(2);
@@ -129,7 +129,7 @@ vector<vector<double>> genmoead_algorithm() {
             //Evelautae the child
             child_objectives=problem_function(child);
             //update the population
-            for (int j=0; j<population; j++){
+            for (int j=0; j<population_size; j++){
               vector<double> j_objectives(2);
               vector<double> j_weights(2);
               vector<double> j_scalar_objectives = scalarizing_function({j_objectives, child_objectives}, j_weights);;
