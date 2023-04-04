@@ -9,20 +9,20 @@ using namespace std;
 // Define a struct to represent a point in the search space
 struct SearchPoint {
     // Coordinates of the point in the search space
-    double coordinates[NUM_DIMENSIONS];
+    double coordinates[DIM];
     // Objective function values of the point
     double objectiveValues[NUM_OBJECTIVES];
 };
 
 // Define a function to initialize the search space with random points
-vector<SearchPoint> InitializeSearchSpace() {
+vector<SearchPoint> StartSpace() {
     vector<SearchPoint> searchSpace;
 
     // Generate random search points
     for (int i = 0; i < NUM_SEARCH_POINTS; i++) {
         SearchPoint searchPoint;
         // Generate random coordinates for the search point
-        for (int j = 0; j < NUM_DIMENSIONS; j++) {
+        for (int j = 0; j < DIM; j++) {
             searchPoint.coordinates[j] = (double) rand() / RAND_MAX;
         }
         searchSpace.push_back(searchPoint);
@@ -61,7 +61,7 @@ vector<SearchPoint> GenerateNonDominatedSet(vector<SearchPoint>& searchPoints) {
 // Define a function to generate a set of search points using the DSD algorithm
 vector<SearchPoint> GenerateSearchPoints() {
     // Initialize the search space with random points
-    vector<SearchPoint> searchSpace = InitializeSearchSpace();
+    vector<SearchPoint> searchSpace = StartSpace();
 
     // Evaluate the objective functions for the search points
     EvaluateObjectiveFunctions(searchSpace);
