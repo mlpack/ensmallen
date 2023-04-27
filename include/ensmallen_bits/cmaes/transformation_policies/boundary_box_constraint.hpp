@@ -51,9 +51,7 @@ public:
                         const MatType& upperBound) :
       lowerBound(lowerBound),
       upperBound(upperBound)
-  {
-
-  }
+  {}
   
   /**
    * Construct the boundary box constraint policy.
@@ -130,6 +128,14 @@ public:
 
     return y;
   }
+
+  /**
+   * Return a suitable initial step size.
+   *
+   * @return initial step size.
+   */
+  typename MatType::elem_type initialStepSize() 
+  { return 0.3 * (upperBound - lowerBound).min(); }
 
   //! Get the lower bound of decision variables.
   MatType LowerBound() const { return lowerBound; }

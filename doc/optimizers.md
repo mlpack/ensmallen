@@ -696,35 +696,40 @@ matrix within an iterative procedure using the covariance matrix.
 
 #### Constructors
 
- * `CMAES<`_`SelectionPolicyType`_`>()`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound`_`)`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize`_`)`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
 
 The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
+The _`TransformationPolicyType`_  template parameter refers to transformation 
+strategy used to map decision variables to the desired domain during fitness 
+evaluation and optimization termination. The `EmptyTransformation` and 
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
 
- * **`CMAES<>`** (equivalent to `CMAES<FullSelection>`): uses all separable functions to compute objective
- * **`ApproxCMAES`** (equivalent to `CMAES<RandomSelection>`): uses a small amount of separable functions to compute approximate objective
+ * **`CMAES<>`** (equivalent to `CMAES<FullSelection, EmptyTransformation<>>`): uses all separable functions to compute objective
+ * **`ApproxCMAES<>`** (equivalent to `CMAES<RandomSelection, EmptyTransformation<>>`): uses a small amount of separable functions to compute approximate objective
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
-| `double` | **`lowerBound`** | Lower bound of decision variables. | `-10.0` |
-| `double` | **`upperBound`** | Upper bound of decision variables. | `10.0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
 | `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
 
 Attributes of the optimizer may also be changed via the member methods
-`Lambda()`, `LowerBound()`, `UpperBound()`, `BatchSize()`, `MaxIterations()`,
+`Lambda()`, `TransformationPolicy()`, `BatchSize()`, `MaxIterations()`,
 `Tolerance()`, and `SelectionPolicy()`.
 
 The `selectionPolicy` attribute allows an instantiated `SelectionPolicyType` to
@@ -733,6 +738,12 @@ the option is not relevant when the `CMAES<>` optimizer type is being used; the
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
+The `transformationPolicy` attribute allows an instantiated 
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
+the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+the coordinates respectively.
 
 #### Examples:
 
@@ -744,12 +755,13 @@ estimate the objective function.
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-// CMAES with the FullSelection policy.
-CMAES<> optimizer(0, -1, 1, 32, 200, 1e-4);
+// CMAES with the FullSelection and BoundaryBoxConstraint policies.
+BoundaryBoxConstraint b(-1, 1);
+CMAES optimizer(0, b, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
-// CMAES with the RandomSelection policy.
-ApproxCMAES<> approxOptimizer(0, -1, 1. 32, 200, 1e-4);
+// CMAES with the RandomSelection and BoundaryBoxConstraint policies.
+ApproxCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
 

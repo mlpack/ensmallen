@@ -105,14 +105,14 @@ class CMAES
    * objective.
    * @param stepSize Starting sigma/step size (will be modified).
    */
-  CMAES(const size_t lambda = 0,
-        const double lowerBound = -10,
-        const double upperBound = 10,
-        const size_t batchSize = 32,
-        const size_t maxIterations = 1000,
-        const double tolerance = 1e-5,
-        const SelectionPolicyType & selectionPolicy = SelectionPolicyType(),
-        double stepSize = 1);
+  ens_deprecated CMAES(const size_t lambda = 0,
+                       const double lowerBound = -10,
+                       const double upperBound = 10,
+                       const size_t batchSize = 32,
+                       const size_t maxIterations = 1000,
+                       const double tolerance = 1e-5,
+                       const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+                       double stepSize = 1);
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -190,7 +190,8 @@ class CMAES
   SelectionPolicyType selectionPolicy;
 
   //! The transformationPolicy used to map coordinates to the suitable domain
-  //! while evaluating fitness. 
+  //! while evaluating fitness. This mapping is also done after optimization 
+  //! has completed.
   TransformationPolicyType transformationPolicy;
 
   double stepSize;

@@ -23,20 +23,20 @@
 /*
  This partial specialization is used to throw an exception when the
  TransformationPolicyType is EmptyTransformation and call a
- constructor with paramters 'lowerBound' and 'upperBound' otherwise.
+ constructor with parameters 'lowerBound' and 'upperBound' otherwise.
  This shall be removed when the deprecated constructor is removed in
  the next major version of ensmallen.
 */
 template<typename T1, typename T2>
-struct notEmptyTransformation : std::true_type {
-  void assign(T1& obj, double lowerBound, double upperBound) {
+struct NotEmptyTransformation : std::true_type {
+  void Assign(T1& obj, double lowerBound, double upperBound) {
     obj = T1(lowerBound, upperBound);
   }
 };
 
-template<template<typename...> typename T, typename... A, typename... B>
-struct notEmptyTransformation<T<A...>, T<B...>> : std::false_type {
-  void assign(T<A...>& obj, double lowerBound, double upperBound) {
+template<template<typename...> class T, typename... A, typename... B>
+struct NotEmptyTransformation<T<A...>, T<B...>> : std::false_type {
+  void Assign(T<A...>& obj, double lowerBound, double upperBound) {
     throw std::logic_error("TransformationPolicyType is EmptyTransformation");
   }
 };
@@ -79,8 +79,8 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
 {
   Warn << "This is a deprecated constructor and will be removed in a "
     "future version of ensmallen" << std::endl;
-  notEmptyTransformation<TransformationPolicyType, EmptyTransformation<>> d;
-  d.assign(transformationPolicy, lowerBound, upperBound);
+  NotEmptyTransformation<TransformationPolicyType, EmptyTransformation<>> d;
+  d.Assign(transformationPolicy, lowerBound, upperBound);
 }
 
 
@@ -124,8 +124,10 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  if (stepSize == 0) sigma(0) = transformationPolicy.initialStepSize();
-  else sigma(0) = stepSize;
+  if (stepSize == 0) 
+    sigma(0) = transformationPolicy.initialStepSize();
+  else 
+    sigma(0) = stepSize;
 
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
@@ -197,7 +199,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, function, 
-    transformedIterate, callbacks...);
+      transformedIterate, callbacks...);
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
     // To keep track of where we are.
