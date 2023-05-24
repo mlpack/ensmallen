@@ -1904,8 +1904,8 @@ Attributes of the optimizer may also be changed via the member methods
 
 ```c++
 SchafferFunctionN1<arma::mat> SCH;
-arma::vec lowerBound("-10 -10");
-arma::vec upperBound("10 10");
+arma::vec lowerBound("-10");
+arma::vec upperBound("10");
 DefaultMOEAD opt(300, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -1966,8 +1966,8 @@ Attributes of the optimizer may also be changed via the member methods
 
 ```c++
 SchafferFunctionN1<arma::mat> SCH;
-arma::vec lowerBound("-1000 -1000");
-arma::vec upperBound("1000 1000");
+arma::vec lowerBound("-1000");
+arma::vec upperBound("1000");
 NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
@@ -1979,7 +1979,7 @@ std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj = opt.Optimize(objectives, coords);
 // Now obtain the best front.
-arma::cube bestFront = opt.Front();
+arma::cube bestFront = opt.ParetoFront();
 ```
 
 </details>

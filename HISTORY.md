@@ -2,6 +2,7 @@
 ###### ????-??-??
  * Fix the current CMAES inconsistencies
    ([#351](https://github.com/mlpack/ensmallen/pull/351)).
+
  * Fix CNE test tolerances
    ([#360](https://github.com/mlpack/ensmallen/pull/360)).
 
