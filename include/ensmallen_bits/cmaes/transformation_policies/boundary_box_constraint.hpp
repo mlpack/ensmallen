@@ -134,7 +134,7 @@ public:
    *
    * @return initial step size.
    */
-  typename MatType::elem_type initialStepSize() 
+  typename MatType::elem_type InitialStepSize()
   { return 0.3 * (upperBound - lowerBound).min(); }
 
   //! Get the lower bound of decision variables.

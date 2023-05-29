@@ -23,22 +23,21 @@ namespace ens {
 template<typename MatType = arma::mat>
 class EmptyTransformation
 {
-public:
+ public:
+  /**
+   * Transforms coordinates to themselves (effectively no transformation).
+   *
+   * @param x Input coordinates.
+   * @return Transformed coordinates (the coordinates themselves).
+   */
+  MatType Transform(const MatType& x) { return x; }
 
-	/**
-	 * Transforms coordinates to themselves (effectively no transformation).
-	 *
-	 * @param x Input coordinates.
-	 * @return Transformed coordinates (the coordinates themselves).
-	 */
-	MatType Transform(const MatType& x) { return x; }
-
-	/**
-	 * Return a suitable initial step size.
-	 *
-	 * @return initial step size.
-	 */
-	typename MatType::elem_type initialStepSize() { return 1; }
-
+  /**
+   * Return a suitable initial step size.
+   *
+   * @return initial step size.
+   */
+  typename MatType::elem_type InitialStepSize() { return 1; }
 };
+
 } // namespace ens
