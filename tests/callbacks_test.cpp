@@ -312,8 +312,8 @@ TEST_CASE("BigBatchSGDCallbacksFullFunctionTest", "[CallbacksTest]")
  */
 TEST_CASE("CMAESCallbacksFullFunctionTest", "[CallbacksTest]")
 {
-  BoundaryBoxConstraint b(-1, 1);
-  CMAES optimizer(0, b, 32, 3, 1e-3);
+  BoundaryBoxConstraint<> b(-1, 1);
+  CMAES<FullSelection, BoundaryBoxConstraint<>> optimizer(0, b, 32, 3, 1e-3);
   CallbacksFullFunctionTest(optimizer, true, false, false, false, true, true,
       false, false, true);
 }
