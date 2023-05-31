@@ -95,11 +95,11 @@ public:
         // Shift y into feasible pre-image.
         if (y(i, j) < xlow)
         {
-          y(i,j) += (ElemType)(r * (1 + (int)(xlow - y(i, j)) / r));
+          y(i,j) += (ElemType)(r * (1 + (int)((xlow - y(i, j)) / r)));
         }
         if (y(i, j) > xup)
         {
-          y(i, j) -= (ElemType)(r * (1 + (int)(y(i, j) - xup) / r));
+          y(i, j) -= (ElemType)(r * (1 + (int)((y(i, j) - xup) / r)));
         }
         if (y(i, j) < lowerBound(Bi, Bj) - al)
         {
