@@ -21,7 +21,6 @@ using namespace ens::test;
  * This test uses the deprecated constructor and therefore can be removed
  * in a future version of ensmallen.
  */
-
 TEST_CASE("ActiveCMAESDeprecatedConstructorRosenbrockFunctionTest", "[ActiveCMAESTest]")
 {
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>> 
