@@ -123,7 +123,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   // Parent number.
   const size_t mu = std::round(lambda / 4);
 
-  //Recombination weight (w = 1/ (parent number));
+  //Recombination weight (w = 1/ (parent number)).
   const double w = 1.0 / mu;
 
   // Number of effective solutions.
@@ -137,8 +137,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     sigma(0) = stepSize;
 
   const double cs = 4.0 / (iterate.n_elem + 4);
-  const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
-      (iterate.n_elem + 1)) - 1, 0.0);
+  const double ds = 1 + cs;
   const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
       (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
 
@@ -297,7 +296,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
             pStep[idx(j)] * pStep[idx(j)].t();
       }
       
-      for (size_t j = mu; j < lambda; ++j)
+      for (size_t j = lambda - mu; j < lambda; ++j)
       {
         C[idx1] = C[idx1] - beta * w *
           pStep[idx(j)] * pStep[idx(j)].t();
@@ -315,7 +314,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
             pStep[idx(j)].t() * pStep[idx(j)];
       }
     
-      for (size_t j = mu; j < lambda; ++j)
+      for (size_t j = lambda - mu; j < lambda; ++j)
       {
         C[idx1] = C[idx1] - beta * w *
           pStep[idx(j)].t() * pStep[idx(j)];
