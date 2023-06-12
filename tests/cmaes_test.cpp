@@ -23,9 +23,10 @@ using namespace ens::test;
  * This test uses the deprecated constructor and therefore can be removed
  * in a future version of ensmallen.
  */
+
 TEST_CASE("CMAESDeprecatedConstructorLogisticRegressionTest", "[CMAESTest]")
 {
-  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, -10, 10, 32, 500, 1e-3);
+  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, -10, 10, 16, 500, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -36,7 +37,7 @@ TEST_CASE("CMAESDeprecatedConstructorLogisticRegressionTest", "[CMAESTest]")
 TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3);
+  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 16, 500, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -47,7 +48,7 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
 TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<> b(-10, 10);
-  ApproxCMAES<BoundaryBoxConstraint<arma::mat>> cmaes(0, b, 32, 500, 1e-3);
+  ApproxCMAES<BoundaryBoxConstraint<arma::mat>> cmaes(0, b, 16, 500, 1e-3);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -58,7 +59,7 @@ TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 32, 500, 1e-3);
+  CMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 16, 500, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 
@@ -69,7 +70,7 @@ TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
 TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  ApproxCMAES<BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 32, 500, 1e-3);
+  ApproxCMAES<BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 16, 500, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 
@@ -82,6 +83,6 @@ TEST_CASE("ApproxCMAESEmptyTransformationLogisticRegressionFMatTest",
   "[CMAESTest]")
 {
   ApproxCMAES<EmptyTransformation<arma::fmat>>
-    cmaes(0, EmptyTransformation<arma::fmat>(), 32, 500, 1e-3);
+    cmaes(0, EmptyTransformation<arma::fmat>(), 16, 500, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
