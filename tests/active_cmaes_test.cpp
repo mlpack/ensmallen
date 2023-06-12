@@ -21,12 +21,13 @@ using namespace ens::test;
  * This test uses the deprecated constructor and therefore can be removed
  * in a future version of ensmallen.
  */
+
 TEST_CASE("ActiveCMAESDeprecatedConstructorRosenbrockFunctionTest", "[ActiveCMAESTest]")
 {
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>> 
-    activecmaes(0, 0, 2, 32, 0, 1e-3);
+    activecmaes(0, 0, 2, 16, 0, 1e-3);
   activecmaes.StepSize() = 0.075;
-  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.15);
+  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.1);
 }
 
 /**
@@ -37,9 +38,9 @@ TEST_CASE("ActiveCMAESRosenbrockFunctionTest", "[ActiveCMAESTest]")
 {
   BoundaryBoxConstraint<> b(0, 2);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>> 
-    activecmaes(0, b, 32, 0, 1e-3);
+    activecmaes(0, b, 16, 0, 1e-3);
   activecmaes.StepSize() = 0.075;
-  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.15);
+  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.1);
 }
 
 /**
@@ -50,9 +51,9 @@ TEST_CASE("ApproxActiveCMAESRosenbrockFunctionTest", "[ActiveCMAESTest]")
 {
   BoundaryBoxConstraint<> b(0, 2);
   ApproxActiveCMAES<BoundaryBoxConstraint<arma::mat>> 
-    activecmaes(0, b, 32, 0, 1e-3);
+    activecmaes(0, b, 16, 0, 1e-3);
   activecmaes.StepSize() = 0.075;
-  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.15);
+  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.1);
 }
 
 /**
@@ -63,9 +64,9 @@ TEST_CASE("ActiveCMAESRosenbrockFunctionFMatTest", "[ActiveCMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(0, 2);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> 
-    activecmaes(0, b, 32, 0, 1e-3);
+    activecmaes(0, b, 16, 0, 1e-3);
   activecmaes.StepSize() = 0.075;
-  FunctionTest<RosenbrockFunction, arma::fmat>(activecmaes, 0.1, 0.15);
+  FunctionTest<RosenbrockFunction, arma::fmat>(activecmaes, 0.1, 0.1);
 }
 
 /**
@@ -76,9 +77,9 @@ TEST_CASE("ApproxActiveCMAESRosenbrockFunctionFMatTest", "[ActiveCMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(0, 2);
   ApproxActiveCMAES<BoundaryBoxConstraint<arma::fmat>> 
-    activecmaes(0, b, 32, 0, 1e-3);
+    activecmaes(0, b, 16, 0, 1e-3);
   activecmaes.StepSize() = 0.075;
-  FunctionTest<RosenbrockFunction, arma::fmat>(activecmaes, 0.1, 0.15);
+  FunctionTest<RosenbrockFunction, arma::fmat>(activecmaes, 0.1, 0.1);
 }
 
 /**
@@ -86,10 +87,11 @@ TEST_CASE("ApproxActiveCMAESRosenbrockFunctionFMatTest", "[ActiveCMAESTest]")
  * on  Rosenbrock function and make sure the results are acceptable.
  * Use arma::fmat.
  */
-TEST_CASE("ApproxActiveCMAESEmptyTransformationRosenbrockFunctionFMatTest",
+TEST_CASE("ApproxActiveCMAESEmptyTransformationLogisticRegressionFMatTest",
   "[ActiveCMAESTest]")
 {
   ApproxActiveCMAES<EmptyTransformation<arma::fmat>>
-    activecmaes(0, EmptyTransformation<arma::fmat>(), 32, 0, 1e-3);
+    activecmaes(0, EmptyTransformation<arma::fmat>(), 16, 0, 1e-3);
+  activecmaes.StepSize() = 0.55;
   LogisticRegressionFunctionTest<arma::fmat>(activecmaes, 0.01, 0.02, 5);
 }
