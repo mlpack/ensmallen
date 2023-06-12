@@ -257,6 +257,17 @@ TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
 }
 
 /**
+ * Make sure we invoke all callbacks (CMAES).
+ */
+TEST_CASE("ActiveCMAESCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  BoundaryBoxConstraint<> b(-1, 1);
+  ActiveCMAES<FullSelection, BoundaryBoxConstraint<>> optimizer(0, b, 32, 3, 1e-3);
+  CallbacksFullFunctionTest(optimizer, true, false, false, false, true, true,
+    false, false, true);
+}
+
+/**
  * Make sure we invoke all callbacks (AdaBound).
  */
 TEST_CASE("AdaBoundCallbacksFullFunctionTest", "[CallbacksTest]")
@@ -315,7 +326,7 @@ TEST_CASE("CMAESCallbacksFullFunctionTest", "[CallbacksTest]")
   BoundaryBoxConstraint<> b(-1, 1);
   CMAES<FullSelection, BoundaryBoxConstraint<>> optimizer(0, b, 32, 3, 1e-3);
   CallbacksFullFunctionTest(optimizer, true, false, false, false, true, true,
-      false, false, true);
+    false, false, true);
 }
 
 /**

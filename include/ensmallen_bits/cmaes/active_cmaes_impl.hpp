@@ -120,13 +120,10 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   if (lambda == 0)
     lambda = (4 + std::round(3 * std::log(iterate.n_elem))) * 10;
 
-  // Parent weights.
+  // Parent number.
   const size_t mu = std::round(lambda / 4);
 
-  /*
-  BaseMatType w = std::log(mu + 0.5) - arma::log(
-      arma::linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
-  */
+  //Recombination weight (w = 1/ (parent number));
   const double w = 1.0 / mu;
 
   // Number of effective solutions.
@@ -343,12 +340,12 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     }
 
     // Output current objective function.
-    Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
+    Info << "Active CMA-ES: iteration " << i << ", objective " << overallObjective
         << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
-      Warn << "CMA-ES: converged to " << overallObjective << "; "
+      Warn << "Active CMA-ES: converged to " << overallObjective << "; "
           << "terminating with failure.  Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
@@ -359,7 +356,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
+      Info << "Active CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);

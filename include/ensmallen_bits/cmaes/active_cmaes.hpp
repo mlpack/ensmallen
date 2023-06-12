@@ -138,8 +138,6 @@ class ActiveCMAES
           MatType& iterate,
           CallbackTypes&&... callbacks);
 
-  //typedef typename TransformationPolicyType::BaseMatType BMatType;
-
   //! Get the population size.
   size_t PopulationSize() const { return lambda; }
   //! Modify the population size.
