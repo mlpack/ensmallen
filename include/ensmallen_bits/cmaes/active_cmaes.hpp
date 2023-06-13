@@ -90,7 +90,7 @@ class ActiveCMAES
         double stepSize = 0);
 
   /**
-   * Construct the CMA-ES optimizer with the given function and parameters 
+   * Construct the Active CMA-ES optimizer with the given function and parameters 
    * (including lower and upper bounds). The defaults here are not necessarily 
    * good for the given problem, so it is suggested that the values used be 
    * tailored to the task at hand.  The maximum number of iterations refers to 
@@ -203,7 +203,7 @@ class ActiveCMAES
 };
 
 /**
- * Convenient typedef for CMAES approximation.
+ * Convenient typedef for Active CMAES approximation.
  */
 template<typename TransformationPolicyType = EmptyTransformation<>,
          typename SelectionPolicyType = RandomSelection>
