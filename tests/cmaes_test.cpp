@@ -37,6 +37,7 @@ TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<> b(-10, 10);
   CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3);
+  cmaes.StepSize() = 0.6;
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -48,6 +49,7 @@ TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<> b(-10, 10);
   ApproxCMAES<BoundaryBoxConstraint<arma::mat>> cmaes(256, b, 16, 500, 1e-3);
+  cmaes.StepSize() = 0.6;
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -69,7 +71,7 @@ TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
 TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  ApproxCMAES<BoundaryBoxConstraint<arma::fmat>> cmaes(256, b, 16, 500, 1e-3);
+  ApproxCMAES<BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 16, 500, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 
