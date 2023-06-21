@@ -1,7 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
 * LBFGS: avoid generation of NaNs, and add checks for finite values
-   ([#360](https://github.com/mlpack/ensmallen/pull/368)).
+   ([#368](https://github.com/mlpack/ensmallen/pull/368)).
 
 * Fix CNE test tolerances
    ([#360](https://github.com/mlpack/ensmallen/pull/360)).
