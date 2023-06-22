@@ -224,20 +224,14 @@ bool L_BFGS::LineSearch(FunctionType& function,
   double stepSize = 1.0;
   finalStepSize = 0.0; // Set only when we take the step.
 
-  if (searchDirection.is_finite() == false)
-  {
-    Warn << "L-BFGS line search direction vector is not finite "
-        << "(terminating)!" << std::endl;
-    return false;
-  }
-
   // The initial linear term approximation in the direction of the
   // search direction.
   ElemType initialSearchDirectionDotGradient =
       arma::dot(gradient, searchDirection);
 
   // If it is not a descent direction, just report failure.
-  if (initialSearchDirectionDotGradient > 0.0)
+  if ( (initialSearchDirectionDotGradient > 0.0)
+    || (std::isfinite(initialSearchDirectionDotGradient) == false) )
   {
     Warn << "L-BFGS line search direction is not a descent direction "
         << "(terminating)!" << std::endl;
@@ -269,9 +263,9 @@ bool L_BFGS::LineSearch(FunctionType& function,
     newIterateTmp += stepSize * searchDirection;
     functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
 
-    if (gradient.is_finite() == false)
+    if (std::isnan(functionValue))
     {
-      Warn << "L-BFGS gradient is not finite (terminating)!" << std::endl;
+      Warn << "L-BFGS objective value is NaN (terminating)!" << std::endl;
       return false;
     }
 
