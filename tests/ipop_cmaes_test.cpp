@@ -1,0 +1,95 @@
+/**
+ * @file ipop_cmaes_test.cpp
+ * @author Suvarsha Chennareddy
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+
+#include <ensmallen.hpp>
+#include "catch.hpp"
+#include "test_function_tools.hpp"
+
+using namespace ens;
+using namespace ens::test;
+
+/**
+ * Run IPOP CMA-ES with the full selection policy on Rosenbrock function and
+ * make sure the results are acceptable (relatively lenient tolerance used).
+ */
+TEST_CASE("IPOPCMAESSchwefelFunctionTest", "[IPOPCMAESTest]")
+{
+  const size_t numFunctions = 2;
+
+  BoundaryBoxConstraint<> b(-500, 500);
+  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, numFunctions, 0, 1e-12);
+  cmaes.StepSize() = 500;
+
+  IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
+    ipopcmaes(cmaes, 3, 20);
+
+  SchwefelFunction f(numFunctions);
+  arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
+  arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
+  
+  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
+    0.1, f.GetFinalObjective(), 0.1, 1);
+}
+
+/**
+ * Run IPOP CMA-ES with the full selection policy on Rosenbrock function and
+ * make sure the results are acceptable.
+ */
+TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
+{
+  BoundaryBoxConstraint<> b(0, 2);
+
+  IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
+    ipopcmaes(0, b, 16, 0, 1e-3);
+
+  FunctionTest<RosenbrockFunction>(ipopcmaes, 0.1, 0.1);
+}
+
+/**
+ * Run IPOP-Active CMA-ES with the full selection policy on Schwefel function and
+ * make sure the results are acceptable (relatively lenient tolerance used).
+ */
+TEST_CASE("IPOPActiveCMAESchwefelFunctionTest", "[IPOPCMAESTest]")
+{
+
+  const size_t numFunctions = 2;
+
+  BoundaryBoxConstraint<> b(-500, 500);
+  ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>
+    activecmaes(0, b, numFunctions, 0, 1e-12);
+  activecmaes.StepSize() = 500;
+
+  IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>>
+    ipopcmaes(activecmaes, 3, 20);
+
+  SchwefelFunction f(numFunctions);
+  arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
+  arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
+
+  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
+    0.1, f.GetFinalObjective(), 0.1, 1);
+}
+
+/**
+ * Run IPOP-Active CMA-ES with the full selection policy on Rosenbrock function and
+ * make sure the results are acceptable.  Use arma::fmat.
+ */
+TEST_CASE("IPOPActiveCMAESRosenbrockFunctionFMatTest", "[IPOPCMAESTest]")
+{
+  BoundaryBoxConstraint<arma::fmat> b(0, 2);
+
+  ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>>
+    activecmaes(0, b, 16, 0, 1e-3);
+
+  IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>>>
+    ipopcmaes(activecmaes);
+
+  FunctionTest<RosenbrockFunction, arma::fmat>(ipopcmaes, 0.1, 0.1);
+}
