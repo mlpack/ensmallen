@@ -43,9 +43,9 @@ typename MatType::elem_type SchwefelFunction::Evaluate(
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    objective += coordinates(p) * std::sin(std::sqrt(std::abs(coordinates(p))));
+    objective -= coordinates(p) * std::sin(std::sqrt(std::abs(coordinates(p))));
   }
-  objective -= 418.9829 * batchSize;
+  objective += 418.9829 * batchSize;
 
   return objective;
 }

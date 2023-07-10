@@ -57,6 +57,12 @@ template<typename SelectionPolicyType = FullSelection,
 class CMAES
 {
  public:
+
+   //! Type of Selection Policy.
+   typedef SelectionPolicyType SelectionPolicyType;
+   //! Type of Transformation Policy.
+   typedef TransformationPolicyType TransformationPolicyType;
+
   /**
    * Construct the CMA-ES optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is

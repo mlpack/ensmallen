@@ -205,6 +205,10 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
   size_t idx0, idx1;
 
+
+  size_t patience = 10 + (30 * iterate.n_elem / lambda) + 1;
+  size_t steps = 0;
+
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
     // To keep track of where we are.
@@ -216,9 +220,9 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     BaseMatType covLower;
     while (!arma::chol(covLower, C[idx0], "lower"))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
-
+  
     arma::eig_sym(eigval, eigvec, C[idx0]);
-
+    
     for (size_t j = 0; j < lambda; ++j)
     {
       if (iterate.n_rows > iterate.n_cols)
@@ -237,6 +241,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
           transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
+
     }
 
     // Sort population.
@@ -280,6 +285,16 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     const ElemType psNorm = arma::norm(ps[idx1]);
     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * ( psNorm / enn - 1));
 
+    if (std::isnan(sigma(idx1)) || sigma(idx1) > 1e14)
+    {
+      Warn << "The step size diverged to " << sigma(idx1) << "; "
+        << "terminating with failure.  Try a smaller step size?" << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
 
     pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) *
       muEffective) * step;
@@ -345,24 +360,29 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Warn << "Active CMA-ES: converged to " << overallObjective << "; "
-          << "terminating with failure.  Try a smaller step size?" << std::endl;
+        << "terminating with failure.  Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
-
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Info << "Active CMA-ES: minimized within tolerance " << tolerance << "; "
+      if (steps > patience) {
+        Info << "Active CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
-      iterate = transformationPolicy.Transform(iterate);
-
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
+        iterate = transformationPolicy.Transform(iterate);
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
     }
+    else {
+      steps = 0;
+    }
+
+    steps++;
 
     lastObjective = overallObjective;
   }

@@ -205,6 +205,10 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, function, 
       transformedIterate, callbacks...);
+
+  size_t patience = 10 + (30 * iterate.n_elem / lambda) + 1;
+  size_t steps = 0;
+
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
     // To keep track of where we are.
@@ -279,6 +283,17 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
     const ElemType psNorm = arma::norm(ps[idx1]);
     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * ( psNorm / enn - 1));
+
+    if (std::isnan(sigma(idx1)) || sigma(idx1) > 1e14)
+    {
+      Warn << "The step size diverged to " << sigma(idx1) << "; "
+        << "terminating with failure.  Try a smaller step size?" << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
 
     // Update covariance matrix.
     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
@@ -362,14 +377,20 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
+      if (steps > patience) {
+        Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
-      iterate = transformationPolicy.Transform(iterate);
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
+        iterate = transformationPolicy.Transform(iterate);
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
+    }
+    else {
+      steps = 0;
     }
 
+    steps++;
     lastObjective = overallObjective;
   }
 
