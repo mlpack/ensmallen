@@ -257,7 +257,7 @@ TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
 }
 
 /**
- * Make sure we invoke all callbacks (CMAES).
+ * Make sure we invoke all callbacks (ActiveCMAES).
  */
 TEST_CASE("ActiveCMAESCallbacksFullFunctionTest", "[CallbacksTest]")
 {
