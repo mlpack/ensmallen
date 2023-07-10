@@ -194,6 +194,7 @@ class CMAES
   //! has completed.
   TransformationPolicyType transformationPolicy;
 
+  //! The step size.
   double stepSize;
 };
 
