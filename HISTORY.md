@@ -3,6 +3,9 @@
  * Fix the current CMAES inconsistencies
    ([#351](https://github.com/mlpack/ensmallen/pull/351)).
 
+ * LBFGS: avoid generation of NaNs, and add checks for finite values
+   ([#368](https://github.com/mlpack/ensmallen/pull/368)).
+
  * Fix CNE test tolerances
    ([#360](https://github.com/mlpack/ensmallen/pull/360)).
 
