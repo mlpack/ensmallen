@@ -8,6 +8,7 @@ ensmallen provides many types of optimizers that can be used
 for virtually any numerical optimization task.
 This includes gradient descent techniques, gradient-free optimizers,
 and constrained optimization.
+Examples include L-BFGS, SGD, CMAES and Simulated Annealing.
 ensmallen also allows optional callbacks to customize the optimization process.
 
 Documentation and downloads: http://ensmallen.org
