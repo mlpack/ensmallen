@@ -257,7 +257,7 @@ TEST_CASE("EarlyStopAtMinLossCustomLambdaTest", "[CallbacksTest]")
 }
 
 /**
- * Make sure we invoke all callbacks (CMAES).
+ * Make sure we invoke all callbacks (ActiveCMAES).
  */
 TEST_CASE("ActiveCMAESCallbacksFullFunctionTest", "[CallbacksTest]")
 {
@@ -377,6 +377,17 @@ TEST_CASE("GradientDescentCallbacksFullFunctionTest", "[CallbacksTest]")
   GradientDescent optimizer(0.001, 3, 1e-15);
   CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
       false, false, true);
+}
+/**
+ * Make sure we invoke all callbacks (IPOPCMAES).
+ */
+TEST_CASE("IPOPCMAESCallbacksFullFunctionTest", "[CallbacksTest]")
+{
+  BoundaryBoxConstraint<> b(-1, 1);
+  IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>> 
+    optimizer(0, b, 32, 3, 1e-3);
+  CallbacksFullFunctionTest(optimizer, true, false, false, false, true, true,
+    false, false, true);
 }
 
 /**
