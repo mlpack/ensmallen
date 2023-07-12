@@ -205,6 +205,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, function, 
       transformedIterate, callbacks...);
+
+  // The number of generations to wait after the minimum loss has
+  // been reached or no improvement has been made before terminating.
+  size_t patience = 10 + (30 * iterate.n_elem / lambda) + 1;
+  size_t steps = 0;
+
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
     // To keep track of where we are.
@@ -224,19 +230,19 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       if (iterate.n_rows > iterate.n_cols)
       {
         pStep[idx(j)] = covLower *
-            arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+          arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
         pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
-            * covLower.t();
+          * covLower.t();
       }
 
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
+        transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
     }
 
     // Sort population.
@@ -250,7 +256,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
-        transformationPolicy.Transform(mPosition[idx1]), callbacks...);
+      transformationPolicy.Transform(mPosition[idx1]), callbacks...);
 
     // Update best parameters.
     if (currentObjective < overallObjective)
@@ -259,26 +265,37 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       iterate = mPosition[idx1];
 
       transformedIterate = transformationPolicy.Transform(iterate);
-      terminate |= Callback::StepTaken(*this, function, 
-          transformedIterate, callbacks...);
+      terminate |= Callback::StepTaken(*this, function,
+        transformedIterate, callbacks...);
     }
 
     // Update Step Size.
     if (iterate.n_rows > iterate.n_cols)
     {
       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
-          cs * (2 - cs) * muEffective) * 
-          eigvec * diagmat(1 / eigval) * eigvec.t() * step;
+        cs * (2 - cs) * muEffective) *
+        eigvec * diagmat(1 / eigval) * eigvec.t() * step;
     }
     else
     {
       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
-          cs * (2 - cs) * muEffective) * step * 
+        cs * (2 - cs) * muEffective) * step *
         eigvec * diagmat(1 / eigval) * eigvec.t();
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
-    sigma(idx1) = sigma(idx0) * std::exp(cs / ds * ( psNorm / enn - 1));
+    sigma(idx1) = sigma(idx0) * std::exp(cs / ds * (psNorm / enn - 1));
+
+    if (std::isnan(sigma(idx1)) || sigma(idx1) > 1e14)
+    {
+      Warn << "The step size diverged to " << sigma(idx1) << "; "
+        << "terminating with failure.  Try a smaller step size?" << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
 
     // Update covariance matrix.
     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
@@ -304,12 +321,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       if (iterate.n_rows > iterate.n_cols)
       {
         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * (pc[idx1] *
-            pc[idx1].t() + (cc * (2 - cc)) * C[idx0]);
+          pc[idx1].t() + (cc * (2 - cc)) * C[idx0]);
       }
       else
       {
         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
-            (pc[idx1].t() * pc[idx1] + (cc * (2 - cc)) * C[idx0]);
+          (pc[idx1].t() * pc[idx1] + (cc * (2 - cc)) * C[idx0]);
       }
     }
 
@@ -318,7 +335,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       for (size_t j = 0; j < mu; ++j)
       {
         C[idx1] = C[idx1] + cmu * w(j) *
-            pStep[idx(j)] * pStep[idx(j)].t();
+          pStep[idx(j)] * pStep[idx(j)].t();
       }
     }
     else
@@ -326,7 +343,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       for (size_t j = 0; j < mu; ++j)
       {
         C[idx1] = C[idx1] + cmu * w(j) *
-            pStep[idx(j)].t() * pStep[idx(j)];
+          pStep[idx(j)].t() * pStep[idx(j)];
       }
     }
 
@@ -341,19 +358,19 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       else
       {
         C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
-            arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
-            eigvec.cols(0, negativeEigval(0) - 1).t();
+          arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
+          eigvec.cols(0, negativeEigval(0) - 1).t();
       }
     }
 
     // Output current objective function.
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
-        << "." << std::endl;
+      << "." << std::endl;
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Warn << "CMA-ES: converged to " << overallObjective << "; "
-          << "terminating with failure.  Try a smaller step size?" << std::endl;
+        << "terminating with failure.  Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
@@ -362,13 +379,20 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
-      Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
+      if (steps > patience) {
+        Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
-      iterate = transformationPolicy.Transform(iterate);
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
+        iterate = transformationPolicy.Transform(iterate);
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
     }
+    else {
+      steps = 0;
+    }
+
+    steps++;
 
     lastObjective = overallObjective;
   }
