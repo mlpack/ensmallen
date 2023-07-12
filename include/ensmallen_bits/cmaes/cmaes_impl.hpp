@@ -206,6 +206,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   terminate |= Callback::BeginOptimization(*this, function, 
       transformedIterate, callbacks...);
 
+  // The number of generations to wait after the minimum loss has
+  // been reached or no improvement has been made before terminating.
   size_t patience = 10 + (30 * iterate.n_elem / lambda) + 1;
   size_t steps = 0;
 
@@ -391,6 +393,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     }
 
     steps++;
+
     lastObjective = overallObjective;
   }
 
