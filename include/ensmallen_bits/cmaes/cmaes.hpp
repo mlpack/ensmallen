@@ -118,7 +118,7 @@ class CMAES
                        const size_t maxIterations = 1000,
                        const double tolerance = 1e-5,
                        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-                       double stepSize = 1);
+                       double stepSize = 0);
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be

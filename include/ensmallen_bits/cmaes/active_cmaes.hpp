@@ -12,8 +12,8 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_ACTIVE_CMAES_CMAES_HPP
-#define ENSMALLEN_ACTIVE_CMAES_CMAES_HPP
+#ifndef ENSMALLEN_CMAES_ACTIVE_CMAES_HPP
+#define ENSMALLEN_CMAES_ACTIVE_CMAES_HPP
 
 #include "full_selection.hpp"
 #include "random_selection.hpp"
@@ -122,7 +122,7 @@ class ActiveCMAES
                        const size_t maxIterations = 1000,
                        const double tolerance = 1e-5,
                        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-                       double stepSize = 1);
+                       double stepSize = 0);
 
   /**
    * Optimize the given function using Active CMA-ES. The given starting point will be
