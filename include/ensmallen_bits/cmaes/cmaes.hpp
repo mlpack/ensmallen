@@ -233,7 +233,7 @@ class CMAES
   //! while evaluating fitness. This mapping is also done after optimization 
   //! has completed.
   TransformationPolicyType transformationPolicy;
-
+  
   //! The initial step size.
   double stepSize;
 

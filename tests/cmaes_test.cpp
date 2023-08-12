@@ -60,7 +60,7 @@ TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 32, 500, 1e-3);
+  CMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> cmaes(120, b, 32, 500, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 
