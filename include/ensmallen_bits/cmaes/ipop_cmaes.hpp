@@ -132,9 +132,9 @@ IPOPCMAES(const size_t lambda = 0,
   double& PopulationFactor() { return populationFactor; }
 
   //! Get the maximum number of restarts.
-  double MaxRestarts() const { return maxRestarts; }
+  size_t MaxRestarts() const { return maxRestarts; }
   //! Modify the maximum number of restarts.
-  double& MaxRestarts() { return maxRestarts; }
+  size_t& MaxRestarts() { return maxRestarts; }
 
   //! Get the CMAES object.
   const CMAESType& CMAES() const { return cmaes; }
