@@ -282,17 +282,6 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
         << "terminating with failure.  Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
-
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
-    }
-
-    if (std::isnan(sigma(idx1)) || sigma(idx1) > 1e14)
-    {
-      Warn << "The step size diverged to " << sigma(idx1) << "; "
-        << "terminating with failure.  Try a smaller step size?" << std::endl;
-
-      iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       terminate = true;
       return overallObjective;
