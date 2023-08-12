@@ -15,7 +15,7 @@
 #ifndef ENSMALLEN_CMAES_CMAES_IMPL_HPP
 #define ENSMALLEN_CMAES_CMAES_IMPL_HPP
 
- // In case it hasn't been included yet.
+// In case it hasn't been included yet.
 #include "cmaes.hpp"
 
 #include "not_empty_transformation.hpp"
@@ -31,14 +31,19 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  bool saveState) :
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
     transformationPolicy(transformationPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    saveState(saveState),
+    start(true),
+    curr_idx(0),
+    sigma(2, 1)
 { /* Nothing to do. */ }
 
 template<typename SelectionPolicyType, typename TransformationPolicyType>
@@ -49,13 +54,18 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  bool saveState) :
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    saveState(saveState),
+    start(true),
+    curr_idx(0),
+    sigma(2, 1)
 {
   Warn << "This is a deprecated constructor and will be removed in a "
     "future version of ensmallen" << std::endl;
@@ -103,12 +113,6 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   const double muEffective = 1 / arma::accu(arma::pow(w, 2));
 
   // Step size control parameters.
-  BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  if (stepSize == 0) 
-    sigma(0) = transformationPolicy.InitialStepSize();
-  else 
-    sigma(0) = stepSize;
-
   const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
@@ -158,12 +162,25 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   std::vector<BaseMatType> pPosition(lambda, BaseMatType(iterate.n_rows,
       iterate.n_cols));
   BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
-  std::vector<BaseMatType> ps(2, BaseMatType(iterate.n_rows, iterate.n_cols));
-  ps[0].zeros();
-  ps[1].zeros();
-  std::vector<BaseMatType> pc = ps;
-  std::vector<BaseMatType> C(2, BaseMatType(iterate.n_elem, iterate.n_elem));
-  C[0].eye();
+
+  if (!saveState || start) {
+
+    //Initialize state parameters.
+    if (stepSize == 0)
+      sigma(0) = transformationPolicy.InitialStepSize();
+    else
+      sigma(0) = stepSize;
+
+    ps.assign(2, BaseMatType(iterate.n_rows, iterate.n_cols));
+    ps[0].zeros();
+    ps[1].zeros();
+    pc = ps;
+    C.assign(2, BaseMatType(iterate.n_elem, iterate.n_elem));
+    C[0].eye();
+
+    start = false;
+    terminate = false;
+  }
 
   // Covariance matrix parameters.
   arma::Col<ElemType> eigval; // TODO: might need a more general type.
@@ -173,9 +190,6 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // The current visitation order (sorted by population objectives).
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
-
-  // Controls early termination of the optimization process.
-  bool terminate = false;
 
   // Now iterate!
   terminate |= Callback::BeginOptimization(*this, function, 
@@ -189,8 +203,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
     // To keep track of where we are.
-    const size_t idx0 = (i - 1) % 2;
-    const size_t idx1 = i % 2;
+    const size_t idx0 = (i - 1 + curr_idx) % 2;
+    const size_t idx1 = (i + curr_idx) % 2;
+    curr_idx = idx1;
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
@@ -267,8 +282,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
         << "terminating with failure.  Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
-
       Callback::EndOptimization(*this, function, iterate, callbacks...);
+      terminate = true;
       return overallObjective;
     }
 
@@ -349,6 +364,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
       iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
+      terminate = true;
       return overallObjective;
     }
 
@@ -360,6 +376,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
         iterate = transformationPolicy.Transform(iterate);
         Callback::EndOptimization(*this, function, iterate, callbacks...);
+        terminate = true;
         return overallObjective;
       }
     }
@@ -370,6 +387,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     steps++;
 
     lastObjective = overallObjective;
+
   }
 
   iterate = transformationPolicy.Transform(iterate);

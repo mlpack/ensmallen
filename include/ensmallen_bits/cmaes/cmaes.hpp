@@ -63,6 +63,10 @@ class CMAES
    //! Type of Transformation Policy.
    typedef TransformationPolicyType TransformationPolicyType;
 
+   typedef typename MatTypeTraits<
+     typename TransformationPolicyType::MatType
+     >::BaseMatType BMatType;
+
   /**
    * Construct the CMA-ES optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
@@ -81,6 +85,9 @@ class CMAES
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
    * @param stepSize Starting sigma/step size (will be modified).
+   * @param saveState If true, the optimization will be resumed from where 
+         it was left off. In other words, the optimization state will 
+         be restored.
    */
   CMAES(const size_t lambda = 0,
         const TransformationPolicyType& 
@@ -89,7 +96,8 @@ class CMAES
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
         const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        double stepSize = 0);
+        double stepSize = 0,
+        bool saveState = false);
 
   /**
    * Construct the CMA-ES optimizer with the given function and parameters 
@@ -110,6 +118,9 @@ class CMAES
    * @param selectionPolicy Instantiated selection policy used to calculate the
    * objective.
    * @param stepSize Starting sigma/step size (will be modified).
+   * @param saveState If true, the optimization will be resumed from where
+         it was left off. In other words, the optimization state will
+         be restored.
    */
   ens_deprecated CMAES(const size_t lambda = 0,
                        const double lowerBound = -10,
@@ -118,7 +129,8 @@ class CMAES
                        const size_t maxIterations = 1000,
                        const double tolerance = 1e-5,
                        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-                       double stepSize = 0);
+                       double stepSize = 1,
+                       bool saveState = false);
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -172,12 +184,34 @@ class CMAES
   TransformationPolicyType& TransformationPolicy() 
   { return transformationPolicy; }
 
-  //! Get the step size.
+  //! Get the initial step size.
   double StepSize() const
   { return stepSize; }
-  //! Modify the step size.
+  //! Modify the initial step size.
   double& StepSize()
   { return stepSize; }
+
+  //! Get whether or not the optimization state will be restored.
+  bool SaveState() const { return saveState; }
+  //! Modify whether or not the optimization state should be restored.
+  bool& SaveState() { return saveState; }
+
+  //! Get the covariance matrix of the latest generation.
+  BMatType CurrentCovMat() const { return C[curr_idx]; }
+  //! Modify the covariance matrix of the latest generation.
+  BMatType& CurrentCovMat() { return C[curr_idx]; }
+
+  //! Get the step size of the latest generation.
+  typename BMatType::elem_type CurrentStepSize() const 
+  { return sigma(curr_idx); }
+  //! Get the step size of the latest generation.
+  typename BMatType::elem_type& CurrentStepSize() 
+  { return sigma(curr_idx); }
+
+  //! Get whether the optimization process was terminated early.
+  bool Terminate() const { return terminate; }
+  //! Modify the early termination indicator.
+  bool& Terminate() { return terminate; }
 
  private:
   //! Population size.
@@ -200,8 +234,36 @@ class CMAES
   //! has completed.
   TransformationPolicyType transformationPolicy;
 
-  //! The step size.
+  //! The initial step size.
   double stepSize;
+
+  //! Controls whether or not the optimization state will be restored.
+  bool saveState;
+
+  //! Indicates whether the optimization is just starting.
+  bool start;
+
+  //! The index that keeps track of where the optimization is.
+  //! This is to help retrieve the state variables when resuming optimization
+  size_t curr_idx;
+
+  //! The vector that stores the conjugate evolution paths of the last
+  //! two generations.
+  std::vector<BMatType> ps;
+
+  //! The vector that stores the evolution paths of the last
+  //! two generations.
+  std::vector<BMatType> pc;
+
+  //! The vector that stores the covariance matrices of the last
+  //! two generations.
+  std::vector<BMatType> C;
+
+  //! The vector that stores the step sizes of the last two generations.
+  BMatType sigma;
+
+  //! Controls early termination of the optimization process.
+  bool terminate;
 };
 
 /**

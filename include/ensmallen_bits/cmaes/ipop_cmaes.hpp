@@ -102,6 +102,7 @@ IPOPCMAES(const size_t lambda = 0,
           const typename CMAESType::SelectionPolicyType&
                 selectionPolicy = typename CMAESType::SelectionPolicyType(),
           double stepSize = 0,
+          bool saveState = false,
           const double populationFactor = 1.5,
           const size_t maxRestarts = 5);
 

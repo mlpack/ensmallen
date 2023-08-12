@@ -26,6 +26,9 @@ template<typename MatType = arma::mat>
 class EmptyTransformation
 {
  public:
+
+   typedef MatType MatType;
+
   /**
    * Transforms coordinates to themselves (effectively no transformation).
    *

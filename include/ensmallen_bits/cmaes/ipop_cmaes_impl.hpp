@@ -42,10 +42,11 @@ IPOPCMAES<CMAESType>::IPOPCMAES(const size_t lambda,
                                 const typename CMAESType::SelectionPolicyType&
                                       selectionPolicy,
                                 double stepSize,
+                                bool saveState,
                                 const double populationFactor,
                                 const size_t maxRestarts) :
     cmaes(lambda, transformationPolicy, batchSize, 
-         maxIterations, tolerance, selectionPolicy, stepSize),
+         maxIterations, tolerance, selectionPolicy, stepSize, true),
     populationFactor(populationFactor),
     maxRestarts(maxRestarts)
 { /* Nothing to do. */  }
@@ -64,13 +65,22 @@ typename MatType::elem_type IPOPCMAES<CMAESType>::Optimize(
 
   StoreBestCoordinates<MatType> sbc;
   CountFunctionEvaluations nfe;
+  MatType iterate;
   for (int i = 0; i < maxRestarts; i++) {
 
-    // Use the starting point.
-    MatType iterate = iterateIn;
+    if (!cmaes.SaveState()) {
+      // Use the starting point.
+      iterate = iterateIn;
 
-    // Optimize using the CMAES object.
-    cmaes.Optimize(function, iterate, sbc, nfe, callbacks...);
+      // Optimize using the CMAES object.
+      cmaes.Optimize(function, iterate, sbc, nfe, callbacks...);
+    }
+    else {
+      // Optimize using the CMAES object.
+      cmaes.Optimize(function, iterateIn, sbc, nfe, callbacks...);
+
+      iterate = iterateIn;
+    }
 
     // If the number of function evaluation exceeds the threshold, end 
     // the optimization.

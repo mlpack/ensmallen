@@ -15,7 +15,7 @@
 #ifndef ENSMALLEN_CMAES_ACTIVE_CMAES_IMPL_HPP
 #define ENSMALLEN_CMAES_ACTIVE_CMAES_IMPL_HPP
 
- // In case it hasn't been included yet.
+// In case it hasn't been included yet.
 #include "active_cmaes.hpp"
 
 #include "not_empty_transformation.hpp"
@@ -32,14 +32,19 @@ ActiveCMAES<SelectionPolicyType, TransformationPolicyType>::ActiveCMAES(
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  bool saveState) :
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
     transformationPolicy(transformationPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    saveState(saveState),
+    start(true),
+    curr_idx(0),
+    sigma(2, 1)
 { /* Nothing to do. */ }
 
 template<typename SelectionPolicyType, typename TransformationPolicyType>
@@ -51,13 +56,18 @@ ActiveCMAES<SelectionPolicyType, TransformationPolicyType>::ActiveCMAES(
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  bool saveState) :
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    saveState(saveState),
+    start(true),
+    curr_idx(0),
+    sigma(2, 1)
 {
   Warn << "This is a deprecated constructor and will be removed in a "
     "future version of ensmallen" << std::endl;
@@ -105,12 +115,6 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   const double muEffective = mu;
 
   // Step size control parameters.
-  BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  if (stepSize == 0) 
-    sigma(0) = transformationPolicy.InitialStepSize();
-  else 
-    sigma(0) = stepSize;
-
   const double cs = 4.0 / (iterate.n_elem + 4);
   const double ds = 1 + cs;
   const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
@@ -155,13 +159,24 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   std::vector<BaseMatType> pPosition(lambda, BaseMatType(iterate.n_rows,
       iterate.n_cols));
   BaseMatType pObjective(lambda, 1); // pObjective is vector-shaped.
-  std::vector<BaseMatType> ps(2, BaseMatType(iterate.n_rows, iterate.n_cols));
-  ps[0].zeros();
-  ps[1].zeros();
-  std::vector<BaseMatType> pc = ps;
-  std::vector<BaseMatType> C(2, BaseMatType(iterate.n_elem, iterate.n_elem));
-  C[0].eye();
 
+  if (!saveState || start) {
+
+    // Initialize state parameters.
+    if (stepSize == 0)
+      sigma(0) = transformationPolicy.InitialStepSize();
+    else
+      sigma(0) = stepSize;
+
+    ps.assign(2, BaseMatType(iterate.n_rows, iterate.n_cols));
+    ps[0].zeros();
+    ps[1].zeros();
+    pc = ps;
+    C.assign(2, BaseMatType(iterate.n_elem, iterate.n_elem));
+    C[0].eye();
+
+    start = false;
+  }
   // Covariance matrix parameters.
   arma::Col<ElemType> eigval; // TODO: might need a more general type.
   BaseMatType eigvec;
@@ -188,8 +203,9 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
     // To keep track of where we are.
-    idx0 = (i - 1) % 2;
-    idx1 = i % 2;
+    idx0 = (i - 1 + curr_idx) % 2;
+    idx1 = (i + curr_idx) % 2;
+    curr_idx = idx1;
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
@@ -267,8 +283,8 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
         << "terminating with failure.  Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
-
       Callback::EndOptimization(*this, function, iterate, callbacks...);
+      terminate = true;
       return overallObjective;
     }
 
@@ -340,6 +356,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
       iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
+      terminate = true;
       return overallObjective;
     }
 
@@ -351,6 +368,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
         iterate = transformationPolicy.Transform(iterate);
         Callback::EndOptimization(*this, function, iterate, callbacks...);
+        terminate = true;
         return overallObjective;
       }
     }

@@ -99,6 +99,7 @@
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cmaes/active_cmaes.hpp"
 #include "ensmallen_bits/cmaes/ipop_cmaes.hpp"
+#include "ensmallen_bits/cmaes/sa_acmes.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
