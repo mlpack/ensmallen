@@ -45,7 +45,7 @@ IPOPCMAES<CMAESType>::IPOPCMAES(const size_t lambda,
                                 const double populationFactor,
                                 const size_t maxRestarts) :
     cmaes(lambda, transformationPolicy, batchSize, 
-         maxIterations, tolerance, selectionPolicy, stepSize, true),
+         maxIterations, tolerance, selectionPolicy, stepSize, saveState),
     populationFactor(populationFactor),
     maxRestarts(maxRestarts)
 { /* Nothing to do. */  }
