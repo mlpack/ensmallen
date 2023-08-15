@@ -34,12 +34,12 @@ IPOPCMAES<CMAESType>::IPOPCMAES(const CMAESType& CMAES,
 
 template<typename CMAESType>
 IPOPCMAES<CMAESType>::IPOPCMAES(const size_t lambda,
-                                const typename CMAESType::TransformationPolicyType&
+                                const typename CMAESType::transformationPolicyType&
                                       transformationPolicy,
                                 const size_t batchSize,
                                 const size_t maxIterations,
                                 const double tolerance,
-                                const typename CMAESType::SelectionPolicyType&
+                                const typename CMAESType::selectionPolicyType&
                                       selectionPolicy,
                                 double stepSize,
                                 const double populationFactor,

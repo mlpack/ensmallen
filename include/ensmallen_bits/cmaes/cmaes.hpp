@@ -59,9 +59,9 @@ class CMAES
  public:
 
    //! Type of Selection Policy.
-   typedef SelectionPolicyType SelectionPolicyType;
+   typedef SelectionPolicyType selectionPolicyType;
    //! Type of Transformation Policy.
-   typedef TransformationPolicyType TransformationPolicyType;
+   typedef TransformationPolicyType transformationPolicyType;
 
   /**
    * Construct the CMA-ES optimizer with the given function and parameters. The

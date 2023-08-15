@@ -94,13 +94,13 @@ class IPOPCMAES
    * @param maxRestarts Maximum number of restarts.
    */
 IPOPCMAES(const size_t lambda = 0,
-          const typename CMAESType::TransformationPolicyType&
-                transformationPolicy = typename CMAESType::TransformationPolicyType(),
+          const typename CMAESType::transformationPolicyType&
+                transformationPolicy = typename CMAESType::transformationPolicyType(),
           const size_t batchSize = 32,
           const size_t maxIterations = 1000,
           const double tolerance = 1e-5,
-          const typename CMAESType::SelectionPolicyType&
-                selectionPolicy = typename CMAESType::SelectionPolicyType(),
+          const typename CMAESType::selectionPolicyType&
+                selectionPolicy = typename CMAESType::selectionPolicyType(),
           double stepSize = 0,
           const double populationFactor = 1.5,
           const size_t maxRestarts = 5);
@@ -131,9 +131,9 @@ IPOPCMAES(const size_t lambda = 0,
   double& PopulationFactor() { return populationFactor; }
 
   //! Get the maximum number of restarts.
-  double MaxRestarts() const { return maxRestarts; }
+  size_t MaxRestarts() const { return maxRestarts; }
   //! Modify the maximum number of restarts.
-  double& MaxRestarts() { return maxRestarts; }
+  size_t& MaxRestarts() { return maxRestarts; }
 
   //! Get the CMAES object.
   const CMAESType& CMAES() const { return cmaes; }
