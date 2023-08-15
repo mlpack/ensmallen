@@ -37,7 +37,7 @@ class BoundaryBoxConstraint
 {
 public:
 
-  typedef MatType MatType;
+  typedef MatType MType;
   /**
    * Construct the boundary box constraint policy.
    */

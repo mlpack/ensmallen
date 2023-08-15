@@ -63,12 +63,12 @@ class ActiveCMAES
  public:
 
    //! Type of Selection Policy.
-   typedef SelectionPolicyType SelectionPolicyType;
+   typedef SelectionPolicyType selectionPolicyType;
    //! Type of Transformation Policy.
-   typedef TransformationPolicyType TransformationPolicyType;
+   typedef TransformationPolicyType transformationPolicyType;
 
    typedef typename MatTypeTraits<
-     typename TransformationPolicyType::MatType
+     typename TransformationPolicyType::MType
      >::BaseMatType BMatType;
 
   /**

@@ -12,8 +12,8 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_CMAES_IPOP_CMAES_HPP
-#define ENSMALLEN_CMAES_IPOP_CMAES_HPP
+#ifndef ENSMALLEN_IPOP_CMAES_CMAES_HPP
+#define ENSMALLEN_IPOP_CMAES_CMAES_HPP
 
 #include "cmaes.hpp"
 #include "active_cmaes.hpp"
@@ -94,13 +94,13 @@ class IPOPCMAES
    * @param maxRestarts Maximum number of restarts.
    */
 IPOPCMAES(const size_t lambda = 0,
-          const typename CMAESType::TransformationPolicyType&
-                transformationPolicy = typename CMAESType::TransformationPolicyType(),
+          const typename CMAESType::transformationPolicyType&
+                transformationPolicy = typename CMAESType::transformationPolicyType(),
           const size_t batchSize = 32,
           const size_t maxIterations = 1000,
           const double tolerance = 1e-5,
-          const typename CMAESType::SelectionPolicyType&
-                selectionPolicy = typename CMAESType::SelectionPolicyType(),
+          const typename CMAESType::selectionPolicyType&
+                selectionPolicy = typename CMAESType::selectionPolicyType(),
           double stepSize = 0,
           bool saveState = false,
           const double populationFactor = 1.5,

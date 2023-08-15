@@ -59,13 +59,13 @@ class CMAES
  public:
 
    //! Type of Selection Policy.
-   typedef SelectionPolicyType SelectionPolicyType;
+   typedef SelectionPolicyType selectionPolicyType;
    //! Type of Transformation Policy.
-   typedef TransformationPolicyType TransformationPolicyType;
+   typedef TransformationPolicyType transformationPolicyType;
 
    typedef typename MatTypeTraits<
-     typename TransformationPolicyType::MatType
-     >::BaseMatType BMatType;
+     typename TransformationPolicyType::MType
+   >::BaseMatType BMatType;
 
   /**
    * Construct the CMA-ES optimizer with the given function and parameters. The
@@ -233,7 +233,7 @@ class CMAES
   //! while evaluating fitness. This mapping is also done after optimization 
   //! has completed.
   TransformationPolicyType transformationPolicy;
-  
+
   //! The initial step size.
   double stepSize;
 

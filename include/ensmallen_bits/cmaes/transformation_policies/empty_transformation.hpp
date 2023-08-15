@@ -27,7 +27,7 @@ class EmptyTransformation
 {
  public:
 
-   typedef MatType MatType;
+   typedef MatType MType;
 
   /**
    * Transforms coordinates to themselves (effectively no transformation).
