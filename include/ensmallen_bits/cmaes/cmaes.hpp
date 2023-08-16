@@ -91,9 +91,8 @@ class CMAES
    * good for the given problem, so it is suggested that the values used be 
    * tailored to the task at hand.  The maximum number of iterations refers to 
    * the maximum number of points that are processed (i.e., one iteration 
-   * equals one point; one iteration does not equal one pass over the dataset). 
-   * This constructor is deprecated.
-   * 
+   * equals one point; one iteration does not equal one pass over the dataset).
+   *
    * @param lambda The population size(0 use the default size).
    * @param lowerBound Lower bound of decision variables.
    * @param upperBound Upper bound of decision variables.
@@ -105,14 +104,14 @@ class CMAES
    * objective.
    * @param stepSize Starting sigma/step size (will be modified).
    */
-  ens_deprecated CMAES(const size_t lambda = 0,
-                       const double lowerBound = -10,
-                       const double upperBound = 10,
-                       const size_t batchSize = 32,
-                       const size_t maxIterations = 1000,
-                       const double tolerance = 1e-5,
-                       const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-                       double stepSize = 0);
+  CMAES(const size_t lambda = 0,
+        const double lowerBound = -10,
+        const double upperBound = 10,
+        const size_t batchSize = 32,
+        const size_t maxIterations = 1000,
+        const double tolerance = 1e-5,
+        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+        double stepSize = 0);
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
