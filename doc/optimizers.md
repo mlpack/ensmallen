@@ -1,3 +1,95 @@
+## ActiveCMAES
+
+*An optimizer for [separable functions](#separable-functions).*
+
+Active CMA-ES is a variant of the stochastic search algorithm
+CMA-ES - Covariance Matrix Adaptation Evolution Strategy.
+Active CMA-ES actively reduces the uncertainty in unfavourable directions by
+exploiting the information about bad mutations in the covariance matrix 
+update step. This isn't for the purpose of accelerating progress, but 
+instead for speeding up the adaptation of the covariance matrix (which, in 
+turn, will lead to faster progress).
+
+#### Constructors
+
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
+
+The _`SelectionPolicyType`_ template parameter refers to the strategy used to
+compute the (approximate) objective function.  The `FullSelection` and
+`RandomSelection` classes are available for use; custom behavior can be achieved
+by implementing a class with the same method signatures.
+The _`TransformationPolicyType`_  template parameter refers to transformation 
+strategy used to map decision variables to the desired domain during fitness 
+evaluation and optimization termination. The `EmptyTransformation` and 
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+achieved by implementing a class with the same method signatures.
+
+For convenience the following types can be used:
+
+ * **`ActiveCMAES<>`** (equivalent to `ActiveCMAES<FullSelection, EmptyTransformation<>>`): uses all separable functions to compute objective
+ * **`ApproxActiveCMAES<>`** (equivalent to `ActiveCMAES<RandomSelection, EmptyTransformation<>>`): uses a small amount of separable functions to compute approximate objective
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
+| `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `size_t` | **`stepSize`** | Initial step size | `0` |
+
+Attributes of the optimizer may also be changed via the member methods
+`Lambda()`, `TransformationPolicy()`, `BatchSize()`, `MaxIterations()`,
+`Tolerance()`, and `SelectionPolicy()`.
+
+The `selectionPolicy` attribute allows an instantiated `SelectionPolicyType` to
+be given.  The `FullSelection` policy has no need to be instantiated and thus
+the option is not relevant when the `ActiveCMAES<>` optimizer type is being used; the
+`RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
+where _`fraction`_ specifies the percentage of separable functions to use to
+estimate the objective function.
+The `transformationPolicy` attribute allows an instantiated 
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
+the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+the coordinates respectively.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+// ActiveCMAES with the FullSelection and BoundaryBoxConstraint policies.
+BoundaryBoxConstraint b(-1, 1);
+ActiveCMAES optimizer(0, b, 32, 200, 1e-4);
+optimizer.Optimize(f, coordinates);
+
+// ActiveCMAES with the RandomSelection and BoundaryBoxConstraint policies.
+ApproxActiveCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
+approxOptimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [CMAES](#cmaes)
+ * [Improving Evolution Strategies through Active Covariance Matrix Adaptation](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.4239&rep=rep1&type=pdfn)
+ * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
+
 ## AdaBelief
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -727,6 +819,7 @@ For convenience the following types can be used:
 | `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `size_t` | **`stepSize`** | Initial step size | `0` |
 
 Attributes of the optimizer may also be changed via the member methods
 `Lambda()`, `TransformationPolicy()`, `BatchSize()`, `MaxIterations()`,

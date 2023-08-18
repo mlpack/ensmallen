@@ -12,8 +12,8 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_ACTIVE_CMAES_CMAES_HPP
-#define ENSMALLEN_ACTIVE_CMAES_CMAES_HPP
+#ifndef ENSMALLEN_CMAES_ACTIVE_CMAES_HPP
+#define ENSMALLEN_CMAES_ACTIVE_CMAES_HPP
 
 #include "full_selection.hpp"
 #include "random_selection.hpp"
