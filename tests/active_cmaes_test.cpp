@@ -62,7 +62,7 @@ TEST_CASE("ApproxActiveCMAESRosenbrockFunctionFMatTest", "[ActiveCMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(0, 10);
   ApproxActiveCMAES<BoundaryBoxConstraint<arma::fmat>> 
-      activecmaes(20248, b, 1, 0, 1e-5);
+      activecmaes(2048, b, 1, 0, 1e-5);
   activecmaes.StepSize() = 0.01;
   FunctionTest<RosenbrockFunction, arma::fmat>(activecmaes, 0.1, 0.1, 10);
 }
