@@ -1,19 +1,19 @@
 /**
- * @file cmaes.hpp
+ * @file active_cmaes.hpp
  * @author Marcus Edel
- * @author Kartik Nighania
+ * @author Suvarsha Chennareddy
  *
- * Definition of the Covariance Matrix Adaptation Evolution Strategy as proposed
- * by N. Hansen et al. in "Completely Derandomized Self-Adaptation in Evolution
- * Strategies".
+ * Definition of the Active Covariance Matrix Adaptation Evolution Strategy 
+ * as proposed by G.A Jastrebski and D.V Arnold in "Improving Evolution 
+ * Strategies through Active Covariance Matrix Adaptation".
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_CMAES_CMAES_HPP
-#define ENSMALLEN_CMAES_CMAES_HPP
+#ifndef ENSMALLEN_CMAES_ACTIVE_CMAES_HPP
+#define ENSMALLEN_CMAES_ACTIVE_CMAES_HPP
 
 #include "full_selection.hpp"
 #include "random_selection.hpp"
@@ -23,27 +23,31 @@
 namespace ens {
 
 /**
- * CMA-ES - Covariance Matrix Adaptation Evolution Strategy is s a stochastic
- * search algorithm. CMA-ES is a second order approach estimating a positive
- * definite matrix within an iterative procedure using the covariance matrix.
+ * Active CMA-ES is a variant of the stochastic search algorithm
+ * CMA-ES - Covariance Matrix Adaptation Evolution Strategy.
+ * Active CMA-ES actively reduces the uncertainty in unfavourable directions by
+ * exploiting the information about bad mutations in the covariance matrix 
+ * update step. This isn't for the purpose of accelerating progress, but 
+ * instead for speeding up the adaptation of the covariance matrix (which, in 
+ * turn, will lead to faster progress).
  *
  * For more information, please refer to:
  *
  * @code
- * @article{Hansen2001
- *   author    = {Hansen, Nikolaus and Ostermeier, Andreas},
- *   title     = {Completely Derandomized Self-Adaptation in Evolution
- *                Strategies},
- *   journal   = {Evol. Comput.},
- *   volume    = {9},
- *   number    = {2},
- *   year      = {2001},
- *   pages     = {159--195},
- *   publisher = {MIT Press},
- * }
+ * @INPROCEEDINGS{1688662,
+ *   author={Jastrebski, G.A. and Arnold, D.V.},
+ *   booktitle={2006 IEEE International Conference on Evolutionary 
+                Computation},
+ *   title={Improving Evolution Strategies through Active Covariance 
+            Matrix Adaptation},
+ *   year={2006},
+ *   volume={},
+ *   number={},
+ *   pages={2814-2821},
+ *   doi={10.1109/CEC.2006.1688662}}
  * @endcode
  *
- * CMA-ES can optimize separable functions.  For more details, see the
+ * Active CMA-ES can optimize separable functions.  For more details, see the
  * documentation on function types included with this distribution or on the
  * ensmallen website.
  *
@@ -54,11 +58,11 @@ namespace ens {
  */
 template<typename SelectionPolicyType = FullSelection,
          typename TransformationPolicyType = EmptyTransformation<>>
-class CMAES
+class ActiveCMAES
 {
  public:
   /**
-   * Construct the CMA-ES optimizer with the given function and parameters. The
+   * Construct the Active CMA-ES optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
    * suggested that the values used be tailored to the task at hand.  The
    * maximum number of iterations refers to the maximum number of points that
@@ -76,22 +80,23 @@ class CMAES
    *     objective.
    * @param stepSize Starting sigma/step size (will be modified).
    */
-  CMAES(const size_t lambda = 0,
-        const TransformationPolicyType& 
-              transformationPolicy = TransformationPolicyType(),
-        const size_t batchSize = 32,
-        const size_t maxIterations = 1000,
-        const double tolerance = 1e-5,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        double stepSize = 0);
+  ActiveCMAES(
+      const size_t lambda = 0,
+      const TransformationPolicyType& 
+          transformationPolicy = TransformationPolicyType(),
+      const size_t batchSize = 32,
+      const size_t maxIterations = 1000,
+      const double tolerance = 1e-5,
+      const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+      double stepSize = 0);
 
   /**
-   * Construct the CMA-ES optimizer with the given function and parameters 
+   * Construct the Active CMA-ES optimizer with the given function and parameters 
    * (including lower and upper bounds). The defaults here are not necessarily 
    * good for the given problem, so it is suggested that the values used be 
    * tailored to the task at hand.  The maximum number of iterations refers to 
    * the maximum number of points that are processed (i.e., one iteration 
-   * equals one point; one iteration does not equal one pass over the dataset).
+   * equals one point; one iteration does not equal one pass over the dataset). 
    *
    * @param lambda The population size(0 use the default size).
    * @param lowerBound Lower bound of decision variables.
@@ -104,17 +109,18 @@ class CMAES
    * objective.
    * @param stepSize Starting sigma/step size (will be modified).
    */
-  CMAES(const size_t lambda = 0,
-        const double lowerBound = -10,
-        const double upperBound = 10,
-        const size_t batchSize = 32,
-        const size_t maxIterations = 1000,
-        const double tolerance = 1e-5,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        double stepSize = 0);
+  ActiveCMAES(
+      const size_t lambda = 0,
+      const double lowerBound = -10,
+      const double upperBound = 10,
+      const size_t batchSize = 32,
+      const size_t maxIterations = 1000,
+      const double tolerance = 1e-5,
+      const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+      double stepSize = 0);
 
   /**
-   * Optimize the given function using CMA-ES. The given starting point will be
+   * Optimize the given function using Active CMA-ES. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.
    *
@@ -129,7 +135,8 @@ class CMAES
   template<typename SeparableFunctionType,
       typename MatType,
       typename... CallbackTypes>
-      typename MatType::elem_type Optimize(SeparableFunctionType& function,
+      typename MatType::elem_type Optimize(
+          SeparableFunctionType& function,
           MatType& iterate,
           CallbackTypes&&... callbacks);
 
@@ -198,15 +205,15 @@ class CMAES
 };
 
 /**
- * Convenient typedef for CMAES approximation.
+ * Convenient typedef for Active CMAES approximation.
  */
 template<typename TransformationPolicyType = EmptyTransformation<>,
          typename SelectionPolicyType = RandomSelection>
-using ApproxCMAES = CMAES<SelectionPolicyType, TransformationPolicyType>;
+using ApproxActiveCMAES = ActiveCMAES<SelectionPolicyType, TransformationPolicyType>;
 
 } // namespace ens
 
 // Include implementation.
-#include "cmaes_impl.hpp"
+#include "active_cmaes_impl.hpp"
 
 #endif

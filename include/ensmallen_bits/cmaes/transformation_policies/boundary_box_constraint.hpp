@@ -21,10 +21,10 @@ namespace ens {
  * by boundaries.
  * The implemented transformation transforms given coordinates into a region 
  * bounded by the given lower and upper bounds (a box). First, the 
- * coordinates are shifted into a feasible preimage bounded by lowerBound - al 
+ * coordinates are shifted into a feasible preimage bounded by lowerBound - al
  * and upperBound + au where al and au and calculated internally. 
- * These shifted coordinates are then transformed into coordinates bounded by 
- * lower_bound and upper_bound. It is an identity transformation in between 
+ * These shifted coordinates are then transformed into coordinates bounded by
+ * lower_bound and upper_bound. It is an identity transformation in between
  * the lower and upper bounds.
  * 
  * For more information, check the original implementation in C by N. Hansen:
@@ -61,8 +61,8 @@ public:
    * @param lowerBound The lower bound (for every dimension) of the coordinates.
    * @param upperBound The upper bound (for every dimension) of the coordinates.
    */
-  BoundaryBoxConstraint(const double lowerBound,
-                        const double upperBound) :
+  BoundaryBoxConstraint(const typename MatType::elem_type lowerBound,
+                        const typename MatType::elem_type upperBound) :
       lowerBound({ (typename MatType::elem_type) lowerBound }),
       upperBound({ (typename MatType::elem_type) upperBound })
   {}
@@ -150,11 +150,11 @@ public:
   MatType& UpperBound() { return upperBound; }
 
 private:
-  //! Upper bound of decision variables.
-  MatType upperBound;
-
   //! Lower bound of decision variables.
   MatType lowerBound;
+
+  //! Upper bound of decision variables.
+  MatType upperBound;
 };
 
 } // namespace ens

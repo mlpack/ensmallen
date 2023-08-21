@@ -1,7 +1,10 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
- * Fix the current CMAES inconsistencies
-   ([#351](https://github.com/mlpack/ensmallen/pull/351)).
+ * Implementation of Active CMAES
+   ([#367](https://github.com/mlpack/ensmallen/pull/367)).
+
+ * LBFGS: avoid generation of NaNs, and add checks for finite values
+   ([#368](https://github.com/mlpack/ensmallen/pull/368)).
 
  * LBFGS: avoid generation of NaNs, and add checks for finite values
    ([#368](https://github.com/mlpack/ensmallen/pull/368)).
