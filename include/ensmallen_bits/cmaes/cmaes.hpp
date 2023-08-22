@@ -172,6 +172,11 @@ class CMAES
   double& StepSize()
   { return stepSize; }
 
+  //! Type of Selection Policy.
+  typedef SelectionPolicyType selectionPolicyType;
+  //! Type of Transformation Policy.
+  typedef TransformationPolicyType transformationPolicyType;
+
  private:
   //! Population size.
   size_t lambda;
