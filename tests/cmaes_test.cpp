@@ -20,18 +20,6 @@ using namespace ens::test;
 /**
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
- * This test uses the deprecated constructor and therefore can be removed
- * in a future version of ensmallen.
- */
-TEST_CASE("CMAESDeprecatedConstructorLogisticRegressionTest", "[CMAESTest]")
-{
-  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, -10, 10, 32, 500, 1e-3);
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
-}
-
-/**
- * Run CMA-ES with the full selection policy on logistic regression and
- * make sure the results are acceptable.
  */
 TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
 {
@@ -60,7 +48,7 @@ TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
 TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
 {
   BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 32, 500, 1e-3);
+  CMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> cmaes(120, b, 32, 500, 1e-3);
   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
 }
 

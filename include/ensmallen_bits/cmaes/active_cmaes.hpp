@@ -61,12 +61,6 @@ template<typename SelectionPolicyType = FullSelection,
 class ActiveCMAES
 {
  public:
-
-   //! Type of Selection Policy.
-   typedef SelectionPolicyType selectionPolicyType;
-   //! Type of Transformation Policy.
-   typedef TransformationPolicyType transformationPolicyType;
-
   /**
    * Construct the Active CMA-ES optimizer with the given function and parameters. The
    * defaults here are not necessarily good for the given problem, so it is
@@ -86,14 +80,15 @@ class ActiveCMAES
    *     objective.
    * @param stepSize Starting sigma/step size (will be modified).
    */
-  ActiveCMAES(const size_t lambda = 0,
-        const TransformationPolicyType& 
-              transformationPolicy = TransformationPolicyType(),
-        const size_t batchSize = 32,
-        const size_t maxIterations = 1000,
-        const double tolerance = 1e-5,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        double stepSize = 0);
+  ActiveCMAES(
+      const size_t lambda = 0,
+      const TransformationPolicyType& 
+          transformationPolicy = TransformationPolicyType(),
+      const size_t batchSize = 32,
+      const size_t maxIterations = 1000,
+      const double tolerance = 1e-5,
+      const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+      double stepSize = 0);
 
   /**
    * Construct the Active CMA-ES optimizer with the given function and parameters 
@@ -102,8 +97,7 @@ class ActiveCMAES
    * tailored to the task at hand.  The maximum number of iterations refers to 
    * the maximum number of points that are processed (i.e., one iteration 
    * equals one point; one iteration does not equal one pass over the dataset). 
-   * This constructor is deprecated.
-   * 
+   *
    * @param lambda The population size(0 use the default size).
    * @param lowerBound Lower bound of decision variables.
    * @param upperBound Upper bound of decision variables.
@@ -115,14 +109,15 @@ class ActiveCMAES
    * objective.
    * @param stepSize Starting sigma/step size (will be modified).
    */
-  ens_deprecated ActiveCMAES(const size_t lambda = 0,
-                       const double lowerBound = -10,
-                       const double upperBound = 10,
-                       const size_t batchSize = 32,
-                       const size_t maxIterations = 1000,
-                       const double tolerance = 1e-5,
-                       const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-                       double stepSize = 0);
+  ActiveCMAES(
+      const size_t lambda = 0,
+      const double lowerBound = -10,
+      const double upperBound = 10,
+      const size_t batchSize = 32,
+      const size_t maxIterations = 1000,
+      const double tolerance = 1e-5,
+      const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+      double stepSize = 0);
 
   /**
    * Optimize the given function using Active CMA-ES. The given starting point will be
@@ -140,7 +135,8 @@ class ActiveCMAES
   template<typename SeparableFunctionType,
       typename MatType,
       typename... CallbackTypes>
-      typename MatType::elem_type Optimize(SeparableFunctionType& function,
+      typename MatType::elem_type Optimize(
+          SeparableFunctionType& function,
           MatType& iterate,
           CallbackTypes&&... callbacks);
 
