@@ -110,8 +110,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     sigma(0) = stepSize;
 
   const ElemType cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
-  const ElemType ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
-      (iterate.n_elem + 1)) - 1, 0.0);
+  const ElemType ds = 1 + cs + 2 * std::max<ElemType>(
+        std::sqrt((muEffective - 1) / (iterate.n_elem + 1)) - 1, 0.0);
   const ElemType enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
       (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
 
@@ -123,9 +123,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   const ElemType c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + muEffective);
   const ElemType alphaMu = 2;
-  const ElemType cmu = std::min(1 - c1, alphaMu * (muEffective - 2 + 1 /
-      muEffective) / (std::pow(iterate.n_elem + 2, 2) +
-      alphaMu * muEffective / 2));
+  const ElemType cmu = std::min<ElemType>(1 - c1, 
+      alphaMu * (muEffective - 2 + 1 / muEffective) / 
+      (std::pow(iterate.n_elem + 2, 2) + alphaMu * muEffective / 2));
 
   std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows,
       iterate.n_cols));
