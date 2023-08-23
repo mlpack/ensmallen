@@ -129,7 +129,8 @@ class CMAES
   template<typename SeparableFunctionType,
       typename MatType,
       typename... CallbackTypes>
-      typename MatType::elem_type Optimize(SeparableFunctionType& function,
+      typename MatType::elem_type Optimize(
+          SeparableFunctionType& function,
           MatType& iterate,
           CallbackTypes&&... callbacks);
 

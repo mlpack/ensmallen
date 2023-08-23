@@ -16,8 +16,6 @@
   This partial specialization is used to throw an exception when the
   TransformationPolicyType is EmptyTransformation and call a
   constructor with parameters 'lowerBound' and 'upperBound' otherwise.
-  This shall be removed when the deprecated constructor is removed in
-  the next major version of ensmallen.
  */
 template<typename T1, typename T2>
 struct NotEmptyTransformation : std::true_type {

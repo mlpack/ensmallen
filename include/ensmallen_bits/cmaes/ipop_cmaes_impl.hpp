@@ -64,7 +64,7 @@ typename MatType::elem_type IPOPCMAES<CMAESType>::Optimize(
 
   StoreBestCoordinates<MatType> sbc;
   CountFunctionEvaluations nfe;
-  for (int i = 0; i < maxRestarts; i++) {
+  for (size_t i = 0; i < maxRestarts; ++i) {
 
     // Use the starting point.
     MatType iterate = iterateIn;

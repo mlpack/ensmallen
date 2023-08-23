@@ -15,7 +15,7 @@
 #ifndef ENSMALLEN_CMAES_CMAES_IMPL_HPP
 #define ENSMALLEN_CMAES_CMAES_IMPL_HPP
 
- // In case it hasn't been included yet.
+// In case it hasn't been included yet.
 #include "cmaes.hpp"
 
 #include "not_empty_transformation.hpp"
@@ -100,7 +100,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   w /= arma::accu(w);
 
   // Number of effective solutions.
-  const double muEffective = 1 / arma::accu(arma::pow(w, 2));
+  const ElemType muEffective = 1 / arma::accu(arma::pow(w, 2));
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
@@ -109,21 +109,21 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   else 
     sigma(0) = stepSize;
 
-  const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
-  const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
+  const ElemType cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
+  const ElemType ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
-  const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
+  const ElemType enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
       (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
 
   // Covariance update parameters.
   // Cumulation for distribution.
-  const double cc = (4 + muEffective / iterate.n_elem) /
+  const ElemType cc = (4 + muEffective / iterate.n_elem) /
       (4 + iterate.n_elem + 2 * muEffective / iterate.n_elem);
-  const double h = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * enn;
+  const ElemType h = (1.4 + 2.0 / (iterate.n_elem + 1.0)) * enn;
 
-  const double c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + muEffective);
-  const double alphaMu = 2;
-  const double cmu = std::min(1 - c1, alphaMu * (muEffective - 2 + 1 /
+  const ElemType c1 = 2 / (std::pow(iterate.n_elem + 1.3, 2) + muEffective);
+  const ElemType alphaMu = 2;
+  const ElemType cmu = std::min(1 - c1, alphaMu * (muEffective - 2 + 1 /
       muEffective) / (std::pow(iterate.n_elem + 2, 2) +
       alphaMu * muEffective / 2));
 
