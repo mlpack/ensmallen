@@ -16,26 +16,25 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Run IPOP CMA-ES with the full selection policy on Rosenbrock function and
- * make sure the results are acceptable (relatively lenient tolerance used).
+ * Run IPOP CMA-ES with the full selection policy on Rastrigin function and
+ * make sure the results are acceptable.
  */
-TEST_CASE("IPOPCMAESSchwefelFunctionTest", "[IPOPCMAESTest]")
+TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 {
   const size_t numFunctions = 2;
 
-  BoundaryBoxConstraint<> b(-500, 500);
+  BoundaryBoxConstraint<> b(-5.12, 5.12);
   CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, numFunctions, 0, 1e-12);
-  cmaes.StepSize() = 500;
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(cmaes, 3, 20);
+    ipopcmaes(cmaes, 3, 5);
 
-  SchwefelFunction f(numFunctions);
+  RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
   arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
   
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-    0.1, f.GetFinalObjective(), 0.1, 1);
+    0.01, f.GetFinalObjective(), 0.01, 1);
 }
 
 /**
@@ -53,28 +52,27 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
 }
 
 /**
- * Run IPOP-Active CMA-ES with the full selection policy on Schwefel function and
- * make sure the results are acceptable (relatively lenient tolerance used).
+ * Run IPOP-Active CMA-ES with the full selection policy on Rastrigin function and
+ * make sure the results are acceptable.
  */
 TEST_CASE("IPOPActiveCMAESchwefelFunctionTest", "[IPOPCMAESTest]")
 {
 
   const size_t numFunctions = 2;
 
-  BoundaryBoxConstraint<> b(-500, 500);
+  BoundaryBoxConstraint<> b(-5.12, 5.12);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>
     activecmaes(0, b, numFunctions, 0, 1e-12);
-  activecmaes.StepSize() = 500;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(activecmaes, 3, 20);
+    ipopcmaes(activecmaes, 3, 5);
 
-  SchwefelFunction f(numFunctions);
+  RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
   arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-    0.1, f.GetFinalObjective(), 0.1, 1);
+    0.01, f.GetFinalObjective(), 0.01, 1);
 }
 
 /**

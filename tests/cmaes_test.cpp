@@ -20,6 +20,18 @@ using namespace ens::test;
 /**
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
+ * This test uses the constructor whcih defines equal bounds across all 
+ * dimensions (hypercube-based approach).
+ */
+TEST_CASE("CMAESHypercubeBoundsConstructorLogisticRegressionTest", "[CMAESTest]")
+{
+  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, -10, 10, 32, 500, 1e-3);
+  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+}
+
+/**
+ * Run CMA-ES with the full selection policy on logistic regression and
+ * make sure the results are acceptable.
  */
 TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
 {

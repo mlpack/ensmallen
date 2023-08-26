@@ -57,8 +57,6 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
     selectionPolicy(selectionPolicy),
     stepSize(stepSizeIn)
 {
-  Warn << "This is a deprecated constructor and will be removed in a "
-    "future version of ensmallen" << std::endl;
   NotEmptyTransformation<TransformationPolicyType, EmptyTransformation<>> d;
   d.Assign(transformationPolicy, lowerBound, upperBound);
 }
