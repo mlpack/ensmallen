@@ -50,7 +50,6 @@ IPOPCMAES<CMAESType>::IPOPCMAES(const size_t lambda,
     maxRestarts(maxRestarts)
 { /* Nothing to do. */  }
 
-
 //! Optimize the function (minimize).
 template<typename CMAESType>
 template<typename SeparableFunctionType,
