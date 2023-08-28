@@ -27,7 +27,7 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, numFunctions, 0, 1e-12);
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(cmaes, 3, 5);
+    ipopcmaes(cmaes, 3, 9);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
@@ -47,6 +47,7 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
     ipopcmaes(0, b, 16, 0, 1e-3);
+  ipopcmaes.PopulationFactor() = 3;
 
   FunctionTest<RosenbrockFunction>(ipopcmaes, 0.1, 0.1);
 }
@@ -55,9 +56,8 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
  * Run IPOP-Active CMA-ES with the full selection policy on Rastrigin function and
  * make sure the results are acceptable.
  */
-TEST_CASE("IPOPActiveCMAESchwefelFunctionTest", "[IPOPCMAESTest]")
+TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 {
-
   const size_t numFunctions = 2;
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
@@ -65,7 +65,7 @@ TEST_CASE("IPOPActiveCMAESchwefelFunctionTest", "[IPOPCMAESTest]")
     activecmaes(0, b, numFunctions, 0, 1e-12);
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(activecmaes, 3, 5);
+    ipopcmaes(activecmaes, 3, 9);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
@@ -87,7 +87,7 @@ TEST_CASE("IPOPActiveCMAESRosenbrockFunctionFMatTest", "[IPOPCMAESTest]")
     activecmaes(0, b, 16, 0, 1e-3);
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>>>
-    ipopcmaes(activecmaes);
+    ipopcmaes(activecmaes, 3, 5);
 
   FunctionTest<RosenbrockFunction, arma::fmat>(ipopcmaes, 0.1, 0.1);
 }

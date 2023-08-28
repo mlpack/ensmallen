@@ -141,7 +141,6 @@ IPOPCMAES(const size_t lambda = 0,
   CMAESType& CMAES() { return cmaes; }
 
  private:
-
   //! Population factor.
   double populationFactor;
   

@@ -61,11 +61,10 @@ typename MatType::elem_type IPOPCMAES<CMAESType>::Optimize(
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
-
   StoreBestCoordinates<MatType> sbc;
   CountFunctionEvaluations nfe;
-  for (size_t i = 0; i < maxRestarts; ++i) {
-
+  for (size_t i = 0; i < maxRestarts; ++i)
+  {
     // Use the starting point.
     MatType iterate = iterateIn;
 
@@ -81,7 +80,6 @@ typename MatType::elem_type IPOPCMAES<CMAESType>::Optimize(
 
     // Increase the population size by the population factor for next restart.
     cmaes.PopulationSize() *= populationFactor;
-
   }
 
   // Store the best coordinates.
