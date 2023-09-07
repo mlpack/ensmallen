@@ -25,9 +25,10 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
   CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, numFunctions, 0, 1e-12);
+  cmaes.StepSize() = 5.12;
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(cmaes, 3, 9);
+    ipopcmaes(cmaes, 1.5, 9);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
@@ -47,7 +48,8 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
     ipopcmaes(0, b, 16, 0, 1e-3);
-  ipopcmaes.PopulationFactor() = 3;
+  ipopcmaes.CMAES().StepSize() = 1;
+  ipopcmaes.PopulationFactor() = 1.5;
 
   FunctionTest<RosenbrockFunction>(ipopcmaes, 0.1, 0.1);
 }
@@ -63,9 +65,10 @@ TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   BoundaryBoxConstraint<> b(-5.12, 5.12);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>
     activecmaes(0, b, numFunctions, 0, 1e-12);
+  activecmaes.StepSize() = 5.12;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(activecmaes, 3, 9);
+    ipopcmaes(activecmaes, 1.5, 9);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
