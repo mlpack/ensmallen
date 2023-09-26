@@ -1,26 +1,26 @@
 /**
- * @file scd_impl.hpp
+ * @file cd_impl.hpp
  * @author Shikhar Bhardwaj
  *
- * Implementation of stochastic coordinate descent.
+ * Implementation of coordinate descent.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_SCD_SCD_IMPL_HPP
-#define ENSMALLEN_SCD_SCD_IMPL_HPP
+#ifndef ENSMALLEN_CD_CD_IMPL_HPP
+#define ENSMALLEN_CD_CD_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "scd.hpp"
+#include "cd.hpp"
 
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {
 
 template <typename DescentPolicyType>
-SCD<DescentPolicyType>::SCD(
+CD<DescentPolicyType>::CD(
     const double stepSize,
     const size_t maxIterations,
     const double tolerance,
@@ -41,7 +41,7 @@ template <typename ResolvableFunctionType,
           typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
-SCD<DescentPolicyType>::Optimize(
+CD<DescentPolicyType>::Optimize(
     ResolvableFunctionType& function,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
@@ -94,12 +94,12 @@ SCD<DescentPolicyType>::Optimize(
           overallObjective, callbacks...);
 
       // Output current objective function.
-      Info << "SCD: iteration " << i << ", objective " << overallObjective
+      Info << "CD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Warn << "SCD: converged to " << overallObjective << "; terminating"
+        Warn << "CD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
 
         Callback::EndOptimization(*this, function, iterate, callbacks...);
@@ -108,7 +108,7 @@ SCD<DescentPolicyType>::Optimize(
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Info << "SCD: minimized within tolerance " << tolerance << "; "
+        Info << "CD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
 
         Callback::EndOptimization(*this, function, iterate, callbacks...);
@@ -119,7 +119,7 @@ SCD<DescentPolicyType>::Optimize(
     }
   }
 
-  Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
+  Info << "CD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
   // Calculate and return final objective.
