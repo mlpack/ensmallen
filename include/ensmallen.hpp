@@ -98,6 +98,7 @@
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cmaes/active_cmaes.hpp"
+#include "ensmallen_bits/cd/cd.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
@@ -119,7 +120,6 @@
 
 #include "ensmallen_bits/sa/sa.hpp"
 #include "ensmallen_bits/sarah/sarah.hpp"
-#include "ensmallen_bits/scd/scd.hpp"
 #include "ensmallen_bits/sdp/sdp.hpp"
 #include "ensmallen_bits/sdp/lrsdp.hpp"
 #include "ensmallen_bits/sdp/primal_dual.hpp"

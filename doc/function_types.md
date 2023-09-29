@@ -307,7 +307,7 @@ regular implementation of the `Gradient()`, so that function may be omitted.
 If these functions are implemented, the following partially differentiable
 function optimizers can be used:
 
- - [Stochastic Coordinate Descent](#stochastic-coordinate-descent-scd)
+ - [Coordinate Descent](#coordinate-descent-cd)
 
 ## Arbitrary separable functions
 
