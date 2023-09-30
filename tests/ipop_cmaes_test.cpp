@@ -21,7 +21,7 @@ using namespace ens::test;
  */
 TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 {
-  const size_t numFunctions = 2;
+  const size_t numFunctions = 10;
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
   CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, numFunctions, 0, 1e-12);
@@ -49,7 +49,7 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
     ipopcmaes(0, b, 16, 0, 1e-3);
   ipopcmaes.CMAES().StepSize() = 0.25;
-  ipopcmaes.PopulationFactor() = 5;
+  ipopcmaes.PopulationFactor() = 1.5;
 
   FunctionTest<RosenbrockFunction>(ipopcmaes, 0.1, 0.1);
 }
@@ -60,7 +60,7 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
  */
 TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 {
-  const size_t numFunctions = 2;
+  const size_t numFunctions = 10;
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>
@@ -91,7 +91,7 @@ TEST_CASE("IPOPActiveCMAESRosenbrockFunctionFMatTest", "[IPOPCMAESTest]")
   activecmaes.StepSize() = 1;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>>>
-    ipopcmaes(activecmaes, 5, 5);
+    ipopcmaes(activecmaes, 4, 5);
 
   FunctionTest<RosenbrockFunction, arma::fmat>(ipopcmaes, 0.1, 0.1);
 }
