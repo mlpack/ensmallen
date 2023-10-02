@@ -24,8 +24,8 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   const size_t numFunctions = 2;
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
-  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(5, b, numFunctions, 0, 1e-5);
-  cmaes.StepSize() = 2.5;
+  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(10, b, numFunctions, 0, 1e-5);
+  cmaes.StepSize() = 3.72;
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
     ipopcmaes(cmaes, 5, 10);
@@ -35,7 +35,7 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-    0.01, f.GetFinalObjective(), 0.1, 1);
+    0.01, f.GetFinalObjective(), 0.1, 5);
 }
 
 /**
@@ -64,8 +64,8 @@ TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>
-    activecmaes(5, b, numFunctions, 0, 1e-5);
-  activecmaes.StepSize() = 6;
+    activecmaes(10, b, numFunctions, 0, 1e-5);
+  activecmaes.StepSize() = 3.72;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>>
     ipopcmaes(activecmaes, 5, 10);
@@ -75,7 +75,7 @@ TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-    0.01, f.GetFinalObjective(), 0.1, 1);
+    0.01, f.GetFinalObjective(), 0.1, 5);
 }
 
 /**

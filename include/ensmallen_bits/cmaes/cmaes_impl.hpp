@@ -269,7 +269,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * (psNorm / enn - 1));
 
     if (std::isnan(sigma(idx1)) ||
-      (sigma(idx1) * eigval.back()) > 1e14)
+      (sigma(idx1) * eigval.back()) > 1e4)
     {
       Warn << "The step size diverged to " << sigma(idx1) << "; "
         << "terminating with failure.  Try a smaller step size?" << std::endl;
