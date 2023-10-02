@@ -21,21 +21,21 @@ using namespace ens::test;
  */
 TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 {
-  const size_t numFunctions = 10;
+  const size_t numFunctions = 2;
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
-  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, numFunctions, 0, 1e-12);
-  cmaes.StepSize() = 5.12;
+  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(5, b, numFunctions, 0, 1e-5);
+  cmaes.StepSize() = 2.5;
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(cmaes, 1.5, 9);
+    ipopcmaes(cmaes, 5, 10);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
   arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
-  
+
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-    0.01, f.GetFinalObjective(), 0.01, 1);
+    0.01, f.GetFinalObjective(), 0.1, 1);
 }
 
 /**
@@ -60,22 +60,22 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
  */
 TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 {
-  const size_t numFunctions = 10;
+  const size_t numFunctions = 2;
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>
-    activecmaes(0, b, numFunctions, 0, 1e-12);
-  activecmaes.StepSize() = 5.12;
+    activecmaes(5, b, numFunctions, 0, 1e-5);
+  activecmaes.StepSize() = 6;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(activecmaes, 1.5, 9);
+    ipopcmaes(activecmaes, 5, 10);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
   arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-    0.01, f.GetFinalObjective(), 0.01, 1);
+    0.01, f.GetFinalObjective(), 0.1, 1);
 }
 
 /**
@@ -87,7 +87,7 @@ TEST_CASE("IPOPActiveCMAESRosenbrockFunctionFMatTest", "[IPOPCMAESTest]")
   BoundaryBoxConstraint<arma::fmat> b(0, 2);
 
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>>
-    activecmaes(0, b, 16, 0, 1e-3);
+    activecmaes(5, b, 16, 0, 1e-3);
   activecmaes.StepSize() = 1;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>>>

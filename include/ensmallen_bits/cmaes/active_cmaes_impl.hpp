@@ -186,10 +186,9 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     idx0 = (i - 1) % 2;
     idx1 = i % 2;
 
-    // Perform Cholesky decomposition. If the matrix is not positive definite,
+    // Check whether the matrix is not positive definite,
     // add a small value and try again.
-    BaseMatType covLower;
-    while (!arma::chol(covLower, C[idx0], "lower"))
+    while (!C[idx0].is_sympd())
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
     arma::eig_sym(eigval, eigvec, C[idx0]);
@@ -198,20 +197,20 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     {
       if (iterate.n_rows > iterate.n_cols)
       {
-        pStep[idx(j)] = covLower *
+        pStep[idx(j)] = eigvec * diagmat(eigval) *
           arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
         pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
-          * covLower.t();
+          * diagmat(eigval) * eigvec.t();
       }
 
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
 
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
+        transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
     }
 
     // Sort population.
@@ -227,6 +226,16 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     currentObjective = selectionPolicy.Select(function, batchSize,
       transformationPolicy.Transform(mPosition[idx1]), callbacks...);
 
+    if (std::isnan(currentObjective) || currentObjective > 1e10)
+    {
+      Warn << "Active CMA-ES: converged to " << overallObjective << "; "
+        << "terminating with failure.  Try a smaller step size?" << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
     // Update best parameters.
     if (currentObjective < overallObjective)
     {
@@ -235,7 +244,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
       transformedIterate = transformationPolicy.Transform(iterate);
       terminate |= Callback::StepTaken(*this, function,
-          transformedIterate, callbacks...);
+        transformedIterate, callbacks...);
     }
 
     // Update Step Size.
@@ -248,17 +257,18 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     else
     {
       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
-          cs * (2 - cs) * muEffective) * step *
-          eigvec * diagmat(1 / eigval) * eigvec.t();
+        cs * (2 - cs) * muEffective) * step *
+        eigvec * diagmat(1 / eigval) * eigvec.t();
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * (psNorm / enn - 1));
 
-    if (std::isnan(sigma(idx1)) || sigma(idx1) > 1e14)
+    if (std::isnan(sigma(idx1)) ||
+      (sigma(idx1) * eigval.back()) > 1e4)
     {
       Warn << "The step size diverged to " << sigma(idx1) << "; "
-          << "terminating with failure.  Try a smaller step size?" << std::endl;
+        << "terminating with failure.  Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
 
@@ -267,79 +277,84 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     }
 
     pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) *
-        muEffective) * step;
+      muEffective) * step;
 
     if (iterate.n_rows > iterate.n_cols)
     {
       C[idx1] = (1 - ccov) * C[idx0] + ccov *
-          (pc[idx1] * pc[idx1].t());
+        (pc[idx1] * pc[idx1].t());
 
       for (size_t j = 0; j < mu; ++j)
       {
         C[idx1] = C[idx1] + beta * w *
-            pStep[idx(j)] * pStep[idx(j)].t();
+          pStep[idx(j)] * pStep[idx(j)].t();
       }
 
       for (size_t j = lambda - mu; j < lambda; ++j)
       {
         C[idx1] = C[idx1] - beta * w *
-            pStep[idx(j)] * pStep[idx(j)].t();
+          pStep[idx(j)] * pStep[idx(j)].t();
       }
     }
     else
     {
       C[idx1] = (1 - ccov) * C[idx0] + ccov *
-          (pc[idx1].t() * pc[idx1]);
+        (pc[idx1].t() * pc[idx1]);
 
       for (size_t j = 0; j < mu; ++j)
       {
         C[idx1] = C[idx1] + beta * w *
-            pStep[idx(j)].t() * pStep[idx(j)];
+          pStep[idx(j)].t() * pStep[idx(j)];
       }
 
       for (size_t j = lambda - mu; j < lambda; ++j)
       {
         C[idx1] = C[idx1] - beta * w *
-            pStep[idx(j)].t() * pStep[idx(j)];
+          pStep[idx(j)].t() * pStep[idx(j)];
       }
     }
 
     arma::eig_sym(eigval, eigvec, C[idx1]);
-    const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
-    if (!negativeEigval.is_empty())
+
+    ElemType condNo = std::abs(eigval.back() / eigval.front());
+    if (condNo < 1) condNo = 1 / condNo;
+
+    if (condNo > 1e5)
     {
-      if (negativeEigval(0) == 0)
+      Warn << "The condition number of the covariance matrix is " <<
+        condNo << ", which exceeds the threshold 10^5" << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    const arma::uvec positiveEigval = arma::find(eigval > 0, 1);
+    if (!positiveEigval.is_empty())
+    {
+      if (positiveEigval(0) != 0)
       {
-        C[idx1].zeros();
+        C[idx1] = eigvec.cols(positiveEigval(0), iterate.n_elem - 1) *
+          arma::diagmat(eigval.subvec(positiveEigval(0), iterate.n_elem - 1)) *
+          eigvec.cols(positiveEigval(0), iterate.n_elem - 1).t();
       }
-      else
-      {
-        C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
-            arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
-            eigvec.cols(0, negativeEigval(0) - 1).t();
-      }
+    }
+    else
+    {
+      C[idx1].zeros();
     }
 
     // Output current objective function.
     Info << "Active CMA-ES: iteration " << i << ", objective " << overallObjective
-        << "." << std::endl;
-
-    if (std::isnan(overallObjective) || std::isinf(overallObjective))
-    {
-      Warn << "Active CMA-ES: converged to " << overallObjective << "; "
-          << "terminating with failure.  Try a smaller step size?" << std::endl;
-
-      iterate = transformationPolicy.Transform(iterate);
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
-    }
+      << "." << std::endl;
 
     if (std::abs(lastObjective - overallObjective) < tolerance)
     {
       if (steps > patience)
       {
         Info << "Active CMA-ES: minimized within tolerance " << tolerance << "; "
-            << "terminating optimization." << std::endl;
+          << "terminating optimization." << std::endl;
 
         iterate = transformationPolicy.Transform(iterate);
         Callback::EndOptimization(*this, function, iterate, callbacks...);
