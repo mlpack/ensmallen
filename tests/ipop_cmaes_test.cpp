@@ -28,7 +28,7 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   cmaes.StepSize() = 3.72;
 
   IPOPCMAES<CMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(cmaes, 5, 10);
+    ipopcmaes(cmaes, 2, 10);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
@@ -91,7 +91,7 @@ TEST_CASE("IPOPActiveCMAESRosenbrockFunctionFMatTest", "[IPOPCMAESTest]")
   activecmaes.StepSize() = 1;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>>>
-    ipopcmaes(activecmaes, 2, 5);
+    ipopcmaes(activecmaes, 3, 5);
 
   FunctionTest<RosenbrockFunction, arma::fmat>(ipopcmaes, 0.1, 0.1);
 }

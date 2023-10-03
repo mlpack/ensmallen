@@ -193,17 +193,19 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
     arma::eig_sym(eigval, eigvec, C[idx0]);
 
+    arma::Col<ElemType> sqrtEigval = arma::sqrt(eigval);
+
     for (size_t j = 0; j < lambda; ++j)
     {
       if (iterate.n_rows > iterate.n_cols)
       {
-        pStep[idx(j)] = eigvec * diagmat(eigval) *
+        pStep[idx(j)] = eigvec * diagmat(sqrtEigval) *
           arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
         pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
-          * diagmat(eigval) * eigvec.t();
+          * diagmat(sqrtEigval) * eigvec.t();
       }
 
       pPosition[idx(j)] = mPosition[idx0] + sigma(idx0) * pStep[idx(j)];
@@ -252,20 +254,20 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     {
       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
         cs * (2 - cs) * muEffective) *
-        eigvec * diagmat(1 / eigval) * eigvec.t() * step;
+        eigvec * diagmat(1 / sqrtEigval) * eigvec.t() * step;
     }
     else
     {
       ps[idx1] = (1 - cs) * ps[idx0] + std::sqrt(
         cs * (2 - cs) * muEffective) * step *
-        eigvec * diagmat(1 / eigval) * eigvec.t();
+        eigvec * diagmat(1 / sqrtEigval) * eigvec.t();
     }
 
     const ElemType psNorm = arma::norm(ps[idx1]);
     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * (psNorm / enn - 1));
 
     if (std::isnan(sigma(idx1)) ||
-      (sigma(idx1) * eigval.back()) > 1e4)
+      (sigma(idx1) * sqrtEigval.back()) > 1e4)
     {
       Warn << "The step size diverged to " << sigma(idx1) << "; "
         << "terminating with failure.  Try a smaller step size?" << std::endl;
@@ -316,20 +318,6 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
     arma::eig_sym(eigval, eigvec, C[idx1]);
 
-    ElemType condNo = std::abs(eigval.back() / eigval.front());
-    if (condNo < 1) condNo = 1 / condNo;
-
-    if (condNo > 1e5)
-    {
-      Warn << "The condition number of the covariance matrix is " <<
-        condNo << ", which exceeds the threshold 10^5" << std::endl;
-
-      iterate = transformationPolicy.Transform(iterate);
-
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      return overallObjective;
-    }
-
     const arma::uvec positiveEigval = arma::find(eigval > 0, 1);
     if (!positiveEigval.is_empty())
     {
@@ -343,6 +331,21 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     else
     {
       C[idx1].zeros();
+    }
+
+    if (!C[idx1].is_zero())
+    {
+      ElemType condNo = arma::cond(C[idx1]);
+      if (condNo > 1e5)
+      {
+        Warn << "The condition number of the covariance matrix is " <<
+          condNo << ", which exceeds the threshold 10^5" << std::endl;
+
+        iterate = transformationPolicy.Transform(iterate);
+
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
     }
 
     // Output current objective function.
