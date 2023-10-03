@@ -64,11 +64,11 @@ TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
 
   BoundaryBoxConstraint<> b(-5.12, 5.12);
   ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>
-    activecmaes(10, b, numFunctions, 0, 1e-5);
-  activecmaes.StepSize() = 3.72;
+    activecmaes(5, b, numFunctions, 0, 1e-5);
+  activecmaes.StepSize() = 6;
 
   IPOPCMAES<ActiveCMAES<FullSelection, BoundaryBoxConstraint<>>>
-    ipopcmaes(activecmaes, 2, 25);
+    ipopcmaes(activecmaes, 3, 25);
 
   RastriginFunction f(numFunctions);
   arma::mat initialPoint = f.template GetInitialPoint<arma::mat>();
