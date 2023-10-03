@@ -317,8 +317,8 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     }
 
     arma::eig_sym(eigval, eigvec, C[idx1]);
-
     const arma::uvec positiveEigval = arma::find(eigval > 0, 1);
+    bool is_not_zero = true;
     if (!positiveEigval.is_empty())
     {
       if (positiveEigval(0) != 0)
@@ -331,9 +331,10 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     else
     {
       C[idx1].zeros();
+      is_not_zero = false;
     }
 
-    if (!C[idx1].is_zero())
+    if (is_not_zero)
     {
       ElemType condNo = arma::cond(C[idx1]);
       if (condNo > 1e5)
