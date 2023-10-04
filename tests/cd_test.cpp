@@ -20,17 +20,17 @@ using namespace ens;
 using namespace ens::test;
 
 /**
- * Test the correctness of the SCD implementation by using a dataset with a
+ * Test the correctness of the CD implementation by using a dataset with a
  * precalculated minima.
  */
-TEST_CASE("PreCalcSCDTest", "[SCDTest]")
+TEST_CASE("PreCalcCDTest", "[CDTest]")
 {
   arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
   arma::Row<size_t> responses("1  1  0;");
 
   LogisticRegressionFunction<arma::mat> f(predictors, responses, 0.0001);
 
-  SCD<> s(0.02, 60000, 1e-5);
+  CD<> s(0.02, 60000, 1e-5);
   arma::mat iterate = f.InitialPoint();
 
   double objective = s.Optimize(f, iterate);
@@ -39,47 +39,47 @@ TEST_CASE("PreCalcSCDTest", "[SCDTest]")
 }
 
 /**
- * Test the correctness of the SCD implemenation by using the sparse test
+ * Test the correctness of the CD implemenation by using the sparse test
  * function, with disjoint features which optimize to a precalculated minima.
  */
-TEST_CASE("DisjointFeatureTest", "[SCDTest]")
+TEST_CASE("DisjointFeatureTest", "[CDTest]")
 {
-  // The test function for parallel SGD should work with SCD, as the gradients
+  // The test function for parallel SGD should work with CD, as the gradients
   // of the individual functions are projections into the ith dimension.
-  SCD<> s(0.4);
+  CD<> s(0.4);
   FunctionTest<SparseTestFunction>(s, 0.01, 0.001);
 }
 
 /**
- * Test the correctness of the SCD implemenation by using the sparse test
+ * Test the correctness of the CD implemenation by using the sparse test
  * function, with disjoint features which optimize to a precalculated minima.
  * Use arma::fmat.
  */
-TEST_CASE("DisjointFeatureFMatTest", "[SCDTest]")
+TEST_CASE("DisjointFeatureFMatTest", "[CDTest]")
 {
-  // The test function for parallel SGD should work with SCD, as the gradients
+  // The test function for parallel SGD should work with CD, as the gradients
   // of the individual functions are projections into the ith dimension.
-  SCD<> s(0.4);
+  CD<> s(0.4);
   FunctionTest<SparseTestFunction, arma::fmat>(s, 0.2, 0.02);
 }
 
 /**
- * Test the correctness of the SCD implemenation by using the sparse test
+ * Test the correctness of the CD implemenation by using the sparse test
  * function, with disjoint features which optimize to a precalculated minima.
  * Use arma::sp_mat.
  */
-TEST_CASE("DisjointFeatureSpMatTest", "[SCDTest]")
+TEST_CASE("DisjointFeatureSpMatTest", "[CDTest]")
 {
-  // The test function for parallel SGD should work with SCD, as the gradients
+  // The test function for parallel SGD should work with CD, as the gradients
   // of the individual functions are projections into the ith dimension.
-  SCD<> s(0.4);
+  CD<> s(0.4);
   FunctionTest<SparseTestFunction, arma::sp_mat>(s, 0.01, 0.001);
 }
 
 /**
  * Test the greedy descent policy.
  */
-TEST_CASE("GreedyDescentTest", "[SCDTest]")
+TEST_CASE("GreedyDescentTest", "[CDTest]")
 {
   // In the sparse test function, the given point has the maximum gradient at
   // the feature with index 2.
@@ -105,7 +105,7 @@ TEST_CASE("GreedyDescentTest", "[SCDTest]")
 /**
  * Test the cyclic descent policy.
  */
-TEST_CASE("CyclicDescentTest", "[SCDTest]")
+TEST_CASE("CyclicDescentTest", "[CDTest]")
 {
   const size_t features = 10;
   struct DummyFunction
@@ -130,7 +130,7 @@ TEST_CASE("CyclicDescentTest", "[SCDTest]")
 /**
  * Test the random descent policy.
  */
-TEST_CASE("RandomDescentTest", "[SCDTest]")
+TEST_CASE("RandomDescentTest", "[CDTest]")
 {
   const size_t features = 10;
   struct DummyFunction
@@ -158,7 +158,7 @@ TEST_CASE("RandomDescentTest", "[SCDTest]")
 /**
  * Test that LogisticRegressionFunction::PartialGradient() works as expected.
  */
-TEST_CASE("LogisticRegressionFunctionPartialGradientTest", "[SCDTest]")
+TEST_CASE("LogisticRegressionFunctionPartialGradientTest", "[CDTest]")
 {
   // Evaluate the gradient and feature gradient and equate.
   arma::mat predictors("0 0 0.4; 0 0 0.6; 0 0.3 0; 0.2 0 0; 0.2 -0.5 0;");
@@ -184,7 +184,7 @@ TEST_CASE("LogisticRegressionFunctionPartialGradientTest", "[SCDTest]")
 /**
  * Test that SoftmaxRegressionFunction::PartialGradient() works as expected.
  */
-TEST_CASE("SoftmaxRegressionFunctionPartialGradientTest", "[SCDTest]")
+TEST_CASE("SoftmaxRegressionFunctionPartialGradientTest", "[CDTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 10;

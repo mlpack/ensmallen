@@ -96,6 +96,7 @@
 #include "ensmallen_bits/qhadam/qhadam.hpp"
 #include "ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp"
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
+#include "ensmallen_bits/cd/cd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cmaes/active_cmaes.hpp"
 #include "ensmallen_bits/cmaes/ipop_cmaes.hpp"
@@ -120,7 +121,6 @@
 
 #include "ensmallen_bits/sa/sa.hpp"
 #include "ensmallen_bits/sarah/sarah.hpp"
-#include "ensmallen_bits/scd/scd.hpp"
 #include "ensmallen_bits/sdp/sdp.hpp"
 #include "ensmallen_bits/sdp/lrsdp.hpp"
 #include "ensmallen_bits/sdp/primal_dual.hpp"
