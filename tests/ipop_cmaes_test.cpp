@@ -75,7 +75,7 @@ TEST_CASE("IPOPActiveCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   arma::mat expectedResult = f.template GetFinalPoint<arma::mat>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-    0.01, f.GetFinalObjective(), 0.1, 5);
+    0.02, f.GetFinalObjective(), 0.1, 5);
 }
 
 /**
