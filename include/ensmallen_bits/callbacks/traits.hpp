@@ -49,7 +49,7 @@ struct TypedForms
   //! This is the form of a bool Evaluate() callback method.
   template<typename CallbackType>
   using EvaluateBoolForm =
-      void(CallbackType::*)(OptimizerType&,
+      bool(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const double);
@@ -65,7 +65,7 @@ struct TypedForms
   //! This is the form of a bool EvaluateConstraint() callback method.
   template<typename CallbackType>
   using EvaluateConstraintBoolForm =
-      void(CallbackType::*)(OptimizerType&,
+      bool(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const size_t,
@@ -83,7 +83,7 @@ struct TypedForms
   //! This is the form of a bool Gradient() callback method.
   template<typename CallbackType>
   using GradientBoolForm =
-      void(CallbackType::*)(OptimizerType&,
+      bool(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const MatType&);
@@ -92,7 +92,7 @@ struct TypedForms
   //! is modifiable.
   template<typename CallbackType>
   using GradientBoolModifiableForm =
-      void(CallbackType::*)(OptimizerType&,
+      bool(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             MatType&);
@@ -117,7 +117,7 @@ struct TypedForms
   //! This is the form of a bool GradientConstraint() callback method.
   template<typename CallbackType>
   using GradientConstraintBoolForm =
-      void(CallbackType::*)(OptimizerType&,
+      bool(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const size_t,
@@ -127,7 +127,7 @@ struct TypedForms
   //! gradient is modifiable.
   template<typename CallbackType>
   using GradientConstraintBoolModifiableForm =
-      void(CallbackType::*)(OptimizerType&,
+      bool(CallbackType::*)(OptimizerType&,
                             FunctionType&,
                             const MatType&,
                             const size_t,
