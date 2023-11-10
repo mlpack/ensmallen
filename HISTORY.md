@@ -3,6 +3,9 @@
  * Clarify return values for different callback types
    ([#383](https://github.com/mlpack/ensmallen/pull/383)).
 
+ * Fix return types of callbacks
+   ([#382](https://github.com/mlpack/ensmallen/pull/382)).
+
 ### ensmallen 2.20.0: "Stripped Bolt Head"
 ###### 2023-10-02
  * Implementation of Active CMAES
@@ -38,7 +41,7 @@
 
  * Add AdaSqrt optimizer
    ([#234](https://github.com/mlpack/ensmallen/pull/234)).
-   
+
  * Bump check for minimum supported version of Armadillo
    ([#342](https://github.com/mlpack/ensmallen/pull/342)).
 
