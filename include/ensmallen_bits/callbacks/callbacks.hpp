@@ -20,32 +20,35 @@ namespace ens {
  * Callbacks are a set of functions that can be applied at given stages of the
  * optimization process. The following callbacks are available:
  *
- * - Evaluate(optimizer, function, coordinates, objective):
+ * - bool Evaluate(optimizer, function, coordinates, objective):
  *   called after any call to Evaluate().
  *
- * - StepTaken(optimizer, function, coordinates):
+ * - bool StepTaken(optimizer, function, coordinates):
  *   called after any step is taken.
  *
- * - Gradient(optimizer, function, coordinates, gradient):
+ * - bool Gradient(optimizer, function, coordinates, gradient):
  *   called whenever the gradient is computed.
  *
- * - BeginEpoch(optimizer, function, coordinates, epoch, objective):
+ * - bool BeginEpoch(optimizer, function, coordinates, epoch, objective):
  *   called at the beginning of a pass over the data. The objective may be
  *   exact or an estimate depending on exactObjective's value.
  *
- * - EvaluateConstraint(optimizer, function, coordinates, constraint,
- *                      constraintValue):
+ * - bool EvaluateConstraint(optimizer, function, coordinates, constraint,
+ *                           constraintValue):
  *   called after any call to EvaluateConstraint().
  *
- * - GradientConstraint(optimizer, function, coordinates, constraint,
- *                      constraintGradient):
+ * - bool GradientConstraint(optimizer, function, coordinates, constraint,
+ *                           constraintGradient):
  *   called after any call to GradientConstraint().
  *
- * - BeginOptimization(optimizer, function, coordinates):
+ * - void BeginOptimization(optimizer, function, coordinates):
  *   called at the beginning of the optimization.
  *
- * - EndOptimization(optimizer, function, coordinates):
+ * - void EndOptimization(optimizer, function, coordinates):
  *   called at the end of the optimization.
+ *
+ * If true is returned to any of the bool-type callbacks, the optimization will
+ * be terminated before any more steps are taken.
  */
 class Callback
 {
@@ -64,14 +67,16 @@ class Callback
            typename MatType>
   static typename std::enable_if<
       callbacks::traits::HasBeginOptimizationSignature<
+      // Check for boolean return values anyway, for older ensmallen callbacks.
+      // (The return value is ignored.)
       CallbackType, OptimizerType, FunctionType, MatType>::hasBool,
-      bool>::type
+      void>::type
   BeginOptimizationFunction(CallbackType& callback,
                             OptimizerType& optimizer,
                             FunctionType& function,
                             MatType& coordinates)
   {
-    return const_cast<CallbackType&>(callback).BeginOptimization(optimizer,
+    (void) const_cast<CallbackType&>(callback).BeginOptimization(optimizer,
         function, coordinates);
   }
 
@@ -82,7 +87,7 @@ class Callback
   static typename std::enable_if<
       callbacks::traits::HasBeginOptimizationSignature<
       CallbackType, OptimizerType, FunctionType, MatType>::hasVoid,
-      bool>::type
+      void>::type
   BeginOptimizationFunction(CallbackType& callback,
                             OptimizerType& optimizer,
                             FunctionType& function,
@@ -90,7 +95,6 @@ class Callback
   {
     const_cast<CallbackType&>(callback).BeginOptimization(optimizer, function,
         coordinates);
-    return false;
   }
 
   template<typename CallbackType,
@@ -100,12 +104,12 @@ class Callback
   static typename std::enable_if<
       callbacks::traits::HasBeginOptimizationSignature<
       CallbackType, OptimizerType, FunctionType, MatType>::hasNone,
-      bool>::type
+      void>::type
   BeginOptimizationFunction(CallbackType& /* callback */,
                             OptimizerType& /* optimizer */,
                             FunctionType& /* function */,
                             MatType& /* coordinates */)
-  { return false; }
+  { /* Nothing to do. */ }
 
   /**
    * Iterate over the callbacks and invoke the BeginOptimization() callback if
@@ -119,18 +123,28 @@ class Callback
   template<typename OptimizerType,
            typename FunctionType,
            typename MatType,
+           typename CallbackType,
            typename... CallbackTypes>
-  static bool BeginOptimization(OptimizerType& optimizer,
+  static void BeginOptimization(OptimizerType& optimizer,
                                 FunctionType& function,
                                 MatType& coordinates,
-                                CallbackTypes&... callbacks)
+                                CallbackType& callback,
+                                CallbackTypes&... otherCallbacks)
   {
-    // This will return immediately once a callback returns true.
-    bool result = false;
-    (void)std::initializer_list<bool>{ result =
-        result || Callback::BeginOptimizationFunction(callbacks, optimizer,
-            function, coordinates)... };
-     return result;
+    Callback::BeginOptimizationFunction(callback, optimizer, function,
+        coordinates);
+    Callback::BeginOptimization(optimizer, function, coordinates,
+        otherCallbacks...);
+  }
+
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static void BeginOptimization(OptimizerType& /* optimizer */,
+                                FunctionType& /* function */,
+                                MatType& /* coordinates */)
+  {
+    // Base case... no callbacks left.  Nothing to do.
   }
 
   /**
@@ -147,14 +161,14 @@ class Callback
            typename MatType>
   static typename std::enable_if<callbacks::traits::HasEndOptimizationSignature<
       CallbackType, OptimizerType, FunctionType, MatType>::value,
-      bool>::type
+      void>::type
   EndOptimizationFunction(CallbackType& callback,
                           OptimizerType& optimizer,
                           FunctionType& function,
                           MatType& coordinates)
   {
-    return (const_cast<CallbackType&>(callback).EndOptimization(
-        optimizer, function, coordinates), false);
+    (void) const_cast<CallbackType&>(callback).EndOptimization( optimizer,
+        function, coordinates);
   }
 
   template<typename CallbackType,
@@ -163,12 +177,12 @@ class Callback
            typename MatType>
   static typename std::enable_if<!callbacks::traits::HasEndOptimizationSignature<
       CallbackType, OptimizerType, FunctionType, MatType>::value,
-      bool>::type
+      void>::type
   EndOptimizationFunction(CallbackType& /* callback */,
                           OptimizerType& /* optimizer */,
                           FunctionType& /* function */,
                           MatType& /* coordinates */)
-  { return false; }
+  { /* Nothing to do. */ }
 
   /**
    * Iterate over the callbacks and invoke the EndOptimization() callback if it
@@ -182,18 +196,28 @@ class Callback
   template<typename OptimizerType,
            typename FunctionType,
            typename MatType,
+           typename CallbackType,
            typename... CallbackTypes>
-  static bool EndOptimization(OptimizerType& optimizer,
+  static void EndOptimization(OptimizerType& optimizer,
                               FunctionType& function,
                               MatType& coordinates,
-                              CallbackTypes&... callbacks)
+                              CallbackType& callback,
+                              CallbackTypes&... otherCallbacks)
   {
-    // This will return immediately once a callback returns true.
-    bool result = false;
-    (void)std::initializer_list<bool>{ result =
-        result || Callback::EndOptimizationFunction(callbacks, optimizer,
-            function, coordinates)... };
-     return result;
+    Callback::EndOptimizationFunction(callback, optimizer, function,
+        coordinates);
+    Callback::EndOptimization(optimizer, function, coordinates,
+        otherCallbacks...);
+  }
+
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static void EndOptimization(OptimizerType& /* optimizer */,
+                              FunctionType& /* function */,
+                              MatType& /* coordinates */)
+  {
+    // Base case... no callbacks left.  Nothing to do.
   }
 
   /**
@@ -843,40 +867,41 @@ class Callback
      return result;
   }
 
-/**
- * Iterate over the callbacks and invoke the GenerationalStepTaken() callback if it
- * exists.
- *
- * Specialization for MultiObjective case.
- *
- * @param optimizer The optimizer used to update the function.
- * @param function Function to optimize.
- * @param coordinates Starting point.
- * @param objectives The set of calculated objectives so far.
- * @param frontIndices The indices of the members belonging to Pareto Front.
- * @param callbacks The callbacks container.
- */
-template<typename OptimizerType,
-         typename FunctionType,
-         typename ObjectivesVecType,
-         typename IndicesType,
-         typename MatType,
-         typename ...CallbackTypes>
+  /**
+   * Iterate over the callbacks and invoke the GenerationalStepTaken() callback if it
+   * exists.
+   *
+   * Specialization for MultiObjective case.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param objectives The set of calculated objectives so far.
+   * @param frontIndices The indices of the members belonging to Pareto Front.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename ObjectivesVecType,
+           typename IndicesType,
+           typename MatType,
+           typename ...CallbackTypes>
   static bool GenerationalStepTaken(OptimizerType& optimizer,
                                     FunctionType& functions,
                                     MatType& coordinates,
                                     ObjectivesVecType& objectives,
                                     IndicesType& frontIndices,
                                     CallbackTypes&... callbacks)
-{
-  // This will return immediately once a callback returns true.
-  bool result = false;
-  (void)std::initializer_list<bool>{ result =
-    result || Callback::GenerationalStepTakenFunction(callbacks, optimizer,
-      functions, coordinates, objectives, frontIndices)... };
-  return result;
-}
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result = result ||
+        Callback::GenerationalStepTakenFunction(callbacks, optimizer, functions,
+        coordinates, objectives, frontIndices)... };
+    return result;
+  }
 };
+
 } // namespace ens
 
 #endif
