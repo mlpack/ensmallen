@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Clarify return values for different callback types
+   ([#383](https://github.com/mlpack/ensmallen/pull/383)).
 
 ### ensmallen 2.20.0: "Stripped Bolt Head"
 ###### 2023-10-02
