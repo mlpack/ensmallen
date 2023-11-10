@@ -400,7 +400,7 @@ L_BFGS::Optimize(FunctionType& function,
   ElemType prevFunctionValue;
 
   // The main optimization loop.
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t itNum = 0; (optimizeUntilConvergence || (itNum != maxIterations))
       && !terminate; ++itNum)
   {

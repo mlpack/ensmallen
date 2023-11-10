@@ -188,7 +188,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (const arma::Col<ElemType>& individualFitness : populationFitness)
     idealPoint = arma::min(idealPoint, individualFitness);
 
-  terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
+  Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
   // 2 The main loop.
   for (size_t generation = 1; generation <= maxGenerations && !terminate; ++generation)

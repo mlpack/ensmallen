@@ -67,8 +67,7 @@ CD<DescentPolicyType>::Optimize(
   bool terminate = false;
 
   // Start iterating.
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // Get the coordinate to descend on.
@@ -81,6 +80,8 @@ CD<DescentPolicyType>::Optimize(
 
     terminate |= Callback::Gradient(*this, function, iterate, overallObjective,
         gradient, callbacks...);
+    if (terminate)
+      break;
 
     // Update the decision variable with the partial gradient.
     iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);
@@ -122,9 +123,10 @@ CD<DescentPolicyType>::Optimize(
   Info << "CD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
-  // Calculate and return final objective.
+  // Calculate and return final objective.  No need to pay attention to the
+  // result of the callback.
   const ElemType objective = function.Evaluate(iterate);
-  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+  (void) Callback::Evaluate(*this, function, iterate, objective, callbacks...);
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return objective;

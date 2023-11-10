@@ -112,8 +112,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   BaseMatType u = t[0];
 
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     for (size_t j = 0, f = 0; f < numFunctions; j++)
@@ -175,7 +174,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
           effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, function, iterate, objective,
+      terminate |= Callback::Evaluate(*this, function, iterate, objective,
           callbacks...);
     }
     overallObjective /= numFunctions;
