@@ -102,8 +102,8 @@
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
+#include "ensmallen_bits/fbs/fbs.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
-
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
 #include "ensmallen_bits/gradient_descent/gradient_descent.hpp"
 #include "ensmallen_bits/grid_search/grid_search.hpp"
