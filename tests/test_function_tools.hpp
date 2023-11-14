@@ -177,6 +177,22 @@ void FunctionTest(OptimizerType& optimizer,
       coordinateMargin, f.GetFinalObjective(), objectiveMargin, trials);
 }
 
+template<typename FunctionType,
+         typename MatType = arma::mat,
+         typename OptimizerType = ens::StandardSGD>
+void FunctionTest(OptimizerType& optimizer,
+                  FunctionType& f,
+                  const double objectiveMargin = 0.01,
+                  const double coordinateMargin = 0.001,
+                  const size_t trials = 1)
+{
+  MatType initialPoint = f.template GetInitialPoint<MatType>();
+  MatType expectedResult = f.template GetFinalPoint<MatType>();
+
+  MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedResult,
+      coordinateMargin, f.GetFinalObjective(), objectiveMargin, trials);
+}
+
 template<typename MatType = arma::mat, typename OptimizerType>
 void LogisticRegressionFunctionTest(OptimizerType& optimizer,
                                     const double trainAccuracyTolerance,
