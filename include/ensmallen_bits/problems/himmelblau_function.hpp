@@ -60,6 +60,12 @@ class HimmelblauFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("5; -5"); }
 
+  //! Get the final point of the optimization.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("3; 2"); }
+
+  double GetFinalObjective() const { return 0.0; }
+
   /**
    * Evaluate a function for a particular batch-size.
    *
