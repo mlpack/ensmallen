@@ -18,6 +18,7 @@ set(ENSMALLEN_TESTS_SOURCES
     demon_adam_test.cpp
     demon_sgd_test.cpp
     eve_test.cpp
+    fbs_test.cpp
     frankwolfe_test.cpp
     ftml_test.cpp
     function_test.cpp
