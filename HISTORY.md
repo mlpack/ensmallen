@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Clarify return values for different callback types
+   ([#383](https://github.com/mlpack/ensmallen/pull/383)).
+
  * Fix return types of callbacks
    ([#382](https://github.com/mlpack/ensmallen/pull/382)).
 

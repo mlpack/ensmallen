@@ -26,6 +26,7 @@ class FullSelection
    * @tparam SeparableFunctionType Type of the function to be evaluated.
    * @param function Function to optimize.
    * @param batchSize Batch size to use for each step.
+   * @param terminate Whether optimization should be terminated after this call.
    * @param iterate starting point.
    */
   template<typename SeparableFunctionType,
@@ -34,6 +35,7 @@ class FullSelection
   double Select(SeparableFunctionType& function,
                 const size_t batchSize,
                 const MatType& iterate,
+                bool& terminate,
                 CallbackTypes&... callbacks)
   {
     // Find the number of functions to use.
@@ -45,7 +47,8 @@ class FullSelection
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
       objective += function.Evaluate(iterate, f, effectiveBatchSize);
 
-      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+      terminate |= Callback::Evaluate(*this, f, iterate, objective,
+          callbacks...);
     }
 
     return objective;

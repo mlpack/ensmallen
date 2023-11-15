@@ -75,7 +75,7 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
   // Controls early termination of the optimization process.
   bool terminate = false;
 
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     currentObjective = f.EvaluateWithGradient(iterate, gradient);

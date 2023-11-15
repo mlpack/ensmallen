@@ -7,10 +7,10 @@ Source:
 
 Files: *
 Copyright:
-  Copyright 2008-2018, Ryan Curtin <ryan@ratml.org>
+  Copyright 2008-2023, Ryan Curtin <ryan@ratml.org>
   Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
   Copyright 2010-2012, James Cline <james.cline@gatech.edu>
-  Copyright 2013-2018, Marcus Edel <marcus.edel@fu-berlin.de>
+  Copyright 2013-2023, Marcus Edel <marcus.edel@fu-berlin.de>
   Copyright 2013-2018, Sumedh Ghaisas <sumedhghaisas@gmail.com>
   Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
   Copyright 2014, Ryan Birmingham <birm@gatech.edu>
@@ -33,7 +33,7 @@ Copyright:
   Copyright 2018, B Kartheek Reddy <bkartheekreddy@gmail.com>
   Copyright 2018, Moksh Jain <mokshjn00@gmail.com>
   Copyright 2018, Shikhar Jaiswal <jaiswalshikhar87@gmail.com>
-  Copyright 2018, Conrad Sanderson
+  Copyright 2018-2023, Conrad Sanderson
   Copyright 2018, Dan Timson
   Copyright 2019, Rahul Ganesh Prabhu
   Copyright 2019, Roberto Hueso <robertohueso96@gmail.com>

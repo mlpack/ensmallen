@@ -133,7 +133,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   }
 
   // Now iterate!
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
   for (size_t i = 0; i < actualMaxIterations && !terminate; i++)
@@ -198,7 +198,9 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
       const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+      // The optimization is over, so we don't need to care about the result of
+      // the callback.
+      (void) Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
   }
 

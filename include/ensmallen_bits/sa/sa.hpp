@@ -179,9 +179,10 @@ class SA
    * @param idx Current parameter to modify.
    * @param sweepCounter Current counter representing how many sweeps have been
    *      completed.
+   * @return Whether the optimization should be terminated.
    */
   template<typename FunctionType, typename MatType, typename... CallbackTypes>
-  void GenerateMove(FunctionType& function,
+  bool GenerateMove(FunctionType& function,
                     MatType& iterate,
                     MatType& accept,
                     MatType& moveSize,

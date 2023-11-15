@@ -424,18 +424,18 @@ std::cout << "The optimized model found by AdaDelta has the "
 Callbacks are called at several states during the optimization process:
 
 * At the beginning and end of the optimization process.
-* After any call to `Evaluate()` and `EvaluateConstraint`.
-* After any call to `Gradient()` and `GradientConstraint`.
+* After any call to `Evaluate()` and `EvaluateConstraint()`.
+* After any call to `Gradient()` and `GradientConstraint()`.
 * At the start and end of an epoch.
 
-Each callback provides optimization relevant information that can be accessed or
+Each callback provides optimization-relevant information that can be accessed or
 modified.
 
 ### BeginOptimization
 
 Called at the beginning of the optimization process.
 
- * `BeginOptimization(`_`optimizer, function, coordinates`_`)`
+ * `void BeginOptimization(`_`optimizer, function, coordinates`_`)`
 
 #### Attributes
 
@@ -449,7 +449,7 @@ Called at the beginning of the optimization process.
 
 Called at the end of the optimization process.
 
- * `EndOptimization(`_`optimizer, function, coordinates`_`)`
+ * `void EndOptimization(`_`optimizer, function, coordinates`_`)`
 
 #### Attributes
 
@@ -463,7 +463,9 @@ Called at the end of the optimization process.
 
 Called after any call to `Evaluate()`.
 
- * `Evaluate(`_`optimizer, function, coordinates, objective`_`)`
+ * `bool Evaluate(`_`optimizer, function, coordinates, objective`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -476,9 +478,11 @@ Called after any call to `Evaluate()`.
 
 ### EvaluateConstraint
 
- Called after any call to `EvaluateConstraint()`.
+Called after any call to `EvaluateConstraint()`.
 
- * `EvaluateConstraint(`_`optimizer, function, coordinates, constraint, constraintValue`_`)`
+ * `bool EvaluateConstraint(`_`optimizer, function, coordinates, constraint, constraintValue`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -492,9 +496,11 @@ Called after any call to `Evaluate()`.
 
 ### Gradient
 
- Called after any call to `Gradient()`.
+Called after any call to `Gradient()`.
 
- * `Gradient(`_`optimizer, function, coordinates, gradient`_`)`
+ * `bool Gradient(`_`optimizer, function, coordinates, gradient`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -507,9 +513,11 @@ Called after any call to `Evaluate()`.
 
 ### GradientConstraint
 
- Called after any call to `GradientConstraint()`.
+Called after any call to `GradientConstraint()`.
 
- * `GradientConstraint(`_`optimizer, function, coordinates, constraint, gradient`_`)`
+ * `bool GradientConstraint(`_`optimizer, function, coordinates, constraint, gradient`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -526,7 +534,9 @@ Called after any call to `Evaluate()`.
 Called at the beginning of a pass over the data. The objective may be exact or
 an estimate depending on `exactObjective` value.
 
- * `BeginEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+ * `bool BeginEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -543,7 +553,9 @@ an estimate depending on `exactObjective` value.
 Called at the end of a pass over the data. The objective may be exact or
 an estimate depending on `exactObjective` value.
 
- * `EndEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+ * `bool EndEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -560,7 +572,9 @@ an estimate depending on `exactObjective` value.
 Called after the evolution of a single generation. Intended specifically for
 MultiObjective Optimizers.
 
- * `GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+ * `bool GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -615,7 +629,7 @@ class ExponentialDecay
   // Callback function called at the end of a pass over the data. We are only
   // interested in the current epoch and the optimizer, we ignore the rest.
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& optimizer,
+  bool EndEpoch(OptimizerType& optimizer,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t epoch,
@@ -624,6 +638,9 @@ class ExponentialDecay
     // Update the learning rate.
     optimizer.StepSize() = learningRate * (1.0 - std::pow(decay,
         (double) epoch));
+
+    // Do not terminate the optimization.
+    return false;
   }
 
   double learningRate;
@@ -695,7 +712,7 @@ class EarlyStop
   // the current objective. We are only interested in the objective and ignore
   // the rest.
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& /* optimizer */,
+  bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
