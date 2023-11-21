@@ -35,29 +35,12 @@ template<typename MatType>
 void L1Penalty::ProximalStep(MatType& coordinates,
                              const double stepSize) const
 {
-  // Generic implementation; used for dense matrices and other objects that
-  // implement the Armadillo API.
-  coordinates = sign(coordinates) % clamp(abs(coordinates) - lambda * stepSize,
-      0, std::numeric_limits<typename MatType::elem_type>::max());
-}
-
-template<typename eT>
-void L1Penalty::ProximalStep(arma::SpMat<eT>& coordinates,
-                             const double stepSize) const
-{
-  // Specific implementation for sparse coordinates, optimized to skip
-  // processing of all zero-valued coordinates.
-  typename arma::SpMat<eT>::iterator it = coordinates.begin();
-  while (it != coordinates.end())
-  {
-    const eT val = (*it);
-    if (val > 0.0)
-      (*it) = std::max(0.0, val - lambda * stepSize);
-    else
-      (*it) = std::min(0.0, val + lambda * stepSize);
-
-    ++it;
-  }
+  // Apply the backwards step coordinate-wise.  If `MatType` is sparse, this
+  // only applies to nonzero elements, which is just fine.
+  typedef typename MatType::elem_type eT;
+  coordinates.transform([this, stepSize](eT val) { return (val > 0.0) ?
+      (std::max(0.0, val - lambda * stepSize)) :
+      (std::min(0.0, val + lambda * stepSize)); });
 }
 
 } // namespace ens
