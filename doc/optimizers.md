@@ -1238,6 +1238,90 @@ optimizer.Optimize(f, coordinates);
  * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](https://arxiv.org/pdf/1611.01505.pdf)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## Forward-Backward Splitting (FBS)
+
+Forward-backward splitting (FBS) is a proximal gradient optimization technique
+to optimize composite functions of the form
+
+```
+h(x) = f(x) + g(x).
+```
+
+Here, `f(x)` is a differentiable function, and `g(x)` is an arbitrary
+non-differentiable function that has a corresponding *proximal operator*.
+In this situation, other ensmallen optimizers for differentiable functions
+cannot be used, since `g(x)` is not differentiable.  To work around this, FBS
+takes a *forward step* that is a standard gradient descent step on `f(x)`, and
+then a *backward step* that is the proximal operator defined by `g(x)`.
+
+For `FBS`, the function `f(x)` is defined in the standard ensmallen way (it is
+passed to `Optimize()`), and the function `g(x)` is defined by a template
+parameter.
+
+#### Constructors
+
+ * `FBS()`
+ * `FBS(`_`stepSize, maxIterations, tolerance`_`)`
+ * `FBS(`_`backwardStep`_`)`
+ * `FBS(`_`backwardStep, stepSize, maxIterations, tolerance`_`)`
+
+The _`backwardStep`_ parameter specifies the function `g(x)` to optimize.  A few
+options are readily available:
+
+ * `L1Penalty(`_`lambda`_`)`
+   - This is for the L1 penalty function `g(x) = lambda * || x ||_1`.
+ * `L1Constraint(`_`lambda`_`)`
+   - This is for the hard constraint `|| x ||_1 <= lambda`.
+
+The `FBS` class takes the penalty type (`L1Penalty` or `L1Constraint`) as its
+first template parameter.  This does not need to be explicitly specified if the
+default is used (`L1Penalty`) or if a constructor form specifying `backwardStep`
+is used.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `10000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-10` |
+| `double` | **`lambda`** | L1 penalty parameter or constraint parameter, for `L1Penalty` or `L1Constraint` backward step classes. | `0` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `MaxIterations()`, and `Tolerance()`.  The backward step object
+can be accessed and modified with the `BackwardStep()` member method.
+
+If `L1Penalty` or `L1Constraint` is used as the backward step type, the value of
+lambda can be accessed with `BackwardStep().Lambda()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+// f(x) is the Rosenbrock function.
+RosenbrockFunction f;
+// g(x) is the L1 penalty (with lambda = 0.1).
+L1Penalty g(0.1);
+
+arma::mat coordinates = f.GetInitialPoint();
+// FBS will optimize h(x) = f(x) + g(x),
+// which here is the L1-penalized Rosenbrock function.
+FBS optimizer(g, 0.001, 1000, 1e-5);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [FISTA](#fista)
+ * [FASTA](#fasta)
+ * [A Field Guide To Forward-Backward Splitting With A FASTA Implementation](https://arxiv.org/pdf/1411.3406.pdf)
+ * [Proximal Operators on Wikipedia](https://en.wikipedia.org/wiki/Proximal_operator)
+
 ## Frank-Wolfe
 
 *An optimizer for [differentiable functions](#differentiable-functions) that may also be constrained.*
@@ -1279,10 +1363,6 @@ For convenience the following typedefs have been defined:
 
 Attributes of the optimizer may also be changed via the member methods
 `LinearConstrSolver()`, `UpdateRule()`, `MaxIterations()`, and `Tolerance()`.
-
-#### Examples:
-
-TODO
 
 #### See also:
 

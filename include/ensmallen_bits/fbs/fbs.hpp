@@ -18,8 +18,8 @@
 namespace ens {
 
 /**
- * Forward-Backward Splitting is a technique for optimizing a function of the
- * form
+ * Forward-Backward Splitting is a proximal gradient optimization technique for
+ * optimizing a function of the form
  *
  *   h(x) = f(x) + g(x)
  *
@@ -68,7 +68,6 @@ class FBS
       const double stepSize = 0.001,
       const size_t maxIterations = 10000,
       const double tolerance = 1e-10);
-
 
   /**
    * Optimize the given function using FBS.  The given starting
