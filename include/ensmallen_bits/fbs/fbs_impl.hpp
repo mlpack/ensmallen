@@ -9,8 +9,8 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_FBS_IMPL_HPP
-#define ENSMALLEN_FBS_IMPL_HPP
+#ifndef ENSMALLEN_FBS_FBS_IMPL_HPP
+#define ENSMALLEN_FBS_FBS_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "fbs.hpp"
