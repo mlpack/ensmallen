@@ -87,6 +87,7 @@ class Report
       TruncatePrint(initialCoordinates, outputMatrixSize);
       output << std::endl << "Final coordinates: " << std::endl;
       TruncatePrint(coordinates, outputMatrixSize);
+      output << std::endl;
     }
     else
     {
