@@ -239,7 +239,7 @@ template<typename CallbackType,
          typename MatType>
 struct HasBeginOptimizationSignature
 {
-  const static bool value =
+  constexpr static bool value =
       HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template BeginOptimizationBoolForm>::value ||
       HasBeginOptimization<CallbackType, TypedForms<OptimizerType,
@@ -254,19 +254,19 @@ template<typename CallbackType,
          typename MatType>
 struct HasEvaluateSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
       HasEvaluate<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateBoolForm>::value &&
       !HasEvaluate<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateVoidForm>::value;
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
       !HasEvaluate<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateBoolForm>::value &&
       HasEvaluate<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateVoidForm>::value;
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
       !HasEvaluate<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateBoolForm>::value &&
       !HasEvaluate<CallbackType, TypedForms<OptimizerType,
@@ -281,19 +281,19 @@ template<typename CallbackType,
          typename MatType>
 struct HasEvaluateConstraintSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
       HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateConstraintBoolForm>::value &&
       !HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateConstraintVoidForm>::value;
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
       !HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateConstraintBoolForm>::value &&
       HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateConstraintVoidForm>::value;
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
       !HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EvaluateConstraintBoolForm>::value &&
       !HasEvaluateConstraint<CallbackType, TypedForms<OptimizerType,
@@ -309,7 +309,7 @@ template<typename CallbackType,
          typename Gradient>
 struct HasGradientSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
       (HasGradient<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType, Gradient>::template GradientBoolForm>::value ||
       HasGradient<CallbackType, TypedForms<OptimizerType,
@@ -321,7 +321,7 @@ struct HasGradientSignature
           FunctionType, MatType, Gradient>::template
           GradientVoidModifiableForm>::value);
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
       (!HasGradient<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType, Gradient>::template GradientBoolForm>::value ||
       !HasGradient<CallbackType, TypedForms<OptimizerType,
@@ -333,7 +333,7 @@ struct HasGradientSignature
           FunctionType, MatType, Gradient>::template
           GradientVoidModifiableForm>::value);
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
       !HasGradient<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType, Gradient>::template GradientBoolForm>::value &&
       !HasGradient<CallbackType, TypedForms<OptimizerType,
@@ -355,7 +355,7 @@ template<typename CallbackType,
          typename Gradient>
 struct HasGradientConstraintSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
       HasGradientConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType, Gradient>::template
           GradientConstraintBoolForm>::value &&
@@ -363,7 +363,7 @@ struct HasGradientConstraintSignature
           FunctionType, MatType, Gradient>::template
           GradientConstraintVoidForm>::value;
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
       !HasGradientConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType, Gradient>::template
           GradientConstraintBoolForm>::value &&
@@ -371,7 +371,7 @@ struct HasGradientConstraintSignature
           FunctionType, MatType, Gradient>::template
           GradientConstraintVoidForm>::value;
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
       !HasGradientConstraint<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType, Gradient>::template
           GradientConstraintBoolForm>::value &&
@@ -388,7 +388,7 @@ template<typename CallbackType,
          typename MatType>
 struct HasEndOptimizationSignature
 {
-  const static bool value =
+  constexpr static bool value =
       HasEndOptimization<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EndOptimizationBoolForm>::value ||
       HasEndOptimization<CallbackType, TypedForms<OptimizerType,
@@ -403,19 +403,19 @@ template<typename CallbackType,
          typename MatType>
 struct HasBeginEpochSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
       HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template BeginEpochBoolForm>::value &&
       !HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template BeginEpochVoidForm>::value;
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
       !HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template BeginEpochBoolForm>::value &&
       HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template BeginEpochVoidForm>::value;
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
       !HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template BeginEpochBoolForm>::value &&
       !HasBeginEpoch<CallbackType, TypedForms<OptimizerType,
@@ -430,19 +430,19 @@ template<typename CallbackType,
          typename MatType>
 struct HasEndEpochSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
       HasEndEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EndEpochBoolForm>::value &&
       !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EndEpochVoidForm>::value;
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
       !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EndEpochBoolForm>::value &&
       HasEndEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EndEpochVoidForm>::value;
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
       !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template EndEpochBoolForm>::value &&
       !HasEndEpoch<CallbackType, TypedForms<OptimizerType,
@@ -456,19 +456,19 @@ template<typename CallbackType,
          typename MatType>
 struct HasStepTakenSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
       HasStepTaken<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template StepTakenBoolForm>::value &&
       !HasStepTaken<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template StepTakenVoidForm>::value;
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
       !HasStepTaken<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template StepTakenBoolForm>::value &&
       HasStepTaken<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template StepTakenVoidForm>::value;
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
       !HasStepTaken<CallbackType, TypedForms<OptimizerType,
           FunctionType, MatType>::template StepTakenBoolForm>::value &&
       !HasStepTaken<CallbackType, TypedForms<OptimizerType,
@@ -514,7 +514,7 @@ template<typename CallbackType,
          typename MatType>
  struct HasGenerationalStepTakenSignature
 {
-  const static bool hasBool =
+  constexpr static bool hasBool =
     HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
         template GenerationalStepTakenBoolForm>::value &&
@@ -522,7 +522,7 @@ template<typename CallbackType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
         template GenerationalStepTakenVoidForm>::value;
 
-  const static bool hasVoid =
+  constexpr static bool hasVoid =
     !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
         template GenerationalStepTakenBoolForm>::value &&
@@ -530,7 +530,7 @@ template<typename CallbackType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
         template GenerationalStepTakenVoidForm>::value;
 
-  const static bool hasNone =
+  constexpr static bool hasNone =
     !HasGenerationalStepTaken<CallbackType, MOOTypedForms<OptimizerType,
         FunctionType, MatType, ObjectivesVecType, IndicesType>::
         template GenerationalStepTakenBoolForm>::value &&
