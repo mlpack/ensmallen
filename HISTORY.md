@@ -6,6 +6,9 @@
  * Fix return types of callbacks
    ([#382](https://github.com/mlpack/ensmallen/pull/382)).
 
+ * Minor cleanup for printing optimization reports via `Report()`
+   ([#385](https://github.com/mlpack/ensmallen/pull/385)).
+
 ### ensmallen 2.20.0: "Stripped Bolt Head"
 ###### 2023-10-02
  * Implementation of Active CMAES
