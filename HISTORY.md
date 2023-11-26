@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.20.1: "Stripped Bolt Head"
 ###### 2023-11-26
  * Clarify return values for different callback types
