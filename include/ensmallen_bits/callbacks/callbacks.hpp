@@ -67,9 +67,7 @@ class Callback
            typename MatType>
   static typename std::enable_if<
       callbacks::traits::HasBeginOptimizationSignature<
-      // Check for boolean return values anyway, for older ensmallen callbacks.
-      // (The return value is ignored.)
-      CallbackType, OptimizerType, FunctionType, MatType>::hasBool,
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
       void>::type
   BeginOptimizationFunction(CallbackType& callback,
                             OptimizerType& optimizer,
@@ -85,25 +83,8 @@ class Callback
            typename FunctionType,
            typename MatType>
   static typename std::enable_if<
-      callbacks::traits::HasBeginOptimizationSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::hasVoid,
-      void>::type
-  BeginOptimizationFunction(CallbackType& callback,
-                            OptimizerType& optimizer,
-                            FunctionType& function,
-                            MatType& coordinates)
-  {
-    const_cast<CallbackType&>(callback).BeginOptimization(optimizer, function,
-        coordinates);
-  }
-
-  template<typename CallbackType,
-           typename OptimizerType,
-           typename FunctionType,
-           typename MatType>
-  static typename std::enable_if<
-      callbacks::traits::HasBeginOptimizationSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::hasNone,
+      !callbacks::traits::HasBeginOptimizationSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::value,
       void>::type
   BeginOptimizationFunction(CallbackType& /* callback */,
                             OptimizerType& /* optimizer */,
@@ -175,7 +156,8 @@ class Callback
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<!callbacks::traits::HasEndOptimizationSignature<
+  static typename std::enable_if<
+      !callbacks::traits::HasEndOptimizationSignature<
       CallbackType, OptimizerType, FunctionType, MatType>::value,
       void>::type
   EndOptimizationFunction(CallbackType& /* callback */,
@@ -234,7 +216,7 @@ class Callback
            typename FunctionType,
            typename MatType>
   static typename std::enable_if<callbacks::traits::HasEvaluateSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      CallbackType, OptimizerType, FunctionType, MatType>::hasBool,
       bool>::type
   EvaluateFunction(CallbackType& callback,
                    OptimizerType& optimizer,
@@ -242,16 +224,34 @@ class Callback
                    const MatType& coordinates,
                    const double objective)
   {
-    return (const_cast<CallbackType&>(callback).Evaluate(
-        optimizer, function, coordinates, objective), false);
+    return const_cast<CallbackType&>(callback).Evaluate(optimizer, function,
+        coordinates, objective);
   }
 
   template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<!callbacks::traits::HasEvaluateSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::value,
+  static typename std::enable_if<callbacks::traits::HasEvaluateSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasVoid,
+      bool>::type
+  EvaluateFunction(CallbackType& callback,
+                   OptimizerType& optimizer,
+                   FunctionType& function,
+                   const MatType& coordinates,
+                   const double objective)
+  {
+    const_cast<CallbackType&>(callback).Evaluate(optimizer, function,
+        coordinates, objective);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<callbacks::traits::HasEvaluateSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasNone,
       bool>::type
   EvaluateFunction(CallbackType& /* callback */,
                    OptimizerType& /* optimizer */,
@@ -304,7 +304,7 @@ class Callback
            typename MatType>
   static typename std::enable_if<
       callbacks::traits::HasEvaluateConstraintSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      CallbackType, OptimizerType, FunctionType, MatType>::hasBool,
       bool>::type
   EvaluateConstraintFunction(CallbackType& callback,
                              OptimizerType& optimizer,
@@ -313,8 +313,8 @@ class Callback
                              const size_t constraint,
                              const double constraintValue)
   {
-    return (const_cast<CallbackType&>(callback).EvaluateConstraint(
-        optimizer, function, coordinates, constraint, constraintValue), false);
+    return const_cast<CallbackType&>(callback).EvaluateConstraint(
+        optimizer, function, coordinates, constraint, constraintValue);
   }
 
   template<typename CallbackType,
@@ -322,8 +322,28 @@ class Callback
            typename FunctionType,
            typename MatType>
   static typename std::enable_if<
-      !callbacks::traits::HasEvaluateConstraintSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::value,
+      callbacks::traits::HasEvaluateConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasVoid,
+      bool>::type
+  EvaluateConstraintFunction(CallbackType& callback,
+                             OptimizerType& optimizer,
+                             FunctionType& function,
+                             const MatType& coordinates,
+                             const size_t constraint,
+                             const double constraintValue)
+  {
+    const_cast<CallbackType&>(callback).EvaluateConstraint(
+        optimizer, function, coordinates, constraint, constraintValue);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<
+      callbacks::traits::HasEvaluateConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasNone,
       bool>::type
   EvaluateConstraintFunction(CallbackType& /* callback */,
                              OptimizerType& /* optimizer */,
@@ -380,7 +400,7 @@ class Callback
            typename MatType,
            typename GradType>
   static typename std::enable_if<callbacks::traits::HasGradientSignature<
-      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::hasBool,
       bool>::type
   GradientFunction(CallbackType& callback,
                    OptimizerType& optimizer,
@@ -388,8 +408,8 @@ class Callback
                    const MatType& coordinates,
                    GradType& gradient)
   {
-    return (const_cast<CallbackType&>(callback).Gradient(
-        optimizer, function, coordinates, gradient), false);
+    return const_cast<CallbackType&>(callback).Gradient(optimizer, function,
+        coordinates, gradient);
   }
 
   template<typename CallbackType,
@@ -397,8 +417,27 @@ class Callback
            typename FunctionType,
            typename MatType,
            typename GradType>
-  static typename std::enable_if<!callbacks::traits::HasGradientSignature<
-      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+  static typename std::enable_if<callbacks::traits::HasGradientSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::hasVoid,
+      bool>::type
+  GradientFunction(CallbackType& callback,
+                   OptimizerType& optimizer,
+                   FunctionType& function,
+                   const MatType& coordinates,
+                   GradType& gradient)
+  {
+    const_cast<CallbackType&>(callback).Gradient(
+        optimizer, function, coordinates, gradient);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType>
+  static typename std::enable_if<callbacks::traits::HasGradientSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::hasNone,
       bool>::type
   GradientFunction(CallbackType& /* callback */,
                    OptimizerType& /* optimizer */,
@@ -451,7 +490,7 @@ class Callback
            typename GradType>
   static typename std::enable_if<
       callbacks::traits::HasGradientConstraintSignature<
-      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::hasBool,
       bool>::type
   GradientConstraintFunction(CallbackType& callback,
                              OptimizerType& optimizer,
@@ -460,8 +499,8 @@ class Callback
                              const size_t constraint,
                              GradType& gradient)
   {
-    return (const_cast<CallbackType&>(callback).GradientConstraint(
-        optimizer, function, coordinates, constraint, gradient), false);
+    return const_cast<CallbackType&>(callback).GradientConstraint(optimizer,
+        function, coordinates, constraint, gradient);
   }
 
   template<typename CallbackType,
@@ -470,8 +509,29 @@ class Callback
            typename MatType,
            typename GradType>
   static typename std::enable_if<
-      !callbacks::traits::HasGradientConstraintSignature<
-      CallbackType, OptimizerType, FunctionType, MatType, GradType>::value,
+      callbacks::traits::HasGradientConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::hasVoid,
+      bool>::type
+  GradientConstraintFunction(CallbackType& callback,
+                             OptimizerType& optimizer,
+                             FunctionType& function,
+                             const MatType& coordinates,
+                             const size_t constraint,
+                             GradType& gradient)
+  {
+    const_cast<CallbackType&>(callback).GradientConstraint(
+        optimizer, function, coordinates, constraint, gradient);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType>
+  static typename std::enable_if<
+      callbacks::traits::HasGradientConstraintSignature<
+      CallbackType, OptimizerType, FunctionType, MatType, GradType>::hasNone,
       bool>::type
   GradientConstraintFunction(CallbackType& /* callback */,
                              OptimizerType& /* optimizer */,
@@ -563,7 +623,7 @@ class Callback
            typename FunctionType,
            typename MatType>
   static typename std::enable_if<callbacks::traits::HasBeginEpochSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::value, bool>::type
+      CallbackType, OptimizerType, FunctionType, MatType>::hasBool, bool>::type
   BeginEpochFunction(CallbackType& callback,
                      OptimizerType& optimizer,
                      FunctionType& function,
@@ -571,16 +631,34 @@ class Callback
                      const size_t epoch,
                      const double objective)
   {
-    return (const_cast<CallbackType&>(callback).BeginEpoch(
-        optimizer, function, coordinates, epoch, objective), false);
+    return const_cast<CallbackType&>(callback).BeginEpoch(
+        optimizer, function, coordinates, epoch, objective);
   }
 
   template<typename CallbackType,
            typename OptimizerType,
            typename FunctionType,
            typename MatType>
-  static typename std::enable_if<!callbacks::traits::HasBeginEpochSignature<
-      CallbackType, OptimizerType, FunctionType, MatType>::value, bool>::type
+  static typename std::enable_if<callbacks::traits::HasBeginEpochSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasVoid, bool>::type
+  BeginEpochFunction(CallbackType& callback,
+                     OptimizerType& optimizer,
+                     FunctionType& function,
+                     const MatType& coordinates,
+                     const size_t epoch,
+                     const double objective)
+  {
+    const_cast<CallbackType&>(callback).BeginEpoch(
+        optimizer, function, coordinates, epoch, objective);
+    return false;
+  }
+
+  template<typename CallbackType,
+           typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  static typename std::enable_if<callbacks::traits::HasBeginEpochSignature<
+      CallbackType, OptimizerType, FunctionType, MatType>::hasNone, bool>::type
   BeginEpochFunction(CallbackType& /* callback  */,
                      OptimizerType& /* optimizer */,
                      FunctionType& /* function  */,
@@ -768,6 +846,32 @@ class Callback
                     MatType& /* coordinates */)
   { return false; }
 
+  /**
+   * Iterate over the callbacks and invoke the StepTaken() callback if it
+   * exists.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param callbacks The callbacks container.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename... CallbackTypes>
+  static bool StepTaken(OptimizerType& optimizer,
+                        FunctionType& function,
+                        MatType& coordinates,
+                        CallbackTypes&... callbacks)
+  {
+    // This will return immediately once a callback returns true.
+    bool result = false;
+    (void)std::initializer_list<bool>{ result =
+        result || Callback::StepTakenFunction(callbacks, optimizer,
+            function, coordinates)... };
+     return result;
+  }
+
  /**
   * Invoke the GenerationalStepTaken() callback if it exists.
   * Specialization for MultiObjective case.
@@ -819,7 +923,6 @@ class Callback
   {
     const_cast<CallbackType&>(callback).GenerationalStepTaken(
         optimizer, function, coordinates, objectives, frontIndices);
-
     return false;
   }
 
@@ -840,32 +943,6 @@ class Callback
                                 ObjectivesVecType& /* objectives */,
                                 IndicesType& /* frontIndices */)
   { return false; }
-
-  /**
-   * Iterate over the callbacks and invoke the StepTaken() callback if it
-   * exists.
-   *
-   * @param optimizer The optimizer used to update the function.
-   * @param function Function to optimize.
-   * @param coordinates Starting point.
-   * @param callbacks The callbacks container.
-   */
-  template<typename OptimizerType,
-           typename FunctionType,
-           typename MatType,
-           typename... CallbackTypes>
-  static bool StepTaken(OptimizerType& optimizer,
-                        FunctionType& function,
-                        MatType& coordinates,
-                        CallbackTypes&... callbacks)
-  {
-    // This will return immediately once a callback returns true.
-    bool result = false;
-    (void)std::initializer_list<bool>{ result =
-        result || Callback::StepTakenFunction(callbacks, optimizer,
-            function, coordinates)... };
-     return result;
-  }
 
   /**
    * Iterate over the callbacks and invoke the GenerationalStepTaken() callback if it
