@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 2.21.0: "Bent Antenna"
 ###### 2023-11-27
  * Clarify return values for different callback types
