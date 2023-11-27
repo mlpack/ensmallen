@@ -73,7 +73,6 @@ FBS<BackwardStepType>::Optimize(FunctionType& function,
   ElemType lastObjective = currentObjective;
 
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
-  BaseMatType s(iterate.n_rows, iterate.n_cols);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
