@@ -30,7 +30,7 @@ class L1Penalty
   /**
    * Construct an L1Penalty object with a given penalty `lambda`.
    */
-  L1Penalty(const double lambda);
+  L1Penalty(const double lambda = 0.0);
 
   /**
    * Evaluate the L1 penalty function: `lambda * || coordinates ||_1`.

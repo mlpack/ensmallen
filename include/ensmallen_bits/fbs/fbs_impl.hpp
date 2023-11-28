@@ -88,6 +88,7 @@ FBS<BackwardStepType>::Optimize(FunctionType& function,
     // Now compute g(x) to get the full objective.
     currentGObjective = backwardStep.Evaluate(iterate);
 
+    lastObjective = currentObjective;
     currentObjective = currentFObjective + currentGObjective;
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,

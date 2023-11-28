@@ -32,7 +32,7 @@ class L1Constraint
    * Construct an L1Constraint with the given maximum L1 norm for the
    * coordinates (lambda).
    */
-  L1Constraint(const double lambda);
+  L1Constraint(const double lambda = 0.0);
 
   /**
    * If the L1 norm of the coordinates is less than or equal to lambda, this
