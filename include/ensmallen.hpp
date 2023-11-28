@@ -103,6 +103,7 @@
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
 #include "ensmallen_bits/fbs/fbs.hpp"
+#include "ensmallen_bits/fista/fista.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
 #include "ensmallen_bits/gradient_descent/gradient_descent.hpp"
