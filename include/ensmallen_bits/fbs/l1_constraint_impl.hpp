@@ -146,10 +146,10 @@ void L1Constraint::ProximalStep(MatType& coordinates,
   // Sanity check: ensure we actually ended up inside the L1 ball.  This might
   // not happen due to floating-point inaccuracies.  If so, try again.
   const eT newNorm = norm(coordinates, 1);
-  if (newNorm - lambda > (eT) 0.0 && lambda > (eT) 0.0)
+  if (newNorm > lambda && lambda > (eT) 0.0)
   {
     // Shrink the L1 ball by the amount of the error.
-    eT newLambda = (lambda - (newNorm - lambda));
+    eT newLambda = (lambda - 2 * (newNorm - lambda));
     if (newLambda == lambda)
     {
       // Make sure we at least remove a few ULPs.
