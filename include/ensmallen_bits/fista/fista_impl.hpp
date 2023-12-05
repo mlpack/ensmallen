@@ -94,21 +94,22 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
   RequireFloatingPointType<BaseGradType>();
   RequireSameInternalTypes<BaseMatType, BaseGradType>();
 
-  BaseMatType& iterate = (BaseMatType&) iterateIn;
+  // Match the notation of the paper.  We force a copy here, since we use
+  // std::move() internally and this may be an alias.  We copy back to
+  // `iterateIn` at the end.
+  BaseMatType x(iterateIn);
 
-  // To keep track of the function value.  This is ignored during the iteration
-  // if computeIterationLoss is false and ENS_PRINT_INFO is not defined.  (It
-  // will be computed at the end, though.)
-  ElemType lastObjective = std::numeric_limits<ElemType>::max();;
-  ElemType currentFObjective = f.Evaluate(iterate);
-  ElemType currentGObjective = backwardStep.Evaluate(iterate);
-  ElemType currentObjective = currentFObjective + currentGObjective;
+  // To keep track of the function value.
+  ElemType lastObj = std::numeric_limits<ElemType>::max();;
+  ElemType currentFObj = f.Evaluate(x);
+  ElemType currentGObj = backwardStep.Evaluate(x);
+  ElemType currentObj = currentFObj + currentGObj;
 
-  BaseGradType gradient(iterate.n_rows, iterate.n_cols);
-  BaseMatType y = iterate; // Initialize y^1 = x^0.
-  BaseMatType lastIterate = iterate;
-  ElemType alpha = 1; // Initialize alpha^1 = 1.
-  ElemType lastAlpha = alpha;
+  BaseGradType g(x.n_rows, x.n_cols); // Gradient.
+  BaseMatType y = x; // Initialize y_1 = x_0.
+  BaseMatType lastX = x;
+  ElemType t = 1; // Initialize t_1 = 1.
+  ElemType lastT = t;
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -116,83 +117,32 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
   // First, estimate the Lipschitz constant to set the initial/maximum step
   // size, if the user asked us to.
   if (estimateStepSize)
-  {
-    // Sanity check for estimateSteps parameter.
-    if (estimateTrials == 0)
-    {
-      throw std::invalid_argument("FISTA::FISTA(): estimateTrials must be "
-          "greater than 0!");
-    }
-
-    const ElemType iterateMax = std::max(1.0, 2.0 * iterate.max());
-    ElemType sum = 0.0;
-    BaseMatType x1, x2, gx1, gx2;
-
-    for (size_t t = 0; t < estimateTrials; ++t)
-    {
-      RandomFill(x1, iterate.n_rows, iterate.n_cols, iterateMax);
-      RandomFill(x2, iterate.n_rows, iterate.n_cols, iterateMax);
-
-      f.Gradient(x1, gx1);
-      f.Gradient(x2, gx2);
-
-      // Compute a Lipschitz constant estimate.
-      const ElemType lEst = norm(gx1 - gx2, 2) / norm(x1 - x2, 2);
-      sum += lEst;
-    }
-
-    sum /= estimateTrials;
-    if (sum == 0)
-      maxStepSize = std::numeric_limits<ElemType>::max();
-    else
-      maxStepSize = (10.0 / sum);
-
-    Info << "FISTA::Optimize(): estimated a maximum step size of "
-        << maxStepSize << "." << std::endl;
-  }
+    EstimateLipschitzStepSize(f, x); // Sets `maxStepSize`.
 
   // Keep track of the last step size we used.
   ElemType currentStepSize = (ElemType) maxStepSize;
   ElemType lastStepSize = (ElemType) maxStepSize;
 
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  terminate |= Callback::BeginOptimization(*this, f, x, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // During this optimization, we want to optimize h(x) = f(x) + g(x).
     // f(x) is `f`, but g(x) is specified by `BackwardStepType`.
 
-    // Output current objective function.
-    Info << "FISTA::Optimize(): iteration " << i << ", combined objective "
-        << currentObjective << " (f(x) = " << currentFObjective
-        << ", g(x) = " << currentGObjective << "), step size "
-        << currentStepSize << "." << std::endl;
+    // Notation (compare with Beck and Teboulle):
+    //   `i` represents `k`, the iteration number.
+    //   `x` represents `x_k` in the paper.
+    //   `y` represents `y_k` in the paper.
 
-    if ((i > 1) && !std::isfinite(currentObjective))
-    {
-      Warn << "FISTA::Optimize(): objective diverged to "
-          << currentObjective << "; terminating optimization." << std::endl;
-      terminate = true;
-      break;
-    }
-
-    // Compute the gradient on y.  Note that FISTA uses f'(y) to take a step,
-    // not f'(x).  We will also need f(y) for the line search, so compute it
-    // now.
-    const ElemType yObj = f.EvaluateWithGradient(y, gradient);
-    terminate |= Callback::EvaluateWithGradient(*this, f, y, yObj, gradient,
+    // The first step is to compute a step size via a line search.  To do this,
+    // we need to compute the gradient f'(y) as required by the quadratic
+    // approximation Q_L(x, y) (Eq. 2.5).
+    //
+    // We will also need the objective f(y), so we will compute that
+    // simultaneously.
+    const ElemType yObj = f.EvaluateWithGradient(y, g);
+    terminate |= Callback::EvaluateWithGradient(*this, f, y, yObj, g,
         callbacks...);
-
-    // Check for convergence.  This is a simple check on the objective.
-    if ((i > 1) && (std::abs(currentObjective - lastObjective) < tolerance))
-    {
-      Info << "FISTA::Optimize(): minimized within objective tolerance "
-          << tolerance << "; terminating optimization." << std::endl;
-      terminate = true;
-    }
-
-    // Terminate before the line search, if we need to.
-    if (terminate)
-      break;
 
     // Use backtracking line search to find the best step size.  This is not the
     // version from the FASTA paper (non-monotone line search) but instead the
@@ -204,20 +154,20 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
     // norm is small.  It is also more effective than simply starting at the
     // last step size and shrinking from there, as it prevents getting "stuck"
     // with a very small step size.
-    bool lineSearchSatisfied = false;
-    size_t lineSearchTrial = 0;
+    bool lsDone = false;
+    size_t lsTrial = 0;
     bool increasing = false; // Will be set during the first iteration.
     ElemType lastFObj = 0.0;
     ElemType lastGObj = 0.0;
-    BaseMatType lastLineSearchIterate; // Only used in increasing mode.
+    BaseMatType lsLastX; // Only used in increasing mode.
 
-    lastIterate = iterate;
+    lastX = std::move(x);
     lastStepSize = currentStepSize;
     currentStepSize = std::min(currentStepSize, (ElemType) maxStepSize);
 
-    while (!lineSearchSatisfied && !terminate)
+    while (!lsDone && !terminate)
     {
-      if (lineSearchTrial == maxLineSearchSteps)
+      if (lsTrial == maxLineSearchSteps)
       {
         if (increasing)
         {
@@ -231,7 +181,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
           Warn << "FISTA::Optimize(): could not find valid step size in range "
               << "(0, " << maxStepSize << "]!  Terminating optimization."
               << std::endl;
-          iterate = lastIterate; // Revert to previous coordinates.
+          x = std::move(lastX); // Revert to previous coordinates.
           terminate = true;
           break;
         }
@@ -242,26 +192,24 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
       {
         Warn << "FISTA::Optimize(): computed zero step size; terminating "
             << "optimization." << std::endl;
-        iterate = lastIterate; // Revert to previous coordinates.
+        x = std::move(lastX); // Revert to previous coordinates.
         terminate = true;
         break;
       }
 
       // Perform forward update into x.
-      iterate = y - currentStepSize * gradient;
-      backwardStep.ProximalStep(iterate, currentStepSize);
+      x = y - currentStepSize * g;
+      backwardStep.ProximalStep(x, currentStepSize);
 
-      // Compute line search improvement condition.
-      // Q_s(x1, x2) = f(x2) + < x1 - x2, f'(x2) > + (1 / 2s) || x1 - x2 ||^2 +
-      //     g(x1)
-      // Here, x1 is the proposal, and x1 is the last y (prediction).
-      const ElemType fObj = f.Evaluate(iterate);
-      const ElemType gObj = backwardStep.Evaluate(iterate);
-      terminate |= Callback::Evaluate(*this, f, iterate, fObj, callbacks...);
+      // Compute F(x) = f(x) + g(x).
+      const ElemType fObj = f.Evaluate(x);
+      const ElemType gObj = backwardStep.Evaluate(x);
+      const ElemType lsObj = fObj + gObj;
+      terminate |= Callback::Evaluate(*this, f, x, fObj, callbacks...);
 
-      const ElemType q = yObj + dot(iterate - y, gradient) +
-          (1.0 / (2.0 * currentStepSize)) * dot(iterate - y, iterate - y) +
-          gObj;
+      // Compute Q_L(x, y) (the quadratic approximation), Eq. (2.5).
+      const ElemType q = yObj + dot(x - y, g) +
+          (1.0 / (2.0 * currentStepSize)) * dot(x - y, x - y) + gObj;
 
       // If we're on the first iteration, we don't know if we should be
       // searching for a step size by increasing or decreasing the step size.
@@ -271,9 +219,9 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
       // Thus, if the condition is satisfied, let's try increasing the step size
       // until it's no longer satisfied.  Otherwise, we will have to decrease
       // the step size.
-      if (lineSearchTrial == 0)
+      if (lsTrial == 0)
       {
-        increasing = (fObj <= q);
+        increasing = (lsObj <= q);
       }
 
       if (increasing)
@@ -281,92 +229,115 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
         // If we are in "increasing" mode, then termination occurs on the first
         // iteration when the condition is *not* satisfied (and we use the last
         // step size).
-        if (fObj > q)
+        if ((lsObj > q) || (!std::isfinite(lsObj)))
         {
-          lineSearchSatisfied = true;
-          iterate = lastLineSearchIterate;
-          currentFObjective = lastFObj;
-          currentGObjective = lastGObj;
-          lastObjective = currentObjective;
-          currentObjective = currentFObjective + currentGObjective;
+          lsDone = true;
+          x = std::move(lsLastX);
+          currentFObj = lastFObj;
+          currentGObj = lastGObj;
+          lastObj = currentObj;
+          currentObj = currentFObj + currentGObj;
           currentStepSize = lastStepSize; // Take one step backwards.
         }
         else if (currentStepSize == (ElemType) maxStepSize)
         {
           // The condition is still satisfied, but the step size will be too big
           // if we take another step.  Go back to the maximum step size.
-          lineSearchSatisfied = true;
-          currentFObjective = fObj;
-          currentGObjective = gObj;
-          lastObjective = currentObjective;
-          currentObjective = currentFObjective + currentGObjective;
+          lsDone = true;
+          currentFObj = fObj;
+          currentGObj = gObj;
+          lastObj = currentObj;
+          currentObj = currentFObj + currentGObj;
         }
         else
         {
           // The condition is still satisfied; increase the step size.
           lastStepSize = currentStepSize;
           currentStepSize *= stepSizeAdjustment;
-          lastLineSearchIterate = iterate;
+          lsLastX = std::move(x);
           lastFObj = fObj;
           lastGObj = gObj;
-          ++lineSearchTrial;
+          ++lsTrial;
         }
       }
       else
       {
         // If we are in "decreasing" mode, then termination occurs on the first
         // iteration when the condition is satisfied.
-        if (fObj <= q)
+        if ((lsObj <= q) && (std::isfinite(lsObj)))
         {
-          lineSearchSatisfied = true;
-          currentFObjective = fObj;
-          currentGObjective = gObj;
-          lastObjective = currentObjective;
-          currentObjective = currentFObjective + currentGObjective;
+          lsDone = true;
+          currentFObj = fObj;
+          currentGObj = gObj;
+          lastObj = currentObj;
+          currentObj = currentFObj + currentGObj;
         }
         else
         {
           // The condition is not yet satisfied; decrease the step size.
           currentStepSize /= stepSizeAdjustment;
-          ++lineSearchTrial;
+          ++lsTrial;
         }
       }
-    }
-
-    if (!lineSearchSatisfied)
-    {
-      // The line search failed, so terminate.
-      Warn << "FISTA::Optimize(): line search failed after "
-          << maxLineSearchSteps << " steps; terminating optimization."
-          << std::endl;
-      iterate = lastIterate;
-      terminate = true;
     }
 
     // If we terminated during the line search, we are done.
     if (terminate)
       break;
 
-    // Compute updated prediction parameter alpha.
-    lastAlpha = alpha;
-    alpha = (1.0 + std::sqrt(1 + 4 * std::pow(alpha, 2.0))) / 2.0;
-
-    // Sometimes alpha can get to be too large; this restart scheme is taken
-    // originally from O'Donoghue and Candes, "Adaptive restart for accelerated
-    // gradient schemes", 2012.
-    const ElemType restartCheck = dot(y - iterate, iterate - lastIterate);
-    if (restartCheck > 0)
+    if (!lsDone)
     {
-      Info << "FISTA::Optimize(): alpha too large (" << alpha << "); reset to "
-          << "1." << std::endl;
-      alpha = 1;
-      lastAlpha = 1;
+      // The line search failed, so terminate.
+      Warn << "FISTA::Optimize(): line search failed after "
+          << maxLineSearchSteps << " steps; terminating optimization."
+          << std::endl;
+      x = std::move(lastX);
+      terminate = true;
+      break;
     }
 
-    // Update prediction.
-    y = iterate + ((lastAlpha - 1.0) / alpha) * (iterate - lastIterate);
+    // Output current objective function.
+    Info << "FISTA::Optimize(): iteration " << i << ", combined objective "
+        << currentObj << " (f(x) = " << currentFObj << ", g(x) = "
+        << currentGObj << "), step size " << currentStepSize << "."
+        << std::endl;
 
-    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
+    if ((i > 1) && !std::isfinite(currentObj))
+    {
+      Warn << "FISTA::Optimize(): objective diverged to " << currentObj
+          << "; terminating optimization." << std::endl;
+      terminate = true;
+      break;
+    }
+
+    // Check for convergence.  This is a simple check on the objective.
+    if ((i > 1) && (std::abs(currentObj - lastObj) < tolerance))
+    {
+      Info << "FISTA::Optimize(): minimized within objective tolerance "
+          << tolerance << "; terminating optimization." << std::endl;
+      terminate = true;
+    }
+
+    // Compute updated prediction parameter t.
+    lastT = t;
+    t = (1.0 + std::sqrt(1 + 4 * std::pow(t, 2.0))) / 2.0;
+
+    // Sometimes t can get to be too large; this restart scheme is taken
+    // originally from O'Donoghue and Candes, "Adaptive restart for accelerated
+    // gradient schemes", 2012.
+    const ElemType restartCheck = dot(y - x, x - lastX);
+    if (restartCheck > 0)
+    {
+      Info << "FISTA::Optimize(): t too large (" << t << "); reset to 1."
+          << std::endl;
+      t = 1;
+      lastT = 1;
+    }
+
+    // Update prediction y.
+    y = x + ((lastT - 1.0) / t) * (x - lastX);
+
+    terminate |= Callback::StepTaken(*this, f, y, callbacks...);
   }
 
   if (!terminate)
@@ -375,9 +346,10 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
         << ") reached; terminating optimization." << std::endl;
   }
 
-  Callback::EndOptimization(*this, f, iterate, callbacks...);
+  Callback::EndOptimization(*this, f, x, callbacks...);
 
-  return currentObjective;
+  ((BaseMatType&) iterateIn) = x;
+  return currentObj;
 } // Optimize()
 
 template<typename BackwardStepType>
@@ -421,6 +393,48 @@ void FISTA<BackwardStepType>::RandomFill(
   }
 
   x *= maxVal;
+}
+
+template<typename BackwardStepType>
+template<typename FunctionType, typename MatType>
+void FISTA<BackwardStepType>::EstimateLipschitzStepSize(
+    FunctionType& f,
+    const MatType& x)
+{
+  typedef typename MatType::elem_type ElemType;
+
+  // Sanity check for estimateSteps parameter.
+  if (estimateTrials == 0)
+  {
+    throw std::invalid_argument("FISTA::Optimize(): estimateTrials must be "
+        "greater than 0!");
+  }
+
+  const ElemType xMax = std::max(1.0, 2.0 * x.max());
+  ElemType sum = 0.0;
+  MatType x1, x2, gx1, gx2;
+
+  for (size_t t = 0; t < estimateTrials; ++t)
+  {
+    RandomFill(x1, x.n_rows, x.n_cols, xMax);
+    RandomFill(x2, x.n_rows, x.n_cols, xMax);
+
+    f.Gradient(x1, gx1);
+    f.Gradient(x2, gx2);
+
+    // Compute a Lipschitz constant estimate.
+    const ElemType lEst = norm(gx1 - gx2, 2) / norm(x1 - x2, 2);
+    sum += lEst;
+  }
+
+  sum /= estimateTrials;
+  if (sum == 0)
+    maxStepSize = std::numeric_limits<ElemType>::max();
+  else
+    maxStepSize = (10.0 / sum);
+
+  Info << "FISTA::Optimize(): estimated a maximum step size of "
+      << maxStepSize << "." << std::endl;
 }
 
 } // namespace ens

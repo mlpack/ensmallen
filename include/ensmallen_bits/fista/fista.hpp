@@ -40,12 +40,16 @@ namespace ens {
  * For more information, see the following paper:
  *
  * ```
- * @article{goldstein2014field,
- *   title={A field guide to forward-backward splitting with a FASTA
- *       implementation},
- *   author={Goldstein, Tom and Studer, Christoph and Baraniuk, Richard},
- *   journal={arXiv preprint arXiv:1411.3406},
- *   year={2014}
+ * @article{beck2009fast,
+ *   title={A fast iterative shrinkage-thresholding algorithm for linear inverse
+ *       problems},
+ *   author={Beck, Amir and Teboulle, Marc},
+ *   journal={SIAM Journal On Imaging Sciences},
+ *   volume={2},
+ *   number={1},
+ *   pages={183--202},
+ *   year={2009},
+ *   publisher={SIAM}
  * }
  * ```
  */
@@ -173,6 +177,9 @@ class FISTA
                          const size_t rows,
                          const size_t cols,
                          const eT maxVal);
+
+  template<typename FunctionType, typename MatType>
+  void EstimateLipschitzStepSize(FunctionType& f, const MatType& x);
 
   //! The instantiated backward step object.
   BackwardStepType backwardStep;

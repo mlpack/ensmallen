@@ -48,7 +48,8 @@ TEMPLATE_TEST_CASE("FISTAWoodFunctionTest", "[FISTATest]", fmat, mat)
   FunctionTest<WoodFunction, MatType>(fista);
 }
 
-TEMPLATE_TEST_CASE("FISTALogisticRegressionFunctionTest", "[FISTATest]", fmat, mat)
+TEMPLATE_TEST_CASE("FISTALogisticRegressionFunctionTest", "[FISTATest]", fmat,
+    mat)
 {
   typedef TestType MatType;
 
