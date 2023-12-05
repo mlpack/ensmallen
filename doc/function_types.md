@@ -131,6 +131,7 @@ The following optimizers can be used with differentiable functions:
 
  * [L-BFGS](#l-bfgs) (`ens::L_BFGS`)
  * [Forward-backward splitting (FBS)](#forward-backward-splitting-fbs) (`ens::FBS`)
+ * [Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)](#fast-iterative-shrinkage-thresholding-algorithm-fista) (`ens::FISTA`)
  * [FrankWolfe](#frank-wolfe) (`ens::FrankWolfe`)
  * [GradientDescent](#gradient-descent) (`ens::GradientDescent`)
  - Any optimizer for [arbitrary functions](#arbitrary-functions)
@@ -295,6 +296,7 @@ ensmallen (these can also optimize differentiable functions only, taking `g(x) =
 0`):
 
  * [Forward-backward splitting (FBS)](#forward-backward-splitting-fbs) (`ens::FBS`)
+ * [Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)](#fast-iteartive-shrinkage-thresholding-algorithm-fista) (`ens::FISTA`)
 
 ensmallen implements a few `g(x)` options that can be used with proximal
 gradient optimizers:

@@ -1240,6 +1240,9 @@ optimizer.Optimize(f, coordinates);
 
 ## Forward-Backward Splitting (FBS)
 
+*An optimizer for [differentiable functions](#differentiable-functions) that may
+also include non-differentiable L1 penalties or similar.*
+
 Forward-backward splitting (FBS) is a proximal gradient optimization technique
 to optimize composite functions of the form
 
@@ -1284,7 +1287,7 @@ is used.
 |----------|----------|-----------------|-------------|
 | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `10000` |
-| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-10` |
+| `double` | **`tolerance`** | Maximum absolute tolerance objective to terminate algorithm. | `1e-10` |
 | `double` | **`lambda`** | L1 penalty parameter or constraint parameter, for `L1Penalty` or `L1Constraint` backward step classes. | `0` |
 
 The attributes of the optimizer may also be modified via the member methods
@@ -1317,8 +1320,107 @@ optimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [FISTA](#fista)
+ * [FISTA](#fast-iterative-shrinkage-thresholding-algorithm-fista)
  * [FASTA](#fasta)
+ * [A Field Guide To Forward-Backward Splitting With A FASTA Implementation](https://arxiv.org/pdf/1411.3406.pdf)
+ * [Proximal Operators on Wikipedia](https://en.wikipedia.org/wiki/Proximal_operator)
+
+## Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)
+
+*An optimizer for [differentiable functions](#differentiable-functions) that may
+also include non-differentiable L1 penalties or similar.*
+
+The Fast Iterative Shrinkage-Thresholding Algorithm (FISTA) is a proximal
+gradient optimization technique to optimize composite functions of the form
+
+```
+h(x) = f(x) + g(x).
+```
+
+Here, `f(x)` is a differentiable function, and `g(x)` is an arbitrary
+non-differentiable function that has a corresponding *proximal operator*.
+In this situation, other ensmallen optimizers for differentiable functions
+cannot be used, since `g(x)` is not differentiable.  To work around this, FISTA
+takes a *forward step* that is a standard gradient descent step on `f(x)`, and
+then a *backward step* that is the proximal operator defined by `g(x)`.
+
+For `FISTA`, the function `f(x)` is defined in the standard ensmallen way (it is
+passed to `Optimize()`), and the function `g(x)` is defined by a template
+parameter.
+
+FISTA differs from [FBS](#forward-backward-splitting-fbs) in that it uses a
+predictive step (similar to momentum) and a line search to choose step size.
+The maximum allowable step size is automatically estimated, unless it is
+specifically provided.
+
+#### Constructors
+
+ * `FISTA()`
+ * `FISTA(`_`maxIterations, tolerance, maxLineSearchSteps, stepSizeAdjustment, estimateStepSize, estimateTrials, maxStepSize`_`)`
+ * `FISTA(`_`backwardStep`_`)`
+ * `FISTA(`_`backwardStep, maxIterations, tolerance, maxLineSearchSteps, stepSizeAdjustment, estimateStepSize, estimateTrials, maxStepSize`_`)`
+
+The _`backwardStep`_ parameter specifies the function `g(x)` to optimize.  A few
+options are readily available:
+
+ * `L1Penalty(`_`lambda`_`)`
+   - This is for the L1 penalty function `g(x) = lambda * || x ||_1`.
+ * `L1Constraint(`_`lambda`_`)`
+   - This is for the hard constraint `|| x ||_1 <= lambda`.
+
+The `FISTA` class takes the penalty type (`L1Penalty` or `L1Constraint`) as its
+first template parameter.  This does not need to be explicitly specified if the
+default is used (`L1Penalty`) or if a constructor form specifying `backwardStep`
+is used.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `10000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance on objective to terminate algorithm. | `1e-10` |
+| `size_t` | **`maxLineSearchSteps`** | Maximum number of line search step attempts to take a step (0 means no limit). | `50` |
+| `double` | **`stepSizeAdjustment`** | Multiplicative amount to shrink or increase step size at each step of the line search. | `2.0` |
+| `bool` | **`estimateStepSize`** | If `true`, `maxStepSize` is computed by estimating the Lipschitz constant of `f(x)`. | `true` |
+| `size_t` | **`estimateTrials`** | Number of random trials to perform to estimate the Lipschitz constant of `f(x)`. | `10` |
+| `double` | **`maxStepSize`** | Maximum allowable step size for any line search.  Ignored (an estimate is used instead) if `estimateStepSize` is `true`. |
+| `double` | **`lambda`** | L1 penalty parameter or constraint parameter, for `L1Penalty` or `L1Constraint` backward step classes. | `0` |
+
+The attributes of the optimizer may also be modified via the member methods
+`MaxIterations()`, `Tolerance()`, `StepSizeAdjustment()`, `EstimateStepSize()`,
+`EstimateTrials()`, and `MaxStepSize()`.  The backward step object can be
+accessed and modified with the `BackwardStep()` member method.
+
+If `L1Penalty` or `L1Constraint` is used as the backward step type, the value of
+lambda can be accessed with `BackwardStep().Lambda()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+// f(x) is the Rosenbrock function.
+RosenbrockFunction f;
+// g(x) is the L1 penalty (with lambda = 0.1).
+L1Penalty g(0.1);
+
+arma::mat coordinates = f.GetInitialPoint();
+// FISTA will optimize h(x) = f(x) + g(x),
+// which here is the L1-penalized Rosenbrock function.
+// The maximum step size will be automatically estimated.
+FISTA optimizer(g, 1000, 1e-8);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Forward-Backward Splitting (FBS)](#forward-backward-splitting-fbs)
+ * [FASTA](#fasta)
+ * [A Fast Iterative Shrinkage-Thresholding Algorithm for Linear Inverse Problems](https://www.ceremade.dauphine.fr/~carlier/FISTA)
  * [A Field Guide To Forward-Backward Splitting With A FASTA Implementation](https://arxiv.org/pdf/1411.3406.pdf)
  * [Proximal Operators on Wikipedia](https://en.wikipedia.org/wiki/Proximal_operator)
 
