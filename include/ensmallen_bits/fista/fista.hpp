@@ -67,12 +67,6 @@ class FISTA
 
   /**
    * Construct the FISTA optimizer with the given options.
-   *
-   * FISTA does not need to compute the objective value each iteration, and so
-   * by default this is not done.  This means that per-iteration loss
-   * information is not printed when `ENS_PRINT_INFO` is defined.  To compute
-   * per-iteration loss and print it, set `computeIterationLoss` to `true` (and
-   * define `ENS_PRINT_INFO`).
    */
   FISTA(BackwardStepType backwardStepType,
         const size_t maxIterations = 10000,
