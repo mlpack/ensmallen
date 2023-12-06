@@ -107,7 +107,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
 
   BaseGradType g(x.n_rows, x.n_cols); // Gradient.
   BaseMatType y = x; // Initialize y_1 = x_0.
-  BaseMatType lastX = x;
+  BaseMatType lastX;
   ElemType t = 1; // Initialize t_1 = 1.
   ElemType lastT = t;
 
@@ -160,6 +160,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
     ElemType lastFObj = 0.0;
     ElemType lastGObj = 0.0;
     BaseMatType lsLastX; // Only used in increasing mode.
+    BaseMatType xDiff;
 
     lastX = std::move(x);
     lastStepSize = currentStepSize;
@@ -208,8 +209,9 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
       terminate |= Callback::Evaluate(*this, f, x, fObj, callbacks...);
 
       // Compute Q_L(x, y) (the quadratic approximation), Eq. (2.5).
-      const ElemType q = yObj + dot(x - y, g) +
-          (1.0 / (2.0 * currentStepSize)) * dot(x - y, x - y) + gObj;
+      xDiff = x - y;
+      const ElemType q = yObj + dot(xDiff, g) +
+          (1.0 / (2.0 * currentStepSize)) * dot(xDiff, xDiff) + gObj;
 
       // If we're on the first iteration, we don't know if we should be
       // searching for a step size by increasing or decreasing the step size.
