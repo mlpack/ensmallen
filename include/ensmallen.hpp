@@ -102,6 +102,7 @@
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
+#include "ensmallen_bits/fasta/fasta.hpp"
 #include "ensmallen_bits/fbs/fbs.hpp"
 #include "ensmallen_bits/fista/fista.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
