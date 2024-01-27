@@ -149,7 +149,7 @@ class AdaptiveStepsize
           2.0);
 
       // Compute curvature.
-      double v = arma::trace(arma::trans(iterate - iteratePrev) *
+      double v = arma::trace(trans(iterate - iteratePrev) *
           (gradient - gradPrevIterate)) /
           std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
 
