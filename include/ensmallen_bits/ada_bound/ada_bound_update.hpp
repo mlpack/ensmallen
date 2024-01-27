@@ -151,7 +151,7 @@ class AdaBoundUpdate
 
        // Applies bounds on actual learning rate.
       iterate -= arma::clamp((stepSize *
-          std::sqrt(biasCorrection2) / biasCorrection1) / (arma::sqrt(v) +
+          std::sqrt(biasCorrection2) / biasCorrection1) / (sqrt(v) +
           parent.epsilon), lower, upper) % m;
     }
 

@@ -116,7 +116,7 @@ class YogiUpdate
       v -= (1 - parent.beta2) * arma::sign(v - gSquared) % gSquared;
 
       // Now update the iterate.
-      iterate -= stepSize * m / (arma::sqrt(v) + parent.epsilon);
+      iterate -= stepSize * m / (sqrt(v) + parent.epsilon);
     }
 
    private:

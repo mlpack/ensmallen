@@ -119,7 +119,7 @@ class AdaBeliefUpdate
       const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       // And update the iterate.
-      iterate -= ((m / biasCorrection1) * stepSize) / (arma::sqrt(s /
+      iterate -= ((m / biasCorrection1) * stepSize) / (sqrt(s /
           biasCorrection2) + parent.epsilon);
     }
 

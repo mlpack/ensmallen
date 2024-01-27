@@ -149,7 +149,7 @@ class SWATSUpdate
       const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       GradType delta = stepSize * m / biasCorrection1 /
-          (arma::sqrt(v / biasCorrection2) + parent.epsilon);
+          (sqrt(v / biasCorrection2) + parent.epsilon);
       iterate -= delta;
 
       const double deltaGradient = arma::dot(delta, gradient);

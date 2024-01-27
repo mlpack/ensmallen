@@ -122,7 +122,7 @@ class AMSGradUpdate
       vImproved = arma::max(vImproved, v);
 
       iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-                  m / (arma::sqrt(vImproved) + parent.epsilon);
+                  m / (sqrt(vImproved) + parent.epsilon);
     }
 
    private:
