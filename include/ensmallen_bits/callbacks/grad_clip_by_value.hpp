@@ -44,7 +44,7 @@ class GradClipByValue
                 const MatType& /* coordinates */,
                 MatType& gradient)
   {
-    gradient = arma::clamp(gradient, lower, upper);
+    gradient = clamp(gradient, lower, upper);
   }
 
  private:
