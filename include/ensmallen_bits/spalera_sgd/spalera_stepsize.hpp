@@ -197,7 +197,7 @@ class SPALeRAStepsize
         if (normGradient > parent.epsilon)
           relaxedSums += gradient * (parent.alpha / normGradient);
 
-        learningRates %= arma::exp((pow(relaxedSums, 2) - paramMean) *
+        learningRates %= exp((pow(relaxedSums, 2) - paramMean) *
             (parent.adaptRate / paramStd));
 
         previousIterate = iterate;

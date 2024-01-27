@@ -108,7 +108,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
   const arma::Row<ElemType> sigmoid = 1.0 / (1.0 +
-      arma::exp(-(parameters(0, 0) +
+      exp(-(parameters(0, 0) +
                 parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   // Assemble full objective function.  Often the objective function and the
@@ -145,7 +145,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
 
   // Calculate the sigmoid function values.
   const arma::Row<ElemType> sigmoid = 1.0 / (1.0 +
-      arma::exp(-(parameters(0, 0) +
+      exp(-(parameters(0, 0) +
                   parameters.tail_cols(parameters.n_elem - 1) *
                       predictors.cols(begin, begin + batchSize - 1))));
 
@@ -171,7 +171,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
   MatType regularization;
   regularization = lambda * parameters.tail_cols(parameters.n_elem - 1);
 
-  const arma::Row<ElemType> sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
+  const arma::Row<ElemType> sigmoids = (1 / (1 + exp(-parameters(0, 0)
       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(arma::size(parameters));
@@ -201,7 +201,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1);
   // Calculating the sigmoid function values.
-  const arma::Row<ElemType> sigmoids = 1.0 / (1.0 + arma::exp(-exponents));
+  const arma::Row<ElemType> sigmoids = 1.0 / (1.0 + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   gradient[0] = -arma::accu(responses.subvec(begin, begin + batchSize - 1) -
@@ -222,7 +222,7 @@ void LogisticRegressionFunction<MatType>::PartialGradient(
     arma::sp_mat& gradient) const
 {
   const arma::Row<typename MatType::elem_type> diffs = responses -
-      (1 / (1 + arma::exp(-parameters(0, 0) -
+      (1 / (1 + exp(-parameters(0, 0) -
                           parameters.tail_cols(parameters.n_elem - 1) *
                               predictors)));
 
@@ -258,7 +258,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
 
   // Calculate the sigmoid function values.
   const arma::Row<ElemType> sigmoids = 1.0 / (1.0 +
-      arma::exp(-(parameters(0, 0) +
+      exp(-(parameters(0, 0) +
                   parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(arma::size(parameters));
@@ -298,7 +298,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
 
   // Calculate the sigmoid function values.
   const arma::Row<ElemType> sigmoids = 1.0 / (1.0 +
-      arma::exp(-(parameters(0, 0) +
+      exp(-(parameters(0, 0) +
                   parameters.tail_cols(parameters.n_elem - 1) *
                       predictors.cols(begin, begin + batchSize - 1))));
 
@@ -329,7 +329,7 @@ void LogisticRegressionFunction<MatType>::Classify(
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
   labels = arma::conv_to<arma::Row<size_t>>::from((1.0 /
-      (1.0 + arma::exp(-parameters(0) -
+      (1.0 + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
       (1.0 - decisionBoundary));
 }
