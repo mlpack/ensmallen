@@ -142,7 +142,7 @@ namespace test {
     {
       arma::cube front(2, 1, numParetoPoints);
       arma::vec x = arma::linspace(0, 1, numParetoPoints);
-      arma::vec y = 1 - arma::square(x);
+      arma::vec y = 1 - square(x);
       for (size_t idx = 0; idx < numParetoPoints; ++idx)
         front.slice(idx) = arma::vec{ x(idx), y(idx) };
 

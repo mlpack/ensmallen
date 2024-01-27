@@ -117,7 +117,7 @@ class OptimisticAdamUpdate
       m += (1 - parent.beta1) * gradient;
 
       v *= parent.beta2;
-      v += (1 - parent.beta2) * arma::square(gradient);
+      v += (1 - parent.beta2) * square(gradient);
 
       GradType mCorrected = m / (1.0 - std::pow(parent.beta1, iteration));
       GradType vCorrected = v / (1.0 - std::pow(parent.beta2, iteration));

@@ -112,7 +112,7 @@ class YogiUpdate
       m *= parent.beta1;
       m += (1 - parent.beta1) * gradient;
 
-      const MatType gSquared = arma::square(gradient);
+      const MatType gSquared = square(gradient);
       v -= (1 - parent.beta2) * sign(v - gSquared) % gSquared;
 
       // Now update the iterate.
