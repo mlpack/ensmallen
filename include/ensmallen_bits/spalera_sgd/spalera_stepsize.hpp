@@ -191,7 +191,7 @@ class SPALeRAStepsize
             std::sqrt(iterate.n_elem);
 
         const typename MatType::elem_type normGradient =
-            std::sqrt(arma::accu(pow(gradient, 2)));
+            std::sqrt(accu(pow(gradient, 2)));
 
         relaxedSums *= (1 - parent.alpha);
         if (normGradient > parent.epsilon)

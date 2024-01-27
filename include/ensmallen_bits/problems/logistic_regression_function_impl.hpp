@@ -117,7 +117,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
   // terms for computational efficiency.  Note that the conversion causes some
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
-  const ElemType result = arma::accu(arma::log(1.0 -
+  const ElemType result = accu(arma::log(1.0 -
       arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoid %
       (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
 
@@ -152,7 +152,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
   // Compute the objective for the given batch size from a given point.
   arma::Row<ElemType> respD = arma::conv_to<arma::Row<ElemType>>::from(
       responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = arma::accu(arma::log(1.0 - respD + sigmoid %
+  const ElemType result = accu(arma::log(1.0 - respD + sigmoid %
       (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.
@@ -175,7 +175,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(arma::size(parameters));
-  gradient[0] = -arma::accu(responses - sigmoids);
+  gradient[0] = -accu(responses - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
       predictors.t() + regularization;
 }
@@ -204,7 +204,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
   const arma::Row<ElemType> sigmoids = 1.0 / (1.0 + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -arma::accu(responses.subvec(begin, begin + batchSize - 1) -
+  gradient[0] = -accu(responses.subvec(begin, begin + batchSize - 1) -
       sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
       responses.subvec(begin, begin + batchSize - 1)) *
@@ -230,7 +230,7 @@ void LogisticRegressionFunction<MatType>::PartialGradient(
 
   if (j == 0)
   {
-    gradient[j] = -arma::accu(diffs);
+    gradient[j] = -accu(diffs);
   }
   else
   {
@@ -262,12 +262,12 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
                   parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(arma::size(parameters));
-  gradient[0] = -arma::accu(responses - sigmoids);
+  gradient[0] = -accu(responses - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
       predictors.t() + regularization;
 
   // Now compute the objective function using the sigmoids.
-  ElemType result = arma::accu(arma::log(1.0 -
+  ElemType result = accu(arma::log(1.0 -
       arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoids %
       (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
 
@@ -303,7 +303,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
                       predictors.cols(begin, begin + batchSize - 1))));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -arma::accu(responses.subvec(begin, begin + batchSize - 1) -
+  gradient[0] = -accu(responses.subvec(begin, begin + batchSize - 1) -
       sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
       responses.subvec(begin, begin + batchSize - 1)) *
@@ -312,7 +312,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
   // Now compute the objective function using the sigmoids.
   arma::Row<ElemType> respD = arma::conv_to<arma::Row<ElemType>>::from(
       responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = arma::accu(arma::log(1.0 - respD + sigmoids %
+  const ElemType result = accu(arma::log(1.0 - respD + sigmoids %
       (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.
