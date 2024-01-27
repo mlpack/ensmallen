@@ -102,7 +102,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
   // For the regularization, we ignore the first term, which is the intercept
   // term and take every term except the last one in the decision variable.
   const ElemType regularization = 0.5 * lambda *
-      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+      dot(parameters.tail_cols(parameters.n_elem - 1),
       parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
@@ -140,7 +140,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
   // Calculate the regularization term.
   const ElemType regularization = lambda *
       (batchSize / (2.0 * predictors.n_cols)) *
-      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+      dot(parameters.tail_cols(parameters.n_elem - 1),
                 parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
@@ -234,7 +234,7 @@ void LogisticRegressionFunction<MatType>::PartialGradient(
   }
   else
   {
-    gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
+    gradient[j] = dot(-predictors.row(j - 1), diffs) + lambda *
       parameters(0, j);
   }
 }
@@ -253,7 +253,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
       parameters.tail_cols(parameters.n_elem - 1);
 
   const ElemType objectiveRegularization = lambda / 2.0 *
-      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+      dot(parameters.tail_cols(parameters.n_elem - 1),
                 parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
@@ -293,7 +293,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
 
   const ElemType objectiveRegularization = lambda *
       (batchSize / (2.0 * predictors.n_cols)) *
-      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+      dot(parameters.tail_cols(parameters.n_elem - 1),
                 parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.

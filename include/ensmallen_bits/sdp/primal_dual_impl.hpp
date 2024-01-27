@@ -388,7 +388,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
           aDense * eInvFaDenseT;
     }
 
-    const typename MatType::elem_type sxdotsz = arma::dot(sx, sz);
+    const typename MatType::elem_type sxdotsz = dot(sx, sz);
 
     // TODO(stephentu): computing these alphahats should take advantage of
     // the cholesky decomposition of X and Z which we should have available
@@ -424,7 +424,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     }
 
     // See (7.1)
-    const double sigma = std::pow(arma::dot(coordinates + alpha * dX,
+    const double sigma = std::pow(dot(coordinates + alpha * dX,
                                             dualCoordinates + beta * dZ) /
         sxdotsz, 3);
     const double mu = sigma * sxdotsz / n;
@@ -487,10 +487,10 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
         densePrimalInfeas * densePrimalInfeas);
 
-    primalObj = arma::dot(sdp.C(), coordinates);
+    primalObj = dot(sdp.C(), coordinates);
 
-    // const double dualObj = arma::dot(sdp.SparseB(), ySparse) +
-    //      arma::dot(sdp.DenseB(), yDense);
+    // const double dualObj = dot(sdp.SparseB(), ySparse) +
+    //      dot(sdp.DenseB(), yDense);
     // TODO: dualObj seems to be unused
 
     // const double dualityGap = primalObj - dualObj;
