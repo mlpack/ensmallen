@@ -61,7 +61,7 @@ class GreedyDescent
 
       function.PartialGradient(iterate, i, fGrad);
 
-      ElemType descent = arma::accu(fGrad);
+      ElemType descent = accu(fGrad);
       if (descent > bestDescent)
       {
         bestFeature = i;

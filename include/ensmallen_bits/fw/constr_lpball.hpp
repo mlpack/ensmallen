@@ -88,7 +88,7 @@ class ConstrLpBallSolver
     if (p == std::numeric_limits<double>::infinity())
     {
       // l-inf ball.
-      s = -arma::sign(v);
+      s = -sign(v);
       if (regFlag)
       {
         // Do element-wise division.
@@ -104,8 +104,8 @@ class ConstrLpBallSolver
         s = v;
 
       double q = 1 / (1.0 - 1.0 / p);
-      s = -arma::sign(v) % arma::pow(arma::abs(s), q - 1);
-      s = arma::normalise(s, p);
+      s = -sign(v) % pow(abs(s), q - 1);
+      s = normalise(s, p);
 
       if (regFlag)
         s = s / arma::conv_to<arma::Col<ElemType>>::from(lambda);
@@ -114,9 +114,9 @@ class ConstrLpBallSolver
     {
       // l1 ball, also used in OMP.
       if (regFlag)
-        s = arma::abs(v / arma::conv_to<arma::Col<ElemType>>::from(lambda));
+        s = abs(v / arma::conv_to<arma::Col<ElemType>>::from(lambda));
       else
-        s = arma::abs(v);
+        s = abs(v);
 
       arma::uword k = 0;
       s.max(k);  // k is the linear index of the largest element.

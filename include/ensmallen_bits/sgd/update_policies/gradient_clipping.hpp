@@ -101,7 +101,7 @@ class GradientClipping
       typedef typename GradType::elem_type GradElemType;
 
       // First, clip the gradient.
-      GradType clippedGradient = arma::clamp(gradient,
+      GradType clippedGradient = clamp(gradient,
           GradElemType(parent.minGradient),
           GradElemType(parent.maxGradient));
 

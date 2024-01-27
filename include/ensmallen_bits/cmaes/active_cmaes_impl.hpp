@@ -191,10 +191,10 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType covLower;
-    while (!arma::chol(covLower, C[idx0], "lower"))
+    while (!chol(covLower, C[idx0], "lower"))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
-    arma::eig_sym(eigval, eigvec, C[idx0]);
+    eig_sym(eigval, eigvec, C[idx0]);
 
     for (size_t j = 0; j < lambda; ++j)
     {
@@ -218,7 +218,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     }
 
     // Sort population.
-    idx = arma::sort_index(pObjective);
+    idx = sort_index(pObjective);
 
     step = w * pStep[idx(0)];
     for (size_t j = 1; j < mu; ++j)
@@ -308,7 +308,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
       }
     }
 
-    arma::eig_sym(eigval, eigvec, C[idx1]);
+    eig_sym(eigval, eigvec, C[idx1]);
     const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
     if (!negativeEigval.is_empty())
     {

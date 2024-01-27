@@ -113,13 +113,13 @@ class AdaBeliefUpdate
       m += (1 - parent.beta1) * gradient;
 
       s *= parent.beta2;
-      s += (1 - parent.beta2) * arma::pow(gradient - m, 2.0) + parent.epsilon;
+      s += (1 - parent.beta2) * pow(gradient - m, 2.0) + parent.epsilon;
 
       const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
       const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       // And update the iterate.
-      iterate -= ((m / biasCorrection1) * stepSize) / (arma::sqrt(s /
+      iterate -= ((m / biasCorrection1) * stepSize) / (sqrt(s /
           biasCorrection2) + parent.epsilon);
     }
 

@@ -84,7 +84,7 @@ namespace test {
 
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
-      ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+      ElemType sum = accu(coords(arma::span(1, numVariables - 1), 0));
       ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.);
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::sqrt(objectiveRatio) -
@@ -125,7 +125,7 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
-        ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+        ElemType sum = accu(coords(arma::span(1, numVariables - 1), 0));
         ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables - 1));
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
@@ -165,7 +165,7 @@ namespace test {
         //! Generate x and y coordinates for the region.
         arma::vec x = arma::linspace(
             region(0), region(1), regionDensity);
-        arma::vec y = 1 - arma::sqrt(x) - x
+        arma::vec y = 1 - sqrt(x) - x
             % arma::sin(10 * arma::datum::pi * x);
 
         //! Fill the front with the generated points.

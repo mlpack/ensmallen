@@ -35,14 +35,14 @@ namespace ens {
 template<typename MatType>
 inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
 {
-  MatType simplexSol = arma::abs(v);
+  MatType simplexSol = abs(v);
 
   // Already with L1 norm <= tau.
-  if (arma::accu(simplexSol) <= tau)
+  if (accu(simplexSol) <= tau)
     return;
 
-  simplexSol = arma::sort(simplexSol, "descend");
-  MatType simplexSum = arma::cumsum(simplexSol);
+  simplexSol = sort(simplexSol, "descend");
+  MatType simplexSum = cumsum(simplexSol);
 
   double nu = 0;
   size_t rho = simplexSol.n_rows - 1;
@@ -72,7 +72,7 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
 template<typename MatType>
 inline void Proximal::ProjectToL0Ball(MatType& v, int tau)
 {
-  arma::uvec indices = arma::sort_index(arma::abs(v));
+  arma::uvec indices = sort_index(abs(v));
   arma::uword numberToKill = v.n_elem - tau;
 
   for (arma::uword i = 0; i < numberToKill; i++)

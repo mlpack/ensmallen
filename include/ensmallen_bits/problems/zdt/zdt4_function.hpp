@@ -79,7 +79,7 @@ namespace test {
       arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
       MatType truncatedCoords = coords(arma::span(1, numVariables - 1), 0);
-      ElemType sum = arma::accu(arma::square(truncatedCoords) -
+      ElemType sum = accu(square(truncatedCoords) -
           10. * arma::cos(4 * arma::datum::pi * truncatedCoords));
       ElemType g = 1. + 10. * static_cast<ElemType>(numVariables - 1) + sum;
       ElemType objectiveRatio = objectives(0) / g;
@@ -121,7 +121,7 @@ namespace test {
 
         size_t numVariables = zdtClass.numVariables;
         MatType truncatedCoords = coords(arma::span(1, numVariables - 1), 0);
-        ElemType sum = arma::accu(arma::square(truncatedCoords) -
+        ElemType sum = accu(square(truncatedCoords) -
             10. * arma::cos(4 * arma::datum::pi * truncatedCoords));
         ElemType g = 1. + 10 * static_cast<ElemType>(numVariables - 1) + sum;
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
@@ -145,7 +145,7 @@ namespace test {
     {
       arma::cube front(2, 1, numParetoPoints);
       arma::vec x = arma::linspace(0, 1, numParetoPoints);
-      arma::vec y = 1 - arma::sqrt(x);
+      arma::vec y = 1 - sqrt(x);
       for (size_t idx = 0; idx < numParetoPoints; ++idx)
         front.slice(idx) = arma::vec{ x(idx), y(idx) };
 

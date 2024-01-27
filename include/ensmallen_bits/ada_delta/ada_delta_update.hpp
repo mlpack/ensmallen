@@ -104,7 +104,7 @@ class AdaDeltaUpdate
       // Accumulate gradient.
       meanSquaredGradient *= parent.rho;
       meanSquaredGradient += (1 - parent.rho) * (gradient % gradient);
-      GradType dx = arma::sqrt((meanSquaredGradientDx + parent.epsilon) /
+      GradType dx = sqrt((meanSquaredGradientDx + parent.epsilon) /
           (meanSquaredGradient + parent.epsilon)) % gradient;
 
       // Accumulate updates.

@@ -87,10 +87,10 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
     const arma::Mat<CubeElemType>& sMat = s.slice(previousPos);
     const arma::Mat<CubeElemType>& yMat = y.slice(previousPos);
     
-    const CubeElemType tmp   = arma::dot(yMat, yMat);
+    const CubeElemType tmp   = dot(yMat, yMat);
     const CubeElemType denom = (tmp != CubeElemType(0)) ? tmp : CubeElemType(1);
     
-    scalingFactor = arma::dot(sMat, yMat) / denom;
+    scalingFactor = dot(sMat, yMat) / denom;
   }
   else
   {
@@ -139,11 +139,11 @@ void L_BFGS::SearchDirection(const MatType& gradient,
     const arma::Mat<CubeElemType>& sMat = s.slice(translatedPosition);
     const arma::Mat<CubeElemType>& yMat = y.slice(translatedPosition);
     
-    const CubeElemType tmp = arma::dot(yMat, sMat);
+    const CubeElemType tmp = dot(yMat, sMat);
     
     rho[iterationNum - i] = (tmp != CubeElemType(0)) ? (1.0 / tmp) : CubeElemType(1);
     
-    alpha[iterationNum - i] = rho[iterationNum - i] * arma::dot(sMat, searchDirection);
+    alpha[iterationNum - i] = rho[iterationNum - i] * dot(sMat, searchDirection);
     
     searchDirection -= alpha[iterationNum - i] * yMat;
   }
@@ -154,7 +154,7 @@ void L_BFGS::SearchDirection(const MatType& gradient,
   {
     int translatedPosition = i % numBasis;
     double beta = rho[iterationNum - i - 1] *
-        arma::dot(y.slice(translatedPosition), searchDirection);
+        dot(y.slice(translatedPosition), searchDirection);
     searchDirection += (alpha[iterationNum - i - 1] - beta) *
         s.slice(translatedPosition);
   }
@@ -227,7 +227,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   // The initial linear term approximation in the direction of the
   // search direction.
   ElemType initialSearchDirectionDotGradient =
-      arma::dot(gradient, searchDirection);
+      dot(gradient, searchDirection);
 
   // If it is not a descent direction, just report failure.
   if ( (initialSearchDirectionDotGradient > 0.0)
@@ -287,7 +287,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
     else
     {
       // Check Wolfe's condition.
-      ElemType searchDirectionDotGradient = arma::dot(gradient,
+      ElemType searchDirectionDotGradient = dot(gradient,
           searchDirection);
 
       if (searchDirectionDotGradient < wolfe *

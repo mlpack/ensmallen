@@ -59,7 +59,7 @@ class RandomSelection
     typename MatType::elem_type objective = 0;
     for (size_t f = 0; f < std::floor(numFunctions * fraction); f += batchSize)
     {
-      const size_t selection = arma::as_scalar(arma::randi<arma::uvec>(
+      const size_t selection = as_scalar(arma::randi<arma::uvec>(
           1, arma::distr_param(0, numFunctions - 1)));
       const size_t effectiveBatchSize = std::min(batchSize,
           numFunctions - selection);

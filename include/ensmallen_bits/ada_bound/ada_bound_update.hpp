@@ -150,8 +150,8 @@ class AdaBoundUpdate
       const ElemType upper = fl * (1.0 + 1.0 / (parent.gamma * iteration));
 
        // Applies bounds on actual learning rate.
-      iterate -= arma::clamp((stepSize *
-          std::sqrt(biasCorrection2) / biasCorrection1) / (arma::sqrt(v) +
+      iterate -= clamp((stepSize *
+          std::sqrt(biasCorrection2) / biasCorrection1) / (sqrt(v) +
           parent.epsilon), lower, upper) % m;
     }
 

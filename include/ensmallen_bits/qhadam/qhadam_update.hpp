@@ -140,7 +140,7 @@ class QHAdamUpdate
       // QHAdam recovers Adam when v2 = v1 = 1.
       iterate -= stepSize *
           ((((1 - parent.v1) * gradient) + parent.v1 * mDash) /
-           (arma::sqrt(((1 - parent.v2) * (gradient % gradient)) +
+           (sqrt(((1 - parent.v2) * (gradient % gradient)) +
             parent.v2 * vDash) + parent.epsilon));
     }
 

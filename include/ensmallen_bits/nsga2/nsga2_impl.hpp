@@ -228,8 +228,8 @@ typename MatType::elem_type NSGA2::Optimize(
   ElemType performance = std::numeric_limits<ElemType>::max();
 
   for (const arma::Col<ElemType>& objective: calculatedObjectives)
-    if (arma::accu(objective) < performance)
-      performance = arma::accu(objective);
+    if (accu(objective) < performance)
+      performance = accu(objective);
 
   return performance;
 }

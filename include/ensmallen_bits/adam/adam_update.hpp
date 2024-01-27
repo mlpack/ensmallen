@@ -123,12 +123,12 @@ class AdamUpdate
       const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       /**
-       * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
+       * It should be noted that the term, m / (sqrt(v) + eps), in the
        * following expression is an approximation of the following actual term;
-       * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
+       * m / (sqrt(v) + (sqrt(biasCorrection2) * eps).
        */
       iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-          m / (arma::sqrt(v) + parent.epsilon);
+          m / (sqrt(v) + parent.epsilon);
     }
 
    private:

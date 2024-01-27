@@ -154,9 +154,9 @@ class AMSBoundUpdate
       vImproved = arma::max(vImproved, v);
 
       // Applies bounds on actual learning rate.
-      iterate -= arma::clamp((stepSize *
+      iterate -= clamp((stepSize *
           std::sqrt(biasCorrection2) / biasCorrection1) /
-          (arma::sqrt(vImproved) + parent.epsilon),  lower, upper) % m;
+          (sqrt(vImproved) + parent.epsilon),  lower, upper) % m;
     }
 
    private:

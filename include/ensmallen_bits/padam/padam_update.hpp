@@ -130,7 +130,7 @@ class PadamUpdate
       vImproved = arma::max(vImproved, v);
 
       iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-          m / arma::pow(vImproved + parent.epsilon, parent.partial);
+          m / pow(vImproved + parent.epsilon, parent.partial);
     }
 
    private:

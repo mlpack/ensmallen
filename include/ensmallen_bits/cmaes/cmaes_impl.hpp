@@ -95,12 +95,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  BaseMatType w = std::log(mu + 0.5) - arma::log(
+  BaseMatType w = std::log(mu + 0.5) - log(
       arma::linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
-  w /= arma::accu(w);
+  w /= accu(w);
 
   // Number of effective solutions.
-  const double muEffective = 1 / arma::accu(arma::pow(w, 2));
+  const double muEffective = 1 / accu(pow(w, 2));
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
@@ -195,10 +195,10 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType covLower;
-    while (!arma::chol(covLower, C[idx0], "lower"))
+    while (!chol(covLower, C[idx0], "lower"))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
-    arma::eig_sym(eigval, eigvec, C[idx0]);
+    eig_sym(eigval, eigvec, C[idx0]);
 
     for (size_t j = 0; j < lambda; ++j)
     {
@@ -222,7 +222,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     }
 
     // Sort population.
-    idx = arma::sort_index(pObjective);
+    idx = sort_index(pObjective);
 
     step = w(0) * pStep[idx(0)];
     for (size_t j = 1; j < mu; ++j)
@@ -324,7 +324,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       }
     }
 
-    arma::eig_sym(eigval, eigvec, C[idx1]);
+    eig_sym(eigval, eigvec, C[idx1]);
     const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
     if (!negativeEigval.is_empty())
     {

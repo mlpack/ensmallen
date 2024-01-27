@@ -62,18 +62,18 @@ template<typename MatType>
 static inline bool
 Alpha(const MatType& a, const MatType& dA, double tau, double& alpha)
 {
-  arma::mat l;
-  if (!arma::chol(l, a, "lower"))
+  MatType l;
+  if (!chol(l, a, "lower"))
     return false;
 
-  arma::mat lInv;
-  if (!arma::inv(lInv, arma::trimatl(l)))
+  MatType lInv;
+  if (!inv(lInv, trimatl(l)))
     return false;
 
   // TODO(stephentu): We only want the top eigenvalue, we should
   // be able to do better than full eigen-decomposition.
   arma::Col<typename MatType::elem_type> evals;
-  if (!arma::eig_sym(evals, -lInv * dA * lInv.t()))
+  if (!eig_sym(evals, -lInv * dA * lInv.t()))
     return false;
   const double alphahatInv = evals(evals.n_elem - 1);
   double alphahat = 1. / alphahatInv;
@@ -92,7 +92,7 @@ Alpha(const MatType& a, const MatType& dA, double tau, double& alpha)
  *
  * where A, H are symmetric matrices.
  *
- * TODO(stephentu): Note this method current uses arma's builtin arma::syl
+ * TODO(stephentu): Note this method current uses arma's builtin syl
  * method, which is overkill for this situation. See Lemma 7.2 of [AHO98] for
  * how to solve this Lyapunov equation using an eigenvalue decomposition of A.
  *
@@ -101,7 +101,7 @@ template<typename MatType, typename AType, typename BType>
 static inline void
 SolveLyapunov(MatType& x, const AType& a, const BType& h)
 {
-  arma::syl(x, a, a, -h);
+  syl(x, a, a, -h);
 }
 
 /**
@@ -156,7 +156,7 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   if (aDense.n_rows)
     rhs(arma::span(aSparse.n_rows, numConstraints - 1), 0) += aDense * eInvFrdRc;
 
-  if (!arma::solve(dy, m, rhs, arma::solve_opts::fast))
+  if (!solve(dy, m, rhs, arma::solve_opts::fast))
   {
     throw std::logic_error("PrimalDualSolver::SolveKKTSystem(): Could not "
         "solve KKT system.");
@@ -219,7 +219,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
         "be square n x n matrix.");
   }
 
-  if (!arma::chol(tmp, coordinates))
+  if (!chol(tmp, coordinates))
   {
     throw std::logic_error("PrimalDualSolver::Optimize(): coordinates needs to "
         "be symmetric positive definite.");
@@ -255,7 +255,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
         " to be square n x n matrix.");
   }
 
-  if (!arma::chol(tmp, dualCoordinates))
+  if (!chol(tmp, dualCoordinates))
   {
     throw std::logic_error("PrimalDualSolver::Optimize(): dualCoordinates needs"
         " to be symmetric positive definite.");
@@ -387,7 +387,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
           aDense * eInvFaDenseT;
     }
 
-    const typename MatType::elem_type sxdotsz = arma::dot(sx, sz);
+    const typename MatType::elem_type sxdotsz = dot(sx, sz);
 
     // TODO(stephentu): computing these alphahats should take advantage of
     // the cholesky decomposition of X and Z which we should have available
@@ -423,7 +423,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     }
 
     // See (7.1)
-    const double sigma = std::pow(arma::dot(coordinates + alpha * dX,
+    const double sigma = std::pow(dot(coordinates + alpha * dX,
                                             dualCoordinates + beta * dZ) /
         sxdotsz, 3);
     const double mu = sigma * sxdotsz / n;
@@ -486,10 +486,10 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
         densePrimalInfeas * densePrimalInfeas);
 
-    primalObj = arma::dot(sdp.C(), coordinates);
+    primalObj = dot(sdp.C(), coordinates);
 
-    // const double dualObj = arma::dot(sdp.SparseB(), ySparse) +
-    //      arma::dot(sdp.DenseB(), yDense);
+    // const double dualObj = dot(sdp.SparseB(), ySparse) +
+    //      dot(sdp.DenseB(), yDense);
     // TODO: dualObj seems to be unused
 
     // const double dualityGap = primalObj - dualObj;

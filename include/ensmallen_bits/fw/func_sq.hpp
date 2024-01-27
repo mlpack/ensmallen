@@ -41,7 +41,7 @@ class FuncSq
   double Evaluate(const arma::mat& coords)
   {
     arma::vec r = A * coords - b;
-    return arma::dot(r, r) * 0.5;
+    return dot(r, r) * 0.5;
   }
 
   /**

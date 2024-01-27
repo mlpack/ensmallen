@@ -63,7 +63,7 @@ typename MatType::elem_type LRSDPFunction<SDPType>::Evaluate(
   // Note: We don't require to update the R*R^T matrix here as the current
   // function is only used by AugLagrangian, which do not update the coordinates
   // matrix.
-  return arma::accu(SDP().C() % rrt.As<MatType>());
+  return accu(SDP().C() % rrt.As<MatType>());
 }
 
 template<typename SDPType>
@@ -138,7 +138,7 @@ UpdateObjective(typename MatType::elem_type& objective,
     // Here taking R^T * A first is not recommended as we are already
     // using pre-computed R * R^T. Taking R^T * A first will result in increase
     // in number of computations.
-    const double constraint = arma::accu(ais[i] % rrt) - bis[i];
+    const double constraint = accu(ais[i] % rrt) - bis[i];
     objective -= (lambda[lambdaOffset + i] * constraint);
     objective += (sigma / 2.) * constraint * constraint;
   }
@@ -161,7 +161,7 @@ UpdateGradient(MatType& s,
     // Here taking R^T * A first is not recommended as we are already
     // using pre-computed R * R^T. Taking R^T * A first will result in increase
     // in number of computations.
-    const double constraint = arma::accu(ais[i] % rrt) - bis[i];
+    const double constraint = accu(ais[i] % rrt) - bis[i];
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
   }

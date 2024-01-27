@@ -81,7 +81,7 @@ namespace test {
       objectives(0) = 1. - std::exp(-4 * coords[0]) *
           std::pow(std::sin(6 * arma::datum::pi * coords[0]), 6);
       ElemType sum = std::pow(
-          arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
+          accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
       ElemType g = 1. + 9. * sum;
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::pow(objectiveRatio, 2));
@@ -124,7 +124,7 @@ namespace test {
         size_t numVariables = zdtClass.numVariables;
 
         ElemType sum = std::pow(
-            arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
+            accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
         ElemType g = 1. + 9. * sum;
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
@@ -147,7 +147,7 @@ namespace test {
     {
       arma::cube front(2, 1, numParetoPoints);
       arma::vec x = arma::linspace(0.2807753191, 1, numParetoPoints);
-      arma::vec y = 1 - arma::square(x);
+      arma::vec y = 1 - square(x);
       for (size_t idx = 0; idx < numParetoPoints; ++idx)
         front.slice(idx) = arma::vec{ x(idx), y(idx) };
 

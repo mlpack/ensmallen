@@ -97,7 +97,7 @@ class BarzilaiBorweinDecay
       {
         // Step size selection based on Barzilai-Borwein (BB).
         stepSize = std::pow(arma::norm(iterate - iterate0), 2.0) /
-            (arma::dot(iterate - iterate0, fullGradient - fullGradient0) +
+            (dot(iterate - iterate0, fullGradient - fullGradient0) +
              parent.epsilon) / (double) numBatches;
 
         stepSize = std::min(stepSize, parent.maxStepSize);
