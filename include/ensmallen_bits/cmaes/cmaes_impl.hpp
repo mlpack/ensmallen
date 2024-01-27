@@ -100,7 +100,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   w /= arma::accu(w);
 
   // Number of effective solutions.
-  const double muEffective = 1 / arma::accu(arma::pow(w, 2));
+  const double muEffective = 1 / arma::accu(pow(w, 2));
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.

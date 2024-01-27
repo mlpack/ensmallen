@@ -104,7 +104,7 @@ class ConstrLpBallSolver
         s = v;
 
       double q = 1 / (1.0 - 1.0 / p);
-      s = -arma::sign(v) % arma::pow(arma::abs(s), q - 1);
+      s = -arma::sign(v) % pow(arma::abs(s), q - 1);
       s = arma::normalise(s, p);
 
       if (regFlag)
