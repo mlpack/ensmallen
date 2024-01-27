@@ -309,8 +309,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
   bool terminate = false;
 
   typename SDPType::ElemType primalObj = 0., alpha, beta;
-  terminate |= Callback::BeginOptimization(*this, sdp, coordinates,
-      callbacks...);
+  Callback::BeginOptimization(*this, sdp, coordinates, callbacks...);
   for (size_t iteration = 1; iteration != maxIterations && !terminate;
       iteration++)
   {

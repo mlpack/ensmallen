@@ -87,6 +87,7 @@ class Report
       TruncatePrint(initialCoordinates, outputMatrixSize);
       output << std::endl << "Final coordinates: " << std::endl;
       TruncatePrint(coordinates, outputMatrixSize);
+      output << std::endl;
     }
     else
     {
@@ -239,13 +240,14 @@ class Report
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void BeginEpoch(OptimizerType& /* optimizer */,
+  bool BeginEpoch(OptimizerType& /* optimizer */,
                   FunctionType& /* function */,
                   const MatType& /* coordinates */,
                   const size_t /* epoch */,
                   const double /* objective */)
   {
     epochCalls++;
+    return false;
   }
 
   /**
@@ -258,7 +260,7 @@ class Report
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& optimizer,
+  bool EndEpoch(OptimizerType& optimizer,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
@@ -282,6 +284,7 @@ class Report
       gradientsNorm.push_back(gradientNorm);
 
     SaveStepSize(optimizer);
+    return false;
   }
 
   /**
@@ -293,7 +296,7 @@ class Report
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void StepTaken(OptimizerType& optimizer,
+  bool StepTaken(OptimizerType& optimizer,
                  FunctionType& /* function */,
                  const MatType& /* coordinates */)
   {
@@ -307,6 +310,7 @@ class Report
 
       SaveStepSize(optimizer);
     }
+    return false;
   }
 
   /**
@@ -318,13 +322,14 @@ class Report
    * @param objectiveIn Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void Evaluate(OptimizerType& /* optimizer */,
+  bool Evaluate(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const double objectiveIn)
   {
     objective = objectiveIn;
     evaluateCalls++;
+    return false;
   }
 
   /**
@@ -337,7 +342,7 @@ class Report
     * @param objectiveIn Objective value of the current point.
     */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EvaluateConstraint(OptimizerType& /* optimizer */,
+  bool EvaluateConstraint(OptimizerType& /* optimizer */,
                           FunctionType& /* function */,
                           const MatType& /* coordinates */,
                           const size_t /* constraint */,
@@ -345,6 +350,7 @@ class Report
   {
     objective += objectiveIn;
     evaluateCalls++;
+    return false;
   }
 
   /**
@@ -356,7 +362,7 @@ class Report
    * @param gradientIn Matrix that holds the gradient.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void Gradient(OptimizerType& /* optimizer */,
+  bool Gradient(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const MatType& gradientIn)
@@ -364,6 +370,7 @@ class Report
     hasGradient = true;
     gradientNorm = arma::norm(gradientIn);
     gradientCalls++;
+    return false;
   }
 
   /**
@@ -376,13 +383,14 @@ class Report
    * @param gradient Matrix that holds the gradient;
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void GradientConstraint(OptimizerType& optimizer,
+  bool GradientConstraint(OptimizerType& optimizer,
                           FunctionType& function,
                           const MatType& coordinates,
                           const size_t /* constraint */,
                           const MatType& gradient)
   {
     Gradient(optimizer, function, coordinates, gradient);
+    return false;
   }
 
  private:

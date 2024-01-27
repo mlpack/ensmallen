@@ -141,7 +141,7 @@ typename MatType::elem_type NSGA2::Optimize(
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
 
   // Iterate until maximum number of generations is obtained.
-  terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
+  Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {

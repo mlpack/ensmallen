@@ -98,8 +98,7 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
   // Iterate till the objective is within tolerance or the maximum number of
   // allowed iterations is reached. If maxIterations is 0, this will iterate
   // till convergence.
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // Calculate the overall objective.

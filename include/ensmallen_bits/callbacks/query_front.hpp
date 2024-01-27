@@ -24,51 +24,55 @@ class QueryFront
    * Set up the query front callback class with the specified inputs.
    *
    * @param queryRate The frequency at which the Pareto Front is queried.
-   * @param paretoFrontArray A reference to a vector of cube to store the queried fronts.
+   * @param paretoFrontArray A reference to a vector of cube to store the
+   *     queried fronts.
    */
-    QueryFront(const size_t queryRate, std::vector<arma::cube>& paretoFrontArray) :
-        queryRate(queryRate),
-        paretoFrontArray(paretoFrontArray),
-        genCounter(0)
-    { /* Nothing to do here */ }
+  QueryFront(const size_t queryRate,
+             std::vector<arma::cube>& paretoFrontArray) :
+      queryRate(queryRate),
+      paretoFrontArray(paretoFrontArray),
+      genCounter(0)
+  { /* Nothing to do here */ }
 
-   /**
-    * Callback function called at the end of a single generational run.
-    *
-    * @param optimizer The optimizer used to update the function.
-    * @param function Function to optimize.
-    * @param coordinates Starting point.
-    * @param objectives The set of calculated objectives so far.
-    * @param frontIndices The indices of the members belonging to Pareto Front.
-    */
-    template<typename OptimizerType,
-             typename FunctionType,
-             typename MatType,
-             typename ObjectivesVecType,
-             typename IndicesType>
-    void GenerationalStepTaken(OptimizerType& opt,
-                               FunctionType& /* function */,
-                               const MatType& /* coordinates */,
-                               const ObjectivesVecType& objectives,
-                               const IndicesType& frontIndices)
+  /**
+   * Callback function called at the end of a single generational run.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param objectives The set of calculated objectives so far.
+   * @param frontIndices The indices of the members belonging to Pareto Front.
+   */
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename ObjectivesVecType,
+           typename IndicesType>
+  bool GenerationalStepTaken(OptimizerType& opt,
+                             FunctionType& /* function */,
+                             const MatType& /* coordinates */,
+                             const ObjectivesVecType& objectives,
+                             const IndicesType& frontIndices)
+  {
+    arma::cube currentParetoFront{};
+
+    if (genCounter % queryRate == 0)
     {
-      arma::cube currentParetoFront{};
-
-      if (genCounter % queryRate == 0)
+      currentParetoFront.resize(objectives[0].n_rows, objectives[0].n_cols,
+          frontIndices[0].size());
+      for (size_t solutionIdx = 0; solutionIdx < frontIndices[0].size();
+          ++solutionIdx)
       {
-        currentParetoFront.resize(objectives[0].n_rows, objectives[0].n_cols,
-            frontIndices[0].size());
-        for (size_t solutionIdx = 0; solutionIdx < frontIndices[0].size(); ++solutionIdx)
-        {
-          currentParetoFront.slice(solutionIdx) =
-              arma::conv_to<arma::mat>::from(objectives[frontIndices[0][solutionIdx]]);
-        }
-
-        paretoFrontArray.emplace_back(std::move(currentParetoFront));
+        currentParetoFront.slice(solutionIdx) = arma::conv_to<arma::mat>::from(
+            objectives[frontIndices[0][solutionIdx]]);
       }
 
-      ++genCounter;
+      paretoFrontArray.emplace_back(std::move(currentParetoFront));
     }
+
+    ++genCounter;
+    return false;
+  }
 
 
  private:

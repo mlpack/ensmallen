@@ -130,6 +130,9 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
   BaseMatType transformedIterate = transformationPolicy.Transform(iterate);
 
+  // Controls early termination of the optimization process.
+  bool terminate = false;
+
   // Calculate the first objective function.
   ElemType currentObjective = 0;
   for (size_t f = 0; f < numFunctions; f += batchSize)
@@ -139,8 +142,8 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
         effectiveBatchSize);
     currentObjective += objective;
 
-    Callback::Evaluate(*this, function, transformedIterate, objective,
-        callbacks...);
+    terminate |= Callback::Evaluate(*this, function, transformedIterate,
+        objective, callbacks...);
   }
 
   ElemType overallObjective = currentObjective;
@@ -168,12 +171,9 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   // The current visitation order (sorted by population objectives).
   arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
 
-  // Controls early termination of the optimization process.
-  bool terminate = false;
-
   // Now iterate!
-  terminate |= Callback::BeginOptimization(*this, function, 
-      transformedIterate, callbacks...);
+  Callback::BeginOptimization(*this, function, transformedIterate,
+      callbacks...);
 
   size_t idx0, idx1;
 
@@ -213,7 +213,8 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
       // Calculate the objective function.
       pObjective(idx(j)) = selectionPolicy.Select(function, batchSize,
-          transformationPolicy.Transform(pPosition[idx(j)]), callbacks...);
+          transformationPolicy.Transform(pPosition[idx(j)]), terminate,
+          callbacks...);
     }
 
     // Sort population.
@@ -227,7 +228,8 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
-      transformationPolicy.Transform(mPosition[idx1]), callbacks...);
+        transformationPolicy.Transform(mPosition[idx1]), terminate,
+        callbacks...);
 
     // Update best parameters.
     if (currentObjective < overallObjective)

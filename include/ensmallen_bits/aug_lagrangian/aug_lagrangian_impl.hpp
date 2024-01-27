@@ -117,8 +117,8 @@ AugLagrangian::Optimize(
   for (size_t i = 0; i < function.NumConstraints(); i++)
   {
     const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates), 2);
-    Callback::EvaluateConstraint(*this, function, coordinates, i, p,
-          callbacks...);
+    terminate |= Callback::EvaluateConstraint(*this, function, coordinates, i,
+        p, callbacks...);
 
     penalty += p;
   }
@@ -129,8 +129,7 @@ AugLagrangian::Optimize(
   // The odd comparison allows user to pass maxIterations = 0 (i.e. no limit on
   // number of iterations).
   size_t it;
-  terminate |= Callback::BeginOptimization(*this, function, coordinates,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, coordinates, callbacks...);
   for (it = 0; it != (maxIterations - 1) && !terminate; it++)
   {
     Info << "AugLagrangian on iteration " << it
@@ -143,7 +142,7 @@ AugLagrangian::Optimize(
 
     const ElemType objective = function.Evaluate(coordinates);
 
-    Callback::Evaluate(*this, function, coordinates, objective,
+    terminate |= Callback::Evaluate(*this, function, coordinates, objective,
         callbacks...);
 
     // Check if we are done with the entire optimization (the threshold we are
@@ -170,14 +169,17 @@ AugLagrangian::Optimize(
     {
       const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates),
           2);
-      Callback::EvaluateConstraint(*this, function, coordinates, i, p,
-          callbacks...);
+      terminate |= Callback::EvaluateConstraint(*this, function, coordinates, i,
+          p, callbacks...);
 
       penalty += p;
     }
 
-    Info << "Penalty is " << penalty << " (threshold "
-        << penaltyThreshold << ")." << std::endl;
+    Info << "Penalty is " << penalty << " (threshold " << penaltyThreshold
+        << ")." << std::endl;
+
+    if (terminate)
+      break;
 
     if (penalty < penaltyThreshold) // We update lambda.
     {
@@ -186,8 +188,8 @@ AugLagrangian::Optimize(
       for (size_t i = 0; i < function.NumConstraints(); i++)
       {
         const ElemType p = function.EvaluateConstraint(i, coordinates);
-        Callback::EvaluateConstraint(*this, function, coordinates, i, p,
-          callbacks...);
+        terminate |= Callback::EvaluateConstraint(*this, function, coordinates,
+            i, p, callbacks...);
 
         augfunc.Lambda()[i] -= augfunc.Sigma() * p;
       }

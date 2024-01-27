@@ -98,7 +98,7 @@ class ProgressBar
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void BeginEpoch(OptimizerType& /* optimizer */,
+  bool BeginEpoch(OptimizerType& /* optimizer */,
                   FunctionType& /* function */,
                   const MatType& /* coordinates */,
                   const size_t epochIn,
@@ -113,6 +113,8 @@ class ProgressBar
 
     epoch = epochIn;
     newEpoch = true;
+
+    return false;
   }
 
   /**
@@ -124,7 +126,7 @@ class ProgressBar
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void StepTaken(OptimizerType& /* optimizer */,
+  bool StepTaken(OptimizerType& /* optimizer */,
                  FunctionType& /* function */,
                  const MatType& /* coordinates */)
   {
@@ -163,6 +165,8 @@ class ProgressBar
     output.flush();
 
     stepTimer.tic();
+
+    return false;
   }
 
   /**
@@ -174,13 +178,14 @@ class ProgressBar
    * @param objectiveIn Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void Evaluate(OptimizerType& optimizer,
+  bool Evaluate(OptimizerType& optimizer,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const double objectiveIn)
   {
     objective += objectiveIn / optimizer.BatchSize();
     steps++;
+    return false;
   }
 
   /**
@@ -193,7 +198,7 @@ class ProgressBar
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& /* optimizer */,
+  bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
@@ -221,6 +226,7 @@ class ProgressBar
     output << "] " << progress << "% - " << epochTimerElapsed
         << "s/epoch; " << stepTime << "ms/step; loss: " << objective  <<  "\n";
     output.flush();
+    return false;
   }
 
  private:

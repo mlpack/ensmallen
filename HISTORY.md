@@ -1,5 +1,19 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+
+### ensmallen 2.21.0: "Bent Antenna"
+###### 2023-11-27
+ * Clarify return values for different callback types
+   ([#383](https://github.com/mlpack/ensmallen/pull/383)).
+
+ * Fix return types of callbacks
+   ([#382](https://github.com/mlpack/ensmallen/pull/382)).
+
+ * Minor cleanup for printing optimization reports via `Report()`
+   ([#385](https://github.com/mlpack/ensmallen/pull/385)).
+
+### ensmallen 2.20.0: "Stripped Bolt Head"
+###### 2023-10-02
  * Implementation of Active CMAES
    ([#367](https://github.com/mlpack/ensmallen/pull/367)).
 
@@ -8,6 +22,9 @@
 
  * Fix CNE test tolerances
    ([#360](https://github.com/mlpack/ensmallen/pull/360)).
+
+ * Rename `SCD` optimizer, to `CD`
+   ([#379](https://github.com/mlpack/ensmallen/pull/379)).
 
 ### ensmallen 2.19.1: "Eight Ball Deluxe"
 ###### 2023-01-30
@@ -30,7 +47,7 @@
 
  * Add AdaSqrt optimizer
    ([#234](https://github.com/mlpack/ensmallen/pull/234)).
-   
+
  * Bump check for minimum supported version of Armadillo
    ([#342](https://github.com/mlpack/ensmallen/pull/342)).
 

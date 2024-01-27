@@ -62,8 +62,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
   // Controls early termination of the optimization process.
   bool terminate = false;
 
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t k = 0; k < maxIterations && !terminate; ++k)
   {
     // Output current objective function.
@@ -101,13 +100,17 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
 
     iterate += ck * spVector;
     const double fPlus = function.Evaluate(iterate);
-    Callback::Evaluate(*this, function, iterate, fPlus, callbacks...);
+    terminate |= Callback::Evaluate(*this, function, iterate, fPlus,
+        callbacks...);
 
     iterate -= 2 * ck * spVector;
     const double fMinus = function.Evaluate(iterate);
-    Callback::Evaluate(*this, function, iterate, fMinus, callbacks...);
+    terminate |= Callback::Evaluate(*this, function, iterate, fMinus,
+        callbacks...);
 
     iterate += ck * spVector;
+    if (terminate)
+      break;
 
     gradient = (fPlus - fMinus) * (1 / (2 * ck * spVector));
     iterate -= akLocal * gradient;
@@ -115,13 +118,14 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
 
     overallObjective = function.Evaluate(iterate);
-    Callback::Evaluate(*this, function, iterate, overallObjective,
+    terminate |= Callback::Evaluate(*this, function, iterate, overallObjective,
         callbacks...);
   }
 
-  // Calculate final objective.
+  // Calculate final objective.  The optimization is over, so the result of the
+  // callback doesn'tatter.
   const ElemType objective = function.Evaluate(iterate);
-  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+  (void) Callback::Evaluate(*this, function, iterate, objective, callbacks...);
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return objective;
