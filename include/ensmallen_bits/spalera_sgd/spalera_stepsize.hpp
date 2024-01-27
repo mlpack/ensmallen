@@ -172,7 +172,7 @@ class SPALeRAStepsize
         // Faster.
         learningRates /= 2;
 
-        if (arma::any(arma::vectorise(learningRates) <= 1e-15))
+        if (arma::any(vectorise(learningRates) <= 1e-15))
         {
           // Stop because learning rate too low.
           return false;

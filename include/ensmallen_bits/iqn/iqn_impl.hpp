@@ -133,8 +133,8 @@ IQN::Optimize(SeparableFunctionType& functionIn,
         terminate |= Callback::Gradient(*this, function, iterate, gradient,
             callbacks...);
 
-        const BaseMatType s = arma::vectorise(iterate - t[it]);
-        const BaseGradType yy = arma::vectorise(gradient - y[it]);
+        const BaseMatType s = vectorise(iterate - t[it]);
+        const BaseGradType yy = vectorise(gradient - y[it]);
 
         const BaseGradType stochasticHessian = Q[it] + yy * yy.t() /
             arma::as_scalar(yy.t() * s) - Q[it] * s * s.t() *
@@ -145,7 +145,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
 
         // Update aggregate Hessian-variable product.
         u += arma::reshape((1.0 / numBatches) * (stochasticHessian *
-            arma::vectorise(iterate) - Q[it] * arma::vectorise(t[it])),
+            vectorise(iterate) - Q[it] * vectorise(t[it])),
             u.n_rows, u.n_cols);;
 
         // Update aggregate gradient.
@@ -156,7 +156,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
         y[it] = std::move(gradient);
         t[it] = iterate;
 
-        iterate = arma::reshape(stepSize * B.i() * (u.t() - arma::vectorise(g)),
+        iterate = arma::reshape(stepSize * B.i() * (u.t() - vectorise(g)),
             iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
 
         terminate |= Callback::StepTaken(*this, function, iterate,
