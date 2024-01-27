@@ -144,7 +144,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
         B += (1.0 / numBatches) * (stochasticHessian - Q[it]);
 
         // Update aggregate Hessian-variable product.
-        u += arma::reshape((1.0 / numBatches) * (stochasticHessian *
+        u += reshape((1.0 / numBatches) * (stochasticHessian *
             vectorise(iterate) - Q[it] * vectorise(t[it])),
             u.n_rows, u.n_cols);;
 
@@ -156,7 +156,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
         y[it] = std::move(gradient);
         t[it] = iterate;
 
-        iterate = arma::reshape(stepSize * B.i() * (u.t() - vectorise(g)),
+        iterate = reshape(stepSize * B.i() * (u.t() - vectorise(g)),
             iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
 
         terminate |= Callback::StepTaken(*this, function, iterate,
