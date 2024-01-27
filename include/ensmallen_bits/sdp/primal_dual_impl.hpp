@@ -73,7 +73,7 @@ Alpha(const MatType& a, const MatType& dA, double tau, double& alpha)
   // TODO(stephentu): We only want the top eigenvalue, we should
   // be able to do better than full eigen-decomposition.
   arma::Col<typename MatType::elem_type> evals;
-  if (!arma::eig_sym(evals, -lInv * dA * lInv.t()))
+  if (!eig_sym(evals, -lInv * dA * lInv.t()))
     return false;
   const double alphahatInv = evals(evals.n_elem - 1);
   double alphahat = 1. / alphahatInv;

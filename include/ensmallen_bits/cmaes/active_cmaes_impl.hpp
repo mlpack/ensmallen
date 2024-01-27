@@ -194,7 +194,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     while (!arma::chol(covLower, C[idx0], "lower"))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
-    arma::eig_sym(eigval, eigvec, C[idx0]);
+    eig_sym(eigval, eigvec, C[idx0]);
 
     for (size_t j = 0; j < lambda; ++j)
     {
@@ -308,7 +308,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
       }
     }
 
-    arma::eig_sym(eigval, eigvec, C[idx1]);
+    eig_sym(eigval, eigvec, C[idx1]);
     const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
     if (!negativeEigval.is_empty())
     {
