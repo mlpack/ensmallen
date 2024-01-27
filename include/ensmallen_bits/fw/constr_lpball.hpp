@@ -104,7 +104,7 @@ class ConstrLpBallSolver
         s = v;
 
       double q = 1 / (1.0 - 1.0 / p);
-      s = -sign(v) % pow(arma::abs(s), q - 1);
+      s = -sign(v) % pow(abs(s), q - 1);
       s = arma::normalise(s, p);
 
       if (regFlag)
@@ -114,9 +114,9 @@ class ConstrLpBallSolver
     {
       // l1 ball, also used in OMP.
       if (regFlag)
-        s = arma::abs(v / arma::conv_to<arma::Col<ElemType>>::from(lambda));
+        s = abs(v / arma::conv_to<arma::Col<ElemType>>::from(lambda));
       else
-        s = arma::abs(v);
+        s = abs(v);
 
       arma::uword k = 0;
       s.max(k);  // k is the linear index of the largest element.

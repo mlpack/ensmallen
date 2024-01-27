@@ -120,7 +120,7 @@ class AdaMaxUpdate
 
       // Update the exponentially weighted infinity norm.
       u *= parent.beta2;
-      u = arma::max(u, arma::abs(gradient));
+      u = arma::max(u, abs(gradient));
 
       const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
 
