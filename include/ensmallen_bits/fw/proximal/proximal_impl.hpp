@@ -42,7 +42,7 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
     return;
 
   simplexSol = sort(simplexSol, "descend");
-  MatType simplexSum = arma::cumsum(simplexSol);
+  MatType simplexSum = cumsum(simplexSol);
 
   double nu = 0;
   size_t rho = simplexSol.n_rows - 1;
