@@ -62,7 +62,7 @@ class BayesianBootstrap
         VecType referenceDirection(numObjectives + 1, arma::fill::randu);
         referenceDirection(0) = 0;
         referenceDirection(numObjectives) = 1;
-        referenceDirection = arma::sort(referenceDirection);
+        referenceDirection = sort(referenceDirection);
         referenceDirection = arma::diff(referenceDirection);
         weights.col(pointIdx) = std::move(referenceDirection) + epsilon;
       }

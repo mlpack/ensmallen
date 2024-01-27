@@ -41,7 +41,7 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
   if (arma::accu(simplexSol) <= tau)
     return;
 
-  simplexSol = arma::sort(simplexSol, "descend");
+  simplexSol = sort(simplexSol, "descend");
   MatType simplexSum = arma::cumsum(simplexSol);
 
   double nu = 0;
@@ -72,7 +72,7 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
 template<typename MatType>
 inline void Proximal::ProjectToL0Ball(MatType& v, int tau)
 {
-  arma::uvec indices = arma::sort_index(abs(v));
+  arma::uvec indices = sort_index(abs(v));
   arma::uword numberToKill = v.n_elem - tau;
 
   for (arma::uword i = 0; i < numberToKill; i++)

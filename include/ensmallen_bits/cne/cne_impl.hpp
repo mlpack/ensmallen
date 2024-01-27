@@ -170,7 +170,7 @@ inline void CNE::Reproduce(std::vector<MatType>& population,
                            arma::uvec& index)
 {
   // Sort fitness values. Smaller fitness value means better performance.
-  index = arma::sort_index(fitnessValues);
+  index = sort_index(fitnessValues);
 
   // First parent.
   size_t mom;

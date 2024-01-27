@@ -222,7 +222,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     }
 
     // Sort population.
-    idx = arma::sort_index(pObjective);
+    idx = sort_index(pObjective);
 
     step = w(0) * pStep[idx(0)];
     for (size_t j = 1; j < mu; ++j)
