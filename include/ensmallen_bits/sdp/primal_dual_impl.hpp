@@ -63,7 +63,7 @@ static inline bool
 Alpha(const MatType& a, const MatType& dA, double tau, double& alpha)
 {
   arma::mat l;
-  if (!arma::chol(l, a, "lower"))
+  if (!chol(l, a, "lower"))
     return false;
 
   arma::mat lInv;
@@ -219,7 +219,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
         "be square n x n matrix.");
   }
 
-  if (!arma::chol(tmp, coordinates))
+  if (!chol(tmp, coordinates))
   {
     throw std::logic_error("PrimalDualSolver::Optimize(): coordinates needs to "
         "be symmetric positive definite.");
@@ -255,7 +255,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
         " to be square n x n matrix.");
   }
 
-  if (!arma::chol(tmp, dualCoordinates))
+  if (!chol(tmp, dualCoordinates))
   {
     throw std::logic_error("PrimalDualSolver::Optimize(): dualCoordinates needs"
         " to be symmetric positive definite.");

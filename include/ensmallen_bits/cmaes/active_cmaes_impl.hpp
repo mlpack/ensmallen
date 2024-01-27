@@ -191,7 +191,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType covLower;
-    while (!arma::chol(covLower, C[idx0], "lower"))
+    while (!chol(covLower, C[idx0], "lower"))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
     eig_sym(eigval, eigvec, C[idx0]);
