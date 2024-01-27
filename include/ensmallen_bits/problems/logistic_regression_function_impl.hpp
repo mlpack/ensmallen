@@ -117,7 +117,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
   // terms for computational efficiency.  Note that the conversion causes some
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
-  const ElemType result = accu(arma::log(1.0 -
+  const ElemType result = accu(log(1.0 -
       arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoid %
       (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
 
@@ -152,7 +152,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
   // Compute the objective for the given batch size from a given point.
   arma::Row<ElemType> respD = arma::conv_to<arma::Row<ElemType>>::from(
       responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = accu(arma::log(1.0 - respD + sigmoid %
+  const ElemType result = accu(log(1.0 - respD + sigmoid %
       (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.
@@ -267,7 +267,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
       predictors.t() + regularization;
 
   // Now compute the objective function using the sigmoids.
-  ElemType result = accu(arma::log(1.0 -
+  ElemType result = accu(log(1.0 -
       arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoids %
       (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
 
@@ -312,7 +312,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
   // Now compute the objective function using the sigmoids.
   arma::Row<ElemType> respD = arma::conv_to<arma::Row<ElemType>>::from(
       responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = accu(arma::log(1.0 - respD + sigmoids %
+  const ElemType result = accu(log(1.0 - respD + sigmoids %
       (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.

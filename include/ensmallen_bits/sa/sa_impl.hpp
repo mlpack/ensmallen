@@ -222,7 +222,7 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
   MatType target;
   target.copy_size(accept);
   target.fill(0.44);
-  moveSize = arma::log(moveSize);
+  moveSize = log(moveSize);
   moveSize += gain * (accept / (double) nMoves - target);
   moveSize = exp(moveSize);
 

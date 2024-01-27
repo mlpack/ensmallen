@@ -95,7 +95,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  BaseMatType w = std::log(mu + 0.5) - arma::log(
+  BaseMatType w = std::log(mu + 0.5) - log(
       arma::linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
   w /= accu(w);
 
