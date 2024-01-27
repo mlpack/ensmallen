@@ -82,7 +82,7 @@ bool SDP<ObjectiveMatrixType,
     A.row(NumSparseConstraints() + i) = sa.t();
   }
 
-  const DenseConstraintMatrixType s = arma::svd(A);
+  const DenseConstraintMatrixType s = svd(A);
   return s(s.n_elem - 1) > 1e-5;
 }
 
