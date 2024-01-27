@@ -137,8 +137,8 @@ IQN::Optimize(SeparableFunctionType& functionIn,
         const BaseGradType yy = vectorise(gradient - y[it]);
 
         const BaseGradType stochasticHessian = Q[it] + yy * yy.t() /
-            arma::as_scalar(yy.t() * s) - Q[it] * s * s.t() *
-            Q[it] / arma::as_scalar(s.t() * Q[it] * s);
+            as_scalar(yy.t() * s) - Q[it] * s * s.t() *
+            Q[it] / as_scalar(s.t() * Q[it] * s);
 
         // Update aggregate Hessian approximation.
         B += (1.0 / numBatches) * (stochasticHessian - Q[it]);
