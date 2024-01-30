@@ -116,7 +116,8 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
     if (NOT "${COOT_USE_CUDA}" STREQUAL "" AND NOT HAVE_CUDA)
       # FindCUDA is deprecated since version 3.10 and replaced with
       # FindCUDAToolkit wich was added in CMake 3.17.
-      if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS "30.17")
+      message(STATUS "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
+      if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS "3.17")
         set(CUDA_FIND_QUIETLY true)
         find_package(CUDA)
 
@@ -140,6 +141,7 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
               "${CUDA_CUBLAS_LIBRARIES}"
               "${CUDA_curand_LIBRARY}"
               "${CUDA_cusolver_LIBRARY}")
+          set(CUDA_INCLUDE_DIRS "")
           set(HAVE_CUDA true)
 
         endif ()
@@ -151,14 +153,20 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
 	        message(STATUS "CUDA! includes: ${CUDAToolkit_INCLUDE_DIRS}")
 	        message(STATUS "CUDA libraries: ${CUDAToolkit_LIBRARY_DIR}")
 
+	  set(CUDA_LIBRARIES CUDA::cudart CUDA::cuda_driver)
+          set(CUDA_CUBLAS_LIBRARIES CUDA::cublas)
+          set(CUDA_curand_LIBRARY CUDA::curand)
+          set(CUDA_cusolver_LIBRARY CUDA::cusolver)
+          set(CUDA_nvrtc_LIBRARY CUDA::nvrtc)
+
           set(SUPPORT_INCLUDE_DIRS "${SUPPORT_INCLUDE_DIRS}"
               "${CUDAToolkit_INCLUDE_DIRS}")
           set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}"
-              "${CUDA::cuda_driver}"
-              "${CUDA::cublas}"
-              "${CUDA::curand}"
-              "${CUDA::cusolver}"
-              "${CUDA::cudart}")
+              CUDA_LIBRARIES
+	      CUDA_CUBLAS_LIBRARIES
+	      CUDA_curand_LIBRARY
+	      CUDA_cusolver_LIBRARY
+	      CUDA_nvrtc_LIBRARY)
           set(HAVE_CUDA true)
         endif()
       endif ()
@@ -200,7 +208,7 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
     # If we haven't found BLAS, try.
     if (NOT "${COOT_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
       # Search for BLAS.
-      set(OpenBLAS_FIND_QUIETLY true)
+      set(OpenBLAS_FIND_QUIETLY false)
       include(ARMA_FindOpenBLAS)
       set(CBLAS_FIND_QUIETLY true)
       include(ARMA_FindCBLAS)
