@@ -79,6 +79,9 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
 {
   typedef typename CubeType::elem_type CubeElemType;
 
+  constexpr const CubeElemType tol =
+      100 * std::numeric_limits<CubeElemType>::epsilon();
+
   double scalingFactor;
   if (iterationNum > 0)
   {
@@ -86,17 +89,17 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
     // Get s and y matrices once instead of multiple times.
     const arma::Mat<CubeElemType>& sMat = s.slice(previousPos);
     const arma::Mat<CubeElemType>& yMat = y.slice(previousPos);
-    
+
     const CubeElemType tmp   = arma::dot(yMat, yMat);
-    const CubeElemType denom = (tmp != CubeElemType(0)) ? tmp : CubeElemType(1);
-    
+    const CubeElemType denom = (tmp >= tol) ? tmp : CubeElemType(1);
+
     scalingFactor = arma::dot(sMat, yMat) / denom;
   }
   else
   {
     const CubeElemType tmp = arma::norm(gradient, "fro");
-    
-    scalingFactor = (tmp != CubeElemType(0)) ? (1.0 / tmp) : 1.0;
+
+    scalingFactor = (tmp >= tol) ? (1.0 / tmp) : 1.0;
   }
 
   return scalingFactor;
@@ -135,16 +138,18 @@ void L_BFGS::SearchDirection(const MatType& gradient,
   for (size_t i = iterationNum; i != limit; i--)
   {
     int translatedPosition = (i + (numBasis - 1)) % numBasis;
-    
+
     const arma::Mat<CubeElemType>& sMat = s.slice(translatedPosition);
     const arma::Mat<CubeElemType>& yMat = y.slice(translatedPosition);
-    
+
     const CubeElemType tmp = arma::dot(yMat, sMat);
-    
-    rho[iterationNum - i] = (tmp != CubeElemType(0)) ? (1.0 / tmp) : CubeElemType(1);
-    
-    alpha[iterationNum - i] = rho[iterationNum - i] * arma::dot(sMat, searchDirection);
-    
+
+    rho[iterationNum - i] = (tmp != CubeElemType(0)) ? (1.0 / tmp) :
+        CubeElemType(1);
+
+    alpha[iterationNum - i] = rho[iterationNum - i] *
+        arma::dot(sMat, searchDirection);
+
     searchDirection -= alpha[iterationNum - i] * yMat;
   }
 
@@ -410,7 +415,8 @@ L_BFGS::Optimize(FunctionType& function,
     //
     // But don't do this on the first iteration to ensure we always take at
     // least one descent step.
-    // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo 12.4
+    // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo
+    // 12.4
     if (arma::norm(gradient, 2) < minGradientNorm)
     {
       Info << "L-BFGS gradient norm too small (terminating successfully)."
@@ -442,7 +448,7 @@ L_BFGS::Optimize(FunctionType& function,
            << std::endl;
       break;
       }
-    
+
     // Build an approximation to the Hessian and choose the search
     // direction for the current iteration.
     SearchDirection(gradient, itNum, scalingFactor, s, y, searchDirection);
