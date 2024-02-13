@@ -48,7 +48,7 @@ class QueryFront
            typename MatType,
            typename ObjectivesVecType,
            typename IndicesType>
-  bool GenerationalStepTaken(OptimizerType& opt,
+  bool GenerationalStepTaken(OptimizerType& /* opt */,
                              FunctionType& /* function */,
                              const MatType& /* coordinates */,
                              const ObjectivesVecType& objectives,
