@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.21.1: "Bent Antenna"
+###### 2024-02-15
  * Fix numerical precision issues for small-gradient L-BFGS scaling factor
    computations ([#392](https://github.com/mlpack/ensmallen/pull/392)).
 
