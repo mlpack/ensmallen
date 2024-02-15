@@ -2,6 +2,9 @@
 # just installs the headers to the install location, and optionally builds the
 # test program.
 cmake_minimum_required(VERSION 3.3.2)
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")  # ensure the tests are built with optimisation
+endif ()
 project(ensmallen
         LANGUAGES C CXX)
 
