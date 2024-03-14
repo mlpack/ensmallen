@@ -53,7 +53,7 @@ namespace test {
  */
 
   template <typename MatType = arma::mat>
-  class DTLZ1
+  class DTLZ7
   {
     private:
 
@@ -64,7 +64,7 @@ namespace test {
 
     public:
 
-      DTLZ1(size_t numParetoPoint = 136) :
+      DTLZ7(size_t numParetoPoint = 136) :
         numParetoPoints(numParetoPoint),
             objectiveF1(0, *this),
             objectiveF2(1, *this),
@@ -102,7 +102,7 @@ namespace test {
         innerSum = (9.0 / k) * arma::accu(coords.rows(numObjectives - 1, numVariables - 1) + 1.0, 0); 
         
 
-        return 100 * (k + innerSum);
+        return innerSum;
       }
 
       arma::Row<typename MatType::elem_type> h(const MatType& coords, 
@@ -168,7 +168,7 @@ namespace test {
           return value; 
         }        
 
-        DTLZ1& dtlz;
+        DTLZ7& dtlz;
         size_t stop;
       };
 

@@ -124,7 +124,7 @@ namespace test {
         arma::Row<ElemType> theta;
         for(size_t i = 0;i < numObjectives - 1;i++)
         {
-          theta = 0.5 * (1.0  + 2.0 % coords.row(i) % G) / (1.0 + G);
+          theta = 0.5 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
           objectives.row(i) =  value %  
                         arma::sin(theta * arma::datum::pi * 0.5);
           value = value % arma::cos(theta * arma::datum::pi * 0.5); 
@@ -151,21 +151,24 @@ namespace test {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
+          ElemType theta;
+          ElemType G = dtlz.g(coords)[0];
           for(size_t i = 0;i < stop;i++)
           {
-            value = value * arma::cos(coords[i] * arma::datum::pi * 0.5);
+            theta = 0.5 * (1.0  + 2.0 * coords[i] % G) / (1.0 + G); 
+            value = value * arma::cos(theta * arma::datum::pi * 0.5);
           }
-
+	        theta = 0.5 * (1.0  + 2.0 * coords[stop] % G) / (1.0 + G);
           if(stop != dtlz.numObjectives - 1)
           {
-            value = value * arma::sin(coords[stop] * arma::datum::pi * 0.5);
+            value = value * arma::sin(theta * arma::datum::pi * 0.5);
           }
           else
           {
-            value = value * arma::cos(coords[stop] * arma::datum::pi * 0.5);
+            value = value * arma::cos(theta * arma::datum::pi * 0.5);
           }
 
-          value = value * (1.0 + dtlz.g(coords));
+          value = value * (1.0 + G);
           return value;  
         }        
 
