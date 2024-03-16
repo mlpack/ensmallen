@@ -67,7 +67,7 @@ namespace test {
 
     public:
 
-      DTLZ1(size_t numParetoPoint = 136) :
+      DTLZ1 (size_t numParetoPoint = 136) :
         numParetoPoints(numParetoPoint),
             objectiveF1(0, *this),
             objectiveF2(1, *this),
@@ -86,14 +86,14 @@ namespace test {
       { this -> numParetoPoints = numParetoPoint; }
 
       // Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint()
+      arma::Col<typename MatType::elem_type> GetInitialPoint ()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, arma::fill::ones);
       }
 
-      arma::Row<typename MatType::elem_type> g(const MatType& coords)
+      arma::Row<typename MatType::elem_type> g (const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -117,7 +117,7 @@ namespace test {
       * @param coords The function coordinates.
       * @return arma::Mat<typename MatType::elem_type>
       */
-      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
+      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -138,7 +138,7 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZObjective
       {
-        DTLZObjective(size_t stop, DTLZ1<MatType>& dtlz): stop(stop), dtlz(dtlz)
+        DTLZObjective (size_t stop, DTLZ1<MatType>& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here. */}  
         
         /**
@@ -147,7 +147,7 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evaluate(const MatType& coords)
+        typename MatType::elem_type Evaluate (const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
@@ -175,14 +175,14 @@ namespace test {
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZObjective, DTLZObjective, DTLZObjective> GetObjectives()
+      std::tuple<DTLZObjective, DTLZObjective, DTLZObjective> GetObjectives ()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
       //! Get the Reference Front.
       //! Front. The implementation has been taken from pymoo.
-      arma::mat GetReferenceFront()
+      arma::mat GetReferenceFront ()
       {
         Uniform ref_generator;
         return 0.5 * ref_generator.Generate<arma::mat>(3, numParetoPoints, 0);

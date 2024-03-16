@@ -1,5 +1,5 @@
 /**
- * @file DTLZ3_function.hpp
+ * @file dtlz3_function.hpp
  * @author Satyam Shukla
  *
  * Implementation of the third DTLZ(Deb, Thiele, Laumanns, and Zitzler) test.
@@ -65,7 +65,7 @@ namespace test {
 
     public:
 
-      DTLZ3(size_t numParetoPoints = 136) :
+      DTLZ3 (size_t numParetoPoints = 136) :
         numParetoPoints(numParetoPoints),
         objectiveF1(0, *this),
         objectiveF2(1, *this),
@@ -73,7 +73,7 @@ namespace test {
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint()
+      arma::Col<typename MatType::elem_type> GetInitialPoint ()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -91,7 +91,7 @@ namespace test {
       void SetNumParetoPoint (size_t numParetoPoint)
       { this -> numParetoPoints = numParetoPoint;}
 
-      arma::Row<typename MatType::elem_type> g(const MatType& coords)
+      arma::Row<typename MatType::elem_type> g (const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -115,7 +115,7 @@ namespace test {
       * @param coords The function coordinates.
       * @return arma::Mat<typename MatType::elem_type>
       */
-      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
+      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -137,7 +137,7 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZ3Objective
       {
-        DTLZ3Objective(size_t stop, DTLZ3& dtlz): stop(stop), dtlz(dtlz)
+        DTLZ3Objective (size_t stop, DTLZ3& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here. */}  
         
         /**
@@ -146,7 +146,7 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evaluate(const MatType& coords)
+        typename MatType::elem_type Evaluate (const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
@@ -174,14 +174,14 @@ namespace test {
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZ3Objective, DTLZ3Objective, DTLZ3Objective> GetObjectives()
+      std::tuple<DTLZ3Objective, DTLZ3Objective, DTLZ3Objective> GetObjectives ()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
       //! Get the Reference Front.
       //! Front. The implementation has been taken from pymoo.
-      arma::mat GetReferenceFront()
+      arma::mat GetReferenceFront ()
       { 
       	Uniform ref_generator;
         arma::mat ref_dirs = ref_generator.Generate<arma::mat>(3, this -> numParetoPoints, 0);

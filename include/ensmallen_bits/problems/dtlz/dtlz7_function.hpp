@@ -64,7 +64,7 @@ namespace test {
 
     public:
 
-      DTLZ7(size_t numParetoPoint = 136) :
+      DTLZ7 (size_t numParetoPoint = 136) :
         numParetoPoints(numParetoPoint),
             objectiveF1(0, *this),
             objectiveF2(1, *this),
@@ -83,14 +83,14 @@ namespace test {
       { this -> numParetoPoints = numParetoPoint; }
 
       // Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint()
+      arma::Col<typename MatType::elem_type> GetInitialPoint ()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, arma::fill::zeros);
       } 
 
-      arma::Row<typename MatType::elem_type> g(const MatType& coords)
+      arma::Row<typename MatType::elem_type> g (const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -105,7 +105,7 @@ namespace test {
         return innerSum;
       }
 
-      arma::Row<typename MatType::elem_type> h(const MatType& coords, 
+      arma::Row<typename MatType::elem_type> h (const MatType& coords, 
                             const arma::Row<typename MatType::elem_type>& G)
       {
         size_t k = numVariables - numObjectives + 1;
@@ -130,7 +130,7 @@ namespace test {
       * @param coords The function coordinates.
       * @return arma::Mat<typename MatType::elem_type>
       */
-      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
+      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -147,7 +147,7 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZ7Objective
       {
-        DTLZ7Objective(size_t stop, DTLZ7& dtlz): stop(stop), dtlz(dtlz)
+        DTLZ7Objective (size_t stop, DTLZ7& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here. */}  
         
         /**
@@ -156,7 +156,7 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evaluate(const MatType& coords)
+        typename MatType::elem_type Evaluate (const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
@@ -173,7 +173,7 @@ namespace test {
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZ7Objective, DTLZ7Objective, DTLZ7Objective> GetObjectives()
+      std::tuple<DTLZ7Objective, DTLZ7Objective, DTLZ7Objective> GetObjectives ()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 

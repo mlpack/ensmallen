@@ -1,5 +1,5 @@
 /**
- * @file DTLZ5_function.hpp
+ * @file dtlz5_function.hpp
  * @author Satyam Shukla
  *
  * Implementation of the fifth DTLZ(Deb, Thiele, Laumanns, and Zitzler) test.
@@ -64,7 +64,7 @@ namespace test {
 
     public:
 
-      DTLZ5(size_t numParetoPoints = 136) :
+      DTLZ5 (size_t numParetoPoints = 136) :
         numParetoPoints(numParetoPoints),
         objectiveF1(0, *this),
         objectiveF2(1, *this),
@@ -72,7 +72,7 @@ namespace test {
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint()
+      arma::Col<typename MatType::elem_type> GetInitialPoint ()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -90,7 +90,7 @@ namespace test {
       void SetNumParetoPoint (size_t numParetoPoint)
       { this -> numParetoPoints = numParetoPoint; }
 
-      arma::Row<typename MatType::elem_type> g(const MatType& coords)
+      arma::Row<typename MatType::elem_type> g (const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -113,7 +113,7 @@ namespace test {
       * @param coords The function coordinates.
       * @return arma::Mat<typename MatType::elem_type>
       */
-      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
+      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -137,7 +137,7 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZ5Objective
       {
-        DTLZ5Objective(size_t stop, DTLZ5& dtlz): stop(stop), dtlz(dtlz)
+        DTLZ5Objective (size_t stop, DTLZ5& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here. */}  
         
         /**
@@ -146,7 +146,7 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evaluate(const MatType& coords)
+        typename MatType::elem_type Evaluate (const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
@@ -177,7 +177,7 @@ namespace test {
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZ5Objective, DTLZ5Objective, DTLZ5Objective> GetObjectives()
+      std::tuple<DTLZ5Objective, DTLZ5Objective, DTLZ5Objective> GetObjectives ()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
