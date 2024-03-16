@@ -13,6 +13,8 @@
 #ifndef ENSMALLEN_PROBLEMS_DTLZ_TWO_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_DTLZ_TWO_FUNCTION_HPP
 
+#include "../../moead/weight_init_policies/uniform_init.hpp"
+
 namespace ens {
 namespace test {
 
@@ -142,23 +144,23 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evalute(const MatType& coords)
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
           for(size_t i = 0;i < stop;i++)
           {
-            value = value * arma::cos(coords[i] * arma::datum::pi * 0.5);
+            value = value * std::cos(coords[i] * arma::datum::pi * 0.5);
           }
 
           if(stop != dtlz.numObjectives - 1)
           {
-            value = value * arma::sin(coords[stop] * arma::datum::pi * 0.5);
+            value = value * std::sin(coords[stop] * arma::datum::pi * 0.5);
           }
           else
           {
-            value = value * arma::cos(coords[stop] * arma::datum::pi * 0.5);
+            value = value * std::cos(coords[stop] * arma::datum::pi * 0.5);
           }
 
           value = value * (1.0 + dtlz.g(coords)[0]);

@@ -13,6 +13,8 @@
 #ifndef ENSMALLEN_PROBLEMS_DTLZ_FOUR_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_DTLZ_FOUR_FUNCTION_HPP
 
+#include "../../moead/weight_init_policies/uniform_init.hpp"
+
 namespace ens {
 namespace test {
 
@@ -51,7 +53,7 @@ namespace test {
  */
 
   template <typename MatType = arma::mat>
-  class DTLZ3
+  class DTLZ4
   {
     private:
 
@@ -63,7 +65,7 @@ namespace test {
 
     public:
 
-      DTLZ3(size_t alpha = 100, size_t numParetoPoints = 136) :
+      DTLZ4(size_t alpha = 100, size_t numParetoPoints = 136) :
         alpha(alpha),
         numParetoPoints(numParetoPoints),
         objectiveF1(0, *this),
@@ -144,32 +146,32 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evalute(const MatType& coords)
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
           for(size_t i = 0;i < stop;i++)
           {
-            value = value * arma::cos(std::pow(coords[i], dtlz.alpha) * arma::datum::pi * 0.5);
+            value = value * std::cos(std::pow(coords[i], dtlz.alpha) * arma::datum::pi * 0.5);
           }
 
           if(stop != dtlz.numObjectives - 1)
           {
-            value = value * arma::sin(std::pow(coords[stop], dtlz.alpha) * arma::datum::pi * 0.5);
+            value = value * std::sin(std::pow(coords[stop], dtlz.alpha) * arma::datum::pi * 0.5);
           }
           else
           {
-            value = value * arma::cos(std::pow(coords[stop], dtlz.alpha) * arma::datum::pi * 0.5);
+            value = value * std::cos(std::pow(coords[stop], dtlz.alpha) * arma::datum::pi * 0.5);
           }
 
-          value = value * (1. + dtlz.g(coords)[0]);
+          value = value * (1 + dtlz.g(coords)[0]);
           return value;  
         }        
 
         DTLZ4& dtlz;
         size_t stop;
-      }
+      };
 
       // Return back a tuple of objective functions.
       std::tuple<DTLZ4Objective, DTLZ4Objective, DTLZ4Objective> GetObjectives()

@@ -13,6 +13,8 @@
 #ifndef ENSMALLEN_PROBLEMS_DTLZ_THREE_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_DTLZ_THREE_FUNCTION_HPP
 
+#include "../../moead/weight_init_policies/uniform_init.hpp"
+
 namespace ens {
 namespace test {
 
@@ -59,6 +61,7 @@ namespace test {
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
     size_t numVariables {7};
+    size_t numParetoPoints;
 
     public:
 
@@ -143,23 +146,23 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evalute(const MatType& coords)
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
           for(size_t i = 0;i < stop;i++)
           {
-            value = value * arma::cos(coords[i] * arma::datum::pi * 0.5);
+            value = value * std::cos(coords[i] * arma::datum::pi * 0.5);
           }
 
           if(stop != dtlz.numObjectives - 1)
           {
-            value = value * arma::sin(coords[stop] * arma::datum::pi * 0.5);
+            value = value * std::sin(coords[stop] * arma::datum::pi * 0.5);
           }
           else
           {
-            value = value * arma::cos(coords[stop] * arma::datum::pi * 0.5);
+            value = value * std::cos(coords[stop] * arma::datum::pi * 0.5);
           }
 
           value = value * (1. + dtlz.g(coords)[0]);
@@ -168,7 +171,7 @@ namespace test {
 
         DTLZ3& dtlz;
         size_t stop;
-      }
+      };
 
       // Return back a tuple of objective functions.
       std::tuple<DTLZ3Objective, DTLZ3Objective, DTLZ3Objective> GetObjectives()

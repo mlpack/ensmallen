@@ -10,14 +10,14 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_PROBLEMS_DTLZ_ONE_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_DTLZ_ONE_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_DTLZ_SEVEN_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_DTLZ_SEVEN_FUNCTION_HPP
 
 namespace ens {
 namespace test {
 
 /**
- * The DTLZ1 function, defined by:
+ * The DTLZ7 function, defined by:
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
  * g(x) = 1 + (9 / |X_M|) * (\Sigma{i = n - M + 1}^n x_i) 
@@ -147,7 +147,7 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZ7Objective
       {
-        DTLZ7Objective(size_t stop, DTLZ7& dtlz1): stop(stop), dtlz(dtlz)
+        DTLZ7Objective(size_t stop, DTLZ7& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here. */}  
         
         /**
@@ -156,14 +156,14 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evalute(const MatType& coords)
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 0.5;
           if(stop != dtlz.numObjectives - 1)
           { return coords[stop];}
-
+ 
           value = (1.0 + dtlz.g(coords)[0]) * dtlz.h(coords, dtlz.g(coords))[0];
           return value; 
         }        

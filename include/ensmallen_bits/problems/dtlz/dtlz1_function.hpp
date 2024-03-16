@@ -13,6 +13,8 @@
 #ifndef ENSMALLEN_PROBLEMS_DTLZ_ONE_FUNCTION_HPP
 #define ENSMALLEN_PROBLEMS_DTLZ_ONE_FUNCTION_HPP
 
+#include "../../moead/weight_init_policies/uniform_init.hpp"
+
 namespace ens {
 namespace test {
 
@@ -88,8 +90,8 @@ namespace test {
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        return arma::Col<ElemType>(numVariables, arma::fill::zeros);
-      } 
+        return arma::Col<ElemType>(numVariables, arma::fill::ones);
+      }
 
       arma::Row<typename MatType::elem_type> g(const MatType& coords)
       {
@@ -145,7 +147,7 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evalute(const MatType& coords)
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;

@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_PROBLEMS_DTLZ_FIVE_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_DTLZ_FIVE_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_DTLZ_SIX_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_DTLZ_SIX_FUNCTION_HPP
 
 namespace ens {
 namespace test {
@@ -146,7 +146,7 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evalute(const MatType& coords)
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
@@ -155,17 +155,17 @@ namespace test {
           ElemType G = dtlz.g(coords)[0];
           for(size_t i = 0;i < stop;i++)
           {
-            theta = 0.5 * (1.0  + 2.0 * coords[i] % G) / (1.0 + G); 
-            value = value * arma::cos(theta * arma::datum::pi * 0.5);
+            theta = 0.5 * (1.0  + 2.0 * coords[i] * G) / (1.0 + G); 
+            value = value * std::cos(theta * arma::datum::pi * 0.5);
           }
-	        theta = 0.5 * (1.0  + 2.0 * coords[stop] % G) / (1.0 + G);
+	        theta = 0.5 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);
           if(stop != dtlz.numObjectives - 1)
           {
-            value = value * arma::sin(theta * arma::datum::pi * 0.5);
+            value = value * std::sin(theta * arma::datum::pi * 0.5);
           }
           else
           {
-            value = value * arma::cos(theta * arma::datum::pi * 0.5);
+            value = value * std::cos(theta * arma::datum::pi * 0.5);
           }
 
           value = value * (1.0 + G);
