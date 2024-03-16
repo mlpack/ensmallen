@@ -99,14 +99,14 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        innerSum = (9.0 / k) * arma::accu(coords.rows(numObjectives - 1, numVariables - 1) + 1.0, 0); 
+        innerSum = (9.0 / k) * arma::sum(coords.rows(numObjectives - 1, numVariables - 1) + 1.0, 0); 
         
 
         return innerSum;
       }
 
       arma::Row<typename MatType::elem_type> h(const MatType& coords, 
-                            const aram::Row<typename MatType::elem_type> G)
+                            const arma::Row<typename MatType::elem_type>& G)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -118,7 +118,7 @@ namespace test {
         innerSum = innerSum * numObjectives;
         for(size_t i = 0;i < numObjectives - 1;i++)
         {
-            innerSum -= coords.row(i) * (1.0 + 
+            innerSum -= coords.row(i) % (1.0 + 
                     arma::cos(arma::datum::pi * 3 * coords.row(i))) / (1 + G); 
         }
         return innerSum;
@@ -135,9 +135,9 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
 
-        arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
+        arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]); 
         arma::Row<ElemType> G = g(coords);
-        arma::Row<ElemType> H = h(coords);
+        arma::Row<ElemType> H = h(coords, G);
         objectives.rows(0, numObjectives - 2) = coords.rows(0, numObjectives - 2);
         objectives.row(numObjectives - 1) = (1 + G) % H;
         return objectives;    
@@ -164,7 +164,7 @@ namespace test {
           if(stop != dtlz.numObjectives - 1)
           { return coords[stop];}
 
-          value = (1.0 + dtlz.g(coords)[0]) * dtlz.h(coords)[0];
+          value = (1.0 + dtlz.g(coords)[0]) * dtlz.h(coords, dtlz.g(coords))[0];
           return value; 
         }        
 
