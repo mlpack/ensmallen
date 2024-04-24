@@ -54,7 +54,6 @@ namespace test {
  *
  * @tparam MatType Type of matrix to optimize.
  */
-
   template <typename MatType = arma::mat>
   class DTLZ1
   {
@@ -67,6 +66,12 @@ namespace test {
 
     public:
 
+      /**
+      * Object Constructor.
+      * Initializes the individual objective functions.
+      *
+      * @param numParetoPoint No. of pareto points in the reference front.
+      */
       DTLZ1 (size_t numParetoPoint = 136) :
         numParetoPoints(numParetoPoint),
             objectiveF1(0, *this),
@@ -81,7 +86,11 @@ namespace test {
       size_t GetNumVariables ()
       { return this -> numVariables; }
 
-      // Set the no. of pareto points.
+      /**
+      * Set the no. of pareto points.
+      *
+      * @param numParetoPoint
+      */
       void SetNumParetoPoint (size_t numParetoPoint)
       { this -> numParetoPoints = numParetoPoint; }
 
@@ -93,6 +102,12 @@ namespace test {
         return arma::Col<ElemType>(numVariables, arma::fill::ones);
       }
 
+      /**
+      * Evaluate the G(x) with the given coordinate.
+      *
+      * @param coords The function coordinates.
+      * @return arma::Row<typename MatType::elem_type>
+      */
       arma::Row<typename MatType::elem_type> g (const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
@@ -134,7 +149,7 @@ namespace test {
         return objectives;    
       }
       
-      // Individual Objcetive function.
+      // Individual Objective function.
       // Changes based on stop variable provided. 
       struct DTLZObjective
       {
