@@ -75,6 +75,7 @@ class AGEMOEA
         const double mutationStrength = 1e-3,
         const double distributionIndex = 20,
         const double epsilon = 1e-6,
+        const double eta = 20,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -104,6 +105,7 @@ class AGEMOEA
         const double mutationStrength = 1e-3,
         const double distributionIndex = 20,
         const double epsilon = 1e-6,
+        const double eta = 20,
         const double lowerBound = 0,
         const double upperBound = 1);
 
@@ -147,6 +149,16 @@ class AGEMOEA
   double MutationProbability() const { return mutationProb; }
   //! Modify the mutation probability.
   double& MutationProbability() { return mutationProb; }
+
+  //! Retrieve value of the distribution index.
+  double DistributionIndex() const { return distributionIndex; }
+  //! Modify the value of the distribution index.
+  double& DistributionIndex() { return distributionIndex; }
+
+  //! Retrieve value of eta.
+  double Eta() const { return eta; }
+  //! Modify the value of eta.
+  double& Eta() { return eta; }
 
   //! Get the mutation strength.
   double MutationStrength() const { return mutationStrength; }
@@ -306,13 +318,12 @@ class AGEMOEA
   *
   * @param front The previously generated Pareto fronts.
   * @param index Index d of the non-dominated front.
-  * @param dimension The calculated
+  * @param dimension The calculated dimension from grt geometry.
   * @param calculatedObjectives The previously calculated objectives.
   * @param survivalScore The Survival Score vector to be updated for each individual in the population.
   */
   template <typename MatType>
   void SurvivalScoreAssignment(const std::vector<size_t>& front,
- 	                           size_t index,
  	                           size_t dimension,
  	                           std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
  	                           std::vector<typename MatType::elem_type>& survivalScore);
@@ -337,7 +348,7 @@ class AGEMOEA
   bool SurvivalScoreOperator(size_t idxP,
                              size_t idxQ,
                              const std::vector<size_t>& ranks,
-                             const std::vector<typename MatType::elem_type>& crowdingDistance);
+                             const std::vector<typename MatType::elem_type>& survivalScore);
   
  /**
   * Normalizes the front given the extreme points in the current front.
@@ -349,9 +360,9 @@ class AGEMOEA
   */
  template <typename MatType>
  void NormalizeFront(std::vector<MatType>& population,
-                    arma::rowvec& normalization,
-                    const std::vector<std::vector<size_t>>& fronts,
-                    const std::vector<size_t>& extreme);
+                    arma::colvec& normalization,
+                    const std::vector<size_t>& front,
+                    const arma::Row<size_t>& extreme);
  
  /**
   * Get the geometry information p of Lp norm (p > 0).
@@ -376,7 +387,8 @@ class AGEMOEA
    * @param dimension The calculated dimension of the front.
    * @return A matrix containing the pairwise distance between all points in the front.
    */
-  arma::mat PairwiseDistance(std::vector<MatType>& population,
+  template <typename MatType>
+  arma::mat& PairwiseDistance(std::vector<MatType>& population,
                              const std::vector<size_t>& front,
                              size_t dimension);
 
@@ -388,7 +400,8 @@ class AGEMOEA
    * @param front The front of the current generation.
    * @return A set of indexes for the extreme points.
    */
-  std::vector<size_t> FindExtremePoints(std::vector<MatType>& population,
+  template <typename MatType>
+  arma::Row<size_t> FindExtremePoints(std::vector<MatType>& population,
                                         const std::vector<size_t>& front);
   
   /**
@@ -399,13 +412,13 @@ class AGEMOEA
    * @param population Reference to the current population.
    * @param front The front of the current generation(indices of population).
    * @param pointA The first point on the line.
-   * @param pointb The second point on the line.
+   * @param pointB The second point on the line.
   */
   template<typename MatType>
-  std::vector<double> PointToLineDistance(const vector<MatType>& population,
+  arma::rowvec PointToLineDistance(const std::vector<MatType>& population,
                                           std::vector<size_t>& front,
-                                          const MatType& pointA,
-                                          const MatType& pointB);
+                                          const arma::rowvec& pointA,
+                                          const arma::rowvec& pointB);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
@@ -428,8 +441,14 @@ class AGEMOEA
   //! Strength of the mutation.
   double mutationStrength;
 
+  //! The crowding degree of the mutation. Higher value produces a mutant
+  //! resembling its parent.
+  double distributionIndex;
+
   //! The tolerance for termination.
   double epsilon;
+
+  double eta;
 
   //! Lower bound of the initial swarm.
   arma::vec lowerBound;
@@ -452,5 +471,8 @@ class AGEMOEA
 };
 
 } // namespace ens
+
+// Include implementation.
+#include "agemoea_impl.hpp"
 
 #endif
