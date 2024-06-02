@@ -349,10 +349,10 @@ inline void AGEMOEA::Crossover(MatType& childA,
     betaq2 = betaq2 * (mask1 - 1.0) + arma::pow((1.0 / (2.0 - us % alpha2)), 1.0 / (eta + 1)) % mask2;
     MatType c1 = 0.5 % ((current_min + current_max) - betaq1 % current_diff);
     MatType c2 = 0.5 % ((current_min + current_max) + betaq2 % current_diff);
-    us = new arma::vec(size(upperBound), arma::fill::randu);
+    us.randu();
     childA = parentA % (us <= 0.5);
     childB = parentB % (us <= 0.5);
-    us = new arma::vec(size(upperBound), arma::fill::randu);
+    us.randu();
     childA = childA + c1 % ((us <= 0.5) % (childA == 0));
     childA = childA + c2 % ((us > 0.5) % (childA == 0));
     childB = childB + c2 % ((us <= 0.5) % (childB == 0));
@@ -461,7 +461,7 @@ inline arma::mat& AGEMOEA::PairwiseDistance(std::vector<MatType>& population,
                                           const std::vector<size_t>& front,
                                           size_t dimension)
 {
-  arma::mat& final = new arma::mat(front.size(),front.size(),arma::fill::zeros);
+  arma::mat final(front.size(),front.size(),arma::fill::zeros);
   
   
   for (size_t i = 0; i < front.size(); i++)
