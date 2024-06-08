@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Update to C++14 standard
+   ([#400](https://github.com/mlpack/ensmallen/pull/400)).
 
 ### ensmallen 2.21.1: "Bent Antenna"
 ###### 2024-02-15
