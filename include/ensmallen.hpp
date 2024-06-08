@@ -15,19 +15,24 @@
 #ifndef ENSMALLEN_HPP
 #define ENSMALLEN_HPP
 
-// certain compilers are way behind the curve
-#if (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))
-  #undef  ARMA_USE_CXX11
-  #define ARMA_USE_CXX11
+#undef ENS_HAVE_CXX14
+
+#if (__cplusplus >= 201402L)
+  #define ENS_HAVE_CXX14
+#endif
+
+#if defined(_MSVC_LANG)
+  #if (_MSVC_LANG >= 201402L)
+    #undef  ENS_HAVE_CXX14
+    #define ENS_HAVE_CXX14
+  #endif
+#endif
+
+#if !defined(ENS_HAVE_CXX14)
+  #error "*** C++14 compiler required; enable C++14 mode in your compiler, or use an earlier version of ensmallen"
 #endif
 
 #include <armadillo>
-
-#if !defined(ARMA_USE_CXX11)
-  // armadillo automatically enables ARMA_USE_CXX11
-  // when a C++11/C++14/C++17/etc compiler is detected
-  #error "please enable C++11/C++14 mode in your compiler"
-#endif
 
 #if ((ARMA_VERSION_MAJOR < 9) || ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR < 800)))
   #error "need Armadillo version 9.800 or later"

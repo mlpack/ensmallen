@@ -188,7 +188,7 @@ struct NAME                                                                    \
     template<typename>                                                         \
     static no& chk(...);                                                       \
                                                                                \
-    static const bool value = sizeof(chk<Class>(0)) == sizeof(yes);            \
+    static constexpr bool value = sizeof(chk<Class>(0)) == sizeof(yes);        \
   };                                                                           \
                                                                                \
   template<size_t N>                                                           \
@@ -201,10 +201,10 @@ struct NAME                                                                    \
             N < MAXN,                                                          \
             WithGreaterOrEqualNumberOfAdditionalArgs<N + 1>,                   \
             std::false_type>::type>::type;                                     \
-    static const bool value = type::value;                                     \
+    static constexpr bool value = type::value;                                 \
   };                                                                           \
                                                                                \
-  static const bool value =                                                    \
+  static constexpr bool value =                                                \
       WithGreaterOrEqualNumberOfAdditionalArgs<MinN>::value;                   \
 };
 
@@ -235,7 +235,7 @@ struct NAME                                                                  \
   template <typename Q = T>                                                  \
   static char f(char) { return 0; }                                        \
                                                                              \
-  static const bool value = sizeof(f<T>(0)) != sizeof(char);                 \
+  static constexpr bool value = sizeof(f<T>(0)) != sizeof(char);             \
 };
 /*
  * A macro that can be used for passing arguments containing commas to other
