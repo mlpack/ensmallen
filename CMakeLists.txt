@@ -13,8 +13,8 @@ option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-# Set required C++ standard to C++11.
-set(CMAKE_CXX_STANDARD 11)
+# Set required C++ standard to C++14.
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Extract version from sources.
