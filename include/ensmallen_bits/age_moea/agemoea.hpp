@@ -196,7 +196,7 @@ class AGEMOEA
    * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
    * instead.
    */
-  ens_deprecated const std::vector<arma::mat>& Front()
+  const std::vector<arma::mat>& Front()
   {
     if (rcFront.size() == 0)
     {
