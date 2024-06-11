@@ -65,19 +65,20 @@ class AGEMOEA
    * @param mutationStrength The strength of the mutation.
    * @param epsilon The minimum difference required to distinguish between
    *     candidate solutions.
+   * @param eta The distance parameters of the crossover distribution.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
   AGEMOEA(const size_t populationSize = 100,
-        const size_t maxGenerations = 2000,
-        const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3,
-        const double distributionIndex = 20,
-        const double epsilon = 1e-6,
-        const double eta = 20,
-        const arma::vec& lowerBound = arma::zeros(1, 1),
-        const arma::vec& upperBound = arma::ones(1, 1));
+          const size_t maxGenerations = 2000,
+          const double crossoverProb = 0.6,
+          const double mutationProb = 0.3,
+          const double mutationStrength = 1e-3,
+          const double distributionIndex = 20,
+          const double epsilon = 1e-6,
+          const double eta = 20,
+          const arma::vec& lowerBound = arma::zeros(1, 1),
+          const arma::vec& upperBound = arma::ones(1, 1));
 
   /**
    * Constructor for the AGE-MOEA optimizer. This constructor provides an overload
@@ -95,19 +96,20 @@ class AGEMOEA
    * @param mutationStrength The strength of the mutation.
    * @param epsilon The minimum difference required to distinguish between
    *     candidate solutions.
+   * @param eta The distance parameters of the crossover distribution
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
   AGEMOEA(const size_t populationSize = 100,
-        const size_t maxGenerations = 2000,
-        const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3,
-        const double distributionIndex = 20,
-        const double epsilon = 1e-6,
-        const double eta = 20,
-        const double lowerBound = 0,
-        const double upperBound = 1);
+          const size_t maxGenerations = 2000,
+          const double crossoverProb = 0.6,
+          const double mutationProb = 0.3,
+          const double mutationStrength = 1e-3,
+          const double distributionIndex = 20,
+          const double epsilon = 1e-6,
+          const double eta = 20,
+          const double lowerBound = 0,
+          const double upperBound = 1);
 
   /**
    * Optimize a set of objectives. The initial population is generated using the
@@ -324,9 +326,11 @@ class AGEMOEA
   */
   template <typename MatType>
   void SurvivalScoreAssignment(const std::vector<size_t>& front,
- 	                           size_t dimension,
- 	                           std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
- 	                           std::vector<typename MatType::elem_type>& survivalScore);
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      std::vector<typename MatType::elem_type>& survivalScore,
+      arma::Row<size_t> extreme,
+      size_t dimension,
+      size_t t);
 
   /**
    * The operator used in the AGE-MOEA survival score based sorting.
@@ -354,71 +358,89 @@ class AGEMOEA
   * Normalizes the front given the extreme points in the current front.
   *
   * @tparam The type of population datapoints.
-  * @param population The current population.
-  * @param front The previously generated Pareto fronts.
+  * @param calculatedObjectives The current population evaluated objectives.
+  * @param normalization The normalizing vector.
+  * @param front The previously generated Pareto front.
   * @param extreme The indexes of the extreme points in the front.
   */
  template <typename MatType>
- void NormalizeFront(std::vector<MatType>& population,
-                    arma::colvec& normalization,
+ void NormalizeFront(
+    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+                    arma::Col<typename MatType::elem_type>& normalization,
                     const std::vector<size_t>& front,
                     const arma::Row<size_t>& extreme);
  
  /**
   * Get the geometry information p of Lp norm (p > 0).
   *
-  * @param population The current population.
+  * @param calculatedObjectives The current population evaluated objectives.
   * @param front The previously generated Pareto fronts.
   * @param extreme The indexes of the extreme points in the front.
-  * @param m The no. of objectives.
   * @return The variable p in the Lp norm that best fits the geometry of the current front.
   */
  template <typename MatType>
- size_t GetGeometry(const std::vector<MatType>& population,
+ size_t GetGeometry(
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                     const std::vector<size_t>& front,
-                    const std::vector<size_t>& extreme,
-                    size_t m);
+                    const arma::Row<size_t>& extreme);
   
   /**
    * Finds the pairwise Lp distance between all the points in the front.
    *
-   * @param population The current population.
+   * @param final The current population evaluated objectives.
+   * @param calculatedObjectives The current population evaluated objectives.
    * @param front The front of the current generation.
    * @param dimension The calculated dimension of the front.
    * @return A matrix containing the pairwise distance between all points in the front.
    */
   template <typename MatType>
-  arma::mat& PairwiseDistance(std::vector<MatType>& population,
-                             const std::vector<size_t>& front,
-                             size_t dimension);
+  void PairwiseDistance(MatType& final,
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+                                          const std::vector<size_t>& front,
+                                          size_t dimension);
 
   /**
    * Finding the indexes of the extreme points in the front.
    *  
-   * @tparam The type of population datapoints.
-   * @param population The current population.
+   * @param indexes vector containing the slected indexes.
+   * @param calculatedObjectives The current population objectives.
    * @param front The front of the current generation.
    * @return A set of indexes for the extreme points.
    */
   template <typename MatType>
-  arma::Row<size_t> FindExtremePoints(std::vector<MatType>& population,
-                                        const std::vector<size_t>& front);
+  void FindExtremePoints(arma::Row<size_t>& indexes, 
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+                              const std::vector<size_t>& front);
   
   /**
-   * 
    * Finding the distance of each point in the front from the line formed
    * by pointA and pointB.
    * 
-   * @param population Reference to the current population.
+   * @param distance The vector containing the distances of the points in the fron from the line.
+   * @param calculatedObjectives Reference to the current population evaluated Objectives.
    * @param front The front of the current generation(indices of population).
    * @param pointA The first point on the line.
    * @param pointB The second point on the line.
   */
-  template<typename MatType>
-  arma::rowvec PointToLineDistance(const std::vector<MatType>& population,
-                                          std::vector<size_t>& front,
-                                          const arma::rowvec& pointA,
-                                          const arma::rowvec& pointB);
+  template <typename MatType>
+  void PointToLineDistance(arma::rowvec& distances,
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+                                       std::vector<size_t>& front,
+                                       const arma::colvec& pointA,
+                                       const arma::colvec& pointB);
+  
+  /**
+   * Find the Diversity score corresponding the solution S using the selected set.
+   * 
+   * @param selected The current selected set.
+   * @param pairwiseDistance The current pairwise distance for the whole front.
+   * @param S The relative index of S being considered within the front.
+   * @return The diversity score for S which the sum of the two smallest elements.
+  */
+ template <typename MatType>
+ typename MatType::elem_type DiversityScore(std::set<size_t>& selected,
+                                                  const MatType& pairwiseDistance,
+                                                  size_t S);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
@@ -448,6 +470,7 @@ class AGEMOEA
   //! The tolerance for termination.
   double epsilon;
 
+  //! The distance parameters of the crossover distribution.
   double eta;
 
   //! Lower bound of the initial swarm.

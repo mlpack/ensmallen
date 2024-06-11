@@ -1,9 +1,8 @@
 /**
- * @file nsga2_impl.hpp
- * @author Sayan Goswami
- * @author Nanubala Gnana Sai
+ * @file agemoea_impl.hpp
+ * @author Satyam Shukla
  *
- * Implementation of the NSGA-II algorithm. Used for multi-objective
+ * Implementation of the AGEMOEA algorithm. Used for multi-objective
  * optimization problems on arbitrary functions.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -13,7 +12,7 @@
  */
 
 #ifndef ENSMALLEN_AGEMOEA_AGEMOEA_IMPL_HPP
-#define ENSMALLEN_AGEMoEA_AGEMOEA_IMPL_HPP
+#define ENSMALLEN_AGEMOEA_AGEMOEA_IMPL_HPP
 
 #include "agemoea.hpp"
 #include <assert.h>
@@ -21,15 +20,15 @@
 namespace ens {
 
 inline AGEMOEA::AGEMOEA(const size_t populationSize,
-                    const size_t maxGenerations,
-                    const double crossoverProb,
-                    const double mutationProb,
-                    const double mutationStrength,
-                    const double distributionIndex,
-                    const double epsilon,
-                    const double eta,
-                    const arma::vec& lowerBound,
-                    const arma::vec& upperBound) :
+                        const size_t maxGenerations,
+                        const double crossoverProb,
+                        const double mutationProb,
+                        const double mutationStrength,
+                        const double distributionIndex,
+                        const double epsilon,
+                        const double eta,
+                        const arma::vec& lowerBound,
+                        const arma::vec& upperBound) :
     numObjectives(0),
     numVariables(0),
     populationSize(populationSize),
@@ -45,15 +44,15 @@ inline AGEMOEA::AGEMOEA(const size_t populationSize,
 { /* Nothing to do here. */ }
 
 inline AGEMOEA::AGEMOEA(const size_t populationSize,
-                    const size_t maxGenerations,
-                    const double crossoverProb,
-                    const double mutationProb,
-                    const double mutationStrength,
-                    const double distributionIndex,
-                    const double epsilon,
-                    const double eta,
-                    const double lowerBound,
-                    const double upperBound) :
+                        const size_t maxGenerations,
+                        const double crossoverProb,
+                        const double mutationProb,
+                        const double mutationStrength,
+                        const double distributionIndex,
+                        const double epsilon,
+                        const double eta,
+                        const double lowerBound,
+                        const double upperBound) :
     numObjectives(0),
     numVariables(0),
     populationSize(populationSize),
@@ -169,13 +168,37 @@ typename MatType::elem_type AGEMOEA::Optimize(
     ranks.resize(population.size());
     FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
 
+    arma::Col<ElemType> idealPoint(calculatedObjectives[0]);
+    for (arma::Col<ElemType> c: calculatedObjectives)
+    {
+      idealPoint = arma::min(idealPoint, c);
+    }
+
+    for (arma::Col<ElemType>& c: calculatedObjectives)
+    {
+      c = c - idealPoint;
+    }
+
+    arma::Row<size_t> extreme(numObjectives, arma::fill::zeros);
+    FindExtremePoints<MatType>(extreme, calculatedObjectives, fronts[0]);
+    arma::Col<ElemType>& normalize;
+    NormalizeFront<MatType>(calculatedObjectives, normalize, fronts[0], extreme);
+
+    for (arma::Col<ElemType>& c: calculatedObjectives)
+    {
+      c = c / normalize;
+    }
+
+    size_t dimension = GetGeometry<MatType>(calculatedObjectives, fronts[0],
+                                           extreme);
+    
     // Perform survival score assignment.
     survivalScore.resize(population.size());
     std::fill(survivalScore.begin(), survivalScore.end(), 0.);
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
       SurvivalScoreAssignment<BaseMatType>(
-          fronts[fNum], calculatedObjectives, survivalScore);
+          fronts[fNum], calculatedObjectives, survivalScore, extreme, dimension);
     }
 
     // Sort based on survival score.
@@ -300,7 +323,7 @@ inline void AGEMOEA::BinaryTournamentSelection(std::vector<MatType>& population,
     MatType childA = population[indexA], childB = population[indexB];
 
     if(arma::randu() <= crossoverProb)
-    Crossover(childA, childB, population[indexA], population[indexB]);
+      Crossover(childA, childB, population[indexA], population[indexB]);
 
     Mutate(childA, 1.0 / static_cast<double>(numVariables),
           lowerBound, upperBound);
@@ -323,32 +346,38 @@ inline void AGEMOEA::Crossover(MatType& childA,
                              const MatType& parentA,
                              const MatType& parentB)
 {
-    // Ensure that parentA and parentB are of the same size.
+    //! Generates a child from two parent individuals
+    // according to the polynomial probability distribution.
     arma::Cube<typename MatType::elem_type> parents(parentA.n_rows, parentA.n_cols, 2);
     parents.slice(0) = parentA;
     parents.slice(1) = parentB;
-    MatType& current_min =  arma::min(parents, 2);
-    MatType& current_max =  arma::max(parents, 2);
+    MatType current_min =  arma::min(parents, 2);
+    MatType current_max =  arma::max(parents, 2);
 
-
-    MatType& current_diff = current_max - current_min;
+    MatType current_diff = current_max - current_min;
     current_diff.clamp(1e-10, arma::datum::inf);
 
+    //! Calculating beta used for the final crossover.
     MatType beta1 = 1 + 2.0 * (current_min - lowerBound) / current_diff;
     MatType beta2 = 1 + 2.0 * (upperBound - current_max) / current_diff;
     MatType alpha1 = 2 - arma::pow(beta1, -(eta + 1));
     MatType alpha2 = 2 - arma::pow(beta2, -(eta + 1));
 
-    arma::vec us(size(upperBound), arma::fill::randu);
-    arma::vec mask1 = us > (1.0 / alpha1);
-    arma::vec betaq1 = arma::pow(us % alpha1, 1 / (eta + 1));
+    MatType us(arma::size(alpha1), arma::fill::randu);
+    MatType mask1 = us > (1.0 / alpha1);
+    MatType betaq1 = arma::pow(us % alpha1, 1. / (eta + 1));
     betaq1 = betaq1 % (mask1 - 1.0) + arma::pow((1.0 / (2.0 - us % alpha1)), 1.0 / (eta + 1)) % mask1;
 
-    arma::vec mask2 = us > (1.0 / alpha2);
-    arma::vec betaq2 = arma::pow(us % alpha2, 1 / (eta + 1));
+    MatType mask2 = us > (1.0 / alpha2);
+    MatType betaq2 = arma::pow(us % alpha2, 1 / (eta + 1));
     betaq2 = betaq2 * (mask1 - 1.0) + arma::pow((1.0 / (2.0 - us % alpha2)), 1.0 / (eta + 1)) % mask2;
+    
+    //! Variables after the cross over for all of them.
     MatType c1 = 0.5 % ((current_min + current_max) - betaq1 % current_diff);
     MatType c2 = 0.5 % ((current_min + current_max) + betaq2 % current_diff);
+    
+    
+    //! Decision for the crossover between the two parents for each variable.
     us.randu();
     childA = parentA % (us <= 0.5);
     childB = parentB % (us <= 0.5);
@@ -400,129 +429,125 @@ inline void AGEMOEA::Mutate(MatType& candidate,
 }
 
 template <typename MatType>
-void AGEMOEA::NormalizeFront(std::vector<MatType>& population,
-                    arma::colvec& normalization,
+inline void AGEMOEA::NormalizeFront(
+    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+                    arma::Col<typename MatType::elem_type>& normalization,
                     const std::vector<size_t>& front,
                     const arma::Row<size_t>& extreme)
 {
-  arma::Mat<typename MatType::elem_type> vectorizedFront(numVariables, front.size());
-  arma::Col<typename MatType::elem_type> temp;
-  for (size_t i = 0; i< front.size(); i++)
+  arma::Mat<typename MatType::elem_type> vectorizedObjectives(numObjectives, front.size());
+  for (size_t i = 0; i < front.size(); i++)
   {
-    vectorizedFront.col(i) = arma::vectorise(population[front[i]], 0); 
+    vectorizedObjectives.col(i) = calculatedObjectives[front[i]];
   }
+  arma::Col<typename MatType::elem_type> temp;
   arma::uvec unique = arma::find_unique(extreme);
   if (extreme.n_elem != unique.n_elem)
   {
-    normalization = arma::max(vectorizedFront, 1);
+    normalization = arma::max(vectorizedObjectives, 1);
   }
-  arma::colvec hyperplane = arma::solve(vectorizedFront, new arma::colvec(numVariables, arma::fill::ones));
+  arma::Col<typename MatType::elem_type> hyperplane = arma::solve(
+    vectorizedObjectives.t(), new arma::colvec(front.size(), arma::fill::ones));
   if (hyperplane.has_inf() || hyperplane.has_nan() || arma::accu(hyperplane < 0.0) > 0)
   {
-    normalization = arma::max(vectorizedFront, 1);
+    normalization = arma::max(vectorizedObjectives, 1);
   }
   normalization = 1. / hyperplane;   
   if (hyperplane.has_inf() || hyperplane.has_nan())
   {    
-    normalization = arma::max(vectorizedFront, 1);
+    normalization = arma::max(vectorizedObjectives, 1);
   }
   normalization = normalization + (normalization == 0);
-  vectorizedFront.each_col( [normalization](arma::vec& a){ a = a / normalization; } );
-  for (size_t i = 0; i< front.size(); i++)
-  {
-    temp = vectorizedFront.col(i);
-    population[front[i]] = temp.reshape(arma::size(population[0]));
-  }
 }
 
 template <typename MatType>
-inline size_t AGEMOEA::GetGeometry(const std::vector<MatType>& population,
+inline size_t AGEMOEA::GetGeometry(
+    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                     const std::vector<size_t>& front,
-                    const std::vector<size_t>& extreme,
-                    size_t m)
+                    const arma::Row<size_t>& extreme)
 {
-  arma::rowvec d = PointToLineDistance<MatType> (population, front, 
-                                    new arma::rowvec(numVariables, arma::fill::zeros),
-                                    new arma::rowvec(numVariables, arma::fill::ones));
+  arma::Row<typename MatType::elem_type> d;
+  PointToLineDistance<MatType> (d, calculatedObjectives, front, 
+                                    new arma::colvec(numObjectives, arma::fill::zeros),
+                                    new arma::colvec(numObjectives, arma::fill::ones));
   for (size_t i = 0; i < extreme.size(); i++)
   {
     d[extreme[i]] = arma::datum::inf;
   }
   size_t index = arma::index_min(d);
-  double avg = arma::accu(population[front[index]]) / static_cast<double> (numVariables); 
-  double p = std::log(m) / std::log(1.0 / avg);
+  double avg = arma::accu(calculatedObjectives[front[index]]) / static_cast<double> (numObjectives); 
+  double p = std::log(numObjectives) / std::log(1.0 / avg);
   if (p <= 0.1 || std::isnan(p)) {p = 1.0;}
   return p;
 }
 
 //! Pairwise distance for each point in the given front.
 template <typename MatType>
-inline arma::mat& AGEMOEA::PairwiseDistance(std::vector<MatType>& population,
+inline void AGEMOEA::PairwiseDistance(MatType& final,
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                                           const std::vector<size_t>& front,
                                           size_t dimension)
 {
-  arma::mat final(front.size(),front.size(),arma::fill::zeros);
-  
+  final.zeros(front.size(),front.size());
   
   for (size_t i = 0; i < front.size(); i++)
   {
     for (size_t j = i + 1; i < front.size(); j++)
     {
-      final(i, j) = std::pow(arma::accu(arma::pow(arma::abs(population[i] - population[j]), dimension)), 1.0 / dimension);
+      final(i, j) = std::pow(arma::accu(arma::pow(arma::abs(calculatedObjectives[front[i]] - calculatedObjectives[front[j]]), dimension)), 1.0 / dimension);
       final(j, i) = final(i, j);
     }
   }
-  return final;
 }
 
 //! Find the index of the of the extreme points in the given front.
 template <typename MatType>
-inline arma::Row<size_t> AGEMOEA::FindExtremePoints(std::vector<MatType>& population,
-                                            const std::vector<size_t>& front)
+void AGEMOEA::FindExtremePoints(arma::Row<size_t>& indexes, 
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+                              const std::vector<size_t>& front)
 {
-  if(numVariables >= front.size())
+  if(numObjectives >= front.size())
   {
-    return front;
+    indexes = arma::linspace<arma::rowvec>(front.size() - 1, 0, front.size());
+    return;
   }
 
-  arma::mat W(numVariables, numVariables, arma::fill::eye);
+  arma::mat W(numObjectives, numObjectives, arma::fill::eye);
   W = W + 1e-6;
-  arma::Row<size_t> indexes(numVariables);
   std::vector<bool> selected(front.size());
-  for (size_t i = 0; i < numVariables; i++)
+  arma::colvec z(numObjectives, arma::fill::zeros);
+  for (size_t i = 0; i < numObjectives; i++)
   {
-    arma::rowvec dists = PointToLineDistance<MatType>(population, 
-         front, new arma::rowvec(numVariables, arma::fill::zeros), W.row(i));
+    arma::rowvec dists;
+    PointToLineDistance<MatType>(dists, calculatedObjectives, front, z, W.col(i));
     for (size_t j = 0; j < front.size(); i++)
       if (selected[j]){dists[i] = arma::datum::inf;}
-    indexes[i] = front[dists.index_min()];
+    indexes[i] = dists.index_min();
     selected[dists.index_min()] = true;
   }
-  return indexes;
 }
 
 //! Find the distance of a front from a line formed by two points.
-template<typename MatType>
-arma::rowvec AGEMOEA::PointToLineDistance(const std::vector<MatType>& population,
+template <typename MatType>
+void AGEMOEA::PointToLineDistance(arma::rowvec& distances,
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                                        std::vector<size_t>& front,
-                                       const arma::rowvec& pointA,
-                                       const arma::rowvec& pointB)
+                                       const arma::colvec& pointA,
+                                       const arma::colvec& pointB)
 {
-  arma::rowvec distances(front.size());
-  MatType ba = pointB - pointA; 
-  MatType pa;
+  arma::rowvec distancesTemp(front.size());
+  arma::colvec ba = pointB - pointA; 
+  arma::colvec pa;
 
   for (size_t i = 0; i < front.size(); i++)
   {
         size_t ind = front[i];
-
-        //! Points can be matrices as well for ease of objective calculation.
-        //! Hence they may need to be vectorized row wise before 
-        pa = (arma::vectorise(population[ind], 1) - pointA);
+ 
+        pa = (calculatedObjectives[ind] - pointA);
         double t = arma::dot(pa, ba) / arma::dot(ba, ba);
-        distances[i] = arma::accu(arma::pow((pa - t % ba), 2));
+        distancesTemp[i] = arma::accu(arma::pow((pa - t * ba), 2));
   }
-  return distances;
+  distances = distancesTemp;
 }
 
 //! Sort population into Pareto fronts.
@@ -611,51 +636,97 @@ inline bool AGEMOEA::Dominates(
   return allBetterOrEqual && atleastOneBetter;
 }
 
+template <typename MatType>
+inline typename MatType::elem_type AGEMOEA::DiversityScore(std::set<size_t>& selected,
+                                                  const MatType& pairwiseDistance,
+                                                  size_t S)
+{
+  typedef typename MatType::elem_type ElemType;
+  ElemType m = arma::datum::inf;
+  ElemType m1 = arma::datum::inf;
+  for (size_t i = 0; i < pairwiseDistance.n_cols; i++)
+  {
+    if(i == S){ continue;}
+    if (pairwiseDistance(S, i) < m) 
+    {
+      m1 = m;
+      m = pairwiseDistance(S, i);
+    }
+    else if (pairwiseDistance(S, i) < m1)
+    {
+      m1 = pairwiseDistance(S, i);
+    }
+  }
+  return m + m1;
+}
+
 //! Assign survival score to the population.
 template <typename MatType>
 inline void AGEMOEA::SurvivalScoreAssignment(
     const std::vector<size_t>& front,
-    size_t dimension,
     std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-    std::vector<typename MatType::elem_type>& survivalScore)
+    std::vector<typename MatType::elem_type>& survivalScore,
+    arma::Row<size_t> extreme,
+    size_t dimension,
+    size_t t)
 {
-  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
-
-  size_t fSize = front.size();
-  // Stores the sorted indices of the fronts.
-  arma::uvec sortedIdx  = arma::regspace<arma::uvec>(0, 1, fSize - 1);
-
-  for (size_t m = 0; m < numObjectives; m++)
+  
+  if (t > 1)
   {
-    // Cache fValues of individuals for current objective.
-    arma::Col<ElemType> fValues(fSize);
-    std::transform(front.begin(), front.end(), fValues.begin(),
-      [&](const size_t& individual)
-        {
-          return calculatedObjectives[individual](m);
-        });
-
-    // Sort front indices by ascending fValues for current objective.
-    std::sort(sortedIdx.begin(), sortedIdx.end(),
-      [&](const size_t& frontIdxA, const size_t& frontIdxB)
-        {
-          return (fValues(frontIdxA) < fValues(frontIdxB));
-        });
-
-    survivalScore[front[sortedIdx(0)]] =
-        std::numeric_limits<ElemType>::max();
-    survivalScore[front[sortedIdx(fSize - 1)]] =
-        std::numeric_limits<ElemType>::max();
-    ElemType minFval = fValues(sortedIdx(0));
-    ElemType maxFval = fValues(sortedIdx(fSize - 1));
-    ElemType scale =
-        std::abs(maxFval - minFval) == 0. ? 1. : std::abs(maxFval - minFval);
-
-    for (size_t i = 1; i < fSize - 1; i++)
+    for (size_t i = 0; i < front.size(); i++)
     {
-      survivalScore[front[sortedIdx(i)]] +=
-          (fValues(sortedIdx(i + 1)) - fValues(sortedIdx(i - 1))) / scale;
+      survivalScore[front[i]] = std::pow(arma::accu(arma::pow(arma::abs(calculatedObjectives[front[i]]), dimension)), 1.0 / dimension);
+    }
+  }
+  
+  else
+  {
+    if (front.size() < numObjectives)
+    {
+      return;
+    }
+    std::set<size_t> selected;
+    std::set<size_t> remaining;
+    
+    
+    //!create the slecetd and remaining sets.
+    for (size_t index: extreme)
+    { 
+      selected.insert(index);
+      survivalScore[front[index]] = arma::datum::inf;
+    }
+    for (size_t i = 0; i < front.size(); i++)
+    {
+      if (selected.count(i) == 0)
+      {
+        remaining.insert(i);
+      }
+    }
+
+    arma::Mat<ElemType> pairwise;
+    PairwiseDistance<MatType>(pairwise,calculatedObjectives,front,dimension);
+    arma::Row<typename MatType::elem_type> proximity(front.size(), arma::fill::zeros);
+    arma::Row<typename MatType::elem_type> diversity(front.size(), arma::fill::zeros);
+    arma::Row<typename MatType::elem_type> value(front.size(), arma::fill::zeros);
+    for (size_t i = 0; i < front.size(); i++)
+    {
+      proximity[i] = arma::norm(calculatedObjectives[front[i]], dimension);
+    } 
+
+    while (remaining.size() > 0)
+    {
+      std::set<size_t>::iterator it;
+      for (it = remaining.begin(); it != remaining.end(); it++)
+      {
+        diversity[*it] = DiversityScore<MatType>(selected, pairwise, *it);
+        value[*it] = diversity[*it] / proximity[*it];
+      }
+      size_t index = arma::index_max(value);
+      survivalScore[front[index]] = value[index];
+      value[index] = 0;
+      selected.insert(index);
+      remaining.erase(index);
     }
   }
 }
