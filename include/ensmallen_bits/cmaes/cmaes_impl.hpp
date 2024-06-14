@@ -417,7 +417,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     }
 
     // Check if the condition number of the covariance matrix is too high.
-    if (eigval(0) / eigval(eigval.n_elem - 1) > 1e14) // TODO: Probably put this into a parameter
+    if (eigval(eigval.n_elem - 1) / eigval(0) > 1e14) // TODO: Probably put this into a parameter
     {
       Info << "CMA-ES: covariance matrix condition number is too high; "
         << "terminating with failure." << std::endl;
