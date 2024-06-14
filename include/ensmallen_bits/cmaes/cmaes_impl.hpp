@@ -291,6 +291,17 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       return overallObjective;
     }
 
+    // Terminate if sigma/sigma0 is above 10^4 * max(D)
+    if (sigma(idx1) / sigma(0) > 1e4 * std::max(eigvalZero, eigval))
+    {
+      Info << "The step size ratio is too large; "
+        << "terminating with failure." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
     // Update covariance matrix.
     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
     {
