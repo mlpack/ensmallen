@@ -31,14 +31,18 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  const double minObjective = std::numeric_limits<double>::lowest(),
+                                  const int maxFunctionEvaluations = std::numeric_limits<int>::max()):
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
     transformationPolicy(transformationPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    minObjective(minObjective),
+    maxFunctionEvaluations(maxFunctionEvaluations)
 { /* Nothing to do. */ }
 
 template<typename SelectionPolicyType, typename TransformationPolicyType>
@@ -49,13 +53,16 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  const double minObjective = std::numeric_limits<double>::lowest(),
+                                  const int maxFunctionEvaluations = std::numeric_limits<int>::max()):
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    minObjective(minObjective)
 {
   Warn << "This is a deprecated constructor and will be removed in a "
     "future version of ensmallen" << std::endl;
@@ -89,9 +96,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   // Find the number of functions to use.
   const size_t numFunctions = function.NumFunctions();
 
+  // Initialize the counter for the number of function evaluations.
+  size_t numFunctionEvaluations = 0;
+
   // Population size.
   if (lambda == 0)
-    lambda = (4 + std::round(3 * std::log(iterate.n_elem))) * 10;
+    lambda = (4 + std::round(3 * std::log(iterate.n_elem)));
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
@@ -109,7 +119,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   else 
     sigma(0) = stepSize;
 
-  const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
+  const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 3);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
   const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
@@ -151,6 +161,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     terminate |= Callback::Evaluate(*this, function, transformedIterate,
         objective, callbacks...);
   }
+  numFunctionEvaluations += numFunctions;
 
   ElemType overallObjective = currentObjective;
   ElemType lastObjective = std::numeric_limits<ElemType>::max();
@@ -185,6 +196,10 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   // been reached or no improvement has been made before terminating.
   size_t patience = 10 + (30 * iterate.n_elem / lambda) + 1;
   size_t steps = 0;
+
+  // The min and max objective values in the range. For early termination.
+  double minObjectiveInPatience = std::numeric_limits<double>::infinity();
+  double maxObjectiveInPatience = -std::numeric_limits<double>::infinity();
 
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
@@ -235,6 +250,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
         transformationPolicy.Transform(mPosition[idx1]), terminate,
         callbacks...);
 
+    numFunctionEvaluations += lambda; // I think, not totally sure
+    
     // Update best parameters.
     if (currentObjective < overallObjective)
     {
@@ -340,6 +357,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       }
     }
 
+    minObjectiveInPatience = std::min(minObjectiveInPatience, currentObjective);
+    maxObjectiveInPatience = std::max(maxObjectiveInPatience, currentObjective);
+
     // Output current objective function.
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
       << "." << std::endl;
@@ -354,7 +374,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       return overallObjective;
     }
 
-    if (std::abs(lastObjective - overallObjective) < tolerance)
+    if ((std::abs(lastObjective - overallObjective) < tolerance) && 
+    (maxObjectiveInPatience - minObjectiveInPatience < tolerance))
     {
       if (steps > patience) {
         Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
@@ -366,7 +387,44 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       }
     }
     else {
+      minObjectiveInPatience = std::numeric_limits<double>::infinity();
+      maxObjectiveInPatience = -std::numeric_limits<double>::infinity();
       steps = 0;
+    }
+
+    // Other termination criteria.
+    // Terminate if the objective is less than the minimum objective.
+    if (overallObjective < minObjective)
+    {
+      Info << "CMA-ES: minimized below minObjective " << minObjective << "; "
+        << "terminating optimization." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    // Terminate if the maximum number of function evaluations has been reached.
+    if (numFunctionEvaluations >= maxFunctionEvaluations)
+    {
+      Info << "CMA-ES: maximum number of function evaluations ("
+        << maxFunctionEvaluations << ") reached; "
+        << "terminating optimization." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    // Check if the condition number of the covariance matrix is too high.
+    if (eigval(0) / eigval(eigval.n_elem - 1) > 1e14) // TODO: Probably put this into a parameter
+    {
+      Info << "CMA-ES: covariance matrix condition number is too high; "
+        << "terminating with failure." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
     }
 
     steps++;
