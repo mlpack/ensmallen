@@ -61,8 +61,6 @@ class AGEMOEA
    *     This should be atleast 4 in size and a multiple of 4.
    * @param maxGenerations The maximum number of generations allowed for NSGA-II.
    * @param crossoverProb The probability that a crossover will occur.
-   * @param mutationProb The probability that a mutation will occur.
-   * @param mutationStrength The strength of the mutation.
    * @param epsilon The minimum difference required to distinguish between
    *     candidate solutions.
    * @param eta The distance parameters of the crossover distribution.
@@ -72,8 +70,6 @@ class AGEMOEA
   AGEMOEA(const size_t populationSize = 100,
           const size_t maxGenerations = 2000,
           const double crossoverProb = 0.6,
-          const double mutationProb = 0.3,
-          const double mutationStrength = 1e-3,
           const double distributionIndex = 20,
           const double epsilon = 1e-6,
           const double eta = 20,
@@ -92,8 +88,6 @@ class AGEMOEA
    *     This should be atleast 4 in size and a multiple of 4.
    * @param maxGenerations The maximum number of generations allowed for NSGA-II.
    * @param crossoverProb The probability that a crossover will occur.
-   * @param mutationProb The probability that a mutation will occur.
-   * @param mutationStrength The strength of the mutation.
    * @param epsilon The minimum difference required to distinguish between
    *     candidate solutions.
    * @param eta The distance parameters of the crossover distribution
@@ -103,8 +97,6 @@ class AGEMOEA
   AGEMOEA(const size_t populationSize = 100,
           const size_t maxGenerations = 2000,
           const double crossoverProb = 0.6,
-          const double mutationProb = 0.3,
-          const double mutationStrength = 1e-3,
           const double distributionIndex = 20,
           const double epsilon = 1e-6,
           const double eta = 20,
@@ -147,11 +139,6 @@ class AGEMOEA
   //! Modify the crossover rate.
   double& CrossoverRate() { return crossoverProb; }
 
-  //! Get the mutation probability.
-  double MutationProbability() const { return mutationProb; }
-  //! Modify the mutation probability.
-  double& MutationProbability() { return mutationProb; }
-
   //! Retrieve value of the distribution index.
   double DistributionIndex() const { return distributionIndex; }
   //! Modify the value of the distribution index.
@@ -161,11 +148,6 @@ class AGEMOEA
   double Eta() const { return eta; }
   //! Modify the value of eta.
   double& Eta() { return eta; }
-
-  //! Get the mutation strength.
-  double MutationStrength() const { return mutationStrength; }
-  //! Modify the mutation strength.
-  double& MutationStrength() { return mutationStrength; }
 
   //! Get the tolerance.
   double Epsilon() const { return epsilon; }
@@ -329,7 +311,7 @@ class AGEMOEA
       std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
       std::vector<typename MatType::elem_type>& survivalScore,
       arma::Row<size_t> extreme,
-      size_t dimension,
+      double dimension,
       size_t t);
 
   /**
@@ -379,7 +361,7 @@ class AGEMOEA
   * @return The variable p in the Lp norm that best fits the geometry of the current front.
   */
  template <typename MatType>
- size_t GetGeometry(
+ double GetGeometry(
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                     const std::vector<size_t>& front,
                     const arma::Row<size_t>& extreme);
@@ -397,7 +379,7 @@ class AGEMOEA
   void PairwiseDistance(MatType& final,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                                           const std::vector<size_t>& front,
-                                          size_t dimension);
+                                          double dimension);
 
   /**
    * Finding the indexes of the extreme points in the front.
@@ -408,7 +390,7 @@ class AGEMOEA
    * @return A set of indexes for the extreme points.
    */
   template <typename MatType>
-  void FindExtremePoints(arma::Row<size_t>& indexes, 
+  void FindExtremePoints(arma::Row<size_t>& indexes,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
                               const std::vector<size_t>& front);
   
@@ -425,7 +407,7 @@ class AGEMOEA
   template <typename MatType>
   void PointToLineDistance(arma::rowvec& distances,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                                       std::vector<size_t>& front,
+                                       const std::vector<size_t>& front,
                                        const arma::colvec& pointA,
                                        const arma::colvec& pointB);
   
