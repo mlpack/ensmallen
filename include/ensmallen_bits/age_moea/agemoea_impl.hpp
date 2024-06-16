@@ -365,7 +365,8 @@ inline void AGEMOEA::Crossover(MatType& childA,
     //! Variables after the cross over for all of them.
     MatType c1 = 0.5 * ((current_min + current_max) - betaq1 % current_diff);
     MatType c2 = 0.5 * ((current_min + current_max) + betaq2 % current_diff);
-    
+    c1 = arma::min(arma::max(c1, lowerBound), upperBound);
+    c2 = arma::min(arma::max(c2, lowerBound), upperBound);
     
     //! Decision for the crossover between the two parents for each variable.
     us.randu();
