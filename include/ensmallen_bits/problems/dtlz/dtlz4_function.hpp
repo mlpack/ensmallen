@@ -65,12 +65,12 @@ namespace test {
     public:
 
       /**
-      * Object Constructor.
-      * Initializes the individual objective functions.
-      *
-      * @param alpha The power which each variable is raised to.
-      * @param numParetoPoint No. of pareto points in the reference front.
-      */
+       * Object Constructor.
+       * Initializes the individual objective functions.
+       *
+       * @param alpha The power which each variable is raised to.
+       * @param numParetoPoint No. of pareto points in the reference front.
+       */
       DTLZ4 (size_t alpha = 100, size_t numParetoPoints = 136) :
         alpha(alpha),
         numParetoPoints(numParetoPoints),
@@ -80,7 +80,7 @@ namespace test {
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint ()
+      arma::Col<typename MatType::elem_type> GetInitialPoint()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -88,27 +88,30 @@ namespace test {
       } 
       
       // Get the private variables.
-      size_t GetNumObjectives ()
-      { return this -> numObjectives;}
+      
+      // Get the number of objectives.
+      size_t GetNumObjectives()
+      { return this -> numObjectives; }
 
-      size_t GetNumVariables ()
-      { return this -> numVariables;}
-
-      /**
-      * Set the no. of pareto points.
-      *
-      * @param numParetoPoint
-      */
-      void SetNumParetoPoint (size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint;}
+      // Get the number of variables.
+      size_t GetNumVariables()
+      { return this -> numVariables; }
 
       /**
-      * Evaluate the G(x) with the given coordinate.
-      *
-      * @param coords The function coordinates.
-      * @return arma::Row<typename MatType::elem_type>
-      */
-      arma::Row<typename MatType::elem_type> g (const MatType& coords)
+       * Set the no. of pareto points.
+       *
+       * @param numParetoPoint
+       */
+      void SetNumParetoPoint(size_t numParetoPoint)
+      { this -> numParetoPoints = numParetoPoint; }
+
+      /**
+       * Evaluate the G(x) with the given coordinate.
+       *
+       * @param coords The function coordinates.
+       * @return arma::Row<typename MatType::elem_type>
+       */
+      arma::Row<typename MatType::elem_type> g(const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -117,7 +120,7 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1;i < numVariables;i++)
+        for(size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2); 
         } 
@@ -126,12 +129,12 @@ namespace test {
       }    
 
       /**
-      * Evaluate the objectives with the given coordinate.
-      *
-      * @param coords The function coordinates.
-      * @return arma::Mat<typename MatType::elem_type>
-      */
-      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
+       * Evaluate the objectives with the given coordinate.
+       *
+       * @param coords The function coordinates.
+       * @return arma::Mat<typename MatType::elem_type>
+       */
+      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -139,10 +142,10 @@ namespace test {
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value = 0.5 * (1.0 + G);
-        for(size_t i = 0;i < numObjectives - 1;i++)
+        for(size_t i = 0; i < numObjectives - 1; i++)
         {
           objectives.row(i) =  value %  
-                        arma::sin(arma::pow(coords.row(i), alpha) * arma::datum::pi * 0.5);
+              arma::sin(arma::pow(coords.row(i), alpha) * arma::datum::pi * 0.5);
           value = value % arma::cos(arma::pow(coords.row(i), alpha) * arma::datum::pi * 0.5); 
         }
         objectives.row(numObjectives - 1) = value;
@@ -153,21 +156,21 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZ4Objective
       {
-        DTLZ4Objective (size_t stop, DTLZ4& dtlz): stop(stop), dtlz(dtlz)
+        DTLZ4Objective(size_t stop, DTLZ4& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here.*/}  
         
         /**
-        * Evaluate one objective with the given coordinate.
-        *
-        * @param coords The function coordinates.
-        * @return arma::Col<typename MatType::elem_type>
-        */
-        typename MatType::elem_type Evaluate (const MatType& coords)
+         * Evaluate one objective with the given coordinate.
+         *
+         * @param coords The function coordinates.
+         * @return arma::Col<typename MatType::elem_type>
+         */
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
-          for(size_t i = 0;i < stop;i++)
+          for(size_t i = 0; i < stop; i++)
           {
             value = value * std::cos(std::pow(coords[i], dtlz.alpha) * arma::datum::pi * 0.5);
           }
@@ -190,21 +193,21 @@ namespace test {
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZ4Objective, DTLZ4Objective, DTLZ4Objective> GetObjectives ()
+      std::tuple<DTLZ4Objective, DTLZ4Objective, DTLZ4Objective> GetObjectives()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
       //! Get the Reference Front.
       //! Front. The implementation has been taken from pymoo.
-      arma::mat GetReferenceFront ()
+      arma::mat GetReferenceFront()
       { 
-      	Uniform ref_generator;
-        arma::mat ref_dirs = ref_generator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
-        arma::colvec x = arma::normalise(ref_dirs, 2, 1);
-        arma::mat A(size(ref_dirs), arma::fill::ones);
+      	Uniform refGenerator;
+        arma::mat refDirs = refGenerator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
+        arma::colvec x = arma::normalise(refDirs, 2, 1);
+        arma::mat A(size(v), arma::fill::ones);
         A.each_col() = x;
-        return ref_dirs / A;
+        return refDirs / A;
       }
 
     DTLZ4Objective objectiveF1;

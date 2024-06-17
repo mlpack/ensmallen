@@ -64,35 +64,38 @@ namespace test {
     public:
 
       /**
-      * Object Constructor.
-      * Initializes the individual objective functions.
-      *
-      * @param numParetoPoint No. of pareto points in the reference front.
-      */
-      DTLZ7 (size_t numParetoPoint = 136) :
+       * Object Constructor.
+       * Initializes the individual objective functions.
+       *
+       * @param numParetoPoint No. of pareto points in the reference front.
+       */
+      DTLZ7(size_t numParetoPoint = 136) :
         numParetoPoints(numParetoPoint),
-            objectiveF1(0, *this),
-            objectiveF2(1, *this),
-            objectiveF3(2, *this)
+        objectiveF1(0, *this),
+        objectiveF2(1, *this),
+        objectiveF3(2, *this)
       {/* Nothing to do here */}
 
       // Get the private variables.
-      size_t GetNumObjectives ()
+
+      // Get the number of objectives.
+      size_t GetNumObjectives()
       { return this -> numObjectives; }
 
-      size_t GetNumVariables ()
+      // Get the number of variables.
+      size_t GetNumVariables()
       { return this -> numVariables; }
 
       /**
-      * Set the no. of pareto points.
-      *
-      * @param numParetoPoint
-      */
-      void SetNumParetoPoint (size_t numParetoPoint)
+       * Set the no. of pareto points.
+       *
+       * @param numParetoPoint No. of pareto points in the reference front.
+       */
+      void SetNumParetoPoint(size_t numParetoPoint)
       { this -> numParetoPoints = numParetoPoint; }
 
       // Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint ()
+      arma::Col<typename MatType::elem_type> GetInitialPoint()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -100,12 +103,12 @@ namespace test {
       } 
 
       /**
-      * Evaluate the G(x) with the given coordinate.
-      *
-      * @param coords The function coordinates.
-      * @return arma::Row<typename MatType::elem_type>
-      */
-      arma::Row<typename MatType::elem_type> g (const MatType& coords)
+       * Evaluate the G(x) with the given coordinate.
+       *
+       * @param coords The function coordinates.
+       * @return arma::Row<typename MatType::elem_type>
+       */
+      arma::Row<typename MatType::elem_type> g(const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -114,26 +117,26 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        innerSum = (9.0 / k) * arma::sum(coords.rows(numObjectives - 1, numVariables - 1) + 1.0, 0); 
+        innerSum = (9.0 / k) * arma::sum(coords.rows(numObjectives - 1,
+            numVariables - 1) + 1.0, 0); 
         
 
         return innerSum;
       }
 
       /**
-      * Evaluate the H(f_i,...) with the given coordinate.
-      *
-      * @param coords The function coordinates.
-      * @return arma::Row<typename MatType::elem_type>
-      */
-      arma::Row<typename MatType::elem_type> h (const MatType& coords, 
-                            const arma::Row<typename MatType::elem_type>& G)
+       * Evaluate the H(f_i,...) with the given coordinate.
+       *
+       * @param coords The function coordinates.
+       * @return arma::Row<typename MatType::elem_type>
+       */
+      arma::Row<typename MatType::elem_type> h(
+          const MatType& coords, const arma::Row<typename MatType::elem_type>& G)
       {
         size_t k = numVariables - numObjectives + 1;
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::ones);
         innerSum = innerSum * numObjectives;
@@ -146,12 +149,12 @@ namespace test {
       }
 
       /**
-      * Evaluate the objectives with the given coordinate.
-      *
-      * @param coords The function coordinates.
-      * @return arma::Mat<typename MatType::elem_type>
-      */
-      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
+       * Evaluate the objectives with the given coordinate.
+       *
+       * @param coords The function coordinates.
+       * @return arma::Mat<typename MatType::elem_type>
+       */
+      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -168,16 +171,16 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZ7Objective
       {
-        DTLZ7Objective (size_t stop, DTLZ7& dtlz): stop(stop), dtlz(dtlz)
+        DTLZ7Objective(size_t stop, DTLZ7& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here. */}  
         
         /**
-        * Evaluate one objective with the given coordinate.
-        *
-        * @param coords The function coordinates.
-        * @return arma::Col<typename MatType::elem_type>
-        */
-        typename MatType::elem_type Evaluate (const MatType& coords)
+         * Evaluate one objective with the given coordinate.
+         *
+         * @param coords The function coordinates.
+         * @return arma::Col<typename MatType::elem_type>
+         */
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
@@ -194,7 +197,7 @@ namespace test {
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZ7Objective, DTLZ7Objective, DTLZ7Objective> GetObjectives ()
+      std::tuple<DTLZ7Objective, DTLZ7Objective, DTLZ7Objective> GetObjectives()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 

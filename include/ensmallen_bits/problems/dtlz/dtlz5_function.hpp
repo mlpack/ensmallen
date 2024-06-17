@@ -64,12 +64,12 @@ namespace test {
     public:
 
       /**
-      * Object Constructor.
-      * Initializes the individual objective functions.
-      *
-      * @param numParetoPoint No. of pareto points in the reference front.
-      */
-      DTLZ5 (size_t numParetoPoints = 136) :
+       * Object Constructor.
+       * Initializes the individual objective functions.
+       *
+       * @param numParetoPoint No. of pareto points in the reference front.
+       */
+      DTLZ5(size_t numParetoPoints = 136) :
         numParetoPoints(numParetoPoints),
         objectiveF1(0, *this),
         objectiveF2(1, *this),
@@ -77,7 +77,7 @@ namespace test {
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint ()
+      arma::Col<typename MatType::elem_type> GetInitialPoint()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -85,27 +85,30 @@ namespace test {
       } 
       
       // Get the private variables.
-      size_t GetNumObjectives ()
+      
+      // Get the number of objectives.
+      size_t GetNumObjectives()
       { return this -> numObjectives; }
-
-      size_t GetNumVariables ()
+      
+      // Get the number of variables.
+      size_t GetNumVariables()
       { return this -> numVariables; }
 
       /**
-      * Set the no. of pareto points.
-      *
-      * @param numParetoPoint
-      */
-      void SetNumParetoPoint (size_t numParetoPoint)
+       * Set the no. of pareto points.
+       *
+       * @param numParetoPoint The no. points in the reference front.
+       */
+      void SetNumParetoPoint(size_t numParetoPoint)
       { this -> numParetoPoints = numParetoPoint; }
 
       /**
-      * Evaluate the G(x) with the given coordinate.
-      *
-      * @param coords The function coordinates.
-      * @return arma::Row<typename MatType::elem_type>
-      */
-      arma::Row<typename MatType::elem_type> g (const MatType& coords)
+       * Evaluate the G(x) with the given coordinate.
+       *
+       * @param coords The function coordinates.
+       * @return arma::Row<typename MatType::elem_type>
+       */
+      arma::Row<typename MatType::elem_type> g(const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
 
@@ -114,7 +117,7 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1;i < numVariables;i++)
+        for(size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2); 
         } 
@@ -123,12 +126,12 @@ namespace test {
       }    
 
       /**
-      * Evaluate the objectives with the given coordinate.
-      *
-      * @param coords The function coordinates.
-      * @return arma::Mat<typename MatType::elem_type>
-      */
-      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
+       * Evaluate the objectives with the given coordinate.
+       *
+       * @param coords The function coordinates.
+       * @return arma::Mat<typename MatType::elem_type>
+       */
+      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -137,11 +140,11 @@ namespace test {
         arma::Row<ElemType> G = g(coords); 
         arma::Row<ElemType> value = 0.5 * (1.0 + G);
         arma::Row<ElemType> theta;
-        for(size_t i = 0;i < numObjectives - 1;i++)
+        for(size_t i = 0; i < numObjectives - 1; i++)
         {
           theta = 0.5 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
           objectives.row(i) =  value %  
-                        arma::sin(theta * arma::datum::pi * 0.5);
+              arma::sin(theta * arma::datum::pi * 0.5);
           value = value % arma::cos(theta * arma::datum::pi * 0.5); 
         }
         objectives.row(numObjectives - 1) = value;
@@ -152,23 +155,23 @@ namespace test {
       // Changes based on stop variable provided. 
       struct DTLZ5Objective
       {
-        DTLZ5Objective (size_t stop, DTLZ5& dtlz): stop(stop), dtlz(dtlz)
+        DTLZ5Objective(size_t stop, DTLZ5& dtlz): stop(stop), dtlz(dtlz)
         {/* Nothing to do here. */}  
         
         /**
-        * Evaluate one objective with the given coordinate.
-        *
-        * @param coords The function coordinates.
-        * @return arma::Col<typename MatType::elem_type>
-        */
-        typename MatType::elem_type Evaluate (const MatType& coords)
+         * Evaluate one objective with the given coordinate.
+         *
+         * @param coords The function coordinates.
+         * @return arma::Col<typename MatType::elem_type>
+         */
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
           ElemType theta;
           ElemType G = dtlz.g(coords)[0];
-          for(size_t i = 0;i < stop;i++)
+          for(size_t i = 0; i < stop; i++)
           {
             theta = 0.5 * (1.0  + 2.0 * coords[i] * G) / (1.0 + G); 
             value = value * std::cos(theta * arma::datum::pi * 0.5);
