@@ -88,7 +88,7 @@ namespace test {
       } 
       
       // Get the private variables.
-      
+
       // Get the number of objectives.
       size_t GetNumObjectives()
       { return this -> numObjectives; }
@@ -205,7 +205,7 @@ namespace test {
       	Uniform refGenerator;
         arma::mat refDirs = refGenerator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
         arma::colvec x = arma::normalise(refDirs, 2, 1);
-        arma::mat A(size(v), arma::fill::ones);
+        arma::mat A(size(refDirs), arma::fill::ones);
         A.each_col() = x;
         return refDirs / A;
       }
