@@ -453,7 +453,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       return overallObjective;
     }
 
-    // Terminate if adding 0.2 sigma_g in each coordinate does not change the m
+    // Terminate if adding 0.2 sigma_g in each coordinate does not change the m.
     for (size_t j = 0; j < iterate.n_elem; ++j)
     {
       if (std::abs(mPosition[idx0](j) - (mPosition[idx0](j) + 0.2 * sigma(idx0))) < 1e-12)
