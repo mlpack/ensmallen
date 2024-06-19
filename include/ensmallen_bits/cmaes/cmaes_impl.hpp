@@ -438,6 +438,35 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       return overallObjective;
     }
 
+    // Terminate if abs(m_g - (m_g + 0.1*sigma_g*sqrt(eigval(i))*||eigvec(i)||)) < 1e-12
+    // i = (g % n) + 1
+    size_t i_aux = (i % iterate.n_elem) + 1;
+    BaseMatType norm_eigvec = eigvec.col(i_aux) / arma::norm(eigvec.col(i_aux), 2);
+    if (std::abs(mPosition[idx0] - mPosition[idx0] +
+        0.1 * sigma(idx0) * std::sqrt(eigval(i_aux))*norm_eigvec) < 1e-12)
+    {
+      Info << "CMA-ES: change in position is too small; "
+        << "terminating with failure." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    // Terminate if adding 0.2 sigma_g in each coordinate does not change the m
+    for (size_t j = 0; j < iterate.n_elem; ++j)
+    {
+      if (std::abs(mPosition[idx0](j) - (mPosition[idx0](j) + 0.2 * sigma(idx0))) < 1e-12)
+      {
+        Info << "CMA-ES: change in position is too small; "
+          << "terminating with failure." << std::endl;
+
+        iterate = transformationPolicy.Transform(iterate);
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
+    }
+
     steps++;
 
     lastObjective = overallObjective;
