@@ -47,5 +47,12 @@
 #include "zdt/zdt3_function.hpp"
 #include "zdt/zdt4_function.hpp"
 #include "zdt/zdt6_function.hpp"
+#include "dtlz/dtlz1_function.hpp"
+#include "dtlz/dtlz2_function.hpp"
+#include "dtlz/dtlz3_function.hpp"
+#include "dtlz/dtlz4_function.hpp"
+#include "dtlz/dtlz5_function.hpp"
+#include "dtlz/dtlz6_function.hpp"
+#include "dtlz/dtlz7_function.hpp"
 
 #endif
