@@ -242,12 +242,16 @@ class AGEMOEA
    * @param childB Another newly generated candidate.
    * @param parentA First parent from elite population.
    * @param parentB Second parent from elite population.
+   * @param lowerBound The lower bound of the objectives.
+   * @param upperBound The upper bound of the objectives.
    */
   template<typename MatType>
   void Crossover(MatType& childA,
                  MatType& childB,
                  const MatType& parentA,
-                 const MatType& parentB);
+                 const MatType& parentB,
+                 const MatType& lowerBound,
+                 const MatType& upperBound);
 
   /**
    * Mutate the coordinates for a candidate.
@@ -301,18 +305,22 @@ class AGEMOEA
   * Assigns Survival Score metric for sorting.
   *
   * @param front The previously generated Pareto fronts.
-  * @param index Index d of the non-dominated front.
+  * @param idealPoint The ideal point of teh first front.
   * @param dimension The calculated dimension from grt geometry.
   * @param calculatedObjectives The previously calculated objectives.
   * @param survivalScore The Survival Score vector to be updated for each individual in the population.
+  * @param normalize The normlization vector of the fronts.
+  * @param dimension The dimension of the first front.
+  * @param fNum teh current front index.
   */
   template <typename MatType>
   void SurvivalScoreAssignment(const std::vector<size_t>& front,
-      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-      std::vector<typename MatType::elem_type>& survivalScore,
-      arma::Row<size_t> extreme,
-      double dimension,
-      size_t t);
+    const arma::Col<typename MatType::elem_type>& idealPoint,
+    std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+    std::vector<typename MatType::elem_type>& survivalScore,
+    arma::Col<typename MatType::elem_type>& normalize,
+    double& dimension,
+    size_t fNum);
 
   /**
    * The operator used in the AGE-MOEA survival score based sorting.
@@ -405,11 +413,11 @@ class AGEMOEA
    * @param pointB The second point on the line.
   */
   template <typename MatType>
-  void PointToLineDistance(arma::rowvec& distances,
+  void PointToLineDistance(arma::Row<typename MatType::elem_type>& distances,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                                       const std::vector<size_t>& front,
-                                       const arma::colvec& pointA,
-                                       const arma::colvec& pointB);
+                           const std::vector<size_t>& front,
+                           const arma::Col<typename MatType::elem_type>& pointA,
+                           const arma::Col<typename MatType::elem_type>& pointB);
   
   /**
    * Find the Diversity score corresponding the solution S using the selected set.
