@@ -187,49 +187,6 @@ TEST_CASE("AGEMOEAFonsecaFlemingDoubleTest", "[AGEMOEATest]")
   REQUIRE(success == true);
 }
 
-/**
- * Optimize for the Fonseca Fleming function using AGE-MOEA optimizer.
- * Tests for data of type float.
- */
-/*TEST_CASE("AGEMOEAFonsecaFlemingTestVectorFloatBounds", "[AGEMOEATest]")
-{
-  FonsecaFlemingFunction<arma::fmat> FON;
-  const arma::vec lowerBound = {-4};
-  const arma::vec upperBound = {4};
-  const float expectedLowerBound = -1.0 / sqrt(3);
-  const float expectedUpperBound = 1.0 / sqrt(3);
-
-  AGEMOEA opt(20, 300, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
-
-  arma::fmat coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
-
-  bool allInRange = true;
-
-  for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
-  {
-    const arma::fmat solution = paretoSet.slice(solutionIdx);
-    float valX = arma::as_scalar(solution(0));
-    float valY = arma::as_scalar(solution(1));
-    float valZ = arma::as_scalar(solution(2));
-
-    if (!IsInBounds<float>(valX, expectedLowerBound, expectedUpperBound, 0.1) ||
-        !IsInBounds<float>(valY, expectedLowerBound, expectedUpperBound, 0.1) ||
-        !IsInBounds<float>(valZ, expectedLowerBound, expectedUpperBound, 0.1))
-    {
-      allInRange = false;
-      break;
-    }
-  }
-
-  REQUIRE(allInRange);
-}*/
-
 TEST_CASE("AGEMOEAZDTONETest", "[AGEMOEATest]")
 {
   //! Parameters taken from original ZDT Paper.
