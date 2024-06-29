@@ -202,7 +202,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
     terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
         calculatedObjectives, fronts, callbacks...);
   }
-
+  EvaluateObjectives(population, objectives, calculatedObjectives);
   // Set the candidates from the Pareto Set as the output.
   paretoSet.set_size(population[0].n_rows, population[0].n_cols, fronts[0].size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
