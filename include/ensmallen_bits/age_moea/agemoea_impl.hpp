@@ -341,7 +341,7 @@ inline void AGEMOEA::Crossover(MatType& childA,
     MatType current_diff = current_max - current_min;
     current_diff.clamp(1e-10, arma::datum::inf);
 
-    //! Calculating beta used for the final crossover.
+    // Calculating beta used for the final crossover.
     MatType beta1 = 1 + 2.0 * (current_min - lowerBound) / current_diff;
     MatType beta2 = 1 + 2.0 * (upperBound - current_max) / current_diff;
     MatType alpha1 = 2 - arma::pow(beta1, -(eta + 1));
@@ -355,13 +355,13 @@ inline void AGEMOEA::Crossover(MatType& childA,
     MatType betaq2 = arma::pow(us % alpha2, 1 / (eta + 1));
     betaq2 = betaq2 % (mask1 != 1.0) + arma::pow((1.0 / (2.0 - us % alpha2)), 1.0 / (eta + 1)) % mask2;
 
-    //! Variables after the cross over for all of them.
+    // Variables after the cross over for all of them.
     MatType c1 = 0.5 * ((current_min + current_max) - betaq1 % current_diff);
     MatType c2 = 0.5 * ((current_min + current_max) + betaq2 % current_diff);
     c1 = arma::min(arma::max(c1, lowerBound), upperBound);
     c2 = arma::min(arma::max(c2, lowerBound), upperBound);
     
-    //! Decision for the crossover between the two parents for each variable.
+    // Decision for the crossover between the two parents for each variable.
     us.randu();
     childA = parentA % (us <= 0.5);
     childB = parentB % (us <= 0.5);
@@ -635,6 +635,7 @@ inline bool AGEMOEA::Dominates(
   return allBetterOrEqual && atleastOneBetter;
 }
 
+//! Assign diversity score for a given point and teh selected set.
 template <typename MatType>
 inline typename MatType::elem_type AGEMOEA::DiversityScore(std::set<size_t>& selected,
                                                   const MatType& pairwiseDistance,
@@ -673,6 +674,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
 {
   typedef typename MatType::elem_type ElemType;
 
+  // Calculations for the first front.
   if(fNum == 0){
 
     if(front.size() < numObjectives)
@@ -703,7 +705,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     std::set<size_t> selected;
     std::set<size_t> remaining;
     
-    //!create the selected and remaining sets.
+    // Create the selected and remaining sets.
     for (size_t index: extreme)
     { 
       selected.insert(index);
@@ -722,10 +724,14 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     arma::Row<typename MatType::elem_type> proximity(front.size(), arma::fill::zeros);
     arma::Row<typename MatType::elem_type> diversity(front.size(), arma::fill::zeros);
     arma::Row<typename MatType::elem_type> value(front.size(), arma::fill::zeros);
+    
+    // Calculate the diversity and proximity score.
     for (size_t i = 0; i < front.size(); i++)
     {
-      proximity[i] = std::pow(arma::accu(arma::pow(arma::abs(calculatedObjectives[front[i]]), dimension)), 1.0 / dimension);
+      proximity[i] = std::pow(arma::accu(arma::pow(
+        arma::abs(calculatedObjectives[front[i]]), dimension)), 1.0 / dimension);
     }
+    
     while (remaining.size() > 0)
     {
       std::set<size_t>::iterator it;
@@ -742,13 +748,15 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     }
   }
 
+  // Calculations for the other fronts.
   else
   {
 
     for(size_t i = 0; i < front.size(); i++)
     {
       calculatedObjectives[front[i]] = calculatedObjectives[front[i]] / normalize;
-      survivalScore[front[i]] =  std::pow(arma::accu(arma::pow(arma::abs(calculatedObjectives[front[i]] - idealPoint), dimension)), 1.0 / dimension);
+      survivalScore[front[i]] =  std::pow(arma::accu(arma::pow(arma::abs(
+        calculatedObjectives[front[i]] - idealPoint), dimension)), 1.0 / dimension);
     }
 
   }
