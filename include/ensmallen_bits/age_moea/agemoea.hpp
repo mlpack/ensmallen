@@ -61,6 +61,7 @@ class AGEMOEA
    *     This should be atleast 4 in size and a multiple of 4.
    * @param maxGenerations The maximum number of generations allowed for NSGA-II.
    * @param crossoverProb The probability that a crossover will occur.
+   * @param distributionIndex The crowding degree of the mutation.
    * @param epsilon The minimum difference required to distinguish between
    *     candidate solutions.
    * @param eta The distance parameters of the crossover distribution.
@@ -88,6 +89,7 @@ class AGEMOEA
    *     This should be atleast 4 in size and a multiple of 4.
    * @param maxGenerations The maximum number of generations allowed for NSGA-II.
    * @param crossoverProb The probability that a crossover will occur.
+   * @param distributionIndex The crowding degree of the mutation.
    * @param epsilon The minimum difference required to distinguish between
    *     candidate solutions.
    * @param eta The distance parameters of the crossover distribution
@@ -224,7 +226,6 @@ class AGEMOEA
    * population.
    *
    * @tparam MatType Type of matrix to optimize.
-   * @param population The elite population.
    * @param objectives The set of objectives.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
@@ -257,7 +258,7 @@ class AGEMOEA
    * Mutate the coordinates for a candidate.
    *
    * @tparam MatType Type of matrix to optimize.
-   * @param child The candidate whose coordinates are being modified.
+   * @param candidate The candidate whose coordinates are being modified.
    * @param mutationRate The probablity of a mutation to occur.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
@@ -306,7 +307,6 @@ class AGEMOEA
   *
   * @param front The previously generated Pareto fronts.
   * @param idealPoint The ideal point of teh first front.
-  * @param dimension The calculated dimension from grt geometry.
   * @param calculatedObjectives The previously calculated objectives.
   * @param survivalScore The Survival Score vector to be updated for each individual in the population.
   * @param normalize The normlization vector of the fronts.
@@ -381,7 +381,6 @@ class AGEMOEA
    * @param calculatedObjectives The current population evaluated objectives.
    * @param front The front of the current generation.
    * @param dimension The calculated dimension of the front.
-   * @return A matrix containing the pairwise distance between all points in the front.
    */
   template <typename MatType>
   void PairwiseDistance(MatType& final,
@@ -395,7 +394,6 @@ class AGEMOEA
    * @param indexes vector containing the slected indexes.
    * @param calculatedObjectives The current population objectives.
    * @param front The front of the current generation.
-   * @return A set of indexes for the extreme points.
    */
   template <typename MatType>
   void FindExtremePoints(arma::Row<size_t>& indexes,
