@@ -22,7 +22,7 @@ namespace test {
  * theta_M = [theta_i, n - M + 1 <= i <= n]
  * g(x) = \Sigma{i = n - M + 1}^n (x_i - 0.5)^2
  * 
- * f_1(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... cos(theta_2 * pi * 0.5) * (1 + g(theta_M)) 
+ * f_1(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... cos(theta_M-1 * pi * 0.5) * (1 + g(theta_M)) 
  * f_2(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... sin(theta_M-1 * pi * 0.5) * (1 + g(theta_M))
  * .
  * .

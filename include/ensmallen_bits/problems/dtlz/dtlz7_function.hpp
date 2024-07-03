@@ -206,6 +206,9 @@ namespace test {
     DTLZ7Objective objectiveF2;
     DTLZ7Objective objectiveF3;
   };
+
+  template<typename MatType>
+  using MAF7 = DTLZ7<MatType>;
   } //namespace test
   } //namespace ens
 

@@ -10,23 +10,24 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_PROBLEMS_DTLZ_FIVE_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_DTLZ_FIVE_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_MAF_TWO_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_MAF_TWO_FUNCTION_HPP
 
 namespace ens {
 namespace test {
 
 /**
- * The DTLZ5 function, defined by:
+ * The MAF2 function, defined by:
  * \f[
  * theta_M = [theta_i, n - M + 1 <= i <= n]
- * g(x) = \Sigma{i = n - M + 1}^n (x_i - 0.5)^2
+ * g_i(x) = \Sigma{i = M + (i - 1) * (n - M + 1) / N}^
+ *                        {M - 1 + (i) * (n - M + 1) / N} (x_i - 0.5)^2 * 0.25
  * 
- * f_1(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... cos(theta_2 * pi * 0.5) * (1 + g(theta_M)) 
- * f_2(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... sin(theta_M-1 * pi * 0.5) * (1 + g(theta_M))
+ * f_1(x) = cos(theta_1) * cos(theta_2) * ... cos(theta_M-1) * (1 + g_1(theta_M)) 
+ * f_2(x) = cos(theta_1) * cos(theta_2) * ... sin(theta_M-1) * (1 + g_2(theta_M))
  * .
  * .
- * f_M(x) = 0.5 * sin(theta_1 * pi * 0.5) * (1 + g(theta_M))
+ * f_M(x) = sin(theta_1) * (1 + g_M(theta_M))
  * \f]
  *
  * Bounds of the variable space is:
@@ -108,19 +109,23 @@ namespace test {
        * @param coords The function coordinates.
        * @return arma::Row<typename MatType::elem_type>
        */
-      arma::Row<typename MatType::elem_type> g(const MatType& coords)
+      arma::Mat<typename MatType::elem_type> g(const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
-
+        size_t c = std::floor(k / numObjectives);
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         
-        arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
+        arma::Mat<ElemType> innerSum(numObjectives, size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1; i < numVariables; i++)
+        for(size_t i = 0; i < numObjectives; i++)
         {
-          innerSum += arma::pow((coords.row(i) - 0.5), 2); 
-        } 
+          size_t j = numObjectives - 1 + (i * c)
+          for(; j < numVariables + (i + 1) *c && j < numObjectives; i++)
+          {
+            innerSum.row(i) += arma::pow((coords.row(i) - 0.5), 2) * 0.25; 
+          }
+        }
         
         return innerSum;
       }    
@@ -137,15 +142,15 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
-        arma::Row<ElemType> G = g(coords); 
-        arma::Row<ElemType> value = 0.5 * (1.0 + G);
+        arma::Mat<ElemType> G = g(coords); 
+        arma::Row<ElemType> value(numObjectives, arma::fill::ones);
         arma::Row<ElemType> theta;
         for(size_t i = 0; i < numObjectives - 1; i++)
         {
-          theta = 0.5 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
+          theta = arma::datum::pi * 0.5 * (coords.row(i) / 2 + 0.25);
           objectives.row(i) =  value %  
-              arma::sin(theta * arma::datum::pi * 0.5);
-          value = value % arma::cos(theta * arma::datum::pi * 0.5); 
+              arma::sin(theta) % (1.0 + G.row(numObjectives - 1 - i));
+          value = value % arma::cos(theta); 
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;
@@ -170,39 +175,39 @@ namespace test {
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
           ElemType theta;
-          ElemType G = maf.g(coords)[0];
+          arma::Col<ElemType> G = maf.g(coords).col(0);
           for(size_t i = 0; i < stop; i++)
           {
-            theta = 0.5 * (1.0  + 2.0 * coords[i] * G) / (1.0 + G); 
-            value = value * std::cos(theta * arma::datum::pi * 0.5);
+            theta = arma::datum::pi * 0.5 * (coords[i] / 2 + 0.25); 
+            value = value * std::cos(theta) * (1.0 + );
           }
-	        theta = 0.5 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);
+	        theta =  arma::datum::pi * 0.5 * (coords[i] / 2 + 0.25);
           if(stop != maf.numObjectives - 1)
           {
-            value = value * std::sin(theta * arma::datum::pi * 0.5);
+            value = value * std::sin(theta);
           }
           else
           {
-            value = value * std::cos(theta * arma::datum::pi * 0.5);
+            value = value * std::cos(theta);
           }
 
-          value = value * (1.0 + G);
+          value = value * (1.0 + G[maf.GetNumObjectives() - 1 -stop]);
           return value;  
-        }        
+        }
 
         MAF2& maf;
         size_t stop;
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZ5Objective, DTLZ5Objective, DTLZ5Objective> GetObjectives ()
+      std::tuple<MAF2Objective, MAF2Objective, MAF2Objective> GetObjectives ()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
-    DTLZ5Objective objectiveF1;
-    DTLZ5Objective objectiveF2;
-    DTLZ5Objective objectiveF3;
+    MAF2Objective objectiveF1;
+    MAF2Objective objectiveF2;
+    MAF2Objective objectiveF3;
   };
   } //namespace test
   } //namespace ens
