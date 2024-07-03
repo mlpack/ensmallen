@@ -339,7 +339,8 @@ inline void AGEMOEA::Crossover(MatType& childA,
       return;
     }
     MatType current_diff = current_max - current_min;
-    current_diff.clamp(1e-10, arma::datum::inf);
+    current_diff.transform( [](typename MatType::elem_type val) 
+      { return (val < 1e-10 ? 1e-10:val); } );
 
     // Calculating beta used for the final crossover.
     MatType beta1 = 1 + 2.0 * (current_min - lowerBound) / current_diff;
