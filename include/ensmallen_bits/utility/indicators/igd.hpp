@@ -1,5 +1,5 @@
 /**
- * @file igd_plus.hpp
+ * @file igd.hpp
  * @author Satyam Shukla
  *
  * Inverse Generational Distance Plus (IGD) indicator.

@@ -144,7 +144,6 @@ typename MatType::elem_type AGEMOEA::Optimize(
 
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {
-
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
     BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
@@ -752,7 +751,6 @@ inline void AGEMOEA::SurvivalScoreAssignment(
   // Calculations for the other fronts.
   else
   {
-
     for(size_t i = 0; i < front.size(); i++)
     {
       calculatedObjectives[front[i]] = calculatedObjectives[front[i]] / normalize;

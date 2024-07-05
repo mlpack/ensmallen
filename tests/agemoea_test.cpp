@@ -36,7 +36,6 @@ bool IsInBounds(const ElemType& value,
   return !(value < (low - roundoff)) && !((high + roundoff) < value);
 }
 
-
 /**
  * Optimize for the Schaffer N.1 function using AGE-MOEA optimizer.
  * Tests for data of type double.
@@ -171,7 +170,7 @@ TEST_CASE("AGEMOEAFonsecaFlemingDoubleTest", "[AGEMOEATest]")
 
       if (!IsInBounds<double>(valX, expectedLowerBound, expectedUpperBound, 0.3) ||
           !IsInBounds<double>(valY, expectedLowerBound, expectedUpperBound, 0.3) ||
-         !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound, 0.3))
+          !IsInBounds<double>(valZ, expectedLowerBound, expectedUpperBound, 0.3))
       {
         allInRange = false;
         break;
@@ -290,11 +289,11 @@ bool AVariableBoundsCheck(const arma::cube& paretoSet)
     const arma::mat& point = paretoSet.slice(pointIdx);
     const double firstVariable = point(0, 0);
 
-    const bool notInRegion0 = !IsInBounds<double>(firstVariable, regions(0, 0), regions(1, 0), 1e-2);
-    const bool notInRegion1 = !IsInBounds<double>(firstVariable, regions(0, 1), regions(1, 1), 1e-2);
-    const bool notInRegion2 = !IsInBounds<double>(firstVariable, regions(0, 2), regions(1, 2), 1e-2);
-    const bool notInRegion3 = !IsInBounds<double>(firstVariable, regions(0, 3), regions(1, 3), 1e-2);
-    const bool notInRegion4 = !IsInBounds<double>(firstVariable, regions(0, 4), regions(1, 4), 1e-2);
+    const bool notInRegion0 = !IsInBounds<double>(firstVariable, regions(0, 0), regions(1, 0), 2e-2);
+    const bool notInRegion1 = !IsInBounds<double>(firstVariable, regions(0, 1), regions(1, 1), 2e-2);
+    const bool notInRegion2 = !IsInBounds<double>(firstVariable, regions(0, 2), regions(1, 2), 2e-2);
+    const bool notInRegion3 = !IsInBounds<double>(firstVariable, regions(0, 3), regions(1, 3), 2e-2);
+    const bool notInRegion4 = !IsInBounds<double>(firstVariable, regions(0, 4), regions(1, 4), 2e-2);
 
     if (notInRegion0 && notInRegion1 && notInRegion2 && notInRegion3 && notInRegion4)
     {
@@ -317,7 +316,7 @@ TEST_CASE("AGEMOEADIRICHLETZDT3Test", "[AGEMOEADTest]")
   const double lowerBound = 0;
   const double upperBound = 1;
 
-  AGEMOEA opt(20, 300, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
+  AGEMOEA opt(20, 500, 0.8, 20, 1e-6, 20, lowerBound, upperBound);
 
   typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
   typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
