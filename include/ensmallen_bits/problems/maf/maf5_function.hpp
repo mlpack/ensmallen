@@ -74,7 +74,7 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        * @param a The scale factor of the objectives.
        */
-      DTLZ4 (size_t alpha = 100, size_t numParetoPoints = 136, double a = 2) :
+      MAF5 (size_t alpha = 100, size_t numParetoPoints = 136, double a = 2) :
         alpha(alpha),
         numParetoPoints(numParetoPoints),
         a(a),

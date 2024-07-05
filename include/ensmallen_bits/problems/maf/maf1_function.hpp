@@ -19,7 +19,7 @@ namespace ens {
 namespace test {
 
 /**
- * The DTLZ1 function, defined by:
+ * The MAF1 function, defined by:
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
  * g(x) = \Sigma{i = n - M + 1}^n (x_i - 0.5)^2
