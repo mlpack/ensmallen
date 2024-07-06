@@ -114,7 +114,7 @@ namespace test {
        *
        * @param I The manifold dimension (0 indexed).
        */
-      void SetNumParetoPoint(size_t I)
+      void SetI(size_t I)
       { this -> I = I; }
 
       /**
@@ -157,7 +157,7 @@ namespace test {
         arma::Row<ElemType> theta;
         for(size_t i = 0; i < numObjectives - 1; i++)
         {
-          if (i < I - 1){ theta = coord.row(i) * arma::datum::pi * 0.5 }
+          if (i < I - 1){ theta = coords.row(i) * arma::datum::pi * 0.5; }
           else
           {
             theta = 0.25 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
@@ -200,7 +200,7 @@ namespace test {
             value = value * std::cos(theta * arma::datum::pi * 0.5);
           }
 
-          if(stop < I - 1){ theta  = arma::datum::pi * coords[i] * 0.5; }
+          if(stop < I - 1){ theta  = arma::datum::pi * coords[stop] * 0.5; }
           else
           {
             theta = 0.25 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);

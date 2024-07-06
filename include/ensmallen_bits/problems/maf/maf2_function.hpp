@@ -120,7 +120,7 @@ namespace test {
         
         for(size_t i = 0; i < numObjectives; i++)
         {
-          size_t j = numObjectives - 1 + (i * c)
+          size_t j = numObjectives - 1 + (i * c);
           for(; j < numVariables + (i + 1) *c && j < numObjectives; i++)
           {
             innerSum.row(i) += arma::pow((coords.row(i) - 0.5), 2) * 0.25; 
@@ -179,9 +179,9 @@ namespace test {
           for(size_t i = 0; i < stop; i++)
           {
             theta = arma::datum::pi * 0.5 * (coords[i] / 2 + 0.25); 
-            value = value * std::cos(theta) * (1.0 + );
+            value = value * std::cos(theta);
           }
-	        theta =  arma::datum::pi * 0.5 * (coords[i] / 2 + 0.25);
+	        theta =  arma::datum::pi * 0.5 * (coords[stop] / 2 + 0.25);
           if(stop != maf.numObjectives - 1)
           {
             value = value * std::sin(theta);
@@ -191,7 +191,7 @@ namespace test {
             value = value * std::cos(theta);
           }
 
-          value = value * (1.0 + G[maf.GetNumObjectives() - 1 -stop]);
+          value = value * (1.0 + G[maf.GetNumObjectives() - 1 - stop]);
           return value;  
         }
 

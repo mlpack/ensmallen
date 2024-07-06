@@ -204,7 +204,7 @@ namespace test {
             value = value * std::cos(std::pow(coords[i], maf.alpha) * arma::datum::pi * 0.5);
           }
 
-          if(stop != dtlz.numObjectives - 1)
+          if(stop != maf.numObjectives - 1)
           {
             value = value * std::sin(std::pow(coords[stop], maf.alpha) * arma::datum::pi * 0.5);
           }

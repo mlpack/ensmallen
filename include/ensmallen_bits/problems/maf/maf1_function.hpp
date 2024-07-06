@@ -118,7 +118,7 @@ namespace test {
         
         for(size_t i = numObjectives - 1;i < numVariables;i++)
         {
-          innerSum += arma::pow((coords.row(i) - 0.5), 2)
+          innerSum += arma::pow((coords.row(i) - 0.5), 2);
         } 
         
         return innerSum;
@@ -170,7 +170,7 @@ namespace test {
             value = value * coords[i];
           }
 
-          if(stop != dtlz.numObjectives - 1)
+          if(stop != maf.numObjectives - 1)
           {
             value = value * (1. - coords[stop]);
           }
@@ -179,8 +179,8 @@ namespace test {
             value = value * coords[stop];
           }
 
-          value = (1.0 - value) * (1. + dtlz.g(coords)[0]);
-          return value; 
+          value = (1.0 - value) * (1. + maf.g(coords)[0]);
+          return value;
         }        
 
         MAF1& maf;
