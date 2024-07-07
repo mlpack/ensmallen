@@ -103,6 +103,8 @@
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
 #include "ensmallen_bits/cmaes/active_cmaes.hpp"
+#include "ensmallen_bits/cmaes/ipop_cmaes.hpp"
+#include "ensmallen_bits/cmaes/bipop_cmaes.hpp"
 #include "ensmallen_bits/cd/cd.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/de/de.hpp"
