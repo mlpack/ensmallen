@@ -778,6 +778,69 @@ optimizer2.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
 
+## BIPOPCMAES
+
+*An optimizer for [separable functions](#separable-functions).*
+
+BIPOP CMA-ES (Bi-Population CMA-ES) extends the idea of IPOP CMA-ES by using
+two intertwined restart strategies: one with an increasing population size and
+another maintaining a smaller, variable population size. This strategy allows
+BIPOP CMA-ES to adaptively balance exploration and exploitation across the
+fitness landscape, and can outperform IPOP. The larger population restarts aim
+to explore broadly, improving global search capabilities, while the smaller
+populations intensify the search in promising regions.
+
+#### Constructors
+
+ * `BIPOPCMAES<`_`CMAESType`_`>()`
+ * `BIPOPCMAES<`_`CMAESType`_`>(`_`CMAES`_`)`
+ * `BIPOPCMAES<`_`CMAESType`_`>(`_`CMAES, maxRestarts`_`)`
+ * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy`_`)`
+ * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+ * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
+ * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts`_`)`
+
+The _`CMAESType`_ template parameter is the CMA-ES type used for the optimization. 
+Currently, either CMAES or ActiveCMAES can be used.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `CMAESType` | **`cmaes`** | The CMAES object used for optimization. | `CMAESType()` |
+| `size_t` | **`maxRestarts`** | Maximum number of restarts. | `9` |
+
+Attributes of the optimizer may also be changed via the member methods
+`CMAES()`, `MaxRestarts()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+// IPOP Active CMA-ES
+BoundaryBoxConstraint<> b(-1, 1);
+CMAES cmaes(0, b, 32, 200, 1e-4);
+BIPOPCMAES optimizer(cmaes, 5);
+Optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [CMAES](#cmaes)
+ * [ActiveCMAES](#activecmaes)
+ * [IPOP-CMAES](#ipopcmaes)
+ * [Benchmarking a BI-Population CMA-ES on the BBOB-2009 Function Testbed](https://dl.acm.org/doi/pdf/10.1145/1570256.1570333)
+ * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
+
 ## Coordinate Descent (CD)
 
 *An optimizer for [partially differentiable functions](#partially-differentiable-functions).*
@@ -1483,6 +1546,73 @@ optimizer.Optimize(f, coordinates);
  * [SGD](#standard-sgd)
  * [HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic Gradient Descent](https://arxiv.org/abs/1106.5730)
  * [Sparse differentiable separable functions](#sparse-differentiable-separable-functions)
+
+## IPOPCMAES
+
+*An optimizer for [separable functions](#separable-functions).*
+
+IPOP CMA-ES (Increasing Population Size CMA-ES) is an extension of the
+Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a 
+restart mechanism that progressively increases the population size. This 
+approach is beneficial for optimizing multi-modal functions,
+characterized by numerous local optima. The restart mechanism is designed to 
+improve the adaptability of CMA-ES by improving the likelihood of escaping
+local optima, thus increasing the chances of discovering the global optimum.
+
+#### Constructors
+
+ * `IPOPCMAES<`_`CMAESType`_`>()`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`CMAES`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`CMAES, populationFactor`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`CMAES, populationFactor, maxRestarts`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, populationFactor`_`)`
+ * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, populationFactor, maxRestarts`_`)`
+
+The _`CMAESType`_ template parameter is the CMA-ES type used for the optimization. 
+Currently, either CMAES or ActiveCMAES can be used.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `CMAESType` | **`cmaes`** | The CMAES object used for optimization. | `CMAESType()` |
+| `double` | **`populationFactor`** | The factor by which population increases after each restart. | `2` |
+| `size_t` | **`maxRestarts`** | Maximum number of restarts. | `9` |
+
+Attributes of the optimizer may also be changed via the member methods
+`CMAES()`, `MaxRestarts()`, `PopulationFactor()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+// IPOP Active CMA-ES
+BoundaryBoxConstraint<> b(-1, 1);
+CMAES cmaes(0, b, 32, 200, 1e-4);
+IPOPCMAES optimizer(cmaes, 2, 5);
+Optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [CMAES](#cmaes)
+ * [ActiveCMAES](#activecmaes)
+ * [BIPOPCMAES](#bipopcmaes)
+ * [A Restart CMA Evolution Strategy With Increasing Population Size](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cec2005ipopcmaes.pdf)
+ * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
+
 
 ## IQN
 
