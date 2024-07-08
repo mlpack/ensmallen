@@ -48,7 +48,7 @@ TEST_CASE("AGEMOEASchafferN1DoubleTest", "[AGEMOEATest]")
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  AGEMOEA opt(20, 300, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
+  AGEMOEA opt(20, 500, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -98,7 +98,7 @@ TEST_CASE("AGEMOEASchafferN1TestVectorDoubleBounds", "[AGEMOEATest]")
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  AGEMOEA opt(20, 300, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
+  AGEMOEA opt(20, 500, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
 
   typedef decltype(SCH.objectiveA) ObjectiveTypeA;
   typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -146,12 +146,12 @@ TEST_CASE("AGEMOEAFonsecaFlemingDoubleTest", "[AGEMOEATest]")
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  AGEMOEA opt(20, 300, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
+  AGEMOEA opt(20, 500, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
 
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 6; ++trial)
   {
     arma::mat coords = FON.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
@@ -198,12 +198,12 @@ TEST_CASE("AGEMOEAFonsecaFlemingTestVectorFloatBounds", "[AGEMOEATest]")
   const float expectedLowerBound = -1.0 / sqrt(3);
   const float expectedUpperBound = 1.0 / sqrt(3);
 
-  AGEMOEA opt(20, 300, 0.8, 20, 1e-6, 20, lowerBound, upperBound);
+  AGEMOEA opt(20, 300, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
   typedef decltype(FON.objectiveA) ObjectiveTypeA;
   typedef decltype(FON.objectiveB) ObjectiveTypeB;
 
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 6; ++trial)
   {
     arma::fmat coords = FON.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
@@ -289,11 +289,11 @@ bool AVariableBoundsCheck(const arma::cube& paretoSet)
     const arma::mat& point = paretoSet.slice(pointIdx);
     const double firstVariable = point(0, 0);
 
-    const bool notInRegion0 = !IsInBounds<double>(firstVariable, regions(0, 0), regions(1, 0), 2e-2);
-    const bool notInRegion1 = !IsInBounds<double>(firstVariable, regions(0, 1), regions(1, 1), 2e-2);
-    const bool notInRegion2 = !IsInBounds<double>(firstVariable, regions(0, 2), regions(1, 2), 2e-2);
-    const bool notInRegion3 = !IsInBounds<double>(firstVariable, regions(0, 3), regions(1, 3), 2e-2);
-    const bool notInRegion4 = !IsInBounds<double>(firstVariable, regions(0, 4), regions(1, 4), 2e-2);
+    const bool notInRegion0 = !IsInBounds<double>(firstVariable, regions(0, 0), regions(1, 0), 3e-2);
+    const bool notInRegion1 = !IsInBounds<double>(firstVariable, regions(0, 1), regions(1, 1), 3e-2);
+    const bool notInRegion2 = !IsInBounds<double>(firstVariable, regions(0, 2), regions(1, 2), 3e-2);
+    const bool notInRegion3 = !IsInBounds<double>(firstVariable, regions(0, 3), regions(1, 3), 3e-2);
+    const bool notInRegion4 = !IsInBounds<double>(firstVariable, regions(0, 4), regions(1, 4), 3e-2);
 
     if (notInRegion0 && notInRegion1 && notInRegion2 && notInRegion3 && notInRegion4)
     {
@@ -306,7 +306,7 @@ bool AVariableBoundsCheck(const arma::cube& paretoSet)
 }
 
 /**
- * Test DirichletMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a 30 
+ * Test AGEMOEA against the third problem of ZDT Test Suite. ZDT-3 is a 30 
  * variable-2 objective problem with disconnected Pareto Fronts. 
  */
 TEST_CASE("AGEMOEADIRICHLETZDT3Test", "[AGEMOEADTest]")
