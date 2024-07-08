@@ -192,7 +192,7 @@ namespace test {
           ElemType G = maf.g(coords)[0];
           for(size_t i = 0; i < stop; i++)
           {
-            if (i < I - 1){ theta  = arma::datum::pi * coords[i] * 0.5; }
+            if (i < maf.GetI() - 1){ theta  = arma::datum::pi * coords[i] * 0.5; }
             else
             {
                 theta = 0.25 * (1.0  + 2.0 * coords[i] * G) / (1.0 + G);
@@ -200,7 +200,7 @@ namespace test {
             value = value * std::cos(theta * arma::datum::pi * 0.5);
           }
 
-          if(stop < I - 1){ theta  = arma::datum::pi * coords[stop] * 0.5; }
+          if(stop < maf.GetI() - 1){ theta  = arma::datum::pi * coords[stop] * 0.5; }
           else
           {
             theta = 0.25 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);
