@@ -66,7 +66,7 @@ class BIPOPCMAES
    * @param maxRestarts Maximum number of restarts.
    */
   BIPOPCMAES(const CMAESType& CMAES = CMAESType(),
-            const size_t maxRestarts = 9);
+             const size_t maxRestarts = 9);
 
   /**
    * Construct the BIPOP CMA-ES optimizer with the given function and parameters. 
