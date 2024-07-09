@@ -34,8 +34,8 @@
 
 #include <armadillo>
 
-#if ((ARMA_VERSION_MAJOR < 9) || ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR < 800)))
-  #error "need Armadillo version 9.800 or later"
+#if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
+  #error "need Armadillo version 10.8 or newer"
 #endif
 
 #include <cctype>
