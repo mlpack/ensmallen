@@ -60,7 +60,7 @@ if(USE_OPENMP)
 endif()
 
 # Find Armadillo and link it.
-find_package(Armadillo 9.800.0 REQUIRED)
+find_package(Armadillo 10.8.2 REQUIRED)
 target_link_libraries(ensmallen INTERFACE Armadillo::Armadillo)
 
 # Set helper variables for creating the version, config and target files.
