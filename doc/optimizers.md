@@ -501,6 +501,69 @@ optimizer.Optimize(f, coordinates);
  * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980) (see section 7)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## AGEMOEA
+
+*An optimizer for arbitrary multi-objective functions.*
+
+Adaptive Geometry Estimation based Multi-Objective Evolutionary Algorithm (AGE-MOEA) is an optimization framework based on NSGA-II yet differs from it in replacing the crowding distance of NSGA-II by a survival score, for which calculations need the diversity and proximity of non-dominated sets. To simplify the computation of the survival score, in each generation, the geometry of the initial non-dominated subset is estimated by AGE-MOEA afterwards, this estimation which gets more accurate as the algorithm matures, is used as the geometry of the Pareto set
+
+#### Constructors
+
+ * `AGEMOEA()`
+ * `AGEMOEA(`_`populationSize, maxGenerations, crossoverProb, distributionIndex, epsilon, eta, lowerBound, upperBound`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 4 in size and a multiple of 4. | `100` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for AGEMOEA. | `2000` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
+| `double` | **`distributionIndex`** | The crowding degree of the mutation. | `20` |
+| `double` | **`epsilon`** | The value used internally to evaluate approximate equality in crowding distance based sorting. | `1e-6` |
+| `double` | **`eta`** | The distance parameters of the crossover distribution. | `20` |
+| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
+| `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
+
+Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `DistributionIndex()`, `Eta()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SchafferFunctionN1<arma::mat> SCH;
+arma::vec lowerBound("-1000");
+arma::vec upperBound("1000");
+AGEMOEA opt(50, 1000, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
+
+typedef decltype(SCH.objectiveA) ObjectiveTypeA;
+typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+
+arma::mat coords = SCH.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+
+// obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
+double obj = opt.Optimize(objectives, coords);
+// Now obtain the best front.
+arma::cube bestFront = opt.ParetoFront();
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
+ * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## AMSBound
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -2107,7 +2170,7 @@ size equal to that of the starting population.
 #### Constructors
 
  * `NSGA2()`
- * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationProb, mutationStrength, epsilon, lowerBound, upperBound`_`)`
+ * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, distributionIndex, epsilon, eta, lowerBound, upperBound`_`)`
 
 #### Attributes
 
