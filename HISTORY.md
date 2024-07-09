@@ -3,6 +3,9 @@
  * Update to C++14 standard
    ([#400](https://github.com/mlpack/ensmallen/pull/400)).
 
+ * Bump minimum Armadillo version to 10.8
+   ([#404](https://github.com/mlpack/ensmallen/pull/404)).
+
 ### ensmallen 2.21.1: "Bent Antenna"
 ###### 2024-02-15
  * Fix numerical precision issues for small-gradient L-BFGS scaling factor
