@@ -558,11 +558,8 @@ arma::cube bestFront = opt.ParetoFront();
 
 #### See also:
 
- * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
- * [SGD](#standard-sgd)
- * [Adaptive Gradient Methods with Dynamic Bound of Learning Rate](https://arxiv.org/abs/1902.09843)
- * [Adam: A Method for Stochastic Optimization](http://arxiv.org/abs/1412.6980)
- * [Differentiable separable functions](#differentiable-separable-functions)
+ * [An adaptive evolutionary algorithm based on non-euclidean geometry for many-objective optimization](https://doi.org/10.1145/3321707.3321839)
+ * [Wikipedia Multi-Objective optimization](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://en.wikipedia.org/wiki/Multi-objective_optimization&ved=2ahUKEwjmnsj0lp2HAxVnzjgGHVWkCyUQFnoECB8QAQ&usg=AOvVaw0G76gxf9FiNUirlc4O_BCJ)
 
 ## AMSBound
 
