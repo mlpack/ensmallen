@@ -39,12 +39,13 @@ namespace test {
  * For more information, please refer to:
  * 
  * @code
- * @incollection{deb2005scalable,
- * title={Scalable test problems for evolutionary multiobjective optimization},
- * author={Deb, Kalyanmoy and Thiele, Lothar and Laumanns, Marco and Zitzler, Eckart},
- * booktitle={Evolutionary multiobjective optimization: theoretical advances and applications},
- * pages={105--145},
- * year={2005},
+ * @article{cheng2017benchmark,
+ * title={A benchmark test suite for evolutionary many-objective optimization},
+ * author={Cheng, Ran and Li, Miqing and Tian, Ye and Zhang, Xingyi and Yang, Shengxiang and Jin, Yaochu and Yao, Xin},
+ * journal={Complex \& Intelligent Systems},
+ * volume={3},
+ * pages={67--81},
+ * year={2017},
  * publisher={Springer}
  * }
  * @endcode
@@ -222,12 +223,6 @@ namespace test {
         MAF6& maf;
         size_t stop;
       };
-
-      // Return back a tuple of objective functions.
-      std::tuple<MAF6Objective, MAF6Objective, MAF6Objective> GetObjectives ()
-      {
-          return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
 
     MAF6Objective objectiveF1;
     MAF6Objective objectiveF2;

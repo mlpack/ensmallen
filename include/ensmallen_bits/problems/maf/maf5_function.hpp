@@ -229,18 +229,6 @@ namespace test {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
-      //! Get the Reference Front.
-      //! Front. The implementation has been taken from pymoo.
-      arma::mat GetReferenceFront()
-      { 
-      	Uniform refGenerator;
-        arma::mat refDirs = refGenerator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
-        arma::colvec x = arma::normalise(refDirs, 2, 1);
-        arma::mat A(size(refDirs), arma::fill::ones);
-        A.each_col() = x;
-        return refDirs / A;
-      }
-
     MAF5Objective objectiveF1;
     MAF5Objective objectiveF2;
     MAF5Objective objectiveF3;

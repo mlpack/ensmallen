@@ -35,21 +35,21 @@ namespace test {
  * 
  * Where theta_i = 0.5 * (1 + 2 * g(X_M) * x_i) / (1 + g(X_M))
  * 
- * This should be optimized to x_i = 0.5 (for all x_i in X_M), at:
  * 
  * For more information, please refer to:
  * 
  * @code
- * @incollection{deb2005scalable,
- * title={Scalable test problems for evolutionary multiobjective optimization},
- * author={Deb, Kalyanmoy and Thiele, Lothar and Laumanns, Marco and Zitzler, Eckart},
- * booktitle={Evolutionary multiobjective optimization: theoretical advances and applications},
- * pages={105--145},
- * year={2005},
+ * @article{cheng2017benchmark,
+ * title={A benchmark test suite for evolutionary many-objective optimization},
+ * author={Cheng, Ran and Li, Miqing and Tian, Ye and Zhang, Xingyi and Yang, Shengxiang and Jin, Yaochu and Yao, Xin},
+ * journal={Complex \& Intelligent Systems},
+ * volume={3},
+ * pages={67--81},
+ * year={2017},
  * publisher={Springer}
  * }
  * @endcode
- *
+ * 
  * @tparam MatType Type of matrix to optimize.
  */
   template <typename MatType = arma::mat>
@@ -198,12 +198,6 @@ namespace test {
         MAF2& maf;
         size_t stop;
       };
-
-      // Return back a tuple of objective functions.
-      std::tuple<MAF2Objective, MAF2Objective, MAF2Objective> GetObjectives ()
-      {
-          return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
 
     MAF2Objective objectiveF1;
     MAF2Objective objectiveF2;

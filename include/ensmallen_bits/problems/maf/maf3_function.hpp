@@ -34,18 +34,17 @@ namespace test {
  *
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
- *
- * This should be optimized to x_i = 0.5 (for all x_i in x_M), at:
  * 
  * For more information, please refer to:
  * 
  * @code
- * @incollection{deb2005scalable,
- * title={Scalable test problems for evolutionary multiobjective optimization},
- * author={Deb, Kalyanmoy and Thiele, Lothar and Laumanns, Marco and Zitzler, Eckart},
- * booktitle={Evolutionary multiobjective optimization: theoretical advances and applications},
- * pages={105--145},
- * year={2005},
+ * @article{cheng2017benchmark,
+ * title={A benchmark test suite for evolutionary many-objective optimization},
+ * author={Cheng, Ran and Li, Miqing and Tian, Ye and Zhang, Xingyi and Yang, Shengxiang and Jin, Yaochu and Yao, Xin},
+ * journal={Complex \& Intelligent Systems},
+ * volume={3},
+ * pages={67--81},
+ * year={2017},
  * publisher={Springer}
  * }
  * @endcode
@@ -201,18 +200,6 @@ namespace test {
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
-
-      //! Get the Reference Front.
-      //! Front. The implementation has been taken from pymoo.
-      arma::mat GetReferenceFront()
-      { 
-      	Uniform refGenerator;
-        arma::mat refDirs = refGenerator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
-        arma::colvec x = arma::normalise(refDirs, 2, 1);
-        arma::mat A(size(refDirs), arma::fill::ones);
-        A.each_col() = x;
-        return refDirs / A;
-      }
 
     MAF3Objective objectiveF1;
     MAF3Objective objectiveF2;

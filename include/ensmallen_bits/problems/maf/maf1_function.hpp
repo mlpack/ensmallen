@@ -34,10 +34,6 @@ namespace test {
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
  *
- * This should be optimized to x_i = 0.5 (for all x_i in x_M), at:
- * the objective function values lie on the linear hyper-plane: 
- * \Sigma { m = 1}^M f_m* =0.5.
- *
  * For more information, please refer to:
  *
  * @code
@@ -186,12 +182,6 @@ namespace test {
         MAF1& maf;
         size_t stop;
       };
-
-      // Return back a tuple of objective functions.
-      std::tuple<MAF1Objective, MAF1Objective, MAF1Objective> GetObjectives ()
-      {
-          return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
 
     MAF1Objective objectiveF1;
     MAF1Objective objectiveF2;
