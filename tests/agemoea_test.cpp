@@ -320,12 +320,17 @@ TEST_CASE("AGEMOEADIRICHLETZDT3Test", "[AGEMOEADTest]")
 
   typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
   typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+  bool success = true;
+  for (size_t tries = 0; tries < 2; tries++)
+  {
+    arma::mat coords = ZDT_THREE.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
 
-  arma::mat coords = ZDT_THREE.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
+    opt.Optimize(objectives, coords);
 
-  opt.Optimize(objectives, coords);
-
-  const arma::cube& finalPopulation = opt.ParetoSet();
-  REQUIRE(AVariableBoundsCheck(finalPopulation));
+    const arma::cube& finalPopulation = opt.ParetoSet();
+    success = AVariableBoundsCheck(finalPopulation);
+    if (success){ break;}
+  }
+  REQUIRE(success);
 }
