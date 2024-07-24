@@ -16,8 +16,10 @@
 namespace ens {
 
 /**
- * The IGD indicator returns the average distance from each point in the reference
- * front to the nearest point to it's solution. 
+ * The inverted generational distance( IGD) is a metric for assessing the quality
+ * of approximations to the Pareto front obtained by multi-objective optimization
+ * algorithms.The IGD indicator returns the average distance from each point in 
+ * the reference front to the nearest point to it's solution. 
  *
  * \f[ d(z,a) = \sqrt{\sum_{i = 1}^{n}(a_i - z_i)^2 \ } \
  *    \f]

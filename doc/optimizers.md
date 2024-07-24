@@ -505,7 +505,7 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for arbitrary multi-objective functions.*
 
-Adaptive Geometry Estimation based Multi-Objective Evolutionary Algorithm (AGE-MOEA) is an optimization framework based on NSGA-II yet differs from it in replacing the crowding distance of NSGA-II by a survival score, for which calculations need the diversity and proximity of non-dominated sets. To simplify the computation of the survival score, in each generation, the geometry of the initial non-dominated subset is estimated by AGE-MOEA afterwards, this estimation which gets more accurate as the algorithm matures, is used as the geometry of the Pareto set
+Adaptive Geometry Estimation based Multi-Objective Evolutionary Algorithm (AGE-MOEA) is an optimization framework based on NSGA-II yet differs from it in replacing the crowding distance of NSGA-II by a survival score, for which calculations need the diversity and proximity of non-dominated sets. To simplify the computation of the survival score, in each generation, the geometry of the initial non-dominated subset is estimated by AGE-MOEA afterwards, this estimation which gets more accurate as the algorithm matures, is used as the geometry of the Pareto set.
 
 #### Constructors
 
@@ -559,7 +559,7 @@ arma::cube bestFront = opt.ParetoFront();
 #### See also:
 
  * [An adaptive evolutionary algorithm based on non-euclidean geometry for many-objective optimization](https://doi.org/10.1145/3321707.3321839)
- * [Wikipedia Multi-Objective optimization](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://en.wikipedia.org/wiki/Multi-objective_optimization&ved=2ahUKEwjmnsj0lp2HAxVnzjgGHVWkCyUQFnoECB8QAQ&usg=AOvVaw0G76gxf9FiNUirlc4O_BCJ)
+ * [Multi-Objective Optimization in Wikipedia](https://en.wikipedia.org/wiki/Multi-objective_optimization)
 
 ## AMSBound
 

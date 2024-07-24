@@ -280,9 +280,10 @@ class AGEMOEA
    * @param calculatedObjectives The previously calculated objectives.
    */
   template<typename MatType>
-  void FastNonDominatedSort(std::vector<std::vector<size_t>>& fronts,
-                            std::vector<size_t>& ranks,
-                            std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+  void FastNonDominatedSort(
+      std::vector<std::vector<size_t> >& fronts,
+      std::vector<size_t>& ranks,
+      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -298,9 +299,10 @@ class AGEMOEA
    * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
    */
   template<typename MatType>
-  bool Dominates(std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-                 size_t candidateP,
-                 size_t candidateQ);
+  bool Dominates(
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      size_t candidateP,
+      size_t candidateQ);
 
  /**
   * Assigns Survival Score metric for sorting.
@@ -314,13 +316,14 @@ class AGEMOEA
   * @param fNum teh current front index.
   */
   template <typename MatType>
-  void SurvivalScoreAssignment(const std::vector<size_t>& front,
-    const arma::Col<typename MatType::elem_type>& idealPoint,
-    std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-    std::vector<typename MatType::elem_type>& survivalScore,
-    arma::Col<typename MatType::elem_type>& normalize,
-    double& dimension,
-    size_t fNum);
+  void SurvivalScoreAssignment(
+      const std::vector<size_t>& front,
+      const arma::Col<typename MatType::elem_type>& idealPoint,
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      std::vector<typename MatType::elem_type>& survivalScore,
+      arma::Col<typename MatType::elem_type>& normalize,
+      double& dimension,
+      size_t fNum);
 
   /**
    * The operator used in the AGE-MOEA survival score based sorting.
@@ -339,10 +342,11 @@ class AGEMOEA
    * @return true if the first candidate is preferred, otherwise, false.
    */
   template<typename MatType>
-  bool SurvivalScoreOperator(size_t idxP,
-                             size_t idxQ,
-                             const std::vector<size_t>& ranks,
-                             const std::vector<typename MatType::elem_type>& survivalScore);
+  bool SurvivalScoreOperator(
+      size_t idxP,
+      size_t idxQ,
+      const std::vector<size_t>& ranks,
+      const std::vector<typename MatType::elem_type>& survivalScore);
   
  /**
   * Normalizes the front given the extreme points in the current front.
@@ -355,10 +359,10 @@ class AGEMOEA
   */
  template <typename MatType>
  void NormalizeFront(
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                    arma::Col<typename MatType::elem_type>& normalization,
-                    const std::vector<size_t>& front,
-                    const arma::Row<size_t>& extreme);
+     std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+     arma::Col<typename MatType::elem_type>& normalization,
+     const std::vector<size_t>& front,
+     const arma::Row<size_t>& extreme);
  
  /**
   * Get the geometry information p of Lp norm (p > 0).
@@ -371,8 +375,8 @@ class AGEMOEA
  template <typename MatType>
  double GetGeometry(
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                    const std::vector<size_t>& front,
-                    const arma::Row<size_t>& extreme);
+      const std::vector<size_t>& front,
+      const arma::Row<size_t>& extreme);
   
   /**
    * Finds the pairwise Lp distance between all the points in the front.
@@ -383,10 +387,11 @@ class AGEMOEA
    * @param dimension The calculated dimension of the front.
    */
   template <typename MatType>
-  void PairwiseDistance(MatType& final,
+  void PairwiseDistance(
+      MatType& final,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                                          const std::vector<size_t>& front,
-                                          double dimension);
+      const std::vector<size_t>& front,
+      double dimension);
 
   /**
    * Finding the indexes of the extreme points in the front.
@@ -396,9 +401,10 @@ class AGEMOEA
    * @param front The front of the current generation.
    */
   template <typename MatType>
-  void FindExtremePoints(arma::Row<size_t>& indexes,
+  void FindExtremePoints(
+      arma::Row<size_t>& indexes,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                              const std::vector<size_t>& front);
+      const std::vector<size_t>& front);
   
   /**
    * Finding the distance of each point in the front from the line formed
@@ -411,11 +417,12 @@ class AGEMOEA
    * @param pointB The second point on the line.
   */
   template <typename MatType>
-  void PointToLineDistance(arma::Row<typename MatType::elem_type>& distances,
+  void PointToLineDistance(
+      arma::Row<typename MatType::elem_type>& distances,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                           const std::vector<size_t>& front,
-                           const arma::Col<typename MatType::elem_type>& pointA,
-                           const arma::Col<typename MatType::elem_type>& pointB);
+      const std::vector<size_t>& front,
+      const arma::Col<typename MatType::elem_type>& pointA,
+      const arma::Col<typename MatType::elem_type>& pointB);
   
   /**
    * Find the Diversity score corresponding the solution S using the selected set.
@@ -427,8 +434,8 @@ class AGEMOEA
   */
  template <typename MatType>
  typename MatType::elem_type DiversityScore(std::set<size_t>& selected,
-                                                  const MatType& pairwiseDistance,
-                                                  size_t S);
+                                            const MatType& pairwiseDistance,
+                                            size_t S);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
