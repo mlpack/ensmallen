@@ -33,8 +33,8 @@ class EarlyStopAtMinLossType
    *    been reached or no improvement has been made (Default: 10).
    */
   EarlyStopAtMinLossType(const size_t patienceIn = 10) :
-      callbackUsed(false), 
-      patience(patienceIn), 
+      callbackUsed(false),
+      patience(patienceIn),
       bestObjective(std::numeric_limits<double>::max()),
       steps(0)
   { /* Nothing to do here */ }
@@ -50,10 +50,10 @@ class EarlyStopAtMinLossType
   EarlyStopAtMinLossType(
       std::function<double(const MatType&)> func,
       const size_t patienceIn = 10)
-    : callbackUsed(true), 
-      patience(patienceIn), 
+    : callbackUsed(true),
+      patience(patienceIn),
       bestObjective(std::numeric_limits<double>::max()),
-      steps(0), 
+      steps(0),
       localFunc(func)
   {
     // Nothing to do here
@@ -78,7 +78,7 @@ class EarlyStopAtMinLossType
     if (callbackUsed)
     {
       objective = localFunc(coordinates);
-    } 
+    }
 
     if (objective < bestObjective)
     {
@@ -98,7 +98,8 @@ class EarlyStopAtMinLossType
   }
 
  private:
-  //! False if the first constructor is called, true if the user passed a lambda. 
+  //! False if the first constructor is called, true if the user passed a
+  //! lambda.
   bool callbackUsed;
 
   //! The number of epochs to wait before terminating the optimization process.

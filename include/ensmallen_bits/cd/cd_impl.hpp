@@ -1,26 +1,26 @@
 /**
- * @file scd_impl.hpp
+ * @file cd_impl.hpp
  * @author Shikhar Bhardwaj
  *
- * Implementation of stochastic coordinate descent.
+ * Implementation of coordinate descent.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_SCD_SCD_IMPL_HPP
-#define ENSMALLEN_SCD_SCD_IMPL_HPP
+#ifndef ENSMALLEN_CD_CD_IMPL_HPP
+#define ENSMALLEN_CD_CD_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "scd.hpp"
+#include "cd.hpp"
 
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {
 
 template <typename DescentPolicyType>
-SCD<DescentPolicyType>::SCD(
+CD<DescentPolicyType>::CD(
     const double stepSize,
     const size_t maxIterations,
     const double tolerance,
@@ -42,7 +42,7 @@ template <typename ResolvableFunctionType,
 typename std::enable_if<IsArmaType<GradType>::value ||
                         coot::is_coot_type<GradType>::value,
 typename MatType::elem_type>::type
-SCD<DescentPolicyType>::Optimize(
+CD<DescentPolicyType>::Optimize(
     ResolvableFunctionType& function,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
@@ -68,8 +68,7 @@ SCD<DescentPolicyType>::Optimize(
   bool terminate = false;
 
   // Start iterating.
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // Get the coordinate to descend on.
@@ -82,6 +81,8 @@ SCD<DescentPolicyType>::Optimize(
 
     terminate |= Callback::Gradient(*this, function, iterate, overallObjective,
         gradient, callbacks...);
+    if (terminate)
+      break;
 
     // Update the decision variable with the partial gradient.
     /* iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx); */
@@ -96,12 +97,12 @@ SCD<DescentPolicyType>::Optimize(
           overallObjective, callbacks...);
 
       // Output current objective function.
-      Info << "SCD: iteration " << i << ", objective " << overallObjective
+      Info << "CD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
       if (std::isnan(overallObjective) || std::isinf(overallObjective))
       {
-        Warn << "SCD: converged to " << overallObjective << "; terminating"
+        Warn << "CD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
 
         Callback::EndOptimization(*this, function, iterate, callbacks...);
@@ -110,7 +111,7 @@ SCD<DescentPolicyType>::Optimize(
 
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
-        Info << "SCD: minimized within tolerance " << tolerance << "; "
+        Info << "CD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
 
         Callback::EndOptimization(*this, function, iterate, callbacks...);
@@ -121,12 +122,13 @@ SCD<DescentPolicyType>::Optimize(
     }
   }
 
-  Info << "SCD: maximum iterations (" << maxIterations << ") reached; "
+  Info << "CD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
 
-  // Calculate and return final objective.
+  // Calculate and return final objective.  No need to pay attention to the
+  // result of the callback.
   const ElemType objective = function.Evaluate(iterate);
-  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+  (void) Callback::Evaluate(*this, function, iterate, objective, callbacks...);
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return objective;

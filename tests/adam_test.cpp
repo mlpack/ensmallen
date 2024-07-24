@@ -34,7 +34,44 @@ TEMPLATE_TEST_CASE("AdamStyblinskiTangFunctionTest", "[Adam]", arma::mat)
       optimizer, 0.5, 0.1);
 }
 
-TEMPLATE_TEST_CASE("AdamMcCormickFunctionTest", "[Adam]", arma::mat)
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
+ */
+TEST_CASE("AdamSphereFunctionTestSpMat", "[AdamTest]")
+{
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.2);
+}
+
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat but a
+ * dense (arma::mat) gradient.
+ */
+TEST_CASE("AdamSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
+{
+  SphereFunction f(2);
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
+
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+}
+
+/**
+ * Test the Adam optimizer on the Wood function.
+ */
+TEST_CASE("AdamStyblinskiTangFunctionTest", "[AdamTest]")
+{
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+  FunctionTest<StyblinskiTangFunction>(optimizer, 0.5, 0.1);
+}
+
+/**
+ * Test the Adam optimizer on the McCormick function.
+ */
+TEST_CASE("AdamMcCormickFunctionTest", "[AdamTest]")
 {
   Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
   FunctionTest<McCormickFunction, TestType>(optimizer, 0.5, 0.1);
@@ -65,7 +102,35 @@ TEMPLATE_TEST_CASE("AMSGradSphereFunctionTestFMat", "[Adam]", arma::fmat)
       optimizer, 0.5, 0.1);
 }
 
-TEMPLATE_TEST_CASE("AdamLogisticRegressionTest", "[Adam]", arma::mat)
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
+ */
+TEST_CASE("AMSGradSphereFunctionTestSpMat", "[AdamTest]")
+{
+  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
+  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.1);
+}
+
+/**
+ * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat but a
+ * dense (arma::mat) gradient.
+ */
+TEST_CASE("AMSGradSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
+{
+  SphereFunction f(2);
+  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
+
+  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
+  optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
+
+  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
+  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+}
+
+/**
+ * Run Adam on logistic regression and make sure the results are acceptable.
+ */
+TEST_CASE("AdamLogisticRegressionTest", "[AdamTest]")
 {
   Adam adam;
   LogisticRegressionFunctionTest<TestType>(adam, 0.003, 0.006);
@@ -114,7 +179,32 @@ TEMPLATE_TEST_CASE("QHAdamLogisticRegressionTest", "[Adam]",
   LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
 }
 
-TEMPLATE_TEST_CASE("AdamAckleyFunctionTest", "[Adam]", arma::mat)
+/**
+ * Run QHAdam on logistic regression and make sure the results are acceptable,
+ * using arma::fmat.
+ */
+TEST_CASE("QHAdamLogisticRegressionFMatTest", "[AdamTest]")
+{
+  QHAdam optimizer;
+  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.03, 0.06);
+}
+
+/**
+ * Run QHAdam on logistic regression and make sure the results are acceptable,
+ * using arma::sp_mat.
+ */
+TEST_CASE("QHAdamLogisticRegressionSpMatTest", "[AdamTest]")
+{
+  QHAdam optimizer;
+  LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006);
+}
+
+/**
+ * Test the Adam optimizer on the Ackley function.
+ * This is to test the Ackley function and not Adam.
+ * This test will be removed later.
+ */
+TEST_CASE("AdamAckleyFunctionTest", "[AdamTest]")
 {
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
   FunctionTest<AckleyFunction, TestType>(optimizer);
@@ -155,56 +245,6 @@ TEMPLATE_TEST_CASE("AdamThreeHumpCamelFunctionTest", "[Adam]", arma::mat)
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
   FunctionTest<ThreeHumpCamelFunction, TestType>(optimizer, 0.1, 0.01);
 }
-
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-TEMPLATE_TEST_CASE("AdamSphereFunctionTestSpMat", "[Adam]", arma::sp_mat)
-{
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<SphereFunction<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2);
-}
-
-TEST_CASE("AdamSphereFunctionTestSpMatDenseGradient", "[Adam]")
-{
-  SphereFunction<arma::mat, arma::Row<size_t>> f(2);
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
-}
-
-/* TEST_CASE("AMSGradSphereFunctionTestSpMat", "[Adam]") */
-/* { */
-/*   AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true); */
-/*   FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.1); */
-/* } */
-
-/* TEST_CASE("AMSGradSphereFunctionTestSpMatDenseGradient", "[Adam]") */
-/* { */
-/*   SphereFunction f(2); */
-/*   AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true); */
-
-/*   arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>(); */
-/*   optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates); */
-
-/*   REQUIRE(coordinates(0) == Approx(0.0).margin(0.1)); */
-/*   REQUIRE(coordinates(1) == Approx(0.0).margin(0.1)); */
-/* } */
-
-
-/* TEST_CASE("QHAdamLogisticRegressionSpMatTest", "[Adam]") */
-/* { */
-/*   QHAdam optimizer; */
-/*   LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006); */
-/* } */
-
-#endif
-
 
 #ifdef USE_COOT
 
@@ -311,3 +351,25 @@ TEMPLATE_TEST_CASE("QHAdamLogisticRegressionTest", "[Adam]",
 }
 
 #endif
+
+/**
+ * Test that multiple runs of the Adam optimizer result in the exact same
+ * result.  This specifically tests that the update policy is successfully
+ * reset at the start of each optimization.
+ */
+TEST_CASE("AdamResetPolicyTest", "[AdamTest]")
+{
+  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 5, 1e-3, false);
+  optimizer.ResetPolicy() = true;
+
+  SphereFunction f(2);
+
+  arma::mat coordinatesA = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinatesA);
+
+  // A second run should produce the exact same results.
+  arma::mat coordinatesB = f.GetInitialPoint();
+  optimizer.Optimize(f, coordinatesB);
+
+  CheckMatrices(coordinatesA, coordinatesB);
+}

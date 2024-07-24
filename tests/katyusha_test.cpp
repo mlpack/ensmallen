@@ -40,31 +40,6 @@ TEMPLATE_TEST_CASE("KatyushaProximalLogisticRegressionTest", "[Katyusha]",
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-/* TEST_CASE("KatyushaLogisticRegressionSpMatTest", "[KatyushaTest]") */
-/* { */
-/*   // Run with a couple of batch sizes. */
-/*   for (size_t batchSize = 30; batchSize < 45; batchSize += 5) */
-/*   { */
-/*     Katyusha optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true); */
-/*     LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015); */
-/*   } */
-/* } */
-
-/* TEST_CASE("KatyushaProximalLogisticRegressionSpMatTest", "[KatyushaTest]") */
-/* { */
-/*   // Run with a couple of batch sizes. */
-/*   for (size_t batchSize = 30; batchSize < 45; batchSize += 5) */
-/*   { */
-/*     KatyushaProximal optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true); */
-/*     LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015); */
-/*   } */
-/* } */
-
-#endif
-
 #ifdef USE_COOT
 
 TEMPLATE_TEST_CASE("KatyushaLogisticRegressionTest", "[Katyusha]",

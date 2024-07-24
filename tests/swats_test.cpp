@@ -42,17 +42,14 @@ TEMPLATE_TEST_CASE("SWATSStyblinskiTangFunctionFMatTest", "[SWATS]",
     TestType>(optimizer, 3.0, 0.3);
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-TEST_CASE("SWATSStyblinskiTangFunctionSpMatTest", "[SWATS]")
+/**
+ * Test the SWATS optimizer on the Styblinski-Tang function.  Use arma::sp_mat.
+ */
+TEST_CASE("SWATSStyblinskiTangFunctionSpMatTest", "[SWATSTest]")
 {
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction<>, arma::sp_mat>(optimizer, 0.3, 0.03);
 }
-
-#endif
-
 
 #ifdef USE_COOT
 

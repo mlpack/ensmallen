@@ -64,21 +64,6 @@ TEMPLATE_TEST_CASE("SGDRLogisticRegressionTest","[SGDR]",
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-/* TEST_CASE("SGDRLogisticRegressionSpMatTest","[SGDRTest]") */
-/* { */
-/*   // Run SGDR with a couple of batch sizes. */
-/*   for (size_t batchSize = 5; batchSize < 50; batchSize += 5) */
-/*   { */
-/*     SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3); */
-/*     LogisticRegressionFunctionTest<arma::sp_mat>(sgdr, 0.003, 0.006); */
-/*   } */
-/* } */
-
-#endif
-
 #ifdef USE_COOT
 
 TEMPLATE_TEST_CASE("SGDRLogisticRegressionTest","[SGDR]",

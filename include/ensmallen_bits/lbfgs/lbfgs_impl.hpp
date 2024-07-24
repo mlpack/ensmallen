@@ -77,19 +77,29 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
                                    const CubeType& s,
                                    const CubeType& y)
 {
-  double scalingFactor = 1.0;
+  typedef typename CubeType::elem_type CubeElemType;
+
+  constexpr const CubeElemType tol =
+      100 * std::numeric_limits<CubeElemType>::epsilon();
+
+  double scalingFactor;
   if (iterationNum > 0)
   {
     int previousPos = (iterationNum - 1) % numBasis;
     // Get s and y matrices once instead of multiple times.
-    typedef typename ForwardCubeMatType<CubeType>::MatType CubeMatType;
-    const CubeMatType& sMat = s.slice(previousPos);
-    const CubeMatType& yMat = y.slice(previousPos);
-    scalingFactor = dot(sMat, yMat) / dot(yMat, yMat);
+    const arma::Mat<CubeElemType>& sMat = s.slice(previousPos);
+    const arma::Mat<CubeElemType>& yMat = y.slice(previousPos);
+
+    const CubeElemType tmp   = arma::dot(yMat, yMat);
+    const CubeElemType denom = (tmp >= tol) ? tmp : CubeElemType(1);
+
+    scalingFactor = arma::dot(sMat, yMat) / denom;
   }
   else
   {
-    scalingFactor = 1.0 / sqrt(dot(gradient, gradient));
+    const CubeElemType tmp = arma::norm(gradient, "fro");
+
+    scalingFactor = (tmp >= tol) ? (1.0 / tmp) : 1.0;
   }
 
   return scalingFactor;
@@ -128,11 +138,18 @@ void L_BFGS::SearchDirection(const MatType& gradient,
   for (size_t i = iterationNum; i != limit; i--)
   {
     int translatedPosition = (i + (numBasis - 1)) % numBasis;
-    rho[iterationNum - i] = 1.0 / dot(y.slice(translatedPosition),
-                                            s.slice(translatedPosition));
+    const arma::Mat<CubeElemType>& sMat = s.slice(translatedPosition);
+    const arma::Mat<CubeElemType>& yMat = y.slice(translatedPosition);
+
+    const CubeElemType tmp = arma::dot(yMat, sMat);
+
+    rho[iterationNum - i] = (tmp != CubeElemType(0)) ? (1.0 / tmp) :
+        CubeElemType(1);
+
     alpha[iterationNum - i] = rho[iterationNum - i] *
-        dot(s.slice(translatedPosition), searchDirection);
-    searchDirection -= alpha[iterationNum - i] * y.slice(translatedPosition);
+        arma::dot(sMat, searchDirection);
+
+    searchDirection -= alpha[iterationNum - i] * yMat;
   }
 
   searchDirection *= scalingFactor;
@@ -217,7 +234,8 @@ bool L_BFGS::LineSearch(FunctionType& function,
       dot(gradient, searchDirection);
 
   // If it is not a descent direction, just report failure.
-  if (initialSearchDirectionDotGradient > 0.0)
+  if ( (initialSearchDirectionDotGradient > 0.0)
+    || (std::isfinite(initialSearchDirectionDotGradient) == false) )
   {
     Warn << "L-BFGS line search direction is not a descent direction "
         << "(terminating)!" << std::endl;
@@ -248,6 +266,12 @@ bool L_BFGS::LineSearch(FunctionType& function,
     newIterateTmp = iterate;
     newIterateTmp += stepSize * searchDirection;
     functionValue = function.EvaluateWithGradient(newIterateTmp, gradient);
+
+    if (std::isnan(functionValue))
+    {
+      Warn << "L-BFGS objective value is NaN (terminating)!" << std::endl;
+      return false;
+    }
 
     terminate |= Callback::EvaluateWithGradient(*this, function, newIterateTmp,
         functionValue, gradient, callbacks...);
@@ -380,10 +404,10 @@ L_BFGS::Optimize(FunctionType& function,
   terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
         functionValue, gradient, callbacks...);
 
-  ElemType prevFunctionValue = functionValue;
+  ElemType prevFunctionValue;
 
   // The main optimization loop.
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t itNum = 0; (optimizeUntilConvergence || (itNum != maxIterations))
       && !terminate; ++itNum)
   {
@@ -393,6 +417,8 @@ L_BFGS::Optimize(FunctionType& function,
     //
     // But don't do this on the first iteration to ensure we always take at
     // least one descent step.
+    // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo
+    // 12.4
     if (norm(gradient, 2) < minGradientNorm)
     {
       Info << "L-BFGS gradient norm too small (terminating successfully)."
@@ -417,6 +443,13 @@ L_BFGS::Optimize(FunctionType& function,
           << std::endl;
       break;
     }
+
+    if (std::isfinite(scalingFactor) == false)
+      {
+      Warn << "L-BFGS scaling factor is not finite.  Stopping optimization."
+           << std::endl;
+      break;
+      }
 
     // Build an approximation to the Hessian and choose the search
     // direction for the current iteration.

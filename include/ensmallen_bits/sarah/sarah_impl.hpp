@@ -92,8 +92,7 @@ SARAHType<UpdatePolicyType>::Optimize(
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
     // Calculate the objective function.
@@ -105,7 +104,8 @@ SARAHType<UpdatePolicyType>::Optimize(
           effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+      terminate |= Callback::Evaluate(*this, function, iterate, objective,
+          callbacks...);
     }
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
@@ -147,6 +147,9 @@ SARAHType<UpdatePolicyType>::Optimize(
       f += effectiveBatchSize;
     }
     v /= (double) numFunctions;
+
+    if (terminate)
+      break;
 
     // Update iterate with full gradient (v).
     iterate -= stepSize * v;
@@ -190,7 +193,7 @@ SARAHType<UpdatePolicyType>::Optimize(
         iterate0 = iterate;
 
         // Use the update policy to take a step.
-        if (updatePolicy.Update(iterate, v, gradient, gradient0,
+        if (terminate || updatePolicy.Update(iterate, v, gradient, gradient0,
             effectiveBatchSize, stepSize, vNorm))
         {
           break;
@@ -203,7 +206,7 @@ SARAHType<UpdatePolicyType>::Optimize(
         iterate0 = iterate;
 
         // Use the update policy to take a step.
-        if (updatePolicy.Update(iterate, v, gradient, gradient,
+        if (terminate || updatePolicy.Update(iterate, v, gradient, gradient,
             effectiveBatchSize, stepSize, vNorm))
         {
           break;
@@ -229,7 +232,10 @@ SARAHType<UpdatePolicyType>::Optimize(
       const ElemType objective = function.Evaluate(iterate, i, effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+      // The optimization is finished, so we don't need to care about the result
+      // of the callback.
+      (void) Callback::Evaluate(*this, function, iterate, objective,
+          callbacks...);
     }
   }
 

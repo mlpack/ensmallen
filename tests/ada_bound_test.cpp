@@ -33,10 +33,10 @@ TEMPLATE_TEST_CASE("AMSBoundSphereFunctionTest", "[AdaBound]",
       optimizer, 0.5, 0.1);
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-TEST_CASE("AdaBoundSphereFunctionTestSpMat", "[AdaBound]")
+/**
+ * Test the AdaBound optimizer on the Sphere function with arma::sp_mat.
+ */
+TEST_CASE("AdaBoundSphereFunctionTestSpMat", "[AdaBoundTest]")
 {
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);

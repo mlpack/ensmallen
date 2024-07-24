@@ -15,23 +15,28 @@
 #ifndef ENSMALLEN_HPP
 #define ENSMALLEN_HPP
 
-// certain compilers are way behind the curve
-#if (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))
-  #undef  ARMA_USE_CXX11
-  #define ARMA_USE_CXX11
+#undef ENS_HAVE_CXX14
+
+#if (__cplusplus >= 201402L)
+  #define ENS_HAVE_CXX14
+#endif
+
+#if defined(_MSVC_LANG)
+  #if (_MSVC_LANG >= 201402L)
+    #undef  ENS_HAVE_CXX14
+    #define ENS_HAVE_CXX14
+  #endif
+#endif
+
+#if !defined(ENS_HAVE_CXX14)
+  #error "*** C++14 compiler required; enable C++14 mode in your compiler, or use an earlier version of ensmallen"
 #endif
 
 #include <bandicoot>
 #include <armadillo>
 
-#if !defined(ARMA_USE_CXX11)
-  // armadillo automatically enables ARMA_USE_CXX11
-  // when a C++11/C++14/C++17/etc compiler is detected
-  #error "please enable C++11/C++14 mode in your compiler"
-#endif
-
-#if ((ARMA_VERSION_MAJOR < 8) || ((ARMA_VERSION_MAJOR == 8) && (ARMA_VERSION_MINOR < 400)))
-  #error "need Armadillo version 8.400 or later"
+#if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
+  #error "need Armadillo version 10.8 or newer"
 #endif
 
 #include <cctype>
@@ -93,14 +98,20 @@
 
 #include "ensmallen_bits/problems/problems.hpp" // TODO: should move to another place
 
+#include "ensmallen_bits/ada_belief/ada_belief.hpp"
 #include "ensmallen_bits/ada_bound/ada_bound.hpp"
 #include "ensmallen_bits/ada_delta/ada_delta.hpp"
 #include "ensmallen_bits/ada_grad/ada_grad.hpp"
+#include "ensmallen_bits/ada_sqrt/ada_sqrt.hpp"
 #include "ensmallen_bits/adam/adam.hpp"
+#include "ensmallen_bits/demon_adam/demon_adam.hpp"
+#include "ensmallen_bits/demon_sgd/demon_sgd.hpp"
 #include "ensmallen_bits/qhadam/qhadam.hpp"
 #include "ensmallen_bits/aug_lagrangian/aug_lagrangian.hpp"
 #include "ensmallen_bits/bigbatch_sgd/bigbatch_sgd.hpp"
 #include "ensmallen_bits/cmaes/cmaes.hpp"
+#include "ensmallen_bits/cmaes/active_cmaes.hpp"
+#include "ensmallen_bits/cd/cd.hpp"
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
@@ -122,7 +133,6 @@
 
 #include "ensmallen_bits/sa/sa.hpp"
 #include "ensmallen_bits/sarah/sarah.hpp"
-#include "ensmallen_bits/scd/scd.hpp"
 #include "ensmallen_bits/sdp/sdp.hpp"
 #include "ensmallen_bits/sdp/lrsdp.hpp"
 #include "ensmallen_bits/sdp/primal_dual.hpp"
@@ -139,5 +149,6 @@
 #include "ensmallen_bits/svrg/svrg.hpp"
 #include "ensmallen_bits/swats/swats.hpp"
 #include "ensmallen_bits/wn_grad/wn_grad.hpp"
+#include "ensmallen_bits/yogi/yogi.hpp"
 
 #endif

@@ -50,8 +50,7 @@ class NadamUpdate
       epsilon(epsilon),
       beta1(beta1),
       beta2(beta2),
-      scheduleDecay(scheduleDecay),
-      iteration(0)
+      scheduleDecay(scheduleDecay)
   {
     // Nothing to do.
   }
@@ -76,11 +75,6 @@ class NadamUpdate
   //! Modify the decay parameter for decay coefficients
   double& ScheduleDecay() { return scheduleDecay; }
 
-  //! Get the current iteration number.
-  size_t Iteration() const { return iteration; }
-  //! Modify the current iteration number.
-  size_t& Iteration() { return iteration; }
-
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
    * template class with two template arguments: MatType and GradType.  This is
@@ -101,7 +95,8 @@ class NadamUpdate
      */
     Policy(NadamUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
-        cumBeta1(1)
+        cumBeta1(1),
+        iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
@@ -119,7 +114,7 @@ class NadamUpdate
                 const GradType& gradient)
     {
       // Increment the iteration counter variable.
-      ++parent.iteration;
+      ++iteration;
 
       // And update the iterate.
       m *= parent.beta1;
@@ -129,18 +124,15 @@ class NadamUpdate
       v += (1 - parent.beta2) * gradient % gradient;
 
       double beta1T = parent.beta1 * (1 - (0.5 *
-          std::pow(0.96, parent.iteration * parent.scheduleDecay)));
+          std::pow(0.96, iteration * parent.scheduleDecay)));
 
       double beta1T1 = parent.beta1 * (1 - (0.5 *
-          std::pow(0.96, (parent.iteration + 1) * parent.scheduleDecay)));
+          std::pow(0.96, (iteration + 1) * parent.scheduleDecay)));
 
       cumBeta1 *= beta1T;
 
       const double biasCorrection1 = 1.0 - cumBeta1;
-
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2,
-          parent.iteration);
-
+      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
       const double biasCorrection3 = 1.0 - (cumBeta1 * beta1T1);
 
       /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated
@@ -163,6 +155,9 @@ class NadamUpdate
 
     // The cumulative product of decay coefficients.
     double cumBeta1;
+
+    // The number of iterations.
+    size_t iteration;
   };
 
  private:
@@ -177,9 +172,6 @@ class NadamUpdate
 
   // The decay parameter for decay coefficients.
   double scheduleDecay;
-
-  // The number of iterations.
-  size_t iteration;
 };
 
 } // namespace ens

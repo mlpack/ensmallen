@@ -125,7 +125,7 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
       overallObjective, callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate;
@@ -186,9 +186,7 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         return overallObjective;
       }
 
-      if (std::abs(lastObjective - overallObjective) < tolerance ||
-          Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
-              callbacks...))
+      if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Info << "SGD: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
@@ -196,6 +194,9 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
+
+      terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
+          overallObjective, callbacks...);
 
       // Reset the counter variables.
       lastObjective = overallObjective;
@@ -207,8 +208,11 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     }
   }
 
-  Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
-      << "terminating optimization." << std::endl;
+  if (!terminate)
+  {
+    Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
+        << "terminating optimization." << std::endl;
+  }
 
   // Calculate final objective if exactObjective is set to true.
   if (exactObjective)
@@ -220,7 +224,9 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
       const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+      // The optimization is over, so it doesn't matter what the callback
+      // returns.
+      (void) Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
   }
 

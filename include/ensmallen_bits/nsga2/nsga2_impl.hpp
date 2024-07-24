@@ -141,7 +141,7 @@ typename MatType::elem_type NSGA2::Optimize(
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
 
   // Iterate until maximum number of generations is obtained.
-  terminate |= Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
+  Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {
@@ -423,9 +423,9 @@ inline bool NSGA2::Dominates(
 //! Assign crowding distance to the population.
 template <typename MatType>
 inline void NSGA2::CrowdingDistanceAssignment(
-	const std::vector<size_t>& front,
-	std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-	std::vector<typename MatType::elem_type>& crowdingDistance)
+    const std::vector<size_t>& front,
+    std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+    std::vector<typename MatType::elem_type>& crowdingDistance)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;

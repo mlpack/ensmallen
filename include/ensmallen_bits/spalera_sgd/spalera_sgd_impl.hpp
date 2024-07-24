@@ -100,7 +100,9 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   ElemType lastObjective = DBL_MAX;
 
   // Controls early termination of the optimization process.
-  bool terminate = Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  bool terminate = false;
+
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
 
   // Calculate the first objective function.
   for (size_t i = 0; i < numFunctions; i += batchSize)
@@ -109,7 +111,7 @@ SPALeRASGD<DecayPolicyType>::Optimize(
     const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
     overallObjective += objective;
 
-    Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+    terminate |= Callback::Evaluate(*this, f, iterate, objective, callbacks...);
   }
 
   ElemType currentObjective = overallObjective / numFunctions;
@@ -137,7 +139,7 @@ SPALeRASGD<DecayPolicyType>::Optimize(
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
+  terminate |= Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
       callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate;
       /* incrementing done manually */)
@@ -158,6 +160,8 @@ SPALeRASGD<DecayPolicyType>::Optimize(
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
         currentObjective, gradient, callbacks...);
+    if (terminate)
+      break;
 
     // Use the update policy to take a step.
     if (!instUpdatePolicy.As<InstUpdatePolicyType>().Update(stepSize,
@@ -179,7 +183,6 @@ SPALeRASGD<DecayPolicyType>::Optimize(
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
     overallObjective += currentObjective;
-    currentObjective /= effectiveBatchSize;
 
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)
@@ -201,9 +204,7 @@ SPALeRASGD<DecayPolicyType>::Optimize(
         return overallObjective;
       }
 
-      if (std::abs(lastObjective - overallObjective) < tolerance ||
-          Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
-              callbacks...))
+      if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Info << "SPALeRA SGD: minimized within tolerance " << tolerance
             << "; terminating optimization." << std::endl;
@@ -216,6 +217,9 @@ SPALeRASGD<DecayPolicyType>::Optimize(
       lastObjective = overallObjective;
       overallObjective = 0;
       currentFunction = 0;
+
+      terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
+          overallObjective, callbacks...);
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();
@@ -235,7 +239,9 @@ SPALeRASGD<DecayPolicyType>::Optimize(
       const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+      // The optimization is over, so we don't need to care about the result of
+      // the callback.
+      (void) Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
   }
 

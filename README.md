@@ -8,14 +8,15 @@ ensmallen provides many types of optimizers that can be used
 for virtually any numerical optimization task.
 This includes gradient descent techniques, gradient-free optimizers,
 and constrained optimization.
+Examples include L-BFGS, SGD, CMAES and Simulated Annealing.
 ensmallen also allows optional callbacks to customize the optimization process.
 
-Documentation and downloads: http://ensmallen.org
+Documentation and downloads: https://ensmallen.org
 
 ### Requirements
 
-* C++ compiler with C++11 support
-* Armadillo: http://arma.sourceforge.net
+* C++ compiler with C++14 support
+* Armadillo: https://arma.sourceforge.net
 * OpenBLAS or Intel MKL or LAPACK (see Armadillo site for details)
 
 
@@ -27,9 +28,7 @@ with or without root access.
 The cmake based installation will check the requirements 
 and optionally build the tests. If cmake 3.3 (or a later version) 
 is not already available on your system, it can be obtained 
-from [cmake.org](https://cmake.org). If you are using an older 
-system such as RHEL 7 or CentOS 7, an updated version of cmake 
-is also available via the EPEL repository (see the `cmake3` package).
+from [cmake.org](https://cmake.org).
 
 Example cmake based installation with root access:
 
@@ -150,3 +149,4 @@ the library.
 * N Rajiv Vaidyanathan
 * Roberto Hueso
 * Sayan Goswami
+

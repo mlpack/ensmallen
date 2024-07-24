@@ -82,24 +82,6 @@ TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-/* TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionSpMatTest", */
-/*     "[SnapshotEnsembles]", arma::sp_mat) */
-/* { */
-/*   // Run SGDR with snapshot ensembles on a couple of batch sizes. */
-/*   for (size_t batchSize = 5; batchSize < 50; batchSize += 5) */
-/*   { */
-/*     SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3); */
-/*     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>( */
-/*         sgdr, 0.003, 0.006); */
-/*   } */
-/* } */
-
-#endif
-
-
 #ifdef USE_COOT
 
 TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
@@ -125,5 +107,4 @@ TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
         sgdr, 0.03, 0.06, 3);
   }
 }
-
 #endif

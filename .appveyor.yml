@@ -1,13 +1,9 @@
 environment:
-  ARMADILLO_DOWNLOAD: "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
+  ARMADILLO_DOWNLOAD: "https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz"
   BLAS_LIBRARY: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a"
   BLAS_LIBRARY_DLL: "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll"
 
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      VSVER: Visual Studio 14 2015 Win64
-      MSBUILD: C:\Program Files (x86)\MSBuild\14.0\bin\MSBuild.exe
-
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VSVER: Visual Studio 15 2017 Win64
       MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
@@ -15,6 +11,10 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       VSVER: Visual Studio 16 2019
       MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      VSVER: Visual Studio 17 2022
+      MSBUILD: C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe
 
 configuration: Release
 
@@ -26,7 +26,7 @@ build_script:
   - cd ..
   - appveyor DownloadFile %ARMADILLO_DOWNLOAD% -FileName armadillo.tar.xz
   - 7z x armadillo.tar.xz -so -txz | 7z x -si -ttar > nul
-  - cd armadillo-8.400.0 && mkdir build && cd build
+  - cd armadillo-10.8.2 && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
     -DBLAS_LIBRARY:FILEPATH=%BLAS_LIBRARY%
@@ -43,14 +43,14 @@ build_script:
   - cd ensmallen && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
-    -DARMADILLO_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/../armadillo-8.400.0/include/
+    -DARMADILLO_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/../armadillo-10.8.2/include/
     -DARMADILLO_LIBRARIES=%BLAS_LIBRARY%
     -DLAPACK_LIBRARY=%BLAS_LIBRARY%
     -DBLAS_LIBRARY=%BLAS_LIBRARY%
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "ensmallen.sln"
-    /m /verbosity:minimal /nologo /p:BuildInParallel=true
+    /m /verbosity:minimal /nologo /p:BuildInParallel=false
 
   # Run tests after copying libraries.
   - ps: cp C:\projects\ensmallen\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.* C:\projects\ensmallen\build\

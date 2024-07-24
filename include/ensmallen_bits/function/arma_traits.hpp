@@ -228,6 +228,22 @@ struct MatTypeTraits<arma::SpSubview<eT>>
 };
 
 template<typename eT>
+struct MatTypeTraits<arma::SpSubview_col<eT>>
+{
+  static_assert(sizeof(arma::SpSubview_col<eT>) == 0,
+      "Armadillo subviews cannot be passed to Optimize()!  Create a matrix "
+      "or a matrix alias instead!");
+};
+
+template<typename eT>
+struct MatTypeTraits<arma::SpSubview_row<eT>>
+{
+  static_assert(sizeof(arma::SpSubview_row<eT>) == 0,
+      "Armadillo subviews cannot be passed to Optimize()!  Create a matrix "
+      "or a matrix alias instead!");
+};
+
+template<typename eT>
 struct MatTypeTraits<arma::Cube<eT>>
 {
   static_assert(sizeof(arma::Cube<eT>) == 0,

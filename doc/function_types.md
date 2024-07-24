@@ -307,7 +307,7 @@ regular implementation of the `Gradient()`, so that function may be omitted.
 If these functions are implemented, the following partially differentiable
 function optimizers can be used:
 
- - [Stochastic Coordinate Descent](#stochastic-coordinate-descent-scd)
+ - [Coordinate Descent](#coordinate-descent-cd)
 
 ## Arbitrary separable functions
 
@@ -554,9 +554,11 @@ Each of the implemented methods is allowed to have additional cv-modifiers
 
 The following optimizers can be used with differentiable separable functions:
 
+ - [AdaBelief](#adabelief)
  - [AdaBound](#adabound)
  - [AdaDelta](#adadelta)
  - [AdaGrad](#adagrad)
+ - [AdaSqrt](#adasqrt)
  - [Adam](#adam)
  - [AdaMax](#adamax)
  - [AMSBound](#amsbound)

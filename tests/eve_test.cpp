@@ -41,16 +41,15 @@ TEMPLATE_TEST_CASE("EveStyblinskiTangFunctionTest", "[Eve]",
       optimizer, 0.5, 0.1);
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-TEST_CASE("EveStyblinskiTangFunctionSpMatTest", "[Eve]")
+/**
+ * Test the Eve optimizer on the Styblinski-Tang function, using arma::sp_mat as
+ * the objective type.
+ */
+TEST_CASE("EveStyblinskiTangFunctionSpMatTest","[EveTest]")
 {
   Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction<>, arma::sp_mat>(optimizer, 0.5, 0.1);
 }
-
-#endif
 
 #ifdef USE_COOT
 

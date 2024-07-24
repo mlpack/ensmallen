@@ -1,16 +1,16 @@
 /**
- * @file scd.hpp
+ * @file cd.hpp
  * @author Shikhar Bhardwaj
  *
- * Stochastic Coordinate Descent (SCD).
+ * Coordinate Descent (CD).
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_SCD_SCD_HPP
-#define ENSMALLEN_SCD_SCD_HPP
+#ifndef ENSMALLEN_CD_CD_HPP
+#define ENSMALLEN_CD_CD_HPP
 
 #include "descent_policies/cyclic_descent.hpp"
 #include "descent_policies/random_descent.hpp"
@@ -42,7 +42,7 @@ namespace ens {
  * }
  * @endcode
  *
- * SCD can optimize partially differentiable functions.  For more details, see
+ * CD can optimize partially differentiable functions.  For more details, see
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
  *
@@ -50,11 +50,11 @@ namespace ens {
  *     coordinate for descent is selected.
  */
 template <typename DescentPolicyType = RandomDescent>
-class SCD
+class CD
 {
  public:
   /**
-   * Construct the SCD optimizer with the given function and parameters. The
+   * Construct the CD optimizer with the given function and parameters. The
    * default value here are not necessarily good for every problem, so it is
    * suggested that the values used are tailored for the task at hand. The
    * maximum number of iterations refers to the maximum number of "descents"
@@ -70,11 +70,11 @@ class SCD
    * @param descentPolicy The policy to use for picking up the coordinate to
    *    descend on.
    */
-  SCD(const double stepSize = 0.01,
-      const size_t maxIterations = 100000,
-      const double tolerance = 1e-5,
-      const size_t updateInterval = 1e3,
-      const DescentPolicyType descentPolicy = DescentPolicyType());
+  CD(const double stepSize = 0.01,
+     const size_t maxIterations = 100000,
+     const double tolerance = 1e-5,
+     const size_t updateInterval = 1e3,
+     const DescentPolicyType descentPolicy = DescentPolicyType());
 
   /**
    * Optimize the given function using stochastic coordinate descent. The
@@ -158,6 +158,24 @@ class SCD
 } // namespace ens
 
 // Include implementation.
-#include "scd_impl.hpp"
+#include "cd_impl.hpp"
+
+namespace ens {
+
+/**
+ * Backwards-compatibility alias; this can be removed after ensmallen 3.10.0.
+ * The history here is that CD was originally named SCD, but that is an
+ * inaccurate name because this is not a stochastic technique; thus, it was
+ * renamed SCD.
+ */
+template<typename DescentPolicyType = RandomDescent>
+using SCD = CD<DescentPolicyType>;
+
+// Convenience typedefs.
+using RandomCD = CD<RandomDescent>;
+using GreedyCD = CD<GreedyDescent>;
+using CyclicCD = CD<CyclicDescent>;
+
+} // namespace ens
 
 #endif

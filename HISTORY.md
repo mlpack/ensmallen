@@ -1,5 +1,76 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Update to C++14 standard
+   ([#400](https://github.com/mlpack/ensmallen/pull/400)).
+
+ * Bump minimum Armadillo version to 10.8
+   ([#404](https://github.com/mlpack/ensmallen/pull/404)).
+
+### ensmallen 2.21.1: "Bent Antenna"
+###### 2024-02-15
+ * Fix numerical precision issues for small-gradient L-BFGS scaling factor
+   computations ([#392](https://github.com/mlpack/ensmallen/pull/392)).
+
+ * Ensure the tests are built with optimisation enabled
+   ([#394](https://github.com/mlpack/ensmallen/pull/394)).
+
+### ensmallen 2.21.0: "Bent Antenna"
+###### 2023-11-27
+ * Clarify return values for different callback types
+   ([#383](https://github.com/mlpack/ensmallen/pull/383)).
+
+ * Fix return types of callbacks
+   ([#382](https://github.com/mlpack/ensmallen/pull/382)).
+
+ * Minor cleanup for printing optimization reports via `Report()`
+   ([#385](https://github.com/mlpack/ensmallen/pull/385)).
+
+### ensmallen 2.20.0: "Stripped Bolt Head"
+###### 2023-10-02
+ * Implementation of Active CMAES
+   ([#367](https://github.com/mlpack/ensmallen/pull/367)).
+
+ * LBFGS: avoid generation of NaNs, and add checks for finite values
+   ([#368](https://github.com/mlpack/ensmallen/pull/368)).
+
+ * Fix CNE test tolerances
+   ([#360](https://github.com/mlpack/ensmallen/pull/360)).
+
+ * Rename `SCD` optimizer, to `CD`
+   ([#379](https://github.com/mlpack/ensmallen/pull/379)).
+
+### ensmallen 2.19.1: "Eight Ball Deluxe"
+###### 2023-01-30
+ * Avoid deprecation warnings in Armadillo 11.2+
+   ([#347](https://github.com/mlpack/ensmallen/pull/347)).
+
+### ensmallen 2.19.0: "Eight Ball Deluxe"
+###### 2022-04-06
+ * Added DemonSGD and DemonAdam optimizers
+   ([#211](https://github.com/mlpack/ensmallen/pull/211)).
+
+ * Fix bug with Adam-like optimizers not resetting when `resetPolicy` is `true`.
+   ([#340](https://github.com/mlpack/ensmallen/pull/340)).
+
+ * Add Yogi optimizer
+   ([#232](https://github.com/mlpack/ensmallen/pull/232)).
+
+ * Add AdaBelief optimizer
+   ([#233](https://github.com/mlpack/ensmallen/pull/233)).
+
+ * Add AdaSqrt optimizer
+   ([#234](https://github.com/mlpack/ensmallen/pull/234)).
+
+ * Bump check for minimum supported version of Armadillo
+   ([#342](https://github.com/mlpack/ensmallen/pull/342)).
+
+### ensmallen 2.18.2: "Fairmount Bagel"
+###### 2022-02-13
+ * Update Catch2 to 2.13.8
+  ([#336](https://github.com/mlpack/ensmallen/pull/336)).
+
+ * Fix epoch timing output
+  ([#337](https://github.com/mlpack/ensmallen/pull/337)).
 
 ### ensmallen 2.18.1: "Fairmount Bagel"
 ###### 2021-11-19

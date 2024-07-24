@@ -105,7 +105,7 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
   BaseGradType functionGradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate;
       /* incrementing done manually */)
   {
@@ -192,6 +192,9 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
       }
     }
 
+    if (terminate)
+      break;
+
     instUpdatePolicy.As<InstUpdatePolicyType>().Update(f, stepSize, iterate,
         gradient, gB, vB, currentFunction, batchSize, effectiveBatchSize,
         reset);
@@ -230,9 +233,7 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
         return overallObjective;
       }
 
-      if (std::abs(lastObjective - overallObjective) < tolerance ||
-          Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
-              callbacks...))
+      if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Info << "Big-batch SGD: minimized within tolerance " << tolerance
             << "; terminating optimization." << std::endl;
@@ -240,6 +241,9 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
         Callback::EndOptimization(*this, f, iterate, callbacks...);
         return overallObjective;
       }
+
+      terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
+          overallObjective, callbacks...);
 
       // Reset the counter variables.
       lastObjective = overallObjective;
@@ -251,8 +255,11 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
     }
   }
 
-  Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
-      << "reached; terminating optimization." << std::endl;
+  if (!terminate)
+  {
+    Info << "Big-batch SGD: maximum iterations (" << maxIterations << ") "
+        << "reached; terminating optimization." << std::endl;
+  }
 
   // Calculate final objective if exactObjective is set to true.
   if (exactObjective)
@@ -264,7 +271,9 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
       const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+      // The optimization is finished, so we don't need to care what the
+      // callback returns.
+      (void) Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
   }
 

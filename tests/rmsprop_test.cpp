@@ -33,3 +33,11 @@ TEMPLATE_TEST_CASE("RMSPropLogisticRegressionTest", "[RMSProp]",
 }
 
 #endif
+/**
+ * Run RMSProp on logistic regression and make sure the results are acceptable.
+ * Use arma::sp_mat.
+ */
+TEST_CASE("RMSPropLogisticRegressionSpMatTest", "[rmsprop]")
+{
+  LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006);
+}

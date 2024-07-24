@@ -1,3 +1,153 @@
+## ActiveCMAES
+
+*An optimizer for [separable functions](#separable-functions).*
+
+Active CMA-ES is a variant of the stochastic search algorithm
+CMA-ES - Covariance Matrix Adaptation Evolution Strategy.
+Active CMA-ES actively reduces the uncertainty in unfavourable directions by
+exploiting the information about bad mutations in the covariance matrix 
+update step. This isn't for the purpose of accelerating progress, but 
+instead for speeding up the adaptation of the covariance matrix (which, in 
+turn, will lead to faster progress).
+
+#### Constructors
+
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `ActiveCMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
+
+The _`SelectionPolicyType`_ template parameter refers to the strategy used to
+compute the (approximate) objective function.  The `FullSelection` and
+`RandomSelection` classes are available for use; custom behavior can be achieved
+by implementing a class with the same method signatures.
+The _`TransformationPolicyType`_  template parameter refers to transformation 
+strategy used to map decision variables to the desired domain during fitness 
+evaluation and optimization termination. The `EmptyTransformation` and 
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+achieved by implementing a class with the same method signatures.
+
+For convenience the following types can be used:
+
+ * **`ActiveCMAES<>`** (equivalent to `ActiveCMAES<FullSelection, EmptyTransformation<>>`): uses all separable functions to compute objective
+ * **`ApproxActiveCMAES<>`** (equivalent to `ActiveCMAES<RandomSelection, EmptyTransformation<>>`): uses a small amount of separable functions to compute approximate objective
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
+| `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `size_t` | **`stepSize`** | Initial step size | `0` |
+
+Attributes of the optimizer may also be changed via the member methods
+`Lambda()`, `TransformationPolicy()`, `BatchSize()`, `MaxIterations()`,
+`Tolerance()`, and `SelectionPolicy()`.
+
+The `selectionPolicy` attribute allows an instantiated `SelectionPolicyType` to
+be given.  The `FullSelection` policy has no need to be instantiated and thus
+the option is not relevant when the `ActiveCMAES<>` optimizer type is being used; the
+`RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
+where _`fraction`_ specifies the percentage of separable functions to use to
+estimate the objective function.
+The `transformationPolicy` attribute allows an instantiated 
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
+the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+the coordinates respectively.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+// ActiveCMAES with the FullSelection and BoundaryBoxConstraint policies.
+BoundaryBoxConstraint b(-1, 1);
+ActiveCMAES optimizer(0, b, 32, 200, 1e-4);
+optimizer.Optimize(f, coordinates);
+
+// ActiveCMAES with the RandomSelection and BoundaryBoxConstraint policies.
+ApproxActiveCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
+approxOptimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [CMAES](#cmaes)
+ * [Improving Evolution Strategies through Active Covariance Matrix Adaptation](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.4239&rep=rep1&type=pdfn)
+ * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
+
+## AdaBelief
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaBelief uses a different denominator from Adam, and is orthogonal to other
+techniques such as recification, decoupled weight decay. The intuition for
+AdaBelief is to adapt the stepsize according to the "belief" in the current
+gradient direction.
+
+#### Constructors
+
+ * `AdaBelief()`
+ * `AdaBelief(`_`stepSize, batchSize`_`)`
+ * `AdaBelief(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle`_`)`
+ * `AdaBelief(`_`stepSize, batchSize, beta1, beta2, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | The exponential decay rate for the 1st moment estimates. | `0.9` |
+| `double` | **`beta2`** | The exponential decay rate for the 2nd moment estimates. | `0.999` |
+| `double` | **`epsilon`** | A small constant for numerical stability. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+AdaBelief optimizer(0.001, 32, 0.9, 0.999, 1e-12, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [AdaBelief Optimizer: Adapting Stepsizes by the Belief in Observed Gradients](https://arxiv.org/abs/2010.07468)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## AdaBound
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -175,6 +325,64 @@ optimizer.Optimize(f, coordinates);
  * [AdaDelta](#adadelta)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## AdaSqrt
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+AdaSqrt is an optimizer with parameter-specific learning rates, which are
+adapted relative to how frequently a parameter gets updated during training.
+Larger updates for more sparse parameters and smaller updates for less sparse
+parameters. AdaSqrt, removes the square root in the denominator and scales the
+learning rate by sqrt(T).
+
+#### Constructors
+
+ - `AdaSqrt()`
+ - `AdaSqrt(`_`stepSize`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle`_`)`
+ - `AdaSqrt(`_`stepSize, batchSize, epsilon, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `size_t` | **`batchSize`** | Number of points to process in one step. | `32` |
+| `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+Attributes of the optimizer may also be changed via the member methods
+`StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
+`Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaSqrt optimizer(1.0, 1, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
+ * [AdaGrad in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#AdaGrad)
+ * [AdaDelta](#adadelta)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## Adam
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -202,14 +410,14 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
 
 #### Examples
@@ -260,7 +468,7 @@ with _`UpdateRule`_` = AdaMaxUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -380,7 +588,7 @@ with _`UpdateRule`_` = AMSGradUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -570,6 +778,82 @@ optimizer2.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
 
+## Coordinate Descent (CD)
+
+*An optimizer for [partially differentiable functions](#partially-differentiable-functions).*
+
+Coordinate descent is a technique for minimizing a function by doing a line
+search along a single direction at the current point in the iteration. The
+direction (or "coordinate") can be chosen cyclically, randomly or in a greedy
+fashion.
+
+#### Constructors
+
+ * `CD<`_`DescentPolicyType`_`>()`
+ * `CD<`_`DescentPolicyType`_`>(`_`stepSize, maxIterations`_`)`
+ * `CD<`_`DescentPolicyType`_`>(`_`stepSize, maxIterations, tolerance, updateInterval`_`)`
+ * `CD<`_`DescentPolicyType`_`>(`_`stepSize, maxIterations, tolerance, updateInterval, descentPolicy`_`)`
+
+The _`DescentPolicyType`_ template parameter specifies the behavior of CD when
+selecting the next coordinate to descend with.  The `RandomDescent`,
+`GreedyDescent`, and `CyclicDescent` classes are available for use.  Custom
+behavior can be achieved by implementing a class with the same method
+signatures.
+
+For convenience, the following typedefs have been defined:
+
+ * `RandomCD` (equivalent to `CD<RandomDescent>`): selects coordinates randomly
+ * `GreedyCD` (equivalent to `CD<GreedyDescent>`): selects the coordinate with the maximum guaranteed descent according to the Gauss-Southwell rule
+ * `CyclicCD` (equivalent to `CD<CyclicDescent>`): selects coordinates sequentially
+
+***Note***: `CD` used to be called `SCD`.  Use of the name `SCD` is deprecated,
+and will be removed in ensmallen 3 and later.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate the algorithm. | `1e-5` |
+| `size_t` | **`updateInterval`** | The interval at which the objective is to be reported and checked for convergence. | `1e3` |
+| `DescentPolicyType` | **`descentPolicy`** | The policy to use for selecting the coordinate to descend on. | `DescentPolicyType()` |
+
+Attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `MaxIterations()`, `Tolerance()`, `UpdateInterval()`, and
+`DescentPolicy()`.
+
+Note that the default value for `descentPolicy` is the default constructor for
+_`DescentPolicyType`_.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+SparseTestFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+RandomCD randomscd(0.01, 100000, 1e-5, 1e3);
+randomscd.Optimize(f, coordinates);
+
+GreedyCD greedyscd(0.01, 100000, 1e-5, 1e3);
+greedyscd.Optimize(f, coordinates);
+
+CyclicCD cyclicscd(0.01, 100000, 1e-5, 1e3);
+cyclicscd.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Coordinate descent on Wikipedia](https://en.wikipedia.org/wiki/Coordinate_descent)
+ * [Stochastic Methods for L1-Regularized Loss Minimization](https://www.jmlr.org/papers/volume12/shalev-shwartz11a/shalev-shwartz11a.pdf)
+ * [Partially differentiable functions](#partially-differentiable-functions)
+
 ## CMAES
 
 *An optimizer for [separable functions](#separable-functions).*
@@ -580,35 +864,41 @@ matrix within an iterative procedure using the covariance matrix.
 
 #### Constructors
 
- * `CMAES<`_`SelectionPolicyType`_`>()`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound`_`)`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize`_`)`
- * `CMAES<`_`SelectionPolicyType`_`>(`_`lambda, lowerBound, upperBound, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
 
 The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
+The _`TransformationPolicyType`_  template parameter refers to transformation 
+strategy used to map decision variables to the desired domain during fitness 
+evaluation and optimization termination. The `EmptyTransformation` and 
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
 
- * **`CMAES<>`** (equivalent to `CMAES<FullSelection>`): uses all separable functions to compute objective
- * **`ApproxCMAES`** (equivalent to `CMAES<RandomSelection>`): uses a small amount of separable functions to compute approximate objective
+ * **`CMAES<>`** (equivalent to `CMAES<FullSelection, EmptyTransformation<>>`): uses all separable functions to compute objective
+ * **`ApproxCMAES<>`** (equivalent to `CMAES<RandomSelection, EmptyTransformation<>>`): uses a small amount of separable functions to compute approximate objective
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
-| `double` | **`lowerBound`** | Lower bound of decision variables. | `-10.0` |
-| `double` | **`upperBound`** | Upper bound of decision variables. | `10.0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
 | `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `size_t` | **`stepSize`** | Initial step size | `0` |
 
 Attributes of the optimizer may also be changed via the member methods
-`Lambda()`, `LowerBound()`, `UpperBound()`, `BatchSize()`, `MaxIterations()`,
+`Lambda()`, `TransformationPolicy()`, `BatchSize()`, `MaxIterations()`,
 `Tolerance()`, and `SelectionPolicy()`.
 
 The `selectionPolicy` attribute allows an instantiated `SelectionPolicyType` to
@@ -617,6 +907,12 @@ the option is not relevant when the `CMAES<>` optimizer type is being used; the
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
+The `transformationPolicy` attribute allows an instantiated 
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
+the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+the coordinates respectively.
 
 #### Examples:
 
@@ -628,12 +924,13 @@ estimate the objective function.
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-// CMAES with the FullSelection policy.
-CMAES<> optimizer(0, -1, 1, 32, 200, 1e-4);
+// CMAES with the FullSelection and BoundaryBoxConstraint policies.
+BoundaryBoxConstraint b(-1, 1);
+CMAES optimizer(0, b, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
-// CMAES with the RandomSelection policy.
-ApproxCMAES<> approxOptimizer(0, -1, 1. 32, 200, 1e-4);
+// CMAES with the RandomSelection and BoundaryBoxConstraint policies.
+ApproxCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
 
@@ -744,6 +1041,148 @@ optimizer.Optimize(f, coordinates);
  * [Differential Evolution in Wikipedia](https://en.wikipedia.org/wiki/Differential_Evolution)
  * [Arbitrary functions](#arbitrary-functions)
 
+## DemonAdam
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+DemonAdam is an Adam based optimizer. DemonAdam is motivated by decaying the
+total contribution of a gradient to all future updates.
+
+#### Constructors
+
+ * `DemonAdam()`
+ * `DemonAdam(`_`stepSize, batchSize`_`)`
+ * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
+ * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+
+Note that the `DemonAdam` class is based on
+the `DemonAdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = AdamUpdate`.
+
+For convenience the following typedefs have been defined:
+
+ * `DemonAdaMax` (equivalent to `DemonAdamType<AdaMaxUpdate>`): DemonAdam that
+   uses the AdaMax update rule.
+ * `DemonAMSGrad` (equivalent to `DemonAdamType<AMSGradUpdate>`): DemonAdam that
+   uses the AMSGrad update rule.
+ * `DemonNadam` (equivalent to `DemonAdamType<NadamUpdate>`): DemonAdam that
+   uses the Nadam update rule.
+ * `NadamUpdate` (equivalent to `DemonAdamType<NadaMaxUpdate>`): DemonAdam that
+   uses the NadaMax update rule.
+ * `DemonOptimisticAdam` (equivalent to `DemonAdamType<OptimisticAdamUpdate>`):
+   DemonAdam that uses the OptimisticAdam update rule.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`momentum`** | The initial momentum coefficient. | `0.9` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Momentum()`, `MomentumIterations()`, `Beta1()`,
+`Beta2()`, `Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
+`ResetPolicy()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+MatyasFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+DemonAdam optimizer(0.5, 1, 0.9);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Decaying momentum helps neural network training](https://arxiv.org/abs/1910.04952)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## DemonSGD
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+DemonSGD is an SGD based optimizer. DemonSGD is motivated by decaying the total
+contribution of a gradient to all future updates.
+
+For convenience ensmallen implements various Adam based versions of the Demon
+optimizer:
+
+ * `DemonAdam` (equivalent to `DemonAdamType<AdamUpdate>`): DemonAdam that uses
+   the Adam update rule.
+ * `DemonAdaMax` (equivalent to `DemonAdamType<AdaMaxUpdate>`): DemonAdam that
+   uses the AdaMax update rule.
+ * `DemonAMSGrad` (equivalent to `DemonAdamType<AMSGradUpdate>`): DemonAdam that
+   uses the AMSGrad update rule.
+ * `DemonNadam` (equivalent to `DemonAdamType<NadamUpdate>`): DemonAdam that
+   uses the Nadam update rule.
+ * `NadamUpdate` (equivalent to `DemonAdamType<NadaMaxUpdate>`): DemonAdam that
+   uses the NadaMax update rule.
+ * `DemonOptimisticAdam` (equivalent to `DemonAdamType<OptimisticAdamUpdate>`):
+   DemonAdam that uses the OptimisticAdam update rule.
+
+#### Constructors
+
+ * `DemonSGD()`
+ * `DemonSGD(`_`stepSize, batchSize`_`)`
+ * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle`_`)`
+ * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`momentum`** | The initial momentum coefficient. | `0.9` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Momentum()`, `MomentumIterations()`,
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+MatyasFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+DemonSGD optimizer(0.5, 1, 0.9);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Decaying momentum helps neural network training](https://arxiv.org/abs/1910.04952)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
 ## Eve
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -766,8 +1205,8 @@ Eve is a stochastic gradient based optimization method with locally and globally
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`beta3`** | Exponential decay rate for relative change. | `0.999` |
 | `double` | **`epsilon`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `double` | **`clip`** | Clipping range to avoid extreme values. | `10` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`clip`** | Clipping range to avoid extreme valus. | `10` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -875,7 +1314,7 @@ changes.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1246,7 +1685,7 @@ can be paired with the `Lookahead` optimizer.
 | `BaseOptimizerType` | **`baseOptimizer`** |  Optimizer for the forward step. | Adam |
 | `double` | **`stepSize`** | Step size for each iteration. | `0.5` |
 | `size_t` | **`k`** | The synchronization period. | `5` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
@@ -1408,7 +1847,7 @@ with _`UpdateRule`_` = NadamUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1466,7 +1905,7 @@ with _`UpdateRule`_` = NadaMaxUpdate`.
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1598,9 +2037,9 @@ For convenience the following types can be used:
 
  * **`DefaultMOEAD`** (equivalent to `MOEAD<Uniform, Tchebycheff>`): utilizes Uniform method for weight initialization
  and Tchebycheff for weight decomposition.
- 
+
  * **`BBSMOEAD`** (equivalent to `MOEAD<BayesianBootstrap, Tchebycheff>`): utilizes Bayesian Bootstrap method for weight initialization and Tchebycheff for weight decomposition.
- 
+
  * **`DirichletMOEAD`** (equivalent to `MOEAD<Dirichlet, Tchebycheff>`): utilizes Dirichlet sampling for weight init
  and Tchebycheff for weight decomposition.
 
@@ -1634,8 +2073,8 @@ Attributes of the optimizer may also be changed via the member methods
 
 ```c++
 SchafferFunctionN1<arma::mat> SCH;
-arma::vec lowerBound("-10 -10");
-arma::vec upperBound("10 10");
+arma::vec lowerBound("-10");
+arma::vec upperBound("10");
 DefaultMOEAD opt(300, 300, 1.0, 0.9, 20, 20, 0.5, 2, 1E-10, lowerBound, upperBound);
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
 typedef decltype(SCH.objectiveB) ObjectiveTypeB;
@@ -1696,8 +2135,8 @@ Attributes of the optimizer may also be changed via the member methods
 
 ```c++
 SchafferFunctionN1<arma::mat> SCH;
-arma::vec lowerBound("-1000 -1000");
-arma::vec upperBound("1000 1000");
+arma::vec lowerBound("-1000");
+arma::vec upperBound("1000");
 NSGA2 opt(20, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
 typedef decltype(SCH.objectiveA) ObjectiveTypeA;
@@ -1709,7 +2148,7 @@ std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj = opt.Optimize(objectives, coords);
 // Now obtain the best front.
-arma::cube bestFront = opt.Front();
+arma::cube bestFront = opt.ParetoFront();
 ```
 
 </details>
@@ -1751,7 +2190,7 @@ Note that the `OptimisticAdam` class is based on the
 | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -1805,7 +2244,7 @@ Padam is a variant of Adam with a partially adaptive momentum estimation method.
 | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
 | `double` | **`partial`** | Partially adaptive parameter. | `0.25` |
 | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
-| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -2098,7 +2537,7 @@ the following other optimizers:
  | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
  | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
  | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
- | `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+ | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
  | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
  | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
  | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
@@ -2443,79 +2882,6 @@ optimizer.Optimize(f, coordinates);
  * [Nesterov Momentum SGD](#nesterov-momentum-sgd)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [Differentiable separable functions](#differentiable-separable-functions)
-
-## Stochastic Coordinate Descent (SCD)
-
-*An optimizer for [partially differentiable functions](#partially-differentiable-functions).*
-
-Stochastic Coordinate descent is a technique for minimizing a function by
-doing a line search along a single direction at the current point in the
-iteration. The direction (or "coordinate") can be chosen cyclically, randomly
-or in a greedy fashion.
-
-#### Constructors
-
- * `SCD<`_`DescentPolicyType`_`>()`
- * `SCD<`_`DescentPolicyType`_`>(`_`stepSize, maxIterations`_`)`
- * `SCD<`_`DescentPolicyType`_`>(`_`stepSize, maxIterations, tolerance, updateInterval`_`)`
- * `SCD<`_`DescentPolicyType`_`>(`_`stepSize, maxIterations, tolerance, updateInterval, descentPolicy`_`)`
-
-The _`DescentPolicyType`_ template parameter specifies the behavior of SCD when
-selecting the next coordinate to descend with.  The `RandomDescent`,
-`GreedyDescent`, and `CyclicDescent` classes are available for use.  Custom
-behavior can be achieved by implementing a class with the same method
-signatures.
-
-For convenience, the following typedefs have been defined:
-
- * `RandomSCD` (equivalent to `SCD<RandomDescent>`): selects coordinates randomly
- * `GreedySCD` (equivalent to `SCD<GreedyDescent>`): selects the coordinate with the maximum guaranteed descent according to the Gauss-Southwell rule
- * `CyclicSCD` (equivalent to `SCD<CyclicDescent>`): selects coordinates sequentially
-
-#### Attributes
-
-| **type** | **name** | **description** | **default** |
-|----------|----------|-----------------|-------------|
-| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
-| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
-| `double` | **`tolerance`** | Maximum absolute tolerance to terminate the algorithm. | `1e-5` |
-| `size_t` | **`updateInterval`** | The interval at which the objective is to be reported and checked for convergence. | `1e3` |
-| `DescentPolicyType` | **`descentPolicy`** | The policy to use for selecting the coordinate to descend on. | `DescentPolicyType()` |
-
-Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `MaxIterations()`, `Tolerance()`, `UpdateInterval()`, and
-`DescentPolicy()`.
-
-Note that the default value for `descentPolicy` is the default constructor for
-_`DescentPolicyType`_.
-
-#### Examples
-
-<details open>
-<summary>Click to collapse/expand example code.
-</summary>
-
-```c++
-SparseTestFunction f;
-arma::mat coordinates = f.GetInitialPoint();
-
-RandomSCD randomscd(0.01, 100000, 1e-5, 1e3);
-randomscd.Optimize(f, coordinates);
-
-GreedySCD greedyscd(0.01, 100000, 1e-5, 1e3);
-greedyscd.Optimize(f, coordinates);
-
-CyclicSCD cyclicscd(0.01, 100000, 1e-5, 1e3);
-cyclicscd.Optimize(f, coordinates);
-```
-
-</details>
-
-#### See also:
-
- * [Coordinate descent on Wikipedia](https://en.wikipedia.org/wiki/Coordinate_descent)
- * [Stochastic Methods for L1-Regularized Loss Minimization](https://www.jmlr.org/papers/volume12/shalev-shwartz11a/shalev-shwartz11a.pdf)
- * [Partially differentiable functions](#partially-differentiable-functions)
 
 ## Stochastic Gradient Descent with Restarts (SGDR)
 
@@ -2975,4 +3341,57 @@ optimizer.Optimize(f, coordinates);
  * [WNGrad: Learn the Learning Rate in Gradient Descent](https://arxiv.org/abs/1803.02865)
  * [SGD](#standard-sgd)
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [Differentiable separable functions](#differentiable-separable-functions)
+
+## Yogi
+
+*An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
+
+Yogi is an optimization algorithm based on Adam with more fine-grained effective
+learning rate control, which uses additive updates instead of multiplicative
+updates for the moving average of the squared gradient. In addition, Yogi has
+similar theoretical guarantees on convergence as Adam.
+
+#### Constructors
+
+ * `Yogi()`
+ * `Yogi(`_`stepSize, batchSize`_`)`
+ * `Yogi(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations`_`)`
+ * `Yogi(`_`stepSize, batchSize, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`max_iterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+#### Examples
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+Yogi optimizer(0.001, 32, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+optimizer.Optimize(f, coordinates);
+```
+
+#### See also:
+
+ * [Adaptive Methods for Nonconvex Optimization](https://papers.nips.cc/paper/8186-adaptive-methods-for-nonconvex-optimization)
+ * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
+ * [SGD](#standard-sgd)
+ * [Adam](#adam)
  * [Differentiable separable functions](#differentiable-separable-functions)

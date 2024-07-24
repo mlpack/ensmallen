@@ -40,33 +40,6 @@ TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-/* TEST_CASE("BBSBBLogisticRegressionSpMatTest", "[BigBatchSGD]") */
-/* { */
-/*   // Run big-batch SGD with a couple of batch sizes. */
-/*   for (size_t batchSize = 350; batchSize < 360; batchSize += 5) */
-/*   { */
-/*     BBS_BB bbsgd(batchSize, 0.005, 0.5, 10000, 1e-8, true, true); */
-/*     LogisticRegressionFunctionTest<arma::sp_mat, arma::Row<size_t>>( */
-/*         bbsgd, 0.003, 0.006, 3); */
-/*   } */
-/* } */
-
-/* TEST_CASE("BBSArmijoLogisticRegressionSpMatTest", "[BigBatchSGD]") */
-/* { */
-/*   // Run big-batch SGD with a couple of batch sizes. */
-/*   for (size_t batchSize = 40; batchSize < 50; batchSize += 1) */
-/*   { */
-/*     BBS_Armijo bbsgd(batchSize, 0.01, 0.001, 10000, 1e-6, true, true); */
-/*     LogisticRegressionFunctionTest<arma::sp_mat>(bbsgd, 0.003, 0.006, 3); */
-/*   } */
-/* } */
-
-#endif
-
-
 #ifdef USE_COOT
 
 TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
@@ -80,6 +53,7 @@ TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
         bbsgd, 0.003, 0.006);
   }
 }
+
 TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
     coot::mat, coot::fmat)
 {

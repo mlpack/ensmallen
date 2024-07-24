@@ -113,8 +113,7 @@ KatyushaType<Proximal>::Optimize(
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
     // Calculate the objective function.
@@ -126,7 +125,8 @@ KatyushaType<Proximal>::Optimize(
           effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, function, iterate0, objective, callbacks...);
+      terminate |= Callback::Evaluate(*this, function, iterate0, objective,
+          callbacks...);
     }
 
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
@@ -175,7 +175,7 @@ KatyushaType<Proximal>::Optimize(
     double cw = 1;
     w.zeros();
 
-    for (size_t f = 0, currentFunction = 0; f < innerIterations;
+    for (size_t f = 0, currentFunction = 0; (f < innerIterations) && !terminate;
         /* incrementing done manually */)
     {
       // Is this iteration the start of a sequence?
@@ -255,7 +255,10 @@ KatyushaType<Proximal>::Optimize(
           effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+      // The optimization is finished, so we don't need to care about the
+      // callback result.
+      (void) Callback::Evaluate(*this, function, iterate, objective,
+          callbacks...);
     }
   }
 

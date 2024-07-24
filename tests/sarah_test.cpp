@@ -40,31 +40,6 @@ TEMPLATE_TEST_CASE("SARAHPlusLogisticRegressionTest","[SARAH]",
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
-/* TEST_CASE("SARAHLogisticRegressionSpMatTest","[SARAH]") */
-/* { */
-/*   // Run SARAH with a couple of batch sizes. */
-/*   for (size_t batchSize = 35; batchSize < 45; batchSize += 5) */
-/*   { */
-/*     SARAH optimizer(0.01, batchSize, 250, 0, 1e-5, true); */
-/*     LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015); */
-/*   } */
-/* } */
-
-/* TEST_CASE("SARAHPlusLogisticRegressionSpMatTest","[SARAH]") */
-/* { */
-/*   // Run SARAH_Plus with a couple of batch sizes. */
-/*   for (size_t batchSize = 35; batchSize < 45; batchSize += 5) */
-/*   { */
-/*     SARAH_Plus optimizer(0.01, batchSize, 250, 0, 1e-5, true); */
-/*     LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015); */
-/*   } */
-/* } */
-
-#endif
-
 #ifdef USE_COOT
 
 TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest","[SARAH]",
