@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_PROBLEMS_MAF_THREE_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_MAF_THREE_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_MAF_FOUR_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_MAF_FOUR_FUNCTION_HPP
 
 #include "../../moead/weight_init_policies/uniform_init.hpp"
 
