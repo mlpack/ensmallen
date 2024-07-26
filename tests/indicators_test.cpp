@@ -79,7 +79,7 @@ TEST_CASE("IGDDoubleTest", "[IndicatorsTest]")
  * Calculates the IGD performance indicator for the pair of fronts.
  * Tests for data of type float.
  * The reference numerical results have been taken from hand calculated values.
- * Refer the IPynb notebook in https://github.com/mlpack/ensmallen/pull/
+ * Refer the IPynb notebook in https://github.com/mlpack/ensmallen/pull/399
  * for more.
  */
 TEST_CASE("IGDFloatTest", "[IndicatorsTest]")
@@ -99,7 +99,7 @@ TEST_CASE("IGDFloatTest", "[IndicatorsTest]")
  * Calculates the IGD+ performance indicator for the pair of fronts.
  * Tests for data of type double.
  * The reference numerical results have been taken from hand calculated values.
- * Refer the IPynb notebook in https://github.com/mlpack/ensmallen/pull/285
+ * Refer the IPynb notebook in https://github.com/mlpack/ensmallen/pull/399
  * for more.
  */
 TEST_CASE("IGDPlusDoubleTest", "[IndicatorsTest]")
