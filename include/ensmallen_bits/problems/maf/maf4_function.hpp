@@ -163,7 +163,7 @@ namespace test {
           value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5); 
         }
         objectives.row(numObjectives - 1) = (1 - value) % (1. + G) * 
-                                    std::pow(a, i + 1.); 
+                                    std::pow(a, numObjectives); 
         objectives = arma::pow(objectives, 2); 
         return objectives;    
       }
