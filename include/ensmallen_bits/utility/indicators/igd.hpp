@@ -75,7 +75,8 @@ namespace ens {
             ElemType z = referenceFront(k, 0, i);
             ElemType a = front(k, 0, j);
             // Assuming minimization of all objectives.
-            dist += std::pow(a - z, 2);
+            //! IGD does not clip negative differences to 0
+            dist += std::pow(a - z, 2); 
           }
           dist = std::sqrt(dist);
           if (dist < min)

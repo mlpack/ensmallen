@@ -1195,3 +1195,85 @@ including ensmallen:
 This can be useful for situations where you know that the checks should be
 ignored.  However, be aware that the code may fail to compile and give more
 confusing and difficult error messages!
+
+# Performance Indicators
+
+## Epsilon
+
+Epsilon metric is a performance metric used in multi-objective optimization which measures 
+the smallest factor by which a set of solution objectives must be scaled to dominate a 
+reference set of solutions. Specifically, given a set of Pareto-optimal solutions, the 
+epsilon indicator finds the minimum value ϵ such that each solution in the set is at 
+least as good as every solution in the reference set when the objectives are scaled by ϵ.
+
+#### Constructors
+
+* `Epsilon()`
+
+#### Examples
+
+```c++
+  arma::cube referenceFront(2, 1, 3);
+  double tol = 1e-10;
+  referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+  referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+  referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+  arma::cube front = referenceFront * 1.1;
+  double eps =  Epsilon::Evaluate(front, referenceFront);
+```
+#### See also:
+
+* [Performance Assessment of Multiobjective Optimizers: An Analysis and Review](https://sop.tik.ee.ethz.ch/publicationListFiles/ztlf2003a.pdf)
+
+## IGD
+
+Inverse Generational Distance (IGD) is a performance metric used in multi-objective optimization 
+to evaluate the quality of a set of solutions relative to a reference set, typically representing 
+the true Pareto front. IGD measures the average distance from each point in the reference set to 
+the closest point in the obtained solution set.
+
+#### Constructors
+
+* `IGD()`
+
+#### Examples
+
+```c++
+  arma::cube referenceFront(2, 1, 3);
+  double tol = 1e-10;
+  referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+  referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+  referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+  arma::cube front = referenceFront * 1.1;
+  // The third parameter is the power constant in the distance formula.
+  double igd =  IGD::Evaluate(front, referenceFront, 1);
+```
+#### See also:
+
+* [Performance Assessment of Multiobjective Optimizers: An Analysis and Review](https://sop.tik.ee.ethz.ch/publicationListFiles/ztlf2003a.pdf)
+
+## IGD Plus
+
+IGD Plus (IGD+) is a variant of the Inverse Generational Distance (IGD) metric used in multi-objective 
+optimization. It refines the traditional IGD metric by incorporating a preference for Pareto-dominance 
+in the distance calculation. This modification helps IGD+ better reflect both the convergence to the 
+Pareto front and the diversity of the solution set.
+
+#### Constructors
+
+* `IGDPlus()`
+
+#### Examples
+
+```c++
+  arma::cube referenceFront(2, 1, 3);
+  double tol = 1e-10;
+  referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+  referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+  referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+  arma::cube front = referenceFront * 1.1;
+  double igdPlus =  IGDPlus::Evaluate(front, referenceFront);
+```
+#### See also:
+
+* [Modified Distance Calculation in Generational Distance and Inverted Generational Distance](https://link.springer.com/chapter/10.1007/978-3-319-15892-1_8)

@@ -303,7 +303,7 @@ inline void AGEMOEA::BinaryTournamentSelection(std::vector<MatType>& population,
     // Initialize the children to the respective parents.
     MatType childA = population[indexA], childB = population[indexB];
 
-    if(arma::randu() <= crossoverProb)
+    if (arma::randu() <= crossoverProb)
       Crossover(childA, childB, population[indexA], population[indexB], 
                 lowerBound, upperBound);
 
@@ -438,7 +438,7 @@ inline void AGEMOEA::NormalizeFront(
     vectorizedObjectives.col(i) = calculatedObjectives[front[i]];
   }
 
-  if(front.size() < numObjectives)
+  if (front.size() < numObjectives)
   {
     normalization = arma::max(vectorizedObjectives, 1);
     return;
@@ -487,7 +487,8 @@ inline double AGEMOEA::GetGeometry(
   size_t index = arma::index_min(d);
   double avg = arma::accu(calculatedObjectives[front[index]]) / static_cast<double> (numObjectives); 
   double p = std::log(numObjectives) / std::log(1.0 / avg);
-  if (p <= 0.1 || std::isnan(p)) {p = 1.0;}
+  if (p <= 0.1 || std::isnan(p)) 
+    p = 1.0;
 
   return p;
 }
@@ -519,7 +520,7 @@ void AGEMOEA::FindExtremePoints(
 {
   typedef typename MatType::elem_type ElemType;
   
-  if(numObjectives >= front.size())
+  if (numObjectives >= front.size())
   {
     indexes = arma::linspace<arma::Row<size_t>>(0, front.size() - 1, front.size());
     return;
@@ -665,7 +666,7 @@ inline typename MatType::elem_type AGEMOEA::DiversityScore(
   std::set<size_t>::iterator it;
   for (it = selected.begin(); it != selected.end(); it++)
   {
-    if(*it == S){ continue; }
+    if (*it == S){ continue; }
     if (pairwiseDistance(S, *it) < m) 
     {
       m1 = m;
@@ -693,9 +694,9 @@ inline void AGEMOEA::SurvivalScoreAssignment(
   typedef typename MatType::elem_type ElemType;
 
   // Calculations for the first front.
-  if(fNum == 0){
+  if (fNum == 0){
 
-    if(front.size() < numObjectives)
+    if (front.size() < numObjectives)
     {
       dimension = 1;
       arma::Row<size_t> extreme(numObjectives, arma::fill::zeros);
@@ -774,7 +775,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
   // Calculations for the other fronts.
   else
   {
-    for(size_t i = 0; i < front.size(); i++)
+    for (size_t i = 0; i < front.size(); i++)
     {
       calculatedObjectives[front[i]] = calculatedObjectives[front[i]] / normalize;
       survivalScore[front[i]] =  std::pow(arma::accu(arma::pow(arma::abs(

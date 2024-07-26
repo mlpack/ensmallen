@@ -2167,7 +2167,7 @@ size equal to that of the starting population.
 #### Constructors
 
  * `NSGA2()`
- * `NSGA2(`_`populationSize, maxGenerations, crossoverProb, mutationStrength, epsilon, lowerBound, upperBound`_`)`
+ * `NSGA2(`_`populationSize, maxGenerations, mutationProb, crossoverProb, mutationStrength, epsilon, lowerBound, upperBound`_`)`
 
 #### Attributes
 
