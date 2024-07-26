@@ -694,8 +694,8 @@ inline void AGEMOEA::SurvivalScoreAssignment(
   typedef typename MatType::elem_type ElemType;
 
   // Calculations for the first front.
-  if (fNum == 0){
-
+  if (fNum == 0)
+  {
     if (front.size() < numObjectives)
     {
       dimension = 1;
