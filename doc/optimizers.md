@@ -556,10 +556,41 @@ arma::cube bestFront = opt.ParetoFront();
 
 </details>
 
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+ZDT3<> ZDT_THREE(300);
+const double lowerBound = 0;
+const double upperBound = 1;
+
+AGEMOEA opt(50, 500, 0.8, 20, 1e-6, 20, lowerBound, upperBound);
+typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
+typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+bool success = true;
+arma::mat coords = ZDT_THREE.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
+opt.Optimize(objectives, coords);
+const arma::cube bestFront = opt.ParetoFront();
+  
+NSGA2 opt2(50, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
+// obj2 will contain the minimum sum of objectiveA and objectiveB found on the best front.
+double obj2 = opt2.Optimize(objectives, coords);
+ 
+arma::cube NSGAFront = opt2.ParetoFront();
+// Get the IGD score for NSGA front using AGEMOEA as reference.
+double igd =  IGD::Evaluate(NSGAFront, bestFront, 1);
+std::cout << igd << std::endl;
+```
+
+</details>
+
 #### See also:
 
  * [An adaptive evolutionary algorithm based on non-euclidean geometry for many-objective optimization](https://doi.org/10.1145/3321707.3321839)
  * [Multi-Objective Optimization in Wikipedia](https://en.wikipedia.org/wiki/Multi-objective_optimization)
+ * [Performance Indicators](#performance-indicators)
 
 ## AMSBound
 
