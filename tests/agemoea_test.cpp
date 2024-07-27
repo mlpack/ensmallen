@@ -321,7 +321,7 @@ TEST_CASE("AGEMOEADIRICHLETZDT3Test", "[AGEMOEADTest]")
   typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
   typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
   bool success = true;
-  for (size_t tries = 0; tries < 2; tries++)
+  for (size_t tries = 0; tries < 4; tries++)
   {
     arma::mat coords = ZDT_THREE.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
