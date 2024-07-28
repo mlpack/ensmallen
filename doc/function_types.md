@@ -888,8 +888,7 @@ arma::cube bestFront = optimizer.ParetoFront();
 
 Performance indicators in multiobjective optimization provide essential metrics 
 for evaluating solution quality, such as convergence to the Pareto front and solution 
-diversity. These indicators are vital for understanding trade-offs and guiding 
-algorithm selection.
+diversity.
 
 The ensmallen library offers three such indicators, aiding in the assessment and comparison 
 of different optimization methods:
@@ -907,13 +906,14 @@ least as good as every solution in the reference set when the objectives are sca
 </summary>
 
 ```c++
-  arma::cube referenceFront(2, 1, 3);
-  double tol = 1e-10;
-  referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
-  referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
-  referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
-  arma::cube front = referenceFront * 1.1;
-  double eps =  Epsilon::Evaluate(front, referenceFront);
+arma::cube referenceFront(2, 1, 3);
+double tol = 1e-10;
+referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+arma::cube front = referenceFront * 1.1;
+// eps is approximately 1.1
+double eps = Epsilon::Evaluate(front, referenceFront);
 ```
 </details>
 
@@ -929,14 +929,15 @@ the closest point in the obtained solution set.
 </summary>
 
 ```c++
-  arma::cube referenceFront(2, 1, 3);
-  double tol = 1e-10;
-  referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
-  referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
-  referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
-  arma::cube front = referenceFront * 1.1;
-  // The third parameter is the power constant in the distance formula.
-  double igd =  IGD::Evaluate(front, referenceFront, 1);
+arma::cube referenceFront(2, 1, 3);
+double tol = 1e-10;
+referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+arma::cube front = referenceFront * 1.1;
+// The third parameter is the power constant in the distance formula.
+// IGD is approximately 0.05329
+double igd = IGD::Evaluate(front, referenceFront, 1);
 ```
 </details>
 
@@ -952,13 +953,14 @@ Pareto front and the diversity of the solution set.
 </summary>
 
 ```c++
-  arma::cube referenceFront(2, 1, 3);
-  double tol = 1e-10;
-  referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
-  referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
-  referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
-  arma::cube front = referenceFront * 1.1;
-  double igdPlus =  IGDPlus::Evaluate(front, referenceFront);
+arma::cube referenceFront(2, 1, 3);
+double tol = 1e-10;
+referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+arma::cube front = referenceFront * 1.1;
+// IGDPlus is approximately 0.05329
+double igdPlus = IGDPlus::Evaluate(front, referenceFront);
 ```
 </details>
 
