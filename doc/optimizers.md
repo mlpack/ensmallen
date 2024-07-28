@@ -580,7 +580,7 @@ double obj2 = opt2.Optimize(objectives, coords);
  
 arma::cube NSGAFront = opt2.ParetoFront();
 // Get the IGD score for NSGA front using AGEMOEA as reference.
-double igd =  IGD::Evaluate(NSGAFront, bestFront, 1);
+double igd = IGD::Evaluate(NSGAFront, bestFront, 1);
 std::cout << igd << std::endl;
 ```
 
