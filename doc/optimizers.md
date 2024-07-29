@@ -86,7 +86,9 @@ approxOptimizer.Optimize(f, coordinates);
 
 #### See also:
 
+ * [BIPOPCMAES](#bipopcmaes)
  * [CMAES](#cmaes)
+ * [IPOPCMAES](#ipopcmaes)
  * [Improving Evolution Strategies through Active Covariance Matrix Adaptation](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.4239&rep=rep1&type=pdfn)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 
@@ -1001,6 +1003,9 @@ approxOptimizer.Optimize(f, coordinates);
 
 #### See also:
 
+ * [ActiveCMAES](#activecmaes)
+ * [BIPOPCMAES](#bipopcmaes)
+ * [IPOPCMAES](#ipopcmaes)
  * [Completely Derandomized Self-Adaptation in Evolution Strategies](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf)
  * [CMA-ES in Wikipedia](https://en.wikipedia.org/wiki/CMA-ES)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
