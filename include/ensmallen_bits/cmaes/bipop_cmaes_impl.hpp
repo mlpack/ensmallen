@@ -95,7 +95,7 @@ typename MatType::elem_type BIPOPCMAES<CMAESType>::Optimize(
       cmaes = CMAESType(currentLargeLambda, cmaes.TransformationPolicy(), cmaes.BatchSize(),
                          cmaes.MaxIterations(), cmaes.Tolerance(), cmaes.SelectionPolicy(), stepSizeDefault);
 
-      std::cout << "BIPOP-CMA-ES: restart " << restart << ", large population size (lambda): " 
+      Info << "BIPOP-CMA-ES: restart " << restart << ", large population size (lambda): " 
             << cmaes.PopulationSize() << std::endl;
 
       iterate = iterateIn;
@@ -114,7 +114,7 @@ typename MatType::elem_type BIPOPCMAES<CMAESType>::Optimize(
       cmaes = CMAESType(smallLambda, cmaes.TransformationPolicy(), cmaes.BatchSize(),
                          cmaes.MaxIterations(), cmaes.Tolerance(), cmaes.SelectionPolicy(), stepSizeSmall);
 
-      std::cout << "BIPOP-CMA-ES: restart " << restart << ", small population size (lambda): " 
+      Info << "BIPOP-CMA-ES: restart " << restart << ", small population size (lambda): " 
             << cmaes.PopulationSize() << std::endl;
 
       iterate = iterateIn;
