@@ -66,7 +66,9 @@ class BIPOPCMAES
    * @param maxRestarts Maximum number of restarts.
    */
   BIPOPCMAES(const CMAESType& CMAES = CMAESType(),
-             const size_t maxRestarts = 9);
+             const size_t maxRestarts = 9,
+             const size_t maxFunctionEvaluations = 1e9,
+             const size_t populationFactor = 2);
 
   /**
    * Construct the BIPOP CMA-ES optimizer with the given function and parameters. 
@@ -89,6 +91,8 @@ class BIPOPCMAES
    * @param populationFactor The factor by which population increases
    *     after each restart.
    * @param maxRestarts Maximum number of restarts.
+   * @param maxFunctionEvaluations Maximum number of function evaluations for all resets.
+   * 
    */
 BIPOPCMAES(const size_t lambda = 0,
           const typename CMAESType::transformationPolicyType&
@@ -99,7 +103,9 @@ BIPOPCMAES(const size_t lambda = 0,
           const typename CMAESType::selectionPolicyType&
                 selectionPolicy = typename CMAESType::selectionPolicyType(),
           double stepSize = 0,
-          const size_t maxRestarts = 9);
+          const size_t maxRestarts = 9,
+          const size_t maxFunctionEvaluations = 1e9,
+          const size_t populationFactor = 2);
 
   /**
    * Optimize the given function using BIPOP CMA-ES. The given starting point will be
@@ -131,9 +137,25 @@ BIPOPCMAES(const size_t lambda = 0,
   //! Modify the CMAES object.
   CMAESType& CMAES() { return cmaes; }
 
+  //! Get the population factor.
+  double PopulationFactor() const { return populationFactor; }
+  //! Modify the population factor.
+  double& PopulationFactor() { return populationFactor; }
+
+  //! Get the maximum number of function evaluations.
+  size_t MaxFunctionEvaluations() const { return maxFunctionEvaluations; }
+  //! Modify the maximum number of function evaluations.
+  size_t& MaxFunctionEvaluations() { return maxFunctionEvaluations; }
+
  private:
   //! Maximum number of restarts.
   size_t maxRestarts;
+
+  //! Maximum number of function evaluations.
+  size_t maxFunctionEvaluations;
+
+  //! Population factor
+  double populationFactor;
 
   //! The CMAES object used for optimization.
   CMAESType cmaes;

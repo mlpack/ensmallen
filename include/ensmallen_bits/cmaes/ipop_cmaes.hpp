@@ -69,7 +69,8 @@ class IPOPCMAES
    */
   IPOPCMAES(const CMAESType& CMAES = CMAESType(),
             const double populationFactor = 2,
-            const size_t maxRestarts = 9);
+            const size_t maxRestarts = 9,
+            const size_t maxFunctionEvaluations = 1e9);
 
   /**
    * Construct the IPOP CMA-ES optimizer with the given function and parameters. 
@@ -103,7 +104,8 @@ IPOPCMAES(const size_t lambda = 0,
                 selectionPolicy = typename CMAESType::selectionPolicyType(),
           double stepSize = 0,
           const double populationFactor = 2,
-          const size_t maxRestarts = 9);
+          const size_t maxRestarts = 9,
+          const size_t maxFunctionEvaluations = 1e9);
 
   /**
    * Optimize the given function using IPOP CMA-ES. The given starting point will be
@@ -135,6 +137,11 @@ IPOPCMAES(const size_t lambda = 0,
   //! Modify the maximum number of restarts.
   size_t& MaxRestarts() { return maxRestarts; }
 
+  //! Get the maximum number of function evaluations.
+  size_t MaxFunctionEvaluations() const { return maxFunctionEvaluations; }
+  //! Modify the maximum number of function evaluations.
+  size_t& MaxFunctionEvaluations() { return maxFunctionEvaluations; }
+
   //! Get the CMAES object.
   const CMAESType& CMAES() const { return cmaes; }
   //! Modify the CMAES object.
@@ -146,6 +153,9 @@ IPOPCMAES(const size_t lambda = 0,
   
   //! Maximum number of restarts.
   size_t maxRestarts;
+
+  //! Maximum number of function evaluations.
+  size_t maxFunctionEvaluations;
 
   //! The CMAES object used for optimization.
   CMAESType cmaes;
