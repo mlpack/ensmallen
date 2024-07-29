@@ -938,12 +938,12 @@ RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
 // CMAES with the FullSelection and BoundaryBoxConstraint policies.
-BoundaryBoxConstraint b(-1, 1);
+BoundaryBoxConstraint<> b(-1, 1);
 CMAES optimizer(0, b, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
 // CMAES with the RandomSelection and BoundaryBoxConstraint policies.
-ApproxCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
+ApproxCMAES<BoundaryBoxConstraint<>> approxOptimizer(0, b, 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
 
