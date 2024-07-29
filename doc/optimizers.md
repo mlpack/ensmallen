@@ -869,6 +869,12 @@ matrix within an iterative procedure using the covariance matrix.
  * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
  * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
  * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
+ * `CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxFunctionEvaluations`_`)`
+* `CMAES<SelectionPolicyType, TransformationPolicyType>(lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxFunctionEvaluations, minObjective)`
+* `CMAES<SelectionPolicyType, TransformationPolicyType>(lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxFunctionEvaluations, minObjective, toleranceConditionCov)`
+* `CMAES<SelectionPolicyType, TransformationPolicyType>(lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxFunctionEvaluations, minObjective, toleranceConditionCov, toleranceNoEffectAxis)`
+* `CMAES<SelectionPolicyType, TransformationPolicyType>(lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxFunctionEvaluations, minObjective, toleranceConditionCov, toleranceNoEffectAxis, toleranceNoEffectCoord)`
+* `CMAES<SelectionPolicyType, TransformationPolicyType>(lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxFunctionEvaluations, minObjective, toleranceConditionCov, toleranceNoEffectAxis, toleranceNoEffectCoord, toleranceRange, toleranceRangePatience)`
 
 The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
@@ -896,6 +902,13 @@ For convenience the following types can be used:
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
 | `size_t` | **`stepSize`** | Initial step size | `0` |
+| `int` | **`maxFunctionEvaluations`** | Stop if the number of function evaluations reaches this limit. | `std::numeric_limits<int>::max()` |
+| `double` | **`minObjective`** | Stop if the best objective value is less than or equal to this target value. | `std::numeric_limits<double>::lowest()` |
+| `size_t` | **`toleranceConditionCov`** | Tolerance for stopping if the condition number of the covariance matrix exceeds this threshold. | `1e14` |
+| `double` | **`toleranceNoEffectAxis`** | Tolerance for stopping if adding a 0.1-standard deviation vector in a principal axis direction of mean vector. | `1e-12` |
+| `double` | **`toleranceNoEffectCoord`** | Tolerance for stopping if adding a 0.2-standard deviation in each coordinate does not change mean vector. | `1e-12` |
+| `double` | **`toleranceRange`** | Tolerance for stopping if the range of the fitness values is less than this value. | `1e-12` |
+| `int` | **`toleranceRangePatience`** | Patience for stopping if the range of the fitness values remains less than `toleranceRange` for a defined number of generations. | `1` |
 
 Attributes of the optimizer may also be changed via the member methods
 `Lambda()`, `TransformationPolicy()`, `BatchSize()`, `MaxIterations()`,

@@ -75,6 +75,13 @@ class CMAES
    * @param selectionPolicy Instantiated selection policy used to calculate the
    *     objective.
    * @param stepSize Starting sigma/step size (will be modified).
+   * @param maxFunctionEvaluations Maximum number of function evaluations allowed.
+   * @param minObjective Minimum objective value to terminate the optimization.
+   * @param toleranceConditionCov Tolerance condition for covariance matrix.
+   * @param toleranceNoEffectCoord Tolerance for stopping if there is no change when adding 0.2 std in each coordinate.
+   * @param toleranceNoEffectAxis Tolerance for stopping if there is no change when adding 0.1 std along each axis.
+   * @param toleranceRange Tolerance for stopping if range of the fitness values is less than this value.
+   * @param toleranceRangePatience Patience for stopping if range of the fitness values is less than toleranceRange.
    */
   CMAES(const size_t lambda = 0,
         const TransformationPolicyType& 
@@ -83,7 +90,15 @@ class CMAES
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
         const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        double stepSize = 0);
+        double stepSize = 0,
+        const int maxFunctionEvaluations = std::numeric_limits<int>::max(),
+        const double minObjective = std::numeric_limits<double>::lowest(),
+        const size_t toleranceConditionCov = 1e14,
+        const double toleranceNoEffectCoord = 1e-12,
+        const double toleranceNoEffectAxis = 1e-12,
+        const double toleranceRange = 1e-12,
+        const size_t toleranceRangePatience = 1
+        );
 
   /**
    * Construct the CMA-ES optimizer with the given function and parameters 
@@ -103,6 +118,13 @@ class CMAES
    * @param selectionPolicy Instantiated selection policy used to calculate the
    * objective.
    * @param stepSize Starting sigma/step size (will be modified).
+   * @param maxFunctionEvaluations Maximum number of function evaluations allowed.
+   * @param minObjective Minimum objective value to terminate the optimization.
+   * @param toleranceConditionCov Tolerance condition for covariance matrix.
+   * @param toleranceNoEffectCoord Tolerance for stopping if there is no change when adding 0.2 std in each coordinate.
+   * @param toleranceNoEffectAxis Tolerance for stopping if there is no change when adding 0.1 std along each axis.
+   * @param toleranceRange Tolerance for stopping if range of the fitness values is less than this value.
+   * @param toleranceRangePatience Patience for stopping if range of the fitness values is less than toleranceRange. 
    */
   CMAES(const size_t lambda = 0,
         const double lowerBound = -10,
@@ -111,7 +133,15 @@ class CMAES
         const size_t maxIterations = 1000,
         const double tolerance = 1e-5,
         const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        double stepSize = 0);
+        double stepSize = 0,
+        const int maxFunctionEvaluations = std::numeric_limits<int>::max(),
+        const double minObjective = std::numeric_limits<double>::lowest(),
+        const size_t toleranceConditionCov = 1e14,
+        const double toleranceNoEffectCoord = 1e-12,
+        const double toleranceNoEffectAxis = 1e-12,
+        const double toleranceRange = 1e-12,
+        const size_t toleranceRangePatience = 1
+        );
 
   /**
    * Optimize the given function using CMA-ES. The given starting point will be
@@ -153,6 +183,21 @@ class CMAES
   //! Modify the tolerance for termination.
   double& Tolerance() { return tolerance; }
 
+  //! Get the maximum number of function evaluations.
+  size_t MaxFunctionEvaluations() const { return maxFunctionEvaluations; }
+  //! Modify the maximum number of function evaluations.
+  size_t& MaxFunctionEvaluations() { return maxFunctionEvaluations; }
+
+  //! Get the minimum objective value to terminate the optimization.
+  double MinObjective() const { return minObjective; }
+  //! Modify the minimum objective value to terminate the optimization.
+  double& MinObjective() { return minObjective; }
+
+  //! Get the tolerance condition for covariance matrix.
+  size_t ToleranceConditionCov() const { return toleranceConditionCov; }
+  //! Modify the tolerance condition for covariance matrix.
+  size_t& ToleranceConditionCov() { return toleranceConditionCov; }
+
   //! Get the selection policy.
   const SelectionPolicyType& SelectionPolicy() const { return selectionPolicy; }
   //! Modify the selection policy.
@@ -172,6 +217,38 @@ class CMAES
   double& StepSize()
   { return stepSize; }
 
+  //! Get the total number of function evaluations.
+  size_t FunctionEvaluations() const 
+  { return functionEvaluations; }
+
+  //! Get the tolerance for stopping if there is no change when adding 0.2 std in each coordinate.
+  double ToleranceNoEffectCoord() const 
+  { return toleranceNoEffectCoord; }
+  //! Modify the tolerance for stopping if there is no change when adding 0.2 std in each coordinate.
+  double& ToleranceNoEffectCoord() 
+  { return toleranceNoEffectCoord; }
+
+  //! Get the tolerance for stopping if there is no change when adding 0.1 std along each axis.
+  double ToleranceNoEffectAxis() const 
+  { return toleranceNoEffectAxis; }
+  //! Modify the tolerance for stopping if there is no change when adding 0.1 std along each axis.
+  double& ToleranceNoEffectAxis() 
+  { return toleranceNoEffectAxis; }
+
+  //! Get the tolerance for stopping if range of the fitness values is less than this value.
+  double ToleranceRange() const
+  { return toleranceRange; }
+  //! Modify the tolerance for stopping if range of the fitness values is less than this value.
+  double& ToleranceRange()
+  { return toleranceRange; }
+
+  //! Get the patience for stopping if range of the fitness values is less than toleranceRange.
+  size_t ToleranceRangePatience() const
+  { return toleranceRangePatience; }
+  //! Modify the patience for stopping if range of the fitness values is less than toleranceRange.
+  size_t& ToleranceRangePatience()
+  { return toleranceRangePatience; }
+
  private:
   //! Population size.
   size_t lambda;
@@ -185,6 +262,21 @@ class CMAES
   //! The tolerance for termination.
   double tolerance;
 
+  //! The tolerance for stopping if there is no change when adding 0.2 std in each coordinate.
+  double toleranceNoEffectCoord;
+
+  //! The tolerance for stopping if there is no change when adding 0.1 std along each axis.
+  double toleranceNoEffectAxis;
+
+  //! The maximum number of function evaluations.
+  size_t maxFunctionEvaluations;
+
+  //! The minimum objective value to terminate the optimization.
+  double minObjective;
+
+  //! The tolerance condition for covariance matrix.
+  size_t toleranceConditionCov;
+
   //! The selection policy used to calculate the objective.
   SelectionPolicyType selectionPolicy;
 
@@ -195,6 +287,15 @@ class CMAES
 
   //! The step size.
   double stepSize;
+
+  //! Counter for the number of function evaluations.
+  size_t functionEvaluations = 0;
+
+  //! The tolerance for stopping if range of the fitness values is less than this value.
+  double toleranceRange;
+
+  //! The patience for stopping if range of the fitness values is less than toleranceRange.
+  size_t toleranceRangePatience;
 };
 
 /**
