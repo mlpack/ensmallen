@@ -25,12 +25,14 @@ set(ENSMALLEN_TESTS_SOURCES
     gradient_descent_test.cpp
     # grid_search_test.cpp
     # iqn_test.cpp
+    indicators_test.cpp
     katyusha_test.cpp
     lbfgs_test.cpp
     # line_search_test.cpp
     lookahead_test.cpp
     # lrsdp_test.cpp
     # moead_test.cpp
+    agemoea_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp
     # nsga2_test.cpp
