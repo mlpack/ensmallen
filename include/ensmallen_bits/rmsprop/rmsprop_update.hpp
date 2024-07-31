@@ -104,7 +104,7 @@ class RMSPropUpdate
     {
       meanSquaredGradient *= parent.alpha;
       meanSquaredGradient += (1 - parent.alpha) * (gradient % gradient);
-      iterate -= stepSize * gradient / (arma::sqrt(meanSquaredGradient) +
+      iterate -= stepSize * gradient / (sqrt(meanSquaredGradient) +
           parent.epsilon);
     }
 

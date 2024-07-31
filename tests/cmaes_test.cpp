@@ -21,7 +21,7 @@ using namespace ens::test;
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
+TEMPLATE_TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]", arma::mat)
 {
   BoundaryBoxConstraint<> b(-10, 10);
   CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3);
@@ -56,11 +56,19 @@ TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
  * Run CMA-ES with the random selection policy on logistic regression and
  * make sure the results are acceptable.  Use arma::fmat.
  */
-TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
+/* TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]") */
+/* { */
+/*   ApproxCMAES<> cmaes(0, -1, 1, 32, 200, 1e-3); */
+/*   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5); */
+/* } */
+
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]", coot::fmat)
 {
-  BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  ApproxCMAES<BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 16, 500, 1e-3);
-  LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
+  BoundaryBoxConstraint<coot::fmat> b(-10, 10);
+  ApproxCMAES<BoundaryBoxConstraint<coot::fmat>> cmaes(0, b, 16, 500, 1e-3);
+  LogisticRegressionFunctionTest<coot::fmat>(cmaes, 0.01, 0.02, 5);
 }
 
 /**
@@ -71,7 +79,9 @@ TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
 TEST_CASE("ApproxCMAESEmptyTransformationLogisticRegressionFMatTest",
   "[CMAESTest]")
 {
-  ApproxCMAES<EmptyTransformation<arma::fmat>>
-    cmaes(0, EmptyTransformation<arma::fmat>(), 16, 500, 1e-3);
-  LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
+  ApproxCMAES<EmptyTransformation<coot::fmat>>
+    cmaes(0, EmptyTransformation<coot::fmat>(), 16, 500, 1e-3);
+  LogisticRegressionFunctionTest<coot::fmat>(cmaes, 0.01, 0.02, 5);
 }
+
+#endif

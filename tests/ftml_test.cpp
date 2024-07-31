@@ -1,6 +1,7 @@
 /**
  * @file ftml_test.cpp
  * @author Ryan Curtin
+ * @author Marcus Edel
  *
  * Test file for the FTML optimizer.
  *
@@ -17,42 +18,57 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run FTML on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("FTMLLogisticRegressionTest", "[FTMLTest]")
+TEMPLATE_TEST_CASE("FTMLLogisticRegressionTest", "[FTML]",
+    arma::mat, arma::fmat)
 {
   FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      optimizer, 0.003, 0.006);
 }
 
-/**
- * Test the FTML optimizer on the Sphere function.
- */
-TEST_CASE("FTMLSphereFunctionTest", "[FTMLTest]")
+TEMPLATE_TEST_CASE("FTMLSphereFunctionTest", "[FTML]",
+    arma::mat, arma::fmat)
 {
   FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
-  FunctionTest<SphereFunction>(optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the FTML optimizer on the Styblinski-Tang function.
- */
-TEST_CASE("FTMLStyblinskiTangFunctionTest", "[FTMLTest]")
+TEMPLATE_TEST_CASE("FTMLStyblinskiTangFunctionTest", "[FTML]",
+    arma::mat, arma::fmat)
 {
   FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  FunctionTest<StyblinskiTangFunction>(optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the FTML optimizer on the Styblinski-Tang function using arma::fmat as
- * the objective type.
- */
-TEST_CASE("FTMLStyblinskiTangFunctionFMatTest", "[FTMLTest]")
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("FTMLLogisticRegressionTest", "[FTML]",
+    coot::mat, coot::fmat)
+{
+  FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.003, 0.006);
+}
+
+TEMPLATE_TEST_CASE("FTMLSphereFunctionTest", "[FTML]",
+    coot::mat, coot::fmat)
+{
+  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
+  FunctionTest<SphereFunction<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
+}
+
+TEMPLATE_TEST_CASE("FTMLStyblinskiTangFunctionTest", "[FTML]",
+    coot::mat, coot::fmat)
 {
   FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 0.5, 0.1);
 }
+
+#endif
 
 // A test with sp_mat is not done, because FTML uses some parts internally that
 // assume the objective is dense.

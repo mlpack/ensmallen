@@ -19,10 +19,12 @@ namespace test {
 //! functions.  The gradient is not very steep far away from the optimum, so a
 //! larger step size may be required to optimize it in a reasonable number of
 //! iterations.
+template<
+  typename LabelsType = arma::Row<size_t>>
 class SGDTestFunction
 {
  private:
-  arma::Col<size_t> visitationOrder;
+  LabelsType visitationOrder;
 
  public:
   //! Initialize the SGDTestFunction.
