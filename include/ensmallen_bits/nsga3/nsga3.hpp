@@ -79,13 +79,13 @@ class NSGA3
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA3(const arma::Cube<MatType::elem_type>& referencePoints,
+  NSGA3(const arma::Cube<typename MatType::elem_type>& referencePoints,
         const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3, 
+        const double distributionIndex = 20,
         const double epsilon = 1e-6,
+        const double eta = 20,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
 
@@ -109,13 +109,13 @@ class NSGA3
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA3(const arma::Cube<MatType::elem_type>& referencePoints,
+  NSGA3(const arma::Cube<typename MatType::elem_type>& referencePoints,
         const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3,
+        const double distributionIndex = 20,
         const double epsilon = 1e-6,
+        const double eta = 20,
         const double lowerBound = 0,
         const double upperBound = 1);
 
@@ -153,25 +153,20 @@ class NSGA3
   //! Modify the crossover rate.
   double& CrossoverRate() { return crossoverProb; }
 
-  //! Get the mutation probability.
-  double MutationProbability() const { return mutationProb; }
-  //! Modify the mutation probability.
-  double& MutationProbability() { return mutationProb; }
+  //! Retrieve value of the distribution index.
+  double DistributionIndex() const { return distributionIndex; }
+  //! Modify the value of the distribution index.
+  double& DistributionIndex() { return distributionIndex; }
 
-  //! Get the mutation strength.
-  double MutationStrength() const { return mutationStrength; }
-  //! Modify the mutation strength.
-  double& MutationStrength() { return mutationStrength; }
+  //! Retrieve value of eta.
+  double Eta() const { return eta; }
+  //! Modify the value of eta.
+  double& Eta() { return eta; }
 
   //! Get the tolerance.
   double Epsilon() const { return epsilon; }
   //! Modify the tolerance.
   double& Epsilon() { return epsilon; }
-
-  //! Get the reference points.
-  const arma::Cube<MatType>& ReferencePoints() const { return referencePoints; }
-  //! Modify the reference points.
-  arma::Cube<MatType>& ReferencePoints() { return referencePoints; }
 
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
@@ -190,6 +185,11 @@ class NSGA3
   //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
   //! `Optimize()` has been called.
   const arma::cube& ParetoFront() const { return paretoFront; }
+
+  //! Get the reference points.
+  const arma::Cube<MatType>& ReferencePoints() const { return referencePoints; }
+  //! Modify the reference points.
+  arma::Cube<MatType>& ReferencePoints() { return referencePoints; }
 
   /**
    * Retrieve the best front (the Pareto frontier).  This returns an empty
@@ -263,7 +263,9 @@ class NSGA3
   void Crossover(MatType& childA,
                  MatType& childB,
                  const MatType& parentA,
-                 const MatType& parentB);
+                 const MatType& parentB,
+                 const MatType& lowerBound,
+                 const MatType& upperBound);
 
   /**
    * Mutate the coordinates for a candidate.
@@ -274,7 +276,8 @@ class NSGA3
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  void Mutate(MatType& child,
+  void Mutate(MatType& candidate,
+              double mutationRate,
               const MatType& lowerBound,
               const MatType& upperBound);
 
@@ -421,8 +424,15 @@ class NSGA3
   //! Strength of the mutation.
   double mutationStrength;
 
+  //! The crowding degree of the mutation. Higher value produces a mutant
+  //! resembling its parent.
+  double distributionIndex;
+
   //! The tolerance for termination.
   double epsilon;
+
+  //! The distance parameters of the crossover distribution.
+  double eta;
 
   //! Lower bound of the initial swarm.
   arma::vec lowerBound;

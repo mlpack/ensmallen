@@ -20,15 +20,16 @@
 namespace ens {
 
 template <typename MatType>
-inline NSGA3<MatType>::NSGA3(const MatType& referencePoints,
-                             const size_t populationSize = 100,
-                             const size_t maxGenerations = 2000,
-                             const double crossoverProb = 0.6,
-                             const double mutationProb = 0.3,
-                             const double mutationStrength = 1e-3, 
-                             const double epsilon = 1e-6,
-                             const arma::vec& lowerBound = arma::zeros(1, 1),
-                             const arma::vec& upperBound = arma::ones(1, 1)):
+inline NSGA3<MatType>::NSGA3(
+    const arma::Cube<typename MatType::elem_type>& referencePoints,
+    const size_t populationSize,
+    const size_t maxGenerations,
+    const double crossoverProb,
+    const double distributionIndex,
+    const double epsilon,
+    const double eta,
+    const arma::vec& lowerBound,
+    const arma::vec& upperBound):
     referencePoints(referencePoints),    
     numObjectives(0),
     numVariables(0),
@@ -43,15 +44,16 @@ inline NSGA3<MatType>::NSGA3(const MatType& referencePoints,
 { /* Nothing to do here. */ }
 
 template <typename MatType>
-inline NSGA3<MatType>::NSGA3(const MatType& referencePoints,
-                             const size_t populationSize = 100,
-                             const size_t maxGenerations = 2000,
-                             const double crossoverProb = 0.6,
-                             const double mutationProb = 0.3,
-                             const double mutationStrength = 1e-3, 
-                             const double epsilon = 1e-6,
-                             const double lowerBound = 0,
-                             const double upperBound = 1):
+inline NSGA3<MatType>::NSGA3(
+    const arma::Cube<typename MatType::elem_type>& referencePoints,
+    const size_t populationSize,
+    const size_t maxGenerations,
+    const double crossoverProb,
+    const double distributionIndex,
+    const double epsilon,
+    const double eta,
+    const double lowerBound,
+    const double upperBound):
     referencePoints(referencePoints),
     numObjectives(0),
     numVariables(0),
@@ -176,6 +178,7 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
       index++;
     }
     selectedPoints.insert(selectedPoints.end(), fronts[++index].begin(), fronts[++index].end());
+    size_t lastFront = index;
 
     arma::Col<ElemType> idealPoint(calculatedObjectives[selectedPoints[0]]);
     for (index = 1; index < selectedPoints.size(); index++)
@@ -185,8 +188,8 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
 
     for (index = 0; index < selectedPoints.size(); index++)
     {
-      calculatedObjectives[front[index]] = calculatedObjectives[front[index]] 
-          - idealPoint;
+      calculatedObjectives[selectedPoints[index]] = 
+          calculatedObjectives[selectedPoints[index]] - idealPoint;
     }
 
     arma::Col<ElemType> normalize(numObjectives, arma::fill::zeros);
@@ -207,7 +210,8 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
     // Calculate the niche count of S_t and performing the niching operation.
     arma::Row<size_t> count(referencePoints.n_slices);
     NicheCount(count, refIndex);
-    Niching(K, nicheCount, refIndex, dists, front, nextPopulation) 
+    Niching(selectedPoints.size() - nextPopulation.size(), count, refIndex,
+        dists, fronts[lastFront], nextPopulation);
     
     for (size_t i : nextPopulation)
     {
@@ -265,12 +269,13 @@ typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 NSGA3<MatType>::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    std::vector<ColType> >&)
+    std::vector<ColType>&)
 {
   // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
+template<typename MatType>
 template<std::size_t I,
          typename ColType,
          typename ...ArbitraryFunctionType>
@@ -394,9 +399,9 @@ inline void NSGA3<MatType>::Crossover(MatType& childA,
 //! Perform Polynomial mutation of the candidate.
 template<typename MatType>
 inline void NSGA3<MatType>::Mutate(MatType& candidate,
-                                            double mutationRate,
-                                            const MatType& lowerBound,
-                                            const MatType& upperBound)
+                                   double mutationRate,
+                                   const MatType& lowerBound,
+                                   const MatType& upperBound)
 {
     const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
@@ -478,7 +483,7 @@ inline void NSGA3<MatType>::NormalizeFront(
 //! Find the index of the of the extreme points in the given front.
 template <typename MatType>
 template <typename ColType>
-void NSGA<MatType>::FindExtremePoints(arma::Row<size_t>& indexes, 
+void NSGA3<MatType>::FindExtremePoints(arma::Row<size_t>& indexes, 
                                       std::vector<ColType>& calculatedObjectives,
                                       const std::vector<size_t>& front)
 {
@@ -599,10 +604,9 @@ void NSGA3<MatType>::Niching(size_t K,
     const arma::urowvec& refIndex,
     const arma::Row<typename MatType::elem_type>& dists,
     const std::vector<size_t>& front,
-    std::vector<size_t>& population) // population excluding current front.
+    std::vector<size_t>& population)
 {
-  typedef typename MatType::elem_type elemType;
-  arma::Row<bool> popMask(population.n_elem);
+  arma::Row<bool> popMask(population.size());
   size_t k = 0;
   while (k < K)
   {
@@ -626,10 +630,10 @@ void NSGA3<MatType>::Niching(size_t K,
           }
         }
       }
-      population.append(I[min]);
+      population.push_back(I[min]);
 
       nicheCount[jMin] += 1;
-      frontMask[I[i]] = false;
+      popMask[I[min]] = false;
       k += 1;
    }
    else
@@ -642,15 +646,17 @@ void NSGA3<MatType>::Niching(size_t K,
 
 template <typename MatType>
 template <typename ColType>
-void NSGA3<MatType>::Associate(arma::urowvec& refindex,
+void NSGA3<MatType>::Associate(arma::urowvec& refIndex,
                                arma::Row<typename MatType::elem_type>& dists,
                                const std::vector<ColType>& calculatedObjectives,
                                const std::vector<size_t>& St)
 {
-  arma::Mat<typename MatType::elem_type> d(refindex.n_elem, St.size());
+  arma::Mat<typename MatType::elem_type> d(refIndex.n_elem, St.size());
+  ColType zero(arma::size(calculatedObjectives),arma::fill::zeros);
   for (size_t i = 0; i < referencePoints.n_slices; i++)
   {
-    PointToLineDistance(d.row(i), calculatedObjectives, St, , W.col(i));
+    PointToLineDistance(d.row(i), calculatedObjectives, St, 
+        referencePoints.slice(i), zero);
   }
   refIndex = arma::index_min(d, 0);
   dists = arma::min(d, 0);
