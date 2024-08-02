@@ -72,9 +72,6 @@ TEST_CASE("SVRGBBLogisticRegressionFMatTest", "[SVRGTest]")
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
 /**
  * Run SVRG on logistic regression and make sure the results are acceptable.
  * Use arma::sp_mat.
@@ -103,5 +100,3 @@ TEST_CASE("SVRGBBLogisticRegressionSpMatTest", "[SVRGTest]")
     LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015);
   }
 }
-
-#endif

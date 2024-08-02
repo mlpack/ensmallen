@@ -85,9 +85,6 @@ TEST_CASE("SnapshotEnsemblesLogisticRegressionFMatTest","[SnapshotEnsemblesTest]
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
 /**
  * Run SGDR with snapshot ensembles on logistic regression and make sure the
  * results are acceptable.  Use arma::sp_mat.
@@ -102,5 +99,3 @@ TEST_CASE("SnapshotEnsemblesLogisticRegressionSpMatTest",
     LogisticRegressionFunctionTest<arma::sp_mat>(sgdr, 0.003, 0.006);
   }
 }
-
-#endif

@@ -55,9 +55,6 @@ TEST_CASE("AMSBoundphereFunctionTestFMat", "[AdaBoundTest]")
   FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
 /**
  * Test the AdaBound optimizer on the Sphere function with arma::sp_mat.
  */
@@ -111,5 +108,3 @@ TEST_CASE("AMSBoundSphereFunctionTestSpMatDenseGradient", "[AdaBoundTest]")
   REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
   REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
-
-#endif
