@@ -79,7 +79,7 @@ class NSGA3
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA3(const MatType& referencePoints,
+  NSGA3(const arma::Cube<MatType::elem_type>& referencePoints,
         const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
@@ -109,7 +109,7 @@ class NSGA3
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA3(const MatType& referencePoints,
+  NSGA3(const arma::Cube<MatType::elem_type>& referencePoints,
         const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
@@ -169,9 +169,9 @@ class NSGA3
   double& Epsilon() { return epsilon; }
 
   //! Get the reference points.
-  const MatType& ReferencePoints() const { return referencePoints; }
+  const arma::Cube<MatType>& ReferencePoints() const { return referencePoints; }
   //! Modify the reference points.
-  MatType& ReferencePoints() { return referencePoints; }
+  arma::Cube<MatType>& ReferencePoints() { return referencePoints; }
 
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
@@ -222,21 +222,20 @@ class NSGA3
    * @param calculatedObjectives Vector to store calculated objectives.
    */
   template<std::size_t I = 0,
-           typename MatType,
+           typename ColType = arma::Col<typename MatType::elem_type>,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<typename MatType::elem_type> >&);
+                     std::vector<ColType>&);
 
   template<std::size_t I = 0,
-           typename MatType,
+           typename ColType = arma::Col<typename MatType::elem_type>,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<typename MatType::elem_type> >&
-                     calculatedObjectives);
+                     std::vector<ColType>& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -248,7 +247,6 @@ class NSGA3
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType>
   void BinaryTournamentSelection(std::vector<MatType>& population,
                                  const MatType& lowerBound,
                                  const MatType& upperBound);
@@ -262,7 +260,6 @@ class NSGA3
    * @param parentA First parent from elite population.
    * @param parentB Second parent from elite population.
    */
-  template<typename MatType>
   void Crossover(MatType& childA,
                  MatType& childB,
                  const MatType& parentA,
@@ -277,7 +274,6 @@ class NSGA3
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType>
   void Mutate(MatType& child,
               const MatType& lowerBound,
               const MatType& upperBound);
@@ -292,11 +288,11 @@ class NSGA3
    * @param ranks The assigned ranks, used for crowding distance based sorting.
    * @param calculatedObjectives The previously calculated objectives.
    */
-  template<typename MatType>
+  template<typename ColType>
   void FastNonDominatedSort(
       std::vector<std::vector<size_t> >& fronts,
       std::vector<size_t>& ranks,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+      std::vector<ColType>& calculatedObjectives);
 
   /**
    * Normalizes the front given the extreme points in the current front.
@@ -307,9 +303,9 @@ class NSGA3
    * @param front The previously generated Pareto front.
    * @param extreme The indexes of the extreme points in the front.
    */
-  void NormalizeFront(
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                      arma::Col<typename MatType::elem_type>& normalization,
+  template<typename ColType>
+  void NormalizeFront(std::vector<ColType>& calculatedObjectives,
+                      ColType& normalization,
                       const std::vector<size_t>& front,
                       const arma::Row<size_t>& extreme);
 
@@ -320,9 +316,10 @@ class NSGA3
    * @param calculatedObjectives The current population objectives.
    * @param front The front of the current generation.
    */
+  template<typename ColType>
   void FindExtremePoints(arma::Row<size_t>& indexes,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                              const std::vector<size_t>& front);
+                         std::vector<ColType>& calculatedObjectives,
+                         const std::vector<size_t>& front);
                         
   /**
    * Finding the distance of each point in the front from the line formed
@@ -333,26 +330,28 @@ class NSGA3
    * @param front The front of the current generation(indices of population).
    * @param pointA The first point on the line.
    * @param pointB The second point on the line.
-  */
+   */
+  template<typename ColType>
   void PointToLineDistance(arma::Row<typename MatType::elem_type>& distances,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+                           std::vector<ColType>& calculatedObjectives,
                            const std::vector<size_t>& front,
-                           const arma::Col<typename MatType::elem_type>& pointA,
-                           const arma::Col<typename MatType::elem_type>& pointB);
+                           const ColType& pointA,
+                           const ColType& pointB);
 
   /**
    * Finding the point in the reference front associated with the members in
    * the given front and also stores the distance between the two points.
    * 
-   * @param index Vector containing the index of the point in the refrence directons associated.
+   * @param refIndex Vector containing the index of the point in the refrence directons associated.
    * @param dists Vector of distances from the corresponding point in the front to the associated reference direction.
-   * @param population The points of the currently generated population.
-   * @param front The index of points belonging to the given front.
+   * @param calculatedObjectives The points of the currently generated population.
+   * @param St The index of points belonging to the given front.
    */
-  void Associate(arma::Row<size_t>& refindex,
+  template <typename ColType>
+  void Associate(arma::urowvec& refIndex,
                  arma::Row<typename MatType::elem_type>& dists,
-                 const std::vector<MatType>& population,
-                 const std::vector<size_t>& front);
+                 const std::vector<ColType>& calculatedObjectives,
+                 const std::vector<size_t>& St);
 
   /**
    * Find the niche count for each reference direction.
@@ -362,21 +361,25 @@ class NSGA3
    * directons associated.
    */
   void NicheCount(arma::Row<size_t>& count,
-                  const arma::Row<size_t>& refIndex);
+                  const arma::urowvec& refIndex);
 
   /**
    * The niche preserving operation to select the final points form the given front
    * aranges the front in descending order of priority for the top K points in the front.
    * 
    * @param K The no. of remaining points to select from the given front for the next population.
+   * @param nicheCount The count of no. of points associated to each reference point in St.
    * @param refIndex The index of the rerference points associated with the in the given front.
    * @param dists The distances of th points in the front form their associated reference points line.
    * @param front The index of teh points within the population which are a part of the given front.
+   * @param population The set St (selected points).
    */
-  void Niching(size_t K.
-               const arma::Row<size_t>& refindex,
+  void Niching(size_t K,
+               arma::Row<size_t>& nicheCount,
+               const arma::urowvec& refIndex,
                const arma::Row<typename MatType::elem_type>& dists,
-               const std::vector<size_t>& front);
+               const std::vector<size_t>& front,
+               std::vector<size_t>& population);
   
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -391,33 +394,11 @@ class NSGA3
    * @param candidateQ The candidate being compared against.
    * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
    */
-  template<typename MatType>
+  template<typename ColType>
   bool Dominates(
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+      std::vector<ColType>& calculatedObjectives,
       size_t candidateP,
       size_t candidateQ);
-
-  /**
-   * The operator used in the crowding distance based sorting.
-   *
-   * If a candidates has a lower rank then it is preferred.
-   * Otherwise, if the ranks are equal then the candidate with the larger
-   * crowding distance is preferred.
-   *
-   * @param idxP The index of the first cadidate from the elite population being
-   *     sorted.
-   * @param idxQ The index of the second cadidate from the elite population
-   *     being sorted.
-   * @param ranks The previously calculated ranks.
-   * @param crowdingDistance The crowding distance for each individual in
-   *    the population.
-   * @return true if the first candidate is preferred, otherwise, false.
-   */
-  template<typename MatType>
-  bool CrowdingOperator(size_t idxP,
-                        size_t idxQ,
-                        const std::vector<size_t>& ranks,
-                        const std::vector<typename MatType::elem_type>& crowdingDistance);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
@@ -458,7 +439,7 @@ class NSGA3
   arma::cube paretoFront;
 
   //! The reference points.
-  MatType referencePoints;
+  arma::Cube<MatType> referencePoints;
 
   //! A different representation of the Pareto front, for reverse compatibility
   //! purposes.  This can be removed when ensmallen 3.x is released!  (Along

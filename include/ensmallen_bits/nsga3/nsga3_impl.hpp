@@ -29,17 +29,17 @@ inline NSGA3<MatType>::NSGA3(const MatType& referencePoints,
                              const double epsilon = 1e-6,
                              const arma::vec& lowerBound = arma::zeros(1, 1),
                              const arma::vec& upperBound = arma::ones(1, 1)):
-                referencePoints(referencePoints),    
-                numObjectives(0),
-                numVariables(0),
-                populationSize(populationSize),
-                maxGenerations(maxGenerations),
-                crossoverProb(crossoverProb),
-                distributionIndex(distributionIndex),
-                epsilon(epsilon),
-                eta(eta),
-                lowerBound(lowerBound),
-                upperBound(upperBound)
+    referencePoints(referencePoints),    
+    numObjectives(0),
+    numVariables(0),
+    populationSize(populationSize),
+    maxGenerations(maxGenerations),
+    crossoverProb(crossoverProb),
+    distributionIndex(distributionIndex),
+    epsilon(epsilon),
+    eta(eta),
+    lowerBound(lowerBound),
+    upperBound(upperBound)
 { /* Nothing to do here. */ }
 
 template <typename MatType>
@@ -52,17 +52,17 @@ inline NSGA3<MatType>::NSGA3(const MatType& referencePoints,
                              const double epsilon = 1e-6,
                              const double lowerBound = 0,
                              const double upperBound = 1):
-                referencePoints(referencePoints),
-                numObjectives(0),
-                numVariables(0),
-                populationSize(populationSize),
-                maxGenerations(maxGenerations),
-                crossoverProb(crossoverProb),
-                distributionIndex(distributionIndex),
-                epsilon(epsilon),
-                eta(eta),
-                lowerBound(lowerBound * arma::ones(1, 1)),
-                upperBound(upperBound * arma::ones(1, 1))
+    referencePoints(referencePoints),
+    numObjectives(0),
+    numVariables(0),
+    populationSize(populationSize),
+    maxGenerations(maxGenerations),
+    crossoverProb(crossoverProb),
+    distributionIndex(distributionIndex),
+    epsilon(epsilon),
+    eta(eta),
+    lowerBound(lowerBound * arma::ones(1, 1)),
+    upperBound(upperBound * arma::ones(1, 1))
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
@@ -115,13 +115,13 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
   std::vector<BaseMatType> population;
+  std::vector<BaseMatType> tempPopulation;
   population.reserve(2 * populationSize + 1);
+  tempPopulation.reserve(populationSize);
 
   // Pareto fronts, initialized during non-dominated sorting.
   // Stores indices of population belonging to a certain front.
   std::vector<std::vector<size_t> > fronts;
-  // Initialised in SurvivalScoreAssignment.
-  std::vector<ElemType> survivalScore;
   // Initialised during non-dominated sorting.
   std::vector<size_t> ranks;
 
@@ -164,42 +164,56 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
     ranks.resize(population.size());
     FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
     
+    // S_t and P_t+1 declared. 
     std::vector<size_t> selectedPoints(fronts[0].begin(), fronts[0].end());
-    while (selectedPoints.size() < populationSize)
+    std::vector<size_t> nextPopulation(fronts[0].begin(), fronts[0].end());
+
+    size_t index = 0;
+    while (nextPopulation.size() + fronts.size() < populationSize)
     {
-      selectedPoints.insert(selectedPoints.end(), fronts[index].begin(), fronts[index].end());   
+      selectedPoints.insert(selectedPoints.end(), fronts[index].begin(), fronts[index].end());
+      nextPopulation.insert(nextPopulation.end(), fronts[index].begin(), fronts[index].end());   
+      index++;
     }
+    selectedPoints.insert(selectedPoints.end(), fronts[++index].begin(), fronts[++index].end());
+
     arma::Col<ElemType> idealPoint(calculatedObjectives[selectedPoints[0]]);
-    for (size_t index = 1; index < selectedPoints.size(); index++)
+    for (index = 1; index < selectedPoints.size(); index++)
     {
       idealPoint = arma::min(idealPoint, calculatedObjectives[selectedPoints[index]]);
     }
 
-    arma::Col<typename MatType::elem_type> normalize(numObjectives, arma::fill::zeros);
+    for (index = 0; index < selectedPoints.size(); index++)
+    {
+      calculatedObjectives[front[index]] = calculatedObjectives[front[index]] 
+          - idealPoint;
+    }
+
+    arma::Col<ElemType> normalize(numObjectives, arma::fill::zeros);
+    arma::Row<size_t> extreme(numObjectives, arma::fill::zeros);
+
+    // Find the extreme points and normalize S_t
+    FindExtremePoints<arma::Col<ElemType>>(extreme, calculatedObjectives, 
+        selectedPoints);
+    NormalizeFront<arma::Col<ElemType>>(calculatedObjectives, normalize,
+        selectedPoints, extreme);
+
+    // Find the associated reference directions to the selected points.
+    arma::urowvec refIndex(selectedPoints.size());
+    arma::Row<ElemType> dists(selectedPoints.size());
+    Associate<arma::Col<ElemType>>(refIndex, dists, calculatedObjectives,
+        selectedPoints);
+
+    // Calculate the niche count of S_t and performing the niching operation.
+    arma::Row<size_t> count(referencePoints.n_slices);
+    NicheCount(count, refIndex);
+    Niching(K, nicheCount, refIndex, dists, front, nextPopulation) 
     
-
-    // Sort based on survival score.
-    std::sort(population.begin(), population.end(),
-      [this, ranks, survivalScore, population]
-        (BaseMatType candidateP, BaseMatType candidateQ)
-          {
-            size_t idxP{}, idxQ{};
-            for (size_t i = 0; i < population.size(); i++)
-            {
-              if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
-                idxP = i;
-
-              if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
-                idxQ = i;
-            }
-
-            return SurvivalScoreOperator<BaseMatType>(idxP, idxQ, ranks, survivalScore);
-          }
-    );
-
-    // Yield a new population P_{t+1} of size populationSize.
-    // Discards unfit population from the R_{t} to yield P_{t+1}.
-    population.resize(populationSize);
+    for (size_t i : nextPopulation)
+    {
+      tempPopulation.push_back(population[i]);
+    }
+    population = tempPopulation;
 
     terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
         calculatedObjectives, fronts, callbacks...);
@@ -243,27 +257,28 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
 }
 
 //! No objectives to evaluate.
+template<typename MatType>
 template<std::size_t I,
-         typename MatType,
+         typename ColType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-AGEMOEA::EvaluateObjectives(
+NSGA3<MatType>::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    std::vector<arma::Col<typename MatType::elem_type> >&)
+    std::vector<ColType> >&)
 {
   // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
 template<std::size_t I,
-         typename MatType,
+         typename ColType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-AGEMOEA::EvaluateObjectives(
+NSGA3<MatType>::EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
+    std::vector<ColType>& calculatedObjectives)
 {
   for (size_t i = 0; i < populationSize; i++)
   {
@@ -275,9 +290,10 @@ AGEMOEA::EvaluateObjectives(
 
 //! Reproduce and generate new candidates.
 template<typename MatType>
-inline void AGEMOEA::BinaryTournamentSelection(std::vector<MatType>& population,
-                                             const MatType& lowerBound,
-                                             const MatType& upperBound)
+inline void NSGA3<MatType>::BinaryTournamentSelection(
+    std::vector<MatType>& population,
+    const MatType& lowerBound,
+    const MatType& upperBound)
 {
   std::vector<MatType> children;
 
@@ -318,13 +334,13 @@ inline void AGEMOEA::BinaryTournamentSelection(std::vector<MatType>& population,
 }
 
 //! Perform simulated binary crossover (SBX) of genes for the children.
-template<typename MatType>
-inline void AGEMOEA::Crossover(MatType& childA,
-                             MatType& childB,
-                             const MatType& parentA,
-                             const MatType& parentB,
-                             const MatType& lowerBound,
-                             const MatType& upperBound)
+template<typename MatType> 
+inline void NSGA3<MatType>::Crossover(MatType& childA,
+                                      MatType& childB,
+                                      const MatType& parentA,
+                                      const MatType& parentB,
+                                      const MatType& lowerBound,
+                                      const MatType& upperBound)
 {
     //! Generates a child from two parent individuals
     // according to the polynomial probability distribution.
@@ -377,10 +393,10 @@ inline void AGEMOEA::Crossover(MatType& childA,
 
 //! Perform Polynomial mutation of the candidate.
 template<typename MatType>
-inline void AGEMOEA::Mutate(MatType& candidate,
-       double mutationRate,
-       const MatType& lowerBound,
-       const MatType& upperBound)
+inline void NSGA3<MatType>::Mutate(MatType& candidate,
+                                            double mutationRate,
+                                            const MatType& lowerBound,
+                                            const MatType& upperBound)
 {
     const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
@@ -416,11 +432,12 @@ inline void AGEMOEA::Mutate(MatType& candidate,
 }
 
 template <typename MatType>
-inline void AGEMOEA::NormalizeFront(
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                    arma::Col<typename MatType::elem_type>& normalization,
-                    const std::vector<size_t>& front,
-                    const arma::Row<size_t>& extreme)
+template <typename ColType>
+inline void NSGA3<MatType>::NormalizeFront(
+    std::vector<ColType>& calculatedObjectives,
+    ColType& normalization,
+    const std::vector<size_t>& front,
+    const arma::Row<size_t>& extreme)
 {
   arma::Mat<typename MatType::elem_type> vectorizedObjectives(numObjectives, front.size());
   for (size_t i = 0; i < front.size(); i++)
@@ -433,15 +450,15 @@ inline void AGEMOEA::NormalizeFront(
     normalization = arma::max(vectorizedObjectives, 1);
     return;
   }
-  arma::Col<typename MatType::elem_type> temp;
+  ColType temp;
   arma::uvec unique = arma::find_unique(extreme);
   if (extreme.n_elem != unique.n_elem)
   {
     normalization = arma::max(vectorizedObjectives, 1);
     return;
   }
-  arma::Col<typename MatType::elem_type> one(front.size(), arma::fill::ones);
-  arma::Col<typename MatType::elem_type> hyperplane = arma::solve(
+  ColType one(front.size(), arma::fill::ones);
+  ColType hyperplane = arma::solve(
     vectorizedObjectives.t(), one);
   if (hyperplane.has_inf() || hyperplane.has_nan() || (arma::accu(hyperplane < 0.0) > 0))
   {
@@ -460,9 +477,10 @@ inline void AGEMOEA::NormalizeFront(
 
 //! Find the index of the of the extreme points in the given front.
 template <typename MatType>
+template <typename ColType>
 void NSGA<MatType>::FindExtremePoints(arma::Row<size_t>& indexes, 
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                              const std::vector<size_t>& front)
+                                      std::vector<ColType>& calculatedObjectives,
+                                      const std::vector<size_t>& front)
 {
   typedef typename MatType::elem_type ElemType;
   
@@ -479,7 +497,7 @@ void NSGA<MatType>::FindExtremePoints(arma::Row<size_t>& indexes,
   arma::Row<ElemType> dists;
   for (size_t i = 0; i < numObjectives; i++)
   {
-    PointToLineDistance<MatType>(dists, calculatedObjectives, front, z, W.col(i));
+    PointToLineDistance<ColType>(dists, calculatedObjectives, front, z, W.col(i));
     for (size_t j = 0; j < front.size(); j++)
       if (selected[j]){dists[j] = arma::datum::inf;}
     indexes[i] = dists.index_min();
@@ -489,16 +507,18 @@ void NSGA<MatType>::FindExtremePoints(arma::Row<size_t>& indexes,
 
 //! Find the distance of a front from a line formed by two points.
 template <typename MatType>
-void NSGA3<MatType>::PointToLineDistance(arma::Row<typename MatType::elem_type>& distances,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
-                           const std::vector<size_t>& front,
-                           const arma::Col<typename MatType::elem_type>& pointA,
-                           const arma::Col<typename MatType::elem_type>& pointB)
+template <typename ColType>
+void NSGA3<MatType>::PointToLineDistance(
+    arma::Row<typename MatType::elem_type>& distances,
+    std::vector<ColType>& calculatedObjectives,
+    const std::vector<size_t>& front,
+    const ColType& pointA,
+    const ColType& pointB)
 {
   typedef typename MatType::elem_type ElemType;
   arma::Row<ElemType> distancesTemp(front.size());
-  arma::Col<ElemType> ba = pointB - pointA; 
-  arma::Col<ElemType> pa;
+  ColType ba = pointB - pointA; 
+  ColType pa;
 
   for (size_t i = 0; i < front.size(); i++)
   {
@@ -513,10 +533,11 @@ void NSGA3<MatType>::PointToLineDistance(arma::Row<typename MatType::elem_type>&
 
 //! Sort population into Pareto fronts.
 template<typename MatType>
-inline void AGEMOEA::FastNonDominatedSort(
+template<typename ColType>
+inline void NSGA3<MatType>::FastNonDominatedSort(
     std::vector<std::vector<size_t> >& fronts,
     std::vector<size_t>& ranks,
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
+    std::vector<ColType>& calculatedObjectives)
 {
   std::map<size_t, size_t> dominationCount;
   std::map<size_t, std::set<size_t> > dominated;
@@ -572,10 +593,84 @@ inline void AGEMOEA::FastNonDominatedSort(
   fronts.pop_back();
 }
 
+template <typename MatType>
+void NSGA3<MatType>::Niching(size_t K,
+    arma::Row<size_t>& nicheCount,
+    const arma::urowvec& refIndex,
+    const arma::Row<typename MatType::elem_type>& dists,
+    const std::vector<size_t>& front,
+    std::vector<size_t>& population) // population excluding current front.
+{
+  typedef typename MatType::elem_type elemType;
+  arma::Row<bool> popMask(population.n_elem);
+  size_t k = 0;
+  while (k < K)
+  {
+   size_t jMin = arma::index_min(nicheCount);
+   std::vector<unsigned int> I;
+   for (size_t i : front)
+   {
+    if(refIndex[i] == jMin && popMask[i])
+      I.push_back(i);
+   }
+   if (I.size() != 0)
+   {
+      size_t min = 0;
+      if(nicheCount[jMin] == 0)
+      {
+        for (size_t i = 0; i < I.size(); i++)
+        {
+          if(dists[I[i]] < dists[I[min]])
+          {
+            min = i;
+          }
+        }
+      }
+      population.append(I[min]);
+
+      nicheCount[jMin] += 1;
+      frontMask[I[i]] = false;
+      k += 1;
+   }
+   else
+   {
+    nicheCount[jMin] = arma::datum::inf;
+   }
+  }
+}
+
+
+template <typename MatType>
+template <typename ColType>
+void NSGA3<MatType>::Associate(arma::urowvec& refindex,
+                               arma::Row<typename MatType::elem_type>& dists,
+                               const std::vector<ColType>& calculatedObjectives,
+                               const std::vector<size_t>& St)
+{
+  arma::Mat<typename MatType::elem_type> d(refindex.n_elem, St.size());
+  for (size_t i = 0; i < referencePoints.n_slices; i++)
+  {
+    PointToLineDistance(d.row(i), calculatedObjectives, St, , W.col(i));
+  }
+  refIndex = arma::index_min(d, 0);
+  dists = arma::min(d, 0);
+}
+
+template <typename MatType>
+void NSGA3<MatType>::NicheCount(arma::Row<size_t>& count,
+                                const arma::urowvec& refIndex)
+{
+  for (size_t i = 0; i < refIndex.n_elem; i++)
+  {
+    count[refIndex[i]] += 1;
+  }
+}
+
 //! Check if a candidate Pareto dominates another candidate.
 template<typename MatType>
-inline bool AGEMOEA::Dominates(
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+template<typename ColType>
+inline bool NSGA3<MatType>::Dominates(
+    std::vector<ColType>& calculatedObjectives,
     size_t candidateP,
     size_t candidateQ)
 {
