@@ -120,6 +120,7 @@
 #include "ensmallen_bits/agemoea/agemoea.hpp"
 #include "ensmallen_bits/moead/moead.hpp"
 #include "ensmallen_bits/nsga2/nsga2.hpp"
+#include "ensmallen_bits/nsga3/nsga3.hpp"
 #include "ensmallen_bits/padam/padam.hpp"
 #include "ensmallen_bits/parallel_sgd/parallel_sgd.hpp"
 #include "ensmallen_bits/pso/pso.hpp"
