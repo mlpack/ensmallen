@@ -155,7 +155,6 @@ namespace test {
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value(coords.n_cols, arma::fill::ones);
-        std::cout << G << std::endl;
         for(size_t i = 0; i < numObjectives - 1; i++)
         {
           objectives.row(i) = (1.0 - value % 
