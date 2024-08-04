@@ -59,7 +59,7 @@ namespace test {
 
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
-    size_t numVariables {7};
+    size_t numVariables {12};
     size_t I;
     size_t numParetoPoints;
 
@@ -72,7 +72,7 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        * @param I The manifold dimension (zero indexed).
        */
-      MAF6(size_t numParetoPoints = 136, size_t I = 0) :
+      MAF6(size_t numParetoPoints = 136, size_t I = 2) :
         numParetoPoints(numParetoPoints),
         objectiveF1(0, *this),
         objectiveF2(1, *this),
@@ -158,14 +158,17 @@ namespace test {
         arma::Row<ElemType> theta;
         for(size_t i = 0; i < numObjectives - 1; i++)
         {
-          if (i < I - 1){ theta = coords.row(i) * arma::datum::pi * 0.5; }
+          if (i < I - 1)
+          { 
+            theta = coords.row(i) * arma::datum::pi * 0.5; 
+          }
           else
           {
             theta = 0.25 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
           }
           objectives.row(i) =  value %  
-              arma::sin(theta * arma::datum::pi * 0.5);
-          value = value % arma::cos(theta * arma::datum::pi * 0.5); 
+              arma::sin(theta);
+          value = value % arma::cos(theta); 
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;
@@ -207,13 +210,9 @@ namespace test {
             theta = 0.25 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);
           }
 
-          if(stop != maf.numObjectives - 1)
+          if(stop != maf.GetNumObjectives() - 1)
           {
             value = value * std::sin(theta * arma::datum::pi * 0.5);
-          }
-          else
-          {
-            value = value * std::cos(theta * arma::datum::pi * 0.5);
           }
 
           value = value * (1.0 + 100 * G);
@@ -223,6 +222,12 @@ namespace test {
         MAF6& maf;
         size_t stop;
       };
+
+      // Return back a tuple of objective functions.
+      std::tuple<MAF6Objective, MAF6Objective, MAF6Objective> GetObjectives()
+      {
+          return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
+      }
 
     MAF6Objective objectiveF1;
     MAF6Objective objectiveF2;

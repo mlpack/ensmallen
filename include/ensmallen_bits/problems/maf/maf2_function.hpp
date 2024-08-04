@@ -59,7 +59,7 @@ namespace test {
 
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
-    size_t numVariables {7};
+    size_t numVariables {12};
     size_t numParetoPoints;
 
     public:
@@ -198,6 +198,12 @@ namespace test {
         MAF2& maf;
         size_t stop;
       };
+
+      // Return back a tuple of objective functions.
+      std::tuple<MAF2Objective, MAF2Objective, MAF2Objective> GetObjectives()
+      {
+          return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
+      }
 
     MAF2Objective objectiveF1;
     MAF2Objective objectiveF2;

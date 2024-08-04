@@ -57,7 +57,7 @@ namespace test {
 
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
-    size_t numVariables {7};
+    size_t numVariables {12};
     size_t numParetoPoints;
 
     public:
@@ -106,7 +106,6 @@ namespace test {
       */
       arma::Row<typename MatType::elem_type> g (const MatType& coords)
       {
-
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         
@@ -133,7 +132,7 @@ namespace test {
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
-        arma::Row<ElemType> value = 1.;
+        arma::Row<ElemType> value(coords.n_cols, arma::fill::ones);
         for(size_t i = 0;i < numObjectives - 1;i++)
         {
           objectives.row(i) = (1 - value % (1.0 - coords.row(i))) % (1. + G);
@@ -159,20 +158,20 @@ namespace test {
         typename MatType::elem_type Evaluate (const MatType& coords)
         {
           // Convenience typedef.
+          if (stop == 0)
+          {
+            return coords[0] * (1. + maf.g(coords)[0]);
+          }
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
-          for(size_t i = 0;i < stop;i++)
+          for (size_t i = 0; i < stop; i++)
           {
             value = value * coords[i];
           }
 
-          if(stop != maf.numObjectives - 1)
+          if(stop != maf.GetNumObjectives() - 1)
           {
             value = value * (1. - coords[stop]);
-          }
-          else
-          {
-            value = value * coords[stop];
           }
 
           value = (1.0 - value) * (1. + maf.g(coords)[0]);
@@ -183,9 +182,15 @@ namespace test {
         size_t stop;
       };
 
-    MAF1Objective objectiveF1;
-    MAF1Objective objectiveF2;
-    MAF1Objective objectiveF3;
+      //! Get objective functions.
+      std::tuple<MAF1Objective, MAF1Objective, MAF1Objective> GetObjectives()
+      {
+        return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
+      }
+
+      MAF1Objective objectiveF1;
+      MAF1Objective objectiveF2;
+      MAF1Objective objectiveF3;
   };
   } //namespace test
   } //namespace ens

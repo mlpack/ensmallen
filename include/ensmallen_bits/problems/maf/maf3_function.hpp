@@ -58,7 +58,7 @@ namespace test {
 
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
-    size_t numVariables {7};
+    size_t numVariables {12};
     size_t numParetoPoints;
 
     public:
@@ -140,9 +140,8 @@ namespace test {
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1], arma::fill::ones);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value = (1.0 + G);
-        for(size_t i = 0; i < numObjectives - 1; i++)
+        for (size_t i = 0; i < numObjectives - 1; i++)
         {
-          
           objectives.row(i) =  arma::pow(value, i == 0 ? 2:4) % 
               arma::pow(arma::sin(coords.row(i) * arma::datum::pi * 0.5), i == 0 ? 2:4);
           value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5);
@@ -174,13 +173,9 @@ namespace test {
             value = value * std::cos(coords[i] * arma::datum::pi * 0.5);
           }
 
-          if(stop != maf.numObjectives - 1)
+          if(stop != maf.GetNumObjectives() - 1)
           {
             value = value * std::sin(coords[stop] * arma::datum::pi * 0.5);
-          }
-          else
-          {
-            value = value * std::cos(coords[stop] * arma::datum::pi * 0.5);
           }
 
           value = value * (1. + maf.g(coords)[0]);
