@@ -71,10 +71,10 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        */
       MAF2(size_t numParetoPoints = 136) :
-        numParetoPoints(numParetoPoints),
-        objectiveF1(0, *this),
-        objectiveF2(1, *this),
-        objectiveF3(2, *this)
+          numParetoPoints(numParetoPoints),
+          objectiveF1(0, *this),
+          objectiveF2(1, *this),
+          objectiveF3(2, *this)
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
@@ -118,7 +118,7 @@ namespace test {
         
         arma::Mat<ElemType> innerSum(numObjectives, size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = 0; i < numObjectives; i++)
+        for (size_t i = 0; i < numObjectives; i++)
         {
           size_t j = numObjectives - 1 + (i * c);
           for(; j < numVariables + (i + 1) *c && j < numObjectives; i++)
@@ -145,7 +145,7 @@ namespace test {
         arma::Mat<ElemType> G = g(coords); 
         arma::Row<ElemType> value(numObjectives, arma::fill::ones);
         arma::Row<ElemType> theta;
-        for(size_t i = 0; i < numObjectives - 1; i++)
+        for (size_t i = 0; i < numObjectives - 1; i++)
         {
           theta = arma::datum::pi * 0.5 * (coords.row(i) / 2 + 0.25);
           objectives.row(i) =  value %  
@@ -176,13 +176,13 @@ namespace test {
           ElemType value = 1.0;
           ElemType theta;
           arma::Col<ElemType> G = maf.g(coords).col(0);
-          for(size_t i = 0; i < stop; i++)
+          for (size_t i = 0; i < stop; i++)
           {
             theta = arma::datum::pi * 0.5 * (coords[i] / 2 + 0.25); 
             value = value * std::cos(theta);
           }
 	        theta =  arma::datum::pi * 0.5 * (coords[stop] / 2 + 0.25);
-          if(stop != maf.numObjectives - 1)
+          if (stop != maf.numObjectives - 1)
           {
             value = value * std::sin(theta);
           }

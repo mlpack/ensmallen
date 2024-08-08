@@ -73,11 +73,11 @@ namespace test {
        * @param I The manifold dimension (zero indexed).
        */
       MAF6(size_t numParetoPoints = 136, size_t I = 2) :
-        numParetoPoints(numParetoPoints),
-        objectiveF1(0, *this),
-        objectiveF2(1, *this),
-        objectiveF3(2, *this),
-        I(I)
+          numParetoPoints(numParetoPoints),
+          objectiveF1(0, *this),
+          objectiveF2(1, *this),
+          objectiveF3(2, *this),
+          I(I)
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
@@ -133,7 +133,7 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1; i < numVariables; i++)
+        for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2); 
         } 
@@ -156,7 +156,7 @@ namespace test {
         arma::Row<ElemType> G = g(coords); 
         arma::Row<ElemType> value = (1.0 + 100 * G);
         arma::Row<ElemType> theta;
-        for(size_t i = 0; i < numObjectives - 1; i++)
+        for (size_t i = 0; i < numObjectives - 1; i++)
         {
           if (i < I - 1)
           { 
@@ -194,7 +194,7 @@ namespace test {
           ElemType value = 1.0;
           ElemType theta;
           ElemType G = maf.g(coords)[0];
-          for(size_t i = 0; i < stop; i++)
+          for (size_t i = 0; i < stop; i++)
           {
             if (i < maf.GetI() - 1){ theta  = arma::datum::pi * coords[i] * 0.5; }
             else
@@ -204,13 +204,13 @@ namespace test {
             value = value * std::cos(theta * arma::datum::pi * 0.5);
           }
 
-          if(stop < maf.GetI() - 1){ theta  = arma::datum::pi * coords[stop] * 0.5; }
+          if (stop < maf.GetI() - 1){ theta  = arma::datum::pi * coords[stop] * 0.5; }
           else
           {
             theta = 0.25 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);
           }
 
-          if(stop != maf.GetNumObjectives() - 1)
+          if (stop != maf.GetNumObjectives() - 1)
           {
             value = value * std::sin(theta * arma::datum::pi * 0.5);
           }

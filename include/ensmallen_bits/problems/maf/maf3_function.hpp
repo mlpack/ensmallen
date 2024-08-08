@@ -70,10 +70,10 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        */
       MAF3(size_t numParetoPoints = 136) :
-        numParetoPoints(numParetoPoints),
-        objectiveF1(0, *this),
-        objectiveF2(1, *this),
-        objectiveF3(2, *this)
+          numParetoPoints(numParetoPoints),
+          objectiveF1(0, *this),
+          objectiveF2(1, *this),
+         objectiveF3(2, *this)
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
@@ -117,7 +117,7 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1; i < numVariables; i++)
+        for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2) - 
               arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5)); 
@@ -168,12 +168,12 @@ namespace test {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
-          for(size_t i = 0; i < stop; i++)
+          for (size_t i = 0; i < stop; i++)
           {
             value = value * std::cos(coords[i] * arma::datum::pi * 0.5);
           }
 
-          if(stop != maf.GetNumObjectives() - 1)
+          if (stop != maf.GetNumObjectives() - 1)
           {
             value = value * std::sin(coords[stop] * arma::datum::pi * 0.5);
           }

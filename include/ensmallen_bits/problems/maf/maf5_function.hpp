@@ -74,13 +74,13 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        * @param a The scale factor of the objectives.
        */
-      MAF5 (size_t alpha = 100, size_t numParetoPoints = 136, double a = 2) :
-        alpha(alpha),
-        numParetoPoints(numParetoPoints),
-        a(a),
-        objectiveF1(0, *this),
-        objectiveF2(1, *this),
-        objectiveF3(2, *this)
+      MAF5(size_t alpha = 100, size_t numParetoPoints = 136, double a = 2) :
+          alpha(alpha),
+          numParetoPoints(numParetoPoints),
+          a(a),
+          objectiveF1(0, *this),
+          objectiveF2(1, *this),
+          objectiveF3(2, *this)
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
@@ -148,7 +148,7 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1; i < numVariables; i++)
+        for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2); 
         } 
@@ -170,7 +170,7 @@ namespace test {
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value = (1.0 + G);
-        for(size_t i = 0; i < numObjectives - 1; i++)
+        for (size_t i = 0; i < numObjectives - 1; i++)
         {
           objectives.row(i) = std::pow(a, i + 1) * arma::pow(value, 4) %  
               arma::pow(arma::sin(arma::pow(coords.row(i), alpha) * 
@@ -199,13 +199,13 @@ namespace test {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
-          for(size_t i = 0; i < stop; i++)
+          for (size_t i = 0; i < stop; i++)
           {
             value = value * std::cos(std::pow(coords[i], maf.GetAlpha()) 
                 * arma::datum::pi * 0.5);
           }
 
-          if(stop != maf.GetNumObjectives() - 1)
+          if (stop != maf.GetNumObjectives() - 1)
           {
             value = value * std::sin(std::pow(coords[stop], maf.GetAlpha()) 
                 * arma::datum::pi * 0.5);
