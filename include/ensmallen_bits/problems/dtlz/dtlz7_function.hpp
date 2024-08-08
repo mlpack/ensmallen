@@ -118,9 +118,7 @@ namespace test {
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
         innerSum = (9.0 / k) * arma::sum(coords.rows(numObjectives - 1,
-            numVariables - 1) + 1.0, 0); 
-        
-
+            numVariables - 1) , 0) + 1.0; 
         return innerSum;
       }
 
@@ -205,7 +203,11 @@ namespace test {
     DTLZ7Objective objectiveF1;
     DTLZ7Objective objectiveF2;
     DTLZ7Objective objectiveF3;
+    using MAF7Objective = DTLZ7Objective;
   };
+
+  template<typename MatType>
+  using MAF7 = DTLZ7<MatType>;
   } //namespace test
   } //namespace ens
 

@@ -54,5 +54,11 @@
 #include "dtlz/dtlz5_function.hpp"
 #include "dtlz/dtlz6_function.hpp"
 #include "dtlz/dtlz7_function.hpp"
+#include "maf/maf1_function.hpp"
+#include "maf/maf2_function.hpp"
+#include "maf/maf3_function.hpp"
+#include "maf/maf4_function.hpp"
+#include "maf/maf5_function.hpp"
+#include "maf/maf6_function.hpp"
 
 #endif
