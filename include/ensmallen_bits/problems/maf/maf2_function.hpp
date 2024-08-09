@@ -70,8 +70,7 @@ namespace test {
        *
        * @param numParetoPoint No. of pareto points in the reference front.
        */
-      MAF2(size_t numParetoPoints = 136) :
-          numParetoPoints(numParetoPoints),
+      MAF2() :
           objectiveF1(0, *this),
           objectiveF2(1, *this),
           objectiveF3(2, *this)
@@ -96,14 +95,6 @@ namespace test {
       { return this -> numVariables; }
 
       /**
-       * Set the no. of pareto points.
-       *
-       * @param numParetoPoint The no. points in the reference front.
-       */
-      void SetNumParetoPoint(size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint; }
-
-      /**
        * Evaluate the G(x) with the given coordinate.
        *
        * @param coords The function coordinates.
@@ -116,12 +107,13 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         
-        arma::Mat<ElemType> innerSum(numObjectives, size(coords)[1], arma::fill::zeros);
+        arma::Mat<ElemType> innerSum(numObjectives, size(coords)[1], 
+            arma::fill::zeros);
         
         for (size_t i = 0; i < numObjectives; i++)
         {
           size_t j = numObjectives - 1 + (i * c);
-          for(; j < numVariables + (i + 1) *c && j < numObjectives; i++)
+          for(; j < numVariables - 1 + (i + 1) *c && j < numObjectives; j++)
           {
             innerSum.row(i) += arma::pow((coords.row(i) - 0.5), 2) * 0.25; 
           }
@@ -143,16 +135,17 @@ namespace test {
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Mat<ElemType> G = g(coords); 
-        arma::Row<ElemType> value(numObjectives, arma::fill::ones);
+        arma::Row<ElemType> value(size(coords)[1], arma::fill::ones);
         arma::Row<ElemType> theta;
         for (size_t i = 0; i < numObjectives - 1; i++)
         {
-          theta = arma::datum::pi * 0.5 * (coords.row(i) / 2 + 0.25);
+          theta = arma::datum::pi * 0.5 * ((coords.row(i) / 2) + 0.25);
           objectives.row(i) =  value %  
               arma::sin(theta) % (1.0 + G.row(numObjectives - 1 - i));
           value = value % arma::cos(theta); 
         }
-        objectives.row(numObjectives - 1) = value;
+        objectives.row(numObjectives - 1) = value % 
+            (1.0 + G.row(0));
         return objectives;
       }
       
@@ -178,17 +171,13 @@ namespace test {
           arma::Col<ElemType> G = maf.g(coords).col(0);
           for (size_t i = 0; i < stop; i++)
           {
-            theta = arma::datum::pi * 0.5 * (coords[i] / 2 + 0.25); 
+            theta = arma::datum::pi * 0.5 * ((coords[i] / 2) + 0.25); 
             value = value * std::cos(theta);
           }
-	        theta =  arma::datum::pi * 0.5 * (coords[stop] / 2 + 0.25);
-          if (stop != maf.numObjectives - 1)
+	        theta = arma::datum::pi * 0.5 * ((coords[stop] / 2) + 0.25);
+          if(stop != maf.numObjectives - 1)
           {
             value = value * std::sin(theta);
-          }
-          else
-          {
-            value = value * std::cos(theta);
           }
 
           value = value * (1.0 + G[maf.GetNumObjectives() - 1 - stop]);

@@ -56,10 +56,9 @@ namespace test {
   {
     private:
 
-    // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
+    // A fixed no. of Objectives and Variables(|x| = 12, M = 3).
     size_t numObjectives {3};
     size_t numVariables {12};
-    size_t numParetoPoints;
 
     public:
 
@@ -69,11 +68,10 @@ namespace test {
        *
        * @param numParetoPoint No. of pareto points in the reference front.
        */
-      MAF3(size_t numParetoPoints = 136) :
-          numParetoPoints(numParetoPoints),
+      MAF3() :
           objectiveF1(0, *this),
           objectiveF2(1, *this),
-         objectiveF3(2, *this)
+          objectiveF3(2, *this)
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
@@ -93,14 +91,6 @@ namespace test {
       // Get the number of variables.
       size_t GetNumVariables()
       { return this -> numVariables;}
-
-      /**
-       * Set the no. of pareto points.
-       *
-       * @param numParetoPoint No. of pareto points in the reference front.
-       */
-      void SetNumParetoPoint(size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint;}
 
       /**
        * Evaluate the G(x) with the given coordinate.
@@ -173,14 +163,14 @@ namespace test {
             value = value * std::cos(coords[i] * arma::datum::pi * 0.5);
           }
 
-          if (stop != maf.GetNumObjectives() - 1)
+          if(stop != maf.GetNumObjectives() - 1)
           {
             value = value * std::sin(coords[stop] * arma::datum::pi * 0.5);
           }
 
           value = value * (1. + maf.g(coords)[0]);
 
-          if (stop == 0) {
+          if(stop == 0) {
             return std::pow(value, 2); 
           }
           return std::pow(value, 4);  

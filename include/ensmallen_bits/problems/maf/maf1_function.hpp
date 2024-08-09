@@ -58,7 +58,6 @@ namespace test {
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
     size_t numVariables {12};
-    size_t numParetoPoints;
 
     public:
 
@@ -68,30 +67,21 @@ namespace test {
       *
       * @param numParetoPoint No. of pareto points in the reference front.
       */
-      MAF1 (size_t numParetoPoint = 136) :
-        numParetoPoints(numParetoPoint),
-            objectiveF1(0, *this),
-            objectiveF2(1, *this),
-            objectiveF3(2, *this)
+      MAF1() :
+          objectiveF1(0, *this),
+          objectiveF2(1, *this),
+          objectiveF3(2, *this)
       {/* Nothing to do here */}
 
       // Get the private variables.
-      size_t GetNumObjectives ()
+      size_t GetNumObjectives()
       { return this -> numObjectives; }
 
-      size_t GetNumVariables ()
+      size_t GetNumVariables()
       { return this -> numVariables; }
 
-      /**
-      * Set the no. of pareto points.
-      *
-      * @param numParetoPoint
-      */
-      void SetNumParetoPoint (size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint; }
-
       // Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint ()
+      arma::Col<typename MatType::elem_type> GetInitialPoint()
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -104,14 +94,14 @@ namespace test {
       * @param coords The function coordinates.
       * @return arma::Row<typename MatType::elem_type>
       */
-      arma::Row<typename MatType::elem_type> g (const MatType& coords)
+      arma::Row<typename MatType::elem_type> g(const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1;i < numVariables;i++)
+        for (size_t i = numObjectives - 1;i < numVariables;i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2);
         } 
@@ -125,7 +115,7 @@ namespace test {
       * @param coords The function coordinates.
       * @return arma::Mat<typename MatType::elem_type>
       */
-      arma::Mat<typename MatType::elem_type> Evaluate (const MatType& coords)
+      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
@@ -133,7 +123,7 @@ namespace test {
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value(coords.n_cols, arma::fill::ones);
-        for(size_t i = 0;i < numObjectives - 1;i++)
+        for (size_t i = 0;i < numObjectives - 1;i++)
         {
           objectives.row(i) = (1 - value % (1.0 - coords.row(i))) % (1. + G);
           value = value % coords.row(i);
@@ -146,7 +136,7 @@ namespace test {
       // Changes based on stop variable provided. 
       struct MAF1Objective
       {
-        MAF1Objective (size_t stop, MAF1<MatType>& maf): stop(stop), maf(maf)
+        MAF1Objective(size_t stop, MAF1& maf): stop(stop), maf(maf)
         {/* Nothing to do here. */}  
         
         /**
@@ -155,10 +145,10 @@ namespace test {
         * @param coords The function coordinates.
         * @return arma::Col<typename MatType::elem_type>
         */
-        typename MatType::elem_type Evaluate (const MatType& coords)
+        typename MatType::elem_type Evaluate(const MatType& coords)
         {
           // Convenience typedef.
-          if (stop == 0)
+          if(stop == 0)
           {
             return coords[0] * (1. + maf.g(coords)[0]);
           }

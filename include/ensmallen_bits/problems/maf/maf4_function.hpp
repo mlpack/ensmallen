@@ -60,7 +60,6 @@ namespace test {
     size_t numObjectives {3};
     size_t numVariables {12}; 
     double a;
-    size_t numParetoPoints;
 
     public:
 
@@ -71,12 +70,11 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        * @param a The scale factor of the objectives.
        */
-      MAF4(size_t numParetoPoints = 136, double a = 2) :
-        numParetoPoints(numParetoPoints),
-        objectiveF1(0, *this),
-        objectiveF2(1, *this),
-        objectiveF3(2, *this),
-        a(a)
+      MAF4(double a = 2) :
+          objectiveF1(0, *this),
+          objectiveF2(1, *this),
+          objectiveF3(2, *this),
+          a(a)
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
@@ -102,14 +100,6 @@ namespace test {
       { return this -> a; }
 
       /**
-       * Set the no. of pareto points.
-       *
-       * @param numParetoPoint No. of pareto points in the reference front.
-       */
-      void SetNumParetoPoint(size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint;}
-
-      /**
        * Set the scale factor of the objectives.
        * 
        * @param a The scale factor a of the objectives.
@@ -132,7 +122,7 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1; i < numVariables; i++)
+        for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2) - 
               arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5)); 
@@ -155,7 +145,7 @@ namespace test {
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value(coords.n_cols, arma::fill::ones);
-        for(size_t i = 0; i < numObjectives - 1; i++)
+        for (size_t i = 0; i < numObjectives - 1; i++)
         {
           objectives.row(i) = (1.0 - value % 
                 arma::sin(coords.row(i) * arma::datum::pi * 0.5)) % (1. + G) * 
@@ -185,7 +175,7 @@ namespace test {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
-          for(size_t i = 0; i < stop; i++)
+          for (size_t i = 0; i < stop; i++)
           {
             value = value * std::cos(coords[i] * arma::datum::pi * 0.5);
           }
@@ -195,7 +185,7 @@ namespace test {
             value = value * std::sin(coords[stop] * arma::datum::pi * 0.5);
           }
 
-          value =  std::pow(maf.GetA(), maf.GetNumObjectives() - stop) * 
+          value = std::pow(maf.GetA(), maf.GetNumObjectives() - stop) * 
               (1 - value) * (1. + maf.g(coords)[0]);
 
           return value;

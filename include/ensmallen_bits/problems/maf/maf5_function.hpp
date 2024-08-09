@@ -60,7 +60,6 @@ namespace test {
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
     size_t numVariables {12};
-    size_t numParetoPoints;
     size_t alpha;
     size_t a;
 
@@ -74,9 +73,8 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        * @param a The scale factor of the objectives.
        */
-      MAF5(size_t alpha = 100, size_t numParetoPoints = 136, double a = 2) :
+      MAF5(size_t alpha = 100, double a = 2) :
           alpha(alpha),
-          numParetoPoints(numParetoPoints),
           a(a),
           objectiveF1(0, *this),
           objectiveF2(1, *this),
@@ -124,14 +122,6 @@ namespace test {
        */
       void SetAlpha(size_t alpha)
       { this -> alpha = alpha; }
-
-      /**
-       * Set the no. of pareto points.
-       *
-       * @param numParetoPoint
-       */
-      void SetNumParetoPoint(size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint; }
 
       /**
        * Evaluate the G(x) with the given coordinate.
@@ -205,7 +195,7 @@ namespace test {
                 * arma::datum::pi * 0.5);
           }
 
-          if (stop != maf.GetNumObjectives() - 1)
+          if(stop != maf.GetNumObjectives() - 1)
           {
             value = value * std::sin(std::pow(coords[stop], maf.GetAlpha()) 
                 * arma::datum::pi * 0.5);

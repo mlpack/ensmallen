@@ -61,7 +61,6 @@ namespace test {
     size_t numObjectives {3};
     size_t numVariables {12};
     size_t I;
-    size_t numParetoPoints;
 
     public:
 
@@ -72,8 +71,7 @@ namespace test {
        * @param numParetoPoint No. of pareto points in the reference front.
        * @param I The manifold dimension (zero indexed).
        */
-      MAF6(size_t numParetoPoints = 136, size_t I = 2) :
-          numParetoPoints(numParetoPoints),
+      MAF6(size_t I = 2) :
           objectiveF1(0, *this),
           objectiveF2(1, *this),
           objectiveF3(2, *this),
@@ -99,16 +97,8 @@ namespace test {
       { return this -> numVariables; }
 
       // Get the manifold dimension.
-      size_t GetI(size_t I)
+      size_t GetI()
       { return this -> I; }
-
-      /**
-       * Set the no. of pareto points.
-       *
-       * @param numParetoPoint The no. points in the reference front.
-       */
-      void SetNumParetoPoint(size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint; }
 
       /**
        * Set the no. of pareto points.
@@ -158,9 +148,9 @@ namespace test {
         arma::Row<ElemType> theta;
         for (size_t i = 0; i < numObjectives - 1; i++)
         {
-          if (i < I - 1)
+          if(i < I)
           { 
-            theta = coords.row(i) * arma::datum::pi * 0.5; 
+            theta = coords.row(i) * arma::datum::pi * 0.5;
           }
           else
           {
@@ -178,7 +168,7 @@ namespace test {
       // Changes based on stop variable provided. 
       struct MAF6Objective
       {
-        MAF6Objective(size_t stop, MAF6& dtlz): stop(stop), maf(maf)
+        MAF6Objective(size_t stop, MAF6& maf): stop(stop), maf(maf)
         {/* Nothing to do here. */}
         
         /**
@@ -196,15 +186,21 @@ namespace test {
           ElemType G = maf.g(coords)[0];
           for (size_t i = 0; i < stop; i++)
           {
-            if (i < maf.GetI() - 1){ theta  = arma::datum::pi * coords[i] * 0.5; }
+            if(i < maf.GetI())
+            {
+             theta  = arma::datum::pi * coords[i] * 0.5;
+            }
             else
             {
                 theta = 0.25 * (1.0  + 2.0 * coords[i] * G) / (1.0 + G);
             }
-            value = value * std::cos(theta * arma::datum::pi * 0.5);
+            value = value * std::cos(theta);
           }
 
-          if (stop < maf.GetI() - 1){ theta  = arma::datum::pi * coords[stop] * 0.5; }
+          if(stop < maf.GetI())
+          {
+            theta  = arma::datum::pi * coords[stop] * 0.5;
+          }
           else
           {
             theta = 0.25 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);
@@ -212,7 +208,7 @@ namespace test {
 
           if (stop != maf.GetNumObjectives() - 1)
           {
-            value = value * std::sin(theta * arma::datum::pi * 0.5);
+            value = value * std::sin(theta);
           }
 
           value = value * (1.0 + 100 * G);
