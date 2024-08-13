@@ -457,8 +457,16 @@ inline void AGEMOEA::NormalizeFront(
     return;
   }
   arma::Col<typename MatType::elem_type> one(extreme.n_elem, arma::fill::ones);
-  arma::Col<typename MatType::elem_type> hyperplane = arma::solve(
+  try{
+    arma::Col<typename MatType::elem_type> hyperplane = arma::solve(
     vectorizedExtremes.t(), one);
+  }
+  catch(...)
+  {
+    normalization = arma::max(vectorizedObjectives, 1);
+    normalization = normalization + (normalization == 0);
+    return;
+  }
   if (hyperplane.has_inf() || hyperplane.has_nan() || (arma::accu(hyperplane < 0.0) > 0))
   {
     normalization = arma::max(vectorizedObjectives, 1);
