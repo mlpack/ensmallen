@@ -10,6 +10,7 @@ set(ENSMALLEN_TESTS_SOURCES
     adam_test.cpp
     aug_lagrangian_test.cpp
     bigbatch_sgd_test.cpp
+    bipop_cmaes_test.cpp
     callbacks_test.cpp
     cd_test.cpp
     cmaes_test.cpp
@@ -34,6 +35,7 @@ set(ENSMALLEN_TESTS_SOURCES
     nesterov_momentum_sgd_test.cpp
     nsga2_test.cpp
     parallel_sgd_test.cpp
+    pop_cmaes_test.cpp
     proximal_test.cpp
     pso_test.cpp
     quasi_hyperbolic_momentum_sgd_test.cpp
