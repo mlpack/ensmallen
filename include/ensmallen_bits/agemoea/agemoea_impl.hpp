@@ -210,22 +210,22 @@ typename MatType::elem_type AGEMOEA::Optimize(
   EvaluateObjectives(population, objectives, calculatedObjectives);
   // Set the candidates from the Pareto Set as the output.
   paretoSet.set_size(population[0].n_rows, population[0].n_cols, 
-      fronts[0].size());
+      population.size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
-  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoSet.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(population[solutionIdx]);
   }
 
   // Set the candidates from the Pareto Front as the output.
   paretoFront.set_size(calculatedObjectives[0].n_rows, 
-      calculatedObjectives[0].n_cols, fronts[0].size());
+      calculatedObjectives[0].n_cols, population.size());
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
-  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoFront.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(calculatedObjectives[solutionIdx]);
   }
 
   // Clear rcFront, in case it is later requested by the user for reverse
