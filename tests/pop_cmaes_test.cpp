@@ -29,7 +29,6 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   arma::mat initialPoint = f.GetInitialPoint();
   arma::mat expectedResult = f.GetFinalPoint();
 
-  // Test IPOP-CMA-ES with the Sphere function.
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
 }
 
@@ -55,7 +54,6 @@ TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[BIPOPCMAESTest]")
   arma::mat initialPoint = f.GetInitialPoint();
   arma::mat expectedResult = f.GetFinalPoint();
 
-  // Test IPOP-CMA-ES with the Sphere function.
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
 }
 
