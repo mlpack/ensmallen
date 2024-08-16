@@ -475,7 +475,7 @@ inline void AGEMOEA::NormalizeFront(
   else
   {
     normalization = 1. / hyperplane;   
-    if (hyperplane.has_inf() || hyperplane.has_nan())
+    if (normalization.has_inf() || normalization.has_nan())
     {    
       normalization = arma::max(vectorizedObjectives, 1);
     }
