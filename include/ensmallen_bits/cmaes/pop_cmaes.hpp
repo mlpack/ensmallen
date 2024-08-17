@@ -76,8 +76,9 @@ namespace ens {
  * step-sizes dynamically.
  */
 template<typename SelectionPolicyType = FullSelection,
-         typename TransformationPolicyType = EmptyTransformation<>>
-class POPCMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
+         typename TransformationPolicyType = EmptyTransformation<>,
+         bool UseBIPOPFlag = true>
+class POP_CMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
 {
  public:
   /**
@@ -104,9 +105,8 @@ class POPCMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
    *     after each restart.
    * @param maxRestarts Maximum number of restarts.
    * @param maxFunctionEvaluations Maximum number of function evaluations.
-   * @param useBIPOP Flag that controls if the optimizer will run BIPOP or IPOP.
    */
-  POPCMAES(const size_t lambda = 0,
+  POP_CMAES(const size_t lambda = 0,
            const TransformationPolicyType& transformationPolicy = 
               TransformationPolicyType(),
            const size_t batchSize = 32,
@@ -116,8 +116,7 @@ class POPCMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
            double stepSize = 0,
            const double populationFactor = 2,
            const size_t maxRestarts = 9,
-           const size_t maxFunctionEvaluations = 1e9,
-           const bool useBIPOP = true);
+           const size_t maxFunctionEvaluations = 1e9);
 
   /**
    * Set POP-CMA-ES specific parameters.
@@ -145,9 +144,7 @@ class POPCMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
   size_t& MaxFunctionEvaluations() { return maxFunctionEvaluations; }
 
   //! Get the BIPOP mode flag.
-  bool UseBIPOP() const { return useBIPOP; }
-  //! Modify the BIPOP mode flag.
-  bool& UseBIPOP() { return useBIPOP; }
+  static constexpr bool UseBIPOP() { return UseBIPOPFlag; }
 
  private:
   //! Population factor
@@ -159,9 +156,16 @@ class POPCMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
   //! Maximum number of function evaluations.
   size_t maxFunctionEvaluations;
 
-  //! Flag to switch between IPOP and BIPOP modes.
-  bool useBIPOP;
 };
+
+// Define IPOP_CMAES and BIPOP_CMAES using the POP_CMAES template
+template<typename SelectionPolicyType = FullSelection,
+         typename TransformationPolicyType = EmptyTransformation<>>
+using IPOP_CMAES = POP_CMAES<SelectionPolicyType, TransformationPolicyType, false>;
+
+template<typename SelectionPolicyType = FullSelection,
+         typename TransformationPolicyType = EmptyTransformation<>>
+using BIPOP_CMAES = POP_CMAES<SelectionPolicyType, TransformationPolicyType, true>;
 
 } // namespace ens
 

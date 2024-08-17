@@ -11,7 +11,7 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
   RastriginFunction f(2);
   BoundaryBoxConstraint<> b(-10, 10);
 
-  POPCMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
@@ -20,9 +20,8 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
     FullSelection(), // selectionPolicy
     3.72, // stepSize
     2.0, // populationFactor
-    1, // maxRestarts
-    1e4, // maxFunctionEvaluations
-    false // useBIPOP (false for IPOP)
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
   );
 
 
@@ -37,7 +36,7 @@ TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[BIPOPCMAESTest]")
   RastriginFunction f(2);
   BoundaryBoxConstraint<> b(-10, 10);
 
-  POPCMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
@@ -46,9 +45,8 @@ TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[BIPOPCMAESTest]")
     FullSelection(), // selectionPolicy
     3.72, // stepSize
     2.0, // populationFactor
-    1, // maxRestarts
-    1e4, // maxFunctionEvaluations
-    true // useBIPOP (false for IPOP)
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
   );
 
   arma::mat initialPoint = f.GetInitialPoint();
@@ -62,7 +60,7 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
 {
   BoundaryBoxConstraint<> b(0, 2);
 
-  POPCMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
+  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> bipopcmaes(
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
@@ -71,19 +69,18 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
     FullSelection(), // selectionPolicy
     0.25, // stepSize
     1.5, // populationFactor
-    1, // maxRestarts
-    1e4, // maxFunctionEvaluations
-    false // useBIPOP (false for IPOP)
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
   );
 
-  FunctionTest<RosenbrockFunction>(ipopcmaes, 0.1, 0.1);
+  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
 }
 
 TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
 {
   BoundaryBoxConstraint<> b(0, 2);
 
-  POPCMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
+  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> bipopcmaes(
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
@@ -92,10 +89,9 @@ TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
     FullSelection(), // selectionPolicy
     0.25, // stepSize
     1.5, // populationFactor
-    1, // maxRestarts
-    1e4, // maxFunctionEvaluations
-    true // useBIPOP (false for IPOP)
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
   );
 
-  FunctionTest<RosenbrockFunction>(ipopcmaes, 0.1, 0.1);
+  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
 }

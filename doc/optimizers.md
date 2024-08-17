@@ -86,9 +86,9 @@ approxOptimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [BIPOPCMAES](#bipopcmaes)
+ * [BIPOP_CMAES](#bipopcmaes)
  * [CMAES](#cmaes)
- * [IPOPCMAES](#ipopcmaes)
+ * [IPOP_CMAES](#ipopcmaes)
  * [Improving Evolution Strategies through Active Covariance Matrix Adaptation](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.4239&rep=rep1&type=pdfn)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 
@@ -780,7 +780,7 @@ optimizer2.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
 
-## BIPOPCMAES
+## BIPOP_CMAES
 
 *An optimizer for [separable functions](#separable-functions).*
 
@@ -792,29 +792,33 @@ fitness landscape, and can outperform IPOP. The larger population restarts aim
 to explore broadly, improving global search capabilities, while the smaller
 populations intensify the search in promising regions.
 
-#### Constructors
+### Constructors
 
- * `BIPOPCMAES<`_`CMAESType`_`>()`
- * `BIPOPCMAES<`_`CMAESType`_`>(`_`CMAES`_`)`
- * `BIPOPCMAES<`_`CMAESType`_`>(`_`CMAES, maxRestarts`_`)`
- * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy`_`)`
- * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
- * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
- * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
- * `BIPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor, maxFunctionEvaluations`_`)`
 
-The _`CMAESType`_ template parameter is the CMA-ES type used for the optimization. 
-Currently, either CMAES or ActiveCMAES can be used.
-
-#### Attributes
+### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `CMAESType` | **`cmaes`** | The CMAES object used for optimization. | `CMAESType()` |
+| `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
+| `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate the algorithm. | `1e-5` |
+| `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `double` | **`stepSize`** | Initial step size. | `0` |
 | `size_t` | **`maxRestarts`** | Maximum number of restarts. | `9` |
+| `double` | **`populationFactor`** | The factor by which the population increases after each restart. | `2.0` |
+| `size_t` | **`maxFunctionEvaluations`** | Maximum number of function evaluations. | `1e9` |
 
-Attributes of the optimizer may also be changed via the member methods
-`CMAES()`, `MaxRestarts()`.
+The _`SelectionPolicyType`_ and _`TransformationPolicyType`_ template parameters are used to control how the selection of points and the transformation of the decision variables are handled during the optimization process. For more information, check the [CMAES](#cmaes) class. The `lambda`, `transformationPolicy`, `batchSize`, `maxIterations`, `tolerance`, `selectionPolicy`, and `stepSize` are all parameters that affect the underlying CMAES process.
 
 #### Examples:
 
@@ -828,8 +832,7 @@ arma::mat coordinates = f.GetInitialPoint();
 
 // IPOP Active CMA-ES
 BoundaryBoxConstraint<> b(-1, 1);
-CMAES cmaes(0, b, 32, 200, 1e-4);
-BIPOPCMAES optimizer(cmaes, 5);
+BIPOP_CMAES optimizer(0, b, 32, 200, 1e-4, 5, 2, 9, 1e4);
 Optimizer.Optimize(f, coordinates);
 ```
 
@@ -839,7 +842,7 @@ Optimizer.Optimize(f, coordinates);
 
  * [CMAES](#cmaes)
  * [ActiveCMAES](#activecmaes)
- * [IPOP-CMAES](#ipopcmaes)
+ * [IPOP_CMAES](#ipopcmaes)
  * [Benchmarking a BI-Population CMA-ES on the BBOB-2009 Function Testbed](https://dl.acm.org/doi/pdf/10.1145/1570256.1570333)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 
@@ -1004,8 +1007,8 @@ approxOptimizer.Optimize(f, coordinates);
 #### See also:
 
  * [ActiveCMAES](#activecmaes)
- * [BIPOPCMAES](#bipopcmaes)
- * [IPOPCMAES](#ipopcmaes)
+ * [BIPOP_CMAES](#bipopcmaes)
+ * [IPOP_CMAES](#ipopcmaes)
  * [Completely Derandomized Self-Adaptation in Evolution Strategies](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf)
  * [CMA-ES in Wikipedia](https://en.wikipedia.org/wiki/CMA-ES)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
@@ -1552,7 +1555,7 @@ optimizer.Optimize(f, coordinates);
  * [HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic Gradient Descent](https://arxiv.org/abs/1106.5730)
  * [Sparse differentiable separable functions](#sparse-differentiable-separable-functions)
 
-## IPOPCMAES
+## IPOP_CMAES
 
 *An optimizer for [separable functions](#separable-functions).*
 
@@ -1564,32 +1567,33 @@ characterized by numerous local optima. The restart mechanism is designed to
 improve the adaptability of CMA-ES by improving the likelihood of escaping
 local optima, thus increasing the chances of discovering the global optimum.
 
-#### Constructors
+### Constructors
 
- * `IPOPCMAES<`_`CMAESType`_`>()`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`CMAES`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`CMAES, populationFactor`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`CMAES, populationFactor, maxRestarts`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, populationFactor`_`)`
- * `IPOPCMAES<`_`CMAESType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, populationFactor, maxRestarts`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor, maxFunctionEvaluations`_`)`
 
-The _`CMAESType`_ template parameter is the CMA-ES type used for the optimization. 
-Currently, either CMAES or ActiveCMAES can be used.
-
-#### Attributes
+### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `CMAESType` | **`cmaes`** | The CMAES object used for optimization. | `CMAESType()` |
-| `double` | **`populationFactor`** | The factor by which population increases after each restart. | `2` |
+| `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
+| `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate the algorithm. | `1e-5` |
+| `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `double` | **`stepSize`** | Initial step size. | `0` |
 | `size_t` | **`maxRestarts`** | Maximum number of restarts. | `9` |
+| `double` | **`populationFactor`** | The factor by which the population increases after each restart. | `2.0` |
+| `size_t` | **`maxFunctionEvaluations`** | Maximum number of function evaluations. | `1e9` |
 
-Attributes of the optimizer may also be changed via the member methods
-`CMAES()`, `MaxRestarts()`, `PopulationFactor()`.
+The _`SelectionPolicyType`_ and _`TransformationPolicyType`_ template parameters are used to control how the selection of points and the transformation of the decision variables are handled during the optimization process. For more information, check the [CMAES](#cmaes) class. The `lambda`, `transformationPolicy`, `batchSize`, `maxIterations`, `tolerance`, `selectionPolicy`, and `stepSize` are all parameters that affect the underlying CMAES process.
 
 #### Examples:
 
@@ -1603,8 +1607,7 @@ arma::mat coordinates = f.GetInitialPoint();
 
 // IPOP Active CMA-ES
 BoundaryBoxConstraint<> b(-1, 1);
-CMAES cmaes(0, b, 32, 200, 1e-4);
-IPOPCMAES optimizer(cmaes, 2, 5);
+IPOP_CMAES optimizer(0, b, 32, 200, 1e-4, 5, 2, 9, 1e4);
 Optimizer.Optimize(f, coordinates);
 ```
 
@@ -1614,7 +1617,7 @@ Optimizer.Optimize(f, coordinates);
 
  * [CMAES](#cmaes)
  * [ActiveCMAES](#activecmaes)
- * [BIPOPCMAES](#bipopcmaes)
+ * [BIPOP_CMAES](#bipopcmaes)
  * [A Restart CMA Evolution Strategy With Increasing Population Size](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cec2005ipopcmaes.pdf)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 

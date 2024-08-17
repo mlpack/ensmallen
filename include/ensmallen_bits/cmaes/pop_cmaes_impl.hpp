@@ -23,8 +23,10 @@
 
 namespace ens {
 
-template<typename SelectionPolicyType, typename TransformationPolicyType>
-POPCMAES<SelectionPolicyType, TransformationPolicyType>::POPCMAES(
+template<typename SelectionPolicyType, typename TransformationPolicyType, bool UseBIPOPFlag>
+POP_CMAES<SelectionPolicyType,
+          TransformationPolicyType,
+          UseBIPOPFlag>::POP_CMAES(
     const size_t lambda,
     const TransformationPolicyType& transformationPolicy,
     const size_t batchSize,
@@ -34,20 +36,21 @@ POPCMAES<SelectionPolicyType, TransformationPolicyType>::POPCMAES(
     double stepSize,
     const double populationFactor,
     const size_t maxRestarts,
-    const size_t maxFunctionEvaluations,
-    const bool useBIPOP) :
+    const size_t maxFunctionEvaluations) :
     CMAES<SelectionPolicyType, TransformationPolicyType>(
         lambda, transformationPolicy, batchSize, maxIterations,
         tolerance, selectionPolicy, stepSize),
     populationFactor(populationFactor),
     maxRestarts(maxRestarts),
-    maxFunctionEvaluations(maxFunctionEvaluations),
-    useBIPOP(useBIPOP)
+    maxFunctionEvaluations(maxFunctionEvaluations)
 { /* Nothing to do. */ }
 
-template<typename SelectionPolicyType, typename TransformationPolicyType>
+template<typename SelectionPolicyType,
+         typename TransformationPolicyType,
+         bool UseBIPOPFlag>
 template<typename SeparableFunctionType, typename MatType, typename... CallbackTypes>
-typename MatType::elem_type POPCMAES<SelectionPolicyType, TransformationPolicyType>::Optimize(
+typename MatType::elem_type POP_CMAES<SelectionPolicyType, 
+    TransformationPolicyType, UseBIPOPFlag>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
@@ -85,8 +88,8 @@ typename MatType::elem_type POPCMAES<SelectionPolicyType, TransformationPolicyTy
 
   while (restart < maxRestarts)
   {
-    if (!useBIPOP || largePopulationBudget <= smallPopulationBudget || restart == 0 || 
-        restart == maxRestarts - 1)
+    if (!UseBIPOPFlag || largePopulationBudget <= smallPopulationBudget || 
+        restart == 0 || restart == maxRestarts - 1)
     {
       // Large population regime (IPOP or BIPOP)
       currentLargeLambda *= populationFactor;
@@ -106,7 +109,7 @@ typename MatType::elem_type POPCMAES<SelectionPolicyType, TransformationPolicyTy
       evaluations = this->FunctionEvaluations();
       largePopulationBudget += evaluations;
     }
-    else if (useBIPOP)
+    else if (UseBIPOPFlag)
     {
       // Small population regime (BIPOP only)
       double u = dis(gen);
@@ -135,7 +138,8 @@ typename MatType::elem_type POPCMAES<SelectionPolicyType, TransformationPolicyTy
     {
       overallObjective = objective;
       overallSBC = sbc;
-      Info << "POP-CMA-ES: New best objective: " << overallObjective << std::endl;
+      Info << "POP-CMA-ES: New best objective: " << overallObjective << 
+          std::endl;
     }
 
     totalFunctionEvaluations += evaluations;
