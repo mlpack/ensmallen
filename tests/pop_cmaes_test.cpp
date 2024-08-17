@@ -1,169 +1,133 @@
+#include <ensmallen.hpp>
+#include "catch.hpp"
+#include "test_function_tools.hpp"
+#include <ensmallen_bits/cmaes/pop_cmaes.hpp>
+
+using namespace ens;
+using namespace ens::test;
+
 /**
- * @file ipop_cmaes_impl.hpp
- * @author Marcus Edel
- * @author Benjami Parellada
- *
- * Implementation of the IPOP Covariance Matrix Adaptation Evolution Strategy
- * as proposed by A. Auger and N. Hansen in "A Restart CMA Evolution
- * Strategy With Increasing Population Size" and BIPOP Covariance Matrix
- * Adaptation Evolution Strategy as proposed by N. Hansen in "Benchmarking 
- * a BI-population CMA-ES on the BBOB-2009 function testbed".
- *
- * ensmallen is free software; you may redistribute it and/or modify it under
- * the terms of the 3-clause BSD license.  You should have received a copy of
- * the 3-clause BSD license along with ensmallen.  If not, see
- * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ * Run IPOP-CMA-ES on the Rastrigin function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
  */
-#ifndef ENSMALLEN_CMAES_POP_CMAES_IMPL_HPP
-#define ENSMALLEN_CMAES_POP_CMAES_IMPL_HPP
-
-#include "pop_cmaes.hpp"
-#include <ensmallen_bits/function.hpp>
-#include <random>
-
-namespace ens {
-
-template<typename SelectionPolicyType, typename TransformationPolicyType, bool UseBIPOPFlag>
-POP_CMAES<SelectionPolicyType,
-          TransformationPolicyType,
-          UseBIPOPFlag>::POP_CMAES(
-    const size_t lambda,
-    const TransformationPolicyType& transformationPolicy,
-    const size_t batchSize,
-    const size_t maxIterations,
-    const double tolerance,
-    const SelectionPolicyType& selectionPolicy,
-    double stepSize,
-    const double populationFactor,
-    const size_t maxRestarts,
-    const size_t maxFunctionEvaluations) :
-    CMAES<SelectionPolicyType, TransformationPolicyType>(
-        lambda, transformationPolicy, batchSize, maxIterations,
-        tolerance, selectionPolicy, stepSize),
-    populationFactor(populationFactor),
-    maxRestarts(maxRestarts),
-    maxFunctionEvaluations(maxFunctionEvaluations)
-{ /* Nothing to do. */ }
-
-template<typename SelectionPolicyType,
-         typename TransformationPolicyType,
-         bool UseBIPOPFlag>
-template<typename SeparableFunctionType, typename MatType, typename... CallbackTypes>
-typename MatType::elem_type POP_CMAES<SelectionPolicyType, 
-    TransformationPolicyType, UseBIPOPFlag>::Optimize(
-    SeparableFunctionType& function,
-    MatType& iterateIn,
-    CallbackTypes&&... callbacks)
+TEST_CASE("IPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
 {
-  // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
+  RastriginFunction f(2);
+  BoundaryBoxConstraint<> b(-10, 10);
 
-  StoreBestCoordinates<MatType> sbc;
-  StoreBestCoordinates<MatType> overallSBC;
-  size_t totalFunctionEvaluations = 0;
-  size_t largePopulationBudget = 0;
-  size_t smallPopulationBudget = 0;
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
+    15, // lambda
+    b, // transformationPolicy
+    32, // batchSize
+    1000, // maxIterations
+    1e-8, // tolerance
+    FullSelection(), // selectionPolicy
+    3.72, // stepSize
+    2.0, // populationFactor
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
+  );
 
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<> dis(0.0, 1.0);
+  arma::mat initialPoint = f.GetInitialPoint();
+  arma::mat expectedResult = f.GetFinalPoint();
 
-  // First single run with default population size
-  MatType iterate = iterateIn;
-  ElemType overallObjective = CMAES<SelectionPolicyType, 
-      TransformationPolicyType>::Optimize(function, iterate, sbc, 
-                                          callbacks...);
-
-  overallSBC = sbc;
-  ElemType objective;
-  size_t evaluations;
-
-  size_t defaultLambda = this->PopulationSize();
-  size_t currentLargeLambda = defaultLambda;
-
-  double stepSizeDefault = this->StepSize();
-
-  Info << "POP-CMA-ES: default population size (lambda): " << defaultLambda 
-    << ", default step size (sigma): " << stepSizeDefault << std::endl;
-
-  size_t restart = 0;
-
-  while (restart < maxRestarts)
-  {
-    if (!UseBIPOPFlag || largePopulationBudget <= smallPopulationBudget || 
-        restart == 0 || restart == maxRestarts - 1)
-    {
-      // Large population regime (IPOP or BIPOP)
-      currentLargeLambda *= populationFactor;
-      this->PopulationSize() = currentLargeLambda;
-      this->StepSize() = stepSizeDefault;
-
-      Info << "POP-CMA-ES: restart " << restart << ", large population size" <<
-          " (lambda): " << this->PopulationSize() << std::endl;
-      
-      iterate = iterateIn;
-
-      // Optimize using the CMAES object.
-      objective = CMAES<SelectionPolicyType, 
-          TransformationPolicyType>::Optimize(function, iterate, sbc, 
-          callbacks...);
-
-      evaluations = this->FunctionEvaluations();
-      largePopulationBudget += evaluations;
-    }
-    else if (UseBIPOPFlag)
-    {
-      // Small population regime (BIPOP only)
-      double u = dis(gen);
-      size_t smallLambda = static_cast<size_t>(defaultLambda * std::pow(0.5 * 
-          currentLargeLambda / defaultLambda, u * u));
-      double stepSizeSmall = 2 * std::pow(10, -2*dis(gen));
-      
-      this->PopulationSize() = smallLambda;
-      this->StepSize() = stepSizeSmall;
-
-      Info << "POP-CMA-ES: restart " << restart << ", small population size"
-        << " (lambda): " << this->PopulationSize() << ", small step size"
-        << " (sigma): " << this->StepSize() << std::endl;
-
-      iterate = iterateIn;
-      
-      // Optimize using the CMAES object.
-      objective = CMAES<SelectionPolicyType, 
-          TransformationPolicyType>::Optimize(function, iterate, sbc, 
-                                              callbacks...);
-
-      evaluations = this->FunctionEvaluations();
-      smallPopulationBudget += evaluations;
-    }
-
-    if (objective < overallObjective)
-    {
-      overallObjective = objective;
-      overallSBC = sbc;
-      Info << "POP-CMA-ES: New best objective: " << overallObjective << 
-          std::endl;
-    }
-
-    totalFunctionEvaluations += evaluations;
-    // Check if the total number of evaluations has exceeded the limit
-    if (totalFunctionEvaluations >= maxFunctionEvaluations) {
-      Warn << "POP-CMA-ES: Maximum function overall evaluations reached. "
-           << "terminating optimization." << std::endl;
-
-      Callback::EndOptimization(*this, function, iterate, callbacks...);
-      iterateIn = overallSBC.BestCoordinates();
-      return overallSBC.BestObjective();
-    }
-
-    ++restart;
-  }
-
-  Callback::EndOptimization(*this, function, iterate, callbacks...);
-  iterateIn = overallSBC.BestCoordinates();
-  return overallSBC.BestObjective();
+  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
 }
 
-} // namespace ens
+/**
+ * Run BIPOP-CMA-ES on the Rastrigin function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
+ */
+TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
+{
+  RastriginFunction f(2);
+  BoundaryBoxConstraint<> b(-10, 10);
 
-#endif
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
+    15, // lambda
+    b, // transformationPolicy
+    32, // batchSize
+    1000, // maxIterations
+    1e-8, // tolerance
+    FullSelection(), // selectionPolicy
+    3.72, // stepSize
+    2.0, // populationFactor
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
+  );
+
+  arma::mat initialPoint = f.GetInitialPoint();
+  arma::mat expectedResult = f.GetFinalPoint();
+
+  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
+}
+
+/**
+ * Run IPOP-CMA-ES on the Rosenbrock function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
+ */
+TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[POPCMAESTest]")
+{
+  BoundaryBoxConstraint<> b(0, 2);
+
+  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> bipopcmaes(
+    15, // lambda
+    b, // transformationPolicy
+    32, // batchSize
+    1000, // maxIterations
+    1e-8, // tolerance
+    FullSelection(), // selectionPolicy
+    0.25, // stepSize
+    1.5, // populationFactor
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
+  );
+
+  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
+}
+
+/**
+ * Run BIPOP-CMA-ES on the Rosenbrock function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
+ */
+TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[POPCMAESTest]")
+{
+  BoundaryBoxConstraint<> b(0, 2);
+
+  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> bipopcmaes(
+    15, // lambda
+    b, // transformationPolicy
+    32, // batchSize
+    1000, // maxIterations
+    1e-8, // tolerance
+    FullSelection(), // selectionPolicy
+    0.25, // stepSize
+    1.5, // populationFactor
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
+  );
+
+  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
+}
+
+/**
+ * Run IPOP-CMA-ES with the full selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
+TEST_CASE("IPOPCMAESLogisticRegressionTest", "[POPCMAESTest]")
+{
+  BoundaryBoxConstraint<> b(-10, 10);
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3, FullSelection(), 0.6, 2.0, 5, 1e7);
+  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+}
+
+/**
+ * Run BIPOP-CMA-ES with the random selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
+TEST_CASE("BIPOPCMAESLogisticRegressionTest", "[POPCMAESTest]")
+{
+  BoundaryBoxConstraint<> b(-10, 10);
+  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3, FullSelection(), 0.6, 2.0, 5, 1e7);
+  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+}
