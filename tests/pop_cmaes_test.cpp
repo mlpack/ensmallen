@@ -6,32 +6,11 @@
 using namespace ens;
 using namespace ens::test;
 
-TEST_CASE("IPOPCMAESRastriginFunctionTest", "[IPOPCMAESTest]")
-{
-  RastriginFunction f(2);
-  BoundaryBoxConstraint<> b(-10, 10);
-
-  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
-    15, // lambda
-    b, // transformationPolicy
-    32, // batchSize
-    1000, // maxIterations
-    1e-8, // tolerance
-    FullSelection(), // selectionPolicy
-    3.72, // stepSize
-    2.0, // populationFactor
-    5, // maxRestarts
-    1e4 // maxFunctionEvaluations
-  );
-
-
-  arma::mat initialPoint = f.GetInitialPoint();
-  arma::mat expectedResult = f.GetFinalPoint();
-
-  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
-}
-
-TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[BIPOPCMAESTest]")
+/**
+ * Run IPOP-CMA-ES on the Rastrigin function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
+ */
+TEST_CASE("IPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
 {
   RastriginFunction f(2);
   BoundaryBoxConstraint<> b(-10, 10);
@@ -55,8 +34,39 @@ TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[BIPOPCMAESTest]")
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
 }
 
+/**
+ * Run BIPOP-CMA-ES on the Rastrigin function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
+ */
+TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
+{
+  RastriginFunction f(2);
+  BoundaryBoxConstraint<> b(-10, 10);
 
-TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> ipopcmaes(
+    15, // lambda
+    b, // transformationPolicy
+    32, // batchSize
+    1000, // maxIterations
+    1e-8, // tolerance
+    FullSelection(), // selectionPolicy
+    3.72, // stepSize
+    2.0, // populationFactor
+    5, // maxRestarts
+    1e4 // maxFunctionEvaluations
+  );
+
+  arma::mat initialPoint = f.GetInitialPoint();
+  arma::mat expectedResult = f.GetFinalPoint();
+
+  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
+}
+
+/**
+ * Run IPOP-CMA-ES on the Rosenbrock function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
+ */
+TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[POPCMAESTest]")
 {
   BoundaryBoxConstraint<> b(0, 2);
 
@@ -76,7 +86,11 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
   FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
 }
 
-TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
+/**
+ * Run BIPOP-CMA-ES on the Rosenbrock function and check whether the optimizer
+ * converges to the expected solution within tolerance limits.
+ */
+TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[POPCMAESTest]")
 {
   BoundaryBoxConstraint<> b(0, 2);
 
@@ -94,4 +108,26 @@ TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[IPOPCMAESTest]")
   );
 
   FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
+}
+
+/**
+ * Run IPOP-CMA-ES with the full selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
+TEST_CASE("IPOPCMAESLogisticRegressionTest", "[POPCMAESTest]")
+{
+  BoundaryBoxConstraint<> b(-10, 10);
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3, FullSelection(), 0.6, 2.0, 5, 1e7);
+  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+}
+
+/**
+ * Run BIPOP-CMA-ES with the random selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
+TEST_CASE("BIPOPCMAESLogisticRegressionTest", "[POPCMAESTest]")
+{
+  BoundaryBoxConstraint<> b(-10, 10);
+  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3, FullSelection(), 0.6, 2.0, 5, 1e7);
+  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
