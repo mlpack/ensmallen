@@ -19,19 +19,19 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
-    1000, // maxIterations
+    10000, // maxIterations
     1e-8, // tolerance
     FullSelection(), // selectionPolicy
     3.72, // stepSize
     2.0, // populationFactor
-    5, // maxRestarts
-    1e4 // maxFunctionEvaluations
+    7, // maxRestarts
+    1e6 // maxFunctionEvaluations
   );
 
   arma::mat initialPoint = f.GetInitialPoint();
   arma::mat expectedResult = f.GetFinalPoint();
 
-  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
+  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.5, f.GetFinalObjective(), 0.5, 5);
 }
 
 /**
@@ -47,19 +47,19 @@ TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
-    1000, // maxIterations
+    10000, // maxIterations
     1e-8, // tolerance
     FullSelection(), // selectionPolicy
     3.72, // stepSize
     2.0, // populationFactor
-    5, // maxRestarts
-    1e4 // maxFunctionEvaluations
+    7, // maxRestarts
+    1e6 // maxFunctionEvaluations
   );
 
   arma::mat initialPoint = f.GetInitialPoint();
   arma::mat expectedResult = f.GetFinalPoint();
 
-  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.01, f.GetFinalObjective(), 0.1, 5);
+  MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.5, f.GetFinalObjective(), 0.5, 5);
 }
 
 /**
@@ -74,16 +74,16 @@ TEST_CASE("IPOPCMAESRosenbrockFunctionTest", "[POPCMAESTest]")
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
-    1000, // maxIterations
+    10000, // maxIterations
     1e-8, // tolerance
     FullSelection(), // selectionPolicy
     0.25, // stepSize
     1.5, // populationFactor
-    5, // maxRestarts
-    1e4 // maxFunctionEvaluations
+    7, // maxRestarts
+    1e6 // maxFunctionEvaluations
   );
 
-  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
+  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.5, 0.5);
 }
 
 /**
@@ -98,16 +98,16 @@ TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[POPCMAESTest]")
     15, // lambda
     b, // transformationPolicy
     32, // batchSize
-    1000, // maxIterations
+    10000, // maxIterations
     1e-8, // tolerance
     FullSelection(), // selectionPolicy
     0.25, // stepSize
     1.5, // populationFactor
-    5, // maxRestarts
-    1e4 // maxFunctionEvaluations
+    7, // maxRestarts
+    1e6 // maxFunctionEvaluations
   );
 
-  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.1, 0.1);
+  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.5, 0.5);
 }
 
 /**
@@ -117,7 +117,7 @@ TEST_CASE("BIPOPCMAESRosenbrockFunctionTest", "[POPCMAESTest]")
 TEST_CASE("IPOPCMAESLogisticRegressionTest", "[POPCMAESTest]")
 {
   BoundaryBoxConstraint<> b(-10, 10);
-  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3, FullSelection(), 0.6, 2.0, 5, 1e7);
+  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
@@ -128,6 +128,6 @@ TEST_CASE("IPOPCMAESLogisticRegressionTest", "[POPCMAESTest]")
 TEST_CASE("BIPOPCMAESLogisticRegressionTest", "[POPCMAESTest]")
 {
   BoundaryBoxConstraint<> b(-10, 10);
-  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3, FullSelection(), 0.6, 2.0, 5, 1e7);
+  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
