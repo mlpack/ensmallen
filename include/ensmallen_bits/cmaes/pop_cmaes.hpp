@@ -107,16 +107,16 @@ class POP_CMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
    * @param maxFunctionEvaluations Maximum number of function evaluations.
    */
   POP_CMAES(const size_t lambda = 0,
-           const TransformationPolicyType& transformationPolicy = 
-              TransformationPolicyType(),
-           const size_t batchSize = 32,
-           const size_t maxIterations = 1000,
-           const double tolerance = 1e-5,
-           const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-           double stepSize = 0,
-           const double populationFactor = 2,
-           const size_t maxRestarts = 9,
-           const size_t maxFunctionEvaluations = 1e9);
+            const TransformationPolicyType& transformationPolicy = 
+                 TransformationPolicyType(),
+            const size_t batchSize = 32,
+            const size_t maxIterations = 1000,
+            const double tolerance = 1e-5,
+            const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
+            double stepSize = 0,
+            const double populationFactor = 2,
+            const size_t maxRestarts = 9,
+            const size_t maxFunctionEvaluations = 1e9);
 
   /**
    * Set POP-CMA-ES specific parameters.
