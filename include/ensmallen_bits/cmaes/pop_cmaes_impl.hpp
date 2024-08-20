@@ -73,6 +73,8 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
   ElemType overallObjective = CMAES<SelectionPolicyType, 
       TransformationPolicyType>::Optimize(function, iterate, sbc, 
                                           callbacks...);
+
+  overallSBC = sbc;
   ElemType objective;
   size_t evaluations;
 
