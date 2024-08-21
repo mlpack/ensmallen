@@ -201,36 +201,10 @@ typename MatType::elem_type NSGA3<ElementType>::Optimize(
       // Find the associated reference directions to the selected points.
       arma::urowvec refIndex(selectedPoints.size());
       arma::Row<ElementType> dists(selectedPoints.size());
-      /*std::cout << "[";
-      for (size_t i = 0; i < referencePoints.n_cols; i++)
-      {
-        std::cout << "[";
-        for (size_t j = 0; j < referencePoints.n_rows; j++)
-        {
-          std::cout << referencePoints(j, i) << ",";
-        }
-        std::cout << "],";
-      }
-      std::cout << "]" << std::endl;
-      std::cout << "[";
-      for (size_t i = 0; i < selectedPoints.size(); i++)
-      {
-        std::cout << "[";
-        for (size_t j = 0; j < 3; j++)
-        {
-          std::cout << calculatedObjectives[selectedPoints[i]][j] << ",";
-        }
-        std::cout << "],";
-      }*/
-      //std::cout << "]" << std::endl;
+
       Associate<arma::Col<ElementType>>(refIndex, dists, calculatedObjectives,
           selectedPoints);
 
-      /*std::cout << "[";
-      for (size_t i = 0; i < refIndex.n_elem; i++)
-      { 
-          std::cout << refIndex[i] << ",";
-      }*/
       // Calculate the niche count of S_t and performing the niching operation.
       arma::Row<size_t> count(referencePoints.n_cols, arma::fill::zeros);
 
