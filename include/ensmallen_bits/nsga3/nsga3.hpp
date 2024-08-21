@@ -56,7 +56,7 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-template <typename MatType>
+template <typename ElementType>
 class NSGA3
 {
  public:
@@ -74,17 +74,14 @@ class NSGA3
    * @param crossoverProb The probability that a crossover will occur.
    * @param mutationProb The probability that a mutation will occur.
    * @param mutationStrength The strength of the mutation.
-   * @param epsilon The minimum difference required to distinguish between
-   *     candidate solutions.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA3(const arma::Cube<typename MatType::elem_type>& referencePoints,
+  NSGA3(const arma::Mat<ElementType>& referencePoints,
         const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
         const double distributionIndex = 20,
-        const double epsilon = 1e-6,
         const double eta = 20,
         const arma::vec& lowerBound = arma::zeros(1, 1),
         const arma::vec& upperBound = arma::ones(1, 1));
@@ -104,17 +101,14 @@ class NSGA3
    * @param crossoverProb The probability that a crossover will occur.
    * @param mutationProb The probability that a mutation will occur.
    * @param mutationStrength The strength of the mutation.
-   * @param epsilon The minimum difference required to distinguish between
-   *     candidate solutions.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA3(const arma::Cube<typename MatType::elem_type>& referencePoints,
+  NSGA3(const arma::Mat<ElementType>& referencePoints,
         const size_t populationSize = 100,
         const size_t maxGenerations = 2000,
         const double crossoverProb = 0.6,
         const double distributionIndex = 20,
-        const double epsilon = 1e-6,
         const double eta = 20,
         const double lowerBound = 0,
         const double upperBound = 1);
@@ -124,6 +118,7 @@ class NSGA3
    * starting point. The output is the best generated front.
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
+   * @tparam MatType Type of matrix to optimize.
    * @tparam CallbackTypes Types of callback functions.
    * @param objectives Vector of objective functions to optimize for.
    * @param iterate Starting point.
@@ -131,12 +126,13 @@ class NSGA3
    * @return MatType::elem_type The minimum of the accumulated sum over the
    *     objective values in the best front.
    */
-  template<typename... ArbitraryFunctionType,
+  template<typename MatType,
+           typename... ArbitraryFunctionType,
            typename... CallbackTypes>
- typename MatType::elem_type Optimize(
-     std::tuple<ArbitraryFunctionType...>& objectives,
-     MatType& iterate,
-     CallbackTypes&&... callbacks);
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CallbackTypes&&... callbacks);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -163,11 +159,6 @@ class NSGA3
   //! Modify the value of eta.
   double& Eta() { return eta; }
 
-  //! Get the tolerance.
-  double Epsilon() const { return epsilon; }
-  //! Modify the tolerance.
-  double& Epsilon() { return epsilon; }
-
   //! Retrieve value of lowerBound.
   const arma::vec& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
@@ -187,9 +178,9 @@ class NSGA3
   const arma::cube& ParetoFront() const { return paretoFront; }
 
   //! Get the reference points.
-  const arma::Cube<MatType>& ReferencePoints() const { return referencePoints; }
+  const arma::Mat<ElementType>& ReferencePoints() const { return referencePoints; }
   //! Modify the reference points.
-  arma::Cube<MatType>& ReferencePoints() { return referencePoints; }
+  arma::Mat<ElementType>& ReferencePoints() { return referencePoints; }
 
   /**
    * Retrieve the best front (the Pareto frontier).  This returns an empty
@@ -211,7 +202,6 @@ class NSGA3
     return rcFront;
   }
 
- private:
   /**
    * Evaluate objectives for the elite population.
    *
@@ -222,31 +212,32 @@ class NSGA3
    * @param calculatedObjectives Vector to store calculated objectives.
    */
   template<std::size_t I = 0,
-           typename ColType = arma::Col<typename MatType::elem_type>,
+           typename MatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<ColType>&);
+                     std::vector<arma::Col<ElementType> >&);
 
   template<std::size_t I = 0,
-           typename ColType = arma::Col<typename MatType::elem_type>,
+           typename MatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<ColType>& calculatedObjectives);
+                     std::vector<arma::Col<ElementType> >&
+                     calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
    * population.
    *
-   * @tparam MatType Type of matrix to optimize.
+   * @tparam BaseMatType Type of matrix to optimize.
    * @param population The elite population.
-   * @param objectives The set of objectives.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
+  template <typename MatType>
   void BinaryTournamentSelection(std::vector<MatType>& population,
                                  const MatType& lowerBound,
                                  const MatType& upperBound);
@@ -259,7 +250,10 @@ class NSGA3
    * @param childB Another newly generated candidate.
    * @param parentA First parent from elite population.
    * @param parentB Second parent from elite population.
+   * @param lowerBound Lower Bound of the offspring.
+   * @param upperBound Upper Boundn of the offspring.
    */
+  template <typename MatType>
   void Crossover(MatType& childA,
                  MatType& childB,
                  const MatType& parentA,
@@ -271,11 +265,12 @@ class NSGA3
    * Mutate the coordinates for a candidate.
    *
    * @tparam MatType Type of matrix to optimize.
-   * @param child The candidate whose coordinates are being modified.
-   * @param objectives The set of objectives.
+   * @param candidate The candidate whose coordinates are being modified.
+   * @param mutationRate The probability of mutation.
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
+  template <typename MatType>
   void Mutate(MatType& candidate,
               double mutationRate,
               const MatType& lowerBound,
@@ -296,33 +291,6 @@ class NSGA3
       std::vector<std::vector<size_t> >& fronts,
       std::vector<size_t>& ranks,
       std::vector<ColType>& calculatedObjectives);
-
-  /**
-   * Normalizes the front given the extreme points in the current front.
-   *
-   * @tparam The type of population datapoints.
-   * @param calculatedObjectives The current population evaluated objectives.
-   * @param normalization The normalizing vector.
-   * @param front The previously generated Pareto front.
-   * @param extreme The indexes of the extreme points in the front.
-   */
-  template<typename ColType>
-  void NormalizeFront(std::vector<ColType>& calculatedObjectives,
-                      ColType& normalization,
-                      const std::vector<size_t>& front,
-                      const arma::Row<size_t>& extreme);
-
-  /**
-   * Finding the indexes of the extreme points in the front.
-   *  
-   * @param indexes vector containing the slected indexes.
-   * @param calculatedObjectives The current population objectives.
-   * @param front The front of the current generation.
-   */
-  template<typename ColType>
-  void FindExtremePoints(arma::Row<size_t>& indexes,
-                         std::vector<ColType>& calculatedObjectives,
-                         const std::vector<size_t>& front);
                         
   /**
    * Finding the distance of each point in the front from the line formed
@@ -335,8 +303,8 @@ class NSGA3
    * @param pointB The second point on the line.
    */
   template<typename ColType>
-  void PointToLineDistance(arma::Row<typename MatType::elem_type>& distances,
-                           std::vector<ColType>& calculatedObjectives,
+  void PointToLineDistance(arma::Row<ElementType>& distances,
+                           const std::vector<ColType>& calculatedObjectives,
                            const std::vector<size_t>& front,
                            const ColType& pointA,
                            const ColType& pointB);
@@ -352,7 +320,7 @@ class NSGA3
    */
   template <typename ColType>
   void Associate(arma::urowvec& refIndex,
-                 arma::Row<typename MatType::elem_type>& dists,
+                 arma::Row<ElementType>& dists,
                  const std::vector<ColType>& calculatedObjectives,
                  const std::vector<size_t>& St);
 
@@ -364,7 +332,8 @@ class NSGA3
    * directons associated.
    */
   void NicheCount(arma::Row<size_t>& count,
-                  const arma::urowvec& refIndex);
+                  const arma::urowvec& refIndex,
+                  const std::vector<size_t>& nextPopulation);
 
   /**
    * The niche preserving operation to select the final points form the given front
@@ -380,7 +349,7 @@ class NSGA3
   void Niching(size_t K,
                arma::Row<size_t>& nicheCount,
                const arma::urowvec& refIndex,
-               const arma::Row<typename MatType::elem_type>& dists,
+               const arma::Row<ElementType>& dists,
                const std::vector<size_t>& front,
                std::vector<size_t>& population);
   
@@ -428,9 +397,6 @@ class NSGA3
   //! resembling its parent.
   double distributionIndex;
 
-  //! The tolerance for termination.
-  double epsilon;
-
   //! The distance parameters of the crossover distribution.
   double eta;
 
@@ -449,7 +415,7 @@ class NSGA3
   arma::cube paretoFront;
 
   //! The reference points.
-  arma::Cube<MatType> referencePoints;
+  arma::Mat<ElementType> referencePoints;
 
   //! A different representation of the Pareto front, for reverse compatibility
   //! purposes.  This can be removed when ensmallen 3.x is released!  (Along

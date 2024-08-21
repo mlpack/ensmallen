@@ -16,17 +16,17 @@
 
 #include "nsga3.hpp"
 #include <assert.h>
+#include "normalization.hpp"
 
 namespace ens {
 
-template <typename MatType>
-inline NSGA3<MatType>::NSGA3(
-    const arma::Cube<typename MatType::elem_type>& referencePoints,
+template <typename ElementType>
+inline NSGA3<ElementType>::NSGA3(
+    const arma::Mat<ElementType>& referencePoints,
     const size_t populationSize,
     const size_t maxGenerations,
     const double crossoverProb,
     const double distributionIndex,
-    const double epsilon,
     const double eta,
     const arma::vec& lowerBound,
     const arma::vec& upperBound):
@@ -37,20 +37,18 @@ inline NSGA3<MatType>::NSGA3(
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
     distributionIndex(distributionIndex),
-    epsilon(epsilon),
     eta(eta),
     lowerBound(lowerBound),
     upperBound(upperBound)
 { /* Nothing to do here. */ }
 
-template <typename MatType>
-inline NSGA3<MatType>::NSGA3(
-    const arma::Cube<typename MatType::elem_type>& referencePoints,
+template <typename ElementType>
+inline NSGA3<ElementType>::NSGA3(
+    const arma::Mat<ElementType>& referencePoints,
     const size_t populationSize,
     const size_t maxGenerations,
     const double crossoverProb,
     const double distributionIndex,
-    const double epsilon,
     const double eta,
     const double lowerBound,
     const double upperBound):
@@ -61,17 +59,17 @@ inline NSGA3<MatType>::NSGA3(
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
     distributionIndex(distributionIndex),
-    epsilon(epsilon),
     eta(eta),
     lowerBound(lowerBound * arma::ones(1, 1)),
     upperBound(upperBound * arma::ones(1, 1))
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template <typename MatType>
-template<typename... ArbitraryFunctionType,
+template<typename ElementType>
+template<typename MatType,
+         typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-typename MatType::elem_type NSGA3<MatType>::Optimize(
+typename MatType::elem_type NSGA3<ElementType>::Optimize(
     std::tuple<ArbitraryFunctionType...>& objectives,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
@@ -111,8 +109,11 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
   numObjectives = sizeof...(ArbitraryFunctionType);
   numVariables = iterate.n_rows;
 
+  assert(numObjectives == referencePoints.n_rows && "The dimensions of "
+      "reference points do not match the number of functions.");
+
   // Cache calculated objectives.
-  std::vector<arma::Col<ElemType> > calculatedObjectives(populationSize);
+  std::vector<arma::Col<ElementType> > calculatedObjectives(populationSize);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
@@ -144,6 +145,7 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
     // Constrain all genes to be within bounds.
     population[i] = arma::min(arma::max(population[i], castedLowerBound), castedUpperBound);
   }
+  Normalization<BaseMatType> hpn(numObjectives);
 
   Info << "NSGA3 initialized successfully. Optimization started." << std::endl;
 
@@ -152,6 +154,7 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
 
   for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
   {
+    std::cout << generation << std::endl;
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
     BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
@@ -159,65 +162,89 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
     std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
-        arma::Col<ElemType>(numObjectives, arma::fill::zeros));
+        arma::Col<ElementType>(numObjectives, arma::fill::zeros));
+
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
     ranks.resize(population.size());
-    FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
+    FastNonDominatedSort<arma::Col<ElementType>>(fronts, ranks, calculatedObjectives);
+
+    hpn.update(calculatedObjectives, fronts[0]);
+    arma::Col<ElementType> denom = hpn.NadirPoint() - hpn.IdealPoint();
     
     // S_t and P_t+1 declared. 
-    std::vector<size_t> selectedPoints(fronts[0].begin(), fronts[0].end());
-    std::vector<size_t> nextPopulation(fronts[0].begin(), fronts[0].end());
+    std::vector<size_t> selectedPoints;
+    std::vector<size_t> nextPopulation;
 
     size_t index = 0;
-    while (nextPopulation.size() + fronts.size() < populationSize)
+    while (nextPopulation.size() + fronts[index].size() < populationSize)
     {
       selectedPoints.insert(selectedPoints.end(), fronts[index].begin(), fronts[index].end());
       nextPopulation.insert(nextPopulation.end(), fronts[index].begin(), fronts[index].end());   
       index++;
     }
-    selectedPoints.insert(selectedPoints.end(), fronts[++index].begin(), fronts[++index].end());
-    size_t lastFront = index;
 
-    arma::Col<ElemType> idealPoint(calculatedObjectives[selectedPoints[0]]);
-    for (index = 1; index < selectedPoints.size(); index++)
+    if(nextPopulation.size() != populationSize)
     {
-      idealPoint = arma::min(idealPoint, calculatedObjectives[selectedPoints[index]]);
+      selectedPoints.insert(selectedPoints.end(), fronts[index].begin(), fronts[index].end());
+
+      size_t lastFront = index;
+
+      for (index = 0; index < selectedPoints.size(); index++)
+      {
+        calculatedObjectives[selectedPoints[index]] = 
+            calculatedObjectives[selectedPoints[index]] - hpn.IdealPoint();
+        calculatedObjectives[selectedPoints[index]] = 
+            calculatedObjectives[selectedPoints[index]] / denom;
+      }
+
+      // Find the associated reference directions to the selected points.
+      arma::urowvec refIndex(selectedPoints.size());
+      arma::Row<ElementType> dists(selectedPoints.size());
+      /*std::cout << "[";
+      for (size_t i = 0; i < referencePoints.n_cols; i++)
+      {
+        std::cout << "[";
+        for (size_t j = 0; j < referencePoints.n_rows; j++)
+        {
+          std::cout << referencePoints(j, i) << ",";
+        }
+        std::cout << "],";
+      }
+      std::cout << "]" << std::endl;
+      std::cout << "[";
+      for (size_t i = 0; i < selectedPoints.size(); i++)
+      {
+        std::cout << "[";
+        for (size_t j = 0; j < 3; j++)
+        {
+          std::cout << calculatedObjectives[selectedPoints[i]][j] << ",";
+        }
+        std::cout << "],";
+      }*/
+      //std::cout << "]" << std::endl;
+      Associate<arma::Col<ElementType>>(refIndex, dists, calculatedObjectives,
+          selectedPoints);
+
+      /*std::cout << "[";
+      for (size_t i = 0; i < refIndex.n_elem; i++)
+      { 
+          std::cout << refIndex[i] << ",";
+      }*/
+      // Calculate the niche count of S_t and performing the niching operation.
+      arma::Row<size_t> count(referencePoints.n_cols, arma::fill::zeros);
+
+      NicheCount(count, refIndex, nextPopulation);
+      Niching(populationSize - nextPopulation.size(), count, refIndex,
+          dists, fronts[lastFront], nextPopulation);
     }
-
-    for (index = 0; index < selectedPoints.size(); index++)
-    {
-      calculatedObjectives[selectedPoints[index]] = 
-          calculatedObjectives[selectedPoints[index]] - idealPoint;
-    }
-
-    arma::Col<ElemType> normalize(numObjectives, arma::fill::zeros);
-    arma::Row<size_t> extreme(numObjectives, arma::fill::zeros);
-
-    // Find the extreme points and normalize S_t
-    FindExtremePoints<arma::Col<ElemType>>(extreme, calculatedObjectives, 
-        selectedPoints);
-    NormalizeFront<arma::Col<ElemType>>(calculatedObjectives, normalize,
-        selectedPoints, extreme);
-
-    // Find the associated reference directions to the selected points.
-    arma::urowvec refIndex(selectedPoints.size());
-    arma::Row<ElemType> dists(selectedPoints.size());
-    Associate<arma::Col<ElemType>>(refIndex, dists, calculatedObjectives,
-        selectedPoints);
-
-    // Calculate the niche count of S_t and performing the niching operation.
-    arma::Row<size_t> count(referencePoints.n_slices);
-    NicheCount(count, refIndex);
-    Niching(selectedPoints.size() - nextPopulation.size(), count, refIndex,
-        dists, fronts[lastFront], nextPopulation);
-    
     for (size_t i : nextPopulation)
     {
       tempPopulation.push_back(population[i]);
     }
     population = tempPopulation;
+    tempPopulation.erase(tempPopulation.begin(), tempPopulation.end());
 
     terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
         calculatedObjectives, fronts, callbacks...);
@@ -253,7 +280,7 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
 
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for (const arma::Col<ElemType>& objective: calculatedObjectives)
+  for (const arma::Col<ElementType>& objective: calculatedObjectives)
     if (arma::accu(objective) < performance)
       performance = arma::accu(objective);
 
@@ -261,31 +288,31 @@ typename MatType::elem_type NSGA3<MatType>::Optimize(
 }
 
 //! No objectives to evaluate.
-template<typename MatType>
+template<typename ElementType>
 template<std::size_t I,
-         typename ColType,
+         typename MatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-NSGA3<MatType>::EvaluateObjectives(
+NSGA3<ElementType>::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    std::vector<ColType>&)
+    std::vector<arma::Col<ElementType> >&)
 {
   // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
-template<typename MatType>
+template<typename ElementType>
 template<std::size_t I,
-         typename ColType,
+         typename MatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-NSGA3<MatType>::EvaluateObjectives(
+NSGA3<ElementType>::EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    std::vector<ColType>& calculatedObjectives)
+    std::vector<arma::Col<ElementType> >& calculatedObjectives)
 {
-  for (size_t i = 0; i < populationSize; i++)
+  for (size_t i = 0; i < population.size(); i++)
   {
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
     EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
@@ -294,15 +321,16 @@ NSGA3<MatType>::EvaluateObjectives(
 }
 
 //! Reproduce and generate new candidates.
+template<typename ElementType>
 template<typename MatType>
-inline void NSGA3<MatType>::BinaryTournamentSelection(
+inline void NSGA3<ElementType>::BinaryTournamentSelection(
     std::vector<MatType>& population,
     const MatType& lowerBound,
     const MatType& upperBound)
 {
   std::vector<MatType> children;
 
-  while (children.size() < population.size())
+  while (children.size() < populationSize)
   {
     // Choose two random parents for reproduction from the elite population.
     size_t indexA = arma::randi<size_t>(arma::distr_param(0, populationSize - 1));
@@ -339,13 +367,14 @@ inline void NSGA3<MatType>::BinaryTournamentSelection(
 }
 
 //! Perform simulated binary crossover (SBX) of genes for the children.
+template<typename ElementType>
 template<typename MatType> 
-inline void NSGA3<MatType>::Crossover(MatType& childA,
-                                      MatType& childB,
-                                      const MatType& parentA,
-                                      const MatType& parentB,
-                                      const MatType& lowerBound,
-                                      const MatType& upperBound)
+inline void NSGA3<ElementType>::Crossover(MatType& childA,
+                                          MatType& childB,
+                                          const MatType& parentA,
+                                          const MatType& parentB,
+                                          const MatType& lowerBound,
+                                          const MatType& upperBound)
 {
     //! Generates a child from two parent individuals
     // according to the polynomial probability distribution.
@@ -397,11 +426,12 @@ inline void NSGA3<MatType>::Crossover(MatType& childA,
 }
 
 //! Perform Polynomial mutation of the candidate.
+template<typename ElementType>
 template<typename MatType>
-inline void NSGA3<MatType>::Mutate(MatType& candidate,
-                                   double mutationRate,
-                                   const MatType& lowerBound,
-                                   const MatType& upperBound)
+inline void NSGA3<ElementType>::Mutate(MatType& candidate,
+                                       double mutationRate,
+                                       const MatType& lowerBound,
+                                       const MatType& upperBound)
 {
     const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
@@ -436,110 +466,35 @@ inline void NSGA3<MatType>::Mutate(MatType& candidate,
     candidate = arma::min(arma::max(candidate, lowerBound), upperBound);
 }
 
-template <typename MatType>
-template <typename ColType>
-inline void NSGA3<MatType>::NormalizeFront(
-    std::vector<ColType>& calculatedObjectives,
-    ColType& normalization,
-    const std::vector<size_t>& front,
-    const arma::Row<size_t>& extreme)
-{
-  arma::Mat<typename MatType::elem_type> vectorizedObjectives(numObjectives, front.size());
-  for (size_t i = 0; i < front.size(); i++)
-  {
-    vectorizedObjectives.col(i) = calculatedObjectives[front[i]];
-  }
-
-  if(front.size() < numObjectives)
-  {
-    normalization = arma::max(vectorizedObjectives, 1);
-    return;
-  }
-  ColType temp;
-  arma::uvec unique = arma::find_unique(extreme);
-  if (extreme.n_elem != unique.n_elem)
-  {
-    normalization = arma::max(vectorizedObjectives, 1);
-    return;
-  }
-  ColType one(front.size(), arma::fill::ones);
-  ColType hyperplane = arma::solve(
-    vectorizedObjectives.t(), one);
-  if (hyperplane.has_inf() || hyperplane.has_nan() || (arma::accu(hyperplane < 0.0) > 0))
-  {
-    normalization = arma::max(vectorizedObjectives, 1);
-  }
-  else
-  {
-    normalization = 1. / hyperplane;   
-    if (hyperplane.has_inf() || hyperplane.has_nan())
-    {    
-      normalization = arma::max(vectorizedObjectives, 1);
-    }
-  }
-  normalization = normalization + (normalization == 0);
-}
-
-//! Find the index of the of the extreme points in the given front.
-template <typename MatType>
-template <typename ColType>
-void NSGA3<MatType>::FindExtremePoints(arma::Row<size_t>& indexes, 
-                                      std::vector<ColType>& calculatedObjectives,
-                                      const std::vector<size_t>& front)
-{
-  typedef typename MatType::elem_type ElemType;
-  
-  if(numObjectives >= front.size())
-  {
-    indexes = arma::linspace<arma::Row<size_t>>(0, front.size() - 1, front.size());
-    return;
-  }
-
-  arma::Mat<ElemType> W(numObjectives, numObjectives, arma::fill::eye);
-  W = W + 1e-6;
-  std::vector<bool> selected(front.size());
-  arma::Col<ElemType> z(numObjectives, arma::fill::zeros);
-  arma::Row<ElemType> dists;
-  for (size_t i = 0; i < numObjectives; i++)
-  {
-    PointToLineDistance<ColType>(dists, calculatedObjectives, front, z, W.col(i));
-    for (size_t j = 0; j < front.size(); j++)
-      if (selected[j]){dists[j] = arma::datum::inf;}
-    indexes[i] = dists.index_min();
-    selected[dists.index_min()] = true;
-  }
-}
-
 //! Find the distance of a front from a line formed by two points.
-template <typename MatType>
+template <typename ElementType>
 template <typename ColType>
-void NSGA3<MatType>::PointToLineDistance(
-    arma::Row<typename MatType::elem_type>& distances,
-    std::vector<ColType>& calculatedObjectives,
+inline void NSGA3<ElementType>::PointToLineDistance(
+    arma::Row<ElementType>& distances,
+    const std::vector<ColType>& calculatedObjectives,
     const std::vector<size_t>& front,
     const ColType& pointA,
     const ColType& pointB)
 {
-  typedef typename MatType::elem_type ElemType;
-  arma::Row<ElemType> distancesTemp(front.size());
+  arma::Row<ElementType> distancesTemp(front.size());
   ColType ba = pointB - pointA; 
   ColType pa;
 
   for (size_t i = 0; i < front.size(); i++)
   {
-        size_t ind = front[i];
+    size_t ind = front[i];
  
-        pa = (calculatedObjectives[ind] - pointA);
-        double t = arma::dot(pa, ba) / arma::dot(ba, ba);
-        distancesTemp[i] = arma::accu(arma::pow((pa - t * ba), 2));
+    pa = (calculatedObjectives[ind] - pointA);
+    double t = arma::dot(pa, ba) / arma::dot(ba, ba);
+    distancesTemp[i] = std::pow(arma::accu(arma::pow((pa - t * ba), 2)), 0.5);
   }
   distances = distancesTemp;
 }
 
 //! Sort population into Pareto fronts.
-template<typename MatType>
+template<typename ElementType>
 template<typename ColType>
-inline void NSGA3<MatType>::FastNonDominatedSort(
+inline void NSGA3<ElementType>::FastNonDominatedSort(
     std::vector<std::vector<size_t> >& fronts,
     std::vector<size_t>& ranks,
     std::vector<ColType>& calculatedObjectives)
@@ -551,16 +506,16 @@ inline void NSGA3<MatType>::FastNonDominatedSort(
   fronts.clear();
   fronts.push_back(std::vector<size_t>());
 
-  for (size_t p = 0; p < populationSize; p++)
+  for (size_t p = 0; p < calculatedObjectives.size(); p++)
   {
     dominated[p] = std::set<size_t>();
     dominationCount[p] = 0;
 
-    for (size_t q = 0; q < populationSize; q++)
+    for (size_t q = 0; q < calculatedObjectives.size(); q++)
     {
-      if (Dominates<MatType>(calculatedObjectives, p, q))
+      if (Dominates<arma::Col<ElementType>>(calculatedObjectives, p, q))
         dominated[p].insert(q);
-      else if (Dominates<MatType>(calculatedObjectives, q, p))
+      else if (Dominates<arma::Col<ElementType>>(calculatedObjectives, q, p))
         dominationCount[p] += 1;
     }
 
@@ -598,23 +553,24 @@ inline void NSGA3<MatType>::FastNonDominatedSort(
   fronts.pop_back();
 }
 
-template <typename MatType>
-void NSGA3<MatType>::Niching(size_t K,
-    arma::Row<size_t>& nicheCount,
-    const arma::urowvec& refIndex,
-    const arma::Row<typename MatType::elem_type>& dists,
-    const std::vector<size_t>& front,
-    std::vector<size_t>& population)
+template<typename ElementType>
+inline void NSGA3<ElementType>::Niching(size_t K,
+                                 arma::Row<size_t>& nicheCount,
+                                 const arma::urowvec& refIndex,
+                                 const arma::Row<ElementType>& dists,
+                                 const std::vector<size_t>& front,
+                                 std::vector<size_t>& population)
 {
-  arma::Row<bool> popMask(population.size());
+  arma::Row<double> popMask(front.size(), arma::fill::zeros);
+  int nextPopSize = population.size();
   size_t k = 0;
   while (k < K)
   {
    size_t jMin = arma::index_min(nicheCount);
    std::vector<unsigned int> I;
-   for (size_t i : front)
+   for (size_t i = 0; i < front.size(); i++)
    {
-    if(refIndex[i] == jMin && popMask[i])
+    if(refIndex[nextPopSize + i] == jMin && !popMask[i])
       I.push_back(i);
    }
    if (I.size() != 0)
@@ -624,58 +580,62 @@ void NSGA3<MatType>::Niching(size_t K,
       {
         for (size_t i = 0; i < I.size(); i++)
         {
-          if(dists[I[i]] < dists[I[min]])
+          if(dists[nextPopSize + I[i]] < dists[nextPopSize + I[min]])
           {
             min = i;
           }
         }
       }
-      population.push_back(I[min]);
+      population.push_back(front[I[min]]);
 
       nicheCount[jMin] += 1;
-      popMask[I[min]] = false;
-      k += 1;
+      popMask[I[min]] = 1;
+      k++;
    }
    else
    {
-    nicheCount[jMin] = arma::datum::inf;
+    nicheCount[jMin] = 100000;
    }
   }
 }
 
 
-template <typename MatType>
+template <typename ElementType>
 template <typename ColType>
-void NSGA3<MatType>::Associate(arma::urowvec& refIndex,
-                               arma::Row<typename MatType::elem_type>& dists,
-                               const std::vector<ColType>& calculatedObjectives,
-                               const std::vector<size_t>& St)
+inline void NSGA3<ElementType>::Associate(
+    arma::urowvec& refIndex,
+    arma::Row<ElementType>& dists,
+    const std::vector<ColType>& calculatedObjectives,
+    const std::vector<size_t>& St)
 {
-  arma::Mat<typename MatType::elem_type> d(refIndex.n_elem, St.size());
-  ColType zero(arma::size(calculatedObjectives),arma::fill::zeros);
-  for (size_t i = 0; i < referencePoints.n_slices; i++)
+  arma::Mat<ElementType> d(referencePoints.n_cols, St.size());
+  ColType zero(arma::size(calculatedObjectives[0]),arma::fill::zeros);
+  arma::Row<ElementType> temp;
+  for (size_t i = 0; i < referencePoints.n_cols; i++)
   {
-    PointToLineDistance(d.row(i), calculatedObjectives, St, 
-        referencePoints.slice(i), zero);
+    PointToLineDistance<ColType>(temp, calculatedObjectives, St, 
+        zero, referencePoints.col(i));
+    d.row(i) = temp;
   }
   refIndex = arma::index_min(d, 0);
   dists = arma::min(d, 0);
 }
 
-template <typename MatType>
-void NSGA3<MatType>::NicheCount(arma::Row<size_t>& count,
-                                const arma::urowvec& refIndex)
+template <typename ElementType>
+inline void NSGA3<ElementType>::NicheCount(arma::Row<size_t>& count,
+                                    const arma::urowvec& refIndex,
+                                    const std::vector<size_t>& nextPopulation)
 {
-  for (size_t i = 0; i < refIndex.n_elem; i++)
+  for (size_t i = 0; i < nextPopulation.size(); i++)
   {
     count[refIndex[i]] += 1;
   }
 }
 
 //! Check if a candidate Pareto dominates another candidate.
-template<typename MatType>
+template<typename ElementType>
 template<typename ColType>
-inline bool NSGA3<MatType>::Dominates(
+inline bool NSGA3<ElementType>::Dominates(
     std::vector<ColType>& calculatedObjectives,
     size_t candidateP,
     size_t candidateQ)

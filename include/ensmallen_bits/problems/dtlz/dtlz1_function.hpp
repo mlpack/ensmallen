@@ -179,10 +179,6 @@ namespace test {
           {
             value = value * (1. - coords[stop]);
           }
-          else
-          {
-            value = value * coords[stop];
-          }
 
           value = value * (1. + dtlz.g(coords)[0]);
           return value; 
