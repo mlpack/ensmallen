@@ -34,8 +34,8 @@
 
 #include <armadillo>
 
-#if ((ARMA_VERSION_MAJOR < 9) || ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR < 800)))
-  #error "need Armadillo version 9.800 or later"
+#if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
+  #error "need Armadillo version 10.8 or newer"
 #endif
 
 #include <cctype>
@@ -71,6 +71,7 @@
 #include "ensmallen_bits/utility/any.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"
+#include "ensmallen_bits/utility/indicators/igd.hpp"
 #include "ensmallen_bits/utility/indicators/igd_plus.hpp"
 
 // Contains traits, must be placed before report callback.
@@ -117,6 +118,7 @@
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
 #include "ensmallen_bits/lookahead/lookahead.hpp"
+#include "ensmallen_bits/agemoea/agemoea.hpp"
 #include "ensmallen_bits/moead/moead.hpp"
 #include "ensmallen_bits/nsga2/nsga2.hpp"
 #include "ensmallen_bits/padam/padam.hpp"

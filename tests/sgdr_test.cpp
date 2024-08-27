@@ -81,9 +81,6 @@ TEST_CASE("SGDRLogisticRegressionFMatTest","[SGDRTest]")
   }
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
 /**
  * Run SGDR on logistic regression and make sure the results are acceptable.
  * Use arma::sp_mat.
@@ -97,5 +94,3 @@ TEST_CASE("SGDRLogisticRegressionSpMatTest","[SGDRTest]")
     LogisticRegressionFunctionTest<arma::sp_mat>(sgdr, 0.003, 0.006);
   }
 }
-
-#endif
