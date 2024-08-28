@@ -210,22 +210,22 @@ typename MatType::elem_type AGEMOEA::Optimize(
   EvaluateObjectives(population, objectives, calculatedObjectives);
   // Set the candidates from the Pareto Set as the output.
   paretoSet.set_size(population[0].n_rows, population[0].n_cols, 
-      fronts[0].size());
+      population.size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
-  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoSet.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(population[solutionIdx]);
   }
 
   // Set the candidates from the Pareto Front as the output.
   paretoFront.set_size(calculatedObjectives[0].n_rows, 
-      calculatedObjectives[0].n_cols, fronts[0].size());
+      calculatedObjectives[0].n_cols, population.size());
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
-  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoFront.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(calculatedObjectives[solutionIdx]);
   }
 
   // Clear rcFront, in case it is later requested by the user for reverse
@@ -269,11 +269,11 @@ AGEMOEA::EvaluateObjectives(
     std::tuple<ArbitraryFunctionType...>& objectives,
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
 {
-  for (size_t i = 0; i < populationSize; i++)
+  for (size_t i = 0; i < population.size(); i++)
   {
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
     EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
-                                                               calculatedObjectives);
+        calculatedObjectives);
   }
 }
 
@@ -433,9 +433,15 @@ inline void AGEMOEA::NormalizeFront(
 {
   arma::Mat<typename MatType::elem_type> vectorizedObjectives(numObjectives, 
       front.size());
+  arma::Mat<typename MatType::elem_type> vectorizedExtremes(numObjectives, 
+      extreme.n_elem);
   for (size_t i = 0; i < front.size(); i++)
   {
     vectorizedObjectives.col(i) = calculatedObjectives[front[i]];
+  }
+  for (size_t i = 0; i < extreme.n_elem; i++)
+  {
+    vectorizedExtremes.col(i) = calculatedObjectives[front[extreme[i]]]; 
   }
 
   if (front.size() < numObjectives)
@@ -450,9 +456,18 @@ inline void AGEMOEA::NormalizeFront(
     normalization = arma::max(vectorizedObjectives, 1);
     return;
   }
-  arma::Col<typename MatType::elem_type> one(front.size(), arma::fill::ones);
-  arma::Col<typename MatType::elem_type> hyperplane = arma::solve(
-    vectorizedObjectives.t(), one);
+  arma::Col<typename MatType::elem_type> one(extreme.n_elem, arma::fill::ones);
+  arma::Col<typename MatType::elem_type> hyperplane(numObjectives, arma::fill::zeros);
+  try{
+    hyperplane = arma::solve(
+    vectorizedExtremes.t(), one);
+  }
+  catch(...)
+  {
+    normalization = arma::max(vectorizedObjectives, 1);
+    normalization = normalization + (normalization == 0);
+    return;
+  }
   if (hyperplane.has_inf() || hyperplane.has_nan() || (arma::accu(hyperplane < 0.0) > 0))
   {
     normalization = arma::max(vectorizedObjectives, 1);
@@ -460,7 +475,7 @@ inline void AGEMOEA::NormalizeFront(
   else
   {
     normalization = 1. / hyperplane;   
-    if (hyperplane.has_inf() || hyperplane.has_nan())
+    if (normalization.has_inf() || normalization.has_nan())
     {    
       normalization = arma::max(vectorizedObjectives, 1);
     }
@@ -496,7 +511,7 @@ inline double AGEMOEA::GetGeometry(
 //! Pairwise distance for each point in the given front.
 template <typename MatType>
 inline void AGEMOEA::PairwiseDistance(
-    MatType& final,
+    MatType& f,
     std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
     const std::vector<size_t>& front,
     double dimension)
@@ -505,8 +520,8 @@ inline void AGEMOEA::PairwiseDistance(
   {
     for (size_t j = i + 1; j < front.size(); j++)
     {
-      final(i, j) = std::pow(arma::accu(arma::pow(arma::abs(calculatedObjectives[front[i]] - calculatedObjectives[front[j]]), dimension)), 1.0 / dimension);
-      final(j, i) = final(i, j);
+      f(i, j) = std::pow(arma::accu(arma::pow(arma::abs(calculatedObjectives[front[i]] - calculatedObjectives[front[j]]), dimension)), 1.0 / dimension);
+      f(j, i) = f(i, j);
     }
   }
 }
@@ -580,12 +595,12 @@ inline void AGEMOEA::FastNonDominatedSort(
   fronts.clear();
   fronts.push_back(std::vector<size_t>());
 
-  for (size_t p = 0; p < populationSize; p++)
+  for (size_t p = 0; p < calculatedObjectives.size(); p++)
   {
     dominated[p] = std::set<size_t>();
     dominationCount[p] = 0;
 
-    for (size_t q = 0; q < populationSize; q++)
+    for (size_t q = 0; q < calculatedObjectives.size(); q++)
     {
       if (Dominates<MatType>(calculatedObjectives, p, q))
         dominated[p].insert(q);
@@ -653,7 +668,7 @@ inline bool AGEMOEA::Dominates(
   return allBetterOrEqual && atleastOneBetter;
 }
 
-//! Assign diversity score for a given point and teh selected set.
+//! Assign diversity score for a given point and the selected set.
 template <typename MatType>
 inline typename MatType::elem_type AGEMOEA::DiversityScore(
     std::set<size_t>& selected,
@@ -677,6 +692,8 @@ inline typename MatType::elem_type AGEMOEA::DiversityScore(
       m1 = pairwiseDistance(S, *it);
     }
   }
+  m1 = (m1 == arma::datum::inf) ? 0 : m1;
+  m = (m == arma::datum::inf) ? 0 : m;
   return m + m1;
 }
 
@@ -704,7 +721,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
       return; 
     }
 
-    for (size_t index = 1; index < front.size(); index++)
+    for (size_t index = 0; index < front.size(); index++)
     {
       calculatedObjectives[front[index]] = calculatedObjectives[front[index]] 
           - idealPoint;
@@ -720,9 +737,6 @@ inline void AGEMOEA::SurvivalScoreAssignment(
           / normalize;
     }
 
-    dimension = GetGeometry<MatType>(calculatedObjectives, front,
-                                           extreme);
-
     std::set<size_t> selected;
     std::set<size_t> remaining;
     
@@ -732,6 +746,9 @@ inline void AGEMOEA::SurvivalScoreAssignment(
       selected.insert(index);
       survivalScore[front[index]] = arma::datum::inf;
     }
+
+    dimension = GetGeometry<MatType>(calculatedObjectives, front,
+                                           extreme);
     for (size_t i = 0; i < front.size(); i++)
     {
       if (selected.count(i) == 0)
@@ -742,31 +759,26 @@ inline void AGEMOEA::SurvivalScoreAssignment(
 
     arma::Mat<ElemType> pairwise(front.size(), front.size(), arma::fill::zeros);
     PairwiseDistance<MatType>(pairwise,calculatedObjectives,front,dimension);
-    arma::Row<typename MatType::elem_type> proximity(front.size(), 
-        arma::fill::zeros);
-    arma::Row<typename MatType::elem_type> diversity(front.size(), 
-        arma::fill::zeros);
     arma::Row<typename MatType::elem_type> value(front.size(), 
         arma::fill::zeros);
     
     // Calculate the diversity and proximity score.
     for (size_t i = 0; i < front.size(); i++)
     {
-      proximity[i] = std::pow(arma::accu(arma::pow(
+      pairwise.col(i) = pairwise.col(i) / std::pow(arma::accu(arma::pow(
         arma::abs(calculatedObjectives[front[i]]), dimension)), 1.0 / dimension);
     }
     
     while (remaining.size() > 0)
     {
       std::set<size_t>::iterator it;
+      value = value.fill(-1);
       for (it = remaining.begin(); it != remaining.end(); it++)
       {
-        diversity[*it] = DiversityScore<MatType>(selected, pairwise, *it);
-        value[*it] = diversity[*it] / proximity[*it];
+        value[*it] = DiversityScore<MatType>(selected, pairwise, *it);
       }
       size_t index = arma::index_max(value);
       survivalScore[front[index]] = value[index];
-      value[index] = - 1;
       selected.insert(index);
       remaining.erase(index);
     }
@@ -777,8 +789,8 @@ inline void AGEMOEA::SurvivalScoreAssignment(
   {
     for (size_t i = 0; i < front.size(); i++)
     {
-      calculatedObjectives[front[i]] = calculatedObjectives[front[i]] / normalize;
-      survivalScore[front[i]] =  std::pow(arma::accu(arma::pow(arma::abs(
+      calculatedObjectives[front[i]] = (calculatedObjectives[front[i]]) / normalize;
+      survivalScore[front[i]] =  1.0 / std::pow(arma::accu(arma::pow(arma::abs(
           calculatedObjectives[front[i]] - idealPoint), dimension)), 
               1.0 / dimension);
     }
