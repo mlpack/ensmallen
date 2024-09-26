@@ -156,7 +156,6 @@ typename MatType::elem_type NSGA3<ElementType>::Optimize(
   {
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
-    std::cout  << generation << std::endl;
     BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
 
     // Evaluate the objectives for the new population.
