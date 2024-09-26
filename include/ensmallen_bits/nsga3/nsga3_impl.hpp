@@ -156,6 +156,7 @@ typename MatType::elem_type NSGA3<ElementType>::Optimize(
   {
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
+    std::cout  << generation << std::endl;
     BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
 
     // Evaluate the objectives for the new population.
@@ -224,22 +225,23 @@ typename MatType::elem_type NSGA3<ElementType>::Optimize(
   }
   EvaluateObjectives(population, objectives, calculatedObjectives);
   // Set the candidates from the Pareto Set as the output.
-  paretoSet.set_size(population[0].n_rows, population[0].n_cols, fronts[0].size());
+  paretoSet.set_size(population[0].n_rows, population[0].n_cols, 
+      population.size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
-  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoSet.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(population[solutionIdx]);
   }
 
   // Set the candidates from the Pareto Front as the output.
-  paretoFront.set_size(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
-      fronts[0].size());
+  paretoFront.set_size(calculatedObjectives[0].n_rows, 
+      calculatedObjectives[0].n_cols, population.size());
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
-  for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
+  for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoFront.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+      arma::conv_to<arma::mat>::from(calculatedObjectives[solutionIdx]);
   }
 
   // Clear rcFront, in case it is later requested by the user for reverse
@@ -288,9 +290,9 @@ NSGA3<ElementType>::EvaluateObjectives(
   for (size_t i = 0; i < population.size(); i++)
   {
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
-    EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
-                                                               calculatedObjectives);
   }
+  EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
+                                                               calculatedObjectives);
 }
 
 //! Reproduce and generate new candidates.

@@ -202,6 +202,7 @@ class NSGA3
     return rcFront;
   }
 
+  private:
   /**
    * Evaluate objectives for the elite population.
    *
