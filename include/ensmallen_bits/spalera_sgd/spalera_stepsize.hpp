@@ -172,7 +172,9 @@ class SPALeRAStepsize
         // Faster.
         learningRates /= 2;
 
-        if (arma::any(arma::vectorise(learningRates) <= 1e-15))
+        //if (any(vectorise(learningRates) <= 1e-15))
+        /* if (min(vectorise(learningRates)) <= 1e-15) */
+        if (learningRates.min() <= 1e-15)
         {
           // Stop because learning rate too low.
           return false;
@@ -191,13 +193,13 @@ class SPALeRAStepsize
             std::sqrt(iterate.n_elem);
 
         const typename MatType::elem_type normGradient =
-            std::sqrt(arma::accu(arma::pow(gradient, 2)));
+            sqrt(accu(square(gradient)));
 
         relaxedSums *= (1 - parent.alpha);
         if (normGradient > parent.epsilon)
           relaxedSums += gradient * (parent.alpha / normGradient);
 
-        learningRates %= arma::exp((arma::pow(relaxedSums, 2) - paramMean) *
+        learningRates %= exp((square(relaxedSums) - paramMean) *
             (parent.adaptRate / paramStd));
 
         previousIterate = iterate;

@@ -34,7 +34,8 @@ template<typename FunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value ||
+                        coot::is_coot_type<GradType>::value,
 typename MatType::elem_type>::type
 GradientDescent::Optimize(FunctionType& function,
                           MatType& iterateIn,

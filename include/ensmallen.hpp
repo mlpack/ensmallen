@@ -32,6 +32,7 @@
   #error "*** C++14 compiler required; enable C++14 mode in your compiler, or use an earlier version of ensmallen"
 #endif
 
+#include <bandicoot>
 #include <armadillo>
 
 #if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
@@ -70,6 +71,13 @@
 
 #include "ensmallen_bits/utility/any.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
+#include "ensmallen_bits/utility/coot_traits.hpp"
+#include "ensmallen_bits/utility/conv_to.hpp"
+#include "ensmallen_bits/utility/linspace.hpp"
+#include "ensmallen_bits/utility/randi.hpp"
+#include "ensmallen_bits/utility/randn.hpp"
+#include "ensmallen_bits/utility/randu.hpp"
+#include "ensmallen_bits/utility/shuffle.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"
 #include "ensmallen_bits/utility/indicators/igd.hpp"
 #include "ensmallen_bits/utility/indicators/igd_plus.hpp"

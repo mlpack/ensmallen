@@ -96,7 +96,7 @@ class AdaGradUpdate
                 const GradType& gradient)
     {
       squaredGradient += (gradient % gradient);
-      iterate -= (stepSize * gradient) / (arma::sqrt(squaredGradient) +
+      iterate -= (stepSize * gradient) / (sqrt(squaredGradient) +
           parent.epsilon);
     }
 

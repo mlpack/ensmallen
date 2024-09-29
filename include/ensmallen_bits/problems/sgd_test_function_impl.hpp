@@ -19,19 +19,22 @@
 namespace ens {
 namespace test {
 
-inline SGDTestFunction::SGDTestFunction() :
-    visitationOrder(arma::linspace<arma::Col<size_t>>(0, NumFunctions() - 1,
+template<typename LabelsType>
+SGDTestFunction<LabelsType>::SGDTestFunction() :
+    visitationOrder(linspace<LabelsType>(0, NumFunctions() - 1,
         NumFunctions()))
 { }
 
-inline void SGDTestFunction::Shuffle()
+template<typename LabelsType>
+void SGDTestFunction<LabelsType>::Shuffle()
 {
-  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
+  visitationOrder = shuffle(linspace<LabelsType>(0,
       (NumFunctions() - 1), NumFunctions()));
 }
 
+template<typename LabelsType>
 template<typename MatType>
-typename MatType::elem_type SGDTestFunction::Evaluate(
+typename MatType::elem_type SGDTestFunction<LabelsType>::Evaluate(
     const MatType& coordinates,
     const size_t begin,
     const size_t batchSize) const
@@ -60,11 +63,13 @@ typename MatType::elem_type SGDTestFunction::Evaluate(
   return objective;
 }
 
+template<typename LabelsType>
 template<typename MatType, typename GradType>
-void SGDTestFunction::Gradient(const MatType& coordinates,
-                               const size_t begin,
-                               GradType& gradient,
-                               const size_t batchSize) const
+void SGDTestFunction<LabelsType>::Gradient(
+    const MatType& coordinates,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize) const
 {
   gradient.zeros(3);
 

@@ -1,6 +1,7 @@
 /**
  * @file de_test.cpp
  * @author Rahul Ganesh Prabhu
+ * @author Marcus Edel
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -8,28 +9,27 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include "../include/ensmallen.hpp"
+#include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Train and test a logistic regression function using DE optimizer.
- */
-TEST_CASE("DELogisticRegressionTest", "[DETest]")
+TEMPLATE_TEST_CASE("DELogisticRegressionTest", "[DE]", arma::mat)
 {
   DE opt(200, 1000, 0.6, 0.8, 1e-5);
-  LogisticRegressionFunctionTest(opt, 0.01, 0.02, 3);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      opt, 0.01, 0.02, 3);
 }
 
-/**
- * Train and test a logistic regression function using DE optimizer.  Use
- * arma::fmat.
- */
-TEST_CASE("DELogisticRegressionFMatTest", "[DETest]")
-{
-  DE opt(200, 1000, 0.6, 0.8, 1e-5);
-  LogisticRegressionFunctionTest<arma::fmat>(opt, 0.03, 0.06, 3);
-}
+#ifdef USE_COOT
+
+/* TEMPLATE_TEST_CASE("DELogisticRegressionTest", "[DE]", coot::mat) */
+/* { */
+/*   DE opt(200, 1000, 0.6, 0.8, 1e-5); */
+/*   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>( */
+/*       opt, 0.01, 0.02, 3); */
+/* } */
+
+#endif

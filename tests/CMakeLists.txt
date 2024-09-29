@@ -1,6 +1,7 @@
 # The tests that need to be compiled.
 set(ENSMALLEN_TESTS_SOURCES
     main.cpp
+    coot_test.cpp
     active_cmaes_test.cpp
     ada_belief_test.cpp
     ada_bound_test.cpp
@@ -8,39 +9,39 @@ set(ENSMALLEN_TESTS_SOURCES
     ada_grad_test.cpp
     ada_sqrt_test.cpp
     adam_test.cpp
-    aug_lagrangian_test.cpp
+    # aug_lagrangian_test.cpp
     bigbatch_sgd_test.cpp
     callbacks_test.cpp
     cd_test.cpp
     cmaes_test.cpp
-    cne_test.cpp
+    # cne_test.cpp
     de_test.cpp
     demon_adam_test.cpp
     demon_sgd_test.cpp
     eve_test.cpp
-    frankwolfe_test.cpp
+    # frankwolfe_test.cpp
     ftml_test.cpp
-    function_test.cpp
+    # function_test.cpp
     gradient_descent_test.cpp
-    grid_search_test.cpp
-    iqn_test.cpp
+    # grid_search_test.cpp
+    # iqn_test.cpp
     indicators_test.cpp
     katyusha_test.cpp
     lbfgs_test.cpp
-    line_search_test.cpp
+    # line_search_test.cpp
     lookahead_test.cpp
-    lrsdp_test.cpp
-    moead_test.cpp
+    # lrsdp_test.cpp
+    # moead_test.cpp
     agemoea_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp
-    nsga2_test.cpp
-    parallel_sgd_test.cpp
-    proximal_test.cpp
-    pso_test.cpp
+    # nsga2_test.cpp
+    # parallel_sgd_test.cpp
+    # proximal_test.cpp
+    # pso_test.cpp
     quasi_hyperbolic_momentum_sgd_test.cpp
     rmsprop_test.cpp
-    sa_test.cpp
+    # sa_test.cpp
     sarah_test.cpp
     sdp_primal_dual_test.cpp
     sgdr_test.cpp

@@ -18,10 +18,10 @@
 namespace ens {
 
 /**
- * The IGD indicator returns the average distance from each point in the reference
- * front to the nearest point to it's solution. IGD+ is an improvement upon
- * the IGD indicator, which fixes misleading results given by IGD in certain
- * cases via a different distance metric:
+ * The IGD indicator returns the average distance from each point in the
+ * reference front to the nearest point to it's solution. IGD+ is an improvement
+ * upon the IGD indicator, which fixes misleading results given by IGD in
+ * certain cases via a different distance metric:
  *
  * \f[ d^{+}(z,a) = \sqrt{\sum_{i = 1}^{n}( \max\{a_i - z_i, 0\})^2 \ } \
  *    \f]
@@ -39,55 +39,59 @@ namespace ens {
  * }
  * @endcode
  */
-  class IGDPlus
+class IGDPlus
+{
+ public:
+  /**
+   * Default constructor does nothing, but is required to satisfy the
+   * Indicator policy.
+   */
+  IGDPlus()
   {
-   public:
-    /**
-     * Default constructor does nothing, but is required to satisfy the Indicator
-     * policy.
-     */
-    IGDPlus() { }
+    // Nothing to do.
+  }
 
-    /**
-     * Find the IGD+ value of the front with respect to the given reference
-     * front.
-     *
-     * @tparam CubeType The cube data type of front.
-     * @param front The given approximation front.
-     * @param referenceFront The given reference front.
-     * @return The IGD value of the front.
-     */
-    template<typename CubeType>
-    static typename CubeType::elem_type Evaluate(const CubeType& front,
-                                                 const CubeType& referenceFront)
+  /**
+   * Find the IGD+ value of the front with respect to the given reference front.
+   *
+   * @tparam CubeType The cube data type of front.
+   * @param front The given approximation front.
+   * @param referenceFront The given reference front.
+   * @return The IGD value of the front.
+   */
+  template<typename CubeType>
+  static typename CubeType::elem_type Evaluate(const CubeType& front,
+                                               const CubeType& referenceFront)
+  {
+    // Convenience typedefs.
+    typedef typename CubeType::elem_type ElemType;
+
+    ElemType igd = 0;
+    for (size_t i = 0; i < referenceFront.n_slices; ++i)
     {
-      // Convenience typedefs.
-      typedef typename CubeType::elem_type ElemType;
-      ElemType igd = 0;
-      for (size_t i = 0; i < referenceFront.n_slices; i++)
+      ElemType min = std::numeric_limits<ElemType>::max();
+      for (size_t j = 0; j < front.n_slices; ++j)
       {
-        ElemType min = std::numeric_limits<ElemType>::max();
-        for (size_t j = 0; j < front.n_slices; j++)
+        ElemType dist = 0;
+        for (size_t k = 0; k < front.slice(j).n_rows; ++k)
         {
-          ElemType dist = 0;
-          for (size_t k = 0; k < front.slice(j).n_rows; k++)
-          {
-            ElemType z = referenceFront(k, 0, i);
-            ElemType a = front(k, 0, j);
-            // Assuming minimization of all objectives.
-            dist += std::pow(std::max<ElemType>(a - z, 0), 2);
-          }
-          dist = std::sqrt(dist);
-          if (dist < min)
-            min = dist;
+          ElemType z = referenceFront(k, 0, i);
+          ElemType a = front(k, 0, j);
+          // Assuming minimization of all objectives.
+          dist += std::pow(std::max<ElemType>(a - z, 0), 2);
         }
-        igd += min;
-      }
-      igd /= referenceFront.n_slices;
 
-      return igd;
+        dist = std::sqrt(dist);
+        if (dist < min)
+          min = dist;
+      }
+      igd += min;
     }
-  };
+    igd /= referenceFront.n_slices;
+
+    return igd;
+  }
+};
 
 } // namespace ens
 

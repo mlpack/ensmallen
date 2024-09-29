@@ -128,17 +128,16 @@ void L_BFGS::SearchDirection(const MatType& gradient,
 
   // See "A Recursive Formula to Compute H * g" in "Updating quasi-Newton
   // matrices with limited storage" (Nocedal, 1980).
-  typedef typename CubeType::elem_type CubeElemType;
 
   // Temporary variables.
-  arma::Col<CubeElemType> rho(numBasis);
-  arma::Col<CubeElemType> alpha(numBasis);
+  typedef typename ForwardCubeColType<CubeType>::ColType ColType;
+  ColType rho(numBasis);
+  ColType alpha(numBasis);
 
   size_t limit = (numBasis > iterationNum) ? 0 : (iterationNum - numBasis);
   for (size_t i = iterationNum; i != limit; i--)
   {
     int translatedPosition = (i + (numBasis - 1)) % numBasis;
-
     const arma::Mat<CubeElemType>& sMat = s.slice(translatedPosition);
     const arma::Mat<CubeElemType>& yMat = y.slice(translatedPosition);
 
@@ -159,7 +158,7 @@ void L_BFGS::SearchDirection(const MatType& gradient,
   {
     int translatedPosition = i % numBasis;
     double beta = rho[iterationNum - i - 1] *
-        arma::dot(y.slice(translatedPosition), searchDirection);
+        dot(y.slice(translatedPosition), searchDirection);
     searchDirection += (alpha[iterationNum - i - 1] - beta) *
         s.slice(translatedPosition);
   }
@@ -232,7 +231,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   // The initial linear term approximation in the direction of the
   // search direction.
   ElemType initialSearchDirectionDotGradient =
-      arma::dot(gradient, searchDirection);
+      dot(gradient, searchDirection);
 
   // If it is not a descent direction, just report failure.
   if ( (initialSearchDirectionDotGradient > 0.0)
@@ -292,7 +291,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
     else
     {
       // Check Wolfe's condition.
-      ElemType searchDirectionDotGradient = arma::dot(gradient,
+      ElemType searchDirectionDotGradient = dot(gradient,
           searchDirection);
 
       if (searchDirectionDotGradient < wolfe *
@@ -346,7 +345,8 @@ template<typename FunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value ||
+                        coot::is_coot_type<GradType>::value,
 typename MatType::elem_type>::type
 L_BFGS::Optimize(FunctionType& function,
                  MatType& iterateIn,
@@ -376,8 +376,10 @@ L_BFGS::Optimize(FunctionType& function,
   const size_t cols = iterate.n_cols;
 
   BaseMatType newIterateTmp(rows, cols);
-  arma::Cube<ElemType> s(rows, cols, numBasis);
-  arma::Cube<ElemType> y(rows, cols, numBasis);
+
+  typedef typename ForwardMatCubeType<MatType>::CubeType CubeType;
+  CubeType s(rows, cols, numBasis);
+  CubeType y(rows, cols, numBasis);
 
   // The old iterate to be saved.
   BaseMatType oldIterate(iterate.n_rows, iterate.n_cols);
@@ -417,7 +419,7 @@ L_BFGS::Optimize(FunctionType& function,
     // least one descent step.
     // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo
     // 12.4
-    if (arma::norm(gradient, 2) < minGradientNorm)
+    if (norm(gradient, 2) < minGradientNorm)
     {
       Info << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
