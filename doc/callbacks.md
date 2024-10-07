@@ -145,7 +145,11 @@ smorms3.Optimize(lrfTrain, coordinates, cb);
 </details>
 
 ### Gradient Clipping
-One challenge in optimization is dealing with "exploding gradients," where large parameter gradients can cause the optimizer to make excessively large updates, potentially pushing the model into regions of high loss or causing numerical instability. This can happen due to:
+
+One challenge in optimization is dealing with "exploding gradients", where large
+parameter gradients can cause the optimizer to make excessively large updates,
+potentially pushing the model into regions of high loss or causing numerical
+instability. This can happen due to:
 
 * A high learning rate, leading to large gradient updates.
 * Poorly scaled datasets, resulting in significant variance between data points.
@@ -154,6 +158,7 @@ One challenge in optimization is dealing with "exploding gradients," where large
 Common solutions for this problem are:
 
 #### GradClipByNorm
+
 In this method, the solution is to change the derivative
 of the error before applying the update step.  One option is to clip the norm
 `||g||` of the gradient `g` before a parameter update. So given the gradient,
@@ -185,6 +190,7 @@ optimizer.Optimize(f, coordinates, GradClipByNorm(0.3));
 ```
 
 #### GradClipByValue
+
 In this method, the solution is to change the derivative
 of the error before applying the update step.  One option is to clip the
 parameter gradient element-wise before a parameter update.
