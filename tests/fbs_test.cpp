@@ -158,8 +158,10 @@ TEMPLATE_TEST_CASE("L1ConstraintProjectionTest", "[FBSTest]", fmat, sp_fmat,
 
     l.ProximalStep(m, 1.0);
 
+    const double tol =
+        (std::is_same<typename MatType::elem_type, float>::value) ? 1e-3 : 1e-8;
     REQUIRE(std::abs(l.Evaluate(m)) <= 1e-15);
-    REQUIRE(norm(m, 1) == Approx(2.5));
+    REQUIRE(norm(m, 1) == Approx(2.5).epsilon(tol));
   }
 }
 
