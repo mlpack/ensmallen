@@ -117,7 +117,7 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
       # FindCUDA is deprecated since version 3.10 and replaced with
       # FindCUDAToolkit wich was added in CMake 3.17.
       message(STATUS "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
-      if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS "3.17")
+      if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS "3.67")
         set(CUDA_FIND_QUIETLY true)
         find_package(CUDA)
 
@@ -125,7 +125,12 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
 	        message(STATUS "CUDA includes: ${CUDA_INCLUDE_DIRS}")
 	        message(STATUS "CUDA libraries: ${CUDA_LIBRARIES}")
 
-          set(NVRTC_FIND_QUIETLY true)
+          # We also need NVRTC and also libcuda itself, which the old FindCUDA package do not find.
+          find_library(CUDA_cuda_LIBRARY cuda
+              HINTS ${CUDA_TOOLKIT_ROOT_DIR} ${CUDA_TOOLKIT_ROOT_DIR}/lib ${CUDA_TOOLKIT_ROOT_DIR}/lib64)
+          find_library(CUDA_nvrtc_LIBRARY nvrtc
+              HINTS ${CUDA_TOOLKIT_ROOT_DIR} ${CUDA_TOOLKIT_ROOT_DIR}/lib ${CUDA_TOOLKIT_ROOT_DIR}/lib64)
+
           include(COOT_FindNVRTC)
 
           if (NVRTC_FOUND)
@@ -137,6 +142,7 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
               "${CUDA_INCLUDE_DIRS}")
           set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}"
               "${CUDA_LIBRARIES}"
+              "${CUDA_nvrtc_LIBRARY}"
               "${CUDA_CUDA_LIBRARY}"
               "${CUDA_CUBLAS_LIBRARIES}"
               "${CUDA_curand_LIBRARY}"
