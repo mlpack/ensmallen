@@ -82,6 +82,43 @@ shuffle(const InputType& input)
   return coot::shuffle(input);
 }
 
+/**
+ * A utility class that based on the data type forwards to `coot::conv_to` or
+ * `arma::conv_to`.
+ *
+ * @tparam OutputType The data type to convert to.
+ */
+template<typename OutputType>
+class conv_to
+{
+  public:
+   /**
+    * Convert from one matrix type to another by forwarding to `coot::conv_to`.
+    *
+    * @param input The input that is converted.
+    */
+   template<typename InputType, typename foo = OutputType>
+   inline static typename std::enable_if<
+      !IsArmaType<foo>::value, OutputType>::type
+   from(const InputType& input)
+   {
+     return coot::conv_to<OutputType>::from(input);
+   }
+
+   /**
+    * Convert from one matrix type to another by forwarding to `arma::conv_to`.
+    *
+    * @param input The input that is converted.
+    */
+   template<typename InputType, typename foo = OutputType>
+   inline static typename std::enable_if<
+      IsArmaType<foo>::value, OutputType>::type
+   from(const InputType& input)
+   {
+     return arma::conv_to<OutputType>::from(input);
+   }
+};
+
 } // namespace ens
 
 #endif
