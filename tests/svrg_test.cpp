@@ -16,63 +16,87 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("SVRGLogisticRegressionTest", "[SVRG]",
-    arma::mat, arma::fmat)
+/**
+ * Run SVRG on logistic regression and make sure the results are acceptable.
+ */
+TEST_CASE("SVRGLogisticRegressionTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
     SVRG optimizer(0.005, batchSize, 300, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest(optimizer, 0.015, 0.015);
   }
 }
 
-TEMPLATE_TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRG]",
-    arma::mat, arma::fmat)
+/**
+ * Run SVRG_BB on logistic regression and make sure the results are acceptable.
+ */
+TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
     SVRG_BB optimizer(0.005, batchSize, 300, 0, 1e-5, true, SVRGUpdate(),
         BarzilaiBorweinDecay(0.1));
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest(optimizer, 0.015, 0.015);
   }
 }
 
-#ifdef USE_COOT
+/**
+ * Run SVRG on logistic regression and make sure the results are acceptable.
+ * Use arma::fmat.
+ */
+TEST_CASE("SVRGLogisticRegressionFMatTest", "[SVRG]")
+{
+  // Run SVRG with a couple of batch sizes.
+  for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
+  {
+    SVRG optimizer(0.005, batchSize, 300, 0, 1e-5, true);
+    LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
+  }
+}
 
-TEMPLATE_TEST_CASE("SVRGLogisticRegressionTest", "[SVRG]",
-    coot::mat, coot::fmat)
-=======
+/**
+ * Run SVRG_BB on logistic regression and make sure the results are acceptable.
+ * Use arma::fmat.
+ */
+TEST_CASE("SVRGBBLogisticRegressionFMatTest", "[SVRG]")
+{
+  // Run SVRG_BB with a couple of batch sizes.
+  for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
+  {
+    SVRG_BB optimizer(0.005, batchSize, 300, 0, 1e-5, true,
+        SVRGUpdate(), BarzilaiBorweinDecay(0.1));
+    LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
+  }
+}
+
 /**
  * Run SVRG on logistic regression and make sure the results are acceptable.
  * Use arma::sp_mat.
  */
-TEST_CASE("SVRGLogisticRegressionSpMatTest", "[SVRGTest]")
->>>>>>> master
+TEST_CASE("SVRGLogisticRegressionSpMatTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
     SVRG optimizer(0.005, batchSize, 300, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-        optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015);
   }
 }
 
-TEMPLATE_TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRG]",
-    coot::mat, coot::fmat)
+/**
+ * Run SVRG_BB on logistic regression and make sure the results are acceptable.
+ * Use arma::sp_mat.
+ */
+TEST_CASE("SVRGBBLogisticRegressionSpMatTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
-    SVRG_BB optimizer(0.005, batchSize, 300, 0, 1e-5, true, SVRGUpdate(),
-        BarzilaiBorweinDecay(0.1));
-    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-        optimizer, 0.015, 0.015);
+    SVRG_BB optimizer(0.005, batchSize, 300, 0, 1e-5, true,
+        SVRGUpdate(), BarzilaiBorweinDecay(0.1));
+    LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015);
   }
 }
-
-#endif

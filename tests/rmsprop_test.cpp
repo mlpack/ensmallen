@@ -17,7 +17,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("RMSPropLogisticRegressionTest", "[RMSProp]",
-    arma::mat, arma::fmat)
+    arma::mat, arma::fmat, arma::sp_mat)
 {
   RMSProp optimizer;
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer, 0.003, 0.006);
@@ -33,11 +33,4 @@ TEMPLATE_TEST_CASE("RMSPropLogisticRegressionTest", "[RMSProp]",
 }
 
 #endif
-/**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
- * Use arma::sp_mat.
- */
-TEST_CASE("RMSPropLogisticRegressionSpMatTest", "[rmsprop]")
-{
-  LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006);
-}
+

@@ -24,7 +24,7 @@ TEMPLATE_TEST_CASE("QHSphereFunction", "[QHMomentumSGD]",
       s, 0.03, 0.003);
 }
 
-TEST_CASE("QHSpMatTestSphereFunction", "[QHMomentumSGDTest]")
+TEST_CASE("QHSpMatTestSphereFunction", "[QHMomentumSGD]")
 {
   QHUpdate update(0.9, 0.9);
   QHSGD s(0.002, 1, 2500000, 1e-15, true, update);

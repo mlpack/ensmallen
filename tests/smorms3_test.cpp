@@ -17,7 +17,7 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("SMORMS3LogisticRegressionTest", "[SMORMS3Test]",
+TEMPLATE_TEST_CASE("SMORMS3LogisticRegressionTest", "[SMORMS3]",
     arma::mat, arma::fmat)
 {
   SMORMS3 smorms3;
@@ -26,7 +26,7 @@ TEMPLATE_TEST_CASE("SMORMS3LogisticRegressionTest", "[SMORMS3Test]",
 
 #ifdef USE_COOT
 
-TEMPLATE_TEST_CASE("SMORMS3LogisticRegressionTest", "[SMORMS3Test]",
+TEMPLATE_TEST_CASE("SMORMS3LogisticRegressionTest", "[SMORMS3]",
     coot::mat, coot::fmat)
 {
   SMORMS3 smorms3;

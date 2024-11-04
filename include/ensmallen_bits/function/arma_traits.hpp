@@ -149,6 +149,20 @@ struct ForwardColType
       arma::Col<ElemType>, coot::Col<ElemType>>::type ColType;
 };
 
+template<typename MatType, typename ElemType = typename MatType::elem_type>
+struct ForwardRowType
+{
+  typedef typename std::conditional<IsArmaType<MatType>::value,
+      arma::Row<ElemType>, coot::Row<ElemType>>::type RowType;
+};
+
+template<typename MatInputType, typename ElemType = typename MatInputType::elem_type>
+struct ForwardMatType
+{
+  typedef typename std::conditional<IsArmaType<MatInputType>::value,
+      arma::Mat<ElemType>, coot::Mat<ElemType>>::type MatType;
+};
+
 /* template<typename eT> */
 /* struct ForwardMatColType<arma::Mat<eT>> */
 /* { */

@@ -25,11 +25,11 @@ TEMPLATE_TEST_CASE("DELogisticRegressionTest", "[DE]", arma::mat)
 
 #ifdef USE_COOT
 
-/* TEMPLATE_TEST_CASE("DELogisticRegressionTest", "[DE]", coot::mat) */
-/* { */
-/*   DE opt(200, 1000, 0.6, 0.8, 1e-5); */
-/*   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>( */
-/*       opt, 0.01, 0.02, 3); */
-/* } */
+TEMPLATE_TEST_CASE("DELogisticRegressionTest", "[DE]", coot::mat)
+{
+  DE opt(200, 1000, 0.6, 0.8, 1e-5);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      opt, 0.01, 0.02, 3);
+}
 
 #endif

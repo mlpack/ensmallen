@@ -107,4 +107,5 @@ TEMPLATE_TEST_CASE("SnapshotEnsemblesLogisticRegressionTest",
         sgdr, 0.03, 0.06, 3);
   }
 }
+
 #endif

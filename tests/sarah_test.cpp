@@ -16,7 +16,7 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest","[SARAH]",
+TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest", "[SARAH]",
     arma::mat, arma::fmat)
 {
   // Run SARAH with a couple of batch sizes.
@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest","[SARAH]",
   }
 }
 
-TEMPLATE_TEST_CASE("SARAHPlusLogisticRegressionTest","[SARAH]",
+TEMPLATE_TEST_CASE("SARAHPlusLogisticRegressionTest", "[SARAH]",
     arma::mat, arma::fmat)
 {
   // Run SARAH_Plus with a couple of batch sizes.
@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("SARAHPlusLogisticRegressionTest","[SARAH]",
 
 #ifdef USE_COOT
 
-TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest","[SARAH]",
+TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest", "[SARAH]",
     coot::mat, coot::fmat)
 {
   // Run SARAH with a couple of batch sizes.
@@ -54,7 +54,7 @@ TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest","[SARAH]",
   }
 }
 
-TEMPLATE_TEST_CASE("SARAHPlusLogisticRegressionTest","[SARAH]",
+TEMPLATE_TEST_CASE("SARAHPlusLogisticRegressionTest", "[SARAH]",
     coot::mat, coot::fmat)
 {
   // Run SARAH_Plus with a couple of batch sizes.

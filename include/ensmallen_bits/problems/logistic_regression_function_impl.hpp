@@ -28,8 +28,8 @@ LogisticRegressionFunction<MatType, LabelsType>::LogisticRegressionFunction(
     responses(responses),
     lambda(lambda)
 {
-  initialPoint = MatType(1, predictors.n_rows + 1);
-  initialPoint.zeros();
+  initialPoint = arma::Row<typename MatType::elem_type>(predictors.n_rows + 1,
+      arma::fill::zeros);
 
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
@@ -91,29 +91,29 @@ void LogisticRegressionFunction<MatType, LabelsType>::Shuffle()
  * parameters.
  */
 template<typename MatType, typename LabelsType>
-typename MatType::elem_type
-LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
+typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
     const MatType& parameters) const
 {
-// The objective function is the log-likelihood function (w is the parameters
+  // The objective function is the log-likelihood function (w is the parameters
   // vector for the model; y is the responses; x is the predictors; sig() is the
   // sigmoid function):
   //   f(w) = sum(y log(sig(w'x)) + (1 - y) log(sig(1 - w'x))).
   // We want to minimize this function.  L2-regularization is just lambda
   // multiplied by the squared l2-norm of the parameters then divided by two.
   typedef typename MatType::elem_type ElemType;
+  typedef typename ForwardRowType<MatType, ElemType>::RowType RowType;
 
   // For the regularization, we ignore the first term, which is the intercept
   // term and take every term except the last one in the decision variable.
   const ElemType regularization = 0.5 * lambda *
-      arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+      dot(parameters.tail_cols(parameters.n_elem - 1),
       parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
-  const arma::Row<ElemType> sigmoid = 1.0 / (1.0 +
-      arma::exp(-(parameters(0, 0) +
-                parameters.tail_cols(parameters.n_elem - 1) * predictors)));
+  const RowType sigmoid = 1.0 / (1.0 +
+      exp(-(parameters(0, 0) +
+      parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   // Assemble full objective function.  Often the objective function and the
   // regularization as given are divided by the number of features, but this
@@ -121,46 +121,12 @@ LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
   // terms for computational efficiency.  Note that the conversion causes some
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
-  const ElemType result = arma::accu(arma::log(1.0 -
-      arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoid %
-      (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
+  const ElemType result = accu(log(1.0 -
+      conv_to<RowType>::from(responses) + sigmoid %
+      (2 * conv_to<RowType>::from(responses) - 1.0)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
-
-
-  /* // The objective function is the log-likelihood function (w is the parameters */
-  /* // vector for the model; y is the responses; x is the predictors; sig() is the */
-  /* // sigmoid function): */
-  /* //   f(w) = sum(y log(sig(w'x)) + (1 - y) log(sig(1 - w'x))). */
-  /* // We want to minimize this function.  L2-regularization is just lambda */
-  /* // multiplied by the squared l2-norm of the parameters then divided by two. */
-  /* typedef typename MatType::elem_type ElemType; */
-
-  /* // For the regularization, we ignore the first term, which is the intercept */
-  /* // term and take every term except the last one in the decision variable. */
-  /* const ElemType regularization = 0.5 * lambda * */
-  /*     dot(parameters.tail_cols(parameters.n_elem - 1), */
-  /*         parameters.tail_cols(parameters.n_elem - 1)); */
-
-  /* // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and */
-  /* // does not need to be multiplied by any of the predictors. */
-  /* const MatType sigmoid = 1.0 / (1.0 + */
-  /*     exp(-(parameters(0, 0) + */
-  /*           parameters.tail_cols(parameters.n_elem - 1) * predictors))); */
-
-  /* // Assemble full objective function.  Often the objective function and the */
-  /* // regularization as given are divided by the number of features, but this */
-  /* // doesn't actually affect the optimization result, so we'll just ignore those */
-  /* // terms for computational efficiency.  Note that the conversion causes some */
-  /* // copy and slowdown, but this is so negligible compared to the rest of the */
-  /* // calculation it is not worth optimizing for. */
-  /* typedef typename ForwardMatRowType<MatType>::RowType RowType; */
-  /* const ElemType result = accu(log(1.0 - */
-  /*     conv_to<RowType>::from(responses) + sigmoid % */
-  /*     (2 * conv_to<RowType>::from(responses) - 1.0))); */
-
-  /* return regularization - result; */
 }
 
 /**
@@ -168,31 +134,31 @@ LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
  * parameters for a given batch from a given point.
  */
 template<typename MatType, typename LabelsType>
-typename MatType::elem_type
-LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
+typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
     const MatType& parameters,
     const size_t begin,
     const size_t batchSize) const
 {
   typedef typename MatType::elem_type ElemType;
+  typedef typename ForwardRowType<MatType, ElemType>::RowType RowType;
 
   // Calculate the regularization term.
   const ElemType regularization = lambda *
       (batchSize / (2.0 * predictors.n_cols)) *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-          parameters.tail_cols(parameters.n_elem - 1));
+                parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const MatType sigmoid = 1.0 / (1.0 +
+  const RowType sigmoid = 1.0 / (1.0 +
       exp(-(parameters(0, 0) +
-          parameters.tail_cols(parameters.n_elem - 1) *
-          predictors.cols(begin, begin + batchSize - 1))));
+      parameters.tail_cols(parameters.n_elem - 1) *
+      predictors.cols(begin, begin + batchSize - 1))));
 
   // Compute the objective for the given batch size from a given point.
-  const ElemType result = accu(log(1.0 -
-      conv_to<MatType>::from(responses.subvec(begin, begin + batchSize - 1)) +
-          sigmoid % (2 * conv_to<MatType>::from(
-              responses.subvec(begin, begin + batchSize - 1)) - 1.0)));
+  RowType respD = conv_to<RowType>::from(
+      responses.subvec(begin, begin + batchSize - 1));
+  const ElemType result = accu(log(1.0 - respD + sigmoid %
+      (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
@@ -205,20 +171,19 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
     const MatType& parameters,
     GradType& gradient) const
 {
-  typedef typename MatType::elem_type ElemType;
+    exit(0);
+//   typedef typename MatType::elem_type ElemType;
+//   // Regularization term.
+//   MatType regularization;
+//   regularization = lambda * parameters.tail_cols(parameters.n_elem - 1);
 
-  // Regularization term.
-  MatType regularization;
-  regularization = lambda * parameters.tail_cols(parameters.n_elem - 1);
+//   const arma::Row<ElemType> sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
+//       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
-  const MatType sigmoids = (1 / (1 + exp(-parameters(0, 0)
-      - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
-
-  gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<MatType>::from(responses) - sigmoids);
-  gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<MatType>::from(responses)) *
-      predictors.t() + regularization;
+//   gradient.set_size(arma::size(parameters));
+//   gradient[0] = -arma::accu(responses - sigmoids);
+//   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
+//       predictors.t() + regularization;
 }
 
 //! Evaluate the gradient of the logistic regression objective function for a
@@ -232,25 +197,25 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
                 const size_t batchSize) const
 {
   typedef typename MatType::elem_type ElemType;
+  typedef typename ForwardRowType<MatType, ElemType>::RowType RowType;
 
   // Regularization term.
   MatType regularization;
   regularization = lambda * parameters.tail_cols(parameters.n_elem - 1)
       / predictors.n_cols * batchSize;
 
-  const MatType exponents = parameters(0, 0) +
+  const RowType exponents = parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1);
   // Calculating the sigmoid function values.
-  const MatType sigmoids = 1.0 / (1.0 + exp(-exponents));
+  const RowType sigmoids = 1.0 / (1.0 + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<MatType>::from(
-      responses.subvec(begin, begin + batchSize - 1)) - sigmoids);
+  gradient[0] = -accu(conv_to<RowType>::from(responses.subvec(begin, begin + batchSize - 1)) -
+      sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<MatType>::from(
-          responses.subvec(begin, begin + batchSize - 1))) *
-          predictors.cols(begin, begin + batchSize - 1).t() + regularization;
+      conv_to<RowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
+      predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 }
 
 /**
@@ -264,21 +229,21 @@ void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
     const size_t j,
     arma::SpMat<ElemType>& gradient) const
 {
-  const MatType diffs = responses -
-      (1 / (1 + exp(-parameters(0, 0) -
-                     parameters.tail_cols(parameters.n_elem - 1) *
-                          predictors)));
+  const arma::Row<typename MatType::elem_type> diffs = responses -
+      (1 / (1 + arma::exp(-parameters(0, 0) -
+                          parameters.tail_cols(parameters.n_elem - 1) *
+                              predictors)));
 
-  gradient.set_size(parameters.n_rows, parameters.n_cols);
+  gradient.set_size(arma::size(parameters));
 
   if (j == 0)
   {
-    gradient[j] = -accu(diffs);
+    gradient[j] = -arma::accu(diffs);
   }
   else
   {
-    gradient[j] = dot(-predictors.row(j - 1), diffs) + lambda *
-        parameters(0, j);
+    gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
+      parameters(0, j);
   }
 }
 
@@ -289,34 +254,34 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
     const MatType& parameters,
     GradType& gradient) const
 {
-  typedef typename MatType::elem_type ElemType;
+    exit(0);
+//   typedef typename MatType::elem_type ElemType;
 
-  // Regularization term.
-  MatType regularization = lambda *
-      parameters.tail_cols(parameters.n_elem - 1);
+//   // Regularization term.
+//   MatType regularization = lambda *
+//       parameters.tail_cols(parameters.n_elem - 1);
 
-  const ElemType objectiveRegularization = lambda / 2.0 *
-      dot(parameters.tail_cols(parameters.n_elem - 1),
-          parameters.tail_cols(parameters.n_elem - 1));
+//   const ElemType objectiveRegularization = lambda / 2.0 *
+//       arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+//                 parameters.tail_cols(parameters.n_elem - 1));
 
-  // Calculate the sigmoid function values.
-  const MatType sigmoids = 1.0 / (1.0 +
-      exp(-(parameters(0, 0) +
-            parameters.tail_cols(parameters.n_elem - 1) * predictors)));
+//   // Calculate the sigmoid function values.
+//   const arma::Row<ElemType> sigmoids = 1.0 / (1.0 +
+//       arma::exp(-(parameters(0, 0) +
+//                   parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
-  gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<MatType>::from(responses) - sigmoids);
-  gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<MatType>::from(responses)) *
-      predictors.t() + regularization;
+//   gradient.set_size(arma::size(parameters));
+//   gradient[0] = -arma::accu(responses - sigmoids);
+//   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
+//       predictors.t() + regularization;
 
-  // Now compute the objective function using the sigmoids.
-  const ElemType result = accu(log(1.0 -
-      conv_to<MatType>::from(responses) + sigmoids %
-      (2 * conv_to<MatType>::from(responses) - 1.0)));
+//   // Now compute the objective function using the sigmoids.
+//   ElemType result = arma::accu(arma::log(1.0 -
+//       arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoids %
+//       (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
 
-  // Invert the result, because it's a minimization.
-  return objectiveRegularization - result;
+//   // Invert the result, because it's a minimization.
+//   return objectiveRegularization - result;
 }
 
 template<typename MatType, typename LabelsType>
@@ -329,6 +294,7 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
     const size_t batchSize) const
 {
   typedef typename MatType::elem_type ElemType;
+  typedef typename ForwardRowType<MatType, ElemType>::RowType RowType;
 
   // Regularization term.
   MatType regularization =
@@ -338,28 +304,28 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
   const ElemType objectiveRegularization = lambda *
       (batchSize / (2.0 * predictors.n_cols)) *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-          parameters.tail_cols(parameters.n_elem - 1));
+                parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const MatType sigmoids = 1.0 / (1.0 +
+  const RowType sigmoids = 1.0 / (1.0 +
       exp(-(parameters(0, 0) +
-            parameters.tail_cols(parameters.n_elem - 1) *
-                predictors.cols(begin, begin + batchSize - 1))));
+                  parameters.tail_cols(parameters.n_elem - 1) *
+                      predictors.cols(begin, begin + batchSize - 1))));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-
-  gradient[0] = -accu(conv_to<MatType>::from(
+  gradient[0] = -accu(conv_to<RowType>::from(
       responses.subvec(begin, begin + batchSize - 1)) - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<MatType>::from(responses.subvec(begin, begin + batchSize - 1))) *
+      conv_to<RowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
       predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 
-  const ElemType result = accu(log(1.0 -
-      conv_to<MatType>::from(
-          responses.subvec(begin, begin + batchSize - 1)) + sigmoids %
-          (2 * conv_to<MatType>::from(
-              responses.subvec(begin, begin + batchSize - 1)) - 1.0)));
+  // Now compute the objective function using the sigmoids.
+  RowType respD = conv_to<RowType>::from(
+      responses.subvec(begin, begin + batchSize - 1));
+  const ElemType result = accu(log(1.0 - respD + sigmoids %
+      (2 * respD - 1.0)));
 
+  // Invert the result, because it's a minimization.
   return objectiveRegularization - result;
 }
 

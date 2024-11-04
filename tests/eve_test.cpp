@@ -45,7 +45,7 @@ TEMPLATE_TEST_CASE("EveStyblinskiTangFunctionTest", "[Eve]",
  * Test the Eve optimizer on the Styblinski-Tang function, using arma::sp_mat as
  * the objective type.
  */
-TEST_CASE("EveStyblinskiTangFunctionSpMatTest","[EveTest]")
+TEST_CASE("EveStyblinskiTangFunctionSpMatTest","[Eve]")
 {
   Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction<>, arma::sp_mat>(optimizer, 0.5, 0.1);
