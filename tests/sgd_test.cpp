@@ -81,13 +81,13 @@ void SGDLogisticRegressionTest()
   REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
 }
 
-TEMPLATE_TEST_CASE("SGDGeneralizedRosenbrock", "[SGDTest]",
+TEMPLATE_TEST_CASE("SGDGeneralizedRosenbrock", "[SGD]",
     arma::mat, arma::fmat)
 {
   SGDGeneralizedRosenbrockTest<TestType>();
 }
 
-TEMPLATE_TEST_CASE("SGDLogisticRegressionTest", "[SGDTest]",
+TEMPLATE_TEST_CASE("SGDLogisticRegressionTest", "[SGD]",
     arma::mat)
 {
   SGDLogisticRegressionTest<TestType, arma::Row<size_t>>();
@@ -95,13 +95,13 @@ TEMPLATE_TEST_CASE("SGDLogisticRegressionTest", "[SGDTest]",
 
 #ifdef USE_COOT
 
-TEMPLATE_TEST_CASE("SGDGeneralizedRosenbrock", "[SGDTest]",
+TEMPLATE_TEST_CASE("SGDGeneralizedRosenbrock", "[SGD]",
     coot::mat, coot::fmat)
 {
   SGDGeneralizedRosenbrockTest<TestType>();
 }
 
-TEMPLATE_TEST_CASE("SGDLogisticRegressionTest", "[SGDTest]",
+TEMPLATE_TEST_CASE("SGDLogisticRegressionTest", "[SGD]",
     coot::mat)
 {
   SGDLogisticRegressionTest<TestType, coot::Row<size_t>>();

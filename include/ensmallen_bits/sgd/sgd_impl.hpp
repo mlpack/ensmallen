@@ -131,8 +131,6 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
   for (size_t i = 0; i < actualMaxIterations && !terminate;
       /* incrementing done manually */)
   {
-    arma::wall_clock timer;
-    timer.tic();
     // Find the effective batch size; we have to take the minimum of three
     // things:
     // - the batch size can't be larger than the user-specified batch size;
@@ -164,8 +162,6 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
 
     i += effectiveBatchSize;
     currentFunction += effectiveBatchSize;
-
-    //std::cout << "iter: " << i << " time: " << timer.toc() << std::endl;
 
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)
