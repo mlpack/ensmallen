@@ -36,7 +36,9 @@ set(VERSION "${ENSMALLEN_VERSION_MAJOR}.${ENSMALLEN_VERSION_MINOR}.${ENSMALLEN_V
 add_library(ensmallen INTERFACE)
 target_include_directories(ensmallen INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>
+  /usr/local/cuda/include
+  )
 
 # Set warning flags for target.
 if(MSVC)
@@ -62,6 +64,7 @@ endif()
 # Find Bandicoot and link it.
 find_package(Bandicoot 0.100.0 REQUIRED)
 target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
+target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
 set(USE_COOT "1")
 add_definitions(-DUSE_COOT)
 
