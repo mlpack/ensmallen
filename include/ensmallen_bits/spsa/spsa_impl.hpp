@@ -43,12 +43,10 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
                                            MatType& iterate,
                                            CallbackTypes&&... callbacks)
 {
-
-// CHECK IF WE GET NEW RANDOM VALUES EACH TIME.
-
-// Convenience typedefs.
+ // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardMatType<MatType, ElemType>::MatType ProxyMatType;
 
   // Make sure that we have the methods that we need.
   traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
@@ -56,7 +54,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
   RequireFloatingPointType<MatType>();
 
   BaseMatType gradient(iterate.n_rows, iterate.n_cols);
-  arma::Mat<ElemType> spVector(iterate.n_rows, iterate.n_cols);
+  ProxyMatType spVector(iterate.n_rows, iterate.n_cols);
 
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
@@ -97,8 +95,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     const double ck = evaluationStepSize / std::pow(k + 1, gamma);
 
     // Choose stochastic directions.
-    spVector = arma::conv_to<arma::Mat<ElemType>>::from(
-        arma::randi(iterate.n_rows, iterate.n_cols,
+    spVector = conv_to<ProxyMatType>::from(randi(iterate.n_rows, iterate.n_cols,
         arma::distr_param(0, 1))) * 2 - 1;
 
     iterate += ck * spVector;
@@ -132,91 +129,6 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return objective;
-
-
-  /* // Convenience typedefs. */
-  /* typedef typename MatType::elem_type ElemType; */
-  /* typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType; */
-
-  /* // Make sure that we have the methods that we need. */
-  /* traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType, */
-  /*     MatType>(); */
-  /* RequireFloatingPointType<MatType>(); */
-
-  /* BaseMatType gradient(iterate.n_rows, iterate.n_cols); */
-
-  /* typedef typename ForwardSpMatMatType<MatType>::MatType ForwardMatType; */
-  /* ForwardMatType spVector(iterate.n_rows, iterate.n_cols); */
-
-  /* // To keep track of where we are and how things are going. */
-  /* ElemType overallObjective = 0; */
-  /* ElemType lastObjective = DBL_MAX; */
-
-  /* // Controls early termination of the optimization process. */
-  /* bool terminate = false; */
-
-  /* terminate |= Callback::BeginOptimization(*this, function, iterate, */
-  /*     callbacks...); */
-  /* for (size_t k = 0; k < maxIterations && !terminate; ++k) */
-  /* { */
-  /*   // Output current objective function. */
-  /*   Info << "SPSA: iteration " << k << ", objective " << overallObjective */
-  /*       << "." << std::endl; */
-
-  /*   if (std::isnan(overallObjective) || std::isinf(overallObjective)) */
-  /*   { */
-  /*     Warn << "SPSA: converged to " << overallObjective << "; terminating" */
-  /*         << " with failure.  Try a smaller step size?" << std::endl; */
-
-  /*     Callback::EndOptimization(*this, function, iterate, callbacks...); */
-  /*     return overallObjective; */
-  /*   } */
-
-  /*   if (std::abs(lastObjective - overallObjective) < tolerance) */
-  /*   { */
-  /*     Warn << "SPSA: minimized within tolerance " << tolerance << "; " */
-  /*         << "terminating optimization." << std::endl; */
-  /*     Callback::EndOptimization(*this, function, iterate, callbacks...); */
-  /*     return overallObjective; */
-  /*   } */
-
-  /*   // Reset the counter variables. */
-  /*   lastObjective = overallObjective; */
-
-  /*   // Gain sequences. */
-  /*   const double akLocal = stepSize / std::pow(k + 1 + ak, alpha); */
-  /*   const double ck = evaluationStepSize / std::pow(k + 1, gamma); */
-
-  /*   // Choose stochastic directions. */
-  /*   randi(iterate.n_rows, iterate.n_cols, 0, 1, spVector); */
-  /*   spVector = spVector * 2 - 1; */
-
-  /*   iterate += ck * spVector; */
-  /*   const double fPlus = function.Evaluate(iterate); */
-  /*   Callback::Evaluate(*this, function, iterate, fPlus, callbacks...); */
-
-  /*   iterate -= 2 * ck * spVector; */
-  /*   const double fMinus = function.Evaluate(iterate); */
-  /*   Callback::Evaluate(*this, function, iterate, fMinus, callbacks...); */
-
-  /*   iterate += ck * spVector; */
-
-  /*   gradient = (fPlus - fMinus) * (1 / (2 * ck * spVector)); */
-  /*   iterate -= akLocal * gradient; */
-
-  /*   terminate |= Callback::StepTaken(*this, function, iterate, callbacks...); */
-
-  /*   overallObjective = function.Evaluate(iterate); */
-  /*   Callback::Evaluate(*this, function, iterate, overallObjective, */
-  /*       callbacks...); */
-  /* } */
-
-  /* // Calculate final objective. */
-  /* const ElemType objective = function.Evaluate(iterate); */
-  /* Callback::Evaluate(*this, function, iterate, objective, callbacks...); */
-
-  /* Callback::EndOptimization(*this, function, iterate, callbacks...); */
-  /* return objective; */
 }
 
 } // namespace ens

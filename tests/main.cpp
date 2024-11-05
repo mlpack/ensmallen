@@ -10,7 +10,6 @@
 
 #include <iostream>
 
-#define USE_COOT
 #define COOT_DEFAULT_BACKEND CUDA_BACKEND
 #define COOT_USE_U64S64
 #define ENS_PRINT_INFO
@@ -23,7 +22,9 @@
 
 int main(int argc, char** argv)
 {
+  #ifdef USE_COOT
   coot::get_rt().init(true);
+  #endif
 
   Catch::Session session;
   const int returnCode = session.applyCommandLine(argc, argv);
@@ -33,7 +34,10 @@ int main(int argc, char** argv)
 
   std::cout << "ensmallen version: " << ens::version::as_string() << std::endl;
   std::cout << "armadillo version: " << arma::arma_version::as_string() << std::endl;
+
+  #ifdef USE_COOT
   std::cout << "bandicoot version: " << coot::coot_version::as_string() << std::endl;
+  #endif
 
   // Use Catch2 command-line to set the random seed.
   // -rng-seed <'time'|number>

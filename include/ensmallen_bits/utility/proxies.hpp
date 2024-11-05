@@ -15,43 +15,55 @@
 namespace ens {
 
 template<typename ElemType>
-typename std::enable_if<coot::is_coot_type<ElemType>::value, ElemType>::type
+typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
 randu(const size_t rows, const size_t cols)
 {
+  #ifdef USE_COOT
   return coot::randu<ElemType>(rows, cols);
+  #else
+  return arma::randu<ElemType>(rows, cols);
+  #endif
 }
 
 template<typename ElemType>
-typename std::enable_if<!coot::is_coot_type<ElemType>::value, ElemType>::type
+typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
 randu(const size_t rows, const size_t cols)
 {
   return arma::randu<ElemType>(rows, cols);
 }
 
 template<typename ElemType>
-typename std::enable_if<coot::is_coot_type<ElemType>::value, ElemType>::type
+typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
 randn(const size_t rows, const size_t cols)
 {
+  #ifdef USE_COOT
   return coot::randn<ElemType>(rows, cols);
+  #else
+  return arma::randn<ElemType>(rows, cols);
+  #endif
 }
 
 template<typename ElemType>
-typename std::enable_if<!coot::is_coot_type<ElemType>::value, ElemType>::type
+typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
 randn(const size_t rows, const size_t cols)
 {
   return arma::randn<ElemType>(rows, cols);
 }
 
 template<typename ElemType>
-typename std::enable_if<coot::is_coot_type<ElemType>::value, ElemType>::type
+typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
 randi(const size_t rows, const size_t cols, const arma::distr_param& param)
 {
+  #ifdef USE_COOT
   return coot::randi<ElemType>(rows, cols,
       coot::distr_param(param.a_int, param.b_int));
+  #else
+  return arma::randi<ElemType>(rows, cols, param);
+  #endif
 }
 
 template<typename ElemType>
-typename std::enable_if<!coot::is_coot_type<ElemType>::value, ElemType>::type
+typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
 randi(const size_t rows, const size_t cols, const arma::distr_param& param)
 {
   return arma::randi<ElemType>(rows, cols, param);
@@ -62,7 +74,11 @@ inline static typename std::enable_if<
     !arma::is_arma_type<OutputType>::value, OutputType>::type
 linspace(const double start, const double end, const size_t num = 100u)
 {
+  #ifdef USE_COOT
   return coot::linspace<OutputType>(start, end, num);
+  #else
+  return arma::linspace<OutputType>(start, end, num);
+  #endif
 }
 
 template<typename OutputType>
@@ -79,7 +95,11 @@ inline static typename std::enable_if<
   ens::IsCootType<InputType>::value, InputType>::type
 shuffle(const InputType& input)
 {
+  #ifdef USE_COOT
   return coot::shuffle(input);
+  #else
+  return arma::shuffle(input);
+  #endif
 }
 
 /**
@@ -102,7 +122,11 @@ class conv_to
       !IsArmaType<foo>::value, OutputType>::type
    from(const InputType& input)
    {
+     #ifdef USE_COOT
      return coot::conv_to<OutputType>::from(input);
+     #else
+     return arma::conv_to<OutputType>::from(input);
+     #endif
    }
 
    /**

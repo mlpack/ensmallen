@@ -1,5 +1,5 @@
 /**
- * @file coot_traits.hpp
+ * @file arma_traits.hpp
  * @author Ryan Curtin
  * @author Marcus Edel
  *
@@ -23,14 +23,14 @@ namespace ens {
  * You might use this struct like this:
  *
  * @code
- * // Only accepts VecTypes that are actually Armadillo vector types.
+ * // Only accepts VecTypes that are actually Bandicoot vector types.
  * template<typename MatType>
  * void Function(const MatType& argumentA,
- *               typename std::enable_if_t<IsArmaType<MatType>::value>* = 0);
+ *               typename std::enable_if_t<IsCootType<MatType>::value>* = 0);
  * @endcode
  *
  * The use of the enable_if_t object allows the compiler to instantiate
- * Function() only if VecType is one of the Armadillo vector types.  It has a
+ * Function() only if VecType is one of the Bandicoot vector types.  It has a
  * default argument because it isn't meant to be used in either the function
  * call or the function body.
  */
@@ -40,8 +40,45 @@ struct IsCootType
   const static bool value = false;
 };
 
+#ifdef USE_COOT
+
 // Commenting out the first template per case, because
 // Visual Studio doesn't like this instantiaion pattern (error C2910).
+// template<>
+template<typename eT>
+struct IsCootType<coot::Col<eT> >
+{
+  const static bool value = true;
+};
+
+// template<>
+template<typename eT>
+struct IsCootType<coot::Row<eT> >
+{
+  const static bool value = true;
+};
+
+// template<>
+template<typename eT>
+struct IsCootType<coot::subview<eT> >
+{
+  const static bool value = true;
+};
+
+// template<>
+template<typename eT>
+struct IsCootType<coot::subview_col<eT> >
+{
+  const static bool value = true;
+};
+
+// template<>
+template<typename eT>
+struct IsCootType<coot::subview_row<eT> >
+{
+  const static bool value = true;
+};
+
 // template<>
 template<typename eT>
 struct IsCootType<coot::Mat<eT> >
@@ -49,12 +86,8 @@ struct IsCootType<coot::Mat<eT> >
   const static bool value = true;
 };
 
-// template<>
-template<typename eT>
-struct IsArmaType<coot::subview<eT> >
-{
-  const static bool value = true;
-};
+#endif
+
 
 } // namespace ens
 

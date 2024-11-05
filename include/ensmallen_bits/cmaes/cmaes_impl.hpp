@@ -95,12 +95,12 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
-  BaseMatType w = std::log(mu + 0.5) - log(
-      linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
-  w /= accu(w);
+  BaseMatType w = std::log(mu + 0.5) - arma::log(
+      arma::linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
+  w /= arma::accu(w);
 
   // Number of effective solutions.
-  const double muEffective = 1 / accu(pow(w, 2));
+  const double muEffective = 1 / arma::accu(arma::pow(w, 2));
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
@@ -169,15 +169,13 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   C[0].eye();
 
   // Covariance matrix parameters.
-  typedef typename ForwardColType<MatType>::ColType ColType;
-  ColType eigval;
+  arma::Col<ElemType> eigval; // TODO: might need a more general type.
   BaseMatType eigvec;
   BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
   eigvalZero.zeros();
 
   // The current visitation order (sorted by population objectives).
-  typedef typename ForwardColType<MatType, size_t>::ColType UVecType;
-  UVecType idx = linspace<UVecType>(0, lambda - 1, lambda);
+  arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
 
   // Now iterate!
   Callback::BeginOptimization(*this, function, transformedIterate,
@@ -197,7 +195,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType covLower;
-    while (!chol(covLower, C[idx0], "lower"))
+    while (!arma::chol(covLower, C[idx0], "lower"))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
     arma::eig_sym(eigval, eigvec, C[idx0]);
@@ -207,11 +205,11 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       if (iterate.n_rows > iterate.n_cols)
       {
         pStep[idx(j)] = covLower *
-          randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+          arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
-        pStep[idx(j)] = randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
+        pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
           * covLower.t();
       }
 
@@ -224,24 +222,25 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     }
 
     // Sort population.
-    idx = sort_index(pObjective);
+    idx = arma::sort_index(pObjective);
 
-/*     step = w(0) * pStep[idx(0)]; */
-/*     for (size_t j = 1; j < mu; ++j) */
-/*       step += w(j) * pStep[idx(j)]; */
+    step = w(0) * pStep[idx(0)];
+    for (size_t j = 1; j < mu; ++j)
+      step += w(j) * pStep[idx(j)];
 
-/*     mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step; */
+    mPosition[idx1] = mPosition[idx0] + sigma(idx0) * step;
 
     // Calculate the objective function.
     currentObjective = selectionPolicy.Select(function, batchSize,
         transformationPolicy.Transform(mPosition[idx1]), terminate,
         callbacks...);
 
-/*     // Update best parameters. */
-/*     if (currentObjective < overallObjective) */
-/*     { */
-/*       overallObjective = currentObjective; */
-/*       iterate = mPosition[idx1]; */
+    // Update best parameters.
+    if (currentObjective < overallObjective)
+    {
+      overallObjective = currentObjective;
+      iterate = mPosition[idx1];
+
       transformedIterate = transformationPolicy.Transform(iterate);
       terminate |= Callback::StepTaken(*this, function,
         transformedIterate, callbacks...);
@@ -275,26 +274,26 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       return overallObjective;
     }
 
-/*     // Update covariance matrix. */
-/*     if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h) */
-/*     { */
-/*       pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) * */
-/*         muEffective) * step; */
+    // Update covariance matrix.
+    if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
+    {
+      pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) *
+        muEffective) * step;
 
-/*       if (iterate.n_rows > iterate.n_cols) */
-/*       { */
-/*         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * */
-/*           (pc[idx1] * pc[idx1].t()); */
-/*       } */
-/*       else */
-/*       { */
-/*         C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 * */
-/*           (pc[idx1].t() * pc[idx1]); */
-/*       } */
-/*     } */
-/*     else */
-/*     { */
-/*       pc[idx1] = (1 - cc) * pc[idx0]; */
+      if (iterate.n_rows > iterate.n_cols)
+      {
+        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
+          (pc[idx1] * pc[idx1].t());
+      }
+      else
+      {
+        C[idx1] = (1 - c1 - cmu) * C[idx0] + c1 *
+          (pc[idx1].t() * pc[idx1]);
+      }
+    }
+    else
+    {
+      pc[idx1] = (1 - cc) * pc[idx0];
 
       if (iterate.n_rows > iterate.n_cols)
       {
@@ -372,7 +371,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
     steps++;
 
-/*     lastObjective = overallObjective; */
+    lastObjective = overallObjective;
   }
 
   iterate = transformationPolicy.Transform(iterate);

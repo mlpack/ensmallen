@@ -78,7 +78,7 @@ class GradientDescent
            typename GradType,
            typename... CallbackTypes>
   typename std::enable_if<IsArmaType<GradType>::value ||
-      coot::is_coot_type<GradType>::value, typename MatType::elem_type>::type
+      IsCootType<GradType>::value, typename MatType::elem_type>::type
   Optimize(FunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);

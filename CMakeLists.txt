@@ -62,11 +62,14 @@ if(USE_OPENMP)
 endif()
 
 # Find Bandicoot and link it.
-find_package(Bandicoot 0.100.0 REQUIRED)
-target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
-target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
-set(USE_COOT "1")
-add_definitions(-DUSE_COOT)
+find_package(Bandicoot 0.100.0)
+if(BANDICOOT_FOUND AND NOT TARGET Bandicoot:Bandicoot)
+  target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
+  target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
+
+  set(USE_COOT "1")
+  add_definitions(-DUSE_COOT)
+endif()
 
 # Find Armadillo and link it.
 find_package(Armadillo 10.8.2 REQUIRED)

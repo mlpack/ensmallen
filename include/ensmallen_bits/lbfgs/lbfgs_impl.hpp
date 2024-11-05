@@ -123,6 +123,8 @@ void L_BFGS::SearchDirection(const MatType& gradient,
                              const CubeType& y,
                              MatType& searchDirection)
 {
+  typedef typename CubeType::elem_type CubeElemType;
+  
   // Start from this point.
   searchDirection = gradient;
 
@@ -346,7 +348,7 @@ template<typename FunctionType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value ||
-                        coot::is_coot_type<GradType>::value,
+                        IsCootType<GradType>::value,
 typename MatType::elem_type>::type
 L_BFGS::Optimize(FunctionType& function,
                  MatType& iterateIn,

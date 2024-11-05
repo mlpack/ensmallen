@@ -68,11 +68,13 @@ struct ForwardMatCubeType<arma::SpMat<eT>>
   typedef arma::Cube<eT> CubeType;
 };
 
+#ifdef USE_COOT
 template<typename eT>
 struct ForwardMatCubeType<coot::Mat<eT>>
 {
   typedef coot::Cube<eT> CubeType;
 };
+#endif
 
 /**
  * Get the Cube type based on the given matrix type (i.e. arma::Mat, returns a
@@ -91,11 +93,13 @@ struct ForwardCubeMatType<arma::Cube<eT>>
   typedef arma::Mat<eT> MatType;
 };
 
+#ifdef USE_COOT
 template<typename eT>
 struct ForwardCubeMatType<coot::Cube<eT>>
 {
   typedef coot::Mat<eT> MatType;
 };
+#endif
 
 /**
  * Get the Mat type based on the given matrix type (i.e. arma::Mat, returns a
@@ -131,11 +135,13 @@ struct ForwardCubeColType<arma::Cube<eT>>
   typedef arma::Col<eT> ColType;
 };
 
+#ifdef USE_COOT
 template<typename eT>
 struct ForwardCubeColType<coot::Cube<eT>>
 {
   typedef coot::Col<eT> ColType;
 };
+#endif
 
 /**
  * Get the Mat type based on the given matrix type (i.e. arma::Cube, returns a
@@ -145,22 +151,34 @@ struct ForwardCubeColType<coot::Cube<eT>>
 template<typename MatType, typename ElemType = typename MatType::elem_type>
 struct ForwardColType
 {
+  #ifdef USE_COOT
   typedef typename std::conditional<IsArmaType<MatType>::value,
       arma::Col<ElemType>, coot::Col<ElemType>>::type ColType;
+  #else
+  typedef arma::Col<ElemType> ColType;
+  #endif
 };
 
 template<typename MatType, typename ElemType = typename MatType::elem_type>
 struct ForwardRowType
 {
+  #ifdef USE_COOT
   typedef typename std::conditional<IsArmaType<MatType>::value,
       arma::Row<ElemType>, coot::Row<ElemType>>::type RowType;
+  #else
+  typedef arma::Row<ElemType> RowType;
+  #endif
 };
 
 template<typename MatInputType, typename ElemType = typename MatInputType::elem_type>
 struct ForwardMatType
 {
+  #ifdef USE_COOT
   typedef typename std::conditional<IsArmaType<MatInputType>::value,
       arma::Mat<ElemType>, coot::Mat<ElemType>>::type MatType;
+  #else
+  typedef arma::Mat<ElemType> MatType;
+  #endif
 };
 
 /* template<typename eT> */
@@ -204,11 +222,13 @@ struct ForwardMatRowType<arma::SpMat<eT>>
   typedef arma::Row<eT> RowType;
 };
 
+#ifdef USE_COOT
 template<typename eT>
 struct ForwardMatRowType<coot::Mat<eT>>
 {
   typedef coot::Row<eT> RowType;
 };
+#endif
 
 /**
  * Disable usage of arma::subviews and related types for optimizers.  It might
@@ -286,10 +306,13 @@ template<>
 inline void RequireDenseFloatingPointType<arma::mat>() { }
 template<>
 inline void RequireDenseFloatingPointType<arma::fmat>() { }
+
+#ifdef USE_COOT
 template<>
 inline void RequireDenseFloatingPointType<coot::mat>() { }
 template<>
 inline void RequireDenseFloatingPointType<coot::fmat>() { }
+#endif
 
 template<typename MatType>
 void RequireFloatingPointType()
@@ -312,10 +335,13 @@ template<>
 inline void RequireFloatingPointType<arma::sp_mat>() { }
 template<>
 inline void RequireFloatingPointType<arma::sp_fmat>() { }
+
+#ifdef USE_COOT
 template<>
 inline void RequireFloatingPointType<coot::mat>() { }
 template<>
 inline void RequireFloatingPointType<coot::fmat>() { }
+#endif
 
 /**
  * Require that the internal element type of the matrix type and gradient type

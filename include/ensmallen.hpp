@@ -33,7 +33,10 @@
 #endif
 
 #include <armadillo>
-#include <bandicoot>
+
+#ifdef USE_COOT
+  #include <bandicoot>
+#endif
 
 #if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
   #error "need Armadillo version 10.8 or newer"

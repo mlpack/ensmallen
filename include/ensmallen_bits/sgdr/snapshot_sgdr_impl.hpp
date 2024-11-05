@@ -58,7 +58,7 @@ template<typename SeparableFunctionType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value ||
-                        coot::is_coot_type<GradType>::value,
+                        IsCootType<GradType>::value,
 typename MatType::elem_type>::type
 SnapshotSGDR<UpdatePolicyType>::Optimize(
     SeparableFunctionType& function,

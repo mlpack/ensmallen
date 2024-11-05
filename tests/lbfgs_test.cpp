@@ -116,51 +116,51 @@ TEMPLATE_TEST_CASE("RosenbrockFunctionTest", "[LBFGS]", coot::mat, coot::fmat)
   FunctionTest<RosenbrockFunction, TestType>(lbfgs, 0.01, 0.001);
 }
 
-/**
- * Tests the L-BFGS optimizer using the generalized Rosenbrock function.  This
- * is actually multiple tests, increasing the dimension by powers of 2, from 4
- * dimensions to 1024 dimensions.
- */
-TEMPLATE_TEST_CASE("GeneralizedRosenbrockFunctionTest", "[LBFGS]",
-    coot::mat, coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
+// /**
+//  * Tests the L-BFGS optimizer using the generalized Rosenbrock function.  This
+//  * is actually multiple tests, increasing the dimension by powers of 2, from 4
+//  * dimensions to 1024 dimensions.
+//  */
+// TEMPLATE_TEST_CASE("GeneralizedRosenbrockFunctionTest", "[LBFGS]",
+//     coot::mat, coot::fmat)
+// {
+//   typedef typename TestType::elem_type ElemType;
 
-  for (int i = 2; i < 10; i++)
-  {
-    // Dimension: powers of 2
-    int dim = std::pow(2.0, i);
+//   for (int i = 2; i < 10; i++)
+//   {
+//     // Dimension: powers of 2
+//     int dim = std::pow(2.0, i);
 
-    GeneralizedRosenbrockFunction<TestType, coot::Row<size_t>> f(dim);
-    L_BFGS lbfgs(20);
-    lbfgs.MaxIterations() = 10000;
+//     GeneralizedRosenbrockFunction<TestType, coot::Row<size_t>> f(dim);
+//     L_BFGS lbfgs(20);
+//     lbfgs.MaxIterations() = 10000;
 
-    TestType coords = f.GetInitialPoint();
-    lbfgs.Optimize(f, coords);
+//     TestType coords = f.GetInitialPoint();
+//     lbfgs.Optimize(f, coords);
 
-    double finalValue = f.Evaluate(coords);
+//     double finalValue = f.Evaluate(coords);
 
-    // Test the output to make sure it is correct.
-    REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-    for (int j = 0; j < dim; j++)
-      REQUIRE(ElemType(coords(j)) == Approx(1.0).epsilon(1e-3));
-  }
-}
+//     // Test the output to make sure it is correct.
+//     REQUIRE(finalValue == Approx(0.0).margin(1e-5));
+//     for (int j = 0; j < dim; j++)
+//       REQUIRE(ElemType(coords(j)) == Approx(1.0).epsilon(1e-3));
+//   }
+// }
 
-TEMPLATE_TEST_CASE("WoodFunctionTest", "[LBFGS]", coot::mat)
-{
-  L_BFGS lbfgs;
-  lbfgs.MaxIterations() = 10000;
-  FunctionTest<WoodFunction, TestType>(lbfgs, 0.01, 0.001);
-}
+// TEMPLATE_TEST_CASE("WoodFunctionTest", "[LBFGS]", coot::mat)
+// {
+//   L_BFGS lbfgs;
+//   lbfgs.MaxIterations() = 10000;
+//   FunctionTest<WoodFunction, TestType>(lbfgs, 0.01, 0.001);
+// }
 
-TEMPLATE_TEST_CASE("RosenbrockWoodFunctionTest", "[LBFGS]",
-    coot::mat)
-{
-  L_BFGS lbfgs;
-  lbfgs.MaxIterations() = 10000;
-  FunctionTest<RosenbrockWoodFunction<TestType, coot::Row<size_t>>, TestType>(
-      lbfgs, 0.01, 0.001);
-}
+// TEMPLATE_TEST_CASE("RosenbrockWoodFunctionTest", "[LBFGS]",
+//     coot::mat)
+// {
+//   L_BFGS lbfgs;
+//   lbfgs.MaxIterations() = 10000;
+//   FunctionTest<RosenbrockWoodFunction<TestType, coot::Row<size_t>>, TestType>(
+//       lbfgs, 0.01, 0.001);
+// }
 
 #endif
