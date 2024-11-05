@@ -284,7 +284,7 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
 
   endif()
 else()
-  message(FATAL_ERROR "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp not "
+  message(STATUS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp not "
       "found!  Cannot determine what to link against.")
 endif()
 
