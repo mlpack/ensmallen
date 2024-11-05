@@ -18,29 +18,15 @@ using namespace ens;
 using namespace ens::test;
 using namespace std;
 
-/**
- * Train and test a logistic regression function using CNE optimizer.
- */
-TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
+TEMPLATE_TEST_CASE("CNELogisticRegressionTest", "[CNE]",
+    arma::mat, arma::fmat)
 {
   CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  LogisticRegressionFunctionTest(opt, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      opt, 0.003, 0.006, 1);
 }
 
-/**
- * Train and test a logistic regression function using CNE optimizer.  Use
- * arma::fmat.
- */
-TEST_CASE("CNELogisticRegressionFMatTest", "[CNETest]")
-{
-  CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  LogisticRegressionFunctionTest<arma::fmat>(opt, 0.003, 0.006);
-}
-
-/**
- * Test the CNE optimizer on Cross-in-Tray Function.
- */
-TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
+TEST_CASE("CNECrossInTrayFunctionTest", "[CNE]")
 {
   CrossInTrayFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
@@ -52,46 +38,31 @@ TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
   REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(0.1));
 }
 
-/**
- * Test the CNE optimizer on the Ackley Function.
- */
-TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
+TEST_CASE("CNEAckleyFunctionTest", "[CNE]")
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<AckleyFunction>(optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the CNE optimizer on the Beale Function.
- */
-TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
+TEST_CASE("CNEBealeFunctionTest", "[CNE]")
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<BealeFunction>(optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the CNE optimizer on the Goldstein-Price Function.
- */
-TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
+TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNE]")
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.1, -1);
   FunctionTest<GoldsteinPriceFunction>(optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the CNE optimizer on the Levi Function.
- */
-TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
+TEST_CASE("CNELevyFunctionN13Test", "[CNE]")
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.02, -1);
   FunctionTest<LevyFunctionN13>(optimizer, 0.5, 0.1);
 }
 
-/**
- * Test the CNE optimizer on the Himmelblau Function.
- */
-TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
+TEST_CASE("CNEHimmelblauFunctionTest", "[CNE]")
 {
   HimmelblauFunction f;
   CNE optimizer(650, 3000, 0.3, 0.3, 0.3, 1e-7);
@@ -112,10 +83,7 @@ TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
   REQUIRE(coordinates(1) == Approx(2.0).margin(0.2));
 }
 
-/**
- * Test the CNE optimizer on the Three-hump Camel Function.
- */
-TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
+TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNE]")
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<ThreeHumpCamelFunction>(optimizer, 0.5, 0.1);
@@ -127,7 +95,7 @@ TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
 /**
  * Test the CNE optimizer on Schaffer function N.4.
  */
-TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
+TEST_CASE("CNESchafferFunctionN4Test", "[CNE]")
 {
   SchafferFunctionN4 f;
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
@@ -154,12 +122,21 @@ TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
   }
 }
 
-/**
- * Test the CNE optimizer on Schaffer Function N.2.
- */
-TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
+TEST_CASE("CNESchafferFunctionN2Test", "[CNE]")
 {
   // We allow a few trials in case convergence is not achieved.
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
   FunctionTest<SchafferFunctionN2>(optimizer, 0.5, 0.1, 7);
 }
+
+#ifdef USE_COOT
+
+// TEMPLATE_TEST_CASE("CNELogisticRegressionTest", "[CNE]",
+//     coot::mat, coot::fmat)
+// {
+//   CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
+//   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+//       opt, 0.003, 0.006, 1);
+// }
+
+#endif

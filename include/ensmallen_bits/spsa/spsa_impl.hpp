@@ -43,9 +43,10 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
                                            MatType& iterate,
                                            CallbackTypes&&... callbacks)
 {
-  // Convenience typedefs.
+ // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardMatType<MatType, ElemType>::MatType ProxyMatType;
 
   // Make sure that we have the methods that we need.
   traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
@@ -53,7 +54,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
   RequireFloatingPointType<MatType>();
 
   BaseMatType gradient(iterate.n_rows, iterate.n_cols);
-  arma::Mat<ElemType> spVector(iterate.n_rows, iterate.n_cols);
+  ProxyMatType spVector(iterate.n_rows, iterate.n_cols);
 
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
@@ -94,8 +95,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     const double ck = evaluationStepSize / std::pow(k + 1, gamma);
 
     // Choose stochastic directions.
-    spVector = arma::conv_to<arma::Mat<ElemType>>::from(
-        arma::randi(iterate.n_rows, iterate.n_cols,
+    spVector = conv_to<ProxyMatType>::from(randi(iterate.n_rows, iterate.n_cols,
         arma::distr_param(0, 1))) * 2 - 1;
 
     iterate += ck * spVector;

@@ -36,7 +36,9 @@ set(VERSION "${ENSMALLEN_VERSION_MAJOR}.${ENSMALLEN_VERSION_MINOR}.${ENSMALLEN_V
 add_library(ensmallen INTERFACE)
 target_include_directories(ensmallen INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>
+  /usr/local/cuda/include
+  )
 
 # Set warning flags for target.
 if(MSVC)
@@ -57,6 +59,16 @@ if(USE_OPENMP)
         PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
   endif()
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
+endif()
+
+# Find Bandicoot and link it.
+find_package(Bandicoot 0.100.0)
+if(BANDICOOT_FOUND AND NOT TARGET Bandicoot:Bandicoot)
+  target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
+  target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
+
+  set(USE_COOT "1")
+  add_definitions(-DUSE_COOT)
 endif()
 
 # Find Armadillo and link it.

@@ -149,14 +149,14 @@ class CNE
 
  private:
   //! Reproduce candidates to create the next generation.
-  template<typename MatType>
+  template<typename MatType, typename IndexType>
   void Reproduce(std::vector<MatType>& population,
                  const MatType& fitnessValues,
-                 arma::uvec& index);
+                 IndexType& index);
 
   //! Modify weights with some noise for the evolution of next generation.
-  template<typename MatType>
-  void Mutate(std::vector<MatType>& population, arma::uvec& index);
+  template<typename MatType, typename IndexType>
+  void Mutate(std::vector<MatType>& population, IndexType& index);
 
   /**
    * Crossover parents and create new childs. Two parents create two new childs.

@@ -15,61 +15,67 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run DemonAdam on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdamTest]")
+TEMPLATE_TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdam]", arma::mat)
 {
   DemonAdam optimizer(0.2, 32, 0.9, 0.9, 0.999, 1e-8,
       10000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 6);
+  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
 }
 
-/**
- * Test the Adam optimizer on the Sphere function.
- */
-TEST_CASE("DemonAdamSphereFunctionTest", "[DemonAdamTest]")
-{
-  SphereFunction f(2);
-  DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunction, arma::mat>(optimizer, 1.0, 0.1);
-}
-
-/**
- * Test the DemonAdam optimizer on the Matyas function.
- */
-TEST_CASE("DemonAdamMatyasFunctionTest", "[DemonAdamTest]")
-{
-  DemonAdam optimizer(0.5, 1, 0.9);
-  FunctionTest<MatyasFunction, arma::mat>(optimizer, 0.1, 0.01);
-}
-
-/**
- * Test the Adam optimizer on the Sphere function.
- */
-TEST_CASE("DemonAdamSphereFunctionTestFloat", "[DemonAdamTest]")
-{
-  DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 1.0, 0.1);
-}
-
-/**
- * Test the DemonAdam optimizer on the Matyas function.
- */
-TEST_CASE("DemonAdamMatyasFunctionTestFloat", "[DemonAdamTest]")
-{
-  DemonAdam optimizer(0.5, 1, 0.9);
-  FunctionTest<MatyasFunction, arma::fmat>(optimizer, 0.1, 0.01);
-}
-
-/**
- * Run DemonAdam (AdaMax update) on logistic regression and make sure the
- * results are acceptable.
- */
-TEST_CASE("DemonAdaMaxLogisticRegressionTest", "[DemonAdamTest]")
+TEMPLATE_TEST_CASE("DemonAdaMaxLogisticRegressionTest", "[DemonAdam]", arma::mat)
 {
   DemonAdamType<AdaMaxUpdate> optimizer(0.5, 10, 0.9, 0.9, 0.999, 1e-8,
       10000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 3);
+  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
 }
+
+TEMPLATE_TEST_CASE("DemonAdamSphereFunctionTest", "[DemonAdam]", arma::mat, arma::fmat)
+{
+  DemonAdam optimizer(0.5, 2, 0.9);
+  FunctionTest<SphereFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 1.0, 0.1);
+}
+
+TEMPLATE_TEST_CASE("DemonAdamMatyasFunctionTest", "[DemonAdam]", arma::mat, arma::fmat)
+{
+  DemonAdam optimizer(0.5, 1, 0.9);
+  FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
+}
+
+TEMPLATE_TEST_CASE("DemonAdamSphereFunctionTestSpMat", "[DemonAdam]", arma::sp_mat)
+{
+  DemonAdam optimizer(0.5, 2, 0.9);
+  FunctionTest<SphereFunction<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 1.0, 0.1);
+}
+
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdam]", coot::mat)
+{
+  DemonAdam optimizer(0.2, 32, 0.9, 0.9, 0.999, 1e-8,
+      10000, 1e-9, true, true, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer, 0.003, 0.006, 6);
+}
+
+TEMPLATE_TEST_CASE("DemonAdaMaxLogisticRegressionTest", "[DemonAdam]", coot::mat)
+{
+  DemonAdamType<AdaMaxUpdate> optimizer(0.5, 10, 0.9, 0.9, 0.999, 1e-8,
+      10000, 1e-9, true, true, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer, 0.003, 0.006, 6);
+}
+
+TEMPLATE_TEST_CASE("DemonAdamSphereFunctionTest", "[DemonAdam]", coot::mat, coot::fmat)
+{
+  DemonAdam optimizer(0.5, 2, 0.9);
+  FunctionTest<SphereFunction<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 1.0, 0.1);
+}
+
+TEMPLATE_TEST_CASE("DemonAdamMatyasFunctionTest", "[DemonAdam]", coot::mat, coot::fmat)
+{
+  DemonAdam optimizer(0.5, 1, 0.9);
+  FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
+}
+
+#endif

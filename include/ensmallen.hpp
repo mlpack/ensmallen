@@ -34,6 +34,10 @@
 
 #include <armadillo>
 
+#ifdef USE_COOT
+  #include <bandicoot>
+#endif
+
 #if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
   #error "need Armadillo version 10.8 or newer"
 #endif
@@ -70,6 +74,8 @@
 
 #include "ensmallen_bits/utility/any.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
+#include "ensmallen_bits/utility/coot_traits.hpp"
+#include "ensmallen_bits/utility/proxies.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"
 #include "ensmallen_bits/utility/indicators/igd.hpp"
 #include "ensmallen_bits/utility/indicators/igd_plus.hpp"

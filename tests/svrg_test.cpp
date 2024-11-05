@@ -19,7 +19,7 @@ using namespace ens::test;
 /**
  * Run SVRG on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("SVRGLogisticRegressionTest", "[SVRGTest]")
+TEST_CASE("SVRGLogisticRegressionTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
@@ -32,7 +32,7 @@ TEST_CASE("SVRGLogisticRegressionTest", "[SVRGTest]")
 /**
  * Run SVRG_BB on logistic regression and make sure the results are acceptable.
  */
-TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRGTest]")
+TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
@@ -47,7 +47,7 @@ TEST_CASE("SVRGBBLogisticRegressionTest", "[SVRGTest]")
  * Run SVRG on logistic regression and make sure the results are acceptable.
  * Use arma::fmat.
  */
-TEST_CASE("SVRGLogisticRegressionFMatTest", "[SVRGTest]")
+TEST_CASE("SVRGLogisticRegressionFMatTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
@@ -61,7 +61,7 @@ TEST_CASE("SVRGLogisticRegressionFMatTest", "[SVRGTest]")
  * Run SVRG_BB on logistic regression and make sure the results are acceptable.
  * Use arma::fmat.
  */
-TEST_CASE("SVRGBBLogisticRegressionFMatTest", "[SVRGTest]")
+TEST_CASE("SVRGBBLogisticRegressionFMatTest", "[SVRG]")
 {
   // Run SVRG_BB with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
@@ -76,7 +76,7 @@ TEST_CASE("SVRGBBLogisticRegressionFMatTest", "[SVRGTest]")
  * Run SVRG on logistic regression and make sure the results are acceptable.
  * Use arma::sp_mat.
  */
-TEST_CASE("SVRGLogisticRegressionSpMatTest", "[SVRGTest]")
+TEST_CASE("SVRGLogisticRegressionSpMatTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
@@ -90,7 +90,7 @@ TEST_CASE("SVRGLogisticRegressionSpMatTest", "[SVRGTest]")
  * Run SVRG_BB on logistic regression and make sure the results are acceptable.
  * Use arma::sp_mat.
  */
-TEST_CASE("SVRGBBLogisticRegressionSpMatTest", "[SVRGTest]")
+TEST_CASE("SVRGBBLogisticRegressionSpMatTest", "[SVRG]")
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)

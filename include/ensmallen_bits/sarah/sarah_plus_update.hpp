@@ -55,7 +55,7 @@ class SARAHPlusUpdate
     v += (gradient - gradient0) / (double) batchSize;
     iterate -= stepSize * v;
 
-    if (arma::norm(v) <= gamma * vNorm)
+    if (norm(v) <= gamma * vNorm)
       return true;
 
     return false;

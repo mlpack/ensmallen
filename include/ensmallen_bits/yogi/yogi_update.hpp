@@ -45,8 +45,6 @@ class YogiUpdate
    *     parameter.
    * @param beta1 The smoothing parameter.
    * @param beta2 The second moment coefficient.
-   * @param v1 The first quasi-hyperbolic term.
-   * @param v1 The second quasi-hyperbolic term.
    */
   YogiUpdate(const double epsilon = 1e-8,
              const double beta1 = 0.9,
@@ -112,11 +110,11 @@ class YogiUpdate
       m *= parent.beta1;
       m += (1 - parent.beta1) * gradient;
 
-      const MatType gSquared = arma::square(gradient);
-      v -= (1 - parent.beta2) * arma::sign(v - gSquared) % gSquared;
+      const MatType gSquared = square(gradient);
+      v -= (1 - parent.beta2) * sign(v - gSquared) % gSquared;
 
       // Now update the iterate.
-      iterate -= stepSize * m / (arma::sqrt(v) + parent.epsilon);
+      iterate -= stepSize * m / (sqrt(v) + parent.epsilon);
     }
 
    private:
