@@ -96,8 +96,7 @@ class Atoms
       // Find possible atom to be deleted.
       arma::vec gap = sqTerm -
           currentCoeffs % trans(gradient.t() * currentAtoms);
-      arma::uword ind;
-      gap.min(ind);
+      arma::uword ind = gap.index_min();
 
       // Try deleting the atom.
       arma::mat newAtoms(currentAtoms.n_rows, currentAtoms.n_cols - 1);
