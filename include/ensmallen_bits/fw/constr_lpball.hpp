@@ -118,8 +118,8 @@ class ConstrLpBallSolver
       else
         s = arma::abs(v);
 
-      arma::uword k = 0;
-      s.max(k);  // k is the linear index of the largest element.
+      // k is the linear index of the largest element.
+      arma::uword k = s.index_max();
       s.zeros();
       // Take the sign of v(k).
       s(k) = -((0.0 < v(k)) - (v(k) < 0.0));

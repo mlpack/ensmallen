@@ -6,6 +6,9 @@
  * Bump minimum Armadillo version to 10.8
    ([#404](https://github.com/mlpack/ensmallen/pull/404)).
 
+ * For Armadillo 14.2.0 switch to `.index_min()` and `.index_max()`
+   ([#409](https://github.com/mlpack/ensmallen/pull/409).
+
 ### ensmallen 2.21.1: "Bent Antenna"
 ###### 2024-02-15
  * Fix numerical precision issues for small-gradient L-BFGS scaling factor
