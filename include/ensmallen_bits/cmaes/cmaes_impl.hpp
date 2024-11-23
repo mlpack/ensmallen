@@ -31,14 +31,28 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  const int maxFunctionEvaluations,
+                                  const double minObjective,
+                                  const size_t toleranceConditionCov,
+                                  const double toleranceNoEffectCoord,
+                                  const double toleranceNoEffectAxis,
+                                  const double toleranceRange,
+                                  const size_t tolerancePatienceRange):
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
     transformationPolicy(transformationPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    maxFunctionEvaluations(maxFunctionEvaluations),
+    minObjective(minObjective),
+    toleranceConditionCov(toleranceConditionCov),
+    toleranceNoEffectCoord(toleranceNoEffectCoord),
+    toleranceNoEffectAxis(toleranceNoEffectAxis),
+    toleranceRange(toleranceRange),
+    toleranceRangePatience(toleranceRangePatience)
 { /* Nothing to do. */ }
 
 template<typename SelectionPolicyType, typename TransformationPolicyType>
@@ -49,13 +63,27 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const size_t maxIterations,
                                   const double tolerance,
                                   const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
+                                  double stepSizeIn,
+                                  const int maxFunctionEvaluations,
+                                  const double minObjective,
+                                  const size_t toleranceConditionCov,
+                                  const double toleranceNoEffectCoord,
+                                  const double toleranceNoEffectAxis,
+                                  const double toleranceRange,
+                                  const size_t toleranceRangePatience):
     lambda(lambda),
     batchSize(batchSize),
     maxIterations(maxIterations),
     tolerance(tolerance),
     selectionPolicy(selectionPolicy),
-    stepSize(stepSizeIn)
+    stepSize(stepSizeIn),
+    maxFunctionEvaluations(maxFunctionEvaluations),
+    minObjective(minObjective),
+    toleranceConditionCov(toleranceConditionCov),
+    toleranceNoEffectCoord(toleranceNoEffectCoord),
+    toleranceNoEffectAxis(toleranceNoEffectAxis),
+    toleranceRange(toleranceRange),
+    toleranceRangePatience(toleranceRangePatience)
 {
   Warn << "This is a deprecated constructor and will be removed in a "
     "future version of ensmallen" << std::endl;
@@ -91,7 +119,16 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
   // Population size.
   if (lambda == 0)
-    lambda = (4 + std::round(3 * std::log(iterate.n_elem))) * 10;
+    lambda = (4 + std::round(3 * std::log(iterate.n_elem)));
+
+  // Stagnation
+  const size_t historySize = std::max(
+      static_cast<size_t>(120 + 30 * iterate.n_elem / lambda),
+      std::min(static_cast<size_t>(0.2 * maxIterations), static_cast<size_t>(20000))
+  );
+
+  std::vector<ElemType> bestFitnessHistory;
+  std::vector<ElemType> medianFitnessHistory;
 
   // Parent weights.
   const size_t mu = std::round(lambda / 2);
@@ -109,7 +146,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   else 
     sigma(0) = stepSize;
 
-  const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 5);
+  const double cs = (muEffective + 2) / (iterate.n_elem + muEffective + 3);
   const double ds = 1 + cs + 2 * std::max(std::sqrt((muEffective - 1) /
       (iterate.n_elem + 1)) - 1, 0.0);
   const double enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
@@ -185,6 +222,11 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   // been reached or no improvement has been made before terminating.
   size_t patience = 10 + (30 * iterate.n_elem / lambda) + 1;
   size_t steps = 0;
+  size_t stepsRange = 0;
+
+  // The min and max objective values in the range. For early termination.
+  double minObjectiveInPatience = std::numeric_limits<double>::infinity();
+  double maxObjectiveInPatience = -std::numeric_limits<double>::infinity();
 
   for (size_t i = 1; (i != maxIterations) && !terminate; ++i)
   {
@@ -235,6 +277,8 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
         transformationPolicy.Transform(mPosition[idx1]), terminate,
         callbacks...);
 
+    functionEvaluations += lambda;
+    
     // Update best parameters.
     if (currentObjective < overallObjective)
     {
@@ -270,6 +314,17 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
 
       iterate = transformationPolicy.Transform(iterate);
 
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    // Terminate if sigma/sigma0 is above 10^4 * max(D), where C = B^T * D * B.
+    if (sigma(idx1) / sigma(0) > 1e4 * std::sqrt(eigval.max()))
+    {
+      Info << "The step size ratio is too large; "
+        << "terminating optimization. Try a smaller step size?" << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
@@ -340,6 +395,9 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       }
     }
 
+    minObjectiveInPatience = std::min(minObjectiveInPatience, static_cast<double>(currentObjective));
+    maxObjectiveInPatience = std::max(maxObjectiveInPatience, static_cast<double>(currentObjective));
+
     // Output current objective function.
     Info << "CMA-ES: iteration " << i << ", objective " << overallObjective
       << "." << std::endl;
@@ -347,16 +405,17 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     if (std::isnan(overallObjective) || std::isinf(overallObjective))
     {
       Warn << "CMA-ES: converged to " << overallObjective << "; "
-        << "terminating with failure.  Try a smaller step size?" << std::endl;
+        << "terminating with failure. Try a smaller step size?" << std::endl;
 
       iterate = transformationPolicy.Transform(iterate);
       Callback::EndOptimization(*this, function, iterate, callbacks...);
       return overallObjective;
     }
 
-    if (std::abs(lastObjective - overallObjective) < tolerance)
+    if ((std::abs(lastObjective - overallObjective) < tolerance))
     {
-      if (steps > patience) {
+      if (steps > patience)
+      {
         Info << "CMA-ES: minimized within tolerance " << tolerance << "; "
           << "terminating optimization." << std::endl;
 
@@ -365,9 +424,161 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
         return overallObjective;
       }
     }
-    else {
+    else 
+    {
       steps = 0;
     }
+
+    // Other termination criteria.
+    // Terminate if the objective is less than the minimum objective.
+    if (overallObjective < minObjective)
+    {
+      Info << "CMA-ES: minimized below minObjective " << minObjective << "; "
+        << "terminating optimization." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    // Terminate if the range of the objective is below tolerance.
+    if (maxObjectiveInPatience - minObjectiveInPatience < toleranceRange)
+    {
+      if (stepsRange > toleranceRangePatience)
+      {
+        Info << "CMA-ES: range of function values below " << toleranceRange <<
+          "; terminating optimization." << std::endl;
+
+        iterate = transformationPolicy.Transform(iterate);
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
+      stepsRange++;
+    }
+    else
+    {
+      minObjectiveInPatience = std::numeric_limits<double>::infinity();
+      maxObjectiveInPatience = -std::numeric_limits<double>::infinity();
+      stepsRange = 0;
+    }
+
+    // Terminate if the maximum number of function evaluations has been reached.
+    if (functionEvaluations >= maxFunctionEvaluations)
+    {
+      Info << "CMA-ES: maximum number of function evaluations ("
+        << maxFunctionEvaluations << ") reached; "
+        << "terminating optimization." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    // Check if the condition number of the covariance matrix is too high.
+    if (eigval(eigval.n_elem - 1) / eigval(0) > toleranceConditionCov)
+    {
+      Info << "CMA-ES: covariance matrix condition number is too high; "
+        << "terminating optimization." << std::endl;
+
+      iterate = transformationPolicy.Transform(iterate);
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
+
+    // Terminate if adding 0.1 std * d * b does not change the m.
+    size_t i_aux = (i % iterate.n_elem);
+    BaseMatType norm_eigvec = eigvec.col(i_aux) / arma::norm(eigvec.col(i_aux), 2);
+    BaseMatType positionChange = arma::abs(mPosition[idx0] - (mPosition[idx0] + 
+    0.1 * sigma(idx0) * std::sqrt(eigval(i_aux)) * norm_eigvec[i_aux]));
+
+    BaseMatType axisChange = arma::abs(mPosition[idx0] - (mPosition[idx0] + positionChange));
+
+    bool tooSmallChange = true;
+    for (size_t j = 0; j < axisChange.n_elem; ++j)
+    {
+        if (axisChange(j) >= toleranceNoEffectAxis)
+        {
+            tooSmallChange = false;
+            break;
+        }
+    }
+
+    if (tooSmallChange)
+    {
+        Info << "CMA-ES: change in axis is too small; "
+          << "terminating optimization." << std::endl;
+        iterate = transformationPolicy.Transform(iterate);
+
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+    }
+
+    // Terminate if adding 0.2 std in each coordinate does not change the m.
+    for (size_t j = 0; j < iterate.n_elem; ++j)
+    {
+      double perturbation = 0.2 * sigma(idx0) * std::sqrt(C[idx0](j, j));
+
+      if (std::abs(mPosition[idx0](j) - (mPosition[idx0](j) + perturbation)) < toleranceNoEffectCoord)
+      {
+        Info << "CMA-ES: change in coordinate is too small; "
+          << "terminating optimization." << std::endl;
+
+        iterate = transformationPolicy.Transform(iterate);
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
+    }
+
+    // Update histories for stagnation
+    bestFitnessHistory.push_back(pObjective(idx(0)));
+    
+    // Calculate median fitness
+    std::vector<ElemType> sortedFitness(pObjective.begin(), pObjective.end());
+    std::nth_element(sortedFitness.begin(), sortedFitness.begin() + lambda / 2, sortedFitness.end());
+    ElemType medianFitness = sortedFitness[lambda / 2];
+    medianFitnessHistory.push_back(medianFitness);
+
+    // Check for stagnation
+    if (bestFitnessHistory.size() >= historySize)
+    {
+      size_t third = historySize * 0.3;
+
+      // Calculate medians for first and last 30% of history
+      std::vector<ElemType> firstThirdBest(bestFitnessHistory.begin(), 
+                                           bestFitnessHistory.begin() + third);
+      std::vector<ElemType> lastThirdBest(bestFitnessHistory.end() - third, 
+                                          bestFitnessHistory.end());
+      std::vector<ElemType> firstThirdMedian(medianFitnessHistory.begin(), 
+                                             medianFitnessHistory.begin() + third);
+      std::vector<ElemType> lastThirdMedian(medianFitnessHistory.end() - third, 
+                                            medianFitnessHistory.end());
+
+      std::nth_element(firstThirdBest.begin(), firstThirdBest.begin() + third / 2, firstThirdBest.end());
+      std::nth_element(lastThirdBest.begin(), lastThirdBest.begin() + third / 2, lastThirdBest.end());
+      std::nth_element(firstThirdMedian.begin(), firstThirdMedian.begin() + third / 2, firstThirdMedian.end());
+      std::nth_element(lastThirdMedian.begin(), lastThirdMedian.begin() + third / 2, lastThirdMedian.end());
+
+      ElemType medianFirstBest = firstThirdBest[third / 2];
+      ElemType medianLastBest = lastThirdBest[third / 2];
+      ElemType medianFirstMedian = firstThirdMedian[third / 2];
+      ElemType medianLastMedian = lastThirdMedian[third / 2];
+
+      if (medianLastBest >= medianFirstBest && 
+          medianLastMedian >= medianFirstMedian)
+      {
+        Info << "CMA-ES: Stagnation detected; "
+            << "terminating optimization." << std::endl;
+        
+        iterate = transformationPolicy.Transform(iterate);
+        Callback::EndOptimization(*this, function, iterate, callbacks...);
+        return overallObjective;
+      }
+
+      // Remove oldest entry to maintain history size
+      bestFitnessHistory.erase(bestFitnessHistory.begin());
+      medianFitnessHistory.erase(medianFitnessHistory.begin());
+    }
+
 
     steps++;
 
