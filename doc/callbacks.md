@@ -144,19 +144,22 @@ smorms3.Optimize(lrfTrain, coordinates, cb);
 
 </details>
 
-### GradClipByNorm
+### Gradient Clipping
 
-One difficulty with optimization is that large parameter gradients can lead an
-optimizer to update the parameters strongly into a region where the loss
-function is much greater, effectively undoing much of the work done to get to
-the current solution. Such large updates during the optimization can cause a
-numerical overflow or underflow, often referred to as "exploding gradients". The
-exploding gradient problem can be caused by: Choosing the wrong learning rate
-which leads to huge updates in the gradients.  Failing to scale a data set
-leading to very large differences between data points.  Applying a loss function
-that computes very large error values.
+One challenge in optimization is dealing with "exploding gradients", where large
+parameter gradients can cause the optimizer to make excessively large updates,
+potentially pushing the model into regions of high loss or causing numerical
+instability. This can happen due to:
 
-A common answer to the exploding gradients problem is to change the derivative
+* A high learning rate, leading to large gradient updates.
+* Poorly scaled datasets, resulting in significant variance between data points.
+* A loss function that generates disproportionately large error values.
+    
+Common solutions for this problem are:
+
+#### GradClipByNorm
+
+In this method, the solution is to change the derivative
 of the error before applying the update step.  One option is to clip the norm
 `||g||` of the gradient `g` before a parameter update. So given the gradient,
 and a maximum norm value, the callback normalizes the gradient so that its
@@ -186,19 +189,9 @@ arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, GradClipByNorm(0.3));
 ```
 
-### GradClipByValue
+#### GradClipByValue
 
-One difficulty with optimization is that large parameter gradients can lead an
-optimizer to update the parameters strongly into a region where the loss
-function is much greater, effectively undoing much of the work done to get to
-the current solution. Such large updates during the optimization can cause a
-numerical overflow or underflow, often referred to as "exploding gradients". The
-exploding gradient problem can be caused by: Choosing the wrong learning rate
-which leads to huge updates in the gradients.  Failing to scale a data set
-leading to very large differences between data points.  Applying a loss function
-that computes very large error values.
-
-A common answer to the exploding gradients problem is to change the derivative
+In this method, the solution is to change the derivative
 of the error before applying the update step.  One option is to clip the
 parameter gradient element-wise before a parameter update.
 
