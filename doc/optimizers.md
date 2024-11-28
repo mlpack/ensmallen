@@ -905,7 +905,17 @@ populations intensify the search in promising regions.
 | `double` | **`populationFactor`** | The factor by which the population increases after each restart. | `2.0` |
 | `size_t` | **`maxFunctionEvaluations`** | Maximum number of function evaluations. | `1e9` |
 
-The _`SelectionPolicyType`_ and _`TransformationPolicyType`_ template parameters are used to control how the selection of points and the transformation of the decision variables are handled during the optimization process. For more information, check the [CMAES](#cmaes) class. The `lambda`, `transformationPolicy`, `batchSize`, `maxIterations`, `tolerance`, `selectionPolicy`, and `stepSize` are all parameters that affect the underlying CMAES process.
+The _`SelectionPolicyType`_ and _`TransformationPolicyType`_ template parameters
+are used to control how the selection of points and the transformation of the
+decision variables are handled during the optimization process. For more
+information, check the [`CMAES`](#cma-es) class. The `lambda`,
+`transformationPolicy`, `batchSize`, `maxIterations`, `tolerance`,
+`selectionPolicy`, and `stepSize` are all parameters that affect the underlying
+CMA-ES process.
+
+For convenience, the following type can be used:
+
+ * **`BIPOP_CMAES<>`** (equivalent to `BIPOP_CMAES<FullSelection, EmptyTransformation<>>`): uses all separable functions to compute objective
 
 #### Examples:
 
