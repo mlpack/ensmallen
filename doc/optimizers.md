@@ -1103,9 +1103,9 @@ approxOptimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [ActiveCMAES](#activecmaes)
- * [BIPOP_CMAES](#bipopcmaes)
- * [IPOP_CMAES](#ipopcmaes)
+ * [Active CMAES](#active-cma-es)
+ * [BIPOP CMA-ES](#bipop-cma-es)
+ * [IPOP CMA-ES](#ipop-cma-es)
  * [Completely Derandomized Self-Adaptation in Evolution Strategies](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf)
  * [CMA-ES in Wikipedia](https://en.wikipedia.org/wiki/CMA-ES)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
