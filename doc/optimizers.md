@@ -887,11 +887,7 @@ populations intensify the search in promising regions.
 
 * `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
 * `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
-* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize`_`)`
-* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy`_`)`
-* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize`_`)`
-* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts`_`)`
-* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance`_`)`
 * `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor, maxFunctionEvaluations`_`)`
 
 ### Attributes
