@@ -875,7 +875,7 @@ optimizer2.Optimize(f, coordinates);
 
 *An optimizer for [separable functions](#separable-functions).*
 
-BIPOP CMA-ES (Bi-Population CMA-ES) extends the idea of IPOP CMA-ES by using
+BIPOP CMA-ES (Bi-Population CMA-ES) extends the idea of [IPOP CMA-ES](#ipop-cma-es) by using
 two intertwined restart strategies: one with an increasing population size and
 another maintaining a smaller, variable population size. This strategy allows
 BIPOP CMA-ES to adaptively balance exploration and exploitation across the
