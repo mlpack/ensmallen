@@ -1,3 +1,14 @@
+/**
+ * @file pop_cmaes_test.cpp
+ * @author Benjami Parellada
+ *
+ * Tests for the POP_CMAES class, including IPOP CMA-ES and BIPOP CMA-ES.
+ *
+ * ensmallen is free software; you may redistribute it and/or modify it under
+ * the terms of the 3-clause BSD license.  You should have received a copy of
+ * the 3-clause BSD license along with ensmallen.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
