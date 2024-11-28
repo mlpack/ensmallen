@@ -94,7 +94,7 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
       this->StepSize() = stepSizeDefault;
 
       Info << "POP-CMA-ES: restart " << restart << ", large population size" <<
-          " (lambda): " << this->PopulationSize() << std::endl;
+          " (lambda): " << this->PopulationSize() << "." << std::endl;
       
       iterate = iterateIn;
 
