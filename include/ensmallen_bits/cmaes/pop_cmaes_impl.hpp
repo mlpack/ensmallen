@@ -154,7 +154,7 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
   }
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
-  iterateIn = overallSBC.BestCoordinates();
+  iterateIn = std::move(overallSBC.BestCoordinates());
   return overallSBC.BestObjective();
 }
 
