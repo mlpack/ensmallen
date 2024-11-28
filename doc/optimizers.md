@@ -921,7 +921,7 @@ The _`SelectionPolicyType`_ and _`TransformationPolicyType`_ template parameters
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-// IPOP Active CMA-ES
+// BIPOP CMA-ES
 BoundaryBoxConstraint<> b(-1, 1);
 BIPOP_CMAES optimizer(0, b, 32, 200, 1e-4, 5, 2, 9, 1e4);
 Optimizer.Optimize(f, coordinates);
