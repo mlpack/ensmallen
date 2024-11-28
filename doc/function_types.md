@@ -456,7 +456,7 @@ int main()
   // parameters, so the shape is 10x1.
   arma::mat params(10, 1, arma::fill::randn);
 
-  // Use the CMAES optimizer with default parameters to minimize the
+  // Use the CMA-ES optimizer with default parameters to minimize the
   // LinearRegressionFunction.
   // The ens::CMAES type can be replaced with any suitable ensmallen optimizer
   // that can handle arbitrary separable functions.
@@ -464,7 +464,7 @@ int main()
   LinearRegressionFunction lrf(data, responses);
   cmaes.Optimize(lrf, params);
 
-  std::cout << "The optimized linear regression model found by CMAES has the "
+  std::cout << "The optimized linear regression model found by CMA-ES has the "
       << "parameters " << params.t();
 }
 ```

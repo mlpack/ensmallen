@@ -1,4 +1,4 @@
-## ActiveCMAES
+## Active CMA-ES
 
 *An optimizer for [separable functions](#separable-functions).*
 
@@ -72,12 +72,12 @@ the coordinates respectively.
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-// ActiveCMAES with the FullSelection and BoundaryBoxConstraint policies.
+// Active CMA-ES with the FullSelection and BoundaryBoxConstraint policies.
 BoundaryBoxConstraint b(-1, 1);
 ActiveCMAES optimizer(0, b, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
-// ActiveCMAES with the RandomSelection and BoundaryBoxConstraint policies.
+// Active CMA-ES with the RandomSelection and BoundaryBoxConstraint policies.
 ApproxActiveCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
@@ -1019,7 +1019,7 @@ cyclicscd.Optimize(f, coordinates);
  * [Stochastic Methods for L1-Regularized Loss Minimization](https://www.jmlr.org/papers/volume12/shalev-shwartz11a/shalev-shwartz11a.pdf)
  * [Partially differentiable functions](#partially-differentiable-functions)
 
-## CMAES
+## CMA-ES
 
 *An optimizer for [separable functions](#separable-functions).*
 
@@ -1089,12 +1089,12 @@ the coordinates respectively.
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-// CMAES with the FullSelection and BoundaryBoxConstraint policies.
+// CMA-ES with the FullSelection and BoundaryBoxConstraint policies.
 BoundaryBoxConstraint b(-1, 1);
 CMAES optimizer(0, b, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
-// CMAES with the RandomSelection and BoundaryBoxConstraint policies.
+// CMA-ES with the RandomSelection and BoundaryBoxConstraint policies.
 ApproxCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
