@@ -135,8 +135,8 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
     {
       overallObjective = objective;
       overallSBC = sbc;
-      Info << "POP-CMA-ES: New best objective: " << overallObjective << 
-          std::endl;
+      Info << "POP-CMA-ES: New best objective: " << overallObjective
+          << "." << std::endl;
     }
 
     totalFunctionEvaluations += evaluations;
