@@ -34,8 +34,8 @@ POP_CMAES<SelectionPolicyType,
     const double tolerance,
     const SelectionPolicyType& selectionPolicy,
     double stepSize,
-    const double populationFactor,
     const size_t maxRestarts,
+    const double populationFactor,
     const size_t maxFunctionEvaluations) :
     CMAES<SelectionPolicyType, TransformationPolicyType>(
         lambda, transformationPolicy, batchSize, maxIterations,
