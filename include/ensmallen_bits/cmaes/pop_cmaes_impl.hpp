@@ -19,7 +19,6 @@
 
 #include "pop_cmaes.hpp"
 #include <ensmallen_bits/function.hpp>
-#include <random>
 
 namespace ens {
 
