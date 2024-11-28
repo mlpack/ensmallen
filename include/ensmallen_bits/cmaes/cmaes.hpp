@@ -173,8 +173,7 @@ class CMAES
   { return stepSize; }
 
   //! Get the total number of function evaluations.
-  size_t FunctionEvaluations() const 
-  { return functionEvaluations; }
+  size_t FunctionEvaluations() const  { return functionEvaluations; }
 
  private:
   //! Population size.
