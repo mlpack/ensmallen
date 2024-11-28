@@ -176,11 +176,6 @@ class CMAES
   size_t FunctionEvaluations() const 
   { return functionEvaluations; }
 
-  //! Type of Selection Policy.
-  typedef SelectionPolicyType selectionPolicyType;
-  //! Type of Transformation Policy.
-  typedef TransformationPolicyType transformationPolicyType;
-
  private:
   //! Population size.
   size_t lambda;
