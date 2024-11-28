@@ -86,9 +86,9 @@ approxOptimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [BIPOP_CMAES](#bipopcmaes)
- * [CMAES](#cmaes)
- * [IPOP_CMAES](#ipopcmaes)
+ * [BIPOP CMA-ES](#bipop-cma-es)
+ * [CMA-ES](#cma-es)
+ * [IPOP CMA-ES](#ipop-cma-es)
  * [Improving Evolution Strategies through Active Covariance Matrix Adaptation](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.4239&rep=rep1&type=pdfn)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 
