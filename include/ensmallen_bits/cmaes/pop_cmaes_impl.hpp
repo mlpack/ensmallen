@@ -79,7 +79,7 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
   double stepSizeDefault = this->StepSize();
 
   // Print out the default population size
-  Info << "Default population size: " << defaultLambda << std::endl;
+  Info << "Default population size: " << defaultLambda << "." << std::endl;
 
   size_t restart = 0;
 
