@@ -1718,9 +1718,9 @@ Optimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [CMAES](#cmaes)
- * [ActiveCMAES](#activecmaes)
- * [BIPOP_CMAES](#bipopcmaes)
+ * [CMA-ES](#cmaes)
+ * [Active CMA-ES](#active-cma-es)
+ * [BIPOP CMA-ES](#bipop-cma-es)
  * [A Restart CMA Evolution Strategy With Increasing Population Size](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cec2005ipopcmaes.pdf)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 
