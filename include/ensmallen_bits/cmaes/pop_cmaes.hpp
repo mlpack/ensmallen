@@ -114,8 +114,8 @@ class POP_CMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
             const double tolerance = 1e-5,
             const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
             double stepSize = 0,
-            const double populationFactor = 2,
             const size_t maxRestarts = 9,
+            const double populationFactor = 2,
             const size_t maxFunctionEvaluations = 1e9);
 
   /**
