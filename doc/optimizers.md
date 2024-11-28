@@ -937,9 +937,9 @@ Optimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [CMAES](#cmaes)
- * [ActiveCMAES](#activecmaes)
- * [IPOP_CMAES](#ipopcmaes)
+ * [CMA-ES](#cma-es)
+ * [Active CMA-ES](#active-cma-es)
+ * [IPOP CMA-ES](#ipop-cma-es)
  * [Benchmarking a BI-Population CMA-ES on the BBOB-2009 Function Testbed](https://dl.acm.org/doi/pdf/10.1145/1570256.1570333)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 
