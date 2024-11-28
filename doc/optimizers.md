@@ -871,7 +871,7 @@ optimizer2.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
 
-## BIPOP_CMAES
+## BIPOP CMA-ES
 
 *An optimizer for [separable functions](#separable-functions).*
 
