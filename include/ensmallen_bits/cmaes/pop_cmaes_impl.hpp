@@ -63,10 +63,6 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
   size_t largePopulationBudget = 0;
   size_t smallPopulationBudget = 0;
 
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<> dis(0.0, 1.0);
-
   // First single run with default population size
   MatType iterate = iterateIn;
   ElemType overallObjective = CMAES<SelectionPolicyType, 
