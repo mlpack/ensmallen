@@ -358,10 +358,10 @@ Each of the implemented methods is allowed to have additional cv-modifiers
 
 The following optimizers can be used with arbitrary separable functions:
 
- - [ActiveCMAES](#activecmaes)
- - [BIPOP_CMAES](#bipopcmaes)
- - [CMAES](#cmaes)
- - [IPOP_CMAES](#ipopcmaes)
+ - [Active CMA-ES](#active-cma-es)
+ - [BIPOP CMA-ES](#bipop-cma-es)
+ - [CMA-ES](#cma-es)
+ - [IPOP CMA-ES](#ipop-cma-es)
 
 Each of these optimizers has an `Optimize()` function that is called as
 `Optimize(f, x)` where `f` is the function to be optimized and `x` holds the
