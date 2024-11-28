@@ -1646,7 +1646,7 @@ optimizer.Optimize(f, coordinates);
  * [HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic Gradient Descent](https://arxiv.org/abs/1106.5730)
  * [Sparse differentiable separable functions](#sparse-differentiable-separable-functions)
 
-## IPOP_CMAES
+## IPOP CMA-ES
 
 *An optimizer for [separable functions](#separable-functions).*
 
