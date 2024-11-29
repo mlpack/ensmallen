@@ -1,4 +1,4 @@
-## ActiveCMAES
+## Active CMA-ES
 
 *An optimizer for [separable functions](#separable-functions).*
 
@@ -72,12 +72,12 @@ the coordinates respectively.
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-// ActiveCMAES with the FullSelection and BoundaryBoxConstraint policies.
+// Active CMA-ES with the FullSelection and BoundaryBoxConstraint policies.
 BoundaryBoxConstraint b(-1, 1);
 ActiveCMAES optimizer(0, b, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
-// ActiveCMAES with the RandomSelection and BoundaryBoxConstraint policies.
+// Active CMA-ES with the RandomSelection and BoundaryBoxConstraint policies.
 ApproxActiveCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
@@ -86,7 +86,9 @@ approxOptimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [CMAES](#cmaes)
+ * [BIPOP CMA-ES](#bipop-cma-es)
+ * [CMA-ES](#cma-es)
+ * [IPOP CMA-ES](#ipop-cma-es)
  * [Improving Evolution Strategies through Active Covariance Matrix Adaptation](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.4239&rep=rep1&type=pdfn)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
 
@@ -869,6 +871,78 @@ optimizer2.Optimize(f, coordinates);
  * [SGD in Wikipedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
  * [SGD](#standard-sgd)
 
+## BIPOP CMA-ES
+
+*An optimizer for [separable functions](#separable-functions).*
+
+BIPOP CMA-ES (Bi-Population CMA-ES) extends the idea of [IPOP CMA-ES](#ipop-cma-es) by using
+two intertwined restart strategies: one with an increasing population size and
+another maintaining a smaller, variable population size. This strategy allows
+BIPOP CMA-ES to adaptively balance exploration and exploitation across the
+fitness landscape, and can outperform IPOP. The larger population restarts aim
+to explore broadly, improving global search capabilities, while the smaller
+populations intensify the search in promising regions.
+
+### Constructors
+
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance`_`)`
+* `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor, maxFunctionEvaluations`_`)`
+
+### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
+| `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate the algorithm. | `1e-5` |
+| `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `double` | **`stepSize`** | Initial step size. | `0` |
+| `size_t` | **`maxRestarts`** | Maximum number of restarts. | `9` |
+| `double` | **`populationFactor`** | The factor by which the population increases after each restart. | `2.0` |
+| `size_t` | **`maxFunctionEvaluations`** | Maximum number of function evaluations. | `1e9` |
+
+The _`SelectionPolicyType`_ and _`TransformationPolicyType`_ template parameters
+are used to control how the selection of points and the transformation of the
+decision variables are handled during the optimization process. For more
+information, check the [`CMAES`](#cma-es) class. The `lambda`,
+`transformationPolicy`, `batchSize`, `maxIterations`, `tolerance`,
+`selectionPolicy`, and `stepSize` are all parameters that affect the underlying
+CMA-ES process.
+
+For convenience, the following type can be used:
+
+ * **`BIPOP_CMAES<>`** (equivalent to `BIPOP_CMAES<FullSelection, EmptyTransformation<>>`): uses all separable functions to compute objective
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+// BIPOP CMA-ES
+BoundaryBoxConstraint<> b(-1, 1);
+BIPOP_CMAES optimizer(0, b, 32, 200, 1e-4, 5, 2, 9, 1e4);
+Optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [CMA-ES](#cma-es)
+ * [Active CMA-ES](#active-cma-es)
+ * [IPOP CMA-ES](#ipop-cma-es)
+ * [Benchmarking a BI-Population CMA-ES on the BBOB-2009 Function Testbed](https://dl.acm.org/doi/pdf/10.1145/1570256.1570333)
+ * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
+
 ## Coordinate Descent (CD)
 
 *An optimizer for [partially differentiable functions](#partially-differentiable-functions).*
@@ -945,7 +1019,7 @@ cyclicscd.Optimize(f, coordinates);
  * [Stochastic Methods for L1-Regularized Loss Minimization](https://www.jmlr.org/papers/volume12/shalev-shwartz11a/shalev-shwartz11a.pdf)
  * [Partially differentiable functions](#partially-differentiable-functions)
 
-## CMAES
+## CMA-ES
 
 *An optimizer for [separable functions](#separable-functions).*
 
@@ -1015,12 +1089,12 @@ the coordinates respectively.
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-// CMAES with the FullSelection and BoundaryBoxConstraint policies.
+// CMA-ES with the FullSelection and BoundaryBoxConstraint policies.
 BoundaryBoxConstraint b(-1, 1);
 CMAES optimizer(0, b, 32, 200, 1e-4);
 optimizer.Optimize(f, coordinates);
 
-// CMAES with the RandomSelection and BoundaryBoxConstraint policies.
+// CMA-ES with the RandomSelection and BoundaryBoxConstraint policies.
 ApproxCMAES<BoundaryBoxConstraint<>> cmaes(0, b, 32, 200, 1e-4);
 approxOptimizer.Optimize(f, coordinates);
 ```
@@ -1029,6 +1103,9 @@ approxOptimizer.Optimize(f, coordinates);
 
 #### See also:
 
+ * [Active CMAES](#active-cma-es)
+ * [BIPOP CMA-ES](#bipop-cma-es)
+ * [IPOP CMA-ES](#ipop-cma-es)
  * [Completely Derandomized Self-Adaptation in Evolution Strategies](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf)
  * [CMA-ES in Wikipedia](https://en.wikipedia.org/wiki/CMA-ES)
  * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
@@ -1574,6 +1651,79 @@ optimizer.Optimize(f, coordinates);
  * [SGD](#standard-sgd)
  * [HOGWILD!: A Lock-Free Approach to Parallelizing Stochastic Gradient Descent](https://arxiv.org/abs/1106.5730)
  * [Sparse differentiable separable functions](#sparse-differentiable-separable-functions)
+
+## IPOP CMA-ES
+
+*An optimizer for [separable functions](#separable-functions).*
+
+IPOP CMA-ES (Increasing Population Size CMA-ES) is an extension of the
+Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a 
+restart mechanism that progressively increases the population size. This 
+approach is beneficial for optimizing multi-modal functions,
+characterized by numerous local optima. The restart mechanism is designed to 
+improve the adaptability of CMA-ES by improving the likelihood of escaping
+local optima, thus increasing the chances of discovering the global optimum.
+
+### Constructors
+
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance`_`)`
+* `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor, maxFunctionEvaluations`_`)`
+
+### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`lambda`** | The population size (0 uses a default size). | `0` |
+| `TransformationPolicyType` | **`transformationPolicy`** | Instantiated transformation policy used to map the coordinates to the desired domain. | `TransformationPolicyType()` |
+| `size_t` | **`batchSize`** | Batch size to use for the objective calculation. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations. | `1000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate the algorithm. | `1e-5` |
+| `SelectionPolicyType` | **`selectionPolicy`** | Instantiated selection policy used to calculate the objective. | `SelectionPolicyType()` |
+| `double` | **`stepSize`** | Initial step size. | `0` |
+| `size_t` | **`maxRestarts`** | Maximum number of restarts. | `9` |
+| `double` | **`populationFactor`** | The factor by which the population increases after each restart. | `2.0` |
+| `size_t` | **`maxFunctionEvaluations`** | Maximum number of function evaluations. | `1e9` |
+
+The _`SelectionPolicyType`_ and _`TransformationPolicyType`_ template parameters
+are used to control how the selection of points and the transformation of the
+decision variables are handled during the optimization process. For more
+information, check the [`CMAES`](#cma-es) class. The `lambda`,
+`transformationPolicy`, `batchSize`, `maxIterations`, `tolerance`,
+`selectionPolicy`, and `stepSize` are all parameters that affect the underlying
+CMA-ES process.
+
+For convenience, the following type can be used:
+
+ * **`IPOP_CMAES<>`** (equivalent to `IPOP_CMAES<FullSelection, EmptyTransformation<>>`): uses all separable functions to compute objective
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+// IPOP CMA-ES
+BoundaryBoxConstraint<> b(-1, 1);
+IPOP_CMAES optimizer(0, b, 32, 200, 1e-4, 5, 2, 9, 1e4);
+Optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [CMA-ES](#cmaes)
+ * [Active CMA-ES](#active-cma-es)
+ * [BIPOP CMA-ES](#bipop-cma-es)
+ * [A Restart CMA Evolution Strategy With Increasing Population Size](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cec2005ipopcmaes.pdf)
+ * [Evolution strategy in Wikipedia](https://en.wikipedia.org/wiki/Evolution_strategy)
+
 
 ## IQN
 
