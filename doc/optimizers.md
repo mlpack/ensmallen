@@ -2214,7 +2214,7 @@ size equal to that of the starting population.
 | `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
 | `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
 
-Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
+Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.The `ElementType` parameter refer
 
 Attributes of the optimizer may also be changed via the member methods
 `PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `MutationProbability()`, `MutationStrength()`, `Epsilon()`, `LowerBound()` and `UpperBound()`.
@@ -2251,6 +2251,73 @@ arma::cube bestFront = opt.ParetoFront();
  * [Multi-objective Functions in Wikipedia](https://en.wikipedia.org/wiki/Test_functions_for_optimization#Test_functions_for_multi-objective_optimization)
  * [Multi-objective functions](#multi-objective-functions)
  * [Performance Indicators](#performance-indicators)
+
+## NSGA3
+
+*An optimizer for arbitrary multi-objective functions.*\
+
+NSGA-III (Non-dominated Sorting Genetic Algorithm III) is a multi-objective optimization algorithm designed to handle problems with many objectives more effectively than its predecessor, NSGA-II. Like NSGA-II, it starts by generating an initial population and creates a new population of offspring at each iteration. The combined population (parents and offspring) is sorted into non-dominated fronts. However, NSGA-III introduces a reference-point-based selection mechanism, ensuring a well-distributed set of solutions across the Pareto front. This approach improves performance for higher-dimensional objective spaces by maintaining diversity and focusing on convergence.
+
+#### Constructors
+
+ * `NSGA3<ElementType>()`
+ * `NSGA3<ElementType>(`_`referencePoints, populationSize, maxGenerations, crossoverProb, distributionIndex, eta, lowerBound, upperBound`_`)`
+
+ The _`ElementType`_ template parameter refers to the type of elements used in
+  initiallization of matrices.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`populationSize`** | The number of candidates in the population. This should be at least 4 in size and a multiple of 4. | `100` |
+| `size_t` | **`maxGenerations`** | The maximum number of generations allowed for NSGA3. | `2000` |
+| `double` | **`crossoverProb`** | Probability that a crossover will occur. | `0.6` |
+| `double` | **`distributionIndex`** | The crowding degree of the mutation. | `20` |
+| `double` | **`eta`** | The distance parameters of the crossover distribution. | `20` |
+| `double`, `arma::vec` | **`lowerBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `0` |
+| `double`, `arma::vec` | **`upperBound`** | Lower bound of the coordinates on the coordinates of the whole population during the search process. | `1` |
+
+Note that the parameters `lowerBound` and `upperBound` are overloaded. Data types of `double` or `arma::mat` may be used. If they are initialized as single values of `double`, then the same value of the bound applies to all the axes, resulting in an initialization following a uniform distribution in a hypercube. If they are initialized as matrices of `arma::mat`, then the value of `lowerBound[i]` applies to axis `[i]`; similarly, for values in `upperBound`. This results in an initialization following a uniform distribution in a hyperrectangle within the specified bounds.
+
+Attributes of the optimizer may also be changed via the member methods
+`PopulationSize()`, `MaxGenerations()`, `CrossoverRate()`, `DistributionIndex()`, `Eta()`, `ReferencePoints()`, `LowerBound()` and `UpperBound()`.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+DTLZ1<arma::mat> DtlzOne;
+const double lowerBound = 0;
+const double upperBound = 1;
+const double expectedLowerBound = 0.5;
+const double expectedUpperBound = 0.5;
+
+Uniform generator;
+arma::Cube<double> refPoints(3,1,136);
+arma::mat g = generator.Generate<arma::mat>(3,91,0);
+
+NSGA3<double> opt(g, 120, 100, 1, 20, 30, 0, 1);
+
+typedef decltype(DtlzOne.objectiveF1) ObjectiveTypeA;
+typedef decltype(DtlzOne.objectiveF2) ObjectiveTypeB;
+typedef decltype(DtlzOne.objectiveF3) ObjectiveTypeC;
+
+arma::Col<double> coords = DtlzOne.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB, ObjectiveTypeC> objectives = 
+    DtlzOne.GetObjectives();
+opt.Optimize(objectives, coords);
+```
+
+</details>
+
+#### See also:
+
+ * [NSGA-III Algorithm](https://www.egr.msu.edu/~kdeb/papers/k2012009.pdf)
+ * [Reference point based multi-objective optimization using evolutionary algorithms](https://www.egr.msu.edu/~kdeb/papers/k2005012.pdf)
 
 ## OptimisticAdam
 
