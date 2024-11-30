@@ -42,7 +42,7 @@ target_include_directories(ensmallen INTERFACE
 if(MSVC)
   target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:/Wall>)
 else()
-  target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:-Wall -Wpedantic -Wunused-parameter>)
+  target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:-Wall -Wpedantic -Wunused-parameter -Wunused-variable>)
 endif()
 
 # Find OpenMP and link it.
