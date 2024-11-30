@@ -252,7 +252,7 @@ class NSGA3
    * @param parentA First parent from elite population.
    * @param parentB Second parent from elite population.
    * @param lowerBound Lower Bound of the offspring.
-   * @param upperBound Upper Boundn of the offspring.
+   * @param upperBound Upper Bound of the offspring.
    */
   template <typename MatType>
   void Crossover(MatType& childA,
