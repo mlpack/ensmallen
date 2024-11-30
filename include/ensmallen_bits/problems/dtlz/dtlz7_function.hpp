@@ -131,7 +131,6 @@ namespace test {
       arma::Row<typename MatType::elem_type> h(
           const MatType& coords, const arma::Row<typename MatType::elem_type>& G)
       {
-        size_t k = numVariables - numObjectives + 1;
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
