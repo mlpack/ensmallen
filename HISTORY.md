@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Remove unused variables to fix compiler warnings
+   ([#413](https://github.com/mlpack/ensmallen/pull/413)).
 
 ### ensmallen 2.22.0: "E-Bike Excitement"
 ###### 2024-11-29
