@@ -16,7 +16,7 @@ Documentation and downloads: https://ensmallen.org
 ### Requirements
 
 * C++ compiler with C++14 support
-* Armadillo: https://arma.sourceforge.net
+* Armadillo (https://arma.sourceforge.net), version 10.8.2 or later
 * OpenBLAS or Intel MKL or LAPACK (see Armadillo site for details)
 
 
