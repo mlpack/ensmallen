@@ -193,10 +193,13 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);
 
-      // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
+      // Reset the counter variables if we will continue.
+      if (i != actualMaxIterations)
+      {
+        lastObjective = overallObjective;
+        overallObjective = 0;
+        currentFunction = 0;
+      }
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();
