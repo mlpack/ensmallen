@@ -121,11 +121,20 @@ gradient direction.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
+
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`,
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -181,12 +190,19 @@ class with _`UpdateRule`_` = AdaBoundUpdate`.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `FinalLr()`, `Gamma()`, `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`,
 `Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
 `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -242,11 +258,18 @@ gradients.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `Rho()`, `Epsilon()`, `MaxIterations()`,
 `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -298,11 +321,18 @@ parameters.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
 `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -356,11 +386,18 @@ learning rate by sqrt(T).
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `tolerance` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
 `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -416,11 +453,19 @@ with _`UpdateRule`_` = AdamUpdate`.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`,
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -473,12 +518,19 @@ with _`UpdateRule`_` = AdaMaxUpdate`.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -625,12 +677,19 @@ class with _`UpdateRule`_` = AdaBoundUpdate`.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `FinalLr()`, `Gamma()`, `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`,
 `Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
 `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -684,12 +743,19 @@ with _`UpdateRule`_` = AMSGradUpdate`.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `ExactObjective()`, and `ResetPolicy()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -838,11 +904,18 @@ For convenience the following typedefs have been defined:
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the batch order is shuffled; otherwise, each batch is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `BatchSize()`, `StepSize()`, `BatchDelta()`, `MaxIterations()`, `Tolerance()`,
 `Shuffle()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -883,14 +956,14 @@ fitness landscape, and can outperform IPOP. The larger population restarts aim
 to explore broadly, improving global search capabilities, while the smaller
 populations intensify the search in promising regions.
 
-### Constructors
+#### Constructors
 
 * `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
 * `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
 * `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance`_`)`
 * `BIPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor, maxFunctionEvaluations`_`)`
 
-### Attributes
+#### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
@@ -1377,11 +1450,18 @@ Eve is a stochastic gradient based optimization method with locally and globally
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Beta3()`, `Epsilon()`, `Clip()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, and `ExactObjective()`.
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Beta3()`, `Epsilon()`,
+`Clip()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -1486,11 +1566,19 @@ changes.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`, `MaxIterations()`,
-`Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`,
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -1664,14 +1752,14 @@ characterized by numerous local optima. The restart mechanism is designed to
 improve the adaptability of CMA-ES by improving the likelihood of escaping
 local optima, thus increasing the chances of discovering the global optimum.
 
-### Constructors
+#### Constructors
 
 * `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>()`
 * `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy`_`)`
 * `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance`_`)`
 * `IPOP_CMAES<`_`SelectionPolicyType, TransformationPolicyType`_`>(`_`lambda, transformationPolicy, batchSize, maxIterations, tolerance, selectionPolicy, stepSize, maxRestarts, populationFactor, maxFunctionEvaluations`_`)`
 
-### Attributes
+#### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
@@ -1809,12 +1897,18 @@ For convenience the following typedefs have been defined:
 | `size_t` | **`innerIterations`** | The number of inner iterations allowed (0 means n / batchSize). Note that the full gradient is only calculated in the outer iteration. | `0` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
-
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `Convexity()`, `Lipschitz()`, `BatchSize()`, `MaxIterations()`,
 `InnerIterations()`, `Tolerance()`, `Shuffle()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -1929,11 +2023,18 @@ can be paired with the `Lookahead` optimizer.
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `BaseOptimizer()`, `StepSize()`, `K()`, `MaxIterations()`,
 `Tolerance()`, `DecayPolicy()` and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -2030,14 +2131,24 @@ MomentumUpdate` and _`DecayPolicyType`_` = NoDecay`.
 | `MomentumUpdate` | **`updatePolicy`** | An instantiated `MomentumUpdate`. | `MomentumUpdate()` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and
-`ExactObjective()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`,
+`UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and `ExactObjective()`.
 
-Note that the `MomentumUpdate` class has the constructor
-`MomentumUpdate(`_`momentum`_`)` with a default value of `0.5` for the momentum.
+***Notes***:
+
+ - The `MomentumUpdate` class has the constructor
+   `MomentumUpdate(`_`momentum`_`)` with a default value of `0.5` for the
+   momentum.
+
+ - If `exactObjective` is `false`, then `Optimize(f, coordinates)` will return
+   an estimate of the objective function.  This estimate is the sum of the
+   objectives obtained on the last pass of the separable functions.  The
+   estimate will not include contributions from any separable functions not
+   visited in the last pass (e.g., if `maxIterations` is not an integer multiple
+   of `f.NumFunctions()`).
 
 #### Examples
 
@@ -2210,14 +2321,24 @@ NesterovMomentumUpdate` and _`DecayPolicyType`_` = NoDecay`.
 | `NesterovMomentumUpdate` | **`updatePolicy`** | An instantiated `MomentumUpdate`. | `NesterovMomentumUpdate()` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and
-`ExactObjective()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`,
+`UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and `ExactObjective()`.
 
-Note that the `NesterovMomentumUpdate` class has the constructor
-`MomentumUpdate(`_`momentum`_`)` with a default value of `0.5` for the momentum.
+***Notes:***
+
+ - The `NesterovMomentumUpdate` class has the constructor
+   `MomentumUpdate(`_`momentum`_`)` with a default value of `0.5` for the
+   momentum.
+
+ - If `exactObjective` is `false`, then `Optimize(f, coordinates)` will return
+   an estimate of the objective function.  This estimate is the sum of the
+   objectives obtained on the last pass of the separable functions.  The
+   estimate will not include contributions from any separable functions not
+   visited in the last pass (e.g., if `maxIterations` is not an integer multiple
+   of `f.NumFunctions()`).
 
 #### Examples
 
@@ -2491,11 +2612,19 @@ Padam is a variant of Adam with a partially adaptive momentum estimation method.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Partial()`, `Epsilon()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -2706,21 +2835,31 @@ SGD.
 
 #### Attributes
 
- | **type** | **name** | **description** | **default** |
- |----------|----------|-----------------|-------------|
- | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
- | `size_t` | **`batchSize`** | Batch size to use for each step. | `32` |
- | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
- | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
- | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
- | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `size_t` | **`batchSize`** | Batch size to use for each step. | `32` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
- Attributes of the optimizer may also be modified via the member methods
- `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`,  and `ExactObjective()`.
+Attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`,  and
+`ExactObjective()`.
 
- Note that the `QHUpdate` class has the constructor  `QHUpdate(`_`v,
-momentum`_`)` with a default value of `0.7` for the quasi-hyperbolic term `v`
-and `0.999` for the momentum term.
+***Notes:***
+
+ - The `QHUpdate` class has the constructor  `QHUpdate(`_`v, momentum`_`)` with
+   a default value of `0.7` for the quasi-hyperbolic term `v` and `0.999` for
+   the momentum term.
+
+ - If `exactObjective` is `false`, then `Optimize(f, coordinates)` will return
+   an estimate of the objective function.  This estimate is the sum of the
+   objectives obtained on the last pass of the separable functions.  The
+   estimate will not include contributions from any separable functions not
+   visited in the last pass (e.g., if `maxIterations` is not an integer multiple
+   of `f.NumFunctions()`).
 
 #### Examples
 
@@ -2771,24 +2910,32 @@ the following other optimizers:
 
 #### Attributes
 
- | **type** | **name** | **description** | **default** |
- |----------|----------|-----------------|-------------|
- | `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
- | `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
- | `double` | **`v1`** | The First Quasi Hyperbolic Term. | `0.7` |
- | `double` | **`v2`** | The Second Quasi Hyperbolic Term. | `1.00` |
- | `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
- | `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
- | `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
- | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
- | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
- | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
- | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
- | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`batchSize`** | Number of points to process in a single step. | `32` |
+| `double` | **`v1`** | The First Quasi Hyperbolic Term. | `0.7` |
+| `double` | **`v2`** | The Second Quasi Hyperbolic Term. | `1.00` |
+| `double` | **`beta1`** | Exponential decay rate for the first moment estimates. | `0.9` |
+| `double` | **`beta2`** | Exponential decay rate for the weighted infinity norm estimates. | `0.999` |
+| `double` | **`eps`** | Value used to initialize the mean squared gradient parameter. | `1e-8` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
- The attributes of the optimizer may also be modified via the member methods
- `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
- `Tolerance()`, `Shuffle()`, `V1()`, `V2()`, `ResetPolicy()`, and `ExactObjective()`.
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
+`Tolerance()`, `Shuffle()`, `V1()`, `V2()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -2836,11 +2983,18 @@ RMSProp utilizes the magnitude of recent gradients to normalize the gradients.
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer can also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Alpha()`, `Epsilon()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -3030,14 +3184,23 @@ For convenience the following typedefs have been defined:
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be changed via the member methods
 `StepSize()`, `BatchSize()`, `MaxIterations()`, `InnerIterations()`,
 `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, and `ExactObjective()`.
 
-Note that the default value for `updatePolicy` is the default constructor for
-the `UpdatePolicyType`.
+***Notes:***
+
+ - The default value for `updatePolicy` is the default constructor for the
+   `UpdatePolicyType`.
+
+ - If `exactObjective` is `false`, then `Optimize(f, coordinates)` will return
+   an estimate of the objective function.  This estimate is the sum of the
+   objectives obtained on the last pass of the separable functions.  The
+   estimate will not include contributions from any separable functions not
+   visited in the last pass (e.g., if `maxIterations` is not an integer multiple
+   of `f.NumFunctions()`).
 
 #### Examples:
 
@@ -3097,11 +3260,18 @@ VanillaUpdate` and _`DecayPolicyType`_` = NoDecay`.
 | `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
 | `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
 | `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
-| `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `DecayPolicy()`, `ResetPolicy()`, and
 `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -3167,11 +3337,18 @@ so the shorter type `SGDR<>` can be used instead of the equivalent
 
 Attributes of the optimizer can also be modified via the member methods
 `EpochRestart()`, `MultFactor()`, `BatchSize()`, `StepSize()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`, `ResetPolicy()`, and
-`ExactObjective()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `UpdatePolicy()`,
+`ResetPolicy()`, and `ExactObjective()`.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -3247,6 +3424,13 @@ snapshots.
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.
 
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
+
 #### Examples:
 
 <details open>
@@ -3301,6 +3485,13 @@ parameter space.
 Attributes of the optimizer can also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Epsilon()`, `MaxIterations()`, `Tolerance()`,
 `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -3378,6 +3569,13 @@ Note that the default values for the `updatePolicy` and `decayPolicy` parameters
 are simply the default constructors of the _`UpdatePolicyType`_ and
 _`DecayPolicyType`_ classes.
 
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
+
 #### Examples:
 
 <details open>
@@ -3431,6 +3629,13 @@ method signatures.
 By default, _`DecayPolicyType`_ is set to `NoDecay`, so the shorter type
 `SPALeRASGD<>` can be used instead of the equivalent `SPALeRASGD<NoDecay>`.
 
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
+
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
@@ -3450,7 +3655,15 @@ By default, _`DecayPolicyType`_ is set to `NoDecay`, so the shorter type
 
 Attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Lambda()`,
-`Alpha()`, `Epsilon()`, `AdaptRate()`, `Shuffle()`, `DecayPolicy()`, `ResetPolicy()`, and `ExactObjective()`.
+`Alpha()`, `Epsilon()`, `AdaptRate()`, `Shuffle()`, `DecayPolicy()`,
+`ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -3507,7 +3720,15 @@ the projection of Adam steps on the gradient subspace.
 
 Attributes of the optimizer can also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Epsilon()`,
-`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and  `ExactObjective()`.
+`MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
+`ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples:
 
@@ -3560,8 +3781,15 @@ near-optimal convergence rates in both the batch and stochastic settings.
 | `bool` | **`exactObjective`** | Calculate the exact objective (Default: estimate the final objective obtained on the last pass over the data). | `false` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and
-`ExactObjective()`.
+`StepSize()`, `BatchSize()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`,
+`ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -3620,6 +3848,13 @@ similar theoretical guarantees on convergence as Adam.
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Beta1()`, `Beta2()`, `Eps()`, `MaxIterations()`,
 `Tolerance()`, `Shuffle()`, `ResetPolicy()`, and `ExactObjective()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 

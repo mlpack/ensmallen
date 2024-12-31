@@ -186,10 +186,13 @@ Eve::Optimize(SeparableFunctionType& function,
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);
 
-      // Reset the counter variables.
-      lastOverallObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
+      // Reset the counter variables if we will continue.
+      if (i != actualMaxIterations)
+      {
+        lastOverallObjective = overallObjective;
+        overallObjective = 0;
+        currentFunction = 0;
+      }
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();

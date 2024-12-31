@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix `exactObjective` output for SGD-like optimizers when the number of
+   iterations is an even number of epochs
+   ([#417](https://github.com/mlpack/ensmallen/pull/417)).
 
 ### ensmallen 2.22.1: "E-Bike Excitement"
 ###### 2024-12-02
