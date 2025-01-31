@@ -68,7 +68,8 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
 
   size_t frozenCount = 0;
   ElemType energy = function.Evaluate(iterate);
-  Callback::Evaluate(*this, function, iterate, energy, callbacks...);
+  terminate |= Callback::Evaluate(*this, function, iterate, energy,
+      callbacks...);
 
   ElemType oldEnergy;
 
@@ -79,20 +80,25 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   BaseMatType moveSize(rows, cols, arma::fill::none);
   moveSize.fill(initMoveCoef);
 
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
 
   // Initial moves to get rid of dependency of initial states.
   for (size_t i = 0; i < initMoves; ++i)
-    GenerateMove(function, iterate, accept, moveSize, energy, idx,
+  {
+    terminate |= GenerateMove(function, iterate, accept, moveSize, energy, idx,
         sweepCounter, callbacks...);
+    if (terminate)
+      break;
+  }
 
   // Iterating and cooling.
   for (size_t i = 0; i != maxIterations && !terminate; ++i)
   {
     oldEnergy = energy;
-    GenerateMove(function, iterate, accept, moveSize, energy, idx,
+    terminate |= GenerateMove(function, iterate, accept, moveSize, energy, idx,
         sweepCounter, callbacks...);
+    if (terminate)
+      break;
     terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
     temperature = coolingSchedule.NextTemperature(temperature, energy);
 
@@ -132,7 +138,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
  */
 template<typename CoolingScheduleType>
 template<typename FunctionType, typename MatType, typename... CallbackTypes>
-void SA<CoolingScheduleType>::GenerateMove(
+bool SA<CoolingScheduleType>::GenerateMove(
     FunctionType& function,
     MatType& iterate,
     MatType& accept,
@@ -159,7 +165,8 @@ void SA<CoolingScheduleType>::GenerateMove(
   iterate(idx) += move;
   energy = function.Evaluate(iterate);
 
-  Callback::Evaluate(*this, function, iterate, energy, callbacks...);
+  const bool terminate = Callback::Evaluate(*this, function, iterate, energy,
+      callbacks...);
 
   // According to the Metropolis criterion, accept the move with probability
   // min{1, exp(-(E_new - E_old) / T)}.
@@ -188,6 +195,8 @@ void SA<CoolingScheduleType>::GenerateMove(
     MoveControl(moveCtrlSweep, accept, moveSize);
     sweepCounter = 0;
   }
+
+  return terminate;
 }
 
 /**

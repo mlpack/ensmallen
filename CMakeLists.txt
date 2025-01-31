@@ -1,7 +1,10 @@
 # ensmallen CMake configuration.  This project has no configurable options---it
 # just installs the headers to the install location, and optionally builds the
 # test program.
-cmake_minimum_required(VERSION 3.3.2)
+cmake_minimum_required(VERSION 3.3.2...3.5)
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")  # ensure the tests are built with optimisation
+endif ()
 project(ensmallen
         LANGUAGES C CXX)
 
@@ -10,8 +13,8 @@ option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-# Set required C++ standard to C++11.
-set(CMAKE_CXX_STANDARD 11)
+# Set required C++ standard to C++14.
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Extract version from sources.
@@ -39,7 +42,7 @@ target_include_directories(ensmallen INTERFACE
 if(MSVC)
   target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:/Wall>)
 else()
-  target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:-Wall -Wpedantic -Wunused-parameter>)
+  target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:-Wall -Wpedantic -Wunused>)
 endif()
 
 # Find OpenMP and link it.
@@ -57,7 +60,7 @@ if(USE_OPENMP)
 endif()
 
 # Find Armadillo and link it.
-find_package(Armadillo 9.800.0 REQUIRED)
+find_package(Armadillo 10.8.2 REQUIRED)
 target_link_libraries(ensmallen INTERFACE Armadillo::Armadillo)
 
 # Set helper variables for creating the version, config and target files.

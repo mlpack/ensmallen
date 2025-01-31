@@ -511,7 +511,10 @@ Each of the implemented methods is allowed to have additional cv-modifiers
 
 The following optimizers can be used with arbitrary separable functions:
 
- - [CMAES](#cmaes)
+ - [Active CMA-ES](#active-cma-es)
+ - [BIPOP CMA-ES](#bipop-cma-es)
+ - [CMA-ES](#cma-es)
+ - [IPOP CMA-ES](#ipop-cma-es)
 
 Each of these optimizers has an `Optimize()` function that is called as
 `Optimize(f, x)` where `f` is the function to be optimized and `x` holds the
@@ -606,7 +609,7 @@ int main()
   // parameters, so the shape is 10x1.
   arma::mat params(10, 1, arma::fill::randn);
 
-  // Use the CMAES optimizer with default parameters to minimize the
+  // Use the CMA-ES optimizer with default parameters to minimize the
   // LinearRegressionFunction.
   // The ens::CMAES type can be replaced with any suitable ensmallen optimizer
   // that can handle arbitrary separable functions.
@@ -614,7 +617,7 @@ int main()
   LinearRegressionFunction lrf(data, responses);
   cmaes.Optimize(lrf, params);
 
-  std::cout << "The optimized linear regression model found by CMAES has the "
+  std::cout << "The optimized linear regression model found by CMA-ES has the "
       << "parameters " << params.t();
 }
 ```
@@ -1037,6 +1040,86 @@ arma::cube bestFront = optimizer.ParetoFront();
 
 </details>
 
+### Performance Indicators
+
+Performance indicators in multiobjective optimization provide essential metrics 
+for evaluating solution quality, such as convergence to the Pareto front and solution 
+diversity.
+
+The ensmallen library offers three such indicators, aiding in the assessment and comparison 
+of different optimization methods:
+
+#### Epsilon
+
+Epsilon metric is a performance metric used in multi-objective optimization which measures 
+the smallest factor by which a set of solution objectives must be scaled to dominate a 
+reference set of solutions. Specifically, given a set of Pareto-optimal solutions, the 
+epsilon indicator finds the minimum value ϵ such that each solution in the set is at 
+least as good as every solution in the reference set when the objectives are scaled by ϵ.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+arma::cube referenceFront(2, 1, 3);
+double tol = 1e-10;
+referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+arma::cube front = referenceFront * 1.1;
+// eps is approximately 1.1
+double eps = Epsilon::Evaluate(front, referenceFront);
+```
+</details>
+
+#### IGD
+
+Inverse Generational Distance (IGD) is a performance metric used in multi-objective optimization 
+to evaluate the quality of a set of solutions relative to a reference set, typically representing 
+the true Pareto front. IGD measures the average distance from each point in the reference set to 
+the closest point in the obtained solution set.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+arma::cube referenceFront(2, 1, 3);
+double tol = 1e-10;
+referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+arma::cube front = referenceFront * 1.1;
+// The third parameter is the power constant in the distance formula.
+// IGD is approximately 0.05329
+double igd = IGD::Evaluate(front, referenceFront, 1);
+```
+</details>
+
+#### IGD Plus
+
+IGD Plus (IGD+) is a variant of the Inverse Generational Distance (IGD) metric used in multi-objective 
+optimization. It refines the traditional IGD metric by incorporating a preference for Pareto-dominance 
+in the distance calculation. This modification helps IGD+ better reflect both the convergence to the 
+Pareto front and the diversity of the solution set.
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+arma::cube referenceFront(2, 1, 3);
+double tol = 1e-10;
+referenceFront.slice(0) = arma::vec{0.01010101, 0.89949622};
+referenceFront.slice(1) = arma::vec{0.02020202, 0.85786619};
+referenceFront.slice(2) = arma::vec{0.03030303, 0.82592234};
+arma::cube front = referenceFront * 1.1;
+// IGDPlus is approximately 0.05329
+double igdPlus = IGDPlus::Evaluate(front, referenceFront);
+```
+</details>
+
 *Note*: all multi-objective function optimizers have both the function `Optimize()` to find the
 best front, and also the function `ParetoFront()` to return all sets of solutions that are on the
 front.
@@ -1044,6 +1127,11 @@ front.
 The following optimizers can be used with multi-objective functions:
 - [NSGA2](#nsga2)
 - [MOEA/D-DE](#moead)
+- [AGEMOEA](#agemoea)
+
+#### See also:
+* [Performance Assessment of Multiobjective Optimizers: An Analysis and Review](https://sop.tik.ee.ethz.ch/publicationListFiles/ztlf2003a.pdf)
+* [Modified Distance Calculation in Generational Distance and Inverted Generational Distance](https://link.springer.com/chapter/10.1007/978-3-319-15892-1_8)
 
 ## Constrained functions
 

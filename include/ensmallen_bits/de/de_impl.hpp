@@ -77,8 +77,8 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
     population[i] += iterate;
     fitnessValues[i] = function.Evaluate(population[i]);
 
-    Callback::Evaluate(*this, function, population[i], fitnessValues[i],
-        callbacks...);
+    terminate |= Callback::Evaluate(*this, function, population[i],
+        fitnessValues[i], callbacks...);
 
     if (fitnessValues[i] < lastBestFitness)
     {
@@ -88,8 +88,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   }
 
   // Iterate until maximum number of generations are completed.
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t gen = 0; gen < maxGenerations && !terminate; gen++)
   {
     // Generate new population based on /best/1/bin strategy.
@@ -126,10 +125,15 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
       }
 
       ElemType iterateValue = function.Evaluate(iterate);
-      Callback::Evaluate(*this, function, iterate, iterateValue, callbacks...);
+      terminate |= Callback::Evaluate(*this, function, iterate, iterateValue,
+          callbacks...);
 
       const ElemType mutantValue = function.Evaluate(mutant);
-      Callback::Evaluate(*this, function, mutant, mutantValue, callbacks...);
+      terminate |= Callback::Evaluate(*this, function, mutant, mutantValue,
+          callbacks...);
+
+      if (terminate)
+        break;
 
       // Replace the current member if mutant is better.
       if (mutantValue < iterateValue)

@@ -66,7 +66,7 @@ GradientDescent::Optimize(FunctionType& function,
   bool terminate = false;
 
   // Now iterate!
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     overallObjective = f.EvaluateWithGradient(iterate, gradient);

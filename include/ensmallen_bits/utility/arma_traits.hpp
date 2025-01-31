@@ -98,26 +98,17 @@ struct IsArmaType<arma::SpSubview<eT> >
   const static bool value = true;
 };
 
+template<typename eT>
+struct IsArmaType<arma::SpSubview_col<eT> >
+{
+  const static bool value = true;
+};
 
-#if ((ARMA_VERSION_MAJOR >= 10) || \
-    ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
-
-  // Armadillo 9.869+ has SpSubview_col and SpSubview_row
-
-  template<typename eT>
-  struct IsArmaType<arma::SpSubview_col<eT> >
-  {
-    const static bool value = true;
-  };
-
-  template<typename eT>
-  struct IsArmaType<arma::SpSubview_row<eT> >
-  {
-    const static bool value = true;
-  };
-
-#endif
-
+template<typename eT>
+struct IsArmaType<arma::SpSubview_row<eT> >
+{
+  const static bool value = true;
+};
 
 // template<>
 template<typename eT>

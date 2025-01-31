@@ -40,7 +40,7 @@ class StoreBestCoordinates
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void Evaluate(OptimizerType& /* optimizer */,
+  bool Evaluate(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& coordinates,
                 const double objective)
@@ -50,6 +50,7 @@ class StoreBestCoordinates
       bestObjective = objective;
       bestCoordinates = coordinates;
     }
+    return false;
   }
 
   //! Get the best coordinates.

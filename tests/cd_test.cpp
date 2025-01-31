@@ -87,19 +87,17 @@ TEST_CASE("GreedyDescentTest", "[CDTest]")
 
   SparseTestFunction f;
 
-  GreedyDescent descentPolicy;
-
-  REQUIRE(descentPolicy.DescentFeature<SparseTestFunction,
-                                       arma::mat,
-                                       arma::mat>(0, point, f) == 2);
+  REQUIRE(GreedyDescent::DescentFeature<SparseTestFunction,
+                                        arma::mat,
+                                        arma::mat>(0, point, f) == 2);
 
   // Changing the point under consideration, so that the maximum gradient is at
   // index 1.
   point(1) = 10;
 
-  REQUIRE(descentPolicy.DescentFeature<SparseTestFunction,
-                                       arma::mat,
-                                       arma::mat>(0, point, f) == 1);
+  REQUIRE(GreedyDescent::DescentFeature<SparseTestFunction,
+                                        arma::mat,
+                                        arma::mat>(0, point, f) == 1);
 }
 
 /**
@@ -118,11 +116,9 @@ TEST_CASE("CyclicDescentTest", "[CDTest]")
 
   DummyFunction dummy;
 
-  CyclicDescent descentPolicy;
-
   for (size_t i = 0; i < 15; ++i)
   {
-    REQUIRE(descentPolicy.DescentFeature<DummyFunction, arma::mat, arma::mat>(
+    REQUIRE(CyclicDescent::DescentFeature<DummyFunction, arma::mat, arma::mat>(
         i, arma::mat(), dummy) == (i % features));
   }
 }
@@ -143,13 +139,11 @@ TEST_CASE("RandomDescentTest", "[CDTest]")
 
   DummyFunction dummy;
 
-  CyclicDescent descentPolicy;
-
   for (size_t i = 0; i < 100; ++i)
   {
-    size_t j = descentPolicy.DescentFeature<DummyFunction,
-                                            arma::mat,
-                                            arma::mat>(i, arma::mat(), dummy);
+    size_t j = CyclicDescent::DescentFeature<DummyFunction,
+                                             arma::mat,
+                                             arma::mat>(i, arma::mat(), dummy);
     REQUIRE(j < features);
     REQUIRE(j >= 0);
   }

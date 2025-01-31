@@ -1,5 +1,47 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix `exactObjective` output for SGD-like optimizers when the number of
+   iterations is an even number of epochs
+   ([#417](https://github.com/mlpack/ensmallen/pull/417)).
+
+### ensmallen 2.22.1: "E-Bike Excitement"
+###### 2024-12-02
+ * Remove unused variables to fix compiler warnings
+   ([#413](https://github.com/mlpack/ensmallen/pull/413)).
+
+### ensmallen 2.22.0: "E-Bike Excitement"
+###### 2024-11-29
+ * Update to C++14 standard
+   ([#400](https://github.com/mlpack/ensmallen/pull/400)).
+
+ * Bump minimum Armadillo version to 10.8
+   ([#404](https://github.com/mlpack/ensmallen/pull/404)).
+
+ * For Armadillo 14.2.0 switch to `.index_min()` and `.index_max()`
+   ([#409](https://github.com/mlpack/ensmallen/pull/409)).
+
+ * Added IPOP and BIPOP restart mechanisms for CMA-ES.
+   ([#403](https://github.com/mlpack/ensmallen/pull/403)).
+
+
+### ensmallen 2.21.1: "Bent Antenna"
+###### 2024-02-15
+ * Fix numerical precision issues for small-gradient L-BFGS scaling factor
+   computations ([#392](https://github.com/mlpack/ensmallen/pull/392)).
+
+ * Ensure the tests are built with optimisation enabled
+   ([#394](https://github.com/mlpack/ensmallen/pull/394)).
+
+### ensmallen 2.21.0: "Bent Antenna"
+###### 2023-11-27
+ * Clarify return values for different callback types
+   ([#383](https://github.com/mlpack/ensmallen/pull/383)).
+
+ * Fix return types of callbacks
+   ([#382](https://github.com/mlpack/ensmallen/pull/382)).
+
+ * Minor cleanup for printing optimization reports via `Report()`
+   ([#385](https://github.com/mlpack/ensmallen/pull/385)).
 
 ### ensmallen 2.20.0: "Stripped Bolt Head"
 ###### 2023-10-02
@@ -36,7 +78,7 @@
 
  * Add AdaSqrt optimizer
    ([#234](https://github.com/mlpack/ensmallen/pull/234)).
-   
+
  * Bump check for minimum supported version of Armadillo
    ([#342](https://github.com/mlpack/ensmallen/pull/342)).
 

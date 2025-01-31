@@ -98,7 +98,7 @@ Eve::Optimize(SeparableFunctionType& function,
   v.zeros();
 
   // Now iterate!
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   BaseGradType gradient(iterate.n_rows, iterate.n_cols);
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
@@ -123,6 +123,8 @@ Eve::Optimize(SeparableFunctionType& function,
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
         objective, gradient, callbacks...);
+    if (terminate)
+      break;
 
     m *= beta1;
     m += (1 - beta1) * gradient;
@@ -172,9 +174,7 @@ Eve::Optimize(SeparableFunctionType& function,
         return overallObjective;
       }
 
-      if (std::abs(lastOverallObjective - overallObjective) < tolerance ||
-          Callback::BeginEpoch(*this, f, iterate, epoch, overallObjective,
-              callbacks...))
+      if (std::abs(lastOverallObjective - overallObjective) < tolerance)
       {
         Info << "Eve: minimized within tolerance " << tolerance << "; "
             << "terminating optimization." << std::endl;
@@ -183,10 +183,16 @@ Eve::Optimize(SeparableFunctionType& function,
         return overallObjective;
       }
 
-      // Reset the counter variables.
-      lastOverallObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
+      terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
+          overallObjective, callbacks...);
+
+      // Reset the counter variables if we will continue.
+      if (i != actualMaxIterations)
+      {
+        lastOverallObjective = overallObjective;
+        overallObjective = 0;
+        currentFunction = 0;
+      }
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();
@@ -206,7 +212,9 @@ Eve::Optimize(SeparableFunctionType& function,
       const ElemType objective = f.Evaluate(iterate, i, effectiveBatchSize);
       overallObjective += objective;
 
-      Callback::Evaluate(*this, f, iterate, objective, callbacks...);
+      // The optimization is finished, so we don't need to care about the result
+      // of the callback.
+      (void) Callback::Evaluate(*this, f, iterate, objective, callbacks...);
     }
   }
 

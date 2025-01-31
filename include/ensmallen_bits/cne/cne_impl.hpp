@@ -111,26 +111,26 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 
   // Find the fitness before optimization using given iterate parameters.
   ElemType lastBestFitness = function.Evaluate(iterate);
-  Callback::Evaluate(*this, function, iterate, lastBestFitness, callbacks...);
+  terminate |= Callback::Evaluate(*this, function, iterate, lastBestFitness,
+      callbacks...);
 
   // Iterate until maximum number of generations is obtained.
-  terminate |= Callback::BeginOptimization(*this, function, iterate,
-      callbacks...);
+  Callback::BeginOptimization(*this, function, iterate, callbacks...);
   for (size_t gen = 1; gen <= maxGenerations && !terminate; gen++)
   {
     // Calculating fitness values of all candidates.
     for (size_t i = 0; i < populationSize; i++)
     {
-       // Select a candidate and insert the parameters in the function.
-       iterate = population[i];
-       terminate |= Callback::StepTaken(*this, function, iterate,
-          callbacks...);
+        // Select a candidate and insert the parameters in the function.
+        iterate = population[i];
+        terminate |= Callback::StepTaken(*this, function, iterate,
+            callbacks...);
 
-       // Find fitness of candidate.
-       fitnessValues[i] = function.Evaluate(iterate);
+        // Find fitness of candidate.
+        fitnessValues[i] = function.Evaluate(iterate);
 
-       Callback::Evaluate(*this, function, iterate, fitnessValues[i],
-          callbacks...);
+        terminate |= Callback::Evaluate(*this, function, iterate,
+            fitnessValues[i], callbacks...);
     }
 
     Info << "Generation number: " << gen << " best fitness = "
@@ -154,8 +154,10 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
   // Set the best candidate into the network parameters.
   iterateIn = population[index(0)];
 
+  // The output of the callback doesn't matter because the optimization is
+  // finished.
   const ElemType objective = function.Evaluate(iterate);
-  Callback::Evaluate(*this, function, iterate, objective, callbacks...);
+  (void) Callback::Evaluate(*this, function, iterate, objective, callbacks...);
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);
   return objective;

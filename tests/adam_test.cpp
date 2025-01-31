@@ -38,9 +38,6 @@ TEST_CASE("AdamSphereFunctionTestFMat", "[AdamTest]")
   FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.2);
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
 /**
  * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
  */
@@ -65,8 +62,6 @@ TEST_CASE("AdamSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
   REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
   REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
-
-#endif
 
 /**
  * Test the Adam optimizer on the Wood function.
@@ -123,9 +118,6 @@ TEST_CASE("AMSGradSphereFunctionTestFMat", "[AdamTest]")
   FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
 }
 
-#if ARMA_VERSION_MAJOR > 9 || \
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
 /**
  * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
  */
@@ -150,8 +142,6 @@ TEST_CASE("AMSGradSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
   REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
   REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
-
-#endif
 
 /**
  * Run Adam on logistic regression and make sure the results are acceptable.
@@ -236,9 +226,6 @@ TEST_CASE("QHAdamLogisticRegressionFMatTest", "[AdamTest]")
   LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.03, 0.06);
 }
 
-#if ARMA_VERSION_MAJOR > 9 ||\
-    (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
-
 /**
  * Run QHAdam on logistic regression and make sure the results are acceptable,
  * using arma::sp_mat.
@@ -248,8 +235,6 @@ TEST_CASE("QHAdamLogisticRegressionSpMatTest", "[AdamTest]")
   QHAdam optimizer;
   LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006);
 }
-
-#endif
 
 /**
  * Test the Adam optimizer on the Ackley function.

@@ -144,19 +144,22 @@ smorms3.Optimize(lrfTrain, coordinates, cb);
 
 </details>
 
-### GradClipByNorm
+### Gradient Clipping
 
-One difficulty with optimization is that large parameter gradients can lead an
-optimizer to update the parameters strongly into a region where the loss
-function is much greater, effectively undoing much of the work done to get to
-the current solution. Such large updates during the optimization can cause a
-numerical overflow or underflow, often referred to as "exploding gradients". The
-exploding gradient problem can be caused by: Choosing the wrong learning rate
-which leads to huge updates in the gradients.  Failing to scale a data set
-leading to very large differences between data points.  Applying a loss function
-that computes very large error values.
+One challenge in optimization is dealing with "exploding gradients", where large
+parameter gradients can cause the optimizer to make excessively large updates,
+potentially pushing the model into regions of high loss or causing numerical
+instability. This can happen due to:
 
-A common answer to the exploding gradients problem is to change the derivative
+* A high learning rate, leading to large gradient updates.
+* Poorly scaled datasets, resulting in significant variance between data points.
+* A loss function that generates disproportionately large error values.
+    
+Common solutions for this problem are:
+
+#### GradClipByNorm
+
+In this method, the solution is to change the derivative
 of the error before applying the update step.  One option is to clip the norm
 `||g||` of the gradient `g` before a parameter update. So given the gradient,
 and a maximum norm value, the callback normalizes the gradient so that its
@@ -186,19 +189,9 @@ arma::mat coordinates = f.GetInitialPoint();
 optimizer.Optimize(f, coordinates, GradClipByNorm(0.3));
 ```
 
-### GradClipByValue
+#### GradClipByValue
 
-One difficulty with optimization is that large parameter gradients can lead an
-optimizer to update the parameters strongly into a region where the loss
-function is much greater, effectively undoing much of the work done to get to
-the current solution. Such large updates during the optimization can cause a
-numerical overflow or underflow, often referred to as "exploding gradients". The
-exploding gradient problem can be caused by: Choosing the wrong learning rate
-which leads to huge updates in the gradients.  Failing to scale a data set
-leading to very large differences between data points.  Applying a loss function
-that computes very large error values.
-
-A common answer to the exploding gradients problem is to change the derivative
+In this method, the solution is to change the derivative
 of the error before applying the update step.  One option is to clip the
 parameter gradient element-wise before a parameter update.
 
@@ -424,18 +417,18 @@ std::cout << "The optimized model found by AdaDelta has the "
 Callbacks are called at several states during the optimization process:
 
 * At the beginning and end of the optimization process.
-* After any call to `Evaluate()` and `EvaluateConstraint`.
-* After any call to `Gradient()` and `GradientConstraint`.
+* After any call to `Evaluate()` and `EvaluateConstraint()`.
+* After any call to `Gradient()` and `GradientConstraint()`.
 * At the start and end of an epoch.
 
-Each callback provides optimization relevant information that can be accessed or
+Each callback provides optimization-relevant information that can be accessed or
 modified.
 
 ### BeginOptimization
 
 Called at the beginning of the optimization process.
 
- * `BeginOptimization(`_`optimizer, function, coordinates`_`)`
+ * `void BeginOptimization(`_`optimizer, function, coordinates`_`)`
 
 #### Attributes
 
@@ -449,7 +442,7 @@ Called at the beginning of the optimization process.
 
 Called at the end of the optimization process.
 
- * `EndOptimization(`_`optimizer, function, coordinates`_`)`
+ * `void EndOptimization(`_`optimizer, function, coordinates`_`)`
 
 #### Attributes
 
@@ -463,7 +456,9 @@ Called at the end of the optimization process.
 
 Called after any call to `Evaluate()`.
 
- * `Evaluate(`_`optimizer, function, coordinates, objective`_`)`
+ * `bool Evaluate(`_`optimizer, function, coordinates, objective`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -476,9 +471,11 @@ Called after any call to `Evaluate()`.
 
 ### EvaluateConstraint
 
- Called after any call to `EvaluateConstraint()`.
+Called after any call to `EvaluateConstraint()`.
 
- * `EvaluateConstraint(`_`optimizer, function, coordinates, constraint, constraintValue`_`)`
+ * `bool EvaluateConstraint(`_`optimizer, function, coordinates, constraint, constraintValue`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -492,9 +489,11 @@ Called after any call to `Evaluate()`.
 
 ### Gradient
 
- Called after any call to `Gradient()`.
+Called after any call to `Gradient()`.
 
- * `Gradient(`_`optimizer, function, coordinates, gradient`_`)`
+ * `bool Gradient(`_`optimizer, function, coordinates, gradient`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -507,9 +506,11 @@ Called after any call to `Evaluate()`.
 
 ### GradientConstraint
 
- Called after any call to `GradientConstraint()`.
+Called after any call to `GradientConstraint()`.
 
- * `GradientConstraint(`_`optimizer, function, coordinates, constraint, gradient`_`)`
+ * `bool GradientConstraint(`_`optimizer, function, coordinates, constraint, gradient`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -526,7 +527,9 @@ Called after any call to `Evaluate()`.
 Called at the beginning of a pass over the data. The objective may be exact or
 an estimate depending on `exactObjective` value.
 
- * `BeginEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+ * `bool BeginEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -543,7 +546,9 @@ an estimate depending on `exactObjective` value.
 Called at the end of a pass over the data. The objective may be exact or
 an estimate depending on `exactObjective` value.
 
- * `EndEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+ * `bool EndEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -560,7 +565,9 @@ an estimate depending on `exactObjective` value.
 Called after the evolution of a single generation. Intended specifically for
 MultiObjective Optimizers.
 
- * `GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+ * `bool GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+
+If the callback returns `true`, the optimization will be terminated.
 
 #### Attributes
 
@@ -615,7 +622,7 @@ class ExponentialDecay
   // Callback function called at the end of a pass over the data. We are only
   // interested in the current epoch and the optimizer, we ignore the rest.
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& optimizer,
+  bool EndEpoch(OptimizerType& optimizer,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t epoch,
@@ -624,6 +631,9 @@ class ExponentialDecay
     // Update the learning rate.
     optimizer.StepSize() = learningRate * (1.0 - std::pow(decay,
         (double) epoch));
+
+    // Do not terminate the optimization.
+    return false;
   }
 
   double learningRate;
@@ -695,7 +705,7 @@ class EarlyStop
   // the current objective. We are only interested in the objective and ignore
   // the rest.
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& /* optimizer */,
+  bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,

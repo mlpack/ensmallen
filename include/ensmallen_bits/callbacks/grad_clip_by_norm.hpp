@@ -40,7 +40,7 @@ class GradClipByNorm
    * @param gradient Matrix that holds the gradient.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void Gradient(OptimizerType& /* optimizer */,
+  bool Gradient(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 MatType& gradient)
@@ -48,6 +48,7 @@ class GradClipByNorm
     const double gradientNorm = arma::norm(gradient);
     if (gradientNorm > maxNorm)
       gradient = maxNorm * gradient / gradientNorm;
+    return false;
   }
 
  private:

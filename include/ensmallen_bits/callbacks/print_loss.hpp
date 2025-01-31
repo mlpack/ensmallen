@@ -38,13 +38,14 @@ class PrintLoss
    * @param objective Objective value of the current point.
    */
   template<typename OptimizerType, typename FunctionType, typename MatType>
-  void EndEpoch(OptimizerType& /* optimizer */,
+  bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
                 const size_t /* epoch */,
                 const double objective)
   {
     output << objective << std::endl;
+    return false;
   }
 
  private:
