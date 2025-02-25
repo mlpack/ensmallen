@@ -4,6 +4,9 @@
    iterations is an even number of epochs
    ([#417](https://github.com/mlpack/ensmallen/pull/417)).
 
+ * Increase tolerance in `demon_sgd_test.cpp`
+   ([#420](https://github.com/mlpack/ensmallen/pull/420)).
+
 ### ensmallen 2.22.1: "E-Bike Excitement"
 ###### 2024-12-02
  * Remove unused variables to fix compiler warnings
