@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix include statement in `tests/de_test.cpp`
+   ([#419](https://github.com/mlpack/ensmallen/pull/419)).
+
  * Fix `exactObjective` output for SGD-like optimizers when the number of
    iterations is an even number of epochs
    ([#417](https://github.com/mlpack/ensmallen/pull/417)).
