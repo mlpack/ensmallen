@@ -83,8 +83,7 @@ class WNGradUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      parent.b += pow(stepSize, 2.0) / parent.b *
-          pow(norm(gradient), 2);
+      parent.b += pow(stepSize, 2.0) / parent.b * pow(norm(gradient), 2);
       iterate -= stepSize * gradient / parent.b;
     }
 
