@@ -141,8 +141,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   const size_t numVariables = iterate.n_rows;
 
   //! Useful temporaries for float-like comparisons.
-  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
-  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+  const BaseMatType castedLowerBound = ConvTo<BaseMatType>::From(lowerBound);
+  const BaseMatType castedUpperBound = ConvTo<BaseMatType>::From(upperBound);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -297,7 +297,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoSet.slice(solutionIdx) =
-        arma::conv_to<arma::mat>::from(population[solutionIdx]);
+        ConvTo<arma::mat>::From(population[solutionIdx]);
   }
 
   // Set the candidates from the Pareto Front as the output.
@@ -308,7 +308,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (size_t solutionIdx = 0; solutionIdx < populationFitness.size(); ++solutionIdx)
   {
     paretoFront.slice(solutionIdx) =
-        arma::conv_to<arma::mat>::from(populationFitness[solutionIdx]);
+        ConvTo<arma::mat>::From(populationFitness[solutionIdx]);
   }
 
   // Assign iterate to first element of the Pareto Set.

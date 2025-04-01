@@ -95,7 +95,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     const double ck = evaluationStepSize / std::pow(k + 1, gamma);
 
     // Choose stochastic directions.
-    spVector = conv_to<ProxyMatType>::from(randi(iterate.n_rows, iterate.n_cols,
+    spVector = ConvTo<ProxyMatType>::From(randi(iterate.n_rows, iterate.n_cols,
         DistrParam(0, 1))) * 2 - 1;
 
     iterate += ck * spVector;

@@ -83,7 +83,7 @@ class GockenbachFunction
   template<typename MatType>
   MatType GetInitialPoint() const
   {
-    return arma::conv_to<MatType>::from(initialPoint);
+    return ConvTo<MatType>::From(initialPoint);
   }
 
  private:

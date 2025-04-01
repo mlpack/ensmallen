@@ -121,8 +121,8 @@ typename MatType::elem_type NSGA2::Optimize(
   std::vector<size_t> ranks;
 
   //! Useful temporaries for float-like comparisons.
-  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
-  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+  const BaseMatType castedLowerBound = ConvTo<BaseMatType>::From(lowerBound);
+  const BaseMatType castedUpperBound = ConvTo<BaseMatType>::From(upperBound);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -203,7 +203,7 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
     paretoSet.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+      ConvTo<arma::mat>::From(population[fronts[0][solutionIdx]]);
   }
 
   // Set the candidates from the Pareto Front as the output.
@@ -213,7 +213,7 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
     paretoFront.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+      ConvTo<arma::mat>::From(calculatedObjectives[fronts[0][solutionIdx]]);
   }
 
   // Clear rcFront, in case it is later requested by the user for reverse

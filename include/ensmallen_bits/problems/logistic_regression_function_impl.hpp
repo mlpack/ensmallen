@@ -122,8 +122,8 @@ typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Eva
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
   const ElemType result = accu(log(1.0 -
-      conv_to<RowType>::from(responses) + sigmoid %
-      (2 * conv_to<RowType>::from(responses) - 1.0)));
+      conv_to<RowType>::From(responses) + sigmoid %
+      (2 * conv_to<RowType>::From(responses) - 1.0)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
@@ -155,7 +155,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Eva
       predictors.cols(begin, begin + batchSize - 1))));
 
   // Compute the objective for the given batch size from a given point.
-  RowType respD = conv_to<RowType>::from(
+  RowType respD = conv_to<RowType>::From(
       responses.subvec(begin, begin + batchSize - 1));
   const ElemType result = accu(log(1.0 - respD + sigmoid % (2 * respD - 1.0)));
 
@@ -210,10 +210,10 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
   const RowType sigmoids = 1.0 / (1.0 + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<RowType>::from(responses.subvec(begin, begin + batchSize - 1)) -
+  gradient[0] = -accu(conv_to<RowType>::From(responses.subvec(begin, begin + batchSize - 1)) -
       sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<RowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
+      conv_to<RowType>::From(responses.subvec(begin, begin + batchSize - 1))) *
       predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 }
 
@@ -276,8 +276,8 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
 
 //   // Now compute the objective function using the sigmoids.
 //   ElemType result = arma::accu(arma::log(1.0 -
-//       arma::conv_to<arma::Row<ElemType>>::from(responses) + sigmoids %
-//       (2 * arma::conv_to<arma::Row<ElemType>>::from(responses) - 1.0)));
+//       ConvTo<arma::Row<ElemType>>::From(responses) + sigmoids %
+//       (2 * ConvTo<arma::Row<ElemType>>::From(responses) - 1.0)));
 
 //   // Invert the result, because it's a minimization.
 //   return objectiveRegularization - result;
@@ -311,14 +311,14 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
           predictors.cols(begin, begin + batchSize - 1))));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<RowType>::from(
+  gradient[0] = -accu(conv_to<RowType>::From(
       responses.subvec(begin, begin + batchSize - 1)) - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<RowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
+      conv_to<RowType>::From(responses.subvec(begin, begin + batchSize - 1))) *
       predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 
   // Now compute the objective function using the sigmoids.
-  RowType respD = conv_to<RowType>::from(
+  RowType respD = conv_to<RowType>::From(
       responses.subvec(begin, begin + batchSize - 1));
   const ElemType result = accu(log(1.0 - respD + sigmoids %
       (2 * respD - 1.0)));
@@ -336,7 +336,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::Classify(
 {
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = conv_to<LabelsType>::from((1.0 / (1.0 + exp(-parameters(0) -
+  labels = conv_to<LabelsType>::From((1.0 / (1.0 + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
       (1.0 - decisionBoundary));
 }

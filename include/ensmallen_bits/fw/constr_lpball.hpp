@@ -92,14 +92,14 @@ class ConstrLpBallSolver
       if (regFlag)
       {
         // Do element-wise division.
-        s /= arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s /= ConvTo<arma::Col<ElemType>>::From(lambda);
       }
     }
     else if (p > 1.0)
     {
       // lp ball with 1<p<inf.
       if (regFlag)
-        s = v / arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s = v / ConvTo<arma::Col<ElemType>>::From(lambda);
       else
         s = v;
 
@@ -108,13 +108,13 @@ class ConstrLpBallSolver
       s = arma::normalise(s, p);
 
       if (regFlag)
-        s = s / arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s = s / ConvTo<arma::Col<ElemType>>::From(lambda);
     }
     else if (p == 1.0)
     {
       // l1 ball, also used in OMP.
       if (regFlag)
-        s = arma::abs(v / arma::conv_to<arma::Col<ElemType>>::from(lambda));
+        s = arma::abs(v / ConvTo<arma::Col<ElemType>>::From(lambda));
       else
         s = arma::abs(v);
 
@@ -125,7 +125,7 @@ class ConstrLpBallSolver
       s(k) = -((0.0 < v(k)) - (v(k) < 0.0));
 
       if (regFlag)
-        s = s / arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s = s / ConvTo<arma::Col<ElemType>>::From(lambda);
     }
     else
     {

@@ -63,7 +63,7 @@ class QueryFront
       for (size_t solutionIdx = 0; solutionIdx < frontIndices[0].size();
           ++solutionIdx)
       {
-        currentParetoFront.slice(solutionIdx) = arma::conv_to<arma::mat>::from(
+        currentParetoFront.slice(solutionIdx) = ConvTo<arma::mat>::From(
             objectives[frontIndices[0][solutionIdx]]);
       }
 

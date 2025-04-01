@@ -97,8 +97,8 @@ class DefaultInit
     for (size_t i = 0; i < numParticles; i++)
     {
       particlePositions.slice(i) = particlePositions.slice(i) %
-          arma::conv_to<arma::Mat<CubeElemType> >::from(upperBound - lowerBound)
-          + arma::conv_to<arma::Mat<CubeElemType> >::from(lowerBound);
+          ConvTo<arma::Mat<CubeElemType> >::From(upperBound - lowerBound)
+          + ConvTo<arma::Mat<CubeElemType> >::From(lowerBound);
     }
 
     // Randomly initialize particle velocities.

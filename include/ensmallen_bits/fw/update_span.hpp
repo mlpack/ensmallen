@@ -63,7 +63,7 @@ class UpdateSpan
     // to the original size.
     arma::mat tmp;
     atoms.RecoverVector(tmp);
-    newCoords = arma::conv_to<MatType>::from(tmp);
+    newCoords = ConvTo<MatType>::From(tmp);
 
     // Prune the support.
     if (isPrune)
@@ -72,7 +72,7 @@ class UpdateSpan
       double F = 0.25 * oldF + 0.75 * function.Evaluate(newCoords);
       atoms.PruneSupport(F, function);
       atoms.RecoverVector(tmp);
-      newCoords = arma::conv_to<MatType>::from(tmp);
+      newCoords = ConvTo<MatType>::From(tmp);
     }
   }
 

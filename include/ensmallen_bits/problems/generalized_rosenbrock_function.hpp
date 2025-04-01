@@ -112,7 +112,7 @@ class GeneralizedRosenbrockFunction
   template<typename InputMatType = MatType>
   const InputMatType GetInitialPoint() const
   {
-    return conv_to<InputMatType>::from(initialPoint);
+    return conv_to<InputMatType>::From(initialPoint);
   }
 
   // Get the final point.
