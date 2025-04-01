@@ -43,7 +43,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
                                            MatType& iterate,
                                            CallbackTypes&&... callbacks)
 {
- // Convenience typedefs.
+  // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename ForwardMatType<MatType, ElemType>::MatType ProxyMatType;
