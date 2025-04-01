@@ -452,12 +452,6 @@ class AGEMOEA
   //! Probability that crossover will occur.
   double crossoverProb;
 
-  //! Probability that mutation will occur.
-  double mutationProb;
-
-  //! Strength of the mutation.
-  double mutationStrength;
-
   //! The crowding degree of the mutation. Higher value produces a mutant
   //! resembling its parent.
   double distributionIndex;

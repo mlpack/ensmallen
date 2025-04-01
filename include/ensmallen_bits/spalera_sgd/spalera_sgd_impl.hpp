@@ -213,10 +213,13 @@ SPALeRASGD<DecayPolicyType>::Optimize(
         return overallObjective;
       }
 
-      // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
+      // Reset the counter variables if we will continue.
+      if (i != actualMaxIterations)
+      {
+        lastObjective = overallObjective;
+        overallObjective = 0;
+        currentFunction = 0;
+      }
 
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);

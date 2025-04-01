@@ -1,8 +1,8 @@
 /**
- * @file dtlz4_function.hpp
+ * @file maf5_function.hpp
  * @author Satyam Shukla
  *
- * Implementation of the fourth DTLZ(Deb, Thiele, Laumanns, and Zitzler) test.
+ * Implementation of the fifth MAF test.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef ENSMALLEN_PROBLEMS_DTLZ_FOUR_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_DTLZ_FOUR_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_MAF_FIVE_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_MAF_FIVE_FUNCTION_HPP
 
 #include "../../moead/weight_init_policies/uniform_init.hpp"
 
@@ -19,16 +19,16 @@ namespace ens {
 namespace test {
 
 /**
- * The DTLZ4 function, defined by:
+ * The MAF5 function, defined by:
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
  * g(x) = \Sigma{i = n - M + 1}^n (x_i - 0.5)^2
  * 
- * f_1(x) = 0.5 * cos(x_1^alpha * pi * 0.5) * cos(x_2^alpha * pi * 0.5) * ... cos(x_2^alpha * pi * 0.5) * (1 + g(x_M)) 
- * f_2(x) = 0.5 * cos(x_1^alpha * pi * 0.5) * cos(x_2^alpha * pi * 0.5) * ... sin(x_M-1^alpha * pi * 0.5) * (1 + g(x_M))
+ * f_1(x) = a^M * cos(x_1^alpha * pi * 0.5) * cos(x_2^alpha * pi * 0.5) * ... cos(x_2^alpha * pi * 0.5) * (1 + g(x_M)) 
+ * f_2(x) = a^M-1 * cos(x_1^alpha * pi * 0.5) * cos(x_2^alpha * pi * 0.5) * ... sin(x_M-1^alpha * pi * 0.5) * (1 + g(x_M))
  * .
  * .
- * f_M(x) = 0.5 * sin(x_1^alpha * pi * 0.5) * (1 + g(x_M))
+ * f_M(x) = a * sin(x_1^alpha * pi * 0.5) * (1 + g(x_M))
  * \f]
  *
  * Bounds of the variable space is:
@@ -39,28 +39,29 @@ namespace test {
  * For more information, please refer to:
  * 
  * @code
- * @incollection{deb2005scalable,
- * title={Scalable test problems for evolutionary multiobjective optimization},
- * author={Deb, Kalyanmoy and Thiele, Lothar and Laumanns, Marco and Zitzler, Eckart},
- * booktitle={Evolutionary multiobjective optimization: theoretical advances and applications},
- * pages={105--145},
- * year={2005},
+ * @article{cheng2017benchmark,
+ * title={A benchmark test suite for evolutionary many-objective optimization},
+ * author={Cheng, Ran and Li, Miqing and Tian, Ye and Zhang, Xingyi and Yang, Shengxiang and Jin, Yaochu and Yao, Xin},
+ * journal={Complex \& Intelligent Systems},
+ * volume={3},
+ * pages={67--81},
+ * year={2017},
  * publisher={Springer}
  * }
- * @endcode
+ * @endcodes
  *
  * @tparam MatType Type of matrix to optimize.
  */
   template <typename MatType = arma::mat>
-  class DTLZ4
+  class MAF5
   {
     private:
 
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
-    size_t numVariables {7};
-    size_t numParetoPoints;
+    size_t numVariables {12};
     size_t alpha;
+    size_t a;
 
     public:
 
@@ -70,16 +71,17 @@ namespace test {
        *
        * @param alpha The power which each variable is raised to.
        * @param numParetoPoint No. of pareto points in the reference front.
+       * @param a The scale factor of the objectives.
        */
-      DTLZ4 (size_t alpha = 100, size_t numParetoPoints = 136) :
-        alpha(alpha),
-        numParetoPoints(numParetoPoints),
-        objectiveF1(0, *this),
-        objectiveF2(1, *this),
-        objectiveF3(2, *this)
+      MAF5(size_t alpha = 100, double a = 2) :
+          alpha(alpha),
+          a(a),
+          objectiveF1(0, *this),
+          objectiveF2(1, *this),
+          objectiveF3(2, *this)
       {/*Nothing to do here.*/}
 
-      // Get the starting point.
+      //! Get the starting point.
       arma::Col<typename MatType::elem_type> GetInitialPoint()
       {
         // Convenience typedef.
@@ -97,13 +99,29 @@ namespace test {
       size_t GetNumVariables()
       { return this -> numVariables; }
 
+      // Get the scale factor a.
+      double GetA()
+      { return this -> a; }
+
+      // Get the power alpha of each variable.
+      size_t GetAlpha()
+      { return this -> alpha; }
+
       /**
-       * Set the no. of pareto points.
-       *
-       * @param numParetoPoint
+       * Set the scale factor a.
+       * 
+       * @param a The scale factor of the objectives.
        */
-      void SetNumParetoPoint(size_t numParetoPoint)
-      { this -> numParetoPoints = numParetoPoint; }
+      void SetA(double a)
+      { this -> a = a; }
+
+      /**
+       * Set the power of each variable alpha.
+       * 
+       * @param alpha The power of each variable.
+       */
+      void SetAlpha(size_t alpha)
+      { this -> alpha = alpha; }
 
       /**
        * Evaluate the G(x) with the given coordinate.
@@ -119,7 +137,7 @@ namespace test {
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
-        for(size_t i = numObjectives - 1; i < numVariables; i++)
+        for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += arma::pow((coords.row(i) - 0.5), 2); 
         } 
@@ -140,22 +158,23 @@ namespace test {
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
-        arma::Row<ElemType> value = 0.5 * (1.0 + G);
-        for(size_t i = 0; i < numObjectives - 1; i++)
+        arma::Row<ElemType> value = (1.0 + G);
+        for (size_t i = 0; i < numObjectives - 1; i++)
         {
-          objectives.row(i) =  value %  
-              arma::sin(arma::pow(coords.row(i), alpha) * arma::datum::pi * 0.5);
+          objectives.row(i) = std::pow(a, i + 1) * arma::pow(value, 4) %  
+              arma::pow(arma::sin(arma::pow(coords.row(i), alpha) * 
+              arma::datum::pi * 0.5), 4);
           value = value % arma::cos(arma::pow(coords.row(i), alpha) * arma::datum::pi * 0.5); 
         }
-        objectives.row(numObjectives - 1) = value;
-        return objectives;    
+        objectives.row(numObjectives - 1) = arma::pow(value, 4) * std::pow(a, numObjectives);
+        return objectives;
       }
       
       // Individual Objective function.
       // Changes based on stop variable provided. 
-      struct DTLZ4Objective
+      struct MAF5Objective
       {
-        DTLZ4Objective(size_t stop, DTLZ4& dtlz): stop(stop), dtlz(dtlz)
+        MAF5Objective(size_t stop, MAF5& maf): stop(stop), maf(maf)
         {/* Nothing to do here.*/}  
         
         /**
@@ -169,49 +188,37 @@ namespace test {
           // Convenience typedef.
           typedef typename MatType::elem_type ElemType;
           ElemType value = 1.0;
-          for(size_t i = 0; i < stop; i++)
+          for (size_t i = 0; i < stop; i++)
           {
-            value = value * std::cos(std::pow(coords[i], dtlz.alpha) * arma::datum::pi * 0.5);
+            value = value * std::cos(std::pow(coords[i], maf.GetAlpha()) 
+                * arma::datum::pi * 0.5);
           }
 
-          if(stop != dtlz.numObjectives - 1)
+          if(stop != maf.GetNumObjectives() - 1)
           {
-            value = value * std::sin(std::pow(coords[stop], dtlz.alpha) * arma::datum::pi * 0.5);
-          }
-          else
-          {
-            value = value * std::cos(std::pow(coords[stop], dtlz.alpha) * arma::datum::pi * 0.5);
+            value = value * std::sin(std::pow(coords[stop], maf.GetAlpha()) 
+                * arma::datum::pi * 0.5);
           }
 
-          value = value * (1 + dtlz.g(coords)[0]);
-          return value;  
+          value = value * (1 + maf.g(coords)[0]);
+          value = std::pow(value, 4);
+          value = value * std::pow(maf.GetA(), stop + 1); 
+          return value;
         }        
 
-        DTLZ4& dtlz;
+        MAF5& maf;
         size_t stop;
       };
 
       // Return back a tuple of objective functions.
-      std::tuple<DTLZ4Objective, DTLZ4Objective, DTLZ4Objective> GetObjectives()
+      std::tuple<MAF5Objective, MAF5Objective, MAF5Objective> GetObjectives()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
-      // Get the Reference Front.
-      // Front. The implementation has been taken from pymoo.
-      arma::mat GetReferenceFront()
-      { 
-      	Uniform refGenerator;
-        arma::mat refDirs = refGenerator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
-        arma::colvec x = arma::normalise(refDirs, 2, 1);
-        arma::mat A(size(refDirs), arma::fill::ones);
-        A.each_col() = x;
-        return refDirs / A;
-      }
-
-    DTLZ4Objective objectiveF1;
-    DTLZ4Objective objectiveF2;
-    DTLZ4Objective objectiveF3;
+    MAF5Objective objectiveF1;
+    MAF5Objective objectiveF2;
+    MAF5Objective objectiveF3;
   };
   } //namespace test
   } //namespace ens

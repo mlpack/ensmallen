@@ -358,7 +358,10 @@ Each of the implemented methods is allowed to have additional cv-modifiers
 
 The following optimizers can be used with arbitrary separable functions:
 
- - [CMAES](#cmaes)
+ - [Active CMA-ES](#active-cma-es)
+ - [BIPOP CMA-ES](#bipop-cma-es)
+ - [CMA-ES](#cma-es)
+ - [IPOP CMA-ES](#ipop-cma-es)
 
 Each of these optimizers has an `Optimize()` function that is called as
 `Optimize(f, x)` where `f` is the function to be optimized and `x` holds the
@@ -453,7 +456,7 @@ int main()
   // parameters, so the shape is 10x1.
   arma::mat params(10, 1, arma::fill::randn);
 
-  // Use the CMAES optimizer with default parameters to minimize the
+  // Use the CMA-ES optimizer with default parameters to minimize the
   // LinearRegressionFunction.
   // The ens::CMAES type can be replaced with any suitable ensmallen optimizer
   // that can handle arbitrary separable functions.
@@ -461,7 +464,7 @@ int main()
   LinearRegressionFunction lrf(data, responses);
   cmaes.Optimize(lrf, params);
 
-  std::cout << "The optimized linear regression model found by CMAES has the "
+  std::cout << "The optimized linear regression model found by CMA-ES has the "
       << "parameters " << params.t();
 }
 ```

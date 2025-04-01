@@ -1,10 +1,34 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix include statement in `tests/de_test.cpp`
+   ([#419](https://github.com/mlpack/ensmallen/pull/419)).
+
+ * Fix `exactObjective` output for SGD-like optimizers when the number of
+   iterations is an even number of epochs
+   ([#417](https://github.com/mlpack/ensmallen/pull/417)).
+
+ * Increase tolerance in `demon_sgd_test.cpp`
+   ([#420](https://github.com/mlpack/ensmallen/pull/420)).
+
+### ensmallen 2.22.1: "E-Bike Excitement"
+###### 2024-12-02
+ * Remove unused variables to fix compiler warnings
+   ([#413](https://github.com/mlpack/ensmallen/pull/413)).
+
+### ensmallen 2.22.0: "E-Bike Excitement"
+###### 2024-11-29
  * Update to C++14 standard
    ([#400](https://github.com/mlpack/ensmallen/pull/400)).
 
  * Bump minimum Armadillo version to 10.8
    ([#404](https://github.com/mlpack/ensmallen/pull/404)).
+
+ * For Armadillo 14.2.0 switch to `.index_min()` and `.index_max()`
+   ([#409](https://github.com/mlpack/ensmallen/pull/409)).
+
+ * Added IPOP and BIPOP restart mechanisms for CMA-ES.
+   ([#403](https://github.com/mlpack/ensmallen/pull/403)).
+
 
 ### ensmallen 2.21.1: "Bent Antenna"
 ###### 2024-02-15

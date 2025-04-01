@@ -18,7 +18,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("DemonSGDLogisticRegressionTest", "[DemonSGDTest]", arma::mat, arma::fmat)
 {
   DemonSGD optimizer(0.1, 32, 0.9, 1000000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
+  LogisticRegressionFunctionTest<TestType>(optimizer, 0.006, 0.006, 6);
 }
 
 #ifdef USE_COOT

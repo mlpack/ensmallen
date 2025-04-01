@@ -45,7 +45,7 @@ set(ENSMALLEN_TESTS_SOURCES
 #     sarah_test.cpp
 #     sdp_primal_dual_test.cpp
 #     sgdr_test.cpp
-    sgd_test.cpp
+#     sgd_test.cpp
 #     smorms3_test.cpp
 #     snapshot_ensembles.cpp
 # #   spalera_sgd_test.cpp

@@ -628,3 +628,184 @@ TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEADTest]")
   const arma::cube& finalPopulation = opt.ParetoSet();
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
+
+/**
+ * Test DirichletMOEAD against the third problem of ZDT Test Suite. MAF-3 is a 12 
+ * variable-3 objective problem with disconnected Pareto Fronts. 
+ */
+TEST_CASE("MOEADDIRICHLETMAF3Test", "[MOEADTest]")
+{
+  //! Parameters taken from original ZDT Paper.
+  MAF3<arma::mat> MAF_THREE;
+  const double lowerBound = 0;
+  const double upperBound = 1;
+  const double expectedLowerBound = 0.5;
+  const double expectedUpperBound = 0.5;
+
+  DirichletMOEAD opt(
+      105, // Population size.
+      1000,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
+
+  typedef decltype(MAF_THREE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(MAF_THREE.objectiveF2) ObjectiveTypeB;
+  typedef decltype(MAF_THREE.objectiveF3) ObjectiveTypeC;
+
+  arma::mat coords = MAF_THREE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB, ObjectiveTypeC> objectives = 
+      MAF_THREE.GetObjectives();
+  opt.Optimize(objectives, coords);
+
+  bool success = true;
+  arma::cube paretoSet = opt.ParetoSet();
+  for (size_t i = 0; i < paretoSet.n_slices; i++)
+  {
+    arma::mat solution = paretoSet.slice(i);
+    bool allInRange = true;
+    for (size_t j = 2; j < MAF_THREE.GetNumVariables(); j++)
+    {
+    	double val = arma::as_scalar(solution(j));
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.1))
+      {
+        allInRange = false;
+        break;
+      }
+    }
+    if(!allInRange)
+    {
+      success = false;
+      break;
+    }
+  }
+  REQUIRE(success == true);
+}
+
+/**
+ * Test DirichletMOEAD against the third problem of ZDT Test Suite. MAF-1 is a 12 
+ * variable-3 objective problem with disconnected Pareto Fronts. 
+ */
+TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEADTest]")
+{
+  //! Parameters taken from original ZDT Paper.
+  MAF1<arma::mat> MAF_ONE;
+  const double lowerBound = 0;
+  const double upperBound = 1;
+  const double expectedLowerBound = 0.5;
+  const double expectedUpperBound = 0.5;
+
+  DirichletMOEAD opt(
+      105, // Population size.
+      1000,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
+
+  typedef decltype(MAF_ONE.objectiveF1) ObjectiveTypeA;
+  typedef decltype(MAF_ONE.objectiveF2) ObjectiveTypeB;
+  typedef decltype(MAF_ONE.objectiveF3) ObjectiveTypeC;
+
+  arma::mat coords = MAF_ONE.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB, ObjectiveTypeC> objectives = 
+      MAF_ONE.GetObjectives();
+  opt.Optimize(objectives, coords);
+
+  bool success = true;
+  arma::cube paretoSet = opt.ParetoSet();
+  for (size_t i = 0; i < paretoSet.n_slices; i++)
+  {
+    arma::mat solution = paretoSet.slice(i);
+    bool allInRange = true;
+    for (size_t j = 2; j < MAF_ONE.GetNumVariables(); j++)
+    {
+    	double val = arma::as_scalar(solution(j));
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.1))
+      {
+        allInRange = false;
+        break;
+      }
+    }
+    if(!allInRange)
+    {
+      success = false;
+      break;
+    }
+  }
+  REQUIRE(success == true);
+}
+
+/**
+ * Test DirichletMOEAD against the third problem of ZDT Test Suite. MAF-4 is a 12 
+ * variable-3 objective problem with disconnected Pareto Fronts. 
+ */
+TEST_CASE("MOEADDIRICHLETMAF4Test", "[MOEADTest]")
+{
+  //! Parameters taken from original ZDT Paper.
+  MAF4<arma::mat> MAF_FOUR;
+  const double lowerBound = 0;
+  const double upperBound = 1;
+  const double expectedLowerBound = 0.5;
+  const double expectedUpperBound = 0.5;
+
+  DirichletMOEAD opt(
+      105, // Population size.
+      1000,  // Max generations.
+      1.0,  // Crossover probability.
+      0.9, // Probability of sampling from neighbor.
+      20, // Neighborhood size.
+      20, // Perturbation index.
+      0.5, // Differential weight.
+      2, // Max childrens to replace parents.
+      1E-10, // epsilon.
+      lowerBound, // Lower bound.
+      upperBound // Upper bound.
+    );
+
+  typedef decltype(MAF_FOUR.objectiveF1) ObjectiveTypeA;
+  typedef decltype(MAF_FOUR.objectiveF2) ObjectiveTypeB;
+  typedef decltype(MAF_FOUR.objectiveF3) ObjectiveTypeC;
+
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB, ObjectiveTypeC> objectives = 
+      MAF_FOUR.GetObjectives();
+
+  bool success = false;
+  arma::mat coords = MAF_FOUR.GetInitialPoint();
+  opt.Optimize(objectives, coords);
+  arma::cube paretoSet = opt.ParetoSet();
+  for (size_t i = 0; i < paretoSet.n_slices; i++)
+  {
+    arma::mat solution = paretoSet.slice(i);
+    bool allInRange = true;
+    for (size_t j = 2; j < MAF_FOUR.GetNumVariables(); j++)
+    {
+    	double val = arma::as_scalar(solution(j));
+     if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.2))
+      {
+        allInRange = false;
+        break;
+      }
+    }
+    if(allInRange)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  REQUIRE(success == true);
+}
