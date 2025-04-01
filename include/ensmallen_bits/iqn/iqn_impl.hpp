@@ -32,7 +32,6 @@ inline IQN::IQN(const double stepSize,
 { /* Nothing to do. */ }
 
 //! Optimize the function (minimize).
-//! Optimize the function (minimize).
 template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
