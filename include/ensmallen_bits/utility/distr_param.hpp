@@ -1,5 +1,5 @@
 /**
- * @file core/util/distr_param.hpp
+ * @file ensmallen_bits/utility/distr_param.hpp
  * @author Conrad Saderson
  * @author Ryan Curton
  *
