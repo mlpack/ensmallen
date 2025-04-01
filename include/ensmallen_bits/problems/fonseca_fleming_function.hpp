@@ -74,12 +74,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-      return 0;
-        // return 1.0 - exp(
-        //      -pow(static_cast<double>(coords[0]) - 1.0 / sqrt(3.0), 2.0)
-        //      -pow(static_cast<double>(coords[1]) - 1.0 / sqrt(3.0), 2.0)
-        //      -pow(static_cast<double>(coords[2]) - 1.0 / sqrt(3.0), 2.0)
-        // );
+      return 1.0 - exp(
+           -pow(static_cast<double>(coords[0]) - 1.0 / sqrt(3.0), 2.0)
+           -pow(static_cast<double>(coords[1]) - 1.0 / sqrt(3.0), 2.0)
+           -pow(static_cast<double>(coords[2]) - 1.0 / sqrt(3.0), 2.0)
+      );
     }
   } objectiveA;
 
@@ -87,12 +86,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-      return 0;
-        // return 1.0 - exp(
-        //     -pow(static_cast<double>(coords[0]) + 1.0 / sqrt(3.0), 2.0)
-        //     -pow(static_cast<double>(coords[1]) + 1.0 / sqrt(3.0), 2.0)
-        //     -pow(static_cast<double>(coords[2]) + 1.0 / sqrt(3.0), 2.0)
-        // );
+      return 1.0 - exp(
+          -pow(static_cast<double>(coords[0]) + 1.0 / sqrt(3.0), 2.0)
+          -pow(static_cast<double>(coords[1]) + 1.0 / sqrt(3.0), 2.0)
+          -pow(static_cast<double>(coords[2]) + 1.0 / sqrt(3.0), 2.0)
+      );
     }
   } objectiveB;
 

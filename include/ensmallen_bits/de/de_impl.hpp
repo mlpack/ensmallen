@@ -102,7 +102,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
       size_t l = 0, m = 0;
       do
       {
-        l = rand() % populationSize;
+        l = randi() % populationSize;
       }
       while (l == member);
 

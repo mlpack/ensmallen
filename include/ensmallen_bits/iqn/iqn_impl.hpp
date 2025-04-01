@@ -138,70 +138,70 @@ IQN::Optimize(SeparableFunctionType& functionIn,
         const BaseMatType s = vectorise(iterate - t[it]);
         const BaseGradType yy = vectorise(gradient - y[it]);
 
-        // const BaseGradType stochasticHessian = Q[it] + yy * yy.t() /
-        //     as_scalar(yy.t() * s) - Q[it] * s * s.t() *
-        //     Q[it] / as_scalar(s.t() * Q[it] * s);
+        const BaseGradType stochasticHessian = Q[it] + yy * yy.t() /
+            as_scalar(yy.t() * s) - Q[it] * s * s.t() *
+            Q[it] / as_scalar(s.t() * Q[it] * s);
 
-        // // Update aggregate Hessian approximation.
-        // B += (1.0 / numBatches) * (stochasticHessian - Q[it]);
+        // Update aggregate Hessian approximation.
+        B += (1.0 / numBatches) * (stochasticHessian - Q[it]);
 
-        // // Update aggregate Hessian-variable product.
-        // u += reshape((1.0 / numBatches) * (stochasticHessian *
-        //     vectorise(iterate) - Q[it] * vectorise(t[it])),
-        //     u.n_rows, u.n_cols);;
+        // Update aggregate Hessian-variable product.
+        u += reshape((1.0 / numBatches) * (stochasticHessian *
+            vectorise(iterate) - Q[it] * vectorise(t[it])),
+            u.n_rows, u.n_cols);;
 
-        // // Update aggregate gradient.
-        // g += (1.0 / numBatches) * (gradient - y[it]);
+        // Update aggregate gradient.
+        g += (1.0 / numBatches) * (gradient - y[it]);
 
-        // // Update the function information tables.
-        // Q[it] = std::move(stochasticHessian);
-        // y[it] = std::move(gradient);
-        // t[it] = iterate;
+        // Update the function information tables.
+        Q[it] = std::move(stochasticHessian);
+        y[it] = std::move(gradient);
+        t[it] = iterate;
 
-        // iterate = reshape(stepSize * B.i() * (u.t() - vectorise(g)),
-        //     iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
+        iterate = reshape(stepSize * B.i() * (u.t() - vectorise(g)),
+            iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
 
-        // terminate |= Callback::StepTaken(*this, function, iterate,
-        //     callbacks...);
+        terminate |= Callback::StepTaken(*this, function, iterate,
+            callbacks...);
       }
 
       f += effectiveBatchSize;
     }
 
-    // overallObjective = 0;
-    // for (size_t f = 0; f < numFunctions; f += batchSize)
-    // {
-    //   const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
-    //   const ElemType objective = function.Evaluate(iterate, f,
-    //       effectiveBatchSize);
-    //   overallObjective += objective;
+    overallObjective = 0;
+    for (size_t f = 0; f < numFunctions; f += batchSize)
+    {
+      const size_t effectiveBatchSize = std::min(batchSize, numFunctions - f);
+      const ElemType objective = function.Evaluate(iterate, f,
+          effectiveBatchSize);
+      overallObjective += objective;
 
-    //   terminate |= Callback::Evaluate(*this, function, iterate, objective,
-    //       callbacks...);
-    // }
-    // overallObjective /= numFunctions;
+      terminate |= Callback::Evaluate(*this, function, iterate, objective,
+          callbacks...);
+    }
+    overallObjective /= numFunctions;
 
-    // // Output current objective function.
-    // Info << "IQN: iteration " << i << ", objective " << overallObjective
-    //     << "." << std::endl;
+    // Output current objective function.
+    Info << "IQN: iteration " << i << ", objective " << overallObjective
+        << "." << std::endl;
 
-    // if (std::isnan(overallObjective) || std::isinf(overallObjective))
-    // {
-    //   Warn << "IQN: converged to " << overallObjective << "; terminating"
-    //       << " with failure.  Try a smaller step size?" << std::endl;
+    if (std::isnan(overallObjective) || std::isinf(overallObjective))
+    {
+      Warn << "IQN: converged to " << overallObjective << "; terminating"
+          << " with failure.  Try a smaller step size?" << std::endl;
 
-    //   Callback::EndOptimization(*this, function, iterate, callbacks...);
-    //   return overallObjective;
-    // }
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
 
-    // if (overallObjective < tolerance)
-    // {
-    //   Info << "IQN: minimized within tolerance " << tolerance << "; "
-    //       << "terminating optimization." << std::endl;
+    if (overallObjective < tolerance)
+    {
+      Info << "IQN: minimized within tolerance " << tolerance << "; "
+          << "terminating optimization." << std::endl;
 
-    //   Callback::EndOptimization(*this, function, iterate, callbacks...);
-    //   return overallObjective;
-    // }
+      Callback::EndOptimization(*this, function, iterate, callbacks...);
+      return overallObjective;
+    }
   }
 
   Info << "IQN: maximum iterations (" << maxIterations << ") reached; "
