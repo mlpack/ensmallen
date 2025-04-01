@@ -23,7 +23,7 @@ TEMPLATE_TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrt]",
       optimizer, 0.003, 0.006, 1);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("AdaSqrtLogisticRegressionTest", "[AdaSqrt]",
     coot::mat, coot::fmat)

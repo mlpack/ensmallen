@@ -205,7 +205,7 @@ TEST_CASE("QHAdamLogisticRegressionSpMatTest", "[Adam]")
 
 #endif
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("AdamSphereFunctionTest", "[Adam]", coot::mat, coot::fmat)
 {

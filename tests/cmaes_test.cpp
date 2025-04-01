@@ -62,7 +62,7 @@ TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
 /*   LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5); */
 /* } */
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("CMAESLogisticRegressionTest", "[CMAES]", coot::fmat)
 {

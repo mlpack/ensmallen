@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE("DemonSGDLogisticRegressionTest", "[DemonSGDTest]", arma::mat
   LogisticRegressionFunctionTest<TestType>(optimizer, 0.006, 0.006, 6);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("DemonSGDLogisticRegressionTest", "[DemonSGDTest]", coot::mat, coot::fmat)
 {

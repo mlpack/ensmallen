@@ -34,7 +34,7 @@
 
 #include <armadillo>
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
   #include <bandicoot>
 #endif
 

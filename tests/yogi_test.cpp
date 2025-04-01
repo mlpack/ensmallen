@@ -35,7 +35,7 @@ TEMPLATE_TEST_CASE("YogiLogisticRegressionTest", "[Yogi]", arma::mat, arma::fmat
   LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("YogiSphereFunctionTest", "[Yogi]", coot::mat, coot::fmat)
 {

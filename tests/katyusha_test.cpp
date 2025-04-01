@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("KatyushaProximalLogisticRegressionTest", "[Katyusha]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("KatyushaLogisticRegressionTest", "[Katyusha]",
     coot::mat, coot::fmat)

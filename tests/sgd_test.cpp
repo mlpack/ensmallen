@@ -93,7 +93,7 @@ TEMPLATE_TEST_CASE("SGDLogisticRegressionTest", "[SGD]",
   SGDLogisticRegressionTest<TestType, arma::Row<size_t>>();
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("SGDGeneralizedRosenbrock", "[SGD]",
     coot::mat, coot::fmat)

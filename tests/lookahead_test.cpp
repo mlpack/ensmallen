@@ -58,7 +58,7 @@ TEMPLATE_TEST_CASE("LookaheadAdamSimpleSphereFunction", "[Lookahead]",
       optimizer, 0.5, 0.2, 3);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("LookaheadAdamSphereFunctionTest", "[Lookahead]",
     coot::mat)

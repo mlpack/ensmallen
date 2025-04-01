@@ -67,8 +67,8 @@ if(BANDICOOT_FOUND AND NOT TARGET Bandicoot:Bandicoot)
   target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
   target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
 
-  set(USE_COOT "1")
-  add_definitions(-DUSE_COOT)
+  set(ENS_HAS_COOT "1")
+  add_definitions(-DENS_HAS_COOT)
 endif()
 
 # Find Armadillo and link it.

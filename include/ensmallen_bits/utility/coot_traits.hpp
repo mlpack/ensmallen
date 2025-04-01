@@ -40,7 +40,7 @@ struct IsCootType
   const static bool value = false;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 // Commenting out the first template per case, because
 // Visual Studio doesn't like this instantiaion pattern (error C2910).

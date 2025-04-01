@@ -54,7 +54,7 @@ TEMPLATE_TEST_CASE("SPSASphereFunctionSpMatTest", "[SPSA]", arma::sp_mat)
 
 #endif
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("SPSASphereFunctionTest", "[SPSA]", coot::mat, coot::fmat)
 {

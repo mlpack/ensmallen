@@ -47,7 +47,7 @@ TEST_CASE("WNGradStyblinskiTangFunctionSpMatTest", "[WNGrad]")
   FunctionTest<StyblinskiTangFunction<>, arma::sp_mat>(optimizer, 0.3, 0.03);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("WNGradLogisticRegressionTest", "[WNGrad]",
     coot::mat, coot::fmat)

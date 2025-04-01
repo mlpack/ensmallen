@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
     coot::mat, coot::fmat)

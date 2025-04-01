@@ -129,7 +129,7 @@ TEST_CASE("CNESchafferFunctionN2Test", "[CNE]")
   FunctionTest<SchafferFunctionN2>(optimizer, 0.5, 0.1, 7);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 // TEMPLATE_TEST_CASE("CNELogisticRegressionTest", "[CNE]",
 //     coot::mat, coot::fmat)

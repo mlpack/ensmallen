@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("SARAHPlusLogisticRegressionTest", "[SARAH]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("SARAHLogisticRegressionTest", "[SARAH]",
     coot::mat, coot::fmat)

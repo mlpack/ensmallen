@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE("LogisticRegressionTest","[SPALeRASGD]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("LogisticRegressionTest","[SPALeRASGD]",
     coot::mat, coot::fmat)

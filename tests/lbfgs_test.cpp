@@ -106,7 +106,7 @@ TEMPLATE_TEST_CASE("RosenbrockWoodFunctionTest", "[LBFGS]",
       lbfgs, 0.01, 0.001);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("RosenbrockFunctionTest", "[LBFGS]", coot::mat, coot::fmat)
 {

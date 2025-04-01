@@ -77,7 +77,7 @@ TEST_CASE("AMSBoundSphereFunctionTestSpMatDenseGradient", "[AdaBound]")
   REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("AdaBoundSphereFunctionTest", "[AdaBound]",
     coot::mat, coot::fmat)

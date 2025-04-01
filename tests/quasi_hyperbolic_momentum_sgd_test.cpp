@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE("QHSGDSGDGeneralizedRosenbrockTest", "[QHMomentumSGD]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("QHSphereFunction", "[QHMomentumSGD]",
     coot::mat, coot::fmat)

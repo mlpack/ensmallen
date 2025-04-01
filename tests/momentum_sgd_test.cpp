@@ -111,7 +111,7 @@ TEMPLATE_TEST_CASE("MomentumSGDGeneralizedRosenbrockTest",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("MomentumSGDSpeedUpTestFunction", "[MomentumSGD]",
     coot::mat, coot::fmat)

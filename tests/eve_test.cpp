@@ -51,7 +51,7 @@ TEST_CASE("EveStyblinskiTangFunctionSpMatTest","[Eve]")
   FunctionTest<StyblinskiTangFunction<>, arma::sp_mat>(optimizer, 0.5, 0.1);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("EveLogisticRegressionTest", "[Eve]",
     coot::mat, coot::fmat)

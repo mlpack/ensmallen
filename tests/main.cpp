@@ -22,7 +22,7 @@
 
 int main(int argc, char** argv)
 {
-  #ifdef USE_COOT
+  #ifdef ENS_HAS_COOT
   coot::get_rt().init(true);
   #endif
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
   std::cout << "ensmallen version: " << ens::version::as_string() << std::endl;
   std::cout << "armadillo version: " << arma::arma_version::as_string() << std::endl;
 
-  #ifdef USE_COOT
+  #ifdef ENS_HAS_COOT
   std::cout << "bandicoot version: " << coot::coot_version::as_string() << std::endl;
   #endif
 

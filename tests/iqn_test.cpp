@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE("IQNLogisticRegressionTest", "[IQN]", arma::mat, arma::fmat)
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("IQNLogisticRegressionTest", "[IQN]", coot::mat, coot::fmat)
 {

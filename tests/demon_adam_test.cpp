@@ -49,7 +49,7 @@ TEMPLATE_TEST_CASE("DemonAdamSphereFunctionTestSpMat", "[DemonAdam]", arma::sp_m
       optimizer, 1.0, 0.1);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdam]", coot::mat)
 {

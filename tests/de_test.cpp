@@ -23,7 +23,7 @@ TEMPLATE_TEST_CASE("DELogisticRegressionTest", "[DE]", arma::mat)
       opt, 0.01, 0.02, 3);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("DELogisticRegressionTest", "[DE]", coot::mat)
 {

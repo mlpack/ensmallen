@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("FTMLStyblinskiTangFunctionTest", "[FTML]",
       optimizer, 0.5, 0.1);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("FTMLLogisticRegressionTest", "[FTML]",
     coot::mat, coot::fmat)

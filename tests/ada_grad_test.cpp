@@ -25,7 +25,7 @@ TEMPLATE_TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGrad]",
       adagrad, 0.003, 0.006);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGrad]",
     coot::mat, coot::fmat)

@@ -68,7 +68,7 @@ struct ForwardMatCubeType<arma::SpMat<eT>>
   typedef arma::Cube<eT> CubeType;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 template<typename eT>
 struct ForwardMatCubeType<coot::Mat<eT>>
 {
@@ -93,7 +93,7 @@ struct ForwardCubeMatType<arma::Cube<eT>>
   typedef arma::Mat<eT> MatType;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 template<typename eT>
 struct ForwardCubeMatType<coot::Cube<eT>>
 {
@@ -135,7 +135,7 @@ struct ForwardCubeColType<arma::Cube<eT>>
   typedef arma::Col<eT> ColType;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 template<typename eT>
 struct ForwardCubeColType<coot::Cube<eT>>
 {
@@ -151,7 +151,7 @@ struct ForwardCubeColType<coot::Cube<eT>>
 template<typename MatType, typename ElemType = typename MatType::elem_type>
 struct ForwardColType
 {
-  #ifdef USE_COOT
+  #ifdef ENS_HAS_COOT
   typedef typename std::conditional<IsArmaType<MatType>::value,
       arma::Col<ElemType>, coot::Col<ElemType>>::type ColType;
   #else
@@ -162,7 +162,7 @@ struct ForwardColType
 template<typename MatType, typename ElemType = typename MatType::elem_type>
 struct ForwardRowType
 {
-  #ifdef USE_COOT
+  #ifdef ENS_HAS_COOT
   typedef typename std::conditional<IsArmaType<MatType>::value,
       arma::Row<ElemType>, coot::Row<ElemType>>::type RowType;
   #else
@@ -173,7 +173,7 @@ struct ForwardRowType
 template<typename MatInputType, typename ElemType = typename MatInputType::elem_type>
 struct ForwardMatType
 {
-  #ifdef USE_COOT
+  #ifdef ENS_HAS_COOT
   typedef typename std::conditional<IsArmaType<MatInputType>::value,
       arma::Mat<ElemType>, coot::Mat<ElemType>>::type MatType;
   #else
@@ -222,7 +222,7 @@ struct ForwardMatRowType<arma::SpMat<eT>>
   typedef arma::Row<eT> RowType;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 template<typename eT>
 struct ForwardMatRowType<coot::Mat<eT>>
 {
@@ -307,7 +307,7 @@ inline void RequireDenseFloatingPointType<arma::mat>() { }
 template<>
 inline void RequireDenseFloatingPointType<arma::fmat>() { }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 template<>
 inline void RequireDenseFloatingPointType<coot::mat>() { }
 template<>
@@ -336,7 +336,7 @@ inline void RequireFloatingPointType<arma::sp_mat>() { }
 template<>
 inline void RequireFloatingPointType<arma::sp_fmat>() { }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 template<>
 inline void RequireFloatingPointType<coot::mat>() { }
 template<>

@@ -23,7 +23,7 @@ TEMPLATE_TEST_CASE("RMSPropLogisticRegressionTest", "[RMSProp]",
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer, 0.003, 0.006);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAS_COOT
 
 TEMPLATE_TEST_CASE("RMSPropLogisticRegressionTest", "[RMSProp]",
     coot::mat, coot::fmat)
