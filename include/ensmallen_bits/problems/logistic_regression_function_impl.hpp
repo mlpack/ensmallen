@@ -157,8 +157,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Eva
   // Compute the objective for the given batch size from a given point.
   RowType respD = conv_to<RowType>::from(
       responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = accu(log(1.0 - respD + sigmoid %
-      (2 * respD - 1.0)));
+  const ElemType result = accu(log(1.0 - respD + sigmoid % (2 * respD - 1.0)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
