@@ -336,8 +336,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::Classify(
 {
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = conv_to<LabelsType>::from((1.0 /
-      (1.0 + exp(-parameters(0) -
+  labels = conv_to<LabelsType>::from((1.0 / (1.0 + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
       (1.0 - decisionBoundary));
 }
