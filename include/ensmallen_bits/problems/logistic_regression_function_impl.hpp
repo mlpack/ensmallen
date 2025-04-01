@@ -306,10 +306,9 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
                 parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const RowType sigmoids = 1.0 / (1.0 +
-      exp(-(parameters(0, 0) +
-                  parameters.tail_cols(parameters.n_elem - 1) *
-                      predictors.cols(begin, begin + batchSize - 1))));
+  const RowType sigmoids = 1.0 / (1.0 + exp(-(parameters(0, 0) +
+      parameters.tail_cols(parameters.n_elem - 1) *
+          predictors.cols(begin, begin + batchSize - 1))));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   gradient[0] = -accu(conv_to<RowType>::from(
