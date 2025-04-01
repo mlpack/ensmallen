@@ -338,13 +338,13 @@ Mating(size_t subProblemIdx,
   //! Indexes of two points from the sample space.
   size_t pointA = sampleNeighbor
       ? neighborIndices(
-            arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
-      : arma::randi(arma::distr_param(0, populationSize - 1u));
+            arma::randi(DistrParam(0, neighborSize - 1u)), subProblemIdx)
+      : arma::randi(DistrParam(0, populationSize - 1u));
 
   size_t pointB = sampleNeighbor
       ? neighborIndices(
-            arma::randi(arma::distr_param(0, neighborSize - 1u)), subProblemIdx)
-      : arma::randi(arma::distr_param(0, populationSize - 1u));
+            arma::randi(DistrParam(0, neighborSize - 1u)), subProblemIdx)
+      : arma::randi(DistrParam(0, populationSize - 1u));
 
   //! If the sampled points are equal, then modify one of them
   //! within reasonable bounds.

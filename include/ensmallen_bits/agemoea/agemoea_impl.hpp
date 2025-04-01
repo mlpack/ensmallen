@@ -288,8 +288,8 @@ inline void AGEMOEA::BinaryTournamentSelection(std::vector<MatType>& population,
   while (children.size() < population.size())
   {
     // Choose two random parents for reproduction from the elite population.
-    size_t indexA = arma::randi<size_t>(arma::distr_param(0, populationSize - 1));
-    size_t indexB = arma::randi<size_t>(arma::distr_param(0, populationSize - 1));
+    size_t indexA = randi<size_t>(DistrParam(0, populationSize - 1));
+    size_t indexB = randi<size_t>(DistrParam(0, populationSize - 1));
 
     // Make sure that the parents differ.
     if (indexA == indexB)
@@ -303,7 +303,7 @@ inline void AGEMOEA::BinaryTournamentSelection(std::vector<MatType>& population,
     // Initialize the children to the respective parents.
     MatType childA = population[indexA], childB = population[indexB];
 
-    if (arma::randu() <= crossoverProb)
+    if (randu() <= crossoverProb)
       Crossover(childA, childB, population[indexA], population[indexB], 
                 lowerBound, upperBound);
 

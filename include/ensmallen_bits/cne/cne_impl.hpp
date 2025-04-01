@@ -183,10 +183,10 @@ inline void CNE::Reproduce(std::vector<MatType>& population,
   // {
   //   // Select 2 different parents from elite group randomly [0, numElite).
   //   mom = arma::as_scalar(arma::randi<arma::uvec>(
-  //         1, arma::distr_param(0, numElite - 1)));
+  //         1, DistrParam(0, numElite - 1)));
 
   //   dad = arma::as_scalar(arma::randi<arma::uvec>(
-  //         1, arma::distr_param(0, numElite - 1)));
+  //         1, DistrParam(0, numElite - 1)));
 
   //   // Making sure both parents are not the same.
   //   if (mom == dad)

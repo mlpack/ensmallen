@@ -96,7 +96,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
 
     // Choose stochastic directions.
     spVector = conv_to<ProxyMatType>::from(randi(iterate.n_rows, iterate.n_cols,
-        arma::distr_param(0, 1))) * 2 - 1;
+        DistrParam(0, 1))) * 2 - 1;
 
     iterate += ck * spVector;
     const double fPlus = function.Evaluate(iterate);
