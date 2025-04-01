@@ -41,7 +41,7 @@ namespace test {
 class EggholderFunction
 {
  public:
-  //! Initialize the EggholderFunction.
+  // Initialize the EggholderFunction.
   EggholderFunction();
 
   /**
@@ -50,7 +50,7 @@ class EggholderFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
   /**
@@ -101,15 +101,15 @@ class EggholderFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-333; -333"); }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const { return MatType("512; 404.2319"); }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return -959.6407; }
 };
 

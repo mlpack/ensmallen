@@ -198,8 +198,8 @@ namespace test {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
-      //! Get the Reference Front.
-      //! Front. The implementation has been taken from pymoo.
+      // Get the Reference Front.
+      // Front. The implementation has been taken from pymoo.
       arma::mat GetReferenceFront()
       {
         Uniform refGenerator;

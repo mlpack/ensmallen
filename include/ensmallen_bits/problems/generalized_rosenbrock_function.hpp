@@ -59,7 +59,7 @@ class GeneralizedRosenbrockFunction
    */
  void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return n - 1; }
 
   /**
@@ -108,14 +108,14 @@ class GeneralizedRosenbrockFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename InputMatType = MatType>
   const InputMatType GetInitialPoint() const
   {
     return conv_to<InputMatType>::from(initialPoint);
   }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename InputMatType = MatType>
   const InputMatType GetFinalPoint() const
   {
@@ -124,17 +124,17 @@ class GeneralizedRosenbrockFunction
     return finalPoint;
   }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return 0.0; }
 
  private:
-  //! Locally-stored Initial point.
+  // Locally-stored Initial point.
   MatType initialPoint;
 
-  //! Number of dimensions for the function.
+  // Number of dimensions for the function.
   size_t n;
 
-  //! For shuffling.
+  // For shuffling.
   LabelsType visitationOrder;
 };
 

@@ -65,7 +65,7 @@ namespace test {
     size_t numVariables {30};
 
    public:
-     //! Initialize the ZDT3
+     // Initialize the ZDT3
     ZDT3(size_t numParetoPoints = 100) :
         numParetoPoints(numParetoPoints),
         objectiveF1(*this),
@@ -93,7 +93,7 @@ namespace test {
       return objectives;
     }
 
-    //! Get the starting point.
+    // Get the starting point.
     MatType GetInitialPoint()
     {
       // Convenience typedef.
@@ -136,15 +136,15 @@ namespace test {
       ZDT3& zdtClass;
     };
 
-    //! Get objective functions.
+    // Get objective functions.
     std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
     {
       return std::make_tuple(objectiveF1, objectiveF2);
     }
 
-    //! Get the Reference Front.
-    //! Refer PR #273 Ipynb notebook to see the plot of Reference
-    //! Front. The implementation has been taken from pymoo.
+    // Get the Reference Front.
+    // Refer PR #273 Ipynb notebook to see the plot of Reference
+    // Front. The implementation has been taken from pymoo.
     arma::cube GetReferenceFront()
     {
       size_t numRegions = 5;
@@ -162,13 +162,13 @@ namespace test {
       for (size_t regionIdx = 0; regionIdx < numRegions; ++regionIdx)
       {
         arma::vec region = regions.col(regionIdx);
-        //! Generate x and y coordinates for the region.
+        // Generate x and y coordinates for the region.
         arma::vec x = arma::linspace(
             region(0), region(1), regionDensity);
         arma::vec y = 1 - arma::sqrt(x) - x
             % arma::sin(10 * arma::datum::pi * x);
 
-        //! Fill the front with the generated points.
+        // Fill the front with the generated points.
         for (size_t pointIdx = 0; pointIdx < regionDensity; ++pointIdx)
         {
           size_t sliceIdx = regionIdx * regionDensity + pointIdx;

@@ -59,7 +59,7 @@ namespace test {
     size_t numVariables {10};
 
    public:
-     //! Initialize the ZDT6
+     // Initialize the ZDT6
     ZDT6(size_t numParetoPoints = 100) :
         numParetoPoints(numParetoPoints),
         objectiveF1(*this),
@@ -89,7 +89,7 @@ namespace test {
       return objectives;
     }
 
-    //! Get the starting point.
+    // Get the starting point.
     MatType GetInitialPoint()
     {
       // Convenience typedef.
@@ -134,15 +134,15 @@ namespace test {
       ZDT6& zdtClass;
     };
 
-    //! Get objective functions.
+    // Get objective functions.
     std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
     {
       return std::make_tuple(objectiveF1, objectiveF2);
     }
 
-    //! Get the Reference Front.
-    //! Refer PR #273 Ipynb notebook to see the plot of Reference
-    //! Front. The implementation has been taken from pymoo.
+    // Get the Reference Front.
+    // Refer PR #273 Ipynb notebook to see the plot of Reference
+    // Front. The implementation has been taken from pymoo.
     arma::cube GetReferenceFront()
     {
       arma::cube front(2, 1, numParetoPoints);

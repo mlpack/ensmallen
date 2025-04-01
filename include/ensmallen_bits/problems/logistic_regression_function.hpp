@@ -35,19 +35,19 @@ class LogisticRegressionFunction
                              MatType& initialPoint,
                              const double lambda = 0);
 
-  //! Return the initial point for the optimization.
+  // Return the initial point for the optimization.
   const MatType& InitialPoint() const { return initialPoint; }
-  //! Modify the initial point for the optimization.
+  // Modify the initial point for the optimization.
   MatType& InitialPoint() { return initialPoint; }
 
-  //! Return the regularization parameter (lambda).
+  // Return the regularization parameter (lambda).
   const double& Lambda() const { return lambda; }
-  //! Modify the regularization parameter (lambda).
+  // Modify the regularization parameter (lambda).
   double& Lambda() { return lambda; }
 
-  //! Return the matrix of predictors.
+  // Return the matrix of predictors.
   const MatType& Predictors() const { return predictors; }
-  //! Return the vector of responses.
+  // Return the vector of responses.
   const LabelsType& Responses() const { return responses; }
 
   /**
@@ -151,13 +151,13 @@ class LogisticRegressionFunction
       GradType& gradient,
       const size_t batchSize = 1) const;
 
-  //! Return the initial point for the optimization.
+  // Return the initial point for the optimization.
   const MatType& GetInitialPoint() const { return initialPoint; }
 
-  //! Return the number of separable functions (the number of predictor points).
+  // Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }
 
-  //! Return the number of features(add 1 for the intercept term).
+  // Return the number of features(add 1 for the intercept term).
   size_t NumFeatures() const { return predictors.n_rows + 1; }
 
   /**
@@ -198,15 +198,15 @@ class LogisticRegressionFunction
                 const double decisionBoundary = 0.5) const;
 
  private:
-  //! The initial point, from which to start the optimization.
+  // The initial point, from which to start the optimization.
   MatType initialPoint;
-  //! The matrix of data points (predictors).  This is an alias until shuffling
-  //! is done.
+  // The matrix of data points (predictors).  This is an alias until shuffling
+  // is done.
   MatType& predictors;
-  //! The vector of responses to the input data points.  This is an alias until
-  //! shuffling is done.
+  // The vector of responses to the input data points.  This is an alias until
+  // shuffling is done.
   LabelsType& responses;
-  //! The regularization parameter for L2-regularization.
+  // The regularization parameter for L2-regularization.
   double lambda;
 };
 

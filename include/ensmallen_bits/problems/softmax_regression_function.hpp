@@ -36,7 +36,7 @@ class SoftmaxRegressionFunction
                             const double lambda = 0.0001,
                             const bool fitIntercept = false);
 
-  //! Initializes the parameters of the model to suitable values.
+  // Initializes the parameters of the model to suitable values.
   const arma::mat InitializeWeights();
 
   /**
@@ -162,38 +162,38 @@ class SoftmaxRegressionFunction
                        size_t j,
                        arma::sp_mat& gradient) const;
 
-  //! Return the initial point for the optimization.
+  // Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
-  //! Gets the number of classes.
+  // Gets the number of classes.
   size_t NumClasses() const { return numClasses; }
 
-  //! Gets the features size of the training data.
+  // Gets the features size of the training data.
   size_t NumFeatures() const
   {
     return initialPoint.n_cols;
   }
 
-  //! Sets the regularization parameter.
+  // Sets the regularization parameter.
   double& Lambda() { return lambda; }
-  //! Gets the regularization parameter.
+  // Gets the regularization parameter.
   double Lambda() const { return lambda; }
 
-  //! Gets the intercept flag.
+  // Gets the intercept flag.
   bool FitIntercept() const { return fitIntercept; }
 
  private:
-  //! Training data matrix.  This is an alias until the data is shuffled.
+  // Training data matrix.  This is an alias until the data is shuffled.
   arma::mat data;
-  //! Label matrix for the provided data.
+  // Label matrix for the provided data.
   arma::sp_mat groundTruth;
-  //! Initial parameter point.
+  // Initial parameter point.
   arma::mat initialPoint;
-  //! Number of classes.
+  // Number of classes.
   size_t numClasses;
-  //! L2-regularization constant.
+  // L2-regularization constant.
   double lambda;
-  //! Intercept term flag.
+  // Intercept term flag.
   bool fitIntercept;
 };
 

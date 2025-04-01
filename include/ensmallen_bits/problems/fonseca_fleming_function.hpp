@@ -61,7 +61,7 @@ class FonsecaFlemingFunction
     return objectives;
   }
 
-  //! Get the starting point.
+  // Get the starting point.
   MatType GetInitialPoint()
   {
     // Convenience typedef.
@@ -96,7 +96,7 @@ class FonsecaFlemingFunction
     }
   } objectiveB;
 
-  //! Get objective functions.
+  // Get objective functions.
   std::tuple<ObjectiveA, ObjectiveB> GetObjectives()
   {
     return std::make_tuple(objectiveA, objectiveB);

@@ -79,7 +79,7 @@ namespace test {
         objectiveF3(2, *this)
       {/*Nothing to do here.*/}
 
-      //! Get the starting point.
+      // Get the starting point.
       arma::Col<typename MatType::elem_type> GetInitialPoint()
       {
         // Convenience typedef.
@@ -198,8 +198,8 @@ namespace test {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
       } 
 
-      //! Get the Reference Front.
-      //! Front. The implementation has been taken from pymoo.
+      // Get the Reference Front.
+      // Front. The implementation has been taken from pymoo.
       arma::mat GetReferenceFront()
       { 
       	Uniform refGenerator;

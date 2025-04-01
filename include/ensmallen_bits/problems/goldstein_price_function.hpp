@@ -49,7 +49,7 @@ namespace test {
 class GoldsteinPriceFunction
 {
  public:
-  //! Initialize the GoldsteinPriceFunction.
+  // Initialize the GoldsteinPriceFunction.
   GoldsteinPriceFunction();
 
   /**
@@ -58,7 +58,7 @@ class GoldsteinPriceFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
   /**
@@ -109,15 +109,15 @@ class GoldsteinPriceFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("0.2; -0.5"); }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const { return MatType("0.0; -1.0"); }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return 3.0; }
 };
 

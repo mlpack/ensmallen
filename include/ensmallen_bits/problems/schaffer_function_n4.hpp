@@ -37,7 +37,7 @@ namespace test {
 class SchafferFunctionN4
 {
  public:
-  //! Initialize the SchafferFunctionN4.
+  // Initialize the SchafferFunctionN4.
   SchafferFunctionN4();
 
   /**
@@ -46,10 +46,10 @@ class SchafferFunctionN4
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-5; 5"); }
 

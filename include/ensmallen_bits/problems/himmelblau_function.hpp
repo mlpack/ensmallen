@@ -44,7 +44,7 @@ namespace test {
 class HimmelblauFunction
 {
  public:
-  //! Initialize the HimmelblauFunction.
+  // Initialize the HimmelblauFunction.
   HimmelblauFunction();
 
   /**
@@ -53,10 +53,10 @@ class HimmelblauFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("5; -5"); }
 

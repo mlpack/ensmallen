@@ -45,7 +45,7 @@ namespace test {
 class CrossInTrayFunction
 {
  public:
-  //! Initialize the CrossInTrayFunction.
+  // Initialize the CrossInTrayFunction.
   CrossInTrayFunction();
 
   /**
@@ -54,7 +54,7 @@ class CrossInTrayFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
   /*
@@ -81,7 +81,7 @@ class CrossInTrayFunction
   // this function!  It is specifically used as a convenience just for
   // ensmallen's testing infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("0; 0"); }
 };

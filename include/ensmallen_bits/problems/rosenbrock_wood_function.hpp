@@ -28,7 +28,7 @@ template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>>
 class RosenbrockWoodFunction
 {
  public:
-  //! Initialize the RosenbrockWoodFunction.
+  // Initialize the RosenbrockWoodFunction.
   RosenbrockWoodFunction();
 
   /**
@@ -37,7 +37,7 @@ class RosenbrockWoodFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
   /**
@@ -86,14 +86,14 @@ class RosenbrockWoodFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatTypeIn = arma::mat>
   const MatType GetInitialPoint() const
   {
     return conv_to<MatType>::from(initialPoint);
   }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename MatTypeIn = arma::mat>
   MatType GetFinalPoint() const
   {
@@ -102,17 +102,17 @@ class RosenbrockWoodFunction
     return finalPoint;
   }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return 0.0; }
 
  private:
-  //! Locally-stored initial point.
+  // Locally-stored initial point.
   MatType initialPoint;
 
-  //! Locally-stored Generalized-Rosenbrock function.
+  // Locally-stored Generalized-Rosenbrock function.
   GeneralizedRosenbrockFunction<MatType, LabelsType> rf;
 
-  //! Locally-stored Wood function.
+  // Locally-stored Wood function.
   WoodFunction wf;
 };
 

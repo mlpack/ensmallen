@@ -24,7 +24,7 @@ inline SparseTestFunction::SparseTestFunction()
   bi = arma::vec("-4 -2 -3 -8");
 }
 
-//! Evaluate a function.
+// Evaluate a function.
 template<typename MatType>
 inline typename MatType::elem_type SparseTestFunction::Evaluate(
     const MatType& coordinates,
@@ -41,7 +41,7 @@ inline typename MatType::elem_type SparseTestFunction::Evaluate(
   return result;
 }
 
-//! Evaluate all the functions.
+// Evaluate all the functions.
 template<typename MatType>
 inline typename MatType::elem_type SparseTestFunction::Evaluate(
     const MatType& coordinates) const
@@ -56,7 +56,7 @@ inline typename MatType::elem_type SparseTestFunction::Evaluate(
   return objective;
 }
 
-//! Evaluate the gradient of a function.
+// Evaluate the gradient of a function.
 template<typename MatType, typename GradType>
 inline void SparseTestFunction::Gradient(const MatType& coordinates,
                                          const size_t i,
@@ -68,7 +68,7 @@ inline void SparseTestFunction::Gradient(const MatType& coordinates,
     gradient[j] = 2 * coordinates[j] + bi[j];
 }
 
-//! Evaluate the gradient of a feature function.
+// Evaluate the gradient of a feature function.
 template<typename MatType, typename GradType>
 inline void SparseTestFunction::PartialGradient(const MatType& coordinates,
                                                 const size_t j,

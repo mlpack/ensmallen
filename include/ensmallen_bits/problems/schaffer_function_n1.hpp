@@ -37,7 +37,7 @@ class SchafferFunctionN1
   size_t numVariables;
 
  public:
- //! Initialize the SchafferFunctionN1
+ // Initialize the SchafferFunctionN1
   SchafferFunctionN1() : numObjectives(2), numVariables(1)
   {/* Nothing to do here. */}
 
@@ -60,7 +60,7 @@ class SchafferFunctionN1
     return objectives;
   }
 
-  //! Get the starting point.
+  // Get the starting point.
   MatType GetInitialPoint()
   {
     // Convenience typedef.
@@ -85,7 +85,7 @@ class SchafferFunctionN1
     }
   } objectiveB;
 
-  //! Get objective functions.
+  // Get objective functions.
   std::tuple<ObjectiveA, ObjectiveB> GetObjectives()
   {
     return std::make_tuple(objectiveA, objectiveB);

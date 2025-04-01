@@ -55,7 +55,7 @@ class SphereFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return n; }
 
   /**
@@ -106,14 +106,14 @@ class SphereFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const
   {
     return conv_to<MatType>::from(initialPoint);
   }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const
   {
@@ -122,17 +122,17 @@ class SphereFunction
     return finalPoint;
   }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return 0.0; }
 
  private:
-  //! Number of dimensions for the function.
+  // Number of dimensions for the function.
   size_t n;
 
-  //! For shuffling.
+  // For shuffling.
   LabelsType visitationOrder;
 
-  //! Initial starting point.
+  // Initial starting point.
   PointMatType initialPoint;
 };
 

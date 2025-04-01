@@ -76,7 +76,7 @@ namespace test {
         objectiveF3(2, *this)
       {/*Nothing to do here.*/}
 
-      //! Get the starting point.
+      // Get the starting point.
       arma::Col<typename MatType::elem_type> GetInitialPoint ()
       {
         // Convenience typedef.

@@ -163,7 +163,7 @@ typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Eva
   return regularization - result;
 }
 
-//! Evaluate the gradient of the logistic regression objective function.
+// Evaluate the gradient of the logistic regression objective function.
 template<typename MatType, typename LabelsType>
 template<typename GradType>
 void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
@@ -185,8 +185,8 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
 //       predictors.t() + regularization;
 }
 
-//! Evaluate the gradient of the logistic regression objective function for a
-//! given batch size.
+// Evaluate the gradient of the logistic regression objective function for a
+// given batch size.
 template<typename MatType, typename LabelsType>
 template<typename GradType>
 void LogisticRegressionFunction<MatType, LabelsType>::Gradient(

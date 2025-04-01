@@ -43,7 +43,7 @@ namespace test {
 class RosenbrockFunction
 {
  public:
-  //! Initialize the RosenbrockFunction.
+  // Initialize the RosenbrockFunction.
   RosenbrockFunction();
 
   /**
@@ -52,7 +52,7 @@ class RosenbrockFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
   /**
@@ -110,15 +110,15 @@ class RosenbrockFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-1.2; 1.0"); }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const { return MatType("1.0; 1.0"); }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return 0.0; }
 };
 

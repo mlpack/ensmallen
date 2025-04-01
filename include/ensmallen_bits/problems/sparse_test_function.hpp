@@ -23,26 +23,26 @@ namespace test {
 class SparseTestFunction
 {
  public:
-  //! Set members in the default constructor.
+  // Set members in the default constructor.
   SparseTestFunction();
 
-  //! Return 4 (the number of functions).
+  // Return 4 (the number of functions).
   size_t NumFunctions() const { return 4; }
 
-  //! Return 4 (the number of features).
+  // Return 4 (the number of features).
   size_t NumFeatures() const { return 4; }
 
-  //! Evaluate a function.
+  // Evaluate a function.
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates,
                                        const size_t i,
                                        const size_t batchSize = 1) const;
 
-  //! Evaluate all the functions.
+  // Evaluate all the functions.
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
-  //! Evaluate the gradient of a function.
+  // Evaluate the gradient of a function.
   template<typename MatType,
            typename GradType = arma::SpMat<typename MatType::elem_type>>
   void Gradient(const MatType& coordinates,
@@ -50,7 +50,7 @@ class SparseTestFunction
                 GradType& gradient,
                 const size_t batchSize = 1) const;
 
-  //! Evaluate the gradient of a feature function.
+  // Evaluate the gradient of a feature function.
   template<typename MatType,
            typename GradType = arma::SpMat<typename MatType::elem_type>>
   void PartialGradient(const MatType& coordinates,
@@ -62,25 +62,25 @@ class SparseTestFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType>
   MatType GetInitialPoint() const { return MatType("0 0 0 0;"); }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const { return MatType("2.0 1.0 1.5 4.0"); }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return 123.75; }
 
  private:
   // Each quadratic polynomial is monic. The intercept and coefficient of the
   // first order term is stored.
 
-  //! The vector storing the intercepts
+  // The vector storing the intercepts
   arma::vec intercepts;
 
-  //! The vector having coefficients of the first order term
+  // The vector having coefficients of the first order term
   arma::vec bi;
 };
 

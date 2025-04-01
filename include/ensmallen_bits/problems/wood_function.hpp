@@ -47,7 +47,7 @@ namespace test {
 class WoodFunction
 {
  public:
-  //! Initialize the WoodFunction.
+  // Initialize the WoodFunction.
   WoodFunction();
 
   /**
@@ -56,7 +56,7 @@ class WoodFunction
    */
   void Shuffle();
 
-  //! Return 1 (the number of functions).
+  // Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
 
   /**
@@ -107,15 +107,15 @@ class WoodFunction
   // specifically used as a convenience just for ensmallen's testing
   // infrastructure.
 
-  //! Get the starting point.
+  // Get the starting point.
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const { return MatType("-3; -1; -3; -1"); }
 
-  //! Get the final point.
+  // Get the final point.
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const { return MatType("1; 1; 1; 1"); }
 
-  //! Get the final objective.
+  // Get the final objective.
   double GetFinalObjective() const { return 0.0; }
 };
 
