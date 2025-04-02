@@ -134,7 +134,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
         iterate.n_cols) - 0.5 + iterate);
 
     // Constrain all genes to be within bounds.
-    population[i] = arma::min(arma::max(population[i], castedLowerBound), 
+    population[i] = min(arma::max(population[i], castedLowerBound),
         castedUpperBound);
   }
 
@@ -162,7 +162,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
     arma::Col<ElemType> idealPoint(calculatedObjectives[fronts[0][0]]);
     for (size_t index = 1; index < fronts[0].size(); index++)
     {
-      idealPoint = arma::min(idealPoint, 
+      idealPoint = min(idealPoint,
           calculatedObjectives[fronts[0][index]]);
     }
 
@@ -336,7 +336,7 @@ inline void AGEMOEA::Crossover(MatType& childA,
       parentA.n_cols, 2);
     parents.slice(0) = parentA;
     parents.slice(1) = parentB;
-    MatType current_min =  arma::min(parents, 2);
+    MatType current_min =  min(parents, 2);
     MatType current_max =  arma::max(parents, 2);
 
     if (arma::accu(parentA - parentB < 1e-14))
@@ -368,8 +368,8 @@ inline void AGEMOEA::Crossover(MatType& childA,
     // Variables after the cross over for all of them.
     MatType c1 = 0.5 * ((current_min + current_max) - betaq1 % current_diff);
     MatType c2 = 0.5 * ((current_min + current_max) + betaq2 % current_diff);
-    c1 = arma::min(arma::max(c1, lowerBound), upperBound);
-    c2 = arma::min(arma::max(c2, lowerBound), upperBound);
+    c1 = min(arma::max(c1, lowerBound), upperBound);
+    c2 = min(arma::max(c2, lowerBound), upperBound);
     
     // Decision for the crossover between the two parents for each variable.
     us.randu();
@@ -421,7 +421,7 @@ inline void AGEMOEA::Mutate(MatType& candidate,
       candidate(geneIdx) += perturbationFactor * geneRange;
     }
     //! Enforce bounds.
-    candidate = arma::min(arma::max(candidate, lowerBound), upperBound);
+    candidate = min(arma::max(candidate, lowerBound), upperBound);
 }
 
 template <typename MatType>

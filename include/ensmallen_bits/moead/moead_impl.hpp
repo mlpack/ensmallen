@@ -171,7 +171,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
     // Constrain all genes to be within bounds.
-    individual = arma::min(arma::max(individual, castedLowerBound), castedUpperBound);
+    individual = min(arma::max(individual, castedLowerBound), castedUpperBound);
   }
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
@@ -186,7 +186,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   idealPoint.fill(std::numeric_limits<ElemType>::max());
 
   for (const arma::Col<ElemType>& individualFitness : populationFitness)
-    idealPoint = arma::min(idealPoint, individualFitness);
+    idealPoint = min(idealPoint, individualFitness);
 
   Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
@@ -249,7 +249,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       candidateContainer.clear();
 
       // 2.4 Update of ideal point.
-      idealPoint = arma::min(idealPoint, candidateFitness);
+      idealPoint = min(idealPoint, candidateFitness);
 
       // 2.5 Update of the population.
       size_t replaceCounter = 0;
@@ -398,7 +398,7 @@ Mutate(MatType& candidate,
       candidate(geneIdx) += perturbationFactor * geneRange;
     }
     //! Enforce bounds.
-    candidate = arma::min(arma::max(candidate, lowerBound), upperBound);
+    candidate = min(arma::max(candidate, lowerBound), upperBound);
 }
 
 //! No objectives to evaluate.

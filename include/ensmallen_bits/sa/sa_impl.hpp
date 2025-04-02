@@ -226,7 +226,7 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
   moveSize += gain * (accept / (double) nMoves - target);
   moveSize = arma::exp(moveSize);
 
-  // To avoid the use of element-wise arma::min(), which is only available in
+  // To avoid the use of element-wise min(), which is only available in
   // Armadillo after v3.930, we use a for loop here instead.
   for (size_t i = 0; i < accept.n_elem; ++i)
     moveSize(i) = (moveSize(i) > maxMoveCoef) ? maxMoveCoef : moveSize(i);

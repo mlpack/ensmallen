@@ -135,7 +135,7 @@ typename MatType::elem_type NSGA2::Optimize(
         iterate.n_cols) - 0.5 + iterate);
 
     // Constrain all genes to be within bounds.
-    population[i] = arma::min(arma::max(population[i], castedLowerBound), castedUpperBound);
+    population[i] = min(arma::max(population[i], castedLowerBound), castedUpperBound);
   }
 
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
@@ -331,7 +331,7 @@ inline void NSGA2::Mutate(MatType& child,
       (mutationStrength * randn<MatType>(child.n_rows, child.n_cols));
 
   // Constrain all genes to be between bounds.
-  child = arma::min(arma::max(child, lowerBound), upperBound);
+  child = min(arma::max(child, lowerBound), upperBound);
 }
 
 //! Sort population into Pareto fronts.
