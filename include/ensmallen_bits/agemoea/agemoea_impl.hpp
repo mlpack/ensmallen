@@ -520,7 +520,7 @@ inline void AGEMOEA::PairwiseDistance(
   {
     for (size_t j = i + 1; j < front.size(); j++)
     {
-      f(i, j) = std::pow(arma::accu(arma::pow(arma::abs(calculatedObjectives[front[i]] - calculatedObjectives[front[j]]), dimension)), 1.0 / dimension);
+      f(i, j) = std::pow(arma::accu(arma::pow(abs(calculatedObjectives[front[i]] - calculatedObjectives[front[j]]), dimension)), 1.0 / dimension);
       f(j, i) = f(i, j);
     }
   }
@@ -766,7 +766,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     for (size_t i = 0; i < front.size(); i++)
     {
       pairwise.col(i) = pairwise.col(i) / std::pow(arma::accu(arma::pow(
-        arma::abs(calculatedObjectives[front[i]]), dimension)), 1.0 / dimension);
+        abs(calculatedObjectives[front[i]]), dimension)), 1.0 / dimension);
     }
     
     while (remaining.size() > 0)
@@ -790,7 +790,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     for (size_t i = 0; i < front.size(); i++)
     {
       calculatedObjectives[front[i]] = (calculatedObjectives[front[i]]) / normalize;
-      survivalScore[front[i]] =  1.0 / std::pow(arma::accu(arma::pow(arma::abs(
+      survivalScore[front[i]] =  1.0 / std::pow(arma::accu(arma::pow(abs(
           calculatedObjectives[front[i]] - idealPoint), dimension)), 
               1.0 / dimension);
     }

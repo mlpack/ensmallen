@@ -24,6 +24,7 @@ namespace ens {
 #ifdef ENS_HAS_COOT
 
 /* using for bandicoot namespace*/
+using coot::abs;
 using coot::exp;
 using coot::dot;
 using coot::join_cols;
@@ -53,6 +54,7 @@ using coot::zeros;
 #endif
 
 /* using for armadillo namespace */
+using arma::abs;
 using arma::exp;
 using arma::dot;
 using arma::join_cols;
