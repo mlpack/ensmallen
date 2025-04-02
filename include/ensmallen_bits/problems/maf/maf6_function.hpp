@@ -21,8 +21,8 @@ namespace test {
  * \f[
  * theta_M = [theta_i, n - M + 1 <= i <= n]
  * g(x) = \Sigma{i = n - M + 1}^n (x_i - 0.5)^2
- * 
- * f_1(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... cos(theta_2 * pi * 0.5) * (1 + g(theta_M)) 
+ *
+ * f_1(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... cos(theta_2 * pi * 0.5) * (1 + g(theta_M))
  * f_2(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... sin(theta_M-1 * pi * 0.5) * (1 + g(theta_M))
  * .
  * .
@@ -31,13 +31,13 @@ namespace test {
  *
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
- * 
+ *
  * Where theta_i = 0.5 * (1 + 2 * g(X_M) * x_i) / (1 + g(X_M))
- * 
+ *
  * This should be optimized to x_i = 0.5 (for all x_i in X_M), at:
- * 
+ *
  * For more information, please refer to:
- * 
+ *
  * @code
  * @article{cheng2017benchmark,
  * title={A benchmark test suite for evolutionary many-objective optimization},
@@ -85,13 +85,13 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
       }
-      
+
       // Get the private variables.
-      
+
       // Get the number of objectives.
       size_t GetNumObjectives()
       { return this -> numObjectives; }
-      
+
       // Get the number of variables.
       size_t GetNumVariables()
       { return this -> numVariables; }
@@ -119,16 +119,16 @@ namespace test {
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
-        
+
         for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
-          innerSum += pow((coords.row(i) - 0.5), 2); 
-        } 
-        
+          innerSum += pow((coords.row(i) - 0.5), 2);
+        }
+
         return innerSum;
-      }    
+      }
 
       /**
        * Evaluate the objectives with the given coordinate.
@@ -142,34 +142,34 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
-        arma::Row<ElemType> G = g(coords); 
+        arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value = (1.0 + 100 * G);
         arma::Row<ElemType> theta;
         for (size_t i = 0; i < numObjectives - 1; i++)
         {
           if(i < I)
-          { 
+          {
             theta = coords.row(i) * arma::datum::pi * 0.5;
           }
           else
           {
             theta = 0.25 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
           }
-          objectives.row(i) =  value %  
+          objectives.row(i) =  value %
               arma::sin(theta);
-          value = value % arma::cos(theta); 
+          value = value % arma::cos(theta);
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct MAF6Objective
       {
         MAF6Objective(size_t stop, MAF6& maf): stop(stop), maf(maf)
         {/* Nothing to do here. */}
-        
+
         /**
          * Evaluate one objective with the given coordinate.
          *
@@ -211,8 +211,8 @@ namespace test {
           }
 
           value = value * (1.0 + 100 * G);
-          return value;  
-        }       
+          return value;
+        }
 
         MAF6& maf;
         size_t stop;

@@ -22,10 +22,10 @@ namespace test {
  * The MAF4 function, defined by:
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
- * g(x) = 100 * [|x_M| + \Sigma{i = n - M + 1}^n (x_i - 0.5)^2 - cos(20 * pi * 
+ * g(x) = 100 * [|x_M| + \Sigma{i = n - M + 1}^n (x_i - 0.5)^2 - cos(20 * pi *
  *   (x_i - 0.5))]
- * 
- * f_1(x) = a * (1 - cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... cos(x_2 * pi * 0.5))* (1 + g(x_M)) 
+ *
+ * f_1(x) = a * (1 - cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... cos(x_2 * pi * 0.5))* (1 + g(x_M))
  * f_2(x) = a^2 * (1 - cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... sin(x_M-1 * pi * 0.5)) * (1 + g(x_M))
  * .
  * .
@@ -34,9 +34,9 @@ namespace test {
  *
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
- * 
+ *
  * For more information, please refer to:
- * 
+ *
  * @code
  * @article{cheng2017benchmark,
  * title={A benchmark test suite for evolutionary many-objective optimization},
@@ -58,7 +58,7 @@ namespace test {
 
     // A fixed no. of Objectives and Variables(|x| = 7, M = 3).
     size_t numObjectives {3};
-    size_t numVariables {12}; 
+    size_t numVariables {12};
     double a;
 
     public:
@@ -84,9 +84,9 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
       }
-      
+
       // Get the private variables.
-      
+
       // Get the number of objectives.
       size_t GetNumObjectives()
       { return this -> numObjectives; }
@@ -101,7 +101,7 @@ namespace test {
 
       /**
        * Set the scale factor of the objectives.
-       * 
+       *
        * @param a The scale factor a of the objectives.
        */
       void SetA(double a)
@@ -119,15 +119,15 @@ namespace test {
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
-        
+
         for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
-          innerSum += pow((coords.row(i) - 0.5), 2) - 
-              arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5)); 
+          innerSum += pow((coords.row(i) - 0.5), 2) -
+              arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5));
         }
-        
+
         return 100 * (k + innerSum);
       }
 
@@ -147,23 +147,23 @@ namespace test {
         arma::Row<ElemType> value(coords.n_cols, arma::fill::ones);
         for (size_t i = 0; i < numObjectives - 1; i++)
         {
-          objectives.row(i) = (1.0 - value % 
-                arma::sin(coords.row(i) * arma::datum::pi * 0.5)) % (1. + G) * 
+          objectives.row(i) = (1.0 - value %
+                arma::sin(coords.row(i) * arma::datum::pi * 0.5)) % (1. + G) *
                 std::pow(a, numObjectives - i);
-          value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5); 
+          value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5);
         }
-        objectives.row(numObjectives - 1) = (1 - value) % (1. + G) * 
-                                    std::pow(a, 1);  
-        return objectives;    
+        objectives.row(numObjectives - 1) = (1 - value) % (1. + G) *
+                                    std::pow(a, 1);
+        return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct MAF4Objective
       {
         MAF4Objective(size_t stop, MAF4& maf): stop(stop), maf(maf)
-        {/* Nothing to do here. */}  
-        
+        {/* Nothing to do here. */}
+
         /**
          * Evaluate one objective with the given coordinate.
          *
@@ -185,11 +185,11 @@ namespace test {
             value = value * std::sin(coords[stop] * arma::datum::pi * 0.5);
           }
 
-          value = std::pow(maf.GetA(), maf.GetNumObjectives() - stop) * 
+          value = std::pow(maf.GetA(), maf.GetNumObjectives() - stop) *
               (1 - value) * (1. + maf.g(coords)[0]);
 
           return value;
-        }        
+        }
 
         MAF4& maf;
         size_t stop;
@@ -199,7 +199,7 @@ namespace test {
       std::tuple<MAF4Objective, MAF4Objective, MAF4Objective> GetObjectives()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
+      }
 
     MAF4Objective objectiveF1;
     MAF4Objective objectiveF2;

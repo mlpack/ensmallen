@@ -22,9 +22,9 @@ namespace test {
  * The MAF3 function, defined by:
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
- * g(x) = 100 * [|x_M| + \Sigma{i = n - M + 1}^n (x_i - 0.5)^2 - cos(20 * pi * 
+ * g(x) = 100 * [|x_M| + \Sigma{i = n - M + 1}^n (x_i - 0.5)^2 - cos(20 * pi *
  *   (x_i - 0.5))]
- * 
+ *
  * f_1(x) = (cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... cos(x_2 * pi * 0.5) * (1 + g(x_M)))^4
  * f_2(x) = (cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... sin(x_M-1 * pi * 0.5) * (1 + g(x_M)))^4
  * .
@@ -34,9 +34,9 @@ namespace test {
  *
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
- * 
+ *
  * For more information, please refer to:
- * 
+ *
  * @code
  * @article{cheng2017benchmark,
  * title={A benchmark test suite for evolutionary many-objective optimization},
@@ -80,10 +80,10 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
-      } 
-      
+      }
+
       // Get the private variables.
-      
+
       // Get the number of objectives.
       size_t GetNumObjectives()
       { return this -> numObjectives; }
@@ -104,17 +104,17 @@ namespace test {
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
-        
+
         for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
-          innerSum += pow((coords.row(i) - 0.5), 2) - 
-              arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5)); 
-        } 
-        
+          innerSum += pow((coords.row(i) - 0.5), 2) -
+              arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5));
+        }
+
         return 100 * (k + innerSum);
-      }    
+      }
 
       /**
        * Evaluate the objectives with the given coordinate.
@@ -132,21 +132,21 @@ namespace test {
         arma::Row<ElemType> value = (1.0 + G);
         for (size_t i = 0; i < numObjectives - 1; i++)
         {
-          objectives.row(i) =  pow(value, i == 0 ? 2:4) % 
+          objectives.row(i) =  pow(value, i == 0 ? 2:4) %
               pow(arma::sin(coords.row(i) * arma::datum::pi * 0.5), i == 0 ? 2:4);
           value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5);
         }
         objectives.row(numObjectives - 1) = pow(value, 4);
         return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct MAF3Objective
       {
         MAF3Objective(size_t stop, MAF3& maf): stop(stop), maf(maf)
-        {/* Nothing to do here. */}  
-        
+        {/* Nothing to do here. */}
+
         /**
          * Evaluate one objective with the given coordinate.
          *
@@ -171,10 +171,10 @@ namespace test {
           value = value * (1. + maf.g(coords)[0]);
 
           if(stop == 0) {
-            return std::pow(value, 2); 
+            return std::pow(value, 2);
           }
-          return std::pow(value, 4);  
-        }        
+          return std::pow(value, 4);
+        }
 
         MAF3& maf;
         size_t stop;
@@ -184,7 +184,7 @@ namespace test {
       std::tuple<MAF3Objective, MAF3Objective, MAF3Objective> GetObjectives()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
+      }
 
     MAF3Objective objectiveF1;
     MAF3Objective objectiveF2;

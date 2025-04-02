@@ -23,8 +23,8 @@ namespace test {
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
  * g(x) = \Sigma{i = n - M + 1}^n (x_i - 0.5)^2
- * 
- * f_1(x) = 1 - x_1 * x_2 * ... x_M-1 * (1 + g(x_M)) 
+ *
+ * f_1(x) = 1 - x_1 * x_2 * ... x_M-1 * (1 + g(x_M))
  * f_2(x) = 1 - x_1 * x_2 * ... (1 - x_M-1) * (1 + g(x_M))
  * .
  * .
@@ -98,16 +98,16 @@ namespace test {
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
-        
+
         for (size_t i = numObjectives - 1;i < numVariables;i++)
         {
           innerSum += pow((coords.row(i) - 0.5), 2);
-        } 
-        
+        }
+
         return innerSum;
-      }     
+      }
 
       /**
       * Evaluate the objectives with the given coordinate.
@@ -129,16 +129,16 @@ namespace test {
           value = value % coords.row(i);
         }
         objectives.row(numObjectives - 1) = (1 - value) % (1. + G);
-        return objectives;    
+        return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct MAF1Objective
       {
         MAF1Objective(size_t stop, MAF1& maf): stop(stop), maf(maf)
-        {/* Nothing to do here. */}  
-        
+        {/* Nothing to do here. */}
+
         /**
         * Evaluate one objective with the given coordinate.
         *
@@ -166,7 +166,7 @@ namespace test {
 
           value = (1.0 - value) * (1. + maf.g(coords)[0]);
           return value;
-        }        
+        }
 
         MAF1& maf;
         size_t stop;

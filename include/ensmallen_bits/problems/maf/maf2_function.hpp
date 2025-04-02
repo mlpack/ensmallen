@@ -22,8 +22,8 @@ namespace test {
  * theta_M = [theta_i, n - M + 1 <= i <= n]
  * g_i(x) = \Sigma{i = M + (i - 1) * (n - M + 1) / N}^
  *                        {M - 1 + (i) * (n - M + 1) / N} (x_i - 0.5)^2 * 0.25
- * 
- * f_1(x) = cos(theta_1) * cos(theta_2) * ... cos(theta_M-1) * (1 + g_1(theta_M)) 
+ *
+ * f_1(x) = cos(theta_1) * cos(theta_2) * ... cos(theta_M-1) * (1 + g_1(theta_M))
  * f_2(x) = cos(theta_1) * cos(theta_2) * ... sin(theta_M-1) * (1 + g_2(theta_M))
  * .
  * .
@@ -32,12 +32,12 @@ namespace test {
  *
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
- * 
+ *
  * Where theta_i = 0.5 * (1 + 2 * g(X_M) * x_i) / (1 + g(X_M))
- * 
- * 
+ *
+ *
  * For more information, please refer to:
- * 
+ *
  * @code
  * @article{cheng2017benchmark,
  * title={A benchmark test suite for evolutionary many-objective optimization},
@@ -49,7 +49,7 @@ namespace test {
  * publisher={Springer}
  * }
  * @endcode
- * 
+ *
  * @tparam MatType Type of matrix to optimize.
  */
   template <typename MatType = arma::mat>
@@ -82,14 +82,14 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
-      } 
-      
+      }
+
       // Get the private variables.
-      
+
       // Get the number of objectives.
       size_t GetNumObjectives()
       { return this -> numObjectives; }
-      
+
       // Get the number of variables.
       size_t GetNumVariables()
       { return this -> numVariables; }
@@ -106,21 +106,21 @@ namespace test {
         size_t c = std::floor(k / numObjectives);
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
-        arma::Mat<ElemType> innerSum(numObjectives, size(coords)[1], 
+
+        arma::Mat<ElemType> innerSum(numObjectives, size(coords)[1],
             arma::fill::zeros);
-        
+
         for (size_t i = 0; i < numObjectives; i++)
         {
           size_t j = numObjectives - 1 + (i * c);
           for(; j < numVariables - 1 + (i + 1) *c && j < numObjectives; j++)
           {
-            innerSum.row(i) += pow((coords.row(i) - 0.5), 2) * 0.25; 
+            innerSum.row(i) += pow((coords.row(i) - 0.5), 2) * 0.25;
           }
         }
-        
+
         return innerSum;
-      }    
+      }
 
       /**
        * Evaluate the objectives with the given coordinate.
@@ -134,28 +134,28 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
-        arma::Mat<ElemType> G = g(coords); 
+        arma::Mat<ElemType> G = g(coords);
         arma::Row<ElemType> value(size(coords)[1], arma::fill::ones);
         arma::Row<ElemType> theta;
         for (size_t i = 0; i < numObjectives - 1; i++)
         {
           theta = arma::datum::pi * 0.5 * ((coords.row(i) / 2) + 0.25);
-          objectives.row(i) =  value %  
+          objectives.row(i) =  value %
               arma::sin(theta) % (1.0 + G.row(numObjectives - 1 - i));
-          value = value % arma::cos(theta); 
+          value = value % arma::cos(theta);
         }
-        objectives.row(numObjectives - 1) = value % 
+        objectives.row(numObjectives - 1) = value %
             (1.0 + G.row(0));
         return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct MAF2Objective
       {
         MAF2Objective(size_t stop, MAF2& maf): stop(stop), maf(maf)
-        {/* Nothing to do here. */}  
-        
+        {/* Nothing to do here. */}
+
         /**
          * Evaluate one objective with the given coordinate.
          *
@@ -171,7 +171,7 @@ namespace test {
           arma::Col<ElemType> G = maf.g(coords).col(0);
           for (size_t i = 0; i < stop; i++)
           {
-            theta = arma::datum::pi * 0.5 * ((coords[i] / 2) + 0.25); 
+            theta = arma::datum::pi * 0.5 * ((coords[i] / 2) + 0.25);
             value = value * std::cos(theta);
           }
 	        theta = arma::datum::pi * 0.5 * ((coords[stop] / 2) + 0.25);
@@ -181,7 +181,7 @@ namespace test {
           }
 
           value = value * (1.0 + G[maf.GetNumObjectives() - 1 - stop]);
-          return value;  
+          return value;
         }
 
         MAF2& maf;
