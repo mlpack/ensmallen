@@ -170,45 +170,45 @@ inline void CNE::Reproduce(std::vector<MatType>& population,
                            const MatType& fitnessValues,
                            IndexType& index)
 {
-  // // Sort fitness values. Smaller fitness value means better performance.
-  // index = sort_index(fitnessValues);
+  // Sort fitness values. Smaller fitness value means better performance.
+  index = sort_index(fitnessValues);
 
-  // // First parent.
-  // size_t mom;
+  // First parent.
+  size_t mom;
 
-  // // Second parent.
-  // size_t dad;
+  // Second parent.
+  size_t dad;
 
-  // for (size_t i = numElite; i < populationSize - 1; i++)
-  // {
-  //   // Select 2 different parents from elite group randomly [0, numElite).
-  //   mom = arma::as_scalar(arma::randi<arma::uvec>(
-  //         1, DistrParam(0, numElite - 1)));
+  for (size_t i = numElite; i < populationSize - 1; i++)
+  {
+    // Select 2 different parents from elite group randomly [0, numElite).
+    mom = arma::as_scalar(arma::randi<arma::uvec>(
+          1, DistrParam(0, numElite - 1)));
 
-  //   dad = arma::as_scalar(arma::randi<arma::uvec>(
-  //         1, DistrParam(0, numElite - 1)));
+    dad = arma::as_scalar(arma::randi<arma::uvec>(
+          1, DistrParam(0, numElite - 1)));
 
-  //   // Making sure both parents are not the same.
-  //   if (mom == dad)
-  //   {
-  //     if (dad != numElite - 1)
-  //     {
-  //       dad++;
-  //     }
-  //     else
-  //     {
-  //       dad--;
-  //     }
-  //   }
+    // Making sure both parents are not the same.
+    if (mom == dad)
+    {
+      if (dad != numElite - 1)
+      {
+        dad++;
+      }
+      else
+      {
+        dad--;
+      }
+    }
 
-  //   // Parents generate 2 children replacing the dropped-out candidates.
-  //   // Also finding the index of these candidates in the population matrix.
-  //   Crossover(population, index[mom], index[dad], index[i], index[i + 1]);
-  // }
+    // Parents generate 2 children replacing the dropped-out candidates.
+    // Also finding the index of these candidates in the population matrix.
+    Crossover(population, index[mom], index[dad], index[i], index[i + 1]);
+  }
 
-  // // Mutating the weights with small noise values.
-  // // This is done to bring change in the next generation.
-  // Mutate(population, index);
+  // Mutating the weights with small noise values.
+  // This is done to bring change in the next generation.
+  Mutate(population, index);
 }
 
 //! Crossover parents to create new children.
@@ -219,41 +219,41 @@ inline void CNE::Crossover(std::vector<MatType>& population,
                            const size_t child1,
                            const size_t child2)
 {
-  // // Replace the candidates with parents at their place.
-  // population[child1] = population[mom];
-  // population[child2] = population[dad];
+  // Replace the candidates with parents at their place.
+  population[child1] = population[mom];
+  population[child2] = population[dad];
 
-  // // Randomly alter mom and dad genome weights to get two different children.
-  // for (size_t i = 0; i < elements; i++)
-  // {
-  //   // Using it to alter the weights of the children.
-  //   const double random = randu<typename MatType::elem_type>();
-  //   if (random > 0.5)
-  //   {
-  //     population[child1](i) = population[mom](i);
-  //     population[child2](i) = population[dad](i);
-  //   }
-  //   else
-  //   {
-  //     population[child1](i) = population[dad](i);
-  //     population[child2](i) = population[mom](i);
-  //   }
-  // }
+  // Randomly alter mom and dad genome weights to get two different children.
+  for (size_t i = 0; i < elements; i++)
+  {
+    // Using it to alter the weights of the children.
+    const double random = randu<typename MatType::elem_type>();
+    if (random > 0.5)
+    {
+      population[child1](i) = population[mom](i);
+      population[child2](i) = population[dad](i);
+    }
+    else
+    {
+      population[child1](i) = population[dad](i);
+      population[child2](i) = population[mom](i);
+    }
+  }
 }
 
 //! Modify weights with some noise for the evolution of next generation.
 template<typename MatType, typename IndexType>
 inline void CNE::Mutate(std::vector<MatType>& population, IndexType& index)
 {
-  // // Mutate the whole matrix with the given rate and probability.
-  // // The best candidate is not altered.
-  // for (size_t i = 1; i < populationSize; i++)
-  // {
-  //   population[index(i)] += (randu<MatType>(population[index(i)].n_rows,
-  //       population[index(i)].n_cols) < mutationProb) %
-  //       (mutationSize * randn<MatType>(population[index(i)].n_rows,
-  //       population[index(i)].n_cols));
-  // }
+  // Mutate the whole matrix with the given rate and probability.
+  // The best candidate is not altered.
+  for (size_t i = 1; i < populationSize; i++)
+  {
+    population[index(i)] += (randu<MatType>(population[index(i)].n_rows,
+        population[index(i)].n_cols) < mutationProb) %
+        (mutationSize * randn<MatType>(population[index(i)].n_rows,
+        population[index(i)].n_cols));
+  }
 }
 
 } // namespace ens
