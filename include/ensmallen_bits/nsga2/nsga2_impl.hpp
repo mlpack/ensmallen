@@ -328,7 +328,7 @@ inline void NSGA2::Mutate(MatType& child,
                           const MatType& upperBound)
 {
   child += (randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
-      (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
+      (mutationStrength * randn<MatType>(child.n_rows, child.n_cols));
 
   // Constrain all genes to be between bounds.
   child = arma::min(arma::max(child, lowerBound), upperBound);

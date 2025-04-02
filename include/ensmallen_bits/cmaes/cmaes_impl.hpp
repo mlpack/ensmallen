@@ -206,11 +206,11 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
       if (iterate.n_rows > iterate.n_cols)
       {
         pStep[idx(j)] = covLower *
-          arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+          randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
-        pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
+        pStep[idx(j)] = randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
           * covLower.t();
       }
 
