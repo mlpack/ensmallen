@@ -22,10 +22,10 @@ namespace test {
  * The DTLZ3 function, defined by:
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
- * g(x) = 100 * [|x_M| + \Sigma{i = n - M + 1}^n (x_i - 0.5)^2 - cos(20 * pi * 
+ * g(x) = 100 * [|x_M| + \Sigma{i = n - M + 1}^n (x_i - 0.5)^2 - cos(20 * pi *
  *   (x_i - 0.5))]
- * 
- * f_1(x) = 0.5 * cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... cos(x_2 * pi * 0.5) * (1 + g(x_M)) 
+ *
+ * f_1(x) = 0.5 * cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... cos(x_2 * pi * 0.5) * (1 + g(x_M))
  * f_2(x) = 0.5 * cos(x_1 * pi * 0.5) * cos(x_2 * pi * 0.5) * ... sin(x_M-1 * pi * 0.5) * (1 + g(x_M))
  * .
  * .
@@ -36,9 +36,9 @@ namespace test {
  * 0 <= x_i <= 1 for i = 1,...,n.
  *
  * This should be optimized to x_i = 0.5 (for all x_i in x_M), at:
- * 
+ *
  * For more information, please refer to:
- * 
+ *
  * @code
  * @incollection{deb2005scalable,
  * title={Scalable test problems for evolutionary multiobjective optimization},
@@ -83,10 +83,10 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
-      } 
-      
+      }
+
       // Get the private variables.
-      
+
       // Get the number of objectives.
       size_t GetNumObjectives()
       { return this -> numObjectives; }
@@ -115,17 +115,17 @@ namespace test {
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
-        
+
         for(size_t i = numObjectives - 1; i < numVariables; i++)
         {
-          innerSum += pow((coords.row(i) - 0.5), 2) - 
-              arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5)); 
-        } 
-        
+          innerSum += pow((coords.row(i) - 0.5), 2) -
+              arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5));
+        }
+
         return 100 * (k + innerSum);
-      }    
+      }
 
       /**
        * Evaluate the objectives with the given coordinate.
@@ -143,21 +143,21 @@ namespace test {
         arma::Row<ElemType> value = 0.5 * (1.0 + G);
         for(size_t i = 0; i < numObjectives - 1; i++)
         {
-          objectives.row(i) =  value %  
+          objectives.row(i) =  value %
               arma::sin(coords.row(i) * arma::datum::pi * 0.5);
-          value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5); 
+          value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5);
         }
         objectives.row(numObjectives - 1) = value;
-        return objectives;    
+        return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct DTLZ3Objective
       {
         DTLZ3Objective(size_t stop, DTLZ3& dtlz): stop(stop), dtlz(dtlz)
-        {/* Nothing to do here. */}  
-        
+        {/* Nothing to do here. */}
+
         /**
          * Evaluate one objective with the given coordinate.
          *
@@ -184,8 +184,8 @@ namespace test {
           }
 
           value = value * (1. + dtlz.g(coords)[0]);
-          return value;  
-        }        
+          return value;
+        }
 
         DTLZ3& dtlz;
         size_t stop;
@@ -195,12 +195,12 @@ namespace test {
       std::tuple<DTLZ3Objective, DTLZ3Objective, DTLZ3Objective> GetObjectives()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
+      }
 
       // Get the Reference Front.
       // Front. The implementation has been taken from pymoo.
       arma::mat GetReferenceFront()
-      { 
+      {
       	Uniform refGenerator;
         arma::mat refDirs = refGenerator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
         arma::colvec x = arma::normalise(refDirs, 2, 1);

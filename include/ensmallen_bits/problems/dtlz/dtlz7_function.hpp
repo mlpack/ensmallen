@@ -20,8 +20,8 @@ namespace test {
  * The DTLZ7 function, defined by:
  * \f[
  * x_M = [x_i, n - M + 1 <= i <= n]
- * g(x) = 1 + (9 / |X_M|) * (\Sigma{i = n - M + 1}^n x_i) 
- * 
+ * g(x) = 1 + (9 / |X_M|) * (\Sigma{i = n - M + 1}^n x_i)
+ *
  * f_1(x) = x_1
  * f_2(x) = x_2
  * .
@@ -33,7 +33,7 @@ namespace test {
  * 0 <= x_i <= 1 for i = 1,...,n.
  *
  * This should be optimized to x_i = 0.5 (for all x_i in x_M), at:
- * the objective function values lie on the linear hyper-plane: 
+ * the objective function values lie on the linear hyper-plane:
  * \Sigma { m = 1}^M f_m* =0.5.
  *
  * For more information, please refer to:
@@ -100,7 +100,7 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, arma::fill::zeros);
-      } 
+      }
 
       /**
        * Evaluate the G(x) with the given coordinate.
@@ -114,11 +114,11 @@ namespace test {
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
-        
+
         innerSum = (9.0 / k) * arma::sum(coords.rows(numObjectives - 1,
-            numVariables - 1) , 0) + 1.0; 
+            numVariables - 1) , 0) + 1.0;
         return innerSum;
       }
 
@@ -134,13 +134,13 @@ namespace test {
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::ones);
         innerSum = innerSum * numObjectives;
         for(size_t i = 0;i < numObjectives - 1;i++)
         {
-            innerSum -= coords.row(i) % (1.0 + 
-                    arma::cos(arma::datum::pi * 3 * coords.row(i))) / (1 + G); 
+            innerSum -= coords.row(i) % (1.0 +
+                    arma::cos(arma::datum::pi * 3 * coords.row(i))) / (1 + G);
         }
         return innerSum;
       }
@@ -156,21 +156,21 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
 
-        arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]); 
+        arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> H = h(coords, G);
         objectives.rows(0, numObjectives - 2) = coords.rows(0, numObjectives - 2);
         objectives.row(numObjectives - 1) = (1 + G) % H;
-        return objectives;    
+        return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct DTLZ7Objective
       {
         DTLZ7Objective(size_t stop, DTLZ7& dtlz): stop(stop), dtlz(dtlz)
-        {/* Nothing to do here. */}  
-        
+        {/* Nothing to do here. */}
+
         /**
          * Evaluate one objective with the given coordinate.
          *
@@ -184,10 +184,10 @@ namespace test {
           ElemType value = 0.5;
           if(stop != dtlz.numObjectives - 1)
           { return coords[stop];}
- 
+
           value = (1.0 + dtlz.g(coords)[0]) * dtlz.h(coords, dtlz.g(coords))[0];
-          return value; 
-        }        
+          return value;
+        }
 
         DTLZ7& dtlz;
         size_t stop;
@@ -197,7 +197,7 @@ namespace test {
       std::tuple<DTLZ7Objective, DTLZ7Objective, DTLZ7Objective> GetObjectives()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
+      }
 
     DTLZ7Objective objectiveF1;
     DTLZ7Objective objectiveF2;

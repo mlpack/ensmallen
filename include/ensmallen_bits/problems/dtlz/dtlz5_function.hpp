@@ -21,8 +21,8 @@ namespace test {
  * \f[
  * theta_M = [theta_i, n - M + 1 <= i <= n]
  * g(x) = \Sigma{i = n - M + 1}^n (x_i - 0.5)^2
- * 
- * f_1(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... cos(theta_M-1 * pi * 0.5) * (1 + g(theta_M)) 
+ *
+ * f_1(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... cos(theta_M-1 * pi * 0.5) * (1 + g(theta_M))
  * f_2(x) = 0.5 * cos(theta_1 * pi * 0.5) * cos(theta_2 * pi * 0.5) * ... sin(theta_M-1 * pi * 0.5) * (1 + g(theta_M))
  * .
  * .
@@ -31,13 +31,13 @@ namespace test {
  *
  * Bounds of the variable space is:
  * 0 <= x_i <= 1 for i = 1,...,n.
- * 
+ *
  * Where theta_i = 0.5 * (1 + 2 * g(X_M) * x_i) / (1 + g(X_M))
- * 
+ *
  * This should be optimized to x_i = 0.5 (for all x_i in X_M), at:
- * 
+ *
  * For more information, please refer to:
- * 
+ *
  * @code
  * @incollection{deb2005scalable,
  * title={Scalable test problems for evolutionary multiobjective optimization},
@@ -82,14 +82,14 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
         return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
-      } 
-      
+      }
+
       // Get the private variables.
-      
+
       // Get the number of objectives.
       size_t GetNumObjectives()
       { return this -> numObjectives; }
-      
+
       // Get the number of variables.
       size_t GetNumVariables()
       { return this -> numVariables; }
@@ -113,16 +113,16 @@ namespace test {
 
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        
+
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
-        
+
         for(size_t i = numObjectives - 1; i < numVariables; i++)
         {
-          innerSum += pow((coords.row(i) - 0.5), 2); 
-        } 
-        
+          innerSum += pow((coords.row(i) - 0.5), 2);
+        }
+
         return innerSum;
-      }    
+      }
 
       /**
        * Evaluate the objectives with the given coordinate.
@@ -136,27 +136,27 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
-        arma::Row<ElemType> G = g(coords); 
+        arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value = 0.5 * (1.0 + G);
         arma::Row<ElemType> theta;
         for(size_t i = 0; i < numObjectives - 1; i++)
         {
           theta = 0.5 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
-          objectives.row(i) =  value %  
+          objectives.row(i) =  value %
               arma::sin(theta * arma::datum::pi * 0.5);
-          value = value % arma::cos(theta * arma::datum::pi * 0.5); 
+          value = value % arma::cos(theta * arma::datum::pi * 0.5);
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;
       }
-      
+
       // Individual Objective function.
-      // Changes based on stop variable provided. 
+      // Changes based on stop variable provided.
       struct DTLZ5Objective
       {
         DTLZ5Objective(size_t stop, DTLZ5& dtlz): stop(stop), dtlz(dtlz)
-        {/* Nothing to do here. */}  
-        
+        {/* Nothing to do here. */}
+
         /**
          * Evaluate one objective with the given coordinate.
          *
@@ -172,7 +172,7 @@ namespace test {
           ElemType G = dtlz.g(coords)[0];
           for(size_t i = 0; i < stop; i++)
           {
-            theta = 0.5 * (1.0  + 2.0 * coords[i] * G) / (1.0 + G); 
+            theta = 0.5 * (1.0  + 2.0 * coords[i] * G) / (1.0 + G);
             value = value * std::cos(theta * arma::datum::pi * 0.5);
           }
 	        theta = 0.5 * (1.0  + 2.0 * coords[stop] * G) / (1.0 + G);
@@ -186,8 +186,8 @@ namespace test {
           }
 
           value = value * (1.0 + G);
-          return value;  
-        }        
+          return value;
+        }
 
         DTLZ5& dtlz;
         size_t stop;
@@ -197,7 +197,7 @@ namespace test {
       std::tuple<DTLZ5Objective, DTLZ5Objective, DTLZ5Objective> GetObjectives ()
       {
           return std::make_tuple(objectiveF1, objectiveF2, objectiveF3);
-      } 
+      }
 
     DTLZ5Objective objectiveF1;
     DTLZ5Objective objectiveF2;
