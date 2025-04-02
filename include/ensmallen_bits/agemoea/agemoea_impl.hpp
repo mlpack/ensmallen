@@ -130,7 +130,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
   // starting point.
   for (size_t i = 0; i < populationSize; i++)
   {
-    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
+    population.push_back(randu<BaseMatType>(iterate.n_rows,
         iterate.n_cols) - 0.5 + iterate);
 
     // Constrain all genes to be within bounds.
@@ -393,7 +393,7 @@ inline void AGEMOEA::Mutate(MatType& candidate,
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
     {
       // Should this gene be mutated?
-      if (arma::randu() > mutationRate)
+      if (randu() > mutationRate)
         continue;
 
       const double geneRange = upperBound(geneIdx) - lowerBound(geneIdx);
@@ -403,7 +403,7 @@ inline void AGEMOEA::Mutate(MatType& candidate,
       const double upperDelta = (upperBound(geneIdx) 
           - candidate(geneIdx)) / geneRange;
       const double mutationPower = 1. / (distributionIndex + 1.0);
-      const double rand = arma::randu();
+      const double rand = randu();
       double value, perturbationFactor;
       if (rand < 0.5)
       {

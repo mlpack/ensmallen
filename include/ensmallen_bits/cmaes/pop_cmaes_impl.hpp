@@ -109,10 +109,10 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
     else if (UseBIPOPFlag)
     {
       // Small population regime (BIPOP only)
-      double u = arma::randu<double>();
+      double u = randu<double>();
       size_t smallLambda = static_cast<size_t>(defaultLambda * std::pow(0.5 * 
           currentLargeLambda / defaultLambda, u * u));
-      double stepSizeSmall = 2 * std::pow(10, -2 * arma::randu<double>());
+      double stepSizeSmall = 2 * std::pow(10, -2 * randu<double>());
       
       this->PopulationSize() = smallLambda;
       this->StepSize() = stepSizeSmall;

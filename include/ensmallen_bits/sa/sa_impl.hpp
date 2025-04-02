@@ -158,7 +158,7 @@ bool SA<CoolingScheduleType>::GenerateMove(
   // MoveControl() is derived for the Laplace distribution.
 
   // Sample from a Laplace distribution with scale parameter moveSize(idx).
-  const double unif = 2.0 * arma::randu() - 1.0;
+  const double unif = 2.0 * randu() - 1.0;
   const ElemType move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
       (-moveSize(idx) * std::log(1 - unif));
 
@@ -170,7 +170,7 @@ bool SA<CoolingScheduleType>::GenerateMove(
 
   // According to the Metropolis criterion, accept the move with probability
   // min{1, exp(-(E_new - E_old) / T)}.
-  const double xi = arma::randu();
+  const double xi = randu();
   const double delta = energy - prevEnergy;
   const double criterion = std::exp(-delta / temperature);
   if (delta <= 0. || criterion > xi)

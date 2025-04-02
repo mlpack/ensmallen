@@ -131,7 +131,7 @@ typename MatType::elem_type NSGA2::Optimize(
   // starting point.
   for (size_t i = 0; i < populationSize; i++)
   {
-    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
+    population.push_back(randu<BaseMatType>(iterate.n_rows,
         iterate.n_cols) - 0.5 + iterate);
 
     // Constrain all genes to be within bounds.
@@ -313,7 +313,7 @@ inline void NSGA2::Crossover(MatType& childA,
                              const MatType& parentB)
 {
   // Indices at which crossover is to occur.
-  const arma::umat idx = arma::randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
+  const arma::umat idx = randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
 
   // Use traits from parentA for indices where idx is 1 and parentB otherwise.
   childA = parentA % idx + parentB % (1 - idx);
@@ -327,7 +327,7 @@ inline void NSGA2::Mutate(MatType& child,
                           const MatType& lowerBound,
                           const MatType& upperBound)
 {
-  child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
+  child += (randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
       (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
 
   // Constrain all genes to be between bounds.

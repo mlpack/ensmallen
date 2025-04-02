@@ -167,7 +167,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   std::vector<BaseMatType> population(populationSize);
   for (BaseMatType& individual : population)
   {
-    individual = arma::randu<BaseMatType>(
+    individual = randu<BaseMatType>(
         iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
     // Constrain all genes to be within bounds.
@@ -203,7 +203,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       size_t r1, r2, r3;
       r1 = subProblemIdx;
       // Randomly choose to sample from the population or the neighbors.
-      const bool sampleNeighbor = arma::randu() < neighborProb;
+      const bool sampleNeighbor = randu() < neighborProb;
       std::tie(r2, r3) =
           Mating(subProblemIdx, neighborIndices, sampleNeighbor);
 
@@ -213,7 +213,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
 
       for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
       {
-        if (arma::randu() < crossoverProb)
+        if (randu() < crossoverProb)
         {
           candidate(geneIdx) = population[r1](geneIdx) +
               differentialWeight * (population[r2](geneIdx) -
@@ -223,12 +223,12 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
           if (candidate(geneIdx) < castedLowerBound(geneIdx))
           {
             candidate(geneIdx) = castedLowerBound(geneIdx) +
-                arma::randu() * (population[r1](geneIdx) - castedLowerBound(geneIdx));
+                randu() * (population[r1](geneIdx) - castedLowerBound(geneIdx));
           }
           if (candidate(geneIdx) > castedUpperBound(geneIdx))
           {
             candidate(geneIdx) = castedUpperBound(geneIdx) -
-                arma::randu() * (castedUpperBound(geneIdx) - population[r1](geneIdx));
+                randu() * (castedUpperBound(geneIdx) - population[r1](geneIdx));
           }
         }
         else
@@ -372,7 +372,7 @@ Mutate(MatType& candidate,
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
     {
       // Should this gene be mutated?
-      if (arma::randu() > mutationRate)
+      if (randu() > mutationRate)
         continue;
 
       const double geneRange = upperBound(geneIdx) - lowerBound(geneIdx);
@@ -380,7 +380,7 @@ Mutate(MatType& candidate,
       const double lowerDelta = (candidate(geneIdx) - lowerBound(geneIdx)) / geneRange;
       const double upperDelta = (upperBound(geneIdx) - candidate(geneIdx)) / geneRange;
       const double mutationPower = 1. / (distributionIndex + 1.0);
-      const double rand = arma::randu();
+      const double rand = randu();
       double value, perturbationFactor;
       if (rand < 0.5)
       {

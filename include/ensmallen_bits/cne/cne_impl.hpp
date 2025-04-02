@@ -227,7 +227,7 @@ inline void CNE::Crossover(std::vector<MatType>& population,
   // for (size_t i = 0; i < elements; i++)
   // {
   //   // Using it to alter the weights of the children.
-  //   const double random = arma::randu<typename MatType::elem_type>();
+  //   const double random = randu<typename MatType::elem_type>();
   //   if (random > 0.5)
   //   {
   //     population[child1](i) = population[mom](i);
