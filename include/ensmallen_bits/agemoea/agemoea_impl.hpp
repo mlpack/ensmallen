@@ -134,7 +134,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
         iterate.n_cols) - 0.5 + iterate);
 
     // Constrain all genes to be within bounds.
-    population[i] = min(arma::max(population[i], castedLowerBound),
+    population[i] = min(max(population[i], castedLowerBound),
         castedUpperBound);
   }
 
@@ -337,7 +337,7 @@ inline void AGEMOEA::Crossover(MatType& childA,
     parents.slice(0) = parentA;
     parents.slice(1) = parentB;
     MatType current_min =  min(parents, 2);
-    MatType current_max =  arma::max(parents, 2);
+    MatType current_max =  max(parents, 2);
 
     if (arma::accu(parentA - parentB < 1e-14))
     {
@@ -368,8 +368,8 @@ inline void AGEMOEA::Crossover(MatType& childA,
     // Variables after the cross over for all of them.
     MatType c1 = 0.5 * ((current_min + current_max) - betaq1 % current_diff);
     MatType c2 = 0.5 * ((current_min + current_max) + betaq2 % current_diff);
-    c1 = min(arma::max(c1, lowerBound), upperBound);
-    c2 = min(arma::max(c2, lowerBound), upperBound);
+    c1 = min(max(c1, lowerBound), upperBound);
+    c2 = min(max(c2, lowerBound), upperBound);
     
     // Decision for the crossover between the two parents for each variable.
     us.randu();
@@ -421,7 +421,7 @@ inline void AGEMOEA::Mutate(MatType& candidate,
       candidate(geneIdx) += perturbationFactor * geneRange;
     }
     //! Enforce bounds.
-    candidate = min(arma::max(candidate, lowerBound), upperBound);
+    candidate = min(max(candidate, lowerBound), upperBound);
 }
 
 template <typename MatType>
@@ -446,14 +446,14 @@ inline void AGEMOEA::NormalizeFront(
 
   if (front.size() < numObjectives)
   {
-    normalization = arma::max(vectorizedObjectives, 1);
+    normalization = max(vectorizedObjectives, 1);
     return;
   }
   arma::Col<typename MatType::elem_type> temp;
   arma::uvec unique = arma::find_unique(extreme);
   if (extreme.n_elem != unique.n_elem)
   {
-    normalization = arma::max(vectorizedObjectives, 1);
+    normalization = max(vectorizedObjectives, 1);
     return;
   }
   arma::Col<typename MatType::elem_type> one(extreme.n_elem, arma::fill::ones);
@@ -464,20 +464,20 @@ inline void AGEMOEA::NormalizeFront(
   }
   catch(...)
   {
-    normalization = arma::max(vectorizedObjectives, 1);
+    normalization = max(vectorizedObjectives, 1);
     normalization = normalization + (normalization == 0);
     return;
   }
   if (hyperplane.has_inf() || hyperplane.has_nan() || (arma::accu(hyperplane < 0.0) > 0))
   {
-    normalization = arma::max(vectorizedObjectives, 1);
+    normalization = max(vectorizedObjectives, 1);
   }
   else
   {
     normalization = 1. / hyperplane;   
     if (normalization.has_inf() || normalization.has_nan())
     {    
-      normalization = arma::max(vectorizedObjectives, 1);
+      normalization = max(vectorizedObjectives, 1);
     }
   }
   normalization = normalization + (normalization == 0);

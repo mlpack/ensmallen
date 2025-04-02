@@ -171,7 +171,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
     // Constrain all genes to be within bounds.
-    individual = min(arma::max(individual, castedLowerBound), castedUpperBound);
+    individual = min(max(individual, castedLowerBound), castedUpperBound);
   }
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
@@ -398,7 +398,7 @@ Mutate(MatType& candidate,
       candidate(geneIdx) += perturbationFactor * geneRange;
     }
     //! Enforce bounds.
-    candidate = min(arma::max(candidate, lowerBound), upperBound);
+    candidate = min(max(candidate, lowerBound), upperBound);
 }
 
 //! No objectives to evaluate.
