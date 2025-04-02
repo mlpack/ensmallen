@@ -69,10 +69,10 @@ class NesterovMomentumUpdate
     Policy(const NesterovMomentumUpdate& parent,
            const size_t rows,
            const size_t cols) :
-        parent(parent)
+        parent(parent),
+        velocity(rows, cols. GetFillType<MatType>::zeros)
     {
-      velocity.set_size(rows, cols);
-      velocity.zeros();
+      // Nothing to do.
     }
 
     /**
