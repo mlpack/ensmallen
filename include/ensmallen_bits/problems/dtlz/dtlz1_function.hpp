@@ -116,13 +116,13 @@ namespace test {
         size_t k = numVariables - numObjectives + 1;
 
         // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
+        using ElemType = typename MatType::elem_type;
         
         arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
         
         for (size_t i = numObjectives - 1; i < numVariables; i++)
         {
-          innerSum += arma::pow((coords.row(i) - 0.5), 2) - 
+          innerSum += pow((coords.row(i) - 0.5), 2) -
               arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5)); 
         } 
         
@@ -138,7 +138,7 @@ namespace test {
       arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
       {
         // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
+        using ElemType = typename MatType::elem_type;
 
         arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);

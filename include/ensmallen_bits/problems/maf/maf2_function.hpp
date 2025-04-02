@@ -115,7 +115,7 @@ namespace test {
           size_t j = numObjectives - 1 + (i * c);
           for(; j < numVariables - 1 + (i + 1) *c && j < numObjectives; j++)
           {
-            innerSum.row(i) += arma::pow((coords.row(i) - 0.5), 2) * 0.25; 
+            innerSum.row(i) += pow((coords.row(i) - 0.5), 2) * 0.25; 
           }
         }
         
