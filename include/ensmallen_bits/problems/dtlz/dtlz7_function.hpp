@@ -99,7 +99,7 @@ namespace test {
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        return arma::Col<ElemType>(numVariables, arma::fill::zeros);
+        return arma::Col<ElemType>(numVariables);
       }
 
       /**
@@ -115,7 +115,7 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
 
-        arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
+        arma::Row<ElemType> innerSum(size(coords)[1]);
 
         innerSum = (9.0 / k) * arma::sum(coords.rows(numObjectives - 1,
             numVariables - 1) , 0) + 1.0;

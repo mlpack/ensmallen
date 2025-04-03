@@ -162,7 +162,7 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
         "solve KKT system.");
   }
 
-  MatType subTerm(aSparse.n_cols, 1, arma::fill::zeros);
+  MatType subTerm(aSparse.n_cols, 1);
   
   if (aSparse.n_rows)
   {

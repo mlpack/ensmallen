@@ -152,7 +152,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
     std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
-        arma::Col<ElemType>(numObjectives, arma::fill::zeros));
+        arma::Col<ElemType>(numObjectives));
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
@@ -458,7 +458,7 @@ inline void AGEMOEA::NormalizeFront(
     return;
   }
   arma::Col<ElemType> one(extreme.n_elem, arma::fill::ones);
-  arma::Col<ElemType> hyperplane(numObjectives, arma::fill::zeros);
+  arma::Col<ElemType> hyperplane(numObjectives);
   try{
     hyperplane = arma::solve(
     vectorizedExtremes.t(), one);
@@ -493,7 +493,7 @@ inline double AGEMOEA::GetGeometry(
 {
   using ElemType = typename MatType::elem_type;
   arma::Row<ElemType> d;
-  arma::Col<ElemType> zero(numObjectives, arma::fill::zeros);
+  arma::Col<ElemType> zero(numObjectives);
   arma::Col<ElemType> one(numObjectives, arma::fill::ones);
 
   PointToLineDistance<MatType> (d, calculatedObjectives, front, zero, one);
@@ -548,7 +548,7 @@ void AGEMOEA::FindExtremePoints(
   arma::Mat<ElemType> W(numObjectives, numObjectives, arma::fill::eye);
   W = W + 1e-6;
   std::vector<bool> selected(front.size());
-  arma::Col<ElemType> z(numObjectives, arma::fill::zeros);
+  arma::Col<ElemType> z(numObjectives);
   arma::Row<ElemType> dists;
   for (size_t i = 0; i < numObjectives; i++)
   {
@@ -720,7 +720,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     if (front.size() < numObjectives)
     {
       dimension = 1;
-      arma::Row<size_t> extreme(numObjectives, arma::fill::zeros);
+      arma::Row<size_t> extreme(numObjectives);
       NormalizeFront<MatType>(calculatedObjectives, normalize, front, extreme);
       return; 
     }
@@ -731,7 +731,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
           - idealPoint;
     }
 
-    arma::Row<size_t> extreme(numObjectives, arma::fill::zeros);
+    arma::Row<size_t> extreme(numObjectives);
     FindExtremePoints<MatType>(extreme, calculatedObjectives, front);
     NormalizeFront<MatType>(calculatedObjectives, normalize, front, extreme);
 
@@ -761,7 +761,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
       }
     }
 
-    arma::Mat<ElemType> pairwise(front.size(), front.size(), arma::fill::zeros);
+    arma::Mat<ElemType> pairwise(front.size(), front.size());
     PairwiseDistance<MatType>(pairwise,calculatedObjectives,front,dimension);
     arma::Row<typename MatType::elem_type> value(front.size(), 
         arma::fill::zeros);

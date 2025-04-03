@@ -83,7 +83,7 @@ namespace test {
       {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
-        return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
+        return arma::Col<ElemType>(numVariables, 1);
       }
 
       // Get the private variables.
@@ -120,7 +120,7 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
 
-        arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::zeros);
+        arma::Row<ElemType> innerSum(size(coords)[1]);
 
         for (size_t i = numObjectives - 1; i < numVariables; i++)
         {

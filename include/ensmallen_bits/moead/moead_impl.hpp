@@ -178,7 +178,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
 
   std::vector<arma::Col<ElemType>> populationFitness(populationSize);
   std::fill(populationFitness.begin(), populationFitness.end(),
-      arma::Col<ElemType>(numObjectives, arma::fill::zeros));
+      arma::Col<ElemType>(numObjectives));
   EvaluateObjectives(population, objectives, populationFitness);
 
   // 1.3 Initialize the ideal point z.

@@ -67,7 +67,7 @@ class FonsecaFlemingFunction
     // Convenience typedef.
     typedef typename MatType::elem_type ElemType;
 
-    return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
+    return arma::Col<ElemType>(numVariables, 1);
   }
 
   struct ObjectiveA

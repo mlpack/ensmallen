@@ -58,7 +58,7 @@ LogisticRegressionFunction<MatType, LabelsType>::LogisticRegressionFunction(
   if (initialPoint.n_rows != (predictors.n_rows + 1) ||
       initialPoint.n_cols != 1)
     this->initialPoint = arma::Row<typename MatType::elem_type>(
-        predictors.n_rows + 1, arma::fill::zeros);
+        predictors.n_rows + 1);
 }
 
 /**
