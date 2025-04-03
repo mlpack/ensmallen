@@ -38,7 +38,7 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
   MatType simplexSol = abs(v);
 
   // Already with L1 norm <= tau.
-  if (arma::accu(simplexSol) <= tau)
+  if (accu(simplexSol) <= tau)
     return;
 
   simplexSol = arma::sort(simplexSol, "descend");

@@ -239,8 +239,8 @@ typename MatType::elem_type AGEMOEA::Optimize(
   ElemType performance = std::numeric_limits<ElemType>::max();
 
   for (const arma::Col<ElemType>& objective: calculatedObjectives)
-    if (arma::accu(objective) < performance)
-      performance = arma::accu(objective);
+    if (accu(objective) < performance)
+      performance = accu(objective);
 
   return performance;
 }
@@ -338,7 +338,7 @@ inline void AGEMOEA::Crossover(MatType& childA,
     MatType current_min =  min(parents, 2);
     MatType current_max =  max(parents, 2);
 
-    if (arma::accu(parentA - parentB < 1e-14))
+    if (accu(parentA - parentB < 1e-14))
     {
       childA = parentA;
       childB = parentB;
@@ -502,7 +502,7 @@ inline double AGEMOEA::GetGeometry(
     d[extreme[i]] = arma::datum::inf;
   }
   size_t index = arma::index_min(d);
-  double avg = arma::accu(calculatedObjectives[front[index]])
+  double avg = accu(calculatedObjectives[front[index]])
       / static_cast<double> (numObjectives);
   double p = std::log(numObjectives) / std::log(1.0 / avg);
   if (p <= 0.1 || std::isnan(p)) 
@@ -523,7 +523,7 @@ inline void AGEMOEA::PairwiseDistance(
   {
     for (size_t j = i + 1; j < front.size(); j++)
     {
-      f(i, j) = std::pow(arma::accu(pow(abs(calculatedObjectives[front[i]] - calculatedObjectives[front[j]]), dimension)), 1.0 / dimension);
+      f(i, j) = std::pow(accu(pow(abs(calculatedObjectives[front[i]] - calculatedObjectives[front[j]]), dimension)), 1.0 / dimension);
       f(j, i) = f(i, j);
     }
   }
@@ -579,7 +579,7 @@ void AGEMOEA::PointToLineDistance(
  
     pa = (calculatedObjectives[ind] - pointA);
     double t = dot(pa, ba) / dot(ba, ba);
-    distancesTemp[i] = arma::accu(pow((pa - t * ba), 2));
+    distancesTemp[i] = accu(pow((pa - t * ba), 2));
   }
   distances = distancesTemp;
 }
@@ -767,7 +767,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     // Calculate the diversity and proximity score.
     for (size_t i = 0; i < front.size(); i++)
     {
-      pairwise.col(i) = pairwise.col(i) / std::pow(arma::accu(pow(
+      pairwise.col(i) = pairwise.col(i) / std::pow(accu(pow(
         abs(calculatedObjectives[front[i]]), dimension)), 1.0 / dimension);
     }
     
@@ -792,7 +792,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
     for (size_t i = 0; i < front.size(); i++)
     {
       calculatedObjectives[front[i]] = (calculatedObjectives[front[i]]) / normalize;
-      survivalScore[front[i]] =  1.0 / std::pow(arma::accu(pow(abs(
+      survivalScore[front[i]] =  1.0 / std::pow(accu(pow(abs(
           calculatedObjectives[front[i]] - idealPoint), dimension)), 
               1.0 / dimension);
     }

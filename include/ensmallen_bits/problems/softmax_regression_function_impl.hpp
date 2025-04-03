@@ -208,9 +208,9 @@ inline double SoftmaxRegressionFunction::Evaluate(
   // Calculate the log likelihood and regularization terms.
   double logLikelihood, weightDecay, cost;
 
-  logLikelihood = arma::accu(groundTruth % arma::log(probabilities)) /
+  logLikelihood = accu(groundTruth % arma::log(probabilities)) /
                   data.n_cols;
-  weightDecay = 0.5 * lambda * arma::accu(parameters % parameters);
+  weightDecay = 0.5 * lambda * accu(parameters % parameters);
 
   // The cost is the sum of the negative log likelihood and the regularization
   // terms.
@@ -233,9 +233,9 @@ inline double SoftmaxRegressionFunction::Evaluate(
   // Calculate the log likelihood and regularization terms.
   double logLikelihood, weightDecay;
 
-  logLikelihood = arma::accu(groundTruth.cols(start, start + batchSize - 1) %
+  logLikelihood = accu(groundTruth.cols(start, start + batchSize - 1) %
       arma::log(probabilities)) / batchSize;
-  weightDecay = 0.5 * lambda * arma::accu(parameters * parameters);
+  weightDecay = 0.5 * lambda * accu(parameters * parameters);
 
   return -logLikelihood + weightDecay;
 }

@@ -320,8 +320,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
 
   for (size_t geneIdx = 0; geneIdx < numObjectives; ++geneIdx)
   {
-    if (arma::accu(populationFitness[geneIdx]) < performance)
-      performance = arma::accu(populationFitness[geneIdx]);
+    if (accu(populationFitness[geneIdx]) < performance)
+      performance = accu(populationFitness[geneIdx]);
   }
 
   return performance;

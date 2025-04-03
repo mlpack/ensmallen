@@ -97,10 +97,10 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   const size_t mu = std::round(lambda / 2);
   BaseMatType w = std::log(mu + 0.5) - arma::log(
       arma::linspace<BaseMatType>(0, mu - 1, mu) + 1.0);
-  w /= arma::accu(w);
+  w /= accu(w);
 
   // Number of effective solutions.
-  const double muEffective = 1 / arma::accu(pow(w, 2));
+  const double muEffective = 1 / accu(pow(w, 2));
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
