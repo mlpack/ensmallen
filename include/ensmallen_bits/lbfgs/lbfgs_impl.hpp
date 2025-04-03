@@ -97,7 +97,7 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
   }
   else
   {
-    const CubeElemType tmp = arma::norm(gradient, "fro");
+    const CubeElemType tmp = norm(gradient, "fro");
 
     scalingFactor = (tmp >= tol) ? (1.0 / tmp) : 1.0;
   }
@@ -419,7 +419,7 @@ L_BFGS::Optimize(FunctionType& function,
     //
     // But don't do this on the first iteration to ensure we always take at
     // least one descent step.
-    // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo
+    // TODO: to speed this up, investigate use of norm2est() in Armadillo
     // 12.4
     if (norm(gradient, 2) < minGradientNorm)
     {

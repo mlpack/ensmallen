@@ -45,7 +45,7 @@ class GradClipByNorm
                 const MatType& /* coordinates */,
                 MatType& gradient)
   {
-    const double gradientNorm = arma::norm(gradient);
+    const double gradientNorm = norm(gradient);
     if (gradientNorm > maxNorm)
       gradient = maxNorm * gradient / gradientNorm;
     return false;

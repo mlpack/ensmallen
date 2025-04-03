@@ -201,18 +201,18 @@ class GroupLpBall
     if (p == std::numeric_limits<double>::infinity())
     {
       // inf-norm, return 1-norm
-      return arma::norm(yk, 1);
+      return norm(yk, 1);
     }
     else if (p > 1.0)
     {
       // p norm, return q-norm
       double q = 1.0 / (1.0 - 1.0 / p);
-      return arma::norm(yk, q);
+      return norm(yk, q);
     }
     else if (p == 1.0)
     {
       // 1-norm, return inf-norm
-      return arma::norm(yk, "inf");
+      return norm(yk, "inf");
     }
     else
     {

@@ -256,7 +256,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
           eigvec * diagmat(1 / eigval) * eigvec.t();
     }
 
-    const ElemType psNorm = arma::norm(ps[idx1]);
+    const ElemType psNorm = norm(ps[idx1]);
     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * (psNorm / enn - 1));
 
     if (std::isnan(sigma(idx1)) || sigma(idx1) > 1e14)

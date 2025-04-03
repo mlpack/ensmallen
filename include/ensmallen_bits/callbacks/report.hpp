@@ -368,7 +368,7 @@ class Report
                 const MatType& gradientIn)
   {
     hasGradient = true;
-    gradientNorm = arma::norm(gradientIn);
+    gradientNorm = norm(gradientIn);
     gradientCalls++;
     return false;
   }

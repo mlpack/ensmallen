@@ -478,11 +478,11 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     // then we consider this a valid certificate of optimality and terminate.
     // Otherwise, we proceed onwards.
 
-    const double normXZ = arma::norm(coordinates * dualCoordinates, "fro");
+    const double normXZ = norm(coordinates * dualCoordinates, "fro");
 
-    const double sparsePrimalInfeas = arma::norm(sdp.SparseB() - aSparse * sx,
+    const double sparsePrimalInfeas = norm(sdp.SparseB() - aSparse * sx,
         2);
-    const double densePrimalInfeas = arma::norm(sdp.DenseB() - aDense * sx, 2);
+    const double densePrimalInfeas = norm(sdp.DenseB() - aDense * sx, 2);
     const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
         densePrimalInfeas * densePrimalInfeas);
 
@@ -502,7 +502,7 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
       dualCheck += ySparse(i) * sdp.SparseA()[i];
     for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
       dualCheck += yDense(i) * sdp.DenseA()[i];
-    const double dualInfeas = arma::norm(dualCheck, "fro");
+    const double dualInfeas = norm(dualCheck, "fro");
 
     if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol &&
         dualInfeas <= dualInfeasTol)

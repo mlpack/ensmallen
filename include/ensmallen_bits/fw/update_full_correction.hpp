@@ -69,7 +69,7 @@ class UpdateFullCorrection
     MatType b = function.Vectorb();
     MatType A = function.MatrixA();
     typename MatType::elem_type gamma = dot(b - A * oldCoords, A * v);
-    gamma = gamma / std::pow(arma::norm(A * v, "fro"), 2);
+    gamma = gamma / std::pow(norm(A * v, "fro"), 2);
     gamma = std::min(gamma, 1.0);
     atoms.CurrentCoeffs() = (1.0 - gamma) * atoms.CurrentCoeffs();
     atoms.AddAtom(arma::mat(s), function, gamma * tau);
