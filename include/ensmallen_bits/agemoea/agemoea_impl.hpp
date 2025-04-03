@@ -544,7 +544,7 @@ void AGEMOEA::FindExtremePoints(
     return;
   }
 
-  arma::Mat<ElemType> W(numObjectives, numObjectives, arma::fill::eye);
+  MatType W(numObjectives, numObjectives, GetFillType<MatType>::eye);
   W = W + 1e-6;
   std::vector<bool> selected(front.size());
   arma::Col<ElemType> z(numObjectives);
@@ -760,7 +760,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
       }
     }
 
-    arma::Mat<ElemType> pairwise(front.size(), front.size());
+    MatType pairwise(front.size(), front.size());
     PairwiseDistance<MatType>(pairwise,calculatedObjectives,front,dimension);
     arma::Row<typename MatType::elem_type> value(front.size());
     
