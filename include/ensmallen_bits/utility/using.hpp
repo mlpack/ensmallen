@@ -25,6 +25,7 @@ namespace ens {
 
 /* using for bandicoot namespace*/
 using coot::abs;
+using coot::clamp;
 using coot::exp;
 using coot::dot;
 using coot::join_cols;
@@ -55,6 +56,7 @@ using coot::zeros;
 
 /* using for armadillo namespace */
 using arma::abs;
+using arma::clamp;
 using arma::exp;
 using arma::dot;
 using arma::join_cols;
