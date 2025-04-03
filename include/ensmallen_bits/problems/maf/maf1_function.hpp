@@ -81,11 +81,9 @@ namespace test {
       { return this -> numVariables; }
 
       // Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint()
+      MatType GetInitialPoint()
       {
-        // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
-        return arma::Col<ElemType>(numVariables, arma::fill::ones);
+        return MatType(numVariables, GetFillType<MatType>::ones);
       }
 
       /**

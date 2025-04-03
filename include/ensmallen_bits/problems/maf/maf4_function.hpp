@@ -78,11 +78,9 @@ namespace test {
       {/*Nothing to do here.*/}
 
       //! Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint()
+      MatType GetInitialPoint()
       {
-        // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
-        return arma::Col<ElemType>(numVariables, 1);
+        return MatType(numVariables, 1);
       }
 
       // Get the private variables.

@@ -95,11 +95,9 @@ namespace test {
       { this -> numParetoPoints = numParetoPoint; }
 
       // Get the starting point.
-      arma::Col<typename MatType::elem_type> GetInitialPoint()
+      MatType GetInitialPoint()
       {
-        // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
-        return arma::Col<ElemType>(numVariables);
+        return MatType(numVariables);
       }
 
       /**

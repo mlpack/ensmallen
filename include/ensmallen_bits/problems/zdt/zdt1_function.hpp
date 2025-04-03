@@ -88,10 +88,7 @@ namespace test {
     // Get the starting point.
     MatType GetInitialPoint()
     {
-      // Convenience typedef.
-      typedef typename MatType::elem_type ElemType;
-
-      return arma::Col<ElemType>(numVariables, 1);
+      return MatType(numVariables, 1);
     }
 
     struct ObjectiveF1
