@@ -176,7 +176,7 @@ inline void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
         data.cols(start, start + batchSize - 1));
   }
 
-  probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
+  probabilities = hypothesis / arma::repmat(sum(hypothesis, 0),
                                             numClasses, 1);
 }
 

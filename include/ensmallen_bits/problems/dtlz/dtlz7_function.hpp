@@ -115,7 +115,7 @@ namespace test {
 
         arma::Row<ElemType> innerSum(size(coords)[1]);
 
-        innerSum = (9.0 / k) * arma::sum(coords.rows(numObjectives - 1,
+        innerSum = (9.0 / k) * sum(coords.rows(numObjectives - 1,
             numVariables - 1) , 0) + 1.0;
         return innerSum;
       }
