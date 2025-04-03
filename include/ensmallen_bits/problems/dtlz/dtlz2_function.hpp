@@ -194,7 +194,7 @@ namespace test {
       {
       	Uniform refGenerator;
         arma::mat refDirs = refGenerator.Generate<arma::mat>(3, this -> numParetoPoints, 0);
-        arma::colvec x = arma::normalise(refDirs, 2, 1);
+        arma::colvec x = normalise(refDirs, 2, 1);
         arma::mat A(size(refDirs), arma::fill::ones);
         A.each_col() = x;
         return refDirs / A;

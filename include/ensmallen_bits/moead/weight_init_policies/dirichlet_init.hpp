@@ -46,7 +46,7 @@ class Dirichlet
     MatType weights = arma::randg<MatType>(numObjectives, numPoints,
         DistrParam(1.0, 1.0)) + epsilon;
     // Normalize each column.
-    return arma::normalise(weights, 1, 0);
+    return normalise(weights, 1, 0);
   }
 };
 
