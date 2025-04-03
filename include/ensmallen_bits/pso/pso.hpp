@@ -88,8 +88,8 @@ class PSOType
    * @param initPolicy Particle initialization policy.
    */
   PSOType(const size_t numParticles = 64,
-          const arma::mat& lowerBound = arma::ones(1, 1),
-          const arma::mat& upperBound = arma::ones(1, 1),
+          const arma::mat& lowerBound = ones(1, 1),
+          const arma::mat& upperBound = ones(1, 1),
           const size_t maxIterations = 3000,
           const size_t horizonSize = 350,
           const double impTolerance = 1e-10,
@@ -145,8 +145,8 @@ class PSOType
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
-          lowerBound(lowerBound * arma::ones(1, 1)),
-          upperBound(upperBound * arma::ones(1, 1)),
+          lowerBound(lowerBound * ones(1, 1)),
+          upperBound(upperBound * ones(1, 1)),
           maxIterations(maxIterations),
           horizonSize(horizonSize),
           impTolerance(impTolerance),

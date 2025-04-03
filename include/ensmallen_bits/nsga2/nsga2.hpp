@@ -79,7 +79,7 @@ class NSGA2
         const double mutationStrength = 1e-3,
         const double epsilon = 1e-6,
         const arma::vec& lowerBound = arma::zeros(1, 1),
-        const arma::vec& upperBound = arma::ones(1, 1));
+        const arma::vec& upperBound = ones(1, 1));
 
   /**
    * Constructor for the NSGA2 optimizer. This constructor provides an overload

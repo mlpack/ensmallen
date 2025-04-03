@@ -83,8 +83,8 @@ class DefaultInit
     // Check if lowerBound and upperBound are vectors of a single dimension.
     else if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 0)
     {
-      lowerBound = -lowerBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
-      upperBound = upperBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
+      lowerBound = -lowerBound(0) * ones(iterate.n_rows, iterate.n_cols);
+      upperBound = upperBound(0) * ones(iterate.n_rows, iterate.n_cols);
     }
 
     // Check the dimensions of lowerBound and upperBound.

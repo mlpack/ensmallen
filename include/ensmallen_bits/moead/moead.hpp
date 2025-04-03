@@ -85,7 +85,7 @@ class MOEAD {
         const size_t maxReplace = 2,
         const double epsilon = 1E-10,
         const arma::vec& lowerBound = arma::zeros(1, 1),
-        const arma::vec& upperBound = arma::ones(1, 1),
+        const arma::vec& upperBound = ones(1, 1),
         const InitPolicyType initPolicy = InitPolicyType(),
         const DecompPolicyType decompPolicy = DecompPolicyType());
 

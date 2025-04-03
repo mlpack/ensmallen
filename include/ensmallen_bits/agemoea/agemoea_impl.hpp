@@ -55,8 +55,8 @@ inline AGEMOEA::AGEMOEA(const size_t populationSize,
     distributionIndex(distributionIndex),
     epsilon(epsilon),
     eta(eta),
-    lowerBound(lowerBound * arma::ones(1, 1)),
-    upperBound(upperBound * arma::ones(1, 1))
+    lowerBound(lowerBound * ones(1, 1)),
+    upperBound(upperBound * ones(1, 1))
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
@@ -88,11 +88,11 @@ typename MatType::elem_type AGEMOEA::Optimize(
 
   // Check if lower bound is a vector of a single dimension.
   if (lowerBound.n_rows == 1)
-    lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+    lowerBound = lowerBound(0, 0) * ones(iterate.n_rows, iterate.n_cols);
 
   // Check if upper bound is a vector of a single dimension.
   if (upperBound.n_rows == 1)
-    upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+    upperBound = upperBound(0, 0) * ones(iterate.n_rows, iterate.n_cols);
 
   // Check the dimensions of lowerBound and upperBound.
   assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "

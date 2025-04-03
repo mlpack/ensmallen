@@ -193,8 +193,8 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     CallbackTypes&&... callbacks)
 {
   // Initialize the other parameters and then call the other overload.
-  MatType ySparse(arma::ones<MatType>(sdp.NumSparseConstraints(), 1));
-  MatType yDense(arma::ones<MatType>(sdp.NumDenseConstraints(), 1));
+  MatType ySparse(ones<MatType>(sdp.NumSparseConstraints(), 1));
+  MatType yDense(ones<MatType>(sdp.NumDenseConstraints(), 1));
   MatType z(arma::eye<MatType>(sdp.N(), sdp.N()));
 
   return Optimize(sdp, coordinates, ySparse, yDense, z, callbacks...);

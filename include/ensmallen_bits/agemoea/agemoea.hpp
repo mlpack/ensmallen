@@ -75,7 +75,7 @@ class AGEMOEA
           const double epsilon = 1e-6,
           const double eta = 20,
           const arma::vec& lowerBound = arma::zeros(1, 1),
-          const arma::vec& upperBound = arma::ones(1, 1));
+          const arma::vec& upperBound = ones(1, 1));
 
   /**
    * Constructor for the AGE-MOEA optimizer. This constructor provides an overload

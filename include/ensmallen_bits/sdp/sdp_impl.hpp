@@ -115,8 +115,8 @@ void SDP<ObjectiveMatrixType,
                                         MatType& dualCoordinates) const
 {
   coordinates = arma::eye<MatType>(c.n_rows, c.n_rows);
-  ySparse = arma::ones<MatType>(NumSparseConstraints(), 1);
-  yDense = arma::ones<MatType>(NumDenseConstraints(), 1);
+  ySparse = ones<MatType>(NumSparseConstraints(), 1);
+  yDense = ones<MatType>(NumDenseConstraints(), 1);
   dualCoordinates = arma::eye<MatType>(c.n_rows, c.n_rows);
 }
 
