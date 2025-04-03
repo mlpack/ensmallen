@@ -85,8 +85,7 @@ CD<DescentPolicyType>::Optimize(
       break;
 
     // Update the decision variable with the partial gradient.
-    /* iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx); */
-    iterate.col(featureIdx) -= gradient.col(featureIdx);
+    iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);
     terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
 
     // Check for convergence.
