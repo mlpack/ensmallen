@@ -135,8 +135,8 @@ class NadamUpdate
       const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
       const double biasCorrection3 = 1.0 - (cumBeta1 * beta1T1);
 
-      /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated
-       * as arma::sqrt(v) + epsilon
+      /* Note :- sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated
+       * as sqrt(v) + epsilon
        */
       iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
           + (beta1T1 / biasCorrection3) * m) * sqrt(biasCorrection2))

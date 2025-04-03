@@ -157,7 +157,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   {
     // Cache the distance between weights[i] and other weights.
     const arma::Row<ElemType> distances =
-        arma::sqrt(sum(arma::square(weights.col(i) - weights.each_col())));
+        sqrt(sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
     // Ignore distance from self.
     neighborIndices.col(i) = sortedIndices(span(1, neighborSize));

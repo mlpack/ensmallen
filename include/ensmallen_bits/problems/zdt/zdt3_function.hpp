@@ -162,7 +162,7 @@ namespace test {
         // Generate x and y coordinates for the region.
         arma::vec x = arma::linspace(
             region(0), region(1), regionDensity);
-        arma::vec y = 1 - arma::sqrt(x) - x
+        arma::vec y = 1 - sqrt(x) - x
             % arma::sin(10 * arma::datum::pi * x);
 
         // Fill the front with the generated points.
