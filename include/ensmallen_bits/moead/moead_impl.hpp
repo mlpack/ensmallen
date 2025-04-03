@@ -160,7 +160,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
     arma::uvec sortedIndices = arma::stable_sort_index(distances);
     // Ignore distance from self.
-    neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
+    neighborIndices.col(i) = sortedIndices(span(1, neighborSize));
   }
 
   // 1.2 Random generation of the initial population.

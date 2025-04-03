@@ -152,9 +152,9 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   MatType rhs = rp;
   const size_t numConstraints = aSparse.n_rows + aDense.n_rows;
   if (aSparse.n_rows)
-    rhs(arma::span(0, aSparse.n_rows - 1), 0) += aSparse * eInvFrdRc;
+    rhs(span(0, aSparse.n_rows - 1), 0) += aSparse * eInvFrdRc;
   if (aDense.n_rows)
-    rhs(arma::span(aSparse.n_rows, numConstraints - 1), 0) += aDense * eInvFrdRc;
+    rhs(span(aSparse.n_rows, numConstraints - 1), 0) += aDense * eInvFrdRc;
 
   if (!arma::solve(dy, m, rhs, arma::solve_opts::fast))
   {
@@ -166,12 +166,12 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   
   if (aSparse.n_rows)
   {
-    dySparse = dy(arma::span(0, aSparse.n_rows - 1), 0);
+    dySparse = dy(span(0, aSparse.n_rows - 1), 0);
     subTerm += aSparse.t() * dySparse;
   }
   if (aDense.n_rows)
   {
-    dyDense = dy(arma::span(aSparse.n_rows, numConstraints - 1), 0);
+    dyDense = dy(span(aSparse.n_rows, numConstraints - 1), 0);
     subTerm += aDense.t() * dyDense;
   }
 
@@ -321,12 +321,12 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     // by most practical solver implementations).
     if (sdp.NumSparseConstraints())
     {
-      rp(arma::span(0, sdp.NumSparseConstraints() - 1), 0) =
+      rp(span(0, sdp.NumSparseConstraints() - 1), 0) =
           sdp.SparseB() - aSparse * sx;
     }
     if (sdp.NumDenseConstraints())
     {
-      rp(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1), 0) =
+      rp(span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1), 0) =
           sdp.DenseB() - aDense * sx;
     }
 
@@ -359,13 +359,13 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     // we have to handle each block separately.
     if (sdp.NumSparseConstraints())
     {
-      m.submat(arma::span(0, sdp.NumSparseConstraints() - 1),
-               arma::span(0, sdp.NumSparseConstraints() - 1)) =
+      m.submat(span(0, sdp.NumSparseConstraints() - 1),
+               span(0, sdp.NumSparseConstraints() - 1)) =
           aSparse * eInvFaSparseT;
       if (sdp.NumDenseConstraints())
       {
-        m.submat(arma::span(0, sdp.NumSparseConstraints() - 1),
-                 arma::span(sdp.NumSparseConstraints(),
+        m.submat(span(0, sdp.NumSparseConstraints() - 1),
+                 span(sdp.NumSparseConstraints(),
                             sdp.NumConstraints() - 1)) =
             aSparse * eInvFaDenseT;
       }
@@ -374,15 +374,15 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     {
       if (sdp.NumSparseConstraints())
       {
-        m.submat(arma::span(sdp.NumSparseConstraints(),
+        m.submat(span(sdp.NumSparseConstraints(),
                             sdp.NumConstraints() - 1),
-                 arma::span(0,
+                 span(0,
                             sdp.NumSparseConstraints() - 1)) =
             aDense * eInvFaSparseT;
       }
-      m.submat(arma::span(sdp.NumSparseConstraints(),
+      m.submat(span(sdp.NumSparseConstraints(),
                           sdp.NumConstraints() - 1),
-               arma::span(sdp.NumSparseConstraints(),
+               span(sdp.NumSparseConstraints(),
                           sdp.NumConstraints() - 1)) =
           aDense * eInvFaDenseT;
     }

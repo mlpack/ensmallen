@@ -81,7 +81,7 @@ namespace test {
       objectives(0) = 1. - std::exp(-4 * coords[0]) *
           std::pow(std::sin(6 * arma::datum::pi * coords[0]), 6);
       ElemType sum = std::pow(
-          arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
+          arma::accu(coords(span(1, numVariables - 1), 0)) / 9, 0.25);
       ElemType g = 1. + 9. * sum;
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::pow(objectiveRatio, 2));
@@ -121,7 +121,7 @@ namespace test {
         size_t numVariables = zdtClass.numVariables;
 
         ElemType sum = std::pow(
-            arma::accu(coords(arma::span(1, numVariables - 1), 0)) / 9, 0.25);
+            arma::accu(coords(span(1, numVariables - 1), 0)) / 9, 0.25);
         ElemType g = 1. + 9. * sum;
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
