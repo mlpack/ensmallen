@@ -240,7 +240,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
   }
   else
   {
-    gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
+    gradient[j] = dot(-predictors.row(j - 1), diffs) + lambda *
       parameters(0, j);
   }
 }
@@ -260,7 +260,7 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
 //       parameters.tail_cols(parameters.n_elem - 1);
 
 //   const ElemType objectiveRegularization = lambda / 2.0 *
-//       arma::dot(parameters.tail_cols(parameters.n_elem - 1),
+//       dot(parameters.tail_cols(parameters.n_elem - 1),
 //                 parameters.tail_cols(parameters.n_elem - 1));
 
 //   // Calculate the sigmoid function values.

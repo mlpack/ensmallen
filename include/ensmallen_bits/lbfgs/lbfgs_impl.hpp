@@ -90,10 +90,10 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
     const arma::Mat<CubeElemType>& sMat = s.slice(previousPos);
     const arma::Mat<CubeElemType>& yMat = y.slice(previousPos);
 
-    const CubeElemType tmp   = arma::dot(yMat, yMat);
+    const CubeElemType tmp   = dot(yMat, yMat);
     const CubeElemType denom = (tmp >= tol) ? tmp : CubeElemType(1);
 
-    scalingFactor = arma::dot(sMat, yMat) / denom;
+    scalingFactor = dot(sMat, yMat) / denom;
   }
   else
   {
@@ -143,13 +143,13 @@ void L_BFGS::SearchDirection(const MatType& gradient,
     const arma::Mat<CubeElemType>& sMat = s.slice(translatedPosition);
     const arma::Mat<CubeElemType>& yMat = y.slice(translatedPosition);
 
-    const CubeElemType tmp = arma::dot(yMat, sMat);
+    const CubeElemType tmp = dot(yMat, sMat);
 
     rho[iterationNum - i] = (tmp != CubeElemType(0)) ? (1.0 / tmp) :
         CubeElemType(1);
 
     alpha[iterationNum - i] = rho[iterationNum - i] *
-        arma::dot(sMat, searchDirection);
+        dot(sMat, searchDirection);
 
     searchDirection -= alpha[iterationNum - i] * yMat;
   }

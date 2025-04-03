@@ -578,7 +578,7 @@ void AGEMOEA::PointToLineDistance(
     size_t ind = front[i];
  
     pa = (calculatedObjectives[ind] - pointA);
-    double t = arma::dot(pa, ba) / arma::dot(ba, ba);
+    double t = dot(pa, ba) / dot(ba, ba);
     distancesTemp[i] = arma::accu(pow((pa - t * ba), 2));
   }
   distances = distancesTemp;

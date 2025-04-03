@@ -53,7 +53,7 @@ class WeightedAverage
                                     const VecType& /* idealPoint */,
                                     const VecType& candidateFitness)
   {
-    return arma::dot(weight, candidateFitness);
+    return dot(weight, candidateFitness);
   }
 };
 
