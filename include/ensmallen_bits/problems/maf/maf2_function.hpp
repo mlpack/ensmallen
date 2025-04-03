@@ -98,15 +98,12 @@ namespace test {
        * @param coords The function coordinates.
        * @return arma::Row<typename MatType::elem_type>
        */
-      arma::Mat<typename MatType::elem_type> g(const MatType& coords)
+      MatType g(const MatType& coords)
       {
         size_t k = numVariables - numObjectives + 1;
         size_t c = std::floor(k / numObjectives);
-        // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
 
-        arma::Mat<ElemType> innerSum(numObjectives, size(coords)[1],
-            arma::fill::zeros);
+        MatType innerSum(numObjectives, size(coords)[1]);
 
         for (size_t i = 0; i < numObjectives; i++)
         {
@@ -124,15 +121,12 @@ namespace test {
        * Evaluate the objectives with the given coordinate.
        *
        * @param coords The function coordinates.
-       * @return arma::Mat<typename MatType::elem_type>
+       * @return MatType
        */
-      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
+      MatType Evaluate(const MatType& coords)
       {
-        // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
-
-        arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
-        arma::Mat<ElemType> G = g(coords);
+        MatType objectives(numObjectives, size(coords)[1]);
+        MatType G = g(coords);
         arma::Row<ElemType> value(size(coords)[1], arma::fill::ones);
         arma::Row<ElemType> theta;
         for (size_t i = 0; i < numObjectives - 1; i++)

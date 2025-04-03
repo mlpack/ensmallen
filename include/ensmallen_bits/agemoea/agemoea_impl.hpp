@@ -170,8 +170,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
     survivalScore.resize(population.size());
     std::fill(survivalScore.begin(), survivalScore.end(), 0.);
     double dimension;
-    arma::Col<typename MatType::elem_type> normalize(numObjectives, 
-        arma::fill::zeros);
+    arma::Col<typename MatType::elem_type> normalize(numObjectives);
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
       SurvivalScoreAssignment<BaseMatType>(fronts[fNum], idealPoint,
@@ -763,8 +762,7 @@ inline void AGEMOEA::SurvivalScoreAssignment(
 
     arma::Mat<ElemType> pairwise(front.size(), front.size());
     PairwiseDistance<MatType>(pairwise,calculatedObjectives,front,dimension);
-    arma::Row<typename MatType::elem_type> value(front.size(), 
-        arma::fill::zeros);
+    arma::Row<typename MatType::elem_type> value(front.size());
     
     // Calculate the diversity and proximity score.
     for (size_t i = 0; i < front.size(); i++)

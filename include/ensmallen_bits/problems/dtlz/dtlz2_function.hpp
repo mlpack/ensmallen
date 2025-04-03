@@ -125,14 +125,11 @@ namespace test {
        * Evaluate the objectives with the given coordinate.
        *
        * @param coords The function coordinates.
-       * @return arma::Mat<typename MatType::elem_type>
+       * @return MatType
        */
-      arma::Mat<typename MatType::elem_type> Evaluate(const MatType& coords)
+      MatType Evaluate(const MatType& coords)
       {
-        // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
-
-        arma::Mat<ElemType> objectives(numObjectives, size(coords)[1]);
+        MatType objectives(numObjectives, size(coords)[1]);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value = 0.5 * (1.0 + G);
         for(size_t i = 0; i < numObjectives - 1; i++)

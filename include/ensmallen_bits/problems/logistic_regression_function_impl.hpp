@@ -28,8 +28,7 @@ LogisticRegressionFunction<MatType, LabelsType>::LogisticRegressionFunction(
     responses(responses),
     lambda(lambda)
 {
-  initialPoint = arma::Row<typename MatType::elem_type>(predictors.n_rows + 1,
-      arma::fill::zeros);
+  initialPoint = arma::Row<typename MatType::elem_type>(predictors.n_rows + 1);
 
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
