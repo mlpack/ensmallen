@@ -27,6 +27,7 @@ namespace ens {
 using coot::abs;
 using coot::accu;
 using coot::clamp;
+using coot::cos;
 using coot::exp;
 using coot::dot;
 using coot::join_cols;
@@ -60,6 +61,7 @@ using coot::zeros;
 using arma::abs;
 using arma::accu;
 using arma::clamp;
+using arma::cos;
 using arma::exp;
 using arma::dot;
 using arma::join_cols;
