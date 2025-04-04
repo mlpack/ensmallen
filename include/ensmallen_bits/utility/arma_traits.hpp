@@ -151,6 +151,44 @@ struct tuple_element<N, T0, T...> {
     typedef typename tuple_element<N-1, T...>::type type;
 };
 
+// Get the row vector type corresponding to a given MatType.
+
+template<typename MatType>
+struct GetRowType { };
+
+template<typename eT>
+struct GetRowType<arma::Mat<eT>>
+{
+  using type = arma::Row<eT>;
+};
+
+template<typename eT>
+struct GetRowType<arma::SpMat<eT>>
+{
+  using type = arma::SpRow<eT>;
+};
+
+template<typename MatType>
+struct GetColType
+{
+  using type = arma::Col<typename MatType::elem_type>;
+};
+
+template<typename MatType>
+struct GetUColType { };
+
+template<typename eT>
+struct GetColType<arma::Mat<eT>>
+{
+  using type = arma::Col<eT>;
+};
+
+template<typename eT>
+struct GetColType<arma::SpMat<eT>>
+{
+  using type = arma::SpCol<eT>;
+};
+
 } // namespace ens
 
 #endif

@@ -86,6 +86,38 @@ struct IsCootType<coot::Mat<eT> >
   const static bool value = true;
 };
 
+// Get the row vector type corresponding to a given MatType.
+
+template<typename eT>
+struct GetRowType<coot::Mat<eT>>
+{
+  using type = coot::Row<eT>;
+};
+
+template<typename eT>
+struct GetRowType<coot::SpMat<eT>>
+{
+  using type = coot::SpRow<eT>;
+};
+
+template<typename MatType>
+struct GetColType
+{
+  using type = coot::Col<typename MatType::elem_type>;
+};
+
+template<typename eT>
+struct GetColType<coot::Mat<eT>>
+{
+  using type = coot::Col<eT>;
+};
+
+template<typename eT>
+struct GetColType<coot::SpMat<eT>>
+{
+  using type = coot::SpCol<eT>;
+};
+
 #endif
 
 
