@@ -139,7 +139,7 @@ namespace test {
           theta = 0.5 * (1.0  + 2.0 * coords.row(i) % G) / (1.0 + G);
           objectives.row(i) =  value %
               arma::sin(theta * arma::datum::pi * 0.5);
-          value = value % arma::cos(theta * arma::datum::pi * 0.5);
+          value = value % cos(theta * arma::datum::pi * 0.5);
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;

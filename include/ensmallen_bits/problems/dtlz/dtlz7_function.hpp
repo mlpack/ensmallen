@@ -138,7 +138,7 @@ namespace test {
         for(size_t i = 0;i < numObjectives - 1;i++)
         {
             innerSum -= coords.row(i) % (1.0 +
-                    arma::cos(arma::datum::pi * 3 * coords.row(i))) / (1 + G);
+                    cos(arma::datum::pi * 3 * coords.row(i))) / (1 + G);
         }
         return innerSum;
       }

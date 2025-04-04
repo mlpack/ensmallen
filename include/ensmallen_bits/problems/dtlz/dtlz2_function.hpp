@@ -136,7 +136,7 @@ namespace test {
         {
           objectives.row(i) =  value %
               arma::sin(coords.row(i) * arma::datum::pi * 0.5);
-          value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5);
+          value = value % cos(coords.row(i) * arma::datum::pi * 0.5);
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;

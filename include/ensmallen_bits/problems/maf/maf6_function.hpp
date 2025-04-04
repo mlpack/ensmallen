@@ -155,7 +155,7 @@ namespace test {
           }
           objectives.row(i) =  value %
               arma::sin(theta);
-          value = value % arma::cos(theta);
+          value = value % cos(theta);
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;

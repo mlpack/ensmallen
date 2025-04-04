@@ -119,7 +119,7 @@ namespace test {
         for(size_t i = numObjectives - 1; i < numVariables; i++)
         {
           innerSum += pow((coords.row(i) - 0.5), 2) -
-              arma::cos(20 * arma::datum::pi * (coords.row(i) - 0.5));
+              cos(20 * arma::datum::pi * (coords.row(i) - 0.5));
         }
 
         return 100 * (k + innerSum);
@@ -140,7 +140,7 @@ namespace test {
         {
           objectives.row(i) =  value %
               arma::sin(coords.row(i) * arma::datum::pi * 0.5);
-          value = value % arma::cos(coords.row(i) * arma::datum::pi * 0.5);
+          value = value % cos(coords.row(i) * arma::datum::pi * 0.5);
         }
         objectives.row(numObjectives - 1) = value;
         return objectives;

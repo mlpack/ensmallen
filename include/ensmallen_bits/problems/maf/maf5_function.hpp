@@ -162,7 +162,7 @@ namespace test {
           objectives.row(i) = std::pow(a, i + 1) * pow(value, 4) %
               pow(arma::sin(pow(coords.row(i), alpha) *
               arma::datum::pi * 0.5), 4);
-          value = value % arma::cos(pow(coords.row(i), alpha) * arma::datum::pi * 0.5);
+          value = value % cos(pow(coords.row(i), alpha) * arma::datum::pi * 0.5);
         }
         objectives.row(numObjectives - 1) = pow(value, 4) * std::pow(a, numObjectives);
         return objectives;
