@@ -322,7 +322,7 @@ inline const arma::mat& LovaszThetaSDP::GetInitialPoint()
   // and because m is always positive,
   //   r = 0.5 + sqrt(0.25 + 2m)
   float m = NumConstraints();
-  float r = 0.5 + sqrt(0.25 + 2 * m);
+  float r = 0.5 + std::sqrt(0.25 + 2 * m);
   if (ceil(r) > vertices)
     r = vertices; // An upper bound on the dimension.
 
@@ -335,9 +335,9 @@ inline const arma::mat& LovaszThetaSDP::GetInitialPoint()
     for (size_t j = 0; j < (size_t) vertices; j++)
     {
       if (i == j)
-        initialPoint(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices * m));
+        initialPoint(i, j) = std::sqrt(1.0 / r) + std::sqrt(1.0 / (vertices * m));
       else
-        initialPoint(i, j) = sqrt(1.0 / (vertices * m));
+        initialPoint(i, j) = std::sqrt(1.0 / (vertices * m));
     }
   }
 

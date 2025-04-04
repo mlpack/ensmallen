@@ -278,7 +278,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
     }
 
     // Update covariance matrix.
-    if ((psNorm / sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
+    if ((psNorm / std::sqrt(1 - std::pow(1 - cs, 2 * i))) < h)
     {
       pc[idx1] = (1 - cc) * pc[idx0] + std::sqrt(cc * (2 - cc) *
         muEffective) * step;

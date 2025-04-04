@@ -482,8 +482,8 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
 
     const double sparsePrimalInfeas = norm(sdp.SparseB() - aSparse * sx,
         2);
-    const double densePrimalInfeas = norm(sdp.DenseB() - aDense * sx, 2);
-    const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
+    const double densePrimalInfeas = arma::norm(sdp.DenseB() - aDense * sx, 2);
+    const double primalInfeas = std::sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
         densePrimalInfeas * densePrimalInfeas);
 
     primalObj = dot(sdp.C(), coordinates);

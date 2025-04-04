@@ -110,7 +110,7 @@ class SphereFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const
   {
-    return conv_to<MatType>::From(initialPoint);
+    return conv_to<MatType>::from(initialPoint);
   }
 
   // Get the final point.
