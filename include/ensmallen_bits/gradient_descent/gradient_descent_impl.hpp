@@ -42,9 +42,9 @@ GradientDescent::Optimize(FunctionType& function,
                           CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
-  typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+  using ElemType = typename MatType::elem_type;
+  using BaseMatType = typename MatTypeTraits<MatType>::BaseMatType;
+  using BaseGradType = typedef typename MatTypeTraits<GradType>::BaseMatType;
 
   // Use the Function<> wrapper type to provide additional functionality.
   typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
