@@ -90,7 +90,7 @@ class RosenbrockWoodFunction
   template<typename MatTypeIn = arma::mat>
   const MatType GetInitialPoint() const
   {
-    return conv_to<MatType>::from(initialPoint);
+    return ConvTo<MatType>::From(initialPoint);
   }
 
   // Get the final point.
