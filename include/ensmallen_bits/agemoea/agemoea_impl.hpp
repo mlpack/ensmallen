@@ -354,7 +354,7 @@ inline void AGEMOEA::Crossover(MatType& childA,
     MatType alpha1 = 2 - pow(beta1, -(eta + 1));
     MatType alpha2 = 2 - pow(beta2, -(eta + 1));
 
-    MatType us(arma::size(alpha1), arma::fill::randu);
+    MatType us(size(alpha1), arma::fill::randu);
     arma::umat mask1 = us > (1.0 / alpha1); 
     MatType betaq1 = pow(us % alpha1, 1. / (eta + 1));
     betaq1 = betaq1 % (mask1 != 1.0) + pow((1.0 / (2.0 - us % alpha1)),

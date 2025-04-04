@@ -63,7 +63,7 @@ inline void SparseTestFunction::Gradient(const MatType& coordinates,
                                          GradType& gradient,
                                          const size_t batchSize) const
 {
-  gradient.zeros(arma::size(coordinates));
+  gradient.zeros(size(coordinates));
   for (size_t j = i; j < i + batchSize; ++j)
     gradient[j] = 2 * coordinates[j] + bi[j];
 }
@@ -74,7 +74,7 @@ inline void SparseTestFunction::PartialGradient(const MatType& coordinates,
                                                 const size_t j,
                                                 GradType& gradient) const
 {
-  gradient.zeros(arma::size(coordinates));
+  gradient.zeros(size(coordinates));
   gradient[j] = 2 * coordinates[j] + bi[j];
 }
 

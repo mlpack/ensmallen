@@ -90,7 +90,7 @@ class Atoms
       // Solve for current gradient.
       arma::mat x;
       RecoverVector(x);
-      arma::mat gradient(arma::size(x));
+      arma::mat gradient(size(x));
       function.Gradient(x, gradient);
 
       // Find possible atom to be deleted.

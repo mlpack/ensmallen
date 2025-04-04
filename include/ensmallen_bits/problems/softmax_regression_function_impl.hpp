@@ -311,7 +311,7 @@ inline void SoftmaxRegressionFunction::PartialGradient(
     const size_t j,
     arma::sp_mat& gradient) const
 {
-  gradient.zeros(arma::size(parameters));
+  gradient.zeros(size(parameters));
 
   arma::mat probabilities;
   GetProbabilitiesMatrix(parameters, probabilities, 0, data.n_cols);

@@ -178,7 +178,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
 //   const arma::Row<ElemType> sigmoids = (1 / (1 + exp(-parameters(0, 0)
 //       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
-//   gradient.set_size(arma::size(parameters));
+//   gradient.set_size(size(parameters));
 //   gradient[0] = -accu(responses - sigmoids);
 //   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
 //       predictors.t() + regularization;
@@ -232,7 +232,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
                           parameters.tail_cols(parameters.n_elem - 1) *
                               predictors)));
 
-  gradient.set_size(arma::size(parameters));
+  gradient.set_size(size(parameters));
 
   if (j == 0)
   {
@@ -268,7 +268,7 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
 //       exp(-(parameters(0, 0) +
 //                   parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
-//   gradient.set_size(arma::size(parameters));
+//   gradient.set_size(size(parameters));
 //   gradient[0] = -accu(responses - sigmoids);
 //   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
 //       predictors.t() + regularization;
