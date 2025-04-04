@@ -88,7 +88,7 @@ class ConstrLpBallSolver
     if (p == std::numeric_limits<double>::infinity())
     {
       // l-inf ball.
-      s = -arma::sign(v);
+      s = -sign(v);
       if (regFlag)
       {
         // Do element-wise division.
@@ -104,7 +104,7 @@ class ConstrLpBallSolver
         s = v;
 
       double q = 1 / (1.0 - 1.0 / p);
-      s = -arma::sign(v) % pow(abs(s), q - 1);
+      s = -sign(v) % pow(abs(s), q - 1);
       s = normalise(s, p);
 
       if (regFlag)
