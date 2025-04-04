@@ -354,7 +354,7 @@ inline void AGEMOEA::Crossover(MatType& childA,
     MatType alpha1 = 2 - pow(beta1, -(eta + 1));
     MatType alpha2 = 2 - pow(beta2, -(eta + 1));
 
-    MatType us(size(alpha1), arma::fill::randu);
+    MatType us(size(alpha1), GetFillType<MatType>::randu);
     arma::umat mask1 = us > (1.0 / alpha1); 
     MatType betaq1 = pow(us % alpha1, 1. / (eta + 1));
     betaq1 = betaq1 % (mask1 != 1.0) + pow((1.0 / (2.0 - us % alpha1)),
@@ -456,7 +456,7 @@ inline void AGEMOEA::NormalizeFront(
     normalization = max(vectorizedObjectives, 1);
     return;
   }
-  arma::Col<ElemType> one(extreme.n_elem, arma::fill::ones);
+  arma::Col<ElemType> one(extreme.n_elem, GetFillType<MatType>::ones);
   arma::Col<ElemType> hyperplane(numObjectives);
   try{
     hyperplane = arma::solve(
@@ -493,7 +493,7 @@ inline double AGEMOEA::GetGeometry(
   using ElemType = typename MatType::elem_type;
   arma::Row<ElemType> d;
   arma::Col<ElemType> zero(numObjectives);
-  arma::Col<ElemType> one(numObjectives, arma::fill::ones);
+  arma::Col<ElemType> one(numObjectives, GetFillType<MatType>::ones);
 
   PointToLineDistance<MatType> (d, calculatedObjectives, front, zero, one);
 

@@ -127,7 +127,7 @@ namespace test {
       {
         MatType objectives(numObjectives, size(coords)[1]);
         MatType G = g(coords);
-        arma::Row<ElemType> value(size(coords)[1], arma::fill::ones);
+        arma::Row<ElemType> value(size(coords)[1], GetFillType<MatType>::ones);
         arma::Row<ElemType> theta;
         for (size_t i = 0; i < numObjectives - 1; i++)
         {

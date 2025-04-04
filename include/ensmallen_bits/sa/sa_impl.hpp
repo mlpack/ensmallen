@@ -77,7 +77,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   size_t sweepCounter = 0;
 
   BaseMatType accept(rows, cols);
-  BaseMatType moveSize(rows, cols, arma::fill::none);
+  BaseMatType moveSize(rows, cols, GetFillType<MatType>::none);
   moveSize.fill(initMoveCoef);
 
   Callback::BeginOptimization(*this, function, iterate, callbacks...);

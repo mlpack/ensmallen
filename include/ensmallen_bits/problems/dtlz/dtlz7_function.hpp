@@ -133,7 +133,7 @@ namespace test {
         // Convenience typedef.
         typedef typename MatType::elem_type ElemType;
 
-        arma::Row<ElemType> innerSum(size(coords)[1], arma::fill::ones);
+        arma::Row<ElemType> innerSum(size(coords)[1], GetFillType<MatType>::ones);
         innerSum = innerSum * numObjectives;
         for(size_t i = 0;i < numObjectives - 1;i++)
         {

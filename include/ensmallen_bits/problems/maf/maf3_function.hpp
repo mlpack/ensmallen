@@ -122,7 +122,7 @@ namespace test {
        */
       MatType Evaluate(const MatType& coords)
       {
-        MatType objectives(numObjectives, size(coords)[1], arma::fill::ones);
+        MatType objectives(numObjectives, size(coords)[1], GetFillType<MatType>::ones);
         arma::Row<ElemType> G = g(coords);
         arma::Row<ElemType> value = (1.0 + G);
         for (size_t i = 0; i < numObjectives - 1; i++)

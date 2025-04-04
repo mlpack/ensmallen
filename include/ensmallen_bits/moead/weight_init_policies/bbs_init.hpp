@@ -59,7 +59,7 @@ class BayesianBootstrap
       MatType weights(numObjectives, numPoints);
       for (size_t pointIdx = 0; pointIdx < numPoints; ++pointIdx)
       {
-        VecType referenceDirection(numObjectives + 1, arma::fill::randu);
+        VecType referenceDirection(numObjectives + 1, GetFillType<MatType>::randu);
         referenceDirection(0) = 0;
         referenceDirection(numObjectives) = 1;
         referenceDirection = arma::sort(referenceDirection);
