@@ -168,14 +168,14 @@ struct GetRowType<arma::SpMat<eT>>
   using type = arma::SpRow<eT>;
 };
 
-template<typename MatType>
-struct GetColType
+template<typename eT>
+struct GetRowType<arma::Cube<eT>>
 {
-  using type = arma::Col<typename MatType::elem_type>;
+  using type = arma::Row<eT>;
 };
 
 template<typename MatType>
-struct GetUColType { };
+struct GetColType { };
 
 template<typename eT>
 struct GetColType<arma::Mat<eT>>
@@ -187,6 +187,93 @@ template<typename eT>
 struct GetColType<arma::SpMat<eT>>
 {
   using type = arma::SpCol<eT>;
+};
+
+template<typename eT>
+struct GetColType<arma::Cube<eT>>
+{
+  using type = arma::Col<eT>;
+};
+
+template<typename MatType>
+struct GetCubeType { };
+
+template<typename eT>
+struct GetCubeType<arma::Mat<eT>>
+{
+  using type = arma::Cube<eT>;
+};
+
+template<typename eT>
+struct GetCubeType<arma::SpMat<eT>>
+{
+  using type = arma::Cube<eT>;
+};
+
+template<typename eT>
+struct GetCubeType<arma::Row<eT>>
+{
+  using type = arma::Cube<eT>;
+};
+
+template<typename eT>
+struct GetCubeType<arma::Col<eT>>
+{
+  using type = arma::Cube<eT>;
+};
+
+template<typename MatType>
+struct GetMatType { };
+
+template<typename eT>
+struct GetMatType<arma::Row<eT>>
+{
+  using type = arma::Mat<eT>;
+};
+
+template<typename eT>
+struct GetMatType<arma::SpMat<eT>>
+{
+  using type = arma::Mat<eT>;
+};
+
+template<typename eT>
+struct GetMatType<arma::Col<eT>>
+{
+  using type = arma::Mat<eT>;
+};
+
+template<typename eT>
+struct GetMatType<arma::Cube<eT>>
+{
+  using type = arma::Mat<eT>;
+};
+
+template<typename SpMatType>
+struct GetSpMatType { };
+
+template<typename eT>
+struct GetSpMatType<arma::Row<eT>>
+{
+  using type = arma::SpMat<eT>;
+};
+
+template<typename eT>
+struct GetSpMatType<arma::Col<eT>>
+{
+  using type = arma::SpMat<eT>;
+};
+
+template<typename eT>
+struct GetSpMatType<arma::Mat<eT>>
+{
+  using type = arma::SpMat<eT>;
+};
+
+template<typename eT>
+struct GetSpMatType<arma::Cube<eT>>
+{
+  using type = arma::SpMat<eT>;
 };
 
 } // namespace ens

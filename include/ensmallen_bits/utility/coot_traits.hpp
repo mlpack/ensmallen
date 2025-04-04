@@ -95,15 +95,9 @@ struct GetRowType<coot::Mat<eT>>
 };
 
 template<typename eT>
-struct GetRowType<coot::SpMat<eT>>
+struct GetRowType<coot::Cube<eT>>
 {
-  using type = coot::SpRow<eT>;
-};
-
-template<typename MatType>
-struct GetColType
-{
-  using type = coot::Col<typename MatType::elem_type>;
+  using type = coot::Row<eT>;
 };
 
 template<typename eT>
@@ -113,13 +107,48 @@ struct GetColType<coot::Mat<eT>>
 };
 
 template<typename eT>
-struct GetColType<coot::SpMat<eT>>
+struct GetColType<coot::Cube<eT>>
 {
-  using type = coot::SpCol<eT>;
+  using type = coot::Col<eT>;
+};
+
+template<typename eT>
+struct GetCubeType<coot::Mat<eT>>
+{
+  using type = coot::Cube<eT>;
+};
+
+template<typename eT>
+struct GetCubeType<coot::Row<eT>>
+{
+  using type = coot::Cube<eT>;
+};
+
+template<typename eT>
+struct GetCubeType<coot::Col<eT>>
+{
+  using type = coot::Cube<eT>;
+};
+
+template<typename eT>
+struct GetMatType<coot::Row<eT>>
+{
+  using type = coot::Mat<eT>;
+};
+
+template<typename eT>
+struct GetMatType<coot::Col<eT>>
+{
+  using type = coot::Mat<eT>;
+};
+
+template<typename eT>
+struct GetMatType<coot::Cube<eT>>
+{
+  using type = coot::Mat<eT>;
 };
 
 #endif
-
 
 } // namespace ens
 
