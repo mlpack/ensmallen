@@ -38,6 +38,7 @@ target_include_directories(ensmallen INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   /usr/local/cuda/include
+  /opt/cuda/targets/x86_64-linux/include/
   )
 
 # Set warning flags for target.

@@ -76,8 +76,9 @@ typename MatType::elem_type AGEMOEA::Optimize(
   }
 
   // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  using ElemType = typename MatType::elem_type;
+  using ColType = typename GetColType<MatType>::type;
+  using BaseMatType = typename MatTypeTraits<MatType>::BaseMatType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
@@ -104,7 +105,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
   numVariables = iterate.n_rows;
 
   // Cache calculated objectives.
-  std::vector<arma::Col<ElemType> > calculatedObjectives(populationSize);
+  std::vector<ColType> calculatedObjectives(populationSize);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
@@ -152,14 +153,14 @@ typename MatType::elem_type AGEMOEA::Optimize(
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
     std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
-        arma::Col<ElemType>(numObjectives));
+        ColType(numObjectives));
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
     ranks.resize(population.size());
     FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
     
-    arma::Col<ElemType> idealPoint(calculatedObjectives[fronts[0][0]]);
+    ColType idealPoint(calculatedObjectives[fronts[0][0]]);
     for (size_t index = 1; index < fronts[0].size(); index++)
     {
       idealPoint = min(idealPoint,
@@ -170,7 +171,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
     survivalScore.resize(population.size());
     std::fill(survivalScore.begin(), survivalScore.end(), 0.);
     double dimension;
-    arma::Col<typename MatType::elem_type> normalize(numObjectives);
+    ColType normalize(numObjectives);
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
       SurvivalScoreAssignment<BaseMatType>(fronts[fNum], idealPoint,
@@ -238,7 +239,7 @@ typename MatType::elem_type AGEMOEA::Optimize(
 
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for (const arma::Col<ElemType>& objective: calculatedObjectives)
+  for (const ColType& objective: calculatedObjectives)
     if (accu(objective) < performance)
       performance = accu(objective);
 
