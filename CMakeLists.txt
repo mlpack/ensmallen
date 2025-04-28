@@ -1,7 +1,7 @@
 # ensmallen CMake configuration.  This project has no configurable options---it
 # just installs the headers to the install location, and optionally builds the
 # test program.
-cmake_minimum_required(VERSION 3.3.2...3.5)
+cmake_minimum_required(VERSION 3.5..4.0)
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")  # ensure the tests are built with optimisation
 endif ()
