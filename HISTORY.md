@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 2.22.2: "E-Bike Excitement"
+###### 2025-04-30
  * Fix include statement in `tests/de_test.cpp`
    ([#419](https://github.com/mlpack/ensmallen/pull/419)).
 
