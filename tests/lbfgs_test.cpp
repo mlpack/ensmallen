@@ -18,6 +18,23 @@ using namespace ens;
 using namespace ens::test;
 
 /**
+ * Tests the L-BFGS optimizer on the NIST functions.
+ */
+TEST_CASE("LBFGSNISTTest", "[LBFGSTest]")
+{
+  // We use a simple instance of the L-BFGS optimizer just to test if the
+  // optimizer is able to solve one problem from the NIST test suite.
+  L_BFGS lbfgs(2);
+  lbfgs.MaxIterations() = 20;
+
+  NISTProblems<L_BFGS> nistProblems(lbfgs);
+  arma::vec results = nistProblems.Evaluate();
+
+  // Just check if the result isn't zero, so at least one problem is solved.
+  REQUIRE(arma::accu(results) != 0);
+}
+
+/**
  * Tests the L-BFGS optimizer using the Rosenbrock Function.
  */
 TEST_CASE("RosenbrockFunctionTest", "[LBFGSTest]")
