@@ -1,0 +1,51 @@
+name: Build and Test
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    outputs:
+        tag: ${{ steps.git.outputs.tag }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: 'CUDA', os: self-hosted}
+          - { name: 'OpenCL', os: self-hosted}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Dependencies
+      run: |
+        cd ../
+        git clone --depth 1 --branch 2.1.1 https://gitlab.com/bandicoot-lib/bandicoot-code.git
+        cd bandicoot-code/
+        mkdir build/
+        cd build/
+
+        if [[ "${{ matrix.config.name }}" == "CUDA" ]]; then
+            echo "Installing Bandicoot CUDA"
+            cmake -DFIND_CUDA=ON -DFIND_OPENCL=OFF -DBUILD_TESTS=OFF ../
+        elif [[ "${{ matrix.config.name }}" == "OpenCL" ]]; then
+            echo "Installing Bandicoot OpenCL"
+            cmake -DFIND_CUDA=OFF -DFIND_OPENCL=ON -DBUILD_TESTS=OFF ../
+        fi
+
+        make
+
+    - name: Build ensmallen
+      run: |
+          mkdir build
+          cd build/
+
+          cmake -DBANDICOOT_INCLUDE_DIR=../../bandicoot-code/include/ ..
+          make ensmallen_tests
+
+    - name: Build ensmallen
+      run: |
+          cd build/
+          if [[ "${{ matrix.config.name }}" == "CUDA" ]]; then
+              COOT_DEFAULT_BACKEND=CUDA_BACKEND ./ensmallen_tests
+          elif [[ "${{ matrix.config.name }}" == "OpenCL" ]]; then
+              COOT_DEFAULT_BACKEND=CL_BACKEND ./ensmallen_tests
+          fi
