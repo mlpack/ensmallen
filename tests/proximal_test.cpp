@@ -13,8 +13,8 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
-using namespace arma;
 using namespace ens;
+using namespace arma;
 using namespace ens::test;
 
 /**
@@ -72,7 +72,7 @@ TEST_CASE("ProjectToL0", "[ProximalTest]")
   {
     // Randomly find a subset of the support of v, generate a tau-sparse
     // vector by restricting v to this support.
-    uvec indices = linspace<uvec>(0, D - 1, D);
+    uvec indices = ens::linspace<uvec>(0, D - 1, D);
     indices = shuffle(indices);
     indices = indices.head(tau);
     vec vNew = zeros<vec>(D);
