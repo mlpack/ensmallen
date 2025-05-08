@@ -47,6 +47,7 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardType<MatType>::uvec UVecType;
 
   // Make sure that we have the methods that we need.  Long name...
   traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
@@ -56,7 +57,7 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
   // Vector of fitness values corresponding to each candidate.
   BaseMatType fitnessValues;
   //! Index of sorted fitness values.
-  arma::uvec index;
+  UVecType index;
 
   // Make sure for evolution to work at least four candidates are present.
   if (populationSize < 4)
@@ -93,7 +94,7 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
   std::vector<BaseMatType> population;
   for (size_t i = 0 ; i < populationSize; ++i)
   {
-    population.push_back(arma::randn<BaseMatType>(iterate.n_rows,
+    population.push_back(randn<BaseMatType>(iterate.n_rows,
         iterate.n_cols) + iterate);
   }
 
@@ -164,13 +165,13 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
 }
 
 //! Reproduce candidates to create the next generation.
-template<typename MatType>
+template<typename MatType, typename IndexType>
 inline void CNE::Reproduce(std::vector<MatType>& population,
                            const MatType& fitnessValues,
-                           arma::uvec& index)
+                           IndexType& index)
 {
   // Sort fitness values. Smaller fitness value means better performance.
-  index = arma::sort_index(fitnessValues);
+  index = sort_index(fitnessValues);
 
   // First parent.
   size_t mom;
@@ -241,16 +242,17 @@ inline void CNE::Crossover(std::vector<MatType>& population,
 }
 
 //! Modify weights with some noise for the evolution of next generation.
-template<typename MatType>
-inline void CNE::Mutate(std::vector<MatType>& population, arma::uvec& index)
+template<typename MatType, typename IndexType>
+inline void CNE::Mutate(std::vector<MatType>& population, IndexType& index)
 {
   // Mutate the whole matrix with the given rate and probability.
   // The best candidate is not altered.
   for (size_t i = 1; i < populationSize; i++)
   {
-    population[index(i)] += (arma::randu<MatType>(population[index(i)].n_rows,
+    population[index(i)] += conv_to<MatType>::from(
+        randu<MatType>(population[index(i)].n_rows,
         population[index(i)].n_cols) < mutationProb) %
-        (mutationSize * arma::randn<MatType>(population[index(i)].n_rows,
+        (mutationSize * randn<MatType>(population[index(i)].n_rows,
         population[index(i)].n_cols));
   }
 }

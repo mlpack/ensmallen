@@ -29,7 +29,7 @@ struct ForwardType
 
     typedef typename std::conditional<IsArmaType<MatType>::value,
         arma::Col<ElemType>, coot::Col<ElemType>>::type bvec;
-    
+
     typedef typename std::conditional<IsArmaType<MatType>::value,
         arma::Row<ElemType>, coot::Row<ElemType>>::type brow;
 
@@ -116,6 +116,24 @@ typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
 randn(const size_t rows, const size_t cols)
 {
   return arma::randn<ElemType>(rows, cols);
+}
+
+template<typename ElemType>
+typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
+randu(const size_t rows, const size_t cols)
+{
+  #ifdef USE_COOT
+  return coot::randu<ElemType>(rows, cols);
+  #else
+  return arma::randu<ElemType>(rows, cols);
+  #endif
+}
+
+template<typename ElemType>
+typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
+randu(const size_t rows, const size_t cols)
+{
+  return arma::randu<ElemType>(rows, cols);
 }
 
 template<typename OutputType>

@@ -35,14 +35,24 @@ namespace ens {
 template<typename MatType>
 inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
 {
-  MatType simplexSol = arma::abs(v);
+  MatType simplexSol = abs(v);
 
   // Already with L1 norm <= tau.
-  if (arma::accu(simplexSol) <= tau)
+  if (accu(simplexSol) <= tau)
     return;
 
-  simplexSol = arma::sort(simplexSol, "descend");
-  MatType simplexSum = arma::cumsum(simplexSol);
+  simplexSol = sort(simplexSol, "descend");
+  // MatType simplexSum = arma::cumsum(simplexSol);
+  MatType simplexSum(simplexSol.n_rows, simplexSol.n_cols);
+  for (size_t col = 0; col < simplexSol.n_cols; ++col)
+  {
+      simplexSum(0, col) = simplexSol(0, col);
+      for (size_t row = 1; row < simplexSol.n_rows; ++row)
+      {
+          simplexSum(row, col) = simplexSum(row - 1, col) +
+              simplexSol(row, col);
+      }
+  }
 
   double nu = 0;
   size_t rho = simplexSol.n_rows - 1;
@@ -72,10 +82,15 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
 template<typename MatType>
 inline void Proximal::ProjectToL0Ball(MatType& v, int tau)
 {
-  arma::uvec indices = arma::sort_index(arma::abs(v));
-  arma::uword numberToKill = v.n_elem - tau;
+  typedef typename ForwardType<MatType>::uword UWordType;
+  typedef typename ForwardType<MatType>::uvec UVecType;
+  typedef typename ForwardType<MatType>::bvec VecType;
 
-  for (arma::uword i = 0; i < numberToKill; i++)
+  const VecType vTemp = conv_to<VecType>::from(abs(v));
+  UVecType indices = sort_index(vTemp);
+  UWordType numberToKill = v.n_elem - tau;
+
+  for (UWordType i = 0; i < numberToKill; i++)
     v(indices(i)) = 0.0;
 }
 

@@ -42,7 +42,7 @@ jobs:
           cmake -DBANDICOOT_INCLUDE_DIR=../../bandicoot-code/include/ ..
           make ensmallen_tests
 
-    - name: Build ensmallen
+    - name: Test ensmallen
       run: |
           cd build/
           if [[ "${{ matrix.config.name }}" == "CUDA" ]]; then
