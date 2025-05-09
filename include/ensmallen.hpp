@@ -76,6 +76,7 @@
 #include "ensmallen_bits/utility/proxies.hpp"
 #include "ensmallen_bits/utility/arma_traits.hpp"
 #include "ensmallen_bits/utility/coot_traits.hpp"
+#include "ensmallen_bits/utility/using.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"
 #include "ensmallen_bits/utility/indicators/igd.hpp"
 #include "ensmallen_bits/utility/indicators/igd_plus.hpp"

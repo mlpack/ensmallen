@@ -60,12 +60,14 @@ namespace ens {
  *
  *    double Evaluate(const arma::mat& x);
  *
+ * @tparam MatType Type of matrix to optimize.
  * @tparam VelocityUpdatePolicy Velocity update policy. By default LBest update
  *     policy (see ens::LBestUpdate) is used.
  * @tparam InitPolicy Particle initialization policy. By default DefaultInit
  *     policy (see ens::DefaultInit) is used.
  */
-template<typename VelocityUpdatePolicy = LBestUpdate,
+template<typename MatType = arma::mat,
+         typename VelocityUpdatePolicy = LBestUpdate,
          typename InitPolicy = DefaultInit>
 class PSOType
 {
@@ -88,8 +90,10 @@ class PSOType
    * @param initPolicy Particle initialization policy.
    */
   PSOType(const size_t numParticles = 64,
-          const arma::mat& lowerBound = arma::ones(1, 1),
-          const arma::mat& upperBound = arma::ones(1, 1),
+          const MatType& lowerBound =
+              MatType(1, 1, GetFillType<MatType>::zeros),
+          const MatType& upperBound =
+              MatType(1, 1, GetFillType<MatType>::ones),
           const size_t maxIterations = 3000,
           const size_t horizonSize = 350,
           const double impTolerance = 1e-10,
@@ -145,8 +149,8 @@ class PSOType
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
-          lowerBound(lowerBound * arma::ones(1, 1)),
-          upperBound(upperBound * arma::ones(1, 1)),
+          lowerBound(lowerBound * MatType(1, 1, GetFillType<MatType>::ones)),
+          upperBound(upperBound * MatType(1, 1, GetFillType<MatType>::ones)),
           maxIterations(maxIterations),
           horizonSize(horizonSize),
           impTolerance(impTolerance),
@@ -163,7 +167,7 @@ class PSOType
    * returned.
    *
    * @tparam ArbitraryFunctionType Type of the function to be optimized.
-   * @tparam MatType Type of matrix to optimize.
+   * @tparam InputMatType Type of matrix to optimize.
    * @tparam CallbackTypes Types of callback functions.
    * @param function Function to be optimized.
    * @param iterate Initial point (will be modified).
@@ -171,11 +175,11 @@ class PSOType
    * @return Objective value of the final point.
    */
   template<typename ArbitraryFunctionType,
-           typename MatType,
+           typename InputMatType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(ArbitraryFunctionType& function,
-                                       MatType& iterate,
-                                       CallbackTypes&&... callbacks);
+  typename InputMatType::elem_type Optimize(ArbitraryFunctionType& function,
+                                            InputMatType& iterate,
+                                            CallbackTypes&&... callbacks);
 
   //! Retrieve value of numParticles.
   size_t NumParticles() const { return numParticles; }
@@ -183,14 +187,14 @@ class PSOType
   size_t& NumParticles() { return numParticles; }
 
   //! Retrieve value of lowerBound.
-  const arma::mat& LowerBound() const { return lowerBound; }
+  const MatType& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
-  arma::mat& LowerBound() { return lowerBound; }
+  MatType& LowerBound() { return lowerBound; }
 
   //! Retrieve value of upperBound.
-  const arma::mat& UpperBound() const { return upperBound; }
+  const MatType& UpperBound() const { return upperBound; }
   //! Modify value of upperBound.
-  arma::mat& UpperBound() { return upperBound; }
+  MatType& UpperBound() { return upperBound; }
 
   //! Retrieve value of maxIterations.
   size_t MaxIterations() const { return maxIterations; }
@@ -237,10 +241,10 @@ class PSOType
   size_t numParticles;
 
   //! Lower bound of the initial swarm.
-  arma::mat lowerBound;
+  MatType lowerBound;
 
   //! Upper bound of the initial swarm.
-  arma::mat upperBound;
+  MatType upperBound;
 
   //! Maximum number of iterations for which the optimizer will run.
   size_t maxIterations;
@@ -259,6 +263,7 @@ class PSOType
 
   //! Velocity update policy used.
   VelocityUpdatePolicy velocityUpdatePolicy;
+
   //! Particle initialization policy used.
   InitPolicy initPolicy;
 
@@ -266,7 +271,7 @@ class PSOType
   Any instUpdatePolicy;
 };
 
-using LBestPSO = PSOType<LBestUpdate>;
+using LBestPSO = PSOType<arma::mat, LBestUpdate, DefaultInit>;
 } // ens
 
 #include "pso_impl.hpp"

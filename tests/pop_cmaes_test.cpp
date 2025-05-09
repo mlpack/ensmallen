@@ -39,8 +39,8 @@ TEST_CASE("IPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
     1e6 // maxFunctionEvaluations
   );
 
-  arma::mat initialPoint = f.GetInitialPoint();
-  arma::mat expectedResult = f.GetFinalPoint();
+  arma::mat initialPoint = f.GetInitialPoint<arma::mat>();
+  arma::mat expectedResult = f.GetFinalPoint<arma::mat>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.5, f.GetFinalObjective(), 0.5, 5);
 }
@@ -67,8 +67,8 @@ TEST_CASE("BIPOPCMAESRastriginFunctionTest", "[POPCMAESTest]")
     1e6 // maxFunctionEvaluations
   );
 
-  arma::mat initialPoint = f.GetInitialPoint();
-  arma::mat expectedResult = f.GetFinalPoint();
+  arma::mat initialPoint = f.GetInitialPoint<arma::mat>();
+  arma::mat expectedResult = f.GetFinalPoint<arma::mat>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult, 0.5, f.GetFinalObjective(), 0.5, 5);
 }

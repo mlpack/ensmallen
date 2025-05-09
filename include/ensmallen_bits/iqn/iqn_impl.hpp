@@ -84,8 +84,8 @@ IQN::Optimize(SeparableFunctionType& functionIn,
       iterate.n_cols));
   std::vector<BaseMatType> Q(numBatches, BaseMatType(iterate.n_elem,
       iterate.n_elem));
-  BaseMatType initialIterate = randn<ProxyMatType>(iterate.n_rows,
-      iterate.n_cols);
+  BaseMatType initialIterate = ProxyMatType(iterate.n_rows, iterate.n_cols,
+      GetFillType<MatType>::randn);
   BaseGradType B(iterate.n_elem, iterate.n_elem);
   B.eye();
 

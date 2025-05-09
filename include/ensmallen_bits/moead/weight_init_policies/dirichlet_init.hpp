@@ -15,8 +15,8 @@
 namespace ens {
 
 /**
- * The Dirichlet method for initializing weights. Sampling a 
- * Dirichlet distribution with parameters set to one returns 
+ * The Dirichlet method for initializing weights. Sampling a
+ * Dirichlet distribution with parameters set to one returns
  * point lying on unit simplex with uniform distribution.
  */
 class Dirichlet
@@ -43,10 +43,10 @@ class Dirichlet
                    const size_t numPoints,
                    const double epsilon)
   {
-    MatType weights = arma::randg<MatType>(numObjectives, numPoints,
-        arma::distr_param(1.0, 1.0)) + epsilon;
+    MatType weights = MatType(numObjectives, numPoints,
+        GetFillType<MatType>::randn);
     // Normalize each column.
-    return arma::normalise(weights, 1, 0);
+    return normalise(weights, 1, 0);
   }
 };
 

@@ -49,7 +49,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value ||
+                        IsCootType<GradType>::value,
 typename MatType::elem_type>::type
 Eve::Optimize(SeparableFunctionType& function,
               MatType& iterateIn,
@@ -148,7 +149,7 @@ Eve::Optimize(SeparableFunctionType& function,
     lastObjective = objective;
 
     iterate -= stepSize / dt * (m / biasCorrection1) /
-        (arma::sqrt(v / biasCorrection2) + epsilon);
+        (sqrt(v / biasCorrection2) + epsilon);
 
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
@@ -186,13 +187,10 @@ Eve::Optimize(SeparableFunctionType& function,
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);
 
-      // Reset the counter variables if we will continue.
-      if (i != actualMaxIterations)
-      {
-        lastOverallObjective = overallObjective;
-        overallObjective = 0;
-        currentFunction = 0;
-      }
+      // Reset the counter variables.
+      lastOverallObjective = overallObjective;
+      overallObjective = 0;
+      currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();

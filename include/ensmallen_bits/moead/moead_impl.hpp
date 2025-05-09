@@ -18,9 +18,9 @@
 #include <assert.h>
 
 namespace ens {
-template <typename InitPolicyType, typename DecompPolicyType>
-inline MOEAD<InitPolicyType, DecompPolicyType>::
-MOEAD(const size_t populationSize,
+template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+inline MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
+MOEADType(const size_t populationSize,
       const size_t maxGenerations,
       const double crossoverProb,
       const double neighborProb,
@@ -29,8 +29,8 @@ MOEAD(const size_t populationSize,
       const double differentialWeight,
       const size_t maxReplace,
       const double epsilon,
-      const arma::vec& lowerBound,
-      const arma::vec& upperBound,
+      const ColType& lowerBound,
+      const ColType& upperBound,
       const InitPolicyType initPolicy,
       const DecompPolicyType decompPolicy) :
     populationSize(populationSize),
@@ -48,9 +48,9 @@ MOEAD(const size_t populationSize,
     decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
 
-template <typename InitPolicyType, typename DecompPolicyType>
-inline MOEAD<InitPolicyType, DecompPolicyType>::
-MOEAD(const size_t populationSize,
+template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+inline MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
+MOEADType(const size_t populationSize,
       const size_t maxGenerations,
       const double crossoverProb,
       const double neighborProb,
@@ -72,20 +72,20 @@ MOEAD(const size_t populationSize,
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
     epsilon(epsilon),
-    lowerBound(lowerBound * arma::ones(1, 1)),
-    upperBound(upperBound * arma::ones(1, 1)),
+    lowerBound(lowerBound * ColType(1, GetFillType<MatType>::ones)),
+    upperBound(upperBound * ColType(1, GetFillType<MatType>::ones)),
     initPolicy(initPolicy),
     decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template <typename InitPolicyType, typename DecompPolicyType>
-template<typename MatType,
+template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template<typename InputMatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-typename MatType::elem_type MOEAD<InitPolicyType, DecompPolicyType>::
+typename InputMatType::elem_type MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
 Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-         MatType& iterateIn,
+         InputMatType& iterateIn,
          CallbackTypes&&... callbacks)
 {
   // Population Size must be at least 3 for MOEA/D-DE to work.
@@ -96,8 +96,14 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   }
 
   // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename InputMatType::elem_type ElemType;
+  typedef typename MatTypeTraits<InputMatType>::BaseMatType BaseMatType;
+
+  typedef typename ForwardType<MatType>::uvec UVecType;
+  typedef typename ForwardType<MatType>::umat UMatType;
+  typedef typename ForwardType<MatType>::brow BaseRowType;
+
+
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
@@ -123,13 +129,23 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
     throw std::logic_error(oss.str());
   }
 
-  // Check if lower bound is a vector of a single dimension.
-  if (lowerBound.n_rows == 1)
-    lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+  BaseMatType castedLowerBound;
+  BaseMatType castedUpperBound;
 
-  // Check if upper bound is a vector of a single dimension.
-  if (upperBound.n_rows == 1)
-    upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
+  // Check if lower/upper bound is a vector of a single dimension.
+  if (lowerBound.n_elem == 1)
+  {
+    castedLowerBound = lowerBound(0) * BaseMatType(
+        iterate.n_rows, iterate.n_cols, GetFillType<MatType>::ones);
+
+    castedUpperBound = upperBound(0) * BaseMatType(
+        iterate.n_rows, iterate.n_cols, GetFillType<MatType>::ones);
+  }
+  else
+  {
+    castedLowerBound = conv_to<BaseMatType>::from(lowerBound);
+    castedUpperBound = conv_to<BaseMatType>::from(upperBound);
+  }
 
   // Check the dimensions of lowerBound and upperBound.
   assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
@@ -140,10 +156,6 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   const size_t numObjectives = sizeof...(ArbitraryFunctionType);
   const size_t numVariables = iterate.n_rows;
 
-  //! Useful temporaries for float-like comparisons.
-  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
-  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
-
   // Controls early termination of the optimization process.
   bool terminate = false;
 
@@ -152,41 +164,48 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       numObjectives, populationSize, epsilon);
 
   // 1.1 Storing the indices of nearest neighbors of each weight vector.
-  arma::umat neighborIndices(neighborSize, populationSize);
+  UMatType neighborIndices(neighborSize, populationSize);
   for (size_t i = 0; i < populationSize; ++i)
   {
     // Cache the distance between weights[i] and other weights.
-    const arma::Row<ElemType> distances =
-        arma::sqrt(arma::sum(arma::square(weights.col(i) - weights.each_col())));
-    arma::uvec sortedIndices = arma::stable_sort_index(distances);
+    const BaseRowType distances =
+        conv_to<BaseRowType>::from(
+        sqrt(sum(square(weights.col(i) - weights.each_col()))));
+    // const BaseRowType distances;
+    UVecType sortedIndices = stable_sort_index(distances);
     // Ignore distance from self.
-    neighborIndices.col(i) = sortedIndices(arma::span(1, neighborSize));
+
+    // TODO!!!
+    // neighborIndices.col(i) = sortedIndices(span(1, neighborSize));
   }
 
   // 1.2 Random generation of the initial population.
   std::vector<BaseMatType> population(populationSize);
   for (BaseMatType& individual : population)
   {
-    individual = arma::randu<BaseMatType>(
+    individual = randu<BaseMatType>(
         iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
 
     // Constrain all genes to be within bounds.
-    individual = arma::min(arma::max(individual, castedLowerBound), castedUpperBound);
+    individual = min(max(individual, castedLowerBound), castedUpperBound);
   }
 
   Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
 
-  std::vector<arma::Col<ElemType>> populationFitness(populationSize);
-  std::fill(populationFitness.begin(), populationFitness.end(),
-      arma::Col<ElemType>(numObjectives, arma::fill::zeros));
+  std::vector<ColType> populationFitness(populationSize);
+  for (size_t i = 0; i < populationSize; ++i)
+  {
+    populationFitness[i].set_size(numObjectives);
+    populationFitness[i].zeros();
+  }
   EvaluateObjectives(population, objectives, populationFitness);
 
   // 1.3 Initialize the ideal point z.
-  arma::Col<ElemType> idealPoint(numObjectives);
+  ColType idealPoint(numObjectives);
   idealPoint.fill(std::numeric_limits<ElemType>::max());
 
-  for (const arma::Col<ElemType>& individualFitness : populationFitness)
-    idealPoint = arma::min(idealPoint, individualFitness);
+  for (const ColType& individualFitness : populationFitness)
+    idealPoint = min(idealPoint, individualFitness);
 
   Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
@@ -194,10 +213,12 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (size_t generation = 1; generation <= maxGenerations && !terminate; ++generation)
   {
     // Shuffle indexes of subproblems.
-    const arma::uvec shuffle = arma::shuffle(
-        arma::linspace<arma::uvec>(0, populationSize - 1, populationSize));
-    for (size_t subProblemIdx : shuffle)
+    const UVecType shuffleTemp = shuffle(
+        linspace<UVecType>(0, populationSize - 1, populationSize));
+
+    for (size_t i = 0; i < shuffleTemp.n_elem; ++i)
     {
+      const size_t subProblemIdx = shuffleTemp(i);
       // 2.1 Randomly select two indices in neighborIndices[subProblemIdx] and use them
       // to make a child.
       size_t r1, r2, r3;
@@ -217,7 +238,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         {
           candidate(geneIdx) = population[r1](geneIdx) +
               differentialWeight * (population[r2](geneIdx) -
-                  population[r3](geneIdx));
+              population[r3](geneIdx));
 
           // Boundary conditions.
           if (candidate(geneIdx) < castedLowerBound(geneIdx))
@@ -238,10 +259,10 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       Mutate(candidate, 1.0 / static_cast<double>(numVariables),
           castedLowerBound, castedUpperBound);
 
-      arma::Col<ElemType> candidateFitness(numObjectives);
+          ColType candidateFitness(numObjectives);
       //! Creating temp vectors to pass to EvaluateObjectives.
       std::vector<BaseMatType> candidateContainer { candidate };
-      std::vector<arma::Col<ElemType>> fitnessContainer { candidateFitness };
+      std::vector<ColType> fitnessContainer { candidateFitness };
       EvaluateObjectives(candidateContainer, objectives, fitnessContainer);
       candidateFitness = std::move(fitnessContainer[0]);
       //! Flush out the dummy containers.
@@ -249,17 +270,19 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       candidateContainer.clear();
 
       // 2.4 Update of ideal point.
-      idealPoint = arma::min(idealPoint, candidateFitness);
+      idealPoint = min(idealPoint, candidateFitness);
 
       // 2.5 Update of the population.
       size_t replaceCounter = 0;
       const size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
-      const arma::uvec idxShuffle = arma::shuffle(
-          arma::linspace<arma::uvec>(0, sampleSize - 1, sampleSize));
+      const UVecType idxShuffle = shuffle(
+          linspace<UVecType>(0, sampleSize - 1, sampleSize));
 
-      for (size_t idx : idxShuffle)
+      // for (size_t idx : idxShuffle)
+      for (size_t i = 0; i < idxShuffle.n_elem; ++i)
       {
+        const size_t idx = idxShuffle(i);
         // Preserve diversity by controlling replacement of neighbors
         // by child solution.
         if (replaceCounter >= maxReplace)
@@ -269,9 +292,11 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
             neighborIndices(idx, subProblemIdx) : idx;
 
         const ElemType candidateDecomposition = decompPolicy.template
-            Apply<arma::Col<ElemType>>(weights.col(pick), idealPoint, candidateFitness);
-        const ElemType parentDecomposition =  decompPolicy.template
-            Apply<arma::Col<ElemType>>(weights.col(pick), idealPoint, populationFitness[pick]);
+            Apply<ColType>(conv_to<ColType>::from(weights.col(pick)),
+            idealPoint, candidateFitness);
+        const ElemType parentDecomposition = decompPolicy.template
+            Apply<ColType>(conv_to<ColType>::from(weights.col(pick)),
+            idealPoint, populationFitness[pick]);
 
         if (candidateDecomposition < parentDecomposition)
         {
@@ -283,8 +308,9 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
     } // End of pass over all subproblems.
 
     //  The final population itself is the best front.
-    const std::vector<arma::uvec> frontIndices { arma::shuffle(
-        arma::linspace<arma::uvec>(0, populationSize - 1, populationSize)) };
+    // const std::vector<UVecType> frontIndices { shuffle(
+    //     linspace<UVecType>(0, populationSize - 1, populationSize)) };
+    const std::vector<UVecType> frontIndices;
 
     terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
         populationFitness, frontIndices, callbacks...);
@@ -297,7 +323,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoSet.slice(solutionIdx) =
-        arma::conv_to<arma::mat>::from(population[solutionIdx]);
+        conv_to<MatType>::from(population[solutionIdx]);
   }
 
   // Set the candidates from the Pareto Front as the output.
@@ -308,7 +334,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (size_t solutionIdx = 0; solutionIdx < populationFitness.size(); ++solutionIdx)
   {
     paretoFront.slice(solutionIdx) =
-        arma::conv_to<arma::mat>::from(populationFitness[solutionIdx]);
+        conv_to<MatType>::from(populationFitness[solutionIdx]);
   }
 
   // Assign iterate to first element of the Pareto Set.
@@ -320,19 +346,20 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
 
   for (size_t geneIdx = 0; geneIdx < numObjectives; ++geneIdx)
   {
-    if (arma::accu(populationFitness[geneIdx]) < performance)
-      performance = arma::accu(populationFitness[geneIdx]);
+    if (accu(populationFitness[geneIdx]) < performance)
+      performance = accu(populationFitness[geneIdx]);
   }
 
   return performance;
 }
 
 //! Randomly chooses to select from parents or neighbors.
-template <typename InitPolicyType, typename DecompPolicyType>
+template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template<typename IndexMatType>
 inline std::tuple<size_t, size_t>
-MOEAD<InitPolicyType, DecompPolicyType>::
+MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
 Mating(size_t subProblemIdx,
-       const arma::umat& neighborIndices,
+       const IndexMatType& neighborIndices,
        bool sampleNeighbor)
 {
   //! Indexes of two points from the sample space.
@@ -360,13 +387,13 @@ Mating(size_t subProblemIdx,
 }
 
 //! Perform Polynomial mutation of the candidate.
-template <typename InitPolicyType, typename DecompPolicyType>
-template<typename MatType>
-inline void MOEAD<InitPolicyType, DecompPolicyType>::
-Mutate(MatType& candidate,
+template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template<typename InputMatType>
+inline void MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
+Mutate(InputMatType& candidate,
        double mutationRate,
-       const MatType& lowerBound,
-       const MatType& upperBound)
+       const InputMatType& lowerBound,
+       const InputMatType& upperBound)
 {
     const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
@@ -398,41 +425,41 @@ Mutate(MatType& candidate,
       candidate(geneIdx) += perturbationFactor * geneRange;
     }
     //! Enforce bounds.
-    candidate = arma::min(arma::max(candidate, lowerBound), upperBound);
+    candidate = min(max(candidate, lowerBound), upperBound);
 }
 
 //! No objectives to evaluate.
-template <typename InitPolicyType, typename DecompPolicyType>
+template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
 template<std::size_t I,
-         typename MatType,
+         typename InputMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-MOEAD<InitPolicyType, DecompPolicyType>::
+MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
 EvaluateObjectives(
-    std::vector<MatType>&,
+    std::vector<InputMatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    std::vector<arma::Col<typename MatType::elem_type> >&)
+    std::vector<ColType>&)
 {
  // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
-template <typename InitPolicyType, typename DecompPolicyType>
+template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
 template<std::size_t I,
-         typename MatType,
+         typename InputMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-MOEAD<InitPolicyType, DecompPolicyType>::
+MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
 EvaluateObjectives(
-    std::vector<MatType>& population,
+    std::vector<InputMatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
+    std::vector<ColType>& calculatedObjectives)
 {
   for (size_t i = 0; i < population.size(); i++)
   {
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
-    EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
-                                                               calculatedObjectives);
+    EvaluateObjectives<I+1, InputMatType, ArbitraryFunctionType...>(
+        population, objectives, calculatedObjectives);
   }
 }
 

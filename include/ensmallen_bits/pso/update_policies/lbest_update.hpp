@@ -12,6 +12,7 @@
  */
 #ifndef ENSMALLEN_PSO_UPDATE_POLICIES_LBEST_UPDATE_HPP
 #define ENSMALLEN_PSO_UPDATE_POLICIES_LBEST_UPDATE_HPP
+
 #include <assert.h>
 
 namespace ens {
@@ -63,7 +64,8 @@ class LBestUpdate
    * instantiated at the start of the optimization, and holds parameters
    * specific to an individual optimization.
    */
-  template<typename MatType>
+  template<
+      typename MatType, typename ColType = typename ForwardType<MatType>::bcol>
   class Policy
   {
     public:
@@ -105,8 +107,7 @@ class LBestUpdate
        chi = 2.0 / std::abs(2.0 - phi - std::sqrt((phi - 4.0) * phi));
 
        // Initialize local best indices to self indices of particles.
-       localBestIndices = arma::linspace<
-           arma::Col<typename MatType::elem_type> >(0, n-1, n);
+       localBestIndices = linspace<ColType>(0, n - 1, n);
 
        // Set sizes r1 and r2.
        r1.set_size(iterate.n_rows, iterate.n_cols);
@@ -126,10 +127,11 @@ class LBestUpdate
       * @param particleBestFitnesses The personal best fitness values of
       *     particles.
       */
-     void Update(arma::Cube<typename MatType::elem_type>& particlePositions,
-                 arma::Cube<typename MatType::elem_type>& particleVelocities,
-                 arma::Cube<typename MatType::elem_type>& particleBestPositions,
-                 arma::Col<typename MatType::elem_type>& particleBestFitnesses)
+     template<typename CubeType, typename VecType>
+     void Update(CubeType& particlePositions,
+                 CubeType& particleVelocities,
+                 CubeType& particleBestPositions,
+                 VecType& particleBestFitnesses)
      {
        // Velocity update logic.
        for (size_t i = 0; i < n; i++)
@@ -172,7 +174,7 @@ class LBestUpdate
      MatType r1, r2;
 
      //! Indices of each particle's best neighbour.
-     arma::Col<typename MatType::elem_type> localBestIndices;
+     ColType localBestIndices;
 
      // Helper functions for calculating neighbours.
     inline size_t left(size_t index) { return (index + n - 1) % n; }

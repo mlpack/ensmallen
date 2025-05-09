@@ -77,27 +77,28 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
                                    const CubeType& s,
                                    const CubeType& y)
 {
-  typedef typename CubeType::elem_type CubeElemType;
+  typedef typename CubeType::elem_type ElemType;
+  typedef typename ForwardType<CubeType>::bmat BaseMatType;
 
-  constexpr const CubeElemType tol =
-      100 * std::numeric_limits<CubeElemType>::epsilon();
+  constexpr const ElemType tol =
+      100 * std::numeric_limits<ElemType>::epsilon();
 
   double scalingFactor;
   if (iterationNum > 0)
   {
     int previousPos = (iterationNum - 1) % numBasis;
     // Get s and y matrices once instead of multiple times.
-    const arma::Mat<CubeElemType>& sMat = s.slice(previousPos);
-    const arma::Mat<CubeElemType>& yMat = y.slice(previousPos);
+    const BaseMatType& sMat = s.slice(previousPos);
+    const BaseMatType& yMat = y.slice(previousPos);
 
-    const CubeElemType tmp   = arma::dot(yMat, yMat);
-    const CubeElemType denom = (tmp >= tol) ? tmp : CubeElemType(1);
+    const ElemType tmp = dot(yMat, yMat);
+    const ElemType denom = (tmp >= tol) ? tmp : ElemType(1);
 
-    scalingFactor = arma::dot(sMat, yMat) / denom;
+    scalingFactor = dot(sMat, yMat) / denom;
   }
   else
   {
-    const CubeElemType tmp = arma::norm(gradient, "fro");
+    const ElemType tmp = norm(gradient, "fro");
 
     scalingFactor = (tmp >= tol) ? (1.0 / tmp) : 1.0;
   }
@@ -123,32 +124,34 @@ void L_BFGS::SearchDirection(const MatType& gradient,
                              const CubeType& y,
                              MatType& searchDirection)
 {
+  typedef typename CubeType::elem_type ElemType;
+  typedef typename ForwardType<CubeType>::bmat BaseMatType;
+  typedef typename ForwardType<CubeType>::bcol BaseColType;
+
   // Start from this point.
   searchDirection = gradient;
 
   // See "A Recursive Formula to Compute H * g" in "Updating quasi-Newton
   // matrices with limited storage" (Nocedal, 1980).
-  typedef typename CubeType::elem_type CubeElemType;
 
   // Temporary variables.
-  arma::Col<CubeElemType> rho(numBasis);
-  arma::Col<CubeElemType> alpha(numBasis);
+  BaseColType rho(numBasis);
+  BaseColType alpha(numBasis);
 
   size_t limit = (numBasis > iterationNum) ? 0 : (iterationNum - numBasis);
   for (size_t i = iterationNum; i != limit; i--)
   {
     int translatedPosition = (i + (numBasis - 1)) % numBasis;
+    const BaseMatType& sMat = s.slice(translatedPosition);
+    const BaseMatType& yMat = y.slice(translatedPosition);
 
-    const arma::Mat<CubeElemType>& sMat = s.slice(translatedPosition);
-    const arma::Mat<CubeElemType>& yMat = y.slice(translatedPosition);
+    const ElemType tmp = dot(yMat, sMat);
 
-    const CubeElemType tmp = arma::dot(yMat, sMat);
-
-    rho[iterationNum - i] = (tmp != CubeElemType(0)) ? (1.0 / tmp) :
-        CubeElemType(1);
+    rho[iterationNum - i] = (tmp != ElemType(0)) ? (1.0 / tmp) :
+        ElemType(1);
 
     alpha[iterationNum - i] = rho[iterationNum - i] *
-        arma::dot(sMat, searchDirection);
+        dot(sMat, searchDirection);
 
     searchDirection -= alpha[iterationNum - i] * yMat;
   }
@@ -159,7 +162,7 @@ void L_BFGS::SearchDirection(const MatType& gradient,
   {
     int translatedPosition = i % numBasis;
     double beta = rho[iterationNum - i - 1] *
-        arma::dot(y.slice(translatedPosition), searchDirection);
+        dot(y.slice(translatedPosition), searchDirection);
     searchDirection += (alpha[iterationNum - i - 1] - beta) *
         s.slice(translatedPosition);
   }
@@ -232,7 +235,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
   // The initial linear term approximation in the direction of the
   // search direction.
   ElemType initialSearchDirectionDotGradient =
-      arma::dot(gradient, searchDirection);
+      dot(gradient, searchDirection);
 
   // If it is not a descent direction, just report failure.
   if ( (initialSearchDirectionDotGradient > 0.0)
@@ -292,7 +295,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
     else
     {
       // Check Wolfe's condition.
-      ElemType searchDirectionDotGradient = arma::dot(gradient,
+      ElemType searchDirectionDotGradient = dot(gradient,
           searchDirection);
 
       if (searchDirectionDotGradient < wolfe *
@@ -346,7 +349,8 @@ template<typename FunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value ||
+                        IsCootType<GradType>::value,
 typename MatType::elem_type>::type
 L_BFGS::Optimize(FunctionType& function,
                  MatType& iterateIn,
@@ -376,8 +380,10 @@ L_BFGS::Optimize(FunctionType& function,
   const size_t cols = iterate.n_cols;
 
   BaseMatType newIterateTmp(rows, cols);
-  arma::Cube<ElemType> s(rows, cols, numBasis);
-  arma::Cube<ElemType> y(rows, cols, numBasis);
+
+  typedef typename ForwardType<MatType>::bcube BaseCubeType;
+  BaseCubeType s(rows, cols, numBasis);
+  BaseCubeType y(rows, cols, numBasis);
 
   // The old iterate to be saved.
   BaseMatType oldIterate(iterate.n_rows, iterate.n_cols);
@@ -417,7 +423,7 @@ L_BFGS::Optimize(FunctionType& function,
     // least one descent step.
     // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo
     // 12.4
-    if (arma::norm(gradient, 2) < minGradientNorm)
+    if (norm(gradient, 2) < minGradientNorm)
     {
       Info << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
@@ -499,4 +505,3 @@ L_BFGS::Optimize(FunctionType& function,
 } // namespace ens
 
 #endif // ENSMALLEN_LBFGS_LBFGS_IMPL_HPP
-

@@ -10,27 +10,29 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <ensmallen.hpp>
-#include "catch.hpp"
-#include "test_function_tools.hpp"
+ #include <ensmallen.hpp>
+ #include "catch.hpp"
+ #include "test_function_tools.hpp"
 
-using namespace ens;
-using namespace ens::test;
+ using namespace ens;
+ using namespace ens::test;
 
-/**
- * Run AdaGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGradTest]")
-{
-  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest(adagrad, 0.003, 0.006);
-}
+ TEMPLATE_TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGrad]",
+     arma::mat, arma::fmat)
+ {
+   AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
+   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+       adagrad, 0.003, 0.006);
+ }
 
-/**
- * Run AdaGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaGradLogisticRegressionTestFMat", "[AdaGradTest]")
-{
-  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest<arma::fmat>(adagrad, 0.003, 0.006);
-}
+ #ifdef USE_COOT
+
+ TEMPLATE_TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGrad]",
+     coot::mat, coot::fmat)
+ {
+   AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
+   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+       adagrad, 0.003, 0.006);
+ }
+
+ #endif

@@ -13,98 +13,111 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#include <ensmallen.hpp>
-#include "catch.hpp"
+ #include <ensmallen.hpp>
+ #include "catch.hpp"
 
-using namespace ens;
-using namespace ens::test;
+ using namespace ens;
+ using namespace ens::test;
 
-/**
- * Tests the Augmented Lagrangian optimizer using the
- * AugmentedLagrangianTestFunction class.
- */
-TEST_CASE("AugLagrangianTestFunctionTest", "[AugLagrangianTest]")
-{
-  // The choice of 10 memory slots is arbitrary.
-  AugLagrangianTestFunction f;
-  AugLagrangian aug;
+ /**
+  * Tests the Augmented Lagrangian optimizer using the
+  * AugmentedLagrangianTestFunction class.
+  */
+ TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction",
+     "[AugLagrangian]", arma::mat)
+ {
+   typedef typename TestType::elem_type ElemType;
 
-  arma::vec coords = f.GetInitialPoint();
+   // The choice of 10 memory slots is arbitrary.
+   AugLagrangianTestFunction f;
+   AugLagrangian aug;
 
-  if (!aug.Optimize(f, coords))
-    FAIL("Optimization reported failure.");
+   arma::Col<ElemType> coords = f.GetInitialPoint();
 
-  double finalValue = f.Evaluate(coords);
+   if (!aug.Optimize(f, coords))
+     FAIL("Optimization reported failure.");
 
-  REQUIRE(finalValue == Approx(70.0).epsilon(1e-7));
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(4.0).epsilon(1e-7));
-}
+   double finalValue = f.Evaluate(coords);
 
-/**
- * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
- */
-TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
-{
-  GockenbachFunction f;
-  AugLagrangian aug;
+   REQUIRE(finalValue == Approx(70.0).epsilon(1e-7));
+   REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
+   REQUIRE(coords(1) == Approx(4.0).epsilon(1e-7));
+ }
 
-  arma::mat coords = f.GetInitialPoint<arma::mat>();
+ /**
+  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
+  */
+ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
+     arma::mat, arma::fmat)
+ {
+   typedef typename TestType::elem_type ElemType;
 
-  if (!aug.Optimize(f, coords))
-    FAIL("Optimization reported failure.");
+   GockenbachFunction f;
+   AugLagrangian aug;
 
-  double finalValue = f.Evaluate(coords);
+   TestType coords = f.GetInitialPoint<TestType>();
 
-  // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
-  REQUIRE(coords(0) == Approx(0.12288178).epsilon(1e-5));
-  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
-  REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
-}
+   if (!aug.Optimize(f, coords))
+     FAIL("Optimization reported failure.");
 
-/**
- * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
- * arma::fmat.
- */
-TEST_CASE("GockenbachFunctionFMatTest", "[AugLagrangianTest]")
-{
-  GockenbachFunction f;
-  AugLagrangian aug;
+   ElemType finalValue = f.Evaluate(coords);
 
-  arma::fmat coords = f.GetInitialPoint<arma::fmat>();
+   // Higher tolerance for smaller values.
+   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
+   REQUIRE(coords(0) == Approx(0.12288178).epsilon(0.1));
+   REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-3));
+   REQUIRE(coords(2) == Approx(0.015099932).epsilon(0.1));
+ }
 
-  if (!aug.Optimize(f, coords))
-    FAIL("Optimization reported failure.");
+ /**
+  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
+  * arma::sp_mat.
+  */
+ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
+     arma::sp_mat)
+ {
+   typedef typename TestType::elem_type ElemType;
 
-  float finalValue = f.Evaluate(coords);
+   GockenbachFunction f;
+   AugLagrangian aug;
 
-  // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
-  REQUIRE(coords(0) == Approx(0.12288178).epsilon(0.1));
-  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-3));
-  REQUIRE(coords(2) == Approx(0.015099932).epsilon(0.1));
-}
+   TestType coords = f.GetInitialPoint<TestType>();
 
-/**
- * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
- * arma::sp_mat.
- */
-TEST_CASE("GockenbachFunctionSpMatTest", "[AugLagrangianTest]")
-{
-  GockenbachFunction f;
-  AugLagrangian aug;
+   if (!aug.Optimize(f, coords))
+     FAIL("Optimization reported failure.");
 
-  arma::sp_mat coords = f.GetInitialPoint<arma::sp_mat>();
+   ElemType finalValue = f.Evaluate(coords);
 
-  if (!aug.Optimize(f, coords))
-    FAIL("Optimization reported failure.");
+   // Higher tolerance for smaller values.
+   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
+   REQUIRE(coords(0) == Approx(0.12288178).epsilon(1e-5));
+   REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
+   REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
+ }
 
-  double finalValue = f.Evaluate(coords);
+ #ifdef USE_COOT
 
-  // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
-  REQUIRE(coords(0) == Approx(0.12288178).epsilon(1e-5));
-  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
-  REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
-}
+ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
+   coot::mat, coot::fmat)
+ {
+   typedef typename ForwardType<TestType>::bvec BaseVecType;
+   typedef typename TestType::elem_type ElemType;
+
+   GockenbachFunctionType<TestType> f;
+   AugLagrangianType<BaseVecType> aug;
+
+   TestType coords = f.template GetInitialPoint<TestType>();
+
+   if (!aug.Optimize(f, coords))
+     FAIL("Optimization reported failure.");
+
+   ElemType finalValue = f.Evaluate(coords);
+
+   // Higher tolerance for smaller values.
+   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
+   REQUIRE(coords(0) == Approx(0.12288178).epsilon(0.1));
+   REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-3));
+   REQUIRE(coords(2) == Approx(0.015099932).epsilon(0.1));
+ }
+
+ #endif

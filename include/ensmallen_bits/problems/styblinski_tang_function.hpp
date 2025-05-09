@@ -38,6 +38,8 @@ namespace test {
  * }
  * @endcode
  */
+template<
+  typename PointMatType = arma::mat, typename LabelsType = arma::Row<size_t>>
 class StyblinskiTangFunction
 {
  public:
@@ -109,7 +111,7 @@ class StyblinskiTangFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const
   {
-    return arma::conv_to<MatType>::from(initialPoint);
+    return conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.
@@ -130,10 +132,10 @@ class StyblinskiTangFunction
   size_t n;
 
   //! For shuffling.
-  arma::Row<size_t> visitationOrder;
+  LabelsType visitationOrder;
 
   //! Initial starting point.
-  arma::mat initialPoint;
+  PointMatType initialPoint;
 };
 
 } // namespace test

@@ -120,6 +120,25 @@ randn(const size_t rows, const size_t cols)
 
 template<typename ElemType>
 typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
+randi(const size_t rows, const size_t cols, const arma::distr_param& param)
+{
+  #ifdef USE_COOT
+  return coot::randi<ElemType>(rows, cols,
+      coot::distr_param(param.a_int, param.b_int));
+  #else
+  return arma::randi<ElemType>(rows, cols, param);
+  #endif
+}
+
+template<typename ElemType>
+typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
+randi(const size_t rows, const size_t cols, const arma::distr_param& param)
+{
+  return arma::randi<ElemType>(rows, cols, param);
+}
+
+template<typename ElemType>
+typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
 randu(const size_t rows, const size_t cols)
 {
   #ifdef USE_COOT

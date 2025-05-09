@@ -18,9 +18,10 @@
 namespace ens {
 namespace test {
 
-inline SphereFunction::SphereFunction(const size_t n) :
+template<typename PointMatType, typename LabelsType>
+SphereFunctionType<PointMatType, LabelsType>::SphereFunctionType(const size_t n) :
     n(n),
-    visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
+    visitationOrder(linspace<LabelsType>(0, n - 1, n))
 {
   initialPoint.set_size(n, 1);
 
@@ -33,14 +34,16 @@ inline SphereFunction::SphereFunction(const size_t n) :
   }
 }
 
-inline void SphereFunction::Shuffle()
+template<typename PointMatType, typename LabelsType>
+void SphereFunctionType<PointMatType, LabelsType>::Shuffle()
 {
-  visitationOrder = arma::shuffle(
-      arma::linspace<arma::Row<size_t> >(0, n - 1, n));
+  visitationOrder = shuffle(linspace<LabelsType>(0, n - 1, n));
 }
 
+template<typename PointMatType, typename LabelsType>
 template<typename MatType>
-typename MatType::elem_type SphereFunction::Evaluate(
+typename MatType::elem_type SphereFunctionType<
+    PointMatType, LabelsType>::Evaluate(
     const MatType& coordinates,
     const size_t begin,
     const size_t batchSize) const
@@ -55,18 +58,22 @@ typename MatType::elem_type SphereFunction::Evaluate(
   return objective;
 }
 
+template<typename PointMatType, typename LabelsType>
 template<typename MatType>
-typename MatType::elem_type SphereFunction::Evaluate(
+typename MatType::elem_type SphereFunctionType<
+    PointMatType, LabelsType>::Evaluate(
     const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
+template<typename PointMatType, typename LabelsType>
 template<typename MatType, typename GradType>
-void SphereFunction::Gradient(const MatType& coordinates,
-                              const size_t begin,
-                              GradType& gradient,
-                              const size_t batchSize) const
+void SphereFunctionType<PointMatType, LabelsType>::Gradient(
+    const MatType& coordinates,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize) const
 {
   gradient.zeros(n, 1);
 
@@ -77,9 +84,10 @@ void SphereFunction::Gradient(const MatType& coordinates,
   }
 }
 
+template<typename PointMatType, typename LabelsType>
 template<typename MatType, typename GradType>
-void SphereFunction::Gradient(const MatType& coordinates,
-                              GradType& gradient)
+void SphereFunctionType<PointMatType, LabelsType>::Gradient(
+    const MatType& coordinates, GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

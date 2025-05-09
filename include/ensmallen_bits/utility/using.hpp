@@ -41,7 +41,6 @@ using coot::norm;
 using coot::normalise;
 using coot::ones;
 using coot::pow;
-using coot::randi;
 using coot::randn;
 using coot::repmat;
 using coot::sign;
@@ -74,7 +73,6 @@ using arma::norm;
 using arma::normalise;
 using arma::ones;
 using arma::pow;
-using arma::randi;
 using arma::randn;
 using arma::repmat;
 using arma::sign;
@@ -95,7 +93,7 @@ struct GetFillTypeInternal
 
 template<typename MatType>
 struct GetFillType : public GetFillTypeInternal<MatType,
-    IsArma<MatType>::value, IsCoot<MatType>::value> { };
+    IsArmaType<MatType>::value, IsCootType<MatType>::value> { };
 
 // By default, assume that we are using an Armadillo object.
 template<typename MatType>

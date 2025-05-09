@@ -94,8 +94,8 @@ typename MatType::elem_type CNE::Optimize(ArbitraryFunctionType& function,
   std::vector<BaseMatType> population;
   for (size_t i = 0 ; i < populationSize; ++i)
   {
-    population.push_back(randn<BaseMatType>(iterate.n_rows,
-        iterate.n_cols) + iterate);
+    population.push_back(BaseMatType(iterate.n_rows, iterate.n_cols,
+        GetFillType<MatType>::randn) + iterate);
   }
 
   // Store the number of elements in the objective matrix.
@@ -252,8 +252,8 @@ inline void CNE::Mutate(std::vector<MatType>& population, IndexType& index)
     population[index(i)] += conv_to<MatType>::from(
         randu<MatType>(population[index(i)].n_rows,
         population[index(i)].n_cols) < mutationProb) %
-        (mutationSize * randn<MatType>(population[index(i)].n_rows,
-        population[index(i)].n_cols));
+        (mutationSize * MatType(population[index(i)].n_rows,
+        population[index(i)].n_cols, GetFillType<MatType>::randn));
   }
 }
 

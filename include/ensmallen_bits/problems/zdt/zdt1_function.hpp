@@ -48,7 +48,11 @@ namespace test {
  *
  * @tparam MatType Type of matrix to optimize.
  */
-  template<typename MatType = arma::mat>
+  template<
+      typename MatType = arma::mat,
+      typename ColType = typename ForwardType<MatType>::bcol,
+      typename CubeType = typename ForwardType<MatType>::bcube
+  >
   class ZDT1
   {
    private:
@@ -68,17 +72,23 @@ namespace test {
      * Evaluate the objectives with the given coordinate.
      *
      * @param coords The function coordinates.
-     * @return arma::Col<typename MatType::elem_type>
+     * @return Col<typename MatType::elem_type>
      */
-    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
+    ColType Evaluate(const MatType& coords)
     {
       // Convenience typedef.
       typedef typename MatType::elem_type ElemType;
 
-      arma::Col<ElemType> objectives(numObjectives);
+      ColType objectives(numObjectives);
       objectives(0) = coords[0];
-      ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-      ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.);
+
+      ElemType sum = 0;
+      for (size_t i = 1; i < numVariables; i++)
+      {
+        sum += coords(i);
+      }
+
+      ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.0);
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::sqrt(objectiveRatio));
 
@@ -88,10 +98,7 @@ namespace test {
     //! Get the starting point.
     MatType GetInitialPoint()
     {
-      // Convenience typedef.
-      typedef typename MatType::elem_type ElemType;
-
-      return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
+      return MatType(numVariables, 1, GetFillType<MatType>::zeros);
     }
 
     struct ObjectiveF1
@@ -137,13 +144,13 @@ namespace test {
     //! Get the Reference Front.
     //! Refer PR #273 Ipynb notebook to see the plot of Reference
     //! Front. The implementation has been taken from pymoo.
-    arma::cube GetReferenceFront()
+    CubeType GetReferenceFront()
     {
-      arma::cube front(2, 1, numParetoPoints);
-      arma::vec x = arma::linspace(0, 1, numParetoPoints);
-      arma::vec y = 1 - arma::sqrt(x);
+      CubeType front(2, 1, numParetoPoints);
+      ColType x = linspace<ColType>(0, 1, numParetoPoints);
+      ColType y = 1 - sqrt(x);
       for (size_t idx = 0; idx < numParetoPoints; ++idx)
-        front.slice(idx) = arma::vec{ x(idx), y(idx) };
+        front.slice(idx) = ColType{ x(idx), y(idx) };
 
       return front;
     }
@@ -151,7 +158,8 @@ namespace test {
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
   };
-  } //namespace test
-  } //namespace ens
+
+} //namespace test
+} //namespace ens
 
 #endif

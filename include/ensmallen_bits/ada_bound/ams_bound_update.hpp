@@ -151,12 +151,12 @@ class AMSBoundUpdate
       const ElemType upper = fl * (1.0 + 1.0 / (parent.gamma * iteration));
 
       // Element wise maximum of past and present squared gradients.
-      vImproved = arma::max(vImproved, v);
+      vImproved = max(vImproved, v);
 
       // Applies bounds on actual learning rate.
-      iterate -= arma::clamp((stepSize *
-          std::sqrt(biasCorrection2) / biasCorrection1) /
-          (arma::sqrt(vImproved) + parent.epsilon),  lower, upper) % m;
+      iterate -= clamp((stepSize * std::sqrt(biasCorrection2) /
+          biasCorrection1) / (sqrt(vImproved) + parent.epsilon),
+          lower, upper) % m;
     }
 
    private:

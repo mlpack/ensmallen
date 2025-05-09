@@ -33,19 +33,23 @@ namespace ens {
  */
 
 //! Optimize the function (minimize).
-template<typename VelocityUpdatePolicy,
+template<typename MatType,
+         typename VelocityUpdatePolicy,
          typename InitPolicy>
 template<typename ArbitraryFunctionType,
-         typename MatType,
+         typename InputMatType,
          typename... CallbackTypes>
-typename MatType::elem_type PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
+typename InputMatType::elem_type PSOType<
+    MatType, VelocityUpdatePolicy, InitPolicy>::Optimize(
     ArbitraryFunctionType& function,
-    MatType& iterateIn,
+    InputMatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
-  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardType<MatType>::bmat BaseMatType;
+  typedef typename ForwardType<MatType>::bcol BaseColType;
+  typedef typename ForwardType<MatType>::bcube BaseCubeType;
 
   // The update policy internally use a templated class so that
   // we can know MatType only when Optimize() is called.
@@ -79,11 +83,8 @@ typename MatType::elem_type PSOType<VelocityUpdatePolicy, InitPolicy>::Optimize(
   }
 
   // Initialize helper variables.
-  arma::Cube<ElemType> particlePositions;
-  arma::Cube<ElemType> particleVelocities;
-  arma::Col<ElemType> particleFitnesses;
-  arma::Col<ElemType> particleBestFitnesses;
-  arma::Cube<ElemType> particleBestPositions;
+  BaseCubeType particlePositions, particleVelocities, particleBestPositions;
+  BaseColType particleFitnesses, particleBestFitnesses;
 
   // Initialize particles using the init policy.
   initPolicy.Initialize(iterate,

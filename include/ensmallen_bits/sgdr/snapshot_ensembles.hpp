@@ -155,7 +155,7 @@ class SnapshotEnsembles
       {
         // n_t = n_min^i + 0.5(n_max^i - n_min^i)(1 + cos(T_cur/T_i * pi)).
         stepSize = 0.5 * parent.constStepSize *
-            (1 + cos((parent.batchRestart / parent.epochBatches)
+            (1 + std::cos((parent.batchRestart / parent.epochBatches)
             * arma::datum::pi));
 
         // Keep track of the number of batches since the last restart.

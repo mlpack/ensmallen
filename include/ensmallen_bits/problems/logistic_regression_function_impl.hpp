@@ -15,6 +15,8 @@
 // In case it hasn't been included yet.
 #include "logistic_regression_function.hpp"
 
+#include <iostream>
+
 namespace ens {
 namespace test {
 
@@ -210,8 +212,8 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
   const BaseRowType sigmoids = 1.0 / (1.0 + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<BaseRowType>::from(
-      responses.subvec(begin, begin + batchSize - 1)) - sigmoids);
+  gradient[0] = -accu(conv_to<BaseRowType>::from(responses.subvec(begin, begin + batchSize - 1)) -
+      sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
       conv_to<BaseRowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
       predictors.cols(begin, begin + batchSize - 1).t() + regularization;
@@ -230,8 +232,8 @@ void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
 {
   const arma::Row<typename MatType::elem_type> diffs = responses -
       (1 / (1 + arma::exp(-parameters(0, 0) -
-      parameters.tail_cols(parameters.n_elem - 1) *
-      predictors)));
+                          parameters.tail_cols(parameters.n_elem - 1) *
+                              predictors)));
 
   gradient.set_size(arma::size(parameters));
 
@@ -242,7 +244,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
   else
   {
     gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
-        parameters(0, j);
+      parameters(0, j);
   }
 }
 
@@ -268,7 +270,7 @@ void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
   else
   {
     gradient[j] = dot(-predictors.row(j - 1), diffs) + lambda *
-        parameters(0, j);
+      parameters(0, j);
   }
 }
 
@@ -288,12 +290,12 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
 
   const ElemType objectiveRegularization = lambda / 2.0 *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-          parameters.tail_cols(parameters.n_elem - 1));
+                parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
   const BaseRowType sigmoids = 1.0 / (1.0 +
       exp(-(parameters(0, 0) +
-          parameters.tail_cols(parameters.n_elem - 1) * predictors)));
+                  parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(size(parameters));
   gradient[0] = -accu(responses - sigmoids);
@@ -329,21 +331,20 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
   const ElemType objectiveRegularization = lambda *
       (batchSize / (2.0 * predictors.n_cols)) *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-          parameters.tail_cols(parameters.n_elem - 1));
+                parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
   const BaseRowType sigmoids = 1.0 / (1.0 +
       exp(-(parameters(0, 0) +
-          parameters.tail_cols(parameters.n_elem - 1) *
-          predictors.cols(begin, begin + batchSize - 1))));
+                  parameters.tail_cols(parameters.n_elem - 1) *
+                      predictors.cols(begin, begin + batchSize - 1))));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
   gradient[0] = -accu(conv_to<BaseRowType>::from(
       responses.subvec(begin, begin + batchSize - 1)) - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<BaseRowType>::from(
-          responses.subvec(begin, begin + batchSize - 1))) *
-          predictors.cols(begin, begin + batchSize - 1).t() + regularization;
+      conv_to<BaseRowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
+      predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 
   // Now compute the objective function using the sigmoids.
   BaseRowType respD = conv_to<BaseRowType>::from(

@@ -19,14 +19,16 @@ namespace test {
 //! functions.  The gradient is not very steep far away from the optimum, so a
 //! larger step size may be required to optimize it in a reasonable number of
 //! iterations.
-class SGDTestFunction
+template<
+  typename LabelsType = arma::Row<size_t>>
+class SGDTestFunctionType
 {
  private:
-  arma::Col<size_t> visitationOrder;
+  LabelsType visitationOrder;
 
  public:
   //! Initialize the SGDTestFunction.
-  SGDTestFunction();
+  SGDTestFunctionType();
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -66,6 +68,8 @@ class SGDTestFunction
   //! Get the final objective.
   double GetFinalObjective() const { return -1.0; }
 };
+
+using SGDTestFunction = SGDTestFunctionType<arma::Row<size_t>>;
 
 } // namespace test
 } // namespace ens

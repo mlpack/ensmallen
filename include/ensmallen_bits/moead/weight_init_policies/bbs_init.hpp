@@ -53,17 +53,17 @@ class BayesianBootstrap
                    const size_t numPoints,
                    const double epsilon)
   {
-      typedef typename MatType::elem_type ElemType;
-      typedef typename arma::Col<ElemType> VecType;
+      typedef typename ForwardType<MatType>::bvec VecType;
 
       MatType weights(numObjectives, numPoints);
       for (size_t pointIdx = 0; pointIdx < numPoints; ++pointIdx)
       {
-        VecType referenceDirection(numObjectives + 1, arma::fill::randu);
+        VecType referenceDirection(numObjectives + 1,
+            GetFillType<VecType>::randu);
         referenceDirection(0) = 0;
         referenceDirection(numObjectives) = 1;
-        referenceDirection = arma::sort(referenceDirection);
-        referenceDirection = arma::diff(referenceDirection);
+        referenceDirection = sort(referenceDirection);
+        referenceDirection = diff(referenceDirection);
         weights.col(pointIdx) = std::move(referenceDirection) + epsilon;
       }
 

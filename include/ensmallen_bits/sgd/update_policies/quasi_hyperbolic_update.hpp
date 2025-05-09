@@ -42,8 +42,7 @@ class QHUpdate
    */
   QHUpdate(const double v = 0.7,
            const double momentum = 0.999) :
-       momentum(momentum),
-       v(v)
+       momentum(momentum), v(v)
   {
     // Nothing to do.
   }

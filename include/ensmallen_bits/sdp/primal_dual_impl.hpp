@@ -163,7 +163,7 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   }
 
   MatType subTerm(aSparse.n_cols, 1, arma::fill::zeros);
-  
+
   if (aSparse.n_rows)
   {
     dySparse = dy(arma::span(0, aSparse.n_rows - 1), 0);
@@ -483,8 +483,8 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     const double sparsePrimalInfeas = arma::norm(sdp.SparseB() - aSparse * sx,
         2);
     const double densePrimalInfeas = arma::norm(sdp.DenseB() - aDense * sx, 2);
-    const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
-        densePrimalInfeas * densePrimalInfeas);
+    const double primalInfeas = std::sqrt(sparsePrimalInfeas *
+        sparsePrimalInfeas + densePrimalInfeas * densePrimalInfeas);
 
     primalObj = arma::dot(sdp.C(), coordinates);
 

@@ -120,8 +120,8 @@ class SnapshotSGDR
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value,
-      typename MatType::elem_type>::type
+  typename std::enable_if<IsArmaType<GradType>::value ||
+      IsCootType<GradType>::value, typename MatType::elem_type>::type
   Optimize(SeparableFunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);
@@ -170,12 +170,14 @@ class SnapshotSGDR
   bool& ExactObjective() { return optimizer.ExactObjective(); }
 
   //! Get the snapshots.
-  std::vector<arma::mat> Snapshots() const
+  template<typename MatType>
+  std::vector<MatType> Snapshots() const
   {
     return optimizer.DecayPolicy().Snapshots();
   }
   //! Modify the snapshots.
-  std::vector<arma::mat>& Snapshots()
+  template<typename MatType>
+  std::vector<MatType>& Snapshots()
   {
     return optimizer.DecayPolicy().Snapshots();
   }

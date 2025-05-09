@@ -30,7 +30,8 @@ namespace ens {
  * documentation on function types included with this distribution or on the
  * ensmallen website.
  */
-class AugLagrangian
+template<typename VecType = arma::vec>
+class AugLagrangianType
 {
  public:
   /**
@@ -43,10 +44,10 @@ class AugLagrangian
    * @param maxIterations Maximum number of iterations of the Augmented
    *     Lagrangian algorithm.  0 indicates no maximum.
    */
-  AugLagrangian(const size_t maxIterations = 1000,
-                const double penaltyThresholdFactor = 0.25,
-                const double sigmaUpdateFactor = 10.0,
-                const L_BFGS& lbfgs = L_BFGS());
+  AugLagrangianType(const size_t maxIterations = 1000,
+                    const double penaltyThresholdFactor = 0.25,
+                    const double sigmaUpdateFactor = 10.0,
+                    const L_BFGS& lbfgs = L_BFGS());
 
   /**
    * Optimize the function.  The value '1' is used for the initial value of each
@@ -66,7 +67,8 @@ class AugLagrangian
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+  typename std::enable_if<IsArmaType<GradType>::value ||
+      IsCootType<GradType>::value, bool>::type
   Optimize(LagrangianFunctionType& function,
            MatType& coordinates,
            CallbackTypes&&... callbacks);
@@ -105,10 +107,11 @@ class AugLagrangian
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value, bool>::type
+  typename std::enable_if<IsArmaType<GradType>::value ||
+      IsCootType<GradType>::value, bool>::type
   Optimize(LagrangianFunctionType& function,
            MatType& coordinates,
-           const arma::vec& initLambda,
+           const VecType& initLambda,
            const double initSigma,
            CallbackTypes&&... callbacks);
 
@@ -118,7 +121,7 @@ class AugLagrangian
            typename... CallbackTypes>
   bool Optimize(LagrangianFunctionType& function,
                 MatType& coordinates,
-                const arma::vec& initLambda,
+                const VecType& initLambda,
                 const double initSigma,
                 CallbackTypes&&... callbacks)
   {
@@ -133,9 +136,9 @@ class AugLagrangian
   L_BFGS& LBFGS() { return lbfgs; }
 
   //! Get the Lagrange multipliers.
-  const arma::vec& Lambda() const { return lambda; }
+  const VecType& Lambda() const { return lambda; }
   //! Modify the Lagrange multipliers (i.e. set them before optimization).
-  arma::vec& Lambda() { return lambda; }
+  VecType& Lambda() { return lambda; }
 
   //! Get the penalty parameter.
   double Sigma() const { return sigma; }
@@ -174,7 +177,7 @@ class AugLagrangian
   bool terminate;
 
   //! Lagrange multipliers.
-  arma::vec lambda;
+  VecType lambda;
 
   //! Penalty parameter.
   double sigma;
@@ -187,8 +190,9 @@ class AugLagrangian
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value, bool>::type
-  Optimize(AugLagrangianFunction<LagrangianFunctionType>& augfunc,
+  typename std::enable_if<IsArmaType<GradType>::value ||
+      IsCootType<GradType>::value, bool>::type
+  Optimize(AugLagrangianFunction<LagrangianFunctionType, VecType>& augfunc,
            MatType& coordinates,
            CallbackTypes&&... callbacks);
 
@@ -196,7 +200,7 @@ class AugLagrangian
   template<typename LagrangianFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  bool Optimize(AugLagrangianFunction<LagrangianFunctionType>& function,
+  bool Optimize(AugLagrangianFunction<LagrangianFunctionType, VecType>& function,
                 MatType& coordinates,
                 CallbackTypes&&... callbacks)
   {
@@ -205,6 +209,8 @@ class AugLagrangian
         std::forward<CallbackTypes>(callbacks)...);
   }
 };
+
+using AugLagrangian = AugLagrangianType<arma::vec>;
 
 } // namespace ens
 
