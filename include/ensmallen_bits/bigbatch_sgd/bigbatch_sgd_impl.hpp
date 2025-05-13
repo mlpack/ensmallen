@@ -50,7 +50,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value ||
+                        IsCootType<GradType>::value,
 typename MatType::elem_type>::type
 BigBatchSGD<UpdatePolicyType>::Optimize(
     SeparableFunctionType& function,
@@ -137,13 +138,13 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
       delta0 = delta1 + (functionGradient - delta1) / k;
 
       // Compute sample variance.
-      vB += arma::norm(functionGradient - delta1, 2.0) *
-          arma::norm(functionGradient - delta0, 2.0);
+      vB += norm(functionGradient - delta1, 2.0) *
+          norm(functionGradient - delta0, 2.0);
 
       delta1 = delta0;
       gradient += functionGradient;
     }
-    double gB = std::pow(arma::norm(gradient / effectiveBatchSize, 2), 2.0);
+    double gB = std::pow(norm(gradient / effectiveBatchSize, 2), 2.0);
 
     // Reset the batch size update process counter.
     reset = false;
@@ -174,13 +175,13 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
           delta0 = delta1 + (functionGradient - delta1) / (k + 1);
 
           // Compute sample variance.
-          vB += arma::norm(functionGradient - delta1, 2.0) *
-              arma::norm(functionGradient - delta0, 2.0);
+          vB += norm(functionGradient - delta1, 2.0) *
+              norm(functionGradient - delta0, 2.0);
 
           delta1 = delta0;
           gradient += functionGradient;
         }
-        gB = std::pow(arma::norm(gradient / (batchSize + batchOffset), 2), 2.0);
+        gB = std::pow(norm(gradient / (batchSize + batchOffset), 2), 2.0);
 
         // Update the batchSize.
         batchSize += batchOffset;
@@ -244,13 +245,10 @@ BigBatchSGD<UpdatePolicyType>::Optimize(
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);
 
-      // Reset the counter variables if we will continue.
-      if (i != actualMaxIterations)
-      {
-        lastObjective = overallObjective;
-        overallObjective = 0;
-        currentFunction = 0;
-      }
+      // Reset the counter variables.
+      lastObjective = overallObjective;
+      overallObjective = 0;
+      currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();

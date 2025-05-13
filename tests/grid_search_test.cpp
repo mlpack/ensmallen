@@ -28,16 +28,15 @@ class SimpleCategoricalFunction
   template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& x)
   {
-    if (size_t(x(0)) == 0 &&
-        size_t(x(1)) == 2 &&
-        size_t(x(2)) == 1)
+    if (size_t(x(0)) == 0 && size_t(x(1)) == 2 && size_t(x(2)) == 1)
       return 0.0;
     else
       return 10.0;
   }
 };
 
-TEST_CASE("GridSearchTest", "[GridSearchTest]")
+TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
+    arma::mat, arma::fmat, arma::imat)
 {
   // Create and optimize the categorical function with the GridSearch
   // optimizer.  We must also create a std::vector<bool> that holds the types
@@ -56,7 +55,7 @@ TEST_CASE("GridSearchTest", "[GridSearchTest]")
   arma::Row<size_t> numCategories("5 3 12");
 
   // The initial point for our optimization will be to set all categories to 0.
-  arma::mat params("0 0 0");
+  TestType params("0 0 0");
 
   // Now create the GridSearch optimizer with default parameters, and run the
   // optimization.
@@ -70,7 +69,11 @@ TEST_CASE("GridSearchTest", "[GridSearchTest]")
   REQUIRE(params(2) == 1);
 }
 
-TEST_CASE("GridSearchFMatTest", "[GridSearchTest]")
+
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
+    coot::mat, coot::fmat, coot::imat)
 {
   // Create and optimize the categorical function with the GridSearch
   // optimizer.  We must also create a std::vector<bool> that holds the types
@@ -86,10 +89,10 @@ TEST_CASE("GridSearchFMatTest", "[GridSearchTest]")
 
   // The first category can take 5 values; the second can take 3; the third can
   // take 12.
-  arma::Row<size_t> numCategories("5 3 12");
+  coot::Row<size_t> numCategories("5 3 12");
 
   // The initial point for our optimization will be to set all categories to 0.
-  arma::fmat params("0 0 0");
+  TestType params("0 0 0");
 
   // Now create the GridSearch optimizer with default parameters, and run the
   // optimization.
@@ -103,35 +106,4 @@ TEST_CASE("GridSearchFMatTest", "[GridSearchTest]")
   REQUIRE(params(2) == 1);
 }
 
-TEST_CASE("GridSearchIMatTest", "[GridSearchTest]")
-{
-  // Create and optimize the categorical function with the GridSearch
-  // optimizer.  We must also create a std::vector<bool> that holds the types
-  // of each dimension, and an arma::Row<size_t> that holds the number of
-  // categories in each dimension.
-  SimpleCategoricalFunction c;
-
-  // We have three categorical dimensions only.
-  std::vector<bool> categoricalDimensions;
-  categoricalDimensions.push_back(true);
-  categoricalDimensions.push_back(true);
-  categoricalDimensions.push_back(true);
-
-  // The first category can take 5 values; the second can take 3; the third can
-  // take 12.
-  arma::Row<size_t> numCategories("5 3 12");
-
-  // The initial point for our optimization will be to set all categories to 0.
-  arma::imat params("0 0 0");
-
-  // Now create the GridSearch optimizer with default parameters, and run the
-  // optimization.
-  // The GridSearch type can be replaced with any ensmallen optimizer that
-  // is able to handle categorical functions.
-  GridSearch gs;
-  gs.Optimize(c, params, categoricalDimensions, numCategories);
-
-  REQUIRE(params(0) == 0);
-  REQUIRE(params(1) == 2);
-  REQUIRE(params(2) == 1);
-}
+#endif

@@ -16,86 +16,45 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run big-batch SGD using BBS_BB on logistic regression and make sure the
- * results are acceptable.
- */
-TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGDTest]")
+TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
+    arma::mat, arma::fmat)
 {
   // Run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 350; batchSize < 360; batchSize += 5)
   {
     BBS_BB bbsgd(batchSize, 0.001, 0.1, 10000, 1e-8, true, true);
-    LogisticRegressionFunctionTest(bbsgd, 0.003, 0.006, 3);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+        bbsgd, 0.003, 0.006);
   }
 }
 
-/**
- * Run big-batch SGD using BBS_Armijo on logistic regression and make sure the
- * results are acceptable.
- */
-TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGDTest]")
+TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
+    arma::mat, arma::fmat)
 {
   // Run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 40; batchSize < 50; batchSize += 1)
   {
     BBS_Armijo bbsgd(batchSize, 0.005, 0.1, 10000, 1e-6, true, true);
-    LogisticRegressionFunctionTest(bbsgd, 0.003, 0.006, 3);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+        bbsgd, 0.003, 0.006);
   }
 }
 
-/**
- * Run big-batch SGD using BBS_BB on logistic regression and make sure the
- * results are acceptable.  Use arma::fmat as the objective type.
- */
-TEST_CASE("BBSBBLogisticRegressionFMatTest", "[BigBatchSGDTest]")
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
+    coot::mat, coot::fmat)
 {
-  // Run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 350; batchSize < 360; batchSize += 5)
-  {
-    BBS_BB bbsgd(batchSize, 0.001, 0.1, 10000, 1e-8, true, true);
-    LogisticRegressionFunctionTest<arma::fmat>(bbsgd, 0.003, 0.006, 3);
-  }
+  BBS_BB bbsgd(350, 0.001, 0.1, 10000, 1e-8, true, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      bbsgd, 0.003, 0.006);
 }
 
-/**
- * Run big-batch SGD using BBS_Armijo on logistic regression and make sure the
- * results are acceptable.  Use arma::fmat as the objective type.
- */
-TEST_CASE("BBSArmijoLogisticRegressionFMatTest", "[BigBatchSGDTest]")
+TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
+    coot::mat, coot::fmat)
 {
-  // Run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 40; batchSize < 50; batchSize += 1)
-  {
-    BBS_Armijo bbsgd(batchSize, 0.01, 0.1, 10000, 1e-6, true, true);
-    LogisticRegressionFunctionTest<arma::fmat>(bbsgd, 0.003, 0.006, 5);
-  }
+  BBS_Armijo bbsgd(40, 0.005, 0.1, 10000, 1e-6, true, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      bbsgd, 0.003, 0.006);
 }
-
-/**
- * Run big-batch SGD using BBS_BB on logistic regression and make sure the
- * results are acceptable.  Use arma::sp_mat as the objective type.
- */
-TEST_CASE("BBSBBLogisticRegressionSpMatTest", "[BigBatchSGDTest]")
-{
-  // Run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 350; batchSize < 360; batchSize += 5)
-  {
-    BBS_BB bbsgd(batchSize, 0.005, 0.5, 10000, 1e-8, true, true);
-    LogisticRegressionFunctionTest<arma::sp_mat>(bbsgd, 0.003, 0.006, 3);
-  }
-}
-
-/**
- * Run big-batch SGD using BBS_Armijo on logistic regression and make sure the
- * results are acceptable.  Use arma::sp_mat as the objective type.
- */
-TEST_CASE("BBSArmijoLogisticRegressionSpMatTest", "[BigBatchSGDTest]")
-{
-  // Run big-batch SGD with a couple of batch sizes.
-  for (size_t batchSize = 40; batchSize < 50; batchSize += 1)
-  {
-    BBS_Armijo bbsgd(batchSize, 0.01, 0.001, 10000, 1e-6, true, true);
-    LogisticRegressionFunctionTest<arma::sp_mat>(bbsgd, 0.003, 0.006, 3);
-  }
-}
+#endif

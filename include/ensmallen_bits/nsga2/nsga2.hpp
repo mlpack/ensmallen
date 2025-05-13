@@ -51,7 +51,12 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-class NSGA2
+template<
+  typename MatType,
+  typename ColType = typename ForwardType<MatType>::bvec,
+  typename CubeType = typename ForwardType<MatType>::bcube
+>
+class NSGA2Type
 {
  public:
   /**
@@ -63,7 +68,8 @@ class NSGA2
    *
    * @param populationSize The number of candidates in the population.
    *     This should be atleast 4 in size and a multiple of 4.
-   * @param maxGenerations The maximum number of generations allowed for NSGA-II.
+   * @param maxGenerations The maximum number of generations allowed
+   *     for NSGA-II.
    * @param crossoverProb The probability that a crossover will occur.
    * @param mutationProb The probability that a mutation will occur.
    * @param mutationStrength The strength of the mutation.
@@ -72,14 +78,15 @@ class NSGA2
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA2(const size_t populationSize = 100,
-        const size_t maxGenerations = 2000,
-        const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3,
-        const double epsilon = 1e-6,
-        const arma::vec& lowerBound = arma::zeros(1, 1),
-        const arma::vec& upperBound = arma::ones(1, 1));
+  NSGA2Type(
+      const size_t populationSize = 100,
+      const size_t maxGenerations = 2000,
+      const double crossoverProb = 0.6,
+      const double mutationProb = 0.3,
+      const double mutationStrength = 1e-3,
+      const double epsilon = 1e-6,
+      const ColType& lowerBound = ColType(1, GetFillType<MatType>::zeros),
+      const ColType& upperBound = ColType(1, GetFillType<MatType>::ones));
 
   /**
    * Constructor for the NSGA2 optimizer. This constructor provides an overload
@@ -100,14 +107,15 @@ class NSGA2
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA2(const size_t populationSize = 100,
-        const size_t maxGenerations = 2000,
-        const double crossoverProb = 0.6,
-        const double mutationProb = 0.3,
-        const double mutationStrength = 1e-3,
-        const double epsilon = 1e-6,
-        const double lowerBound = 0,
-        const double upperBound = 1);
+  NSGA2Type(
+      const size_t populationSize = 100,
+      const size_t maxGenerations = 2000,
+      const double crossoverProb = 0.6,
+      const double mutationProb = 0.3,
+      const double mutationStrength = 1e-3,
+      const double epsilon = 1e-6,
+      const double lowerBound = 0,
+      const double upperBound = 1);
 
   /**
    * Optimize a set of objectives. The initial population is generated using the
@@ -122,12 +130,12 @@ class NSGA2
    * @return MatType::elem_type The minimum of the accumulated sum over the
    *     objective values in the best front.
    */
-  template<typename MatType,
+  template<typename InputMatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
- typename MatType::elem_type Optimize(
+ typename InputMatType::elem_type Optimize(
      std::tuple<ArbitraryFunctionType...>& objectives,
-     MatType& iterate,
+     InputMatType& iterate,
      CallbackTypes&&... callbacks);
 
   //! Get the population size.
@@ -161,22 +169,22 @@ class NSGA2
   double& Epsilon() { return epsilon; }
 
   //! Retrieve value of lowerBound.
-  const arma::vec& LowerBound() const { return lowerBound; }
+  const ColType& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
-  arma::vec& LowerBound() { return lowerBound; }
+  ColType& LowerBound() { return lowerBound; }
 
   //! Retrieve value of upperBound.
-  const arma::vec& UpperBound() const { return upperBound; }
+  const ColType& UpperBound() const { return upperBound; }
   //! Modify value of upperBound.
-  arma::vec& UpperBound() { return upperBound; }
+  ColType& UpperBound() { return upperBound; }
 
-  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
-  //! until `Optimize()` has been called.
-  const arma::cube& ParetoSet() const { return paretoSet; }
+  //! Retrieve the Pareto optimal points in variable space. This returns an
+  // empty cube until `Optimize()` has been called.
+  const CubeType& ParetoSet() const { return paretoSet; }
 
-  //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
-  //! `Optimize()` has been called.
-  const arma::cube& ParetoFront() const { return paretoFront; }
+  //! Retrieve the best front (the Pareto frontier). This returns an
+  //! empty cube until `Optimize()` has been called.
+  const CubeType& ParetoFront() const { return paretoFront; }
 
   /**
    * Retrieve the best front (the Pareto frontier).  This returns an empty
@@ -184,14 +192,14 @@ class NSGA2
    * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
    * instead.
    */
-  [[deprecated("use ParetoFront() instead")]] const std::vector<arma::mat>& Front()
+  [[deprecated("use ParetoFront() instead")]] const std::vector<MatType>& Front()
   {
     if (rcFront.size() == 0)
     {
       // Match the old return format.
       for (size_t i = 0; i < paretoFront.n_slices; ++i)
       {
-        rcFront.push_back(arma::mat(paretoFront.slice(i)));
+        rcFront.push_back(MatType(paretoFront.slice(i)));
       }
     }
 
@@ -209,21 +217,25 @@ class NSGA2
    * @param calculatedObjectives Vector to store calculated objectives.
    */
   template<std::size_t I = 0,
-           typename MatType,
+           typename InputMatType,
+           typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>&,
-                     std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<typename MatType::elem_type> >&);
+  EvaluateObjectives(
+      std::vector<InputMatType>&,
+      std::tuple<ArbitraryFunctionType...>&,
+      std::vector<ObjectiveMatType>&);
 
   template<std::size_t I = 0,
-           typename MatType,
+           typename InputMatType,
+           typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>& population,
-                     std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<typename MatType::elem_type> >&
-                     calculatedObjectives);
+  EvaluateObjectives(
+      std::vector<InputMatType>& population,
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      std::vector<ObjectiveMatType>&
+      calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -235,10 +247,11 @@ class NSGA2
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType>
-  void BinaryTournamentSelection(std::vector<MatType>& population,
-                                 const MatType& lowerBound,
-                                 const MatType& upperBound);
+  template<typename InputMatType>
+  void BinaryTournamentSelection(
+      std::vector<InputMatType>& population,
+      const InputMatType& lowerBound,
+      const InputMatType& upperBound);
 
   /**
    * Crossover two parents to create a pair of new children.
@@ -249,11 +262,12 @@ class NSGA2
    * @param parentA First parent from elite population.
    * @param parentB Second parent from elite population.
    */
-  template<typename MatType>
-  void Crossover(MatType& childA,
-                 MatType& childB,
-                 const MatType& parentA,
-                 const MatType& parentB);
+  template<typename InputMatType>
+  void Crossover(
+      InputMatType& childA,
+      InputMatType& childB,
+      const InputMatType& parentA,
+      const InputMatType& parentB);
 
   /**
    * Mutate the coordinates for a candidate.
@@ -264,10 +278,11 @@ class NSGA2
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType>
-  void Mutate(MatType& child,
-              const MatType& lowerBound,
-              const MatType& upperBound);
+  template<typename InputMatType>
+  void Mutate(
+      InputMatType& child,
+      const InputMatType& lowerBound,
+      const InputMatType& upperBound);
 
   /**
    * Sort the candidate population using their domination count and the set of
@@ -279,11 +294,11 @@ class NSGA2
    * @param ranks The assigned ranks, used for crowding distance based sorting.
    * @param calculatedObjectives The previously calculated objectives.
    */
-  template<typename MatType>
+  template<typename InputMatType, typename ObjectiveMatType>
   void FastNonDominatedSort(
       std::vector<std::vector<size_t> >& fronts,
       std::vector<size_t>& ranks,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+      std::vector<ObjectiveMatType>& calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -298,9 +313,9 @@ class NSGA2
    * @param candidateQ The candidate being compared against.
    * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
    */
-  template<typename MatType>
+  template<typename InputMatType, typename ObjectiveMatType>
   bool Dominates(
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+      std::vector<ObjectiveMatType>& calculatedObjectives,
       size_t candidateP,
       size_t candidateQ);
 
@@ -312,11 +327,11 @@ class NSGA2
    * @param crowdingDistance The crowding distance for each individual in
    *    the population.
    */
-  template <typename MatType>
+  template <typename InputMatType, typename ObjectiveMatType>
   void CrowdingDistanceAssignment(
       const std::vector<size_t>& front,
-      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-      std::vector<typename MatType::elem_type>& crowdingDistance);
+      std::vector<ObjectiveMatType>& calculatedObjectives,
+      std::vector<typename InputMatType::elem_type>& crowdingDistance);
 
   /**
    * The operator used in the crowding distance based sorting.
@@ -334,11 +349,12 @@ class NSGA2
    *    the population.
    * @return true if the first candidate is preferred, otherwise, false.
    */
-  template<typename MatType>
-  bool CrowdingOperator(size_t idxP,
-                        size_t idxQ,
-                        const std::vector<size_t>& ranks,
-                        const std::vector<typename MatType::elem_type>& crowdingDistance);
+  template<typename InputMatType>
+  bool CrowdingOperator(
+      size_t idxP,
+      size_t idxQ,
+      const std::vector<size_t>& ranks,
+      const std::vector<typename InputMatType::elem_type>& crowdingDistance);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
@@ -365,24 +381,26 @@ class NSGA2
   double epsilon;
 
   //! Lower bound of the initial swarm.
-  arma::vec lowerBound;
+  ColType lowerBound;
 
   //! Upper bound of the initial swarm.
-  arma::vec upperBound;
+  ColType upperBound;
 
   //! The set of all the Pareto optimal points.
   //! Stored after Optimize() is called.
-  arma::cube paretoSet;
+  CubeType paretoSet;
 
   //! The set of all the Pareto optimal objective vectors.
   //! Stored after Optimize() is called.
-  arma::cube paretoFront;
+  CubeType paretoFront;
 
   //! A different representation of the Pareto front, for reverse compatibility
   //! purposes.  This can be removed when ensmallen 3.x is released!  (Along
   //! with `Front()`.)  This is only populated when `Front()` is called.
-  std::vector<arma::mat> rcFront;
+  std::vector<MatType> rcFront;
 };
+
+using NSGA2 = NSGA2Type<arma::mat>;
 
 } // namespace ens
 

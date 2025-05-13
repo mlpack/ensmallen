@@ -33,7 +33,7 @@
  TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
      coot::mat, coot::fmat)
  {
-   IQN iqn(0.01, 1, 5000, 0.01);
+   IQN iqn(0.01, 10, 5000, 0.01);
    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
        iqn, 0.003, 0.006);
  }

@@ -77,8 +77,8 @@ class GradientDescent
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value,
-      typename MatType::elem_type>::type
+  typename std::enable_if<IsArmaType<GradType>::value ||
+      IsCootType<GradType>::value, typename MatType::elem_type>::type
   Optimize(FunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);
@@ -120,27 +120,29 @@ class GradientDescent
   template<typename FunctionType,
            typename MatType,
            typename GradType,
+           typename CategoryType,
            typename... CallbackTypes>
   typename std::enable_if<IsArmaType<GradType>::value,
       typename MatType::elem_type>::type
   Optimize(FunctionType& function,
            MatType& iterate,
            const std::vector<bool>& categoricalDimensions,
-           const arma::Row<size_t>& numCategories,
+           const CategoryType& numCategories,
            CallbackTypes&&... callbacks);
 
   //! Forward the MatType as GradType.
   template<typename FunctionType,
            typename MatType,
+           typename CategoryVecType,
            typename... CallbackTypes>
   typename MatType::elem_type Optimize(
       FunctionType& function,
       MatType& iterate,
       const std::vector<bool>& categoricalDimensions,
-      const arma::Row<size_t>& numCategories,
+      const CategoryVecType& numCategories,
       CallbackTypes&&... callbacks)
   {
-    return Optimize<FunctionType, MatType, MatType,
+    return Optimize<FunctionType, MatType, MatType, CategoryVecType,
         CallbackTypes...>(function, iterate, categoricalDimensions,
         numCategories, std::forward<CallbackTypes>(callbacks)...);
   }

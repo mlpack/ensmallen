@@ -18,21 +18,22 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run AdaDelta on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDeltaTest]")
+TEMPLATE_TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDelta]",
+    arma::mat, arma::fmat)
 {
   AdaDelta adaDelta;
-  LogisticRegressionFunctionTest(adaDelta, 0.003, 0.006, 1);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      adaDelta, 0.003, 0.006, 1);
 }
 
-/**
- * Run AdaDelta on logistic regression and make sure the results are acceptable
- * with arma::fmat as the type.
- */
-TEST_CASE("AdaDeltaLogisticRegressionTestFMat", "[AdaDeltaTest]")
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDelta]",
+    coot::mat, coot::fmat)
 {
   AdaDelta adaDelta;
-  LogisticRegressionFunctionTest(adaDelta, 0.003, 0.006, 1);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      adaDelta, 0.003, 0.006, 1);
 }
+
+#endif

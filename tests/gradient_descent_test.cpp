@@ -17,20 +17,34 @@
 using namespace ens;
 using namespace ens::test;
 
-TEST_CASE("SimpleGDTestFunction", "[GradientDescentTest]")
+TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
+   arma::mat, arma::fmat)
 {
   GradientDescent s(0.01, 5000000, 1e-9);
-  FunctionTest<GDTestFunction>(s, 0.1, 0.01);
+  FunctionTest<GDTestFunction, TestType>(s, 0.1, 0.01);
 }
 
-TEST_CASE("GDRosenbrockTest", "[GradientDescentTest]")
+TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
+    arma::mat, arma::fmat)
 {
   GradientDescent s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction>(s, 0.01, 0.001);
+  FunctionTest<RosenbrockFunction, TestType>(s, 0.01, 0.001);
 }
 
-TEST_CASE("GDRosenbrockFMatTest", "[GradientDescentTest]")
+#ifdef USE_COOT
+
+TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
+   coot::mat, coot::fmat)
+{
+  GradientDescent s(0.01, 5000000, 1e-9);
+  FunctionTest<GDTestFunction, TestType>(s, 0.1, 0.01);
+}
+
+TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
+    coot::mat, coot::fmat)
 {
   GradientDescent s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction, arma::fmat>(s, 0.1, 0.01);
+  FunctionTest<RosenbrockFunction, TestType>(s, 0.01, 0.001);
 }
+
+#endif
