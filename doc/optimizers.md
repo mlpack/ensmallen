@@ -5,9 +5,9 @@
 Active CMA-ES is a variant of the stochastic search algorithm
 CMA-ES - Covariance Matrix Adaptation Evolution Strategy.
 Active CMA-ES actively reduces the uncertainty in unfavourable directions by
-exploiting the information about bad mutations in the covariance matrix 
-update step. This isn't for the purpose of accelerating progress, but 
-instead for speeding up the adaptation of the covariance matrix (which, in 
+exploiting the information about bad mutations in the covariance matrix
+update step. This isn't for the purpose of accelerating progress, but
+instead for speeding up the adaptation of the covariance matrix (which, in
 turn, will lead to faster progress).
 
 #### Constructors
@@ -22,10 +22,10 @@ The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
-The _`TransformationPolicyType`_  template parameter refers to transformation 
-strategy used to map decision variables to the desired domain during fitness 
-evaluation and optimization termination. The `EmptyTransformation` and 
-`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+The _`TransformationPolicyType`_  template parameter refers to transformation
+strategy used to map decision variables to the desired domain during fitness
+evaluation and optimization termination. The `EmptyTransformation` and
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be
 achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
@@ -55,11 +55,11 @@ the option is not relevant when the `ActiveCMAES<>` optimizer type is being used
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
-The `transformationPolicy` attribute allows an instantiated 
-`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+The `transformationPolicy` attribute allows an instantiated
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>`
 has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
 the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
-where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of
 the coordinates respectively.
 
 #### Examples:
@@ -627,11 +627,11 @@ arma::mat coords = ZDT_THREE.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
 opt.Optimize(objectives, coords);
 const arma::cube bestFront = opt.ParetoFront();
-  
+
 NSGA2 opt2(50, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 // obj2 will contain the minimum sum of objectiveA and objectiveB found on the best front.
 double obj2 = opt2.Optimize(objectives, coords);
- 
+
 arma::cube NSGAFront = opt2.ParetoFront();
 // Get the IGD score for NSGA front using AGEMOEA as reference.
 double igd = IGD::Evaluate(NSGAFront, bestFront, 1);
@@ -792,6 +792,10 @@ optimizer uses [L-BFGS](#l-bfgs).
 #### Constructors
 
  * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor, sigmaUpdateFactor`_`)`
+ * `AugLagrangianType<_VecType_>(`_`maxIterations, penaltyThresholdFactor, sigmaUpdateFactor`_`)`
+
+When optimizing matrix types other than `arma::mat`, specify `VecType` as the
+corresponding vector type (e.g. `arma::vec` or `coot::fvec`).
 
 #### Attributes
 
@@ -1112,10 +1116,10 @@ The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
-The _`TransformationPolicyType`_  template parameter refers to transformation 
-strategy used to map decision variables to the desired domain during fitness 
-evaluation and optimization termination. The `EmptyTransformation` and 
-`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+The _`TransformationPolicyType`_  template parameter refers to transformation
+strategy used to map decision variables to the desired domain during fitness
+evaluation and optimization termination. The `EmptyTransformation` and
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be
 achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
@@ -1145,11 +1149,11 @@ the option is not relevant when the `CMAES<>` optimizer type is being used; the
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
-The `transformationPolicy` attribute allows an instantiated 
-`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+The `transformationPolicy` attribute allows an instantiated
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>`
 has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
 the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
-where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of
 the coordinates respectively.
 
 #### Examples:
@@ -1745,10 +1749,10 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [separable functions](#separable-functions).*
 
 IPOP CMA-ES (Increasing Population Size CMA-ES) is an extension of the
-Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a 
-restart mechanism that progressively increases the population size. This 
+Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a
+restart mechanism that progressively increases the population size. This
 approach is beneficial for optimizing multi-modal functions,
-characterized by numerous local optima. The restart mechanism is designed to 
+characterized by numerous local optima. The restart mechanism is designed to
 improve the adaptability of CMA-ES by improving the likelihood of escaping
 local optima, thus increasing the chances of discovering the global optimum.
 
