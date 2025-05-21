@@ -265,8 +265,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
   FonsecaFlemingFunction<TestType> FON;
   const arma::Col<ElemType> lowerBound = {-4, -4, -4};
   const arma::Col<ElemType> upperBound = {4, 4, 4};
-  const double expectedLowerBound = -1.0 / sqrt(3);
-  const double expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = -1.0 / sqrt(3);
+  const ElemType expectedUpperBound = 1.0 / sqrt(3);
 
   MOEADType<Uniform, Tchebycheff, TestType> opt(
       300,  // Max generations.

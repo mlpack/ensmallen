@@ -43,8 +43,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
   SchafferFunctionN1<TestType> SCH;
   const double lowerBound = -1000;
   const double upperBound = 1000;
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0.0;
+  const ElemType expectedUpperBound = 2.0;
 
   NSGA2Type<TestType> opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
@@ -95,8 +95,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
   SchafferFunctionN1<TestType> SCH;
   const arma::Col<ElemType> lowerBound = {-1000};
   const arma::Col<ElemType> upperBound = {1000};
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0.0;
+  const ElemType expectedUpperBound = 2.0;
 
   NSGA2Type<TestType> opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
@@ -149,8 +149,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
   const double upperBound = 4;
   const double tolerance = 1e-6;
   const double strength = 1e-4;
-  const double expectedLowerBound = -1.0 / sqrt(3);
-  const double expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = -1.0 / sqrt(3);
+  const ElemType expectedUpperBound = 1.0 / sqrt(3);
 
   NSGA2Type<TestType> opt(20, 300, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
@@ -198,8 +198,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
   const arma::Col<ElemType> upperBound = {4, 4, 4};
   const double tolerance = 1e-6;
   const double strength = 1e-4;
-  const float expectedLowerBound = -1.0 / sqrt(3);
-  const float expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = -1.0 / sqrt(3);
+  const ElemType expectedUpperBound = 1.0 / sqrt(3);
 
   NSGA2Type<TestType> opt(20, 300, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
@@ -317,8 +317,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
   SchafferFunctionN1<TestType> SCH;
   const double lowerBound = -1000;
   const double upperBound = 1000;
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0.0;
+  const ElemType expectedUpperBound = 2.0;
 
   NSGA2Type<TestType> opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
@@ -372,8 +372,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2Test]",
   lowerBound(0) = -1000.0;
   coot::Col<ElemType> upperBound(1);
   upperBound(0) = 1000.0;
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0.0;
+  const ElemType expectedUpperBound = 2.0;
 
   NSGA2Type<TestType> opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
