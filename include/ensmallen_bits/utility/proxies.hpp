@@ -68,8 +68,8 @@ struct ForwardType
     typedef arma::umat umat;
     typedef arma::uword uword;
     typedef arma::uvec uvec;
-    typedef arma::ucolvec ucolvec;
     typedef arma::urowvec urowvec;
+    typedef arma::ucolvec ucolvec;
     typedef arma::Col<ElemType> bcol;
     typedef arma::Col<ElemType> bvec;
     typedef arma::Row<ElemType> brow;
@@ -77,6 +77,8 @@ struct ForwardType
     typedef arma::Cube<ElemType> bcube;
     typedef arma::cube cube;
     typedef arma::distr_param distr_param;
+
+
     #endif
 };
 

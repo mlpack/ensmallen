@@ -28,15 +28,15 @@
 namespace ens {
 
 /**
- * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon - 
- * Differential Variant) is a multiobjective optimization algorithm. This class 
- * implements the said optimizer. 
+ * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon -
+ * Differential Variant) is a multiobjective optimization algorithm. This class
+ * implements the said optimizer.
  *
- * The algorithm works by generating a candidate population from a fixed starting point. 
- * Reference directions are generated to guide the optimization process towards the Pareto Front. 
- * Further, a decomposition function is defined to decompose the problem to a scalar optimization 
- * objective. Utilizing genetic operators, offsprings are generated with better decomposition values 
- * to replace the neighboring parent solutions. 
+ * The algorithm works by generating a candidate population from a fixed starting point.
+ * Reference directions are generated to guide the optimization process towards the Pareto Front.
+ * Further, a decomposition function is defined to decompose the problem to a scalar optimization
+ * objective. Utilizing genetic operators, offsprings are generated with better decomposition values
+ * to replace the neighboring parent solutions.
  *
  * For more information, see the following:
  * @code
@@ -49,12 +49,13 @@ namespace ens {
  * @endcode
  */
 template<
+    typename InitPolicyType = Uniform,
+    typename DecompPolicyType = Tchebycheff,
     typename MatType = arma::mat,
     typename ColType = typename ForwardType<MatType>::bcol,
-    typename CubeType = typename ForwardType<MatType>::bcube,
-    typename InitPolicyType = Uniform,
-    typename DecompPolicyType = Tchebycheff>
-class MOEADType {
+    typename CubeType = typename ForwardType<MatType>::bcube>
+class MOEADType
+{
  public:
   /**
    * Constructor for the MOEA/D optimizer.
@@ -79,19 +80,20 @@ class MOEADType {
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-  MOEADType(const size_t populationSize = 300,
-        const size_t maxGenerations = 500,
-        const double crossoverProb = 1.0,
-        const double neighborProb = 0.9,
-        const size_t neighborSize = 20,
-        const double distributionIndex = 20,
-        const double differentialWeight = 0.5,
-        const size_t maxReplace = 2,
-        const double epsilon = 1E-10,
-        const ColType& lowerBound = ColType(1, GetFillType<ColType>::zeros),
-        const ColType& upperBound = ColType(1, GetFillType<ColType>::ones),
-        const InitPolicyType initPolicy = InitPolicyType(),
-        const DecompPolicyType decompPolicy = DecompPolicyType());
+  MOEADType(
+      const size_t populationSize = 300,
+      const size_t maxGenerations = 500,
+      const double crossoverProb = 1.0,
+      const double neighborProb = 0.9,
+      const size_t neighborSize = 20,
+      const double distributionIndex = 20,
+      const double differentialWeight = 0.5,
+      const size_t maxReplace = 2,
+      const double epsilon = 1E-10,
+      const ColType& lowerBound = ColType(1, GetFillType<ColType>::zeros),
+      const ColType& upperBound = ColType(1, GetFillType<ColType>::ones),
+      const InitPolicyType initPolicy = InitPolicyType(),
+      const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Constructor for the MOEA/D optimizer. This constructor is provides an
@@ -118,19 +120,20 @@ class MOEADType {
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-  MOEADType(const size_t populationSize = 300,
-          const size_t maxGenerations = 500,
-          const double crossoverProb = 1.0,
-          const double neighborProb = 0.9,
-          const size_t neighborSize = 20,
-          const double distributionIndex = 20,
-          const double differentialWeight = 0.5,
-          const size_t maxReplace = 2,
-          const double epsilon = 1E-10,
-          const double lowerBound = 0,
-          const double upperBound = 1,
-          const InitPolicyType initPolicy = InitPolicyType(),
-          const DecompPolicyType decompPolicy = DecompPolicyType());
+  MOEADType(
+      const size_t populationSize = 300,
+      const size_t maxGenerations = 500,
+      const double crossoverProb = 1.0,
+      const double neighborProb = 0.9,
+      const size_t neighborSize = 20,
+      const double distributionIndex = 20,
+      const double differentialWeight = 0.5,
+      const size_t maxReplace = 2,
+      const double epsilon = 1E-10,
+      const double lowerBound = 0,
+      const double upperBound = 1,
+      const InitPolicyType initPolicy = InitPolicyType(),
+      const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Optimize a set of objectives. The initial population is generated
@@ -146,9 +149,10 @@ class MOEADType {
   template<typename InputMatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
-  typename InputMatType::elem_type Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                       InputMatType& iterate,
-                                       CallbackTypes&&... callbacks);
+  typename InputMatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      InputMatType& iterate,
+      CallbackTypes&&... callbacks);
 
   //! Retrieve population size.
   size_t PopulationSize() const { return populationSize; }
@@ -205,12 +209,12 @@ class MOEADType {
   //! Modify value of upperBound.
   ColType& UpperBound() { return upperBound; }
 
-  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
-  //! until `Optimize()` has been called.
+  //! Retrieve the Pareto optimal points in variable space.
+  //! This returns an empty cube until `Optimize()` has been called.
   const CubeType& ParetoSet() const { return paretoSet; }
 
-  //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
-  //! `Optimize()` has been called.
+  //! Retrieve the best front (the Pareto frontier).
+  //! This returns an empty cube until `Optimize()` has been called.
   const CubeType& ParetoFront() const { return paretoFront; }
 
   //! Get the weight initialization policy.
@@ -267,18 +271,18 @@ class MOEADType {
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(
-                     std::vector<InputMatType>&,
-                     std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<ColType>&);
+      std::vector<InputMatType>&,
+      std::tuple<ArbitraryFunctionType...>&,
+      std::vector<ColType>&);
 
   template<std::size_t I = 0,
            typename InputMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(
-                     std::vector<InputMatType>& population,
-                     std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<ColType>& calculatedObjectives);
+      std::vector<InputMatType>& population,
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      std::vector<ColType>& calculatedObjectives);
 
   //! Size of the population.
   size_t populationSize;
@@ -331,16 +335,21 @@ class MOEADType {
   DecompPolicyType decompPolicy;
 };
 
-using MOEAD = MOEADType<arma::mat, arma::colvec, arma::cube, Uniform, Tchebycheff>;
-using DefaultMOEAD = MOEADType<arma::mat, arma::colvec, arma::cube, Uniform, Tchebycheff>;
-using BBSMOEAD = MOEADType<arma::mat, arma::colvec, arma::cube, BayesianBootstrap, Tchebycheff>;
+using MOEAD = MOEADType<
+    Uniform, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
+using DefaultMOEAD = MOEADType<
+    Uniform, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
+using BBSMOEAD = MOEADType<
+    BayesianBootstrap, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
 
 template<
     typename MatType,
     typename ColType = typename ForwardType<MatType>::bcol,
     typename CubeType = typename ForwardType<MatType>::bcube>
-using DirichletMOEADType = MOEADType<MatType, ColType, CubeType, Dirichlet, Tchebycheff>;
-using DirichletMOEAD = MOEADType<arma::mat, arma::colvec, arma::cube, Dirichlet, Tchebycheff>;
+using DirichletMOEADType = MOEADType<
+    Dirichlet, Tchebycheff, MatType, ColType, CubeType>;
+using DirichletMOEAD = MOEADType<
+    Dirichlet, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
 } // namespace ens
 
 // Include implementation.

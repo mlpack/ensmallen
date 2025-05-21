@@ -18,21 +18,26 @@
 #include <assert.h>
 
 namespace ens {
-template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
-inline MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
-MOEADType(const size_t populationSize,
-      const size_t maxGenerations,
-      const double crossoverProb,
-      const double neighborProb,
-      const size_t neighborSize,
-      const double distributionIndex,
-      const double differentialWeight,
-      const size_t maxReplace,
-      const double epsilon,
-      const ColType& lowerBound,
-      const ColType& upperBound,
-      const InitPolicyType initPolicy,
-      const DecompPolicyType decompPolicy) :
+template <typename InitPolicyType,
+          typename DecompPolicyType,
+          typename MatType,
+          typename ColType,
+          typename CubeType>
+inline MOEADType<InitPolicyType, DecompPolicyType, MatType, ColType, CubeType>::
+MOEADType(
+    const size_t populationSize,
+    const size_t maxGenerations,
+    const double crossoverProb,
+    const double neighborProb,
+    const size_t neighborSize,
+    const double distributionIndex,
+    const double differentialWeight,
+    const size_t maxReplace,
+    const double epsilon,
+    const ColType& lowerBound,
+    const ColType& upperBound,
+    const InitPolicyType initPolicy,
+    const DecompPolicyType decompPolicy) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -48,21 +53,26 @@ MOEADType(const size_t populationSize,
     decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
 
-template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
-inline MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
-MOEADType(const size_t populationSize,
-      const size_t maxGenerations,
-      const double crossoverProb,
-      const double neighborProb,
-      const size_t neighborSize,
-      const double distributionIndex,
-      const double differentialWeight,
-      const size_t maxReplace,
-      const double epsilon,
-      const double lowerBound,
-      const double upperBound,
-      const InitPolicyType initPolicy,
-      const DecompPolicyType decompPolicy) :
+template <typename InitPolicyType,
+          typename DecompPolicyType,
+          typename MatType,
+          typename ColType,
+          typename CubeType>
+inline MOEADType<InitPolicyType, DecompPolicyType, MatType, ColType, CubeType>::
+MOEADType(
+    const size_t populationSize,
+    const size_t maxGenerations,
+    const double crossoverProb,
+    const double neighborProb,
+    const size_t neighborSize,
+    const double distributionIndex,
+    const double differentialWeight,
+    const size_t maxReplace,
+    const double epsilon,
+    const double lowerBound,
+    const double upperBound,
+    const InitPolicyType initPolicy,
+    const DecompPolicyType decompPolicy) :
     populationSize(populationSize),
     maxGenerations(maxGenerations),
     crossoverProb(crossoverProb),
@@ -79,11 +89,16 @@ MOEADType(const size_t populationSize,
   { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template <typename InitPolicyType,
+          typename DecompPolicyType,
+          typename MatType,
+          typename ColType,
+          typename CubeType>
 template<typename InputMatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-typename InputMatType::elem_type MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
+typename InputMatType::elem_type MOEADType<
+    InitPolicyType, DecompPolicyType, MatType, ColType, CubeType>::
 Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
          InputMatType& iterateIn,
          CallbackTypes&&... callbacks)
@@ -91,8 +106,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   // Population Size must be at least 3 for MOEA/D-DE to work.
   if (populationSize < 3)
   {
-    throw std::logic_error("MOEA/D-DE::Optimize(): population size should be at least"
-        " 3!");
+    throw std::logic_error(
+        "MOEA/D-DE::Optimize(): population size should be at least 3!");
   }
 
   // Convenience typedefs.
@@ -102,8 +117,6 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   typedef typename ForwardType<MatType>::uvec UVecType;
   typedef typename ForwardType<MatType>::umat UMatType;
   typedef typename ForwardType<MatType>::brow BaseRowType;
-
-
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
@@ -159,7 +172,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   // Controls early termination of the optimization process.
   bool terminate = false;
 
-  // The weight matrix. Each vector represents a decomposition subproblem (M X N).
+  // The weight matrix. Each vector represents a decomposition
+  // subproblem (M X N).
   const BaseMatType weights = initPolicy.template Generate<BaseMatType>(
       numObjectives, populationSize, epsilon);
 
@@ -171,12 +185,10 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
     const BaseRowType distances =
         conv_to<BaseRowType>::from(
         sqrt(sum(square(weights.col(i) - weights.each_col()))));
-    // const BaseRowType distances;
     UVecType sortedIndices = stable_sort_index(distances);
     // Ignore distance from self.
-
-    // TODO!!!
-    // neighborIndices.col(i) = sortedIndices(span(1, neighborSize));
+    neighborIndices.col(i) = sortedIndices(
+          typename GetProxyType<UVecType>::span(1, neighborSize), 0);
   }
 
   // 1.2 Random generation of the initial population.
@@ -190,7 +202,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
     individual = min(max(individual, castedLowerBound), castedUpperBound);
   }
 
-  Info << "MOEA/D-DE initialized successfully. Optimization started." << std::endl;
+  Info << "MOEA/D-DE initialized successfully. Optimization started."
+      << std::endl;
 
   std::vector<ColType> populationFitness(populationSize);
   for (size_t i = 0; i < populationSize; ++i)
@@ -210,7 +223,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
   // 2 The main loop.
-  for (size_t generation = 1; generation <= maxGenerations && !terminate; ++generation)
+  for (size_t generation = 1;
+      generation <= maxGenerations && !terminate; ++generation)
   {
     // Shuffle indexes of subproblems.
     const UVecType shuffleTemp = shuffle(
@@ -219,8 +233,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
     for (size_t i = 0; i < shuffleTemp.n_elem; ++i)
     {
       const size_t subProblemIdx = shuffleTemp(i);
-      // 2.1 Randomly select two indices in neighborIndices[subProblemIdx] and use them
-      // to make a child.
+      // 2.1 Randomly select two indices in neighborIndices[subProblemIdx]
+      // and use them to make a child.
       size_t r1, r2, r3;
       r1 = subProblemIdx;
       // Randomly choose to sample from the population or the neighbors.
@@ -243,13 +257,13 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
           // Boundary conditions.
           if (candidate(geneIdx) < castedLowerBound(geneIdx))
           {
-            candidate(geneIdx) = castedLowerBound(geneIdx) +
-                arma::randu() * (population[r1](geneIdx) - castedLowerBound(geneIdx));
+            candidate(geneIdx) = castedLowerBound(geneIdx) + arma::randu() *
+                (population[r1](geneIdx) - castedLowerBound(geneIdx));
           }
           if (candidate(geneIdx) > castedUpperBound(geneIdx))
           {
-            candidate(geneIdx) = castedUpperBound(geneIdx) -
-                arma::randu() * (castedUpperBound(geneIdx) - population[r1](geneIdx));
+            candidate(geneIdx) = castedUpperBound(geneIdx) - arma::randu() *
+                (castedUpperBound(geneIdx) - population[r1](geneIdx));
           }
         }
         else
@@ -259,7 +273,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       Mutate(candidate, 1.0 / static_cast<double>(numVariables),
           castedLowerBound, castedUpperBound);
 
-          ColType candidateFitness(numObjectives);
+      ColType candidateFitness(numObjectives);
       //! Creating temp vectors to pass to EvaluateObjectives.
       std::vector<BaseMatType> candidateContainer { candidate };
       std::vector<ColType> fitnessContainer { candidateFitness };
@@ -279,7 +293,6 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       const UVecType idxShuffle = shuffle(
           linspace<UVecType>(0, sampleSize - 1, sampleSize));
 
-      // for (size_t idx : idxShuffle)
       for (size_t i = 0; i < idxShuffle.n_elem; ++i)
       {
         const size_t idx = idxShuffle(i);
@@ -308,16 +321,16 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
     } // End of pass over all subproblems.
 
     //  The final population itself is the best front.
-    // const std::vector<UVecType> frontIndices { shuffle(
-    //     linspace<UVecType>(0, populationSize - 1, populationSize)) };
-    const std::vector<UVecType> frontIndices;
+    const std::vector<UVecType> frontIndices { shuffle(
+        linspace<UVecType>(0, populationSize - 1, populationSize)) };
 
     terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
         populationFitness, frontIndices, callbacks...);
   } // End of pass over all the generations.
 
   // Set the candidates from the Pareto Set as the output.
-  paretoSet.set_size(population[0].n_rows, population[0].n_cols, population.size());
+  paretoSet.set_size(
+      population[0].n_rows, population[0].n_cols, population.size());
 
   // The Pareto Front is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
@@ -331,7 +344,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       populationFitness.size());
 
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
-  for (size_t solutionIdx = 0; solutionIdx < populationFitness.size(); ++solutionIdx)
+  for (size_t solutionIdx = 0;
+      solutionIdx < populationFitness.size(); ++solutionIdx)
   {
     paretoFront.slice(solutionIdx) =
         conv_to<MatType>::from(populationFitness[solutionIdx]);
@@ -354,10 +368,14 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
 }
 
 //! Randomly chooses to select from parents or neighbors.
-template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template <typename InitPolicyType,
+          typename DecompPolicyType,
+          typename MatType,
+          typename ColType,
+          typename CubeType>
 template<typename IndexMatType>
 inline std::tuple<size_t, size_t>
-MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
+MOEADType<InitPolicyType, DecompPolicyType, MatType, ColType, CubeType>::
 Mating(size_t subProblemIdx,
        const IndexMatType& neighborIndices,
        bool sampleNeighbor)
@@ -387,13 +405,18 @@ Mating(size_t subProblemIdx,
 }
 
 //! Perform Polynomial mutation of the candidate.
-template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template <typename InitPolicyType,
+          typename DecompPolicyType,
+          typename MatType,
+          typename ColType,
+          typename CubeType>
 template<typename InputMatType>
-inline void MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
-Mutate(InputMatType& candidate,
-       double mutationRate,
-       const InputMatType& lowerBound,
-       const InputMatType& upperBound)
+inline void MOEADType<
+    InitPolicyType, DecompPolicyType, MatType, ColType, CubeType>::Mutate(
+    InputMatType& candidate,
+    double mutationRate,
+    const InputMatType& lowerBound,
+    const InputMatType& upperBound)
 {
     const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
@@ -404,8 +427,10 @@ Mutate(InputMatType& candidate,
 
       const double geneRange = upperBound(geneIdx) - lowerBound(geneIdx);
       // Normalised distance from the bounds.
-      const double lowerDelta = (candidate(geneIdx) - lowerBound(geneIdx)) / geneRange;
-      const double upperDelta = (upperBound(geneIdx) - candidate(geneIdx)) / geneRange;
+      const double lowerDelta = (candidate(geneIdx) - lowerBound(geneIdx)) /
+          geneRange;
+      const double upperDelta = (upperBound(geneIdx) - candidate(geneIdx)) /
+          geneRange;
       const double mutationPower = 1. / (distributionIndex + 1.0);
       const double rand = arma::randu();
       double value, perturbationFactor;
@@ -429,12 +454,16 @@ Mutate(InputMatType& candidate,
 }
 
 //! No objectives to evaluate.
-template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template <typename InitPolicyType,
+          typename DecompPolicyType,
+          typename MatType,
+          typename ColType,
+          typename CubeType>
 template<std::size_t I,
          typename InputMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
+MOEADType<InitPolicyType, DecompPolicyType, MatType, ColType, CubeType>::
 EvaluateObjectives(
     std::vector<InputMatType>&,
     std::tuple<ArbitraryFunctionType...>&,
@@ -444,12 +473,16 @@ EvaluateObjectives(
 }
 
 //! Evaluate the objectives for the entire population.
-template <typename MatType, typename ColType, typename CubeType, typename InitPolicyType, typename DecompPolicyType>
+template <typename InitPolicyType,
+          typename DecompPolicyType,
+          typename MatType,
+          typename ColType,
+          typename CubeType>
 template<std::size_t I,
          typename InputMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-MOEADType<MatType, ColType, CubeType, InitPolicyType, DecompPolicyType>::
+MOEADType<InitPolicyType, DecompPolicyType, MatType, ColType, CubeType>::
 EvaluateObjectives(
     std::vector<InputMatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,

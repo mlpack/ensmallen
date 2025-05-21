@@ -73,7 +73,7 @@ namespace test {
          numParetoPoints(numParetoPoints),
          objectiveF1(*this),
          objectiveF2(*this)
-    {/* Nothing to do here. */}
+    { /* Nothing to do here. */ }
 
     /**
      * Evaluate the objectives with the given coordinate.
@@ -87,8 +87,8 @@ namespace test {
 
       ColType objectives(numObjectives);
       objectives(0) = coords[0];
-      // ElemType sum = accu(coords(span(1, numVariables - 1), 0));
-      ElemType sum = 0;
+      ElemType sum = arma::accu(coords(typename GetProxyType<MatType>::span(
+          1, numVariables - 1), 0));
       ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.);
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::sqrt(objectiveRatio) -
@@ -126,8 +126,8 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
-        // ElemType sum = accu(coords(span(1, numVariables - 1), 0));
-        ElemType sum = 0;
+        ElemType sum = accu(coords(typename GetProxyType<MatType>::span(
+            1, numVariables - 1), 0));
         ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables - 1));
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 

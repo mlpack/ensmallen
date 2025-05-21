@@ -104,6 +104,25 @@ struct GetFillTypeInternal<MatType, true, false>
   static constexpr const decltype(arma::fill::ones)& ones   = arma::fill::ones;
   static constexpr const decltype(arma::fill::randu)& randu = arma::fill::randu;
   static constexpr const decltype(arma::fill::randn)& randn = arma::fill::randn;
+  static constexpr const decltype(arma::fill::eye)& eye     = arma::fill::eye;
+};
+
+template<typename MatType, bool IsArma, bool IsCoot>
+struct GetProxyTypeInternal
+{
+  // Default empty implementation
+};
+
+template<typename MatType>
+struct GetProxyType : public GetProxyTypeInternal<MatType,
+    IsArmaType<MatType>::value, IsCootType<MatType>::value> { };
+
+// By default, assume that we are using an Armadillo object.
+template<typename MatType>
+struct GetProxyTypeInternal<MatType, true, false>
+{
+  using span = arma::span;
+  static constexpr const decltype(arma::span::all)& all = arma::span::all;
 };
 
 #ifdef USE_COOT
@@ -117,6 +136,15 @@ struct GetFillTypeInternal<MatType, false, true>
   static constexpr const decltype(coot::fill::ones)& ones   = coot::fill::ones;
   static constexpr const decltype(coot::fill::randu)& randu = coot::fill::randu;
   static constexpr const decltype(coot::fill::randn)& randn = coot::fill::randn;
+  static constexpr const decltype(coot::fill::eye)& eye     = coot::fill::eye;
+};
+
+// If the matrix type is a Bandicoot type, use Bandicoot types instead.
+template<typename MatType>
+struct GetProxyTypeInternal<MatType, false, true>
+{
+  using span = coot::span;
+  static constexpr const decltype(coot::span::all)& all = coot::span::all;
 };
 
 #endif
