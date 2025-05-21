@@ -40,58 +40,48 @@ struct IsArmaType
   const static bool value = false;
 };
 
-// Commenting out the first template per case, because
-// Visual Studio doesn't like this instantiaion pattern (error C2910).
-// template<>
 template<typename eT>
 struct IsArmaType<arma::Col<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::SpCol<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::Row<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::SpRow<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::subview<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::subview_col<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::subview_row<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::SpSubview<eT> >
 {
@@ -110,28 +100,24 @@ struct IsArmaType<arma::SpSubview_row<eT> >
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::Mat<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::SpMat<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::Cube<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsArmaType<arma::subview_cube<eT> >
 {

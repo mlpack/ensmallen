@@ -10,6 +10,7 @@ project(ensmallen
 
 # Configurable options for CMake.
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
+option(USE_BANDICOOT "If available, build against Bandicoot for GPU support." ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
@@ -59,13 +60,15 @@ if(USE_OPENMP)
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
-# Find Bandicoot and link it.
-find_package(Bandicoot 0.100.0)
-if(BANDICOOT_FOUND AND NOT TARGET Bandicoot::Bandicoot)
-  target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
-  target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
+if (USE_BANDICOOT)
+  # Find Bandicoot and link it.
+  find_package(Bandicoot 0.100.0)
+  if(BANDICOOT_FOUND AND NOT TARGET Bandicoot::Bandicoot)
+    target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
+    target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
 
-  add_definitions(-DUSE_COOT)
+    add_definitions(-DUSE_COOT)
+  endif()
 endif()
 
 # Find Armadillo and link it.

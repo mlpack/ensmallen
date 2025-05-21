@@ -96,20 +96,6 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
         set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${CLBLAS_LIBRARIES}")
         set(HAVE_CLBLAS true)
       endif ()
-
-      # Search for clBlast.
-      set(CLBLAST_FIND_QUIETLY true)
-      include(COOT_FindCLBlast)
-
-      if (CLBLAST_FOUND)
-        message(STATUS "clBlast includes: ${CLBLAST_INCLUDE_DIR}")
-        message(STATUS "clBlast libraries: ${CLBLAST_LIBRARIES}")
-
-        set(SUPPORT_INCLUDE_DIRS "${SUPPORT_INCLUDE_DIRS}"
-            "${CLBLAST_INCLUDE_DIR}")
-        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${CLBLAST_LIBRARIES}")
-        set(HAVE_CLBLAST true)
-      endif ()
     endif ()
 
     # Search for CUDA.
