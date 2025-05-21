@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]", arma::mat)
  * Test the correctness of the CD implemenation by using the sparse test
  * function, with disjoint features which optimize to a precalculated minima.
  */
-TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", arma::mat)
+TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", arma::mat, arma::sp_mat)
 {
   // The test function for parallel SGD should work with CD, as the gradients
   // of the individual functions are projections into the ith dimension.
@@ -61,19 +61,6 @@ TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", arma::fmat)
   // of the individual functions are projections into the ith dimension.
   CD<> s(0.4);
   FunctionTest<SparseTestFunction, TestType>(s, 0.2, 0.02);
-}
-
-/**
- * Test the correctness of the CD implemenation by using the sparse test
- * function, with disjoint features which optimize to a precalculated minima.
- * Use arma::sp_mat.
- */
-TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", arma::sp_mat)
-{
-  // The test function for parallel SGD should work with CD, as the gradients
-  // of the individual functions are projections into the ith dimension.
-  CD<> s(0.4);
-  FunctionTest<SparseTestFunction, arma::sp_mat>(s, 0.01, 0.001);
 }
 
 /**

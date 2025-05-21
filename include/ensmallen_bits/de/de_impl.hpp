@@ -102,13 +102,13 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
       size_t l = 0, m = 0;
       do
       {
-        l = rand() % populationSize;
+        l = arma::randi<arma::uword>(arma::distr_param(0, populationSize - 1));
       }
       while (l == member);
 
       do
       {
-        m = rand() % populationSize;
+        m = arma::randi<arma::uword>(arma::distr_param(0, populationSize - 1));
       }
       while (m == member && m == l);
 

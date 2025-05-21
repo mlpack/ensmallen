@@ -17,7 +17,7 @@
  using namespace ens;
  using namespace ens::test;
 
- TEMPLATE_TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGrad]",
+ TEMPLATE_TEST_CASE("AdaGrad_LogisticRegressionFunction", "[AdaGrad]",
      arma::mat, arma::fmat)
  {
    AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
@@ -27,7 +27,7 @@
 
  #ifdef USE_COOT
 
- TEMPLATE_TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGrad]",
+ TEMPLATE_TEST_CASE("AdaGrad_LogisticRegressionFunction", "[AdaGrad]",
      coot::mat, coot::fmat)
  {
    AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);

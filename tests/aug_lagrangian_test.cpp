@@ -98,7 +98,7 @@
  #ifdef USE_COOT
 
  TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
-   coot::mat, coot::fmat)
+     coot::mat, coot::fmat)
  {
    typedef typename ForwardType<TestType>::bvec BaseVecType;
    typedef typename TestType::elem_type ElemType;

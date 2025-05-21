@@ -18,7 +18,7 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDelta]",
+TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
     arma::mat, arma::fmat)
 {
   AdaDelta adaDelta;
@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDelta]",
 
 #ifdef USE_COOT
 
-TEMPLATE_TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDelta]",
+TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
     coot::mat, coot::fmat)
 {
   AdaDelta adaDelta;

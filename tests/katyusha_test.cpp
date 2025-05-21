@@ -24,7 +24,7 @@
    {
      Katyusha optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
      LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-       optimizer, 0.015, 0.015);
+         optimizer, 0.015, 0.015);
    }
  }
 
@@ -36,7 +36,7 @@
    {
      KatyushaProximal optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
      LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-       optimizer, 0.015, 0.015);
+         optimizer, 0.015, 0.015);
    }
  }
 
@@ -47,7 +47,7 @@
  {
    Katyusha optimizer(1.0, 10.0, 10, 100, 0, 1e-10, true);
    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-     optimizer, 0.015, 0.015);
+       optimizer, 0.015, 0.015);
  }
 
  TEMPLATE_TEST_CASE("KatyushaProximal_LogisticRegressionFunction", "[Katyusha]",
@@ -55,7 +55,7 @@
  {
    KatyushaProximal optimizer(1.0, 10.0, 30, 100, 0, 1e-10, true);
    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-     optimizer, 0.015, 0.015);
+       optimizer, 0.015, 0.015);
  }
 
  #endif

@@ -67,7 +67,8 @@ class PenaltyBoundaryIntersection
     //! Distance of F(x) from the idealPoint along the reference direction.
     const ElemType d1 = dot(candidateFitness - idealPoint, referenceDirection);
     //! The perpendicular distance of F(x) from reference direction.
-    const ElemType d2 = norm(candidateFitness - (idealPoint + d1 * referenceDirection));
+    const ElemType d2 = norm(candidateFitness - (idealPoint + d1 *
+        referenceDirection));
 
     return d1 + static_cast<ElemType>(theta) * d2;
   }

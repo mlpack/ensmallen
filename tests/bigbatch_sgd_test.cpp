@@ -16,7 +16,7 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
+TEMPLATE_TEST_CASE("BBS_BB_LogisticRegressionFunction", "[BigBatchSGD]",
     arma::mat, arma::fmat)
 {
   // Run big-batch SGD with a couple of batch sizes.
@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
   }
 }
 
-TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
+TEMPLATE_TEST_CASE("BBS_Armijo_LogisticRegressionFunction", "[BigBatchSGD]",
     arma::mat, arma::fmat)
 {
   // Run big-batch SGD with a couple of batch sizes.
@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
 
 #ifdef USE_COOT
 
-TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
+TEMPLATE_TEST_CASE("BBS_BB_LogisticRegressionFunction", "[BigBatchSGD]",
     coot::mat, coot::fmat)
 {
   BBS_BB bbsgd(350, 0.001, 0.1, 10000, 1e-8, true, true);
@@ -50,7 +50,7 @@ TEMPLATE_TEST_CASE("BBSBBLogisticRegressionTest", "[BigBatchSGD]",
       bbsgd, 0.003, 0.006);
 }
 
-TEMPLATE_TEST_CASE("BBSArmijoLogisticRegressionTest", "[BigBatchSGD]",
+TEMPLATE_TEST_CASE("BBS_Armijo_LogisticRegressionFunction", "[BigBatchSGD]",
     coot::mat, coot::fmat)
 {
   BBS_Armijo bbsgd(40, 0.005, 0.1, 10000, 1e-6, true, true);
