@@ -46,12 +46,12 @@ inline void Proximal::ProjectToL1Ball(MatType& v, double tau)
   MatType simplexSum(simplexSol.n_rows, simplexSol.n_cols);
   for (size_t col = 0; col < simplexSol.n_cols; ++col)
   {
-      simplexSum(0, col) = simplexSol(0, col);
-      for (size_t row = 1; row < simplexSol.n_rows; ++row)
-      {
-          simplexSum(row, col) = simplexSum(row - 1, col) +
-              simplexSol(row, col);
-      }
+    simplexSum(0, col) = simplexSol(0, col);
+    for (size_t row = 1; row < simplexSol.n_rows; ++row)
+    {
+      simplexSum(row, col) = simplexSum(row - 1, col) +
+          simplexSol(row, col);
+    }
   }
 
   double nu = 0;

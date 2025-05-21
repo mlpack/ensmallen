@@ -78,7 +78,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
 
   BaseMatType accept(rows, cols);
   accept.zeros();
-  BaseMatType moveSize(rows, cols);
+  BaseMatType moveSize(rows, cols, GetFillType<BaseMatType>::none);
   moveSize.fill(initMoveCoef);
 
   Callback::BeginOptimization(*this, function, iterate, callbacks...);
@@ -220,7 +220,7 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
                                                  MatType& accept,
                                                  MatType& moveSize)
 {
-  MatType target(accept.n_rows, accept.n_cols);
+  MatType target(accept.n_rows, accept.n_cols, GetFillType<MatType>::none);
   target.fill(0.44);
 
   moveSize = log(moveSize);

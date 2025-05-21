@@ -71,8 +71,7 @@ class NesterovMomentumUpdate
            const size_t cols) :
         parent(parent)
     {
-      velocity.set_size(rows, cols);
-      velocity.zeros();
+      velocity.zeros(rows, cols);
     }
 
     /**

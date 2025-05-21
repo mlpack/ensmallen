@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("SA_GeneralizedRosenbrockFunction", "[SA]", arma::mat)
     // The convergence is very sensitive to the choices of maxMove and initMove.
     SA<ExponentialSchedule> sa(schedule, 1000000, 1000., 1000, 100, 1e-10, 3,
         1.5, 0.5, 0.3);
-    coordinates = f. template GetInitialPoint<TestType>();
+    coordinates = f.template GetInitialPoint<TestType>();
     result = sa.Optimize(f, coordinates);
     ++iteration;
 

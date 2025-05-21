@@ -172,8 +172,6 @@ class SPALeRAStepsize
         // Faster.
         learningRates /= 2;
 
-        //if (any(vectorise(learningRates) <= 1e-15))
-        /* if (min(vectorise(learningRates)) <= 1e-15) */
         if (learningRates.min() <= 1e-15)
         {
           // Stop because learning rate too low.

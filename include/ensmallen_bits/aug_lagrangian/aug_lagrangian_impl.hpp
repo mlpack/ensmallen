@@ -20,10 +20,11 @@
 namespace ens {
 
 template<typename VecType>
-inline AugLagrangianType<VecType>::AugLagrangianType(const size_t maxIterations,
-                                    const double penaltyThresholdFactor,
-                                    const double sigmaUpdateFactor,
-                                    const L_BFGS& lbfgs) :
+inline AugLagrangianType<VecType>::AugLagrangianType(
+    const size_t maxIterations,
+    const double penaltyThresholdFactor,
+    const double sigmaUpdateFactor,
+    const L_BFGS& lbfgs) :
     maxIterations(maxIterations),
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
@@ -40,11 +41,12 @@ template<typename LagrangianFunctionType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value ||
     IsCootType<GradType>::value, bool>::type
-AugLagrangianType<VecType>::Optimize(LagrangianFunctionType& function,
-                        MatType& coordinates,
-                        const VecType& initLambda,
-                        const double initSigma,
-                        CallbackTypes&&... callbacks)
+AugLagrangianType<VecType>::Optimize(
+    LagrangianFunctionType& function,
+    MatType& coordinates,
+    const VecType& initLambda,
+    const double initSigma,
+    CallbackTypes&&... callbacks)
 {
   lambda = initLambda;
   sigma = initSigma;

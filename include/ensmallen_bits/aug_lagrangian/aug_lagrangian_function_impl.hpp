@@ -47,7 +47,8 @@ AugLagrangianFunction<LagrangianFunction, VecType>::AugLagrangianFunction(
 // Evaluate the AugLagrangianFunction at the given coordinates.
 template<typename LagrangianFunction, typename VecType>
 template<typename MatType>
-typename MatType::elem_type AugLagrangianFunction<LagrangianFunction, VecType>::Evaluate(
+typename MatType::elem_type
+AugLagrangianFunction<LagrangianFunction, VecType>::Evaluate(
     const MatType& coordinates) const
 {
   // The augmented Lagrangian is evaluated as
@@ -98,7 +99,8 @@ void AugLagrangianFunction<LagrangianFunction, VecType>::Gradient(
 // Get the initial point.
 template<typename LagrangianFunction, typename VecType>
 template<typename MatType>
-const MatType& AugLagrangianFunction<LagrangianFunction, VecType>::GetInitialPoint()
+const MatType&
+AugLagrangianFunction<LagrangianFunction, VecType>::GetInitialPoint()
     const
 {
   return function.template GetInitialPoint<MatType>();

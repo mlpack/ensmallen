@@ -58,7 +58,7 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
   string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]COOT_USE_BLAS[)][\t ]*\r?\n[\t ]*#define[ \t]+COOT_USE_BLAS[ \t]*\r?\n" COOT_USE_BLAS "${_bandicoot_CONFIG_CONTENTS}")
 
   # If we aren't wrapping, things get a little more complex.
-  if("${COOT_USE_WRAPPER}" STREQUAL "")
+  if(NOT COOT_USE_WRAPPER)
     set(COOT_NEED_LIBRARY false)
     message(STATUS "COOT_USE_WRAPPER is not defined, so all dependencies of "
                    "Bandicoot must be manually linked.")
@@ -122,8 +122,8 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
         find_package(CUDA)
 
         if (CUDA_FOUND)
-	        message(STATUS "CUDA includes: ${CUDA_INCLUDE_DIRS}")
-	        message(STATUS "CUDA libraries: ${CUDA_LIBRARIES}")
+	  message(STATUS "CUDA includes: ${CUDA_INCLUDE_DIRS}")
+	  message(STATUS "CUDA libraries: ${CUDA_LIBRARIES}")
 
           # We also need NVRTC and also libcuda itself, which the old FindCUDA package do not find.
           find_library(CUDA_cuda_LIBRARY cuda
@@ -156,8 +156,8 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
         find_package(CUDAToolkit REQUIRED)
 
         if (CUDAToolkit_FOUND)
-	        message(STATUS "CUDA includes: ${CUDAToolkit_INCLUDE_DIRS}")
-	        message(STATUS "CUDA libraries: ${CUDAToolkit_LIBRARY_DIR}")
+	  message(STATUS "CUDA includes: ${CUDAToolkit_INCLUDE_DIRS}")
+	  message(STATUS "CUDA libraries: ${CUDAToolkit_LIBRARY_DIR}")
 
 	  set(CUDA_LIBRARIES CUDA::cudart CUDA::cuda_driver)
           set(CUDA_CUBLAS_LIBRARIES CUDA::cublas)
@@ -291,7 +291,7 @@ endif()
 if (COOT_NEED_LIBRARY)
   # UNIX paths are standard, no need to write.
   find_library(BANDICOOT_LIBRARY
-    NAMES armadillo
+    NAMES bandicoot
     PATHS "$ENV{ProgramFiles}/Bandicoot/lib"  "$ENV{ProgramFiles}/Bandicoot/lib64" "$ENV{ProgramFiles}/Bandicoot"
     )
 
