@@ -11,70 +11,58 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
- #include <ensmallen.hpp>
- #include "catch.hpp"
- #include "test_function_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
+#include "test_function_tools.hpp"
 
- using namespace arma;
- using namespace ens;
- using namespace ens::test;
+using namespace arma;
+using namespace ens;
+using namespace ens::test;
 
- TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", arma::mat, arma::fmat)
- {
-   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-       optimizer, 1.0, 0.1);
- }
+TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", arma::mat, arma::fmat)
+{
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
+  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
+      optimizer, 1.0, 0.1);
+}
 
- TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", arma::mat, arma::fmat)
- {
-   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-   FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
- }
+TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", arma::mat, arma::fmat)
+{
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
+  FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
+}
 
- TEMPLATE_TEST_CASE("SPSA_LogisticRegressionFunction", "[SPSA]", arma::mat)
- {
-   // We allow 10 trials, because SPSA is definitely not guaranteed to
-   // converge.
-   SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
-   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-       optimizer, 0.003, 0.006, 10);
- }
+TEMPLATE_TEST_CASE("SPSA_LogisticRegressionFunction", "[SPSA]", arma::mat)
+{
+  // We allow 10 trials, because SPSA is definitely not guaranteed to
+  // converge.
+  SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      optimizer, 0.003, 0.006, 10);
+}
 
- #if ARMA_VERSION_MAJOR > 9 ||\
-     (ARMA_VERSION_MAJOR == 9 && ARMA_VERSION_MINOR >= 400)
+#ifdef USE_COOT
 
- TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", arma::sp_mat)
- {
-   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-       optimizer, 1.0, 0.1);
- }
+TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", coot::mat, coot::fmat)
+{
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
+  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
+      optimizer, 1.0, 0.1);
+}
 
- #endif
+TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", coot::mat, coot::fmat)
+{
+  SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
+  FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
+}
 
- #ifdef USE_COOT
+TEMPLATE_TEST_CASE("SPSA_LogisticRegressionFunction", "[SPSA]", coot::mat)
+{
+  // We allow 10 trials, because SPSA is definitely not guaranteed to
+  // converge.
+  SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.003, 0.006, 10);
+}
 
- TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", coot::mat, coot::fmat)
- {
-   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-   FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-       optimizer, 1.0, 0.1);
- }
-
- TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", coot::mat, coot::fmat)
- {
-   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-   FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
- }
-
- TEMPLATE_TEST_CASE("SPSA_LogisticRegressionFunction", "[SPSA]", coot::mat)
- {
-   // We allow 10 trials, because SPSA is definitely not guaranteed to
-   // converge.
-   SPSA optimizer(0.5, 0.102, 0.002, 0.3, 5000, 1e-8);
-   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-       optimizer, 0.003, 0.006, 10);
- }
-
- #endif
+#endif
