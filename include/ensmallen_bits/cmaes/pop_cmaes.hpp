@@ -62,11 +62,14 @@ namespace ens {
  *
  * @code
  * @inproceedings{hansen2009benchmarking,
- *   title={Benchmarking a BI-population CMA-ES on the BBOB-2009 function testbed},
- *   author={Hansen, Nikolaus},
- *   booktitle={Proceedings of the 11th annual conference companion on genetic and evolutionary computation conference: late breaking papers},
- *   pages={2389--2396},
- *   year={2009}}
+ *   title     = {Benchmarking a BI-population CMA-ES on the BBOB-2009 function
+ *                testbed},
+ *   author    = {Hansen, Nikolaus},
+ *   booktitle = {Proceedings of the 11th annual conference companion on genetic
+ *                and evolutionary computation conference: late breaking
+ *                papers},
+ *   pages     = {2389--2396},
+ *   year      = {2009}}
  * @endcode
  *
  * BI-Population CMA-ES can efficiently handle separable, multimodal, and weak
@@ -162,11 +165,13 @@ class POP_CMAES : public CMAES<SelectionPolicyType, TransformationPolicyType>
 // Define IPOP_CMAES and BIPOP_CMAES using the POP_CMAES template
 template<typename SelectionPolicyType = FullSelection,
          typename TransformationPolicyType = EmptyTransformation<>>
-using IPOP_CMAES = POP_CMAES<SelectionPolicyType, TransformationPolicyType, false>;
+using IPOP_CMAES = POP_CMAES<
+    SelectionPolicyType, TransformationPolicyType, false>;
 
 template<typename SelectionPolicyType = FullSelection,
          typename TransformationPolicyType = EmptyTransformation<>>
-using BIPOP_CMAES = POP_CMAES<SelectionPolicyType, TransformationPolicyType, true>;
+using BIPOP_CMAES = POP_CMAES<
+    SelectionPolicyType, TransformationPolicyType, true>;
 
 } // namespace ens
 

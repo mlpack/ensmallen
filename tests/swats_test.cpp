@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
 }
 
 TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]",
-  coot::mat, coot::fmat)
+    coot::mat, coot::fmat)
 {
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
@@ -69,7 +69,7 @@ TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]",
 }
 
 TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
-  coot::mat, coot::fmat)
+    coot::mat, coot::fmat)
 {
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>,

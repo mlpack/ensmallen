@@ -9,35 +9,35 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
- #include <ensmallen.hpp>
- #include "catch.hpp"
- #include "test_function_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
+#include "test_function_tools.hpp"
 
- using namespace ens;
- using namespace ens::test;
- using namespace std;
+using namespace ens;
+using namespace ens::test;
+using namespace std;
 
- /**
-  * Checks if low <= value <= high. Used by NSGA2FonsecaFlemingTest.
-  *
-  * @param value The value being checked.
-  * @param low The lower bound.
-  * @param high The upper bound.
-  * @tparam The type of elements in the population set.
-  * @return true if value lies in the range [low, high].
-  * @return false if value does not lie in the range [low, high].
-  */
- template<typename ElemType>
- bool IsInBounds(
+/**
+* Checks if low <= value <= high. Used by NSGA2FonsecaFlemingTest.
+*
+* @param value The value being checked.
+* @param low The lower bound.
+* @param high The upper bound.
+* @tparam The type of elements in the population set.
+* @return true if value lies in the range [low, high].
+* @return false if value does not lie in the range [low, high].
+*/
+template<typename ElemType>
+bool IsInBounds(
     const ElemType& value, const ElemType& low, const ElemType& high)
- {
-   ElemType roundoff = 0.1;
-   return !(value < (low - roundoff)) && !((high + roundoff) < value);
- }
+{
+  ElemType roundoff = 0.1;
+  return !(value < (low - roundoff)) && !((high + roundoff) < value);
+}
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
     arma::mat, arma::fmat)
- {
+{
   typedef typename TestType::elem_type ElemType;
 
   SchafferFunctionN1<TestType> SCH;

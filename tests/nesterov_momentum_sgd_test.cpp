@@ -105,7 +105,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
 TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",
     "[NesterovMomentumSGD]", coot::mat)
 {
-  typedef typename TestType::elem_type eT;
+  typedef typename TestType::elem_type ElemType;
 
   // Create the generalized Rosenbrock function.
   GeneralizedRosenbrockFunctionType<TestType, coot::Row<size_t>> f(10);
@@ -114,17 +114,17 @@ TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",
       NoDecay(), true, true);
 
   TestType coordinates = f.GetInitialPoint();
-  double result = s.Optimize(f, coordinates);
+  ElemType result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
   for (size_t j = 0; j < 10; ++j)
-    REQUIRE(eT(coordinates(j)) == Approx(1.0).epsilon(0.003));
+    REQUIRE(ElemType(coordinates(j)) == Approx(1.0).epsilon(0.003));
 }
 
 TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
     "[NesterovMomentumSGD]", coot::fmat)
 {
-  typedef typename TestType::elem_type eT;
+  typedef typename TestType::elem_type ElemType;
 
   // Create the generalized Rosenbrock function.
   GeneralizedRosenbrockFunctionType<TestType, coot::Row<size_t>> f(10);
@@ -132,7 +132,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   NesterovMomentumSGD s(0.00015, 1, 0, 1e-10, true, nesterovMomentumUpdate);
 
   size_t trial = 0;
-  float result = std::numeric_limits<float>::max();
+  ElemType result = std::numeric_limits<ElemType>::max();
   TestType coordinates;
   while (trial++ < 8 && result > 0.1)
   {
@@ -142,7 +142,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
 
   REQUIRE(result == Approx(0.0).margin(0.02));
   for (size_t j = 0; j < 10; ++j)
-    REQUIRE(eT(coordinates(j)) == Approx(1.0).margin(0.05));
+    REQUIRE(ElemType(coordinates(j)) == Approx(1.0).margin(0.05));
 }
 
 #endif
