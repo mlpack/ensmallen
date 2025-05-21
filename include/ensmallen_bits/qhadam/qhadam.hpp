@@ -27,10 +27,10 @@ namespace ens {
  *
  * @code
  * @inproceedings{ma2019qh,
- *   title={Quasi-hyperbolic momentum and Adam for deep learning},
- *   author={Jerry Ma and Denis Yarats},
- *   booktitle={International Conference on Learning Representations},
- *   year={2019}
+ *   title     = {Quasi-hyperbolic momentum and Adam for deep learning},
+ *   author    = {Jerry Ma and Denis Yarats},
+ *   booktitle = {International Conference on Learning Representations},
+ *   year      = {2019}
  * }
  * @endcode
  *

@@ -41,11 +41,12 @@ namespace ens {
  * For more information, see the following:
  * @code
  * @article{li2008multiobjective,
- *   title={Multiobjective optimization problems with complicated Pareto sets, MOEA/D and NSGA-II},
- *   author={Li, Hui and Zhang, Qingfu},
- *   journal={IEEE transactions on evolutionary computation},
- *   pages={284--302},
- *   year={2008},
+ *   title   = {Multiobjective optimization problems with complicated Pareto
+ *              sets, MOEA/D and NSGA-II},
+ *   author  = {Li, Hui and Zhang, Qingfu},
+ *   journal = {IEEE transactions on evolutionary computation},
+ *   pages   = {284--302},
+ *   year    = {2008},
  * @endcode
  */
 template<

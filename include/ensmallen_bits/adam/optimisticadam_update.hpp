@@ -27,11 +27,11 @@ namespace ens {
  *
  * @code
  * @article{
- *   author  = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
- *              Haoyang Zeng},
- *   title   = {Training GANs with Optimism},
- *   year    = {2017},
- *   url     = {https://arxiv.org/abs/1711.00141}
+ *   author = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
+ *             Haoyang Zeng},
+ *   title  = {Training GANs with Optimism},
+ *   year   = {2017},
+ *   url    = {https://arxiv.org/abs/1711.00141}
  * }
  * @endcode
  */

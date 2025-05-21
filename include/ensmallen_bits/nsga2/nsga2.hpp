@@ -40,10 +40,10 @@ namespace ens {
  *
  * @code
  * @article{10.1109/4235.996017,
- *   author = {Deb, K. and Pratap, A. and Agarwal, S. and Meyarivan, T.},
- *   title = {A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II},
- *   year = {2002},
- *   url = {https://doi.org/10.1109/4235.996017},
+ *   author  = {Deb, K. and Pratap, A. and Agarwal, S. and Meyarivan, T.},
+ *   title   = {A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II},
+ *   year    = {2002},
+ *   url     = {https://doi.org/10.1109/4235.996017},
  *   journal = {Trans. Evol. Comp}}
  * @endcode
  *

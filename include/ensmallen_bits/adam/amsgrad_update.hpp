@@ -25,9 +25,9 @@ namespace ens {
  *
  * @code
  * @article{
- *   title   = {On the convergence of Adam and beyond},
- *   url     = {https://openreview.net/pdf?id=ryQu7f-RZ}
- *   year    = {2018}
+ *   title = {On the convergence of Adam and beyond},
+ *   url   = {https://openreview.net/pdf?id=ryQu7f-RZ}
+ *   year  = {2018}
  * }
  * @endcode
  */
