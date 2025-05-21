@@ -200,9 +200,10 @@ class AugLagrangianType
   template<typename LagrangianFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  bool Optimize(AugLagrangianFunction<LagrangianFunctionType, VecType>& function,
-                MatType& coordinates,
-                CallbackTypes&&... callbacks)
+  bool Optimize(
+      AugLagrangianFunction<LagrangianFunctionType, VecType>& function,
+      MatType& coordinates,
+      CallbackTypes&&... callbacks)
   {
     return Optimize<LagrangianFunctionType, MatType, MatType,
         CallbackTypes...>(function, coordinates,
