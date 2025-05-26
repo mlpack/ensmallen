@@ -61,7 +61,13 @@ using arma::abs;
 using arma::accu;
 using arma::chol;
 using arma::clamp;
-// using arma::conv_to;
+
+// If Bandicoot is used, using arma::conv_to is already
+// part of including bandicoot.
+#ifndef USE_COOT
+using arma::conv_to;
+#endif
+
 using arma::cos;
 using arma::dot;
 using arma::exp;

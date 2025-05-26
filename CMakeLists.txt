@@ -60,10 +60,10 @@ if(USE_OPENMP)
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
-if (USE_BANDICOOT)
+if(USE_BANDICOOT)
   # Find Bandicoot and link it.
   find_package(Bandicoot 0.100.0)
-  if(BANDICOOT_FOUND AND NOT TARGET Bandicoot::Bandicoot)
+  if(BANDICOOT_FOUND)
     target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
     target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
 
