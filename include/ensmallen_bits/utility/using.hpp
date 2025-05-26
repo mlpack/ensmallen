@@ -61,7 +61,7 @@ using arma::abs;
 using arma::accu;
 using arma::chol;
 using arma::clamp;
-using arma::conv_to;
+// using arma::conv_to;
 using arma::cos;
 using arma::dot;
 using arma::exp;

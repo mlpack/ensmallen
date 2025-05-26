@@ -104,7 +104,8 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
   BoundaryBoxConstraint<TestType> b(-10, 10);
   IPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
       0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      cmaes, 0.003, 0.006, 5);
 }
 
 TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
@@ -113,7 +114,8 @@ TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
   BoundaryBoxConstraint<TestType> b(-10, 10);
   BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
       0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      cmaes, 0.003, 0.006, 5);
 }
 
 #endif
