@@ -13,6 +13,7 @@ jobs:
         config:
           - { name: 'CUDA', os: self-hosted}
           - { name: 'OpenCL', os: self-hosted}
+          - { name: 'CPU', os: self-hosted}
     steps:
     - uses: actions/checkout@v4
     - name: Install Dependencies
@@ -39,7 +40,12 @@ jobs:
           mkdir build
           cd build/
 
-          cmake -DBANDICOOT_INCLUDE_DIR=../../bandicoot-code/include/ ..
+          if [[ "${{ matrix.config.name }}" == "CPU" ]]; then
+              cmake -DUSE_BANDICOOT=OFF ..
+          else
+              cmake -DBANDICOOT_INCLUDE_DIR=../../bandicoot-code/include/ ..
+          fi
+
           make ensmallen_tests
 
     - name: Test ensmallen
@@ -49,4 +55,6 @@ jobs:
               COOT_DEFAULT_BACKEND=CUDA_BACKEND ./ensmallen_tests
           elif [[ "${{ matrix.config.name }}" == "OpenCL" ]]; then
               COOT_DEFAULT_BACKEND=CL_BACKEND ./ensmallen_tests
+          else
+              ./ensmallen_tests
           fi
