@@ -28,12 +28,12 @@ jobs:
         if [[ "${{ matrix.config.name }}" == "CUDA" ]]; then
             echo "Installing Bandicoot CUDA"
             cmake -DFIND_CUDA=ON -DFIND_OPENCL=OFF -DBUILD_TESTS=OFF ../
+            make
         elif [[ "${{ matrix.config.name }}" == "OpenCL" ]]; then
             echo "Installing Bandicoot OpenCL"
             cmake -DFIND_CUDA=OFF -DFIND_OPENCL=ON -DBUILD_TESTS=OFF ../
+            make
         fi
-
-        make
 
     - name: Build ensmallen
       run: |
