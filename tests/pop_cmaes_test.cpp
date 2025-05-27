@@ -109,7 +109,7 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
 }
 
 TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
-    arma::mat)
+    coot::mat)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
