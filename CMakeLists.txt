@@ -62,7 +62,7 @@ endif()
 
 if(USE_BANDICOOT)
   # Find Bandicoot and link it.
-  find_package(Bandicoot 0.100.0)
+  find_package(Bandicoot 2.1.0)
   if(BANDICOOT_FOUND)
     target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
     target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
