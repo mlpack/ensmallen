@@ -12,8 +12,7 @@
 #ifndef ENSMALLEN_UTILITY_PROXIES_HPP
 #define ENSMALLEN_UTILITY_PROXIES_HPP
 
-#include "arma_traits.hpp"
-#include "coot_traits.hpp"
+#include "function_traits.hpp"
 
 namespace ens {
 
@@ -97,11 +96,6 @@ struct ForwardType
     // with one row).
     typedef typename std::conditional<IsArmaType<MatType>::value,
         arma::urowvec, coot::urowvec>::type urowvec;
-
-    // `umat` is a typedef for unsigned integer matrices, with elements stored
-    // in column-major ordering (ie. column by column).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::umat, coot::umat>::type umat;
 
     // `distr_param` is a typedef for the distribution parameters used in
     // random number generation.

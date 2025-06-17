@@ -17,7 +17,7 @@
 #ifndef ENS_CORE_UTIL_USING_HPP
 #define ENS_CORE_UTIL_USING_HPP
 
-#include "arma_traits.hpp"
+#include "function_traits.hpp"
 
 namespace ens {
 

@@ -31,9 +31,7 @@ namespace test {
  *
  * @tparam arma::mat Type of matrix to optimize.
  */
-template<
-    typename MatType = arma::mat,
-    typename ColType = typename ForwardType<MatType>::bvec>
+template<typename MatType = arma::mat>
 class FonsecaFlemingFunction
 {
  private:
@@ -50,9 +48,10 @@ class FonsecaFlemingFunction
    * @param coords The function coordinates.
    * @return Col<typename MatType::elem_type>
    */
-  ColType Evaluate(const MatType& coords)
+
+  typename ForwardType<MatType>::bvec Evaluate(const MatType& coords)
   {
-    ColType objectives(numObjectives);
+    typename ForwardType<MatType>::bvec objectives(numObjectives);
 
     objectives(0) = objectiveA.Evaluate(coords);
     objectives(1) = objectiveB.Evaluate(coords);

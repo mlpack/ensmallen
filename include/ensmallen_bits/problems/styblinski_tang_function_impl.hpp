@@ -32,7 +32,7 @@ StyblinskiTangFunction<PointMatType, LabelsType>::StyblinskiTangFunction(
 template<typename PointMatType, typename LabelsType>
 void StyblinskiTangFunction<PointMatType, LabelsType>::Shuffle()
 {
-  // visitationOrder = shuffle(linspace<LabelsType>(0, n - 1, n));
+  visitationOrder = shuffle(linspace<LabelsType>(0, n - 1, n));
 }
 
 template<typename PointMatType, typename LabelsType>
