@@ -788,7 +788,7 @@ TEST_CASE("ReportCallbackTest", "[CallbacksTest]")
   REQUIRE(stream.str().length() > 0);
 
   stream.str("");
-  AugLagrangianTestFunction f3;
+  AugLagrangianTestFunction<> f3;
   AugLagrangian aug;
 
   coordinates = f3.GetInitialPoint();

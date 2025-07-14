@@ -11,30 +11,33 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]", ENS_TEST_TYPES)
 {
   Yogi optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]", ENS_TEST_TYPES)
 {
   Yogi optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
-  FunctionTest<McCormickFunction, TestType>(optimizer, 0.5, 0.1);
+  FunctionTest<McCormickFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]", ENS_TEST_TYPES)
 {
   Yogi optimizer;
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
 #ifdef USE_COOT

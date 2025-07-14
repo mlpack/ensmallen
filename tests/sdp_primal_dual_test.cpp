@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
- #if (ARMA_VERSION_MAJOR < 11)
+#if (ARMA_VERSION_MAJOR < 11)
  #define ARMA_DONT_PRINT_ERRORS
 #endif
 
@@ -68,15 +68,19 @@ class UndirectedGraph
                                       bool transposeWeights)
   {
     // data::Load(edgesFilename, g.edges, true, transposeEdges);
-    if (g.edges.load(edgesFilename) == false)  { FAIL("couldn't load data"); }
-    if (transposeEdges)  { g.edges = g.edges.t(); }
+    if (g.edges.load(edgesFilename) == false)
+      FAIL("couldn't load data");
+    if (transposeEdges)
+      g.edges = g.edges.t();
 
     if (g.edges.n_rows != 2)
       FAIL("Invalid datafile");
 
     // data::Load(weightsFilename, g.weights, true, transposeWeights);
-    if (g.weights.load(weightsFilename) == false)  { FAIL("couldn't load data"); }
-    if (transposeWeights)  { g.weights = g.weights.t(); }
+    if (g.weights.load(weightsFilename) == false)
+      FAIL("couldn't load data");
+    if (transposeWeights)
+      g.weights = g.weights.t();
 
     if (g.weights.n_elem != g.edges.n_cols)
       FAIL("Size mismatch");
@@ -102,7 +106,8 @@ class UndirectedGraph
         if (arma::as_scalar(arma::randu(1)) > edgeProbability)
           continue;
         edges.emplace_back(i, j);
-        weights.push_back(weighted ? double(arma::as_scalar(arma::randu(1))) : double(1));
+        weights.push_back(weighted ? double(arma::as_scalar(arma::randu(1))) :
+            double(1));
       }
     }
 

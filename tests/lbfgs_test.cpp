@@ -17,19 +17,23 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]", arma::mat)
+TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]", ENS_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
 
-  FunctionTest<RosenbrockFunction, TestType>(lbfgs, 0.01, 0.001);
+  FunctionTest<RosenbrockFunction, TestType>(lbfgs,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
 /**
  * Test the L-BFGS optimizer using an arma::mat with the Rosenbrock function and
  * a sparse gradient.
  */
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockGradFunction", "[LBFGS]", arma::sp_mat)
+TEMPLATE_TEST_CASE("LBFGS_RosenbrockGradFunction", "[LBFGS]",
+    ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -40,34 +44,30 @@ TEMPLATE_TEST_CASE("LBFGS_RosenbrockGradFunction", "[LBFGS]", arma::sp_mat)
   arma::Mat<ElemType> coords = f.GetInitialPoint<arma::Col<ElemType> >();
   lbfgs.Optimize<RosenbrockFunction, arma::Mat<ElemType>, TestType>(f, coords);
 
-  double finalValue = f.Evaluate(coords);
+  ElemType finalValue = f.Evaluate(coords);
 
-  REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(finalValue == Approx(0.0).margin(Tolerances<TestType>::Obj));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(Tolerances<TestType>::Coord));
+  REQUIRE(coords(1) == Approx(1.0).epsilon(Tolerances<TestType>::Coord));
 }
 
-/**
- * Test the L-BFGS optimizer using an arma::sp_mat with the Rosenbrock function.
- */
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]", arma::sp_mat)
+TEMPLATE_TEST_CASE("LBFGS_ColvilleFunction", "[LBFGS]", ENS_TEST_TYPES)
 {
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-  FunctionTest<RosenbrockFunction, TestType>(lbfgs, 0.01, 0.001);
+  FunctionTest<ColvilleFunction, TestType>(lbfgs,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("LBFGS_ColvilleFunction", "[LBFGS]", arma::mat)
+TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", ENS_TEST_TYPES)
 {
-  L_BFGS lbfgs;
-  lbfgs.MaxIterations() = 10000;
-  FunctionTest<ColvilleFunction, TestType>(lbfgs, 0.01, 0.001);
-}
+  typedef typename TestType::elem_type ElemType;
 
-TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", arma::mat)
-{
   L_BFGS lbfgs;
-  FunctionTest<WoodFunction, TestType>(lbfgs, 0.01, 0.001);
+  // Special tolerances: L-BFGS with floats will converge too early.
+  const double tol = std::is_same<ElemType, float>::value ? 20.0 : 1e-8;
+  FunctionTest<WoodFunction, TestType>(lbfgs, tol, tol / 10);
 }
 
 /**
@@ -76,12 +76,14 @@ TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", arma::mat)
  * dimensions to 1024 dimensions.
  */
 TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
-  for (int i = 2; i < 10; i++)
+  typedef typename TestType::elem_type ElemType;
+
+  for (size_t i = 2; i < 10; i++)
   {
     // Dimension: powers of 2
-    int dim = std::pow(2.0, i);
+    size_t dim = std::pow(2.0, i);
 
     GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(dim);
     L_BFGS lbfgs(20);
@@ -90,22 +92,25 @@ TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
     TestType coords = f.GetInitialPoint();
     lbfgs.Optimize(f, coords);
 
-    double finalValue = f.Evaluate(coords);
+    ElemType finalValue = f.Evaluate(coords);
 
     // Test the output to make sure it is correct.
-    REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-    for (int j = 0; j < dim; j++)
-      REQUIRE(coords(j) == Approx(1.0).epsilon(1e-3));
+    REQUIRE(finalValue == Approx(0.0).margin(Tolerances<TestType>::Obj));
+    for (size_t j = 0; j < dim; j++)
+      REQUIRE(coords(j) == Approx(1.0).epsilon(Tolerances<TestType>::Coord));
   }
 }
 
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]",
-    arma::mat)
+TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]", ENS_TEST_TYPES)
 {
+  typedef typename TestType::elem_type ElemType;
+
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-  FunctionTest<RosenbrockWoodFunctionType<
-      TestType, arma::Row<size_t>>, TestType>(lbfgs, 0.01, 0.001);
+  // Special tolerances: L-BFGS with floats will converge too early.
+  const double tol = std::is_same<ElemType, float>::value ? 20.0 : 1e-8;
+  FunctionTest<RosenbrockWoodFunctionType<TestType, arma::Row<size_t>>,
+               TestType>(lbfgs, tol, tol / 10);
 }
 
 #ifdef USE_COOT

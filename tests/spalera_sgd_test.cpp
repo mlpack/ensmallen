@@ -12,19 +12,23 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("SPALeRASGD_LogisticRegressionFunction", "[SPALeRASGD]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   // Run SPALeRA SGD with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 50; batchSize += 5)
   {
     SPALeRASGD<> optimizer(0.05 / batchSize, batchSize, 10000, 1e-4);
     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        optimizer, 0.015, 0.024, 3);
+        optimizer,
+        5 * Tolerances<TestType>::LRTrainAcc,
+        4 * Tolerances<TestType>::LRTestAcc,
+        3);
   }
 }
 

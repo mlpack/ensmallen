@@ -12,31 +12,30 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   // Run SARAH with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
   {
     SARAH optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        optimizer, 0.003, 0.006);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
   }
 }
 
-TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH_Plus]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH]",
+    ENS_TEST_TYPES)
 {
   // Run SARAH_Plus with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
   {
     SARAH_Plus optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
   }
 }
 
@@ -50,7 +49,7 @@ TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
       optimizer, 0.015, 0.015);
 }
 
-TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH_Plus]",
+TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH]",
     coot::mat, coot::fmat)
 {
   SARAH_Plus optimizer(0.01, 45, 250, 0, 1e-5, true);

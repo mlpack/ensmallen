@@ -13,22 +13,27 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
-   arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   GradientDescent s(0.01, 5000000, 1e-9);
-  FunctionTest<GDTestFunction, TestType>(s, 0.1, 0.01);
+  FunctionTest<GDTestFunction, TestType>(s,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
 TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
-  GradientDescent s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction, TestType>(s, 0.01, 0.001);
+  GradientDescent s(0.001, 0, Tolerances<TestType>::Obj / 1000);
+  FunctionTest<RosenbrockFunction, TestType>(s,
+      Tolerances<TestType>::LargeObj / 10,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
 #ifdef USE_COOT

@@ -20,126 +20,129 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
       optimizer, 0.5, 0.2);
 }
 
-TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
   FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
       optimizer, 0.5, 0.1);
 }
 
-TEMPLATE_TEST_CASE("Adam_McCormickFunctionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_McCormickFunctionFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 50000, 1e-5, false);
   FunctionTest<McCormickFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
-TEMPLATE_TEST_CASE("Adam_MatyasFunctionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_MatyasFunctionFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 50000, 1e-5, false);
   FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
 }
 
-TEMPLATE_TEST_CASE("Adam_EasomFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_EasomFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.2, 1, 0.7, 0.999, 1e-8, 50000, 1e-5, false);
   FunctionTest<EasomFunction, TestType>(optimizer, 1.5, 0.01);
 }
 
-TEMPLATE_TEST_CASE("Adam_BoothFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_BoothFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(1e-1, 1, 0.7, 0.999, 1e-8, 50000, 1e-9, true);
   FunctionTest<BoothFunction, TestType>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("AMSGrad_SphereFunction", "[Adam]", arma::fmat)
+TEMPLATE_TEST_CASE("AMSGrad_SphereFunction", "[Adam]", ENS_TEST_TYPES)
 {
   AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 50000, 1e-11, true);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
       optimizer, 0.5, 0.1);
 }
 
-TEMPLATE_TEST_CASE("Adam_LogisticRegressionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_LogisticRegressionFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam adam;
-  LogisticRegressionFunctionTest<TestType>(adam, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(adam);
 }
 
-TEMPLATE_TEST_CASE("AdaMax_LogisticRegressionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("AdaMax_LogisticRegressionFunction", "[Adam]",
+    ENS_TEST_TYPES)
 {
   AdaMax adamax(1e-3, 1, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
-  LogisticRegressionFunctionTest<TestType>(adamax, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(adamax);
 }
 
-TEMPLATE_TEST_CASE("AMSGrad_LogisticRegressionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("AMSGrad_LogisticRegressionFunction", "[Adam]",
+    ENS_TEST_TYPES)
 {
   AMSGrad amsgrad(1e-3, 1, 0.9, 0.999, 1e-8, 50000, 1e-11, true);
-  LogisticRegressionFunctionTest<TestType>(amsgrad, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(amsgrad);
 }
 
-TEMPLATE_TEST_CASE("Nadam_LogisticRegressionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Nadam_LogisticRegressionFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Nadam nadam;
-  LogisticRegressionFunctionTest<TestType>(nadam, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(nadam);
 }
 
-TEMPLATE_TEST_CASE("NadaMax_LogisticRegressionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("NadaMax_LogisticRegressionFunction", "[Adam]",
+    ENS_TEST_TYPES)
 {
   NadaMax nadamax(1e-3, 1, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
-  LogisticRegressionFunctionTest<TestType>(nadamax, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(nadamax);
 }
 
 TEMPLATE_TEST_CASE("OptimisticAdam_LogisticRegressionFunction", "[Adam]",
-    arma::mat)
+    ENS_TEST_TYPES)
 {
   OptimisticAdam optimisticAdam;
-  LogisticRegressionFunctionTest<TestType>(optimisticAdam, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(optimisticAdam);
 }
 
-TEMPLATE_TEST_CASE("Padam_LogisticRegressionFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Padam_LogisticRegressionFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Padam optimizer;
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
 TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   QHAdam optimizer;
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 50000, 1e-7, false);
   FunctionTest<AckleyFunction, TestType>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("Adam_BealeFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_BealeFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 50000, 1e-7, false);
   FunctionTest<BealeFunction, TestType>(optimizer, 0.1, 0.01);
 }
 
-TEMPLATE_TEST_CASE("Adam_GoldsteinPriceFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_GoldsteinPriceFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.0001, 2, 0.7, 0.999, 1e-8, 50000, 1e-9, false);
   FunctionTest<GoldsteinPriceFunction, TestType>(optimizer, 0.1, 0.01);
 }
 
-TEMPLATE_TEST_CASE("Adam_LevyFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_LevyFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 50000, 1e-9, false);
   FunctionTest<LevyFunctionN13, TestType>(optimizer, 0.1, 0.01);
 }
 
-TEMPLATE_TEST_CASE("Adam_HimmelblauFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_HimmelblauFunction", "[Adam]", ENS_TEST_TYPES)
 {
   HimmelblauFunction f;
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 50000, 1e-9, false);
@@ -151,7 +154,7 @@ TEMPLATE_TEST_CASE("Adam_HimmelblauFunction", "[Adam]", arma::mat)
   REQUIRE(coordinates(1) == Approx(2.0).margin(0.05));
 }
 
-TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", arma::mat)
+TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", ENS_TEST_TYPES)
 {
   Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 50000, 1e-9, false);
   FunctionTest<ThreeHumpCamelFunction, TestType>(optimizer, 0.1, 0.01);

@@ -10,20 +10,19 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   AdaDelta adaDelta;
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      adaDelta, 0.003, 0.006, 1);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adaDelta);
 }
 
 #ifdef USE_COOT

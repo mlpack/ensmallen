@@ -36,7 +36,7 @@ class SimpleCategoricalFunction
 };
 
 TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
-    arma::mat, arma::fmat, arma::imat)
+    ENS_TEST_TYPES, arma::imat)
 {
   // Create and optimize the categorical function with the GridSearch
   // optimizer.  We must also create a std::vector<bool> that holds the types

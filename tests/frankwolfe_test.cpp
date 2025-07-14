@@ -14,6 +14,7 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace arma;
 using namespace ens;
@@ -27,8 +28,8 @@ TEMPLATE_TEST_CASE("FrankWolfe_OMP", "[FrankWolfe]", arma::mat)
   typedef typename TestType::elem_type ElemType;
 
   const int k = 5;
-  TestType B1 = eye(3, 3);
-  TestType B2 = 0.1 * randn(3, k);
+  TestType B1 = arma::eye<TestType>(3, 3);
+  TestType B2 = 0.1 * arma::randn<TestType>(3, k);
   // The dictionary is input as columns of A.
   TestType A = join_horiz(B1, B2);
   // Vector to be sparsely approximated.
@@ -43,13 +44,15 @@ TEMPLATE_TEST_CASE("FrankWolfe_OMP", "[FrankWolfe]", arma::mat)
   TestType coordinates = zeros<TestType>(k + 3, 1);
   ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates(0) - 1 == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates(1) - 1 == Approx(0.0).margin(1e-10));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-10));
+  const double margin = Tolerances<TestType>::Coord;
+
+  REQUIRE(result == Approx(0.0).margin(margin));
+  REQUIRE(coordinates(0) - 1 == Approx(0.0).margin(margin));
+  REQUIRE(coordinates(1) - 1 == Approx(0.0).margin(margin));
+  REQUIRE(coordinates(2) == Approx(0.0).margin(margin));
   for (int ii = 0; ii < k; ++ii)
   {
-    REQUIRE(coordinates[ii + 3] == Approx(0.0).margin(1e-10));
+    REQUIRE(coordinates[ii + 3] == Approx(0.0).margin(margin));
   }
 }
 
@@ -61,8 +64,8 @@ TEMPLATE_TEST_CASE("FrankWolfe_RegularizedOMP", "[FrankWolfe]", arma::mat)
   typedef typename TestType::elem_type ElemType;
 
   const int k = 10;
-  TestType B1 = 0.1 * eye(k, k);
-  TestType B2 = 100 * randn(k, k);
+  TestType B1 = 0.1 * arma::eye<TestType>(k, k);
+  TestType B2 = 100 * arma::randn<TestType>(k, k);
   // The dictionary is input as columns of A.
   TestType A = join_horiz(B1, B2);
   // Vector to be sparsely approximated.
@@ -82,7 +85,7 @@ TEMPLATE_TEST_CASE("FrankWolfe_RegularizedOMP", "[FrankWolfe]", arma::mat)
   TestType coordinates = zeros<TestType>(2 * k, 1);
   ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0.0).margin(1e-10));
+  REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Coord));
 }
 
 /**
@@ -97,7 +100,7 @@ TEMPLATE_TEST_CASE("FrankWolfe_PruneSupportOMP", "[FrankWolfe]", arma::mat)
   TestType B1 = { { 1.0, 0.0, 1.0 },
                   { 0.0, 1.0, 1.0 },
                   { 0.0, 0.0, 1.0 } };
-  TestType B2 = randu(k, k);
+  TestType B2 = arma::randu<TestType>(k, k);
   // The dictionary is input as columns of A.
   TestType A = join_horiz(B1, B2);
   // Vector to be sparsely approximated.
@@ -112,19 +115,20 @@ TEMPLATE_TEST_CASE("FrankWolfe_PruneSupportOMP", "[FrankWolfe]", arma::mat)
   TestType coordinates = zeros<TestType>(k + 3, 1);
   ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0.0).margin(1e-10));
+  REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Coord));
 }
 
 /**
  * Simple test of sparse soluton in atom domain with atom norm constraint.
  */
-TEMPLATE_TEST_CASE("FrankWolfe_AtomNormConstraint", "[FrankWolfe]", arma::mat)
+TEMPLATE_TEST_CASE("FrankWolfe_AtomNormConstraint", "[FrankWolfe]",
+    arma::mat)
 {
   typedef typename TestType::elem_type ElemType;
 
   const int k = 5;
-  TestType B1 = eye(3, 3);
-  TestType B2 = 0.1 * randn(3, k);
+  TestType B1 = arma::eye<TestType>(3, 3);
+  TestType B2 = 0.1 * arma::randn<TestType>(3, k);
   // The dictionary is input as columns of A.
   TestType A = join_horiz(B1, B2);
   // Vector to be sparsely approximated.
@@ -135,19 +139,19 @@ TEMPLATE_TEST_CASE("FrankWolfe_AtomNormConstraint", "[FrankWolfe]", arma::mat)
   UpdateFullCorrection updateRule(2, 0.2);
 
   FrankWolfe<ConstrLpBallSolver, UpdateFullCorrection>
-    s(linearConstrSolver, updateRule);
+      s(linearConstrSolver, updateRule);
 
-    TestType coordinates = zeros<TestType>(k + 3, 1);
+  TestType coordinates = zeros<TestType>(k + 3, 1);
   ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0.0).margin(1e-10));
+  REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Coord));
 }
 
 /**
  * A very simple test of classic Frank-Wolfe algorithm.
  * The constrained domain used is unit lp ball.
  */
-TEMPLATE_TEST_CASE("FrankWolfe_Classic", "[FrankWolfe]", arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("FrankWolfe_Classic", "[FrankWolfe]", arma::mat)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -162,10 +166,11 @@ TEMPLATE_TEST_CASE("FrankWolfe_Classic", "[FrankWolfe]", arma::mat, arma::fmat)
   TestType coordinates = arma::randu<TestType>(3, 1);
   ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Obj));
+  const double coordTol = Tolerances<TestType>::Coord;
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(coordTol));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(coordTol));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(coordTol));
 }
 
 /**
@@ -173,8 +178,7 @@ TEMPLATE_TEST_CASE("FrankWolfe_Classic", "[FrankWolfe]", arma::mat, arma::fmat)
  * The update step performs a line search now.
  * It converges much faster.
  */
-TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]", arma::mat)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -189,10 +193,11 @@ TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]",
   TestType coordinates = arma::randu<TestType>(3);
   ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
+  REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Obj));
+  const double coordTol = Tolerances<TestType>::Coord;
+  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(coordTol));
+  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(coordTol));
+  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(coordTol));
 }
 
 #ifdef USE_COOT

@@ -13,6 +13,7 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace arma;
 using namespace ens;
@@ -23,6 +24,9 @@ void SGDGeneralizedRosenbrockTest(const size_t variants = 50)
 {
   typedef typename MatType::elem_type ElemType;
 
+  const double objTol = 100 * Tolerances<MatType>::Obj;
+  const double coordTol = 100 * Tolerances<MatType>::Coord;
+
   // Loop over several variants.
   for (size_t i = 10; i < variants; i += 5)
   {
@@ -32,25 +36,25 @@ void SGDGeneralizedRosenbrockTest(const size_t variants = 50)
     // Allow a few trials.
     for (size_t trial = 0; trial < 5; ++trial)
     {
-      StandardSGD s(0.001, 1, 0, 1e-15, true);
+      StandardSGD s(0.001, 1, 1000000, Tolerances<MatType>::Obj / 100, true);
 
       MatType coordinates = f.GetInitialPoint();
       float result = s.Optimize(f, coordinates);
 
       if (trial != 4)
       {
-        if (result != Approx(0.0).margin(1e-5))
+        if (result != Approx(0.0).margin(objTol))
           continue;
         for (size_t j = 0; j < i; ++j)
         {
-          if (ElemType(coordinates(j)) != Approx(1.0).epsilon(1e-3))
+          if (ElemType(coordinates(j)) != Approx(1.0).epsilon(coordTol))
             continue;
         }
       }
 
-      REQUIRE(result == Approx(0.0).margin(1e-5));
+      REQUIRE(result == Approx(0.0).margin(objTol));
       for (size_t j = 0; j < i; ++j)
-        REQUIRE(ElemType(coordinates(j)) == Approx(1.0).epsilon(1e-3));
+        REQUIRE(ElemType(coordinates(j)) == Approx(1.0).epsilon(coordTol));
       break;
     }
   }
@@ -74,21 +78,19 @@ void SGDLogisticRegressionTest()
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses, coordinates);
 
-  REQUIRE(acc == Approx(100.0).epsilon(0.003)); // 0.3% error tolerance.
+  REQUIRE(acc == Approx(100.0).epsilon(Tolerances<MatType>::LRTrainAcc));
 
   const double testAcc = lr.ComputeAccuracy(testData, testResponses,
       coordinates);
-  REQUIRE(testAcc == Approx(100.0).epsilon(0.006)); // 0.6% error tolerance.
+  REQUIRE(testAcc == Approx(100.0).epsilon(Tolerances<MatType>::LRTestAcc));
 }
 
-TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]", ENS_TEST_TYPES)
 {
   SGDGeneralizedRosenbrockTest<TestType>();
 }
 
-TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
-    arma::mat)
+TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]", ENS_TEST_TYPES)
 {
   SGDLogisticRegressionTest<TestType, arma::Row<size_t>>();
 }

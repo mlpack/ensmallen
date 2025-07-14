@@ -11,6 +11,7 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -78,12 +79,11 @@ bool VariableBoundsCheck(const CubeType& paretoSet)
   return inBounds;
 }
 
-TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
-  SchafferFunctionN1<TestType> SCH;
+  SchafferFunctionN1<TestType> sch;
   const double lowerBound = -1000;
   const double upperBound = 1000;
   const double expectedLowerBound = 0.0;
@@ -103,15 +103,15 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]",
       upperBound // Upper bound.
   );
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(sch.objectiveA) ObjectiveTypeA;
+  typedef decltype(sch.objectiveB) ObjectiveTypeB;
 
   // We allow a few trials in case of poor convergence.
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    TestType coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+    TestType coords = sch.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
     opt.Optimize(objectives, coords);
     arma::Cube<ElemType> paretoSet= opt.ParetoSet();
@@ -140,12 +140,12 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]",
 }
 
 TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   // This test can be a little flaky, so we try it a few times.
-  SchafferFunctionN1<TestType> SCH;
+  SchafferFunctionN1<TestType> sch;
   const arma::Col<ElemType> lowerBound = {-1000};
   const arma::Col<ElemType> upperBound = {1000};
   const double expectedLowerBound = 0.0;
@@ -165,21 +165,22 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
       upperBound // Upper bound.
   );
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(sch.objectiveA) ObjectiveTypeA;
+  typedef decltype(sch.objectiveB) ObjectiveTypeB;
 
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
-    TestType coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+    TestType coords = sch.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
     opt.Optimize(objectives, coords);
     arma::Cube<ElemType> paretoSet = opt.ParetoSet();
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       ElemType val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(
@@ -201,11 +202,11 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
 }
 
 TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
-  FonsecaFlemingFunction<TestType> FON;
+  FonsecaFlemingFunction<TestType> fon;
   const double lowerBound = -4;
   const double upperBound = 4;
   const double expectedLowerBound = -1.0 / sqrt(3);
@@ -224,11 +225,11 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
       lowerBound, // Lower bound.
       upperBound // Upper bound.
   );
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+  typedef decltype(fon.objectiveA) ObjectiveTypeA;
+  typedef decltype(fon.objectiveB) ObjectiveTypeB;
 
-  TestType coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+  TestType coords = fon.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
   opt.Optimize(objectives, coords);
   arma::Cube<ElemType> paretoSet = opt.ParetoSet();
@@ -258,11 +259,11 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
 }
 
 TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
-  FonsecaFlemingFunction<TestType> FON;
+  FonsecaFlemingFunction<TestType> fon;
   const arma::Col<ElemType> lowerBound = {-4, -4, -4};
   const arma::Col<ElemType> upperBound = {4, 4, 4};
   const ElemType expectedLowerBound = -1.0 / sqrt(3);
@@ -282,11 +283,11 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
       upperBound // Upper bound.
   );
 
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+  typedef decltype(fon.objectiveA) ObjectiveTypeA;
+  typedef decltype(fon.objectiveB) ObjectiveTypeB;
 
-  TestType coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+  TestType coords = fon.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
   opt.Optimize(objectives, coords);
   arma::Cube<ElemType> paretoSet = opt.ParetoSet();
@@ -325,12 +326,12 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
  * We run the test multiple times, since it sometimes fails, in order to get the
  * probability of failure down.
  */
-TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", arma::mat)
+TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   //! Parameters taken from original ZDT Paper.
-  ZDT1<TestType> ZDT_ONE(100);
+  ZDT1<TestType> zdt1(100);
   const double lowerBound = 0;
   const double upperBound = 1;
 
@@ -343,25 +344,25 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", arma::mat)
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      Tolerances<TestType>::Obj, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
   );
 
-  typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
-  typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
+  typedef decltype(zdt1.objectiveF1) ObjectiveTypeA;
+  typedef decltype(zdt1.objectiveF2) ObjectiveTypeB;
 
   const size_t trials = 8;
   for (size_t trial = 0; trial < trials; ++trial)
   {
-    TestType coords = ZDT_ONE.GetInitialPoint();
+    TestType coords = zdt1.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-        ZDT_ONE.GetObjectives();
+        zdt1.GetObjectives();
 
     opt.Optimize(objectives, coords);
 
-    //! Refer the ZDT_ONE implementation for g objective implementation.
-    //! The optimal g value is taken from the docs of ZDT_ONE.
+    //! Refer the zdt1 implementation for g objective implementation.
+    //! The optimal g value is taken from the docs of zdt1.
     size_t numVariables = coords.size();
     ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
     const ElemType g = 1.0 + 9.0 * sum /
@@ -378,12 +379,12 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", arma::mat)
  * Test DirichletMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a 30
  * variable-2 objective problem with disconnected Pareto Fronts.
  */
-TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", arma::mat)
+TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   //! Parameters taken from original ZDT Paper.
-  ZDT3<> ZDT_THREE(300);
+  ZDT3<TestType> zdt3(300);
   const double lowerBound = 0;
   const double upperBound = 1;
 
@@ -396,21 +397,22 @@ TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", arma::mat)
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      Tolerances<TestType>::Obj, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
     );
 
-  typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
-  typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+  typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
+  typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
 
-  TestType coords = ZDT_THREE.GetInitialPoint();
+  TestType coords = zdt3.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      ZDT_THREE.GetObjectives();
+      zdt3.GetObjectives();
 
   opt.Optimize(objectives, coords);
 
-  const arma::Cube<ElemType>& finalPopulation = opt.ParetoSet();
+  arma::Cube<ElemType> finalPopulation =
+      arma::conv_to<arma::Cube<ElemType>>::from(opt.ParetoSet());
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
 
@@ -421,7 +423,7 @@ TEMPLATE_TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEAD]", coot::mat, coot::fmat)
   typedef typename TestType::elem_type ElemType;
 
   //! Parameters taken from original ZDT Paper.
-  ZDT3<TestType> ZDT_THREE(300);
+  ZDT3<TestType> zdt3(300);
   const double lowerBound = 0;
   const double upperBound = 1;
 
@@ -434,17 +436,17 @@ TEMPLATE_TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEAD]", coot::mat, coot::fmat)
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      1e-10, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
     );
 
-  typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
-  typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+  typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
+  typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
 
-  TestType coords = ZDT_THREE.GetInitialPoint();
+  TestType coords = zdt3.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      ZDT_THREE.GetObjectives();
+      zdt3.GetObjectives();
 
   opt.Optimize(objectives, coords);
 

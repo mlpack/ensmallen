@@ -12,16 +12,16 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
-    arma::mat, arma::fmat, arma::sp_mat)
+    ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   RMSProp optimizer;
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
 #ifdef USE_COOT

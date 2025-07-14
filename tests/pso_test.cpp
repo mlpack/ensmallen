@@ -12,30 +12,33 @@
  */
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 using namespace std;
 
-TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   SphereFunctionType<TestType> f(4);
-  LBestPSO s;
+  // TODO(PR): remove MatType parameter from PSOType and hold an arma::vec for
+  // the bounds internally, but convert to a MatType at the start of Optimize()?
+  PSOType<TestType> s;
 
-  TestType coords = f. template GetInitialPoint<TestType>();
+  TestType coords = f.template GetInitialPoint<TestType>();
   if (!s.Optimize(f, coords))
     FAIL("LBest PSO optimization reported failure for Sphere Function.");
 
   ElemType finalValue = f.Evaluate(coords);
-  REQUIRE(finalValue <= 1e-5);
+  REQUIRE(finalValue <= (ElemType) Tolerances<TestType>::Obj);
   for (size_t j = 0; j < 4; ++j)
-    REQUIRE(coords(j) <= 1e-3);
+    REQUIRE(coords(j) <= (ElemType) Tolerances<TestType>::Coord);
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -48,7 +51,8 @@ TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]",
   // We allow a few trials.
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    LBestPSO s(250, lowerBound, upperBound, 5000, 600, 1e-30, 2.05, 2.05);
+    PSOType<TestType> s(250, lowerBound, upperBound, 5000, 600, 1e-30, 2.05,
+        2.05);
     TestType coordinates = f.GetInitialPoint<TestType>();
 
     const ElemType result = s.Optimize(f, coordinates);
@@ -63,13 +67,17 @@ TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]",
         continue;
     }
 
-    REQUIRE(result == Approx(0.0).margin(0.03));
-    REQUIRE(coordinates(0) == Approx(1.0).margin(0.03));
-    REQUIRE(coordinates(1) == Approx(1.0).margin(0.03));
+    REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::LargeObj));
+    REQUIRE(coordinates(0) ==
+        Approx(1.0).margin(Tolerances<TestType>::LargeCoord));
+    REQUIRE(coordinates(1) ==
+        Approx(1.0).margin(Tolerances<TestType>::LargeCoord));
+
+    break;
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -82,31 +90,36 @@ TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", arma::mat)
   upperBound.fill(1);
 
   // We allow many trials---sometimes this can have trouble converging.
-  for (size_t trial = 0; trial < 15; ++trial)
+  for (size_t trial = 0; trial < 3; ++trial)
   {
-    LBestPSO s(500, lowerBound, upperBound, 6000, 400, 1e-30, 2.05, 2.05);
+    PSOType<TestType> s(500, lowerBound, upperBound, 6000, 400,
+        Tolerances<TestType>::Obj, 2.05, 2.05);
     TestType coordinates = TestType("10; 10");
     const ElemType result = s.Optimize(f, coordinates);
+    const ElemType objTol = Tolerances<TestType>::LargeObj;
+    const ElemType coordTol = Tolerances<TestType>::LargeCoord;
 
-    if (trial != 14)
+    if (trial != 2)
     {
       if (std::isinf(result) || std::isnan(result))
         continue;
-      if (result != Approx(-2.06261).margin(0.01))
+      if (result != Approx(-2.06261).margin(objTol))
         continue;
-      if (abs(coordinates(0)) != Approx(1.34941).margin(0.01))
+      if (abs(coordinates(0)) != Approx(1.34941).margin(coordTol))
         continue;
-      if (abs(coordinates(1)) != Approx(1.34941).margin(0.01))
+      if (abs(coordinates(1)) != Approx(1.34941).margin(coordTol))
         continue;
     }
 
-    REQUIRE(result == Approx(-2.06261).margin(0.01));
-    REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(0.01));
-    REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(0.01));
+    REQUIRE(result == Approx(-2.06261).margin(objTol));
+    REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(coordTol));
+    REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(coordTol));
+
+    break;
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -118,16 +131,16 @@ TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", arma::mat)
   lowerBound.fill(4);
   upperBound.fill(5);
 
-  LBestPSO s(64, lowerBound, upperBound);
+  PSOType<TestType> s(64, lowerBound, upperBound);
   TestType coordinates = TestType("5; 5");
   const ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0).margin(0.01));
-  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
+  REQUIRE(result == Approx(0).margin(Tolerances<TestType>::LargeObj));
+  REQUIRE(coordinates(0) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -139,17 +152,18 @@ TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", arma::mat)
   lowerBound.fill(3);
   upperBound.fill(4);
 
-  LBestPSO s(64, lowerBound, upperBound);
+  PSOType<TestType> s(64, lowerBound, upperBound);
 
   TestType coordinates = TestType("4.5; 4.5");
   const ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0).margin(0.01));
-  REQUIRE(coordinates(0) == Approx(3).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(0.5).margin(0.01));
+  REQUIRE(result == Approx(0).margin(Tolerances<TestType>::LargeObj));
+  REQUIRE(coordinates(0) == Approx(3).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) ==
+      Approx(0.5).margin(Tolerances<TestType>::LargeCoord));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -162,27 +176,31 @@ TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]", arma::mat)
   upperBound.fill(2);
 
   // Allow a few trials in case of failure.
-  for (size_t trial = 0; trial < 10; ++trial)
+  for (size_t trial = 0; trial < 3; ++trial)
   {
-    LBestPSO s(64, lowerBound, upperBound);
+    PSOType<TestType> s(64, lowerBound, upperBound);
 
     TestType coordinates = TestType("1; 0");
     s.Optimize(f, coordinates);
 
-    if (trial != 9)
+    const ElemType coordTol = Tolerances<TestType>::LargeCoord;
+
+    if (trial != 2)
     {
-      if (coordinates(0) != Approx(0).margin(0.01))
+      if (coordinates(0) != Approx(0).margin(coordTol))
         continue;
-      if (coordinates(1) != Approx(-1).margin(0.01))
+      if (coordinates(1) != Approx(-1).margin(coordTol))
         continue;
     }
 
-    REQUIRE(coordinates(0) == Approx(0).margin(0.01));
-    REQUIRE(coordinates(1) == Approx(-1).margin(0.01));
+    REQUIRE(coordinates(0) == Approx(0).margin(coordTol));
+    REQUIRE(coordinates(1) == Approx(-1).margin(coordTol));
+
+    break;
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -194,16 +212,16 @@ TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", arma::mat)
   lowerBound.fill(-10);
   upperBound.fill(-9);
 
-  LBestPSO s(64, lowerBound, upperBound);
+  PSOType<TestType> s(64, lowerBound, upperBound);
 
   TestType coordinates = TestType("3; 3");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(1).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(1).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(1).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) == Approx(1).margin(Tolerances<TestType>::LargeCoord));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -215,16 +233,27 @@ TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", arma::mat)
   lowerBound.fill(0);
   upperBound.fill(1);
 
-  LBestPSO s(64, lowerBound, upperBound);
+  // This optimization could take a couple trials to get right.
+  TestType coordinates;
+  const double coordTol = Tolerances<TestType>::LargeCoord;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    PSOType<TestType> s(64, lowerBound, upperBound);
 
-  TestType coordinates = TestType("2; 1");
-  s.Optimize(f, coordinates);
+    coordinates = TestType("2; 1");
+    s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(3.0).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(2.0).margin(0.01));
+    if (coordinates(0) == Approx(3.0).margin(coordTol))
+      break;
+    if (coordinates(1) == Approx(2.0).margin(coordTol))
+      break;
+  }
+
+  REQUIRE(coordinates(0) == Approx(3.0).margin(coordTol));
+  REQUIRE(coordinates(1) == Approx(2.0).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -236,16 +265,16 @@ TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]", arma::mat)
   lowerBound.fill(-5);
   upperBound.fill(-4);
 
-  LBestPSO s(64, lowerBound, upperBound);
+  PSOType<TestType> s(64, lowerBound, upperBound);
 
   TestType coordinates = TestType("2; 2");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", arma::mat)
+TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -257,12 +286,12 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", arma::mat)
   lowerBound.fill(40);
   upperBound.fill(50);
 
-  LBestPSO s(500, lowerBound, upperBound);
+  PSOType<TestType> s(500, lowerBound, upperBound);
   TestType coordinates = TestType("10; 10");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
+  REQUIRE(coordinates(0) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
 }
 
 #ifdef USE_COOT

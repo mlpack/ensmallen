@@ -17,26 +17,32 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("Katyusha_LogisticRegressionFunction", "[Katyusha]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   // Run with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
   {
-    Katyusha optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
+    Katyusha optimizer(1.0, 10.0, batchSize, 200, 0,
+        Tolerances<TestType>::Obj, true);
     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        optimizer, 0.015, 0.015);
+        optimizer,
+        Tolerances<TestType>::LRTrainAcc,
+        Tolerances<TestType>::LRTestAcc);
   }
 }
 
 TEMPLATE_TEST_CASE("KatyushaProximal_LogisticRegressionFunction", "[Katyusha]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
   // Run with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
   {
-    KatyushaProximal optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
+    KatyushaProximal optimizer(1.0, 10.0, batchSize, 200, 0,
+        Tolerances<TestType>::Obj, true);
     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        optimizer, 0.015, 0.015);
+        optimizer,
+        Tolerances<TestType>::LRTrainAcc,
+        Tolerances<TestType>::LRTestAcc);
   }
 }
 

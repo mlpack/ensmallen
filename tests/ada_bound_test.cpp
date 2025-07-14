@@ -7,16 +7,16 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include <ensmallen.hpp>
+#include "catch.hpp"
+#include "test_function_tools.hpp"
+#include "test_types.hpp"
 
- #include <ensmallen.hpp>
- #include "catch.hpp"
- #include "test_function_tools.hpp"
+using namespace ens;
+using namespace ens::test;
 
- using namespace ens;
- using namespace ens::test;
-
-TEMPLATE_TEST_CASE("AdaBound_SphereFunction", "[AdaBound]",
-    arma::mat, arma::fmat, arma::sp_mat)
+TEMPLATE_TEST_CASE("AdaBound_SphereFunction", "[AdaBound]", ENS_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
   AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
@@ -24,8 +24,8 @@ TEMPLATE_TEST_CASE("AdaBound_SphereFunction", "[AdaBound]",
       optimizer, 0.5, 0.1);
 }
 
-TEMPLATE_TEST_CASE("AMSBound_SphereFunction", "[AdaBound]",
-    arma::mat, arma::fmat, arma::sp_mat)
+TEMPLATE_TEST_CASE("AMSBound_SphereFunction", "[AdaBound]", ENS_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
   AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
@@ -34,7 +34,7 @@ TEMPLATE_TEST_CASE("AMSBound_SphereFunction", "[AdaBound]",
 }
 
 TEMPLATE_TEST_CASE("AdaBound_SphereFunctionSpMatDenseGradient", "[AdaBound]",
-    arma::sp_mat)
+    ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -52,7 +52,7 @@ TEMPLATE_TEST_CASE("AdaBound_SphereFunctionSpMatDenseGradient", "[AdaBound]",
 }
 
 TEMPLATE_TEST_CASE("AMSBound_SphereFunctionSpMatDenseGradient", "[AdaBound]",
-    arma::sp_mat)
+    ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 

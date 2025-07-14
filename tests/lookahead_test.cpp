@@ -11,12 +11,13 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
-    arma::mat)
+    ENS_TEST_TYPES)
 {
   Lookahead<> optimizer(0.5, 5, 100000, 1e-5, NoDecay(), false, true);
   optimizer.BaseOptimizer().StepSize() = 0.1;
@@ -25,27 +26,32 @@ TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
   optimizer.BaseOptimizer().Tolerance() = 1e-15;
   // We allow a few trials.
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2, 3);
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord,
+      3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
-    arma::mat)
+    ENS_TEST_TYPES)
 {
   AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-15, true);
   Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000, 1e-15, NoDecay(),
       false, true);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2, 3);
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord,
+      3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
-    arma::mat)
+    ENS_TEST_TYPES)
 {
   Adam adam(0.001, 32, 0.9, 0.999, 1e-8, 5, 1e-19);
   Lookahead<Adam> optimizer(adam, 0.5, 20, 100000, 1e-15, NoDecay(),
       false, true);
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
 #ifdef USE_COOT

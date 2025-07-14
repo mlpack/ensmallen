@@ -12,30 +12,37 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("SVRG_LogisticRegressionFunction", "[SVRG]",
-    arma::mat, arma::fmat, arma::sp_mat)
+TEMPLATE_TEST_CASE("SVRG_LogisticRegressionFunction", "[SVRG]", ENS_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
     SVRG optimizer(0.005, batchSize, 300, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<TestType>(optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest<TestType>(
+        optimizer,
+        5 * Tolerances<TestType>::LRTrainAcc,
+        5 * Tolerances<TestType>::LRTestAcc);
   }
 }
 
 TEMPLATE_TEST_CASE("SVRG_BB_LogisticRegressionFunction", "[SVRG_BB]",
-    arma::mat, arma::fmat, arma::sp_mat)
+    ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
   {
     SVRG_BB optimizer(0.005, batchSize, 300, 0, 1e-5, true, SVRGUpdate(),
         BarzilaiBorweinDecay(0.1));
-    LogisticRegressionFunctionTest(optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest(
+        optimizer,
+        5 * Tolerances<TestType>::LRTrainAcc,
+        5 * Tolerances<TestType>::LRTestAcc);
   }
 }
 

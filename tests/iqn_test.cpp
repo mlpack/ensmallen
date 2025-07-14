@@ -13,18 +13,22 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]", ENS_TEST_TYPES)
 {
   // Run on a couple of batch sizes.
   for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
   {
-    IQN iqn(0.01, batchSize, 5000, 0.01);
-    LogisticRegressionFunctionTest<TestType>(iqn, 0.003, 0.006);
+    IQN iqn(0.01, batchSize, 200000, 0.01);
+    // It could take a few attempts to converge.
+    LogisticRegressionFunctionTest<TestType>(iqn,
+        Tolerances<TestType>::LRTrainAcc,
+        Tolerances<TestType>::LRTestAcc,
+        5);
   }
 }
 
