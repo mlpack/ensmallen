@@ -14,6 +14,10 @@
 #define ENSMALLEN_TESTS_TEST_FUNCTION_TOOLS_HPP
 
 #include "catch.hpp"
+#include "test_types.hpp"
+
+namespace ens {
+namespace test {
 
 /**
 * Create the data for the a logistic regression test.
@@ -146,14 +150,15 @@ bool TestOptimizer(FunctionType& f,
 // This runs a test multiple times, but does not do any special behavior between
 // runs.
 template<typename FunctionType, typename OptimizerType, typename PointType>
-void MultipleTrialOptimizerTest(FunctionType& f,
-                                OptimizerType& optimizer,
-                                PointType& initialPoint,
-                                const PointType& expectedResult,
-                                const double coordinateMargin,
-                                const double expectedObjective,
-                                const double objectiveMargin,
-                                const size_t trials = 1)
+void MultipleTrialOptimizerTest(
+    FunctionType& f,
+    OptimizerType& optimizer,
+    PointType& initialPoint,
+    const PointType& expectedResult,
+    const typename PointType::elem_type coordinateMargin,
+    const typename PointType::elem_type expectedObjective,
+    const typename PointType::elem_type objectiveMargin,
+    const size_t trials = 1)
 {
   for (size_t t = 0; t < trials; ++t)
   {
@@ -173,11 +178,11 @@ void MultipleTrialOptimizerTest(FunctionType& f,
 }
 
 template<typename FunctionType,
-        typename MatType = arma::mat,
-        typename OptimizerType = ens::StandardSGD>
+         typename MatType = arma::mat,
+         typename OptimizerType = ens::StandardSGD>
 void FunctionTest(OptimizerType& optimizer,
-                  const double objectiveMargin = 0.01,
-                  const double coordinateMargin = 0.001,
+                  const typename MatType::elem_type objectiveMargin = 0.01,
+                  const typename MatType::elem_type coordinateMargin = 0.001,
                   const size_t trials = 1)
 {
   FunctionType f;
@@ -190,10 +195,11 @@ void FunctionTest(OptimizerType& optimizer,
 
 template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>,
     typename OptimizerType>
-void LogisticRegressionFunctionTest(OptimizerType& optimizer,
-                                    const double trainAccuracyTolerance,
-                                    const double testAccuracyTolerance,
-                                    const size_t trials = 1)
+void LogisticRegressionFunctionTest(
+    OptimizerType& optimizer,
+    const double trainAccuracyTolerance = Tolerances<MatType>::LRTrainAcc,
+    const double testAccuracyTolerance = Tolerances<MatType>::LRTestAcc,
+    const size_t trials = 1)
 {
   // We have to generate new data for each trial, so we can't use
   // MultipleTrialOptimizerTest().
@@ -229,5 +235,8 @@ void LogisticRegressionFunctionTest(OptimizerType& optimizer,
     break;
   }
 }
+
+} // namespace test
+} // namespace ens
 
 #endif

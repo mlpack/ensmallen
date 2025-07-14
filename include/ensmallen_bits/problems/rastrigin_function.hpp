@@ -36,8 +36,7 @@ namespace test {
  * }
  * @endcode
  */
-template<typename MatType = arma::mat, typename IndexVecType = arma::Row<size_t> >
-class RastriginFunctionType
+class RastriginFunction
 {
  public:
   /*
@@ -45,7 +44,7 @@ class RastriginFunctionType
    *
    * @param n Number of dimensions for the function.
    */
-  RastriginFunctionType(const size_t n = 2);
+  RastriginFunction(const size_t n = 2);
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -63,6 +62,7 @@ class RastriginFunctionType
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
+  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates,
                                        const size_t begin,
                                        const size_t batchSize) const;
@@ -72,6 +72,7 @@ class RastriginFunctionType
    *
    * @param coordinates The function coordinates.
    */
+  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
@@ -82,10 +83,10 @@ class RastriginFunctionType
    * @param gradient The function gradient.
    * @param batchSize Number of points to process.
    */
-  template<typename InputMatType, typename InputGradType>
-  void Gradient(const InputMatType& coordinates,
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates,
                 const size_t begin,
-                InputGradType& gradient,
+                GradType& gradient,
                 const size_t batchSize) const;
 
   /**
@@ -94,8 +95,8 @@ class RastriginFunctionType
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  template<typename InputMatType, typename InputGradType>
-  void Gradient(const InputMatType& coordinates, InputGradType& gradient);
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient);
 
   // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
   // required for using ensmallen to optimize this function!  They are
@@ -103,17 +104,17 @@ class RastriginFunctionType
   // infrastructure.
 
   //! Get the starting point.
-  template<typename InputMatType>
-  InputMatType GetInitialPoint() const
+  template<typename MatType>
+  MatType GetInitialPoint() const
   {
-    return conv_to<InputMatType>::from(initialPoint);
+    return conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.
-  template<typename InputMatType>
+  template<typename MatType>
   MatType GetFinalPoint() const
   {
-    InputMatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
+    MatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
     finalPoint.zeros();
     return finalPoint;
   }
@@ -126,13 +127,11 @@ class RastriginFunctionType
   size_t n;
 
   //! For shuffling.
-  IndexVecType visitationOrder;
+  arma::Col<size_t> visitationOrder;
 
   //! Initial starting point.
-  MatType initialPoint;
+  arma::mat initialPoint;
 };
-
-using RastriginFunction = RastriginFunctionType<arma::mat>;
 
 } // namespace test
 } // namespace ens

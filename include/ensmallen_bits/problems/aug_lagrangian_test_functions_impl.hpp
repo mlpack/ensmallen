@@ -20,20 +20,24 @@ namespace test {
 //
 // AugLagrangianTestFunction
 //
-inline AugLagrangianTestFunction::AugLagrangianTestFunction()
+template<typename MatType>
+inline AugLagrangianTestFunction<MatType>::AugLagrangianTestFunction()
 {
   // Set the initial point to be (0, 0).
   initialPoint.zeros(2, 1);
 }
 
-inline AugLagrangianTestFunction::AugLagrangianTestFunction(
-      const arma::mat& initialPoint) :
+template<typename MatType>
+inline AugLagrangianTestFunction<MatType>::AugLagrangianTestFunction(
+      const MatType& initialPoint) :
     initialPoint(initialPoint)
 {
   // Nothing to do.
 }
 
-inline double AugLagrangianTestFunction::Evaluate(const arma::mat& coordinates)
+template<typename MatType>
+inline typename MatType::elem_type AugLagrangianTestFunction<MatType>::Evaluate(
+    const MatType& coordinates)
 {
   // f(x) = 6 x_1^2 + 4 x_1 x_2 + 3 x_2^2
   return ((6 * std::pow(coordinates[0], 2)) +
@@ -41,8 +45,10 @@ inline double AugLagrangianTestFunction::Evaluate(const arma::mat& coordinates)
           (3 * std::pow(coordinates[1], 2)));
 }
 
-inline void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
-                                                arma::mat& gradient)
+template<typename MatType>
+inline void AugLagrangianTestFunction<MatType>::Gradient(
+    const MatType& coordinates,
+    MatType& gradient)
 {
   // f'_x1(x) = 12 x_1 + 4 x_2
   // f'_x2(x) = 4 x_1 + 6 x_2
@@ -52,8 +58,11 @@ inline void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
   gradient[1] = 4 * coordinates[0] + 6 * coordinates[1];
 }
 
-inline double AugLagrangianTestFunction::EvaluateConstraint(const size_t index,
-    const arma::mat& coordinates)
+template<typename MatType>
+inline typename MatType::elem_type
+AugLagrangianTestFunction<MatType>::EvaluateConstraint(
+    const size_t index,
+    const MatType& coordinates)
 {
   // We return 0 if the index is wrong (not 0).
   if (index != 0)
@@ -63,9 +72,11 @@ inline double AugLagrangianTestFunction::EvaluateConstraint(const size_t index,
   return (coordinates[0] + coordinates[1] - 5);
 }
 
-inline void AugLagrangianTestFunction::GradientConstraint(const size_t index,
-    const arma::mat& /* coordinates */,
-    arma::mat& gradient)
+template<typename MatType>
+inline void AugLagrangianTestFunction<MatType>::GradientConstraint(
+    const size_t index,
+    const MatType& /* coordinates */,
+    MatType& gradient)
 {
   // If the user passed an invalid index (not 0), we will return a zero
   // gradient.

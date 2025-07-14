@@ -1298,7 +1298,7 @@ total contribution of a gradient to all future updates.
  * `DemonAdam()`
  * `DemonAdam(`_`stepSize, batchSize`_`)`
  * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 Note that the `DemonAdam` class is based on
 the `DemonAdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = AdamUpdate`.
@@ -1330,11 +1330,19 @@ For convenience the following typedefs have been defined:
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Momentum()`, `MomentumIterations()`, `Beta1()`,
 `Beta2()`, `Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
 `ResetPolicy()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -1387,7 +1395,7 @@ optimizer:
  * `DemonSGD()`
  * `DemonSGD(`_`stepSize, batchSize`_`)`
  * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle`_`)`
- * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -1400,10 +1408,18 @@ optimizer:
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Momentum()`, `MomentumIterations()`,
 `MaxIterations()`, `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 

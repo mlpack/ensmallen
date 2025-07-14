@@ -26,7 +26,10 @@ StyblinskiTangFunction<PointMatType, LabelsType>::StyblinskiTangFunction(
 
 {
   initialPoint.set_size(n, 1);
-  initialPoint.fill(-5);
+  // Manual reimplementation of fill() that also works for sparse types (for
+  // testing).
+  for (size_t i = 0; i < n; ++i)
+    initialPoint[i] = -5;
 }
 
 template<typename PointMatType, typename LabelsType>
