@@ -293,7 +293,7 @@ optimizer.Optimize(f, coordinates);
  * [AdaGrad](#adagrad)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
-## Adagrad
+## AdaGrad
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
