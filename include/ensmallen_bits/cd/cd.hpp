@@ -112,6 +112,7 @@ class CD
         arma::SpMat<typename MatType::elem_type>, CallbackTypes...>(
         function, iterate, std::forward<CallbackTypes>(callbacks)...);
   }
+
   //! Get the step size.
   double StepSize() const { return stepSize; }
   //! Modify the step size.
