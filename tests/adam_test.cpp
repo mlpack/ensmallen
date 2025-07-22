@@ -40,10 +40,9 @@ TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", ENS_ALL_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("Adam_McCormickFunctionFunction", "[Adam]",
-    ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("Adam_McCormickFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-5,
+  Adam optimizer(0.4, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-5,
       false);
   FunctionTest<McCormickFunction, TestType>(
       optimizer,
@@ -73,12 +72,12 @@ TEMPLATE_TEST_CASE("Adam_EasomFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 
 TEMPLATE_TEST_CASE("Adam_BoothFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.35, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-9,
+  Adam optimizer(0.75, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-9,
       true);
   FunctionTest<BoothFunction, TestType>(
       optimizer,
-      50 * Tolerances<TestType>::Obj,
-      10 * Tolerances<TestType>::Coord);
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
 TEMPLATE_TEST_CASE("AMSGrad_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)

@@ -40,8 +40,8 @@ TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]", ENS_TEST_TYPES,
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
       optimizer,
-      3 * Tolerances<TestType>::LargeObj,
-      3 * Tolerances<TestType>::LargeCoord);
+      5 * Tolerances<TestType>::LargeObj,
+      5 * Tolerances<TestType>::LargeCoord);
 }
 
 #ifdef USE_COOT

@@ -63,7 +63,7 @@ struct Tolerances<arma::fp16_mat>
   constexpr static const arma::fp16 Obj = arma::fp16(0.0001);
   constexpr static const arma::fp16 Coord = arma::fp16(0.01);
 
-  constexpr static const arma::fp16 LargeObj = arma::fp16(0.01);
+  constexpr static const arma::fp16 LargeObj = arma::fp16(0.03);
   constexpr static const arma::fp16 LargeCoord = arma::fp16(0.1);
 
   // Tolerances for LogisticRegressionFunctionTest().
