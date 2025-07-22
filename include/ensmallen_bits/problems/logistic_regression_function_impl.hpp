@@ -20,18 +20,19 @@
 namespace ens {
 namespace test {
 
-template<typename MatType, typename LabelsType>
-LogisticRegressionFunction<MatType, LabelsType>::LogisticRegressionFunction(
+template<typename MatType>
+template<typename LabelsType>
+LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     MatType& predictors,
-    LabelsType& responses,
-    const double lambda) :
+    LabelsType& responsesIn,
+    const double lambdaIn) :
     // We promise to be well-behaved... the elements won't be modified.
     predictors(predictors),
-    responses(responses),
-    lambda(lambda)
+    responses(conv_to<MatType>::from(responsesIn)),
+    lambda(ElemType(lambdaIn)),
+    halfLambda(ElemType(lambdaIn / 2.0))
 {
-  initialPoint = arma::Row<typename MatType::elem_type>(predictors.n_rows + 1,
-      arma::fill::zeros);
+  initialPoint = arma::Row<ElemType>(predictors.n_rows + 1, arma::fill::zeros);
 
   // Sanity check.
   if (responses.n_elem != predictors.n_cols)
@@ -45,42 +46,46 @@ LogisticRegressionFunction<MatType, LabelsType>::LogisticRegressionFunction(
   }
 }
 
-template<typename MatType, typename LabelsType>
-LogisticRegressionFunction<MatType, LabelsType>::LogisticRegressionFunction(
+template<typename MatType>
+template<typename LabelsType>
+LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     MatType& predictors,
-    LabelsType& responses,
+    LabelsType& responsesIn,
     MatType& initialPoint,
-    const double lambda) :
+    const double lambdaIn) :
     initialPoint(initialPoint),
     predictors(predictors),
-    responses(responses),
-    lambda(lambda)
+    responses(conv_to<MatType>::from(responsesIn)),
+    lambda(ElemType(lambdaIn)),
+    halfLambda(ElemType(lambdaIn / 2.0))
 {
   // To check if initialPoint is compatible with predictors.
   if (initialPoint.n_rows != (predictors.n_rows + 1) ||
       initialPoint.n_cols != 1)
-    this->initialPoint = arma::Row<typename MatType::elem_type>(
-        predictors.n_rows + 1, arma::fill::zeros);
+  {
+    this->initialPoint = arma::Row<ElemType>(predictors.n_rows + 1,
+        arma::fill::zeros);
+  }
 }
 
 /**
  * Shuffle the datapoints.
  */
-template<typename MatType, typename LabelsType>
-void LogisticRegressionFunction<MatType, LabelsType>::Shuffle()
+template<typename MatType>
+void LogisticRegressionFunction<MatType>::Shuffle()
 {
   MatType newPredictors;
-  LabelsType newResponses;
+  MatType newResponses;
 
   arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       predictors.n_cols - 1, predictors.n_cols));
 
-  newPredictors.set_size(predictors.n_rows, predictors.n_cols);
-  newResponses.set_size(responses.n_elem);
+  newPredictors.set_size(size(predictors));
+  newResponses.set_size(size(responses));
   for (size_t i = 0; i < predictors.n_cols; ++i)
   {
     newPredictors.col(i) = predictors.col(ordering[i]);
-    newResponses[i] = (typename LabelsType::elem_type) responses[ordering[i]];
+    newResponses[i] = responses[ordering[i]];
   }
 
   // Take ownership of the new data.
@@ -92,8 +97,8 @@ void LogisticRegressionFunction<MatType, LabelsType>::Shuffle()
  * Evaluate the logistic regression objective function given the estimated
  * parameters.
  */
-template<typename MatType, typename LabelsType>
-typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
+template<typename MatType>
+typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
     const MatType& parameters) const
 {
   // The objective function is the log-likelihood function (w is the parameters
@@ -102,19 +107,17 @@ typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Eva
   //   f(w) = sum(y log(sig(w'x)) + (1 - y) log(sig(1 - w'x))).
   // We want to minimize this function.  L2-regularization is just lambda
   // multiplied by the squared l2-norm of the parameters then divided by two.
-  typedef typename MatType::elem_type ElemType;
   typedef typename ForwardType<MatType>::brow BaseRowType;
 
   // For the regularization, we ignore the first term, which is the intercept
   // term and take every term except the last one in the decision variable.
-  const ElemType regularization = 0.5 * lambda *
+  const ElemType regularization = halfLambda *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-      parameters.tail_cols(parameters.n_elem - 1));
+          parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
   // does not need to be multiplied by any of the predictors.
-  const BaseRowType sigmoid = 1.0 / (1.0 +
-      exp(-(parameters(0, 0) +
+  const BaseRowType sigmoid = 1 / (1 + exp(-(parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   // Assemble full objective function.  Often the objective function and the
@@ -123,9 +126,8 @@ typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Eva
   // terms for computational efficiency.  Note that the conversion causes some
   // copy and slowdown, but this is so negligible compared to the rest of the
   // calculation it is not worth optimizing for.
-  const ElemType result = accu(log(1.0 -
-      conv_to<BaseRowType>::from(responses) + sigmoid %
-      (2 * conv_to<BaseRowType>::from(responses) - 1.0)));
+  const ElemType result = accu(
+      log(1 - responses + sigmoid % (2 * responses - 1)));
 
   // Invert the result, because it's a minimization.
   return regularization - result;
@@ -135,41 +137,40 @@ typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Eva
  * Evaluate the logistic regression objective function given the estimated
  * parameters for a given batch from a given point.
  */
-template<typename MatType, typename LabelsType>
-typename MatType::elem_type LogisticRegressionFunction<MatType, LabelsType>::Evaluate(
+template<typename MatType>
+typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
     const MatType& parameters,
     const size_t begin,
     const size_t batchSize) const
 {
-  typedef typename MatType::elem_type ElemType;
   typedef typename ForwardType<MatType>::brow BaseRowType;
 
   // Calculate the regularization term.
-  const ElemType regularization = lambda *
-      (batchSize / (2.0 * predictors.n_cols)) *
+  const ElemType regularization = halfLambda *
+      (batchSize / ElemType(predictors.n_cols)) *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-                parameters.tail_cols(parameters.n_elem - 1));
+          parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const BaseRowType sigmoid = 1.0 / (1.0 +
-      exp(-(parameters(0, 0) +
+  const BaseRowType sigmoid = 1 / (1 + exp(-(parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1))));
 
   // Compute the objective for the given batch size from a given point.
-  BaseRowType respD = conv_to<BaseRowType>::from(
-      responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = accu(log(1.0 - respD + sigmoid %
-      (2 * respD - 1.0)));
+  const ElemType result = accu(log(
+      1 - responses.cols(begin, begin + batchSize - 1) +
+      sigmoid % (2 * responses.cols(begin, begin + batchSize - 1) - 1)));
+
+  //std::cout << "LRF::Evaluate(" << begin << ", " << batchSize << "): reg " << regularization << " res " << result << "\n";
 
   // Invert the result, because it's a minimization.
   return regularization - result;
 }
 
 //! Evaluate the gradient of the logistic regression objective function.
-template<typename MatType, typename LabelsType>
+template<typename MatType>
 template<typename GradType>
-void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
+void LogisticRegressionFunction<MatType>::Gradient(
     const MatType& parameters,
     GradType& gradient) const
 {
@@ -190,32 +191,31 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
 
 //! Evaluate the gradient of the logistic regression objective function for a
 //! given batch size.
-template<typename MatType, typename LabelsType>
+template<typename MatType>
 template<typename GradType>
-void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
-                const MatType& parameters,
-                const size_t begin,
-                GradType& gradient,
-                const size_t batchSize) const
+void LogisticRegressionFunction<MatType>::Gradient(
+    const MatType& parameters,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize) const
 {
   typedef typename ForwardType<MatType>::brow BaseRowType;
 
   // Regularization term.
-  MatType regularization;
-  regularization = lambda * parameters.tail_cols(parameters.n_elem - 1)
+  MatType regularization = lambda * parameters.tail_cols(parameters.n_elem - 1)
       / predictors.n_cols * batchSize;
 
   const BaseRowType exponents = parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) *
       predictors.cols(begin, begin + batchSize - 1);
   // Calculating the sigmoid function values.
-  const BaseRowType sigmoids = 1.0 / (1.0 + exp(-exponents));
+  const BaseRowType sigmoids = 1 / (1 + exp(-exponents));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<BaseRowType>::from(responses.subvec(begin, begin + batchSize - 1)) -
+  gradient[0] = -accu(responses.cols(begin, begin + batchSize - 1) -
       sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<BaseRowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
+      responses.cols(begin, begin + batchSize - 1)) *
       predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 }
 
@@ -223,43 +223,17 @@ void LogisticRegressionFunction<MatType, LabelsType>::Gradient(
  * Evaluate the partial gradient of the logistic regression objective
  * function with respect to the individual features in the parameter.
  */
-template <typename MatType, typename LabelsType>
-template<typename ElemType>
-void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
+template<typename MatType>
+template<typename GradType>
+void LogisticRegressionFunction<MatType>::PartialGradient(
     const MatType& parameters,
     const size_t j,
-    arma::SpMat<ElemType>& gradient) const
-{
-  const arma::Row<typename MatType::elem_type> diffs = responses -
-      (1 / (1 + arma::exp(-parameters(0, 0) -
-                          parameters.tail_cols(parameters.n_elem - 1) *
-                              predictors)));
-
-  gradient.set_size(arma::size(parameters));
-
-  if (j == 0)
-  {
-    gradient[j] = -accu(diffs);
-  }
-  else
-  {
-    gradient[j] = arma::dot(-predictors.row(j - 1), diffs) + lambda *
-      parameters(0, j);
-  }
-}
-
-template <typename MatType, typename LabelsType>
-void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
-    const MatType& parameters,
-    const size_t j,
-    MatType& gradient) const
+    GradType& gradient) const
 {
   typedef typename ForwardType<MatType>::brow BaseRowType;
 
-  const BaseRowType diffs = conv_to<BaseRowType>::from(responses) -
-      (1 / (1 + exp(-parameters(0, 0) -
-      parameters.tail_cols(parameters.n_elem - 1) *
-      predictors)));
+  const BaseRowType diffs = responses - (1 / (1 + arma::exp(-parameters(0, 0) -
+      parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(size(parameters));
 
@@ -270,32 +244,29 @@ void LogisticRegressionFunction<MatType, LabelsType>::PartialGradient(
   else
   {
     gradient[j] = dot(-predictors.row(j - 1), diffs) + lambda *
-      parameters(0, j);
+        parameters(0, j);
   }
 }
 
-template<typename MatType, typename LabelsType>
+template<typename MatType>
 template<typename GradType>
 typename MatType::elem_type
-LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
+LogisticRegressionFunction<MatType>::EvaluateWithGradient(
     const MatType& parameters,
     GradType& gradient) const
 {
-  typedef typename MatType::elem_type ElemType;
   typedef typename ForwardType<MatType>::brow BaseRowType;
 
   // Regularization term.
-  MatType regularization = lambda *
-      parameters.tail_cols(parameters.n_elem - 1);
+  MatType regularization = lambda * parameters.tail_cols(parameters.n_elem - 1);
 
-  const ElemType objectiveRegularization = lambda / 2.0 *
+  const ElemType objectiveRegularization = halfLambda *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-                parameters.tail_cols(parameters.n_elem - 1));
+          parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const BaseRowType sigmoids = 1.0 / (1.0 +
-      exp(-(parameters(0, 0) +
-                  parameters.tail_cols(parameters.n_elem - 1) * predictors)));
+  const BaseRowType sigmoids = 1 / (1 + exp(-(parameters(0, 0) +
+      parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
   gradient.set_size(size(parameters));
   gradient[0] = -accu(responses - sigmoids);
@@ -303,76 +274,83 @@ LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
       predictors.t() + regularization;
 
   // Now compute the objective function using the sigmoids.
-  ElemType result = accu(log(1.0 -
-      conv_to<BaseRowType>::from(responses) + sigmoids %
-      (2 * conv_to<BaseRowType>::from(responses) - 1.0)));
+  ElemType result = accu(log(1 - responses + sigmoids % (2 * responses - 1)));
 
   // Invert the result, because it's a minimization.
   return objectiveRegularization - result;
 }
 
-template<typename MatType, typename LabelsType>
+template<typename MatType>
 template<typename GradType>
 typename MatType::elem_type
-LogisticRegressionFunction<MatType, LabelsType>::EvaluateWithGradient(
+LogisticRegressionFunction<MatType>::EvaluateWithGradient(
     const MatType& parameters,
     const size_t begin,
     GradType& gradient,
     const size_t batchSize) const
 {
-  typedef typename MatType::elem_type ElemType;
   typedef typename ForwardType<MatType>::brow BaseRowType;
 
   // Regularization term.
-  MatType regularization =
-      lambda * parameters.tail_cols(parameters.n_elem - 1) / predictors.n_cols *
+  MatType regularization = lambda *
+      parameters.tail_cols(parameters.n_elem - 1) / predictors.n_cols *
       batchSize;
 
-  const ElemType objectiveRegularization = lambda *
-      (batchSize / (2.0 * predictors.n_cols)) *
+  const ElemType objectiveRegularization = halfLambda *
+      (batchSize / ElemType(predictors.n_cols)) *
       dot(parameters.tail_cols(parameters.n_elem - 1),
-                parameters.tail_cols(parameters.n_elem - 1));
+          parameters.tail_cols(parameters.n_elem - 1));
 
   // Calculate the sigmoid function values.
-  const BaseRowType sigmoids = 1.0 / (1.0 +
-      exp(-(parameters(0, 0) +
-                  parameters.tail_cols(parameters.n_elem - 1) *
-                      predictors.cols(begin, begin + batchSize - 1))));
+  const BaseRowType sigmoids = 1 / (1 + exp(-(parameters(0, 0) +
+      parameters.tail_cols(parameters.n_elem - 1) *
+      predictors.cols(begin, begin + batchSize - 1))));
 
   gradient.set_size(parameters.n_rows, parameters.n_cols);
-  gradient[0] = -accu(conv_to<BaseRowType>::from(
-      responses.subvec(begin, begin + batchSize - 1)) - sigmoids);
+  gradient[0] = -accu(responses.cols(begin, begin + batchSize - 1) -
+      sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids -
-      conv_to<BaseRowType>::from(responses.subvec(begin, begin + batchSize - 1))) *
+      responses.cols(begin, begin + batchSize - 1)) *
       predictors.cols(begin, begin + batchSize - 1).t() + regularization;
 
   // Now compute the objective function using the sigmoids.
-  BaseRowType respD = conv_to<BaseRowType>::from(
-      responses.subvec(begin, begin + batchSize - 1));
-  const ElemType result = accu(log(1.0 - respD + sigmoids %
-      (2 * respD - 1.0)));
+  const ElemType result = accu(log(
+      1 - responses.cols(begin, begin + batchSize - 1) +
+      sigmoids % (2 * responses.cols(begin, begin + batchSize - 1) - 1)));
+
+  //std::cout << "LRF::EvaluateWithGradient(" << begin << ", " << batchSize << "): reg " << objectiveRegularization << " res " << result << "\n";
+  //std::cout << "  gradient[0]: " << gradient[0] << "\n";
+  //std::cout << "  parameters: " << parameters;
+  //std::cout << "  predictors cols:\n" << predictors.cols(begin, begin + batchSize - 1) << "\n";
+  //std::cout << "  sigmoids denom: " << -(parameters(0, 0) + parameters.tail_cols(parameters.n_elem - 1) * predictors.cols(begin, begin + batchSize - 1)) << "\n";
+  //std::cout << "  responses: " << responses.cols(begin, begin + batchSize - 1);
+  //std::cout << "  sigmoids: " << sigmoids;
+  //std::cout << "  inner left: " << (1 - responses.cols(begin, begin + batchSize - 1) + sigmoids % (2 * responses.cols(begin, begin + batchSize - 1) - 1)) << "\n";
+  //std::cout << "  log: " << log(1 - responses.cols(begin, begin + batchSize - 1) + sigmoids % (2 * responses.cols(begin, begin + batchSize - 1) - 1)) << "\n";
 
   // Invert the result, because it's a minimization.
   return objectiveRegularization - result;
 }
 
-template<typename MatType, typename LabelsType>
-void LogisticRegressionFunction<MatType, LabelsType>::Classify(
+template<typename MatType>
+template<typename LabelsType>
+void LogisticRegressionFunction<MatType>::Classify(
     const MatType& dataset,
     LabelsType& labels,
     const MatType& parameters,
     const double decisionBoundary) const
 {
-  // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
+  // Calculate sigmoid function for each point.  The (1 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = conv_to<LabelsType>::from((1.0 /
-      (1.0 + exp(-parameters(0) -
+  labels = conv_to<LabelsType>::from((1 /
+      (1 + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
-      (1.0 - decisionBoundary));
+      ElemType(1 - decisionBoundary));
 }
 
-template<typename MatType, typename LabelsType>
-double LogisticRegressionFunction<MatType, LabelsType>::ComputeAccuracy(
+template<typename MatType>
+template<typename LabelsType>
+double LogisticRegressionFunction<MatType>::ComputeAccuracy(
     const MatType& predictors,
     const LabelsType& responses,
     const MatType& parameters,

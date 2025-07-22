@@ -84,6 +84,8 @@ class MomentumUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.
@@ -93,7 +95,8 @@ class MomentumUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(const MomentumUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        momentum(ElemType(parent.momentum))
     {
       velocity.zeros(rows, cols);
     }
@@ -111,7 +114,7 @@ class MomentumUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      velocity = parent.momentum * velocity - stepSize * gradient;
+      velocity = momentum * velocity - ElemType(stepSize) * gradient;
       iterate += velocity;
     }
 
@@ -120,6 +123,8 @@ class MomentumUpdate
     const MomentumUpdate& parent;
     // The velocity matrix.
     MatType velocity;
+    // The momentum, converted to the element type of the optimization.
+    ElemType momentum;
   };
 
  private:

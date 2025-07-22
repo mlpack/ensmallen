@@ -29,14 +29,14 @@ class SimpleCategoricalFunction
   typename MatType::elem_type Evaluate(const MatType& x)
   {
     if (size_t(x(0)) == 0 && size_t(x(1)) == 2 && size_t(x(2)) == 1)
-      return 0.0;
+      return 0;
     else
-      return 10.0;
+      return 10;
   }
 };
 
 TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
-    ENS_TEST_TYPES, arma::imat)
+    ENS_ALL_TEST_TYPES, arma::imat)
 {
   // Create and optimize the categorical function with the GridSearch
   // optimizer.  We must also create a std::vector<bool> that holds the types

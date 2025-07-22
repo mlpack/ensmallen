@@ -17,6 +17,10 @@
 using namespace ens;
 using namespace ens::test;
 
+// NOTE: L-BFGS depends on the squared gradient norm and the squared norm of
+// different of gradients between iterations, and this can be much too large to
+// be represented by FP16.  So, we have only one FP16 test case.
+
 TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]", ENS_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
@@ -67,7 +71,8 @@ TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", ENS_TEST_TYPES)
   L_BFGS lbfgs;
   // Special tolerances: L-BFGS with floats will converge too early.
   const double tol = std::is_same<ElemType, float>::value ? 20.0 : 1e-8;
-  FunctionTest<WoodFunction, TestType>(lbfgs, tol, tol / 10);
+  FunctionTest<WoodFunction, TestType>(lbfgs, ElemType(tol),
+      ElemType(tol / 10));
 }
 
 /**
@@ -101,6 +106,35 @@ TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
   }
 }
 
+// This test will work with all test types (including FP16), but we leave the
+// tolerances quite loose.
+TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunctionLoose", "[LBFGS]",
+    ENS_ALL_TEST_TYPES)
+{
+  typedef typename TestType::elem_type ElemType;
+
+  GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
+  L_BFGS lbfgs(20);
+  lbfgs.MaxIterations() = 1000;
+  // For FP16, to keep the gradient different norm small enough, we must limit
+  // the step size.
+  if (sizeof(ElemType) < 4)
+    lbfgs.MaxStep() = 0.15;
+
+  TestType coords = f.GetInitialPoint();
+  lbfgs.Optimize(f, coords);
+
+  ElemType finalValue = f.Evaluate(coords);
+
+  // Test the output to make sure it is correct.
+  REQUIRE(finalValue ==
+      Approx(0.0).margin(50 * Tolerances<TestType>::LargeObj));
+  REQUIRE(coords(0) ==
+        Approx(1.0).margin(50 * Tolerances<TestType>::LargeCoord));
+  REQUIRE(coords(1) ==
+        Approx(1.0).margin(50 * Tolerances<TestType>::LargeCoord));
+}
+
 TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
@@ -110,7 +144,7 @@ TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]", ENS_TEST_TYPES)
   // Special tolerances: L-BFGS with floats will converge too early.
   const double tol = std::is_same<ElemType, float>::value ? 20.0 : 1e-8;
   FunctionTest<RosenbrockWoodFunctionType<TestType, arma::Row<size_t>>,
-               TestType>(lbfgs, tol, tol / 10);
+               TestType>(lbfgs, ElemType(tol), ElemType(tol / 10));
 }
 
 #ifdef USE_COOT

@@ -42,6 +42,7 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
 { /* Nothing to do. */ }
 
 template<typename SelectionPolicyType, typename TransformationPolicyType>
+// TODO: actually mark as deprecated!
 CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
                                   const double lowerBound,
                                   const double upperBound,

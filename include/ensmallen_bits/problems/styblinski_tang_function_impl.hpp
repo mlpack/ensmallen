@@ -46,12 +46,14 @@ typename MatType::elem_type StyblinskiTangFunction<
     const size_t begin,
     const size_t batchSize) const
 {
-  typename MatType::elem_type objective = 0.0;
+  typedef typename MatType::elem_type ElemType;
+
+  typename MatType::elem_type objective = ElemType(0);
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    objective += std::pow(coordinates(p), 4) - 16 *
-        std::pow(coordinates(p), 2) + 5 * coordinates(p);
+    objective += std::pow(coordinates(p), ElemType(4)) - 16 *
+        std::pow(coordinates(p), ElemType(2)) + 5 * coordinates(p);
   }
   objective /= 2;
 
@@ -74,13 +76,15 @@ void StyblinskiTangFunction<PointMatType, LabelsType>::Gradient(
     GradType& gradient,
     const size_t batchSize) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   gradient.zeros(n, 1);
 
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient(p) += 0.5 * (4 * std::pow(coordinates(p), 3) -
-        32.0 * coordinates(p) + 5.0);
+    gradient(p) += (4 * std::pow(coordinates(p), ElemType(3)) -
+        32 * coordinates(p) + 5) / 2;
   }
 }
 

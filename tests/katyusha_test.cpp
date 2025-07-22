@@ -17,7 +17,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("Katyusha_LogisticRegressionFunction", "[Katyusha]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   // Run with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 45; batchSize += 5)

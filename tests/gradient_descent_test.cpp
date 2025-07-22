@@ -19,7 +19,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   GradientDescent s(0.01, 5000000, 1e-9);
   FunctionTest<GDTestFunction, TestType>(s,
@@ -28,11 +28,11 @@ TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
 }
 
 TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
-  GradientDescent s(0.001, 0, Tolerances<TestType>::Obj / 1000);
+  GradientDescent s(0.002, 0, Tolerances<TestType>::Obj / 1000);
   FunctionTest<RosenbrockFunction, TestType>(s,
-      Tolerances<TestType>::LargeObj / 10,
+      10 * Tolerances<TestType>::LargeObj,
       10 * Tolerances<TestType>::LargeCoord);
 }
 

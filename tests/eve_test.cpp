@@ -18,25 +18,29 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("Eve_LogisticRegressionFunction", "[Eve]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("Eve_LogisticRegressionFunction", "[Eve]",
+    ENS_ALL_TEST_TYPES)
 {
-  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+  Eve optimizer(0.01, 1, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
+      500000, Tolerances<TestType>::Obj / 10, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("Eve_SphereFunction", "[Eve]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("Eve_SphereFunction", "[Eve]", ENS_ALL_TEST_TYPES)
 {
-  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+  Eve optimizer(0.01, 2, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
+      500000, Tolerances<TestType>::Obj / 10, true);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
       optimizer,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]", ENS_TEST_TYPES,
+TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
-  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
+  Eve optimizer(0.08, 2, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
+      500000, Tolerances<TestType>::Obj / 10, true);
   FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
       optimizer,
       Tolerances<TestType>::LargeObj,

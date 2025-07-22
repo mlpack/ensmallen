@@ -48,6 +48,8 @@ template<
 class GeneralizedRosenbrockFunctionType
 {
  public:
+  typedef typename MatType::elem_type ElemType;
+
   /*
    * Initialize the GeneralizedRosenbrockFunction.
    *

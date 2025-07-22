@@ -16,6 +16,9 @@ using namespace ens;
 using namespace ens::test;
 using namespace std;
 
+// NOTE: we can't use ENS_TEST_TYPES for AGEMOEA, because AGEMOEA uses
+// solve(), which is not implemented for FP16.
+
 /**
  * Checks if low <= value <= high. Used by MOEADFonsecaFlemingTest.
  *
@@ -46,8 +49,8 @@ TEMPLATE_TEST_CASE("AGEMOEASchafferN1Test", "[AGEMOEA]", ENS_TEST_TYPES)
   SchafferFunctionN1<TestType> sch;
   const double lowerBound = -1000;
   const double upperBound = 1000;
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0;
+  const ElemType expectedUpperBound = 2;
 
   AGEMOEA opt(20, 500, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
 
@@ -72,7 +75,7 @@ TEMPLATE_TEST_CASE("AGEMOEASchafferN1Test", "[AGEMOEA]", ENS_TEST_TYPES)
     {
       ElemType val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(val, expectedLowerBound, expectedUpperBound,
-          0.1))
+          ElemType(0.1)))
       {
         allInRange = false;
         break;
@@ -101,8 +104,8 @@ TEMPLATE_TEST_CASE("AGEMOEASchafferN1TestVectorBounds", "[AGEMOEA]",
   SchafferFunctionN1<TestType> sch;
   const arma::vec lowerBound = {-1000};
   const arma::vec upperBound = {1000};
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0;
+  const ElemType expectedUpperBound = 2;
 
   AGEMOEA opt(20, 500, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
 
@@ -121,11 +124,12 @@ TEMPLATE_TEST_CASE("AGEMOEASchafferN1TestVectorBounds", "[AGEMOEA]",
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       ElemType val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(val, expectedLowerBound, expectedUpperBound,
-          0.1))
+          ElemType(0.1)))
       {
         allInRange = false;
         break;
@@ -152,8 +156,8 @@ TEMPLATE_TEST_CASE("AGEMOEAFonsecaFlemingTest", "[AGEMOEA]", ENS_TEST_TYPES)
   FonsecaFlemingFunction<TestType> fon;
   const double lowerBound = -4;
   const double upperBound = 4;
-  const double lbExpected = -1.0 / sqrt(3);
-  const double ubExpected = 1.0 / sqrt(3);
+  const ElemType lbExpected = -1 / sqrt(ElemType(3));
+  const ElemType ubExpected = 1 / sqrt(ElemType(3));
 
   AGEMOEA opt(20, 500, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
   typedef decltype(fon.objectiveA) ObjectiveTypeA;
@@ -175,13 +179,13 @@ TEMPLATE_TEST_CASE("AGEMOEAFonsecaFlemingTest", "[AGEMOEA]", ENS_TEST_TYPES)
          ++solutionIdx)
     {
       const TestType& solution = paretoSet.slice(solutionIdx);
-      ElemType valX = arma::as_scalar(solution(0));
-      ElemType valY = arma::as_scalar(solution(1));
-      ElemType valZ = arma::as_scalar(solution(2));
+      const ElemType valX = arma::as_scalar(solution(0));
+      const ElemType valY = arma::as_scalar(solution(1));
+      const ElemType valZ = arma::as_scalar(solution(2));
 
-      if (!IsInBounds<ElemType>(valX, lbExpected, ubExpected, 0.3) ||
-          !IsInBounds<ElemType>(valY, lbExpected, ubExpected, 0.3) ||
-          !IsInBounds<ElemType>(valZ, lbExpected, ubExpected, 0.3))
+      if (!IsInBounds<ElemType>(valX, lbExpected, ubExpected, ElemType(0.3)) ||
+          !IsInBounds<ElemType>(valY, lbExpected, ubExpected, ElemType(0.3)) ||
+          !IsInBounds<ElemType>(valZ, lbExpected, ubExpected, ElemType(0.3)))
       {
         allInRange = false;
         break;
@@ -209,8 +213,8 @@ TEMPLATE_TEST_CASE("AGEMOEAFonsecaFlemingTestVectorBounds", "[AGEMOEA]",
   FonsecaFlemingFunction<TestType> fon;
   const arma::vec lowerBound = {-4, -4, -4};
   const arma::vec upperBound = {4, 4, 4};
-  const float lbExpected = -1.0 / sqrt(3);
-  const float ubExpected = 1.0 / sqrt(3);
+  const ElemType lbExpected = -1 / sqrt(ElemType(3));
+  const ElemType ubExpected = 1 / sqrt(ElemType(3));
 
   AGEMOEA opt(20, 300, 0.6, 20, 1e-6, 20, lowerBound, upperBound);
   typedef decltype(fon.objectiveA) ObjectiveTypeA;
@@ -231,13 +235,13 @@ TEMPLATE_TEST_CASE("AGEMOEAFonsecaFlemingTestVectorBounds", "[AGEMOEA]",
          ++solutionIdx)
     {
       const TestType& solution = paretoSet.slice(solutionIdx);
-      ElemType valX = arma::as_scalar(solution(0));
-      ElemType valY = arma::as_scalar(solution(1));
-      ElemType valZ = arma::as_scalar(solution(2));
+      const ElemType valX = arma::as_scalar(solution(0));
+      const ElemType valY = arma::as_scalar(solution(1));
+      const ElemType valZ = arma::as_scalar(solution(2));
 
-      if (!IsInBounds<ElemType>(valX, lbExpected, ubExpected, 0.3) ||
-          !IsInBounds<ElemType>(valY, lbExpected, ubExpected, 0.3) ||
-          !IsInBounds<ElemType>(valZ, lbExpected, ubExpected, 0.3))
+      if (!IsInBounds<ElemType>(valX, lbExpected, ubExpected, ElemType(0.3)) ||
+          !IsInBounds<ElemType>(valY, lbExpected, ubExpected, ElemType(0.3)) ||
+          !IsInBounds<ElemType>(valZ, lbExpected, ubExpected, ElemType(0.3)))
       {
         allInRange = false;
       }
@@ -280,12 +284,11 @@ TEMPLATE_TEST_CASE("AGEMOEAZDTONETest", "[AGEMOEA]", ENS_TEST_TYPES)
     //! The optimal g value is taken from the docs of ZDT_ONE.
     size_t numVariables = coords.size();
     ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-    const ElemType g = 1.0 + 9.0 * sum /
-        (static_cast<double>(numVariables - 1));
-    if (trial < trials - 1 && g != Approx(1.0).margin(0.99))
+    const ElemType g = 1 + 9 * sum / (static_cast<ElemType>(numVariables - 1));
+    if (trial < trials - 1 && g != Approx(1).margin(ElemType(0.99)))
       continue;
 
-    REQUIRE(g == Approx(1.0).margin(0.99));
+    REQUIRE(g == Approx(1).margin(ElemType(0.99)));
     break;
   }
 }
@@ -329,7 +332,7 @@ bool AVariableBoundsCheck(const CubeType& paretoSet)
   }
 
   notInBounds = notInBounds / paretoSet.n_slices;
-  return notInBounds < 0.80;
+  return notInBounds < ElemType(0.80);
 }
 
 /**

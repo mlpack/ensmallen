@@ -19,9 +19,13 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
-  AdaDelta adaDelta;
+  typedef typename TestType::elem_type ElemType;
+
+  // Use a large epsilon if we are using FP16, to avoid underflow in the first
+  // iterations.
+  AdaDelta adaDelta(1.0, 32, 0.95, sizeof(ElemType) == 2 ? 1e-4 : 1e-6);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adaDelta);
 }
 

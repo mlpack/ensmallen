@@ -15,22 +15,26 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("AdaBound_SphereFunction", "[AdaBound]", ENS_TEST_TYPES,
+TEMPLATE_TEST_CASE("AdaBound_SphereFunction", "[AdaBound]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
-  AdaBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
+  AdaBound optimizer(0.005, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("AMSBound_SphereFunction", "[AdaBound]", ENS_TEST_TYPES,
+TEMPLATE_TEST_CASE("AMSBound_SphereFunction", "[AdaBound]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
-  AMSBound optimizer(0.001, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
+  AMSBound optimizer(0.005, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
       1e-3, false);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
 TEMPLATE_TEST_CASE("AdaBound_SphereFunctionSpMatDenseGradient", "[AdaBound]",

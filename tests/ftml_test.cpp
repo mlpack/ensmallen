@@ -19,24 +19,28 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("FTML_LogisticRegressionFunction", "[FTML]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("FTML_LogisticRegressionFunction", "[FTML]",
+    ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+  FTML optimizer(0.005, 1, 0.9, 0.999, Tolerances<TestType>::Obj, 100000,
+      Tolerances<TestType>::Obj * 10, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
+  FTML optimizer(0.05, 2, 0.9, 0.999, Tolerances<TestType>::Obj / 100, 500000,
+      Tolerances<TestType>::Obj / 100, true);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
       optimizer,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+  FTML optimizer(0.4, 2, 0.9, 0.999, Tolerances<TestType>::Obj, 100000,
+      Tolerances<TestType>::Obj / 100, true);
   FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
       optimizer,
       10 * Tolerances<TestType>::LargeObj,

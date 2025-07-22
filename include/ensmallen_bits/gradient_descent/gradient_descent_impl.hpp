@@ -102,7 +102,7 @@ GradientDescent::Optimize(FunctionType& function,
     lastObjective = overallObjective;
 
     // And update the iterate.
-    iterate -= stepSize * gradient;
+    iterate -= ElemType(stepSize) * gradient;
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 

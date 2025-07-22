@@ -20,6 +20,8 @@
 using namespace ens;
 using namespace ens::test;
 
+// NOTE: we cannot use FP16 types until sparse support is added.
+
 /**
  * Tests the Augmented Lagrangian optimizer using the
  * AugmentedLagrangianTestFunction class.

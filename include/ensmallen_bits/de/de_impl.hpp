@@ -40,7 +40,6 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
-  typedef typename ForwardType<MatType>::vec ColType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
@@ -49,7 +48,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   population.resize(populationSize);
 
   // Vector of fitness values corresponding to each candidate.
-  ColType fitnessValues;
+  arma::Col<ElemType> fitnessValues;
 
   // Make sure that we have the methods that we need.  Long name...
   traits::CheckArbitraryFunctionTypeAPI<
@@ -59,13 +58,13 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   // Population Size must be at least 3 for DE to work.
   if (populationSize < 3)
   {
-    throw std::logic_error("CNE::Optimize(): population size should be at least"
+    throw std::logic_error("DE::Optimize(): population size should be at least"
         " 3!");
   }
 
   // Initialize helper variables.
   fitnessValues.set_size(populationSize);
-  ElemType lastBestFitness = DBL_MAX;
+  ElemType lastBestFitness = std::numeric_limits<ElemType>::max();
   BaseMatType bestElement;
 
   // Controls early termination of the optimization process.
@@ -113,7 +112,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
       while (m == member && m == l);
 
       // Generate new "mutant" from two randomly chosen members.
-      BaseMatType mutant = bestElement + differentialWeight *
+      BaseMatType mutant = bestElement + ElemType(differentialWeight) *
           (population[l] - population[m]);
 
       // Perform crossover.
@@ -121,7 +120,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
       cr.randu(iterate.n_rows, 1);
       for (size_t it = 0; it < iterate.n_rows; it++)
       {
-        if (cr[it] >= crossoverRate)
+        if (cr[it] >= ElemType(crossoverRate))
         {
           mutant(it) = ElemType(iterate(it));
         }

@@ -39,7 +39,9 @@ typename MatType::elem_type SGDTestFunctionType<LabelsType>::Evaluate(
     const size_t begin,
     const size_t batchSize) const
 {
-  typename MatType::elem_type objective = 0;
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType objective = 0;
 
   for (size_t i = begin; i < begin + batchSize; i++)
   {
@@ -50,12 +52,12 @@ typename MatType::elem_type SGDTestFunctionType<LabelsType>::Evaluate(
         break;
 
       case 1:
-        objective += std::pow(coordinates[1], 2);
+        objective += std::pow(coordinates[1], ElemType(2));
         break;
 
       case 2:
-        objective += std::pow(coordinates[2], 4) + \
-                     3 * std::pow(coordinates[2], 2);
+        objective += std::pow(coordinates[2], ElemType(4)) + \
+                     3 * std::pow(coordinates[2], ElemType(2));
         break;
     }
   }
@@ -71,6 +73,8 @@ void SGDTestFunctionType<LabelsType>::Gradient(
     GradType& gradient,
     const size_t batchSize) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   gradient.zeros(3);
 
   for (size_t i = begin; i < begin + batchSize; ++i)
@@ -89,7 +93,8 @@ void SGDTestFunctionType<LabelsType>::Gradient(
         break;
 
       case 2:
-        gradient[2] += 4 * std::pow(coordinates[2], 3) + 6 * coordinates[2];
+        gradient[2] += 4 * std::pow(coordinates[2], ElemType(3)) +
+            6 * coordinates[2];
         break;
     }
   }

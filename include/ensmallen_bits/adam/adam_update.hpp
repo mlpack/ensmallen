@@ -82,6 +82,8 @@ class AdamUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -92,10 +94,17 @@ class AdamUpdate
      */
     Policy(AdamUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
         iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
+
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 100 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -113,22 +122,23 @@ class AdamUpdate
       ++iteration;
 
       // And update the iterate.
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * square(gradient);
+      v *= beta2;
+      v += (1 - beta2) * square(gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
 
       /**
        * It should be noted that the term, m / (arma::sqrt(v) + eps), in the
        * following expression is an approximation of the following actual term;
        * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
        */
-      iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-          m / (sqrt(v) + parent.epsilon);
+      iterate -= (ElemType(stepSize) *
+          std::sqrt(biasCorrection2) / biasCorrection1) *
+          m / (sqrt(v) + epsilon);
     }
 
    private:
@@ -140,6 +150,11 @@ class AdamUpdate
 
     // The exponential moving average of squared gradient values.
     GradType v;
+
+    // Parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
 
     // The number of iterations.
     size_t iteration;

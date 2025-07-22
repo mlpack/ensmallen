@@ -31,11 +31,11 @@ namespace test {
 */
 template<typename MatType, typename LabelsType>
 inline void LogisticRegressionTestData(MatType& data,
-                                      MatType& testData,
-                                      MatType& shuffledData,
-                                      LabelsType& responses,
-                                      LabelsType& testResponses,
-                                      LabelsType& shuffledResponses)
+                                       MatType& testData,
+                                       MatType& shuffledData,
+                                       LabelsType& responses,
+                                       LabelsType& testResponses,
+                                       LabelsType& shuffledResponses)
 {
   typedef typename MatType::elem_type ElemType;
 
@@ -112,13 +112,13 @@ inline void CheckMatrices(const MatType& a,
 
 template<typename FunctionType, typename OptimizerType, typename PointType>
 bool TestOptimizer(FunctionType& f,
-                  OptimizerType& optimizer,
-                  PointType& point,
-                  const PointType& expectedResult,
-                  const double coordinateMargin,
-                  const double expectedObjective,
-                  const double objectiveMargin,
-                  const bool mustSucceed = true)
+                   OptimizerType& optimizer,
+                   PointType& point,
+                   const PointType& expectedResult,
+                   const double coordinateMargin,
+                   const double expectedObjective,
+                   const double objectiveMargin,
+                   const bool mustSucceed = true)
 {
   const double objective = optimizer.Optimize(f, point);
 
@@ -129,7 +129,8 @@ bool TestOptimizer(FunctionType& f,
     REQUIRE(objective == Approx(expectedObjective).margin(objectiveMargin));
     for (size_t i = 0; i < point.n_elem; ++i)
     {
-      REQUIRE(eT(point[i]) == Approx(expectedResult[i]).margin(coordinateMargin));
+      REQUIRE(eT(point[i]) ==
+          Approx(expectedResult[i]).margin(coordinateMargin));
     }
   }
   else
@@ -181,8 +182,10 @@ template<typename FunctionType,
          typename MatType = arma::mat,
          typename OptimizerType = ens::StandardSGD>
 void FunctionTest(OptimizerType& optimizer,
-                  const typename MatType::elem_type objectiveMargin = 0.01,
-                  const typename MatType::elem_type coordinateMargin = 0.001,
+                  const typename MatType::elem_type objectiveMargin =
+                      typename MatType::elem_type(0.01),
+                  const typename MatType::elem_type coordinateMargin =
+                      typename MatType::elem_type(0.001),
                   const size_t trials = 1)
 {
   FunctionType f;
@@ -190,7 +193,8 @@ void FunctionTest(OptimizerType& optimizer,
   MatType expectedResult = f.template GetFinalPoint<MatType>();
 
   MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedResult,
-      coordinateMargin, f.GetFinalObjective(), objectiveMargin, trials);
+      coordinateMargin, typename MatType::elem_type(f.GetFinalObjective()),
+      objectiveMargin, trials);
 }
 
 template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>,
@@ -210,7 +214,7 @@ void LogisticRegressionFunctionTest(
   {
     LogisticRegressionTestData(data, testData, shuffledData,
         responses, testResponses, shuffledResponses);
-    ens::test::LogisticRegressionFunction<MatType, LabelsType> lr(
+    ens::test::LogisticRegressionFunction<MatType> lr(
         shuffledData, shuffledResponses, 0.5);
 
     MatType coordinates = lr.GetInitialPoint();

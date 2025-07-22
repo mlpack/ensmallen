@@ -17,7 +17,7 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("DE_LogisticRegressionFunction", "[DE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("DE_LogisticRegressionFunction", "[DE]", ENS_ALL_TEST_TYPES)
 {
   DE opt(200, 1000, 0.6, 0.8, 1e-5);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(

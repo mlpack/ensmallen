@@ -37,10 +37,12 @@ typename MatType::elem_type ColvilleFunction::Evaluate(
   const ElemType x3 = coordinates(2);
   const ElemType x4 = coordinates(3);
 
-  const ElemType objective = 100 * std::pow(std::pow(x1, 2) - x2, 2) +
-      std::pow(x1 - 1, 2) + std::pow(x3 - 1, 2) + 90 *
-      std::pow(std::pow(x3, 2) - x4, 2) + 10.1 * (std::pow(x2 - 1, 2) +
-      std::pow(x4 - 1, 2)) + 19.8 * (x2 - 1) * (x4 - 1);
+  const ElemType objective =
+      100 * std::pow(std::pow(x1, ElemType(2)) - x2, ElemType(2)) +
+      std::pow(x1 - 1, ElemType(2)) + std::pow(x3 - 1, ElemType(2)) +
+      90 * std::pow(std::pow(x3, ElemType(2)) - x4, ElemType(2)) +
+      ElemType(10.1) * (std::pow(x2 - 1, ElemType(2)) +
+      std::pow(x4 - 1, ElemType(2))) + ElemType(19.8) * (x2 - 1) * (x4 - 1);
 
   return objective;
 }
@@ -68,10 +70,12 @@ inline void ColvilleFunction::Gradient(const MatType& coordinates,
   const ElemType x4 = coordinates(3);
 
   gradient.set_size(4, 1);
-  gradient(0) = 2 * (200 * x1 * (std::pow(x1, 2) - x2) + x1 - 1);
-  gradient(1) = 19.8 * x4 - 200 * std::pow(x1, 2) + 220.2 * x2 - 40;
-  gradient(2) = 2 * (180 * x3 * (std::pow(x3, 2) - x4) + x3 - 1);
-  gradient(3) = 200.2 * x4 + 19.8 * x2 - 180 * std::pow(x3, 2) - 40;
+  gradient(0) = 2 * (200 * x1 * (std::pow(x1, ElemType(2)) - x2) + x1 - 1);
+  gradient(1) = ElemType(19.8) * x4 - 200 * std::pow(x1, ElemType(2)) +
+      ElemType(220.2) * x2 - 40;
+  gradient(2) = 2 * (180 * x3 * (std::pow(x3, ElemType(2)) - x4) + x3 - 1);
+  gradient(3) = ElemType(200.2) * x4 + ElemType(19.8) * x2 -
+      180 * std::pow(x3, ElemType(2)) - 40;
 }
 
 template<typename MatType, typename GradType>

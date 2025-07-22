@@ -17,6 +17,8 @@
 using namespace ens;
 using namespace ens::test;
 
+// NOTE: we don't use low-precision for this test because it is very
+// specifically tuned to compare momentum SGD and regular SGD.
 TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
     ENS_TEST_TYPES)
 {
@@ -84,6 +86,31 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
           Approx(1.0).epsilon(Tolerances<TestType>::LargeCoord));
     }
   }
+}
+
+TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunctionLoose",
+    "[MomentumSGD]", ENS_ALL_TEST_TYPES)
+{
+  typedef typename TestType::elem_type ElemType;
+
+  // Create the generalized Rosenbrock function.
+  GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
+  MomentumUpdate momentumUpdate(0.2);
+  MomentumSGD s(0.001);
+  s.Tolerance() = 1e-9;
+
+  TestType coordinates = f.GetInitialPoint();
+  ElemType result = s.Optimize(f, coordinates);
+
+  // Allow wider tolerances for low-precision types.
+  const ElemType factor = (sizeof(ElemType) < 4) ? 5 : 1;
+  REQUIRE(result ==
+      Approx(0.0).margin(factor * Tolerances<TestType>::LargeObj));
+
+  REQUIRE(coordinates(0) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
 }
 
 #ifdef USE_COOT

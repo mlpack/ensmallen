@@ -19,6 +19,9 @@ using namespace std;
 using namespace ens;
 using namespace ens::test;
 
+// NOTE: this cannot work yet with FP16 because Armadillo does not support FP16
+// sparse types.
+
 /**
  * Test the correctness of the CD implementation by using a dataset with a
  * precalculated minima.

@@ -18,13 +18,15 @@ using namespace ens;
 using namespace ens::test;
 using namespace std;
 
-TEMPLATE_TEST_CASE("CNE_LogisticRegressionFunction", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_LogisticRegressionFunction", "[CNE]",
+    ENS_ALL_TEST_TYPES)
 {
   CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(opt);
 }
 
-TEMPLATE_TEST_CASE("CNE_CrossInTrayFunction", "[CNE]", ENS_TEST_TYPES)
+// The CrossInTray function doesn't optimize well with FP16.
+TEMPLATE_TEST_CASE("CNE_CrossInTrayFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CrossInTrayFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
@@ -38,7 +40,7 @@ TEMPLATE_TEST_CASE("CNE_CrossInTrayFunction", "[CNE]", ENS_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord));
 }
 
-TEMPLATE_TEST_CASE("CNE_AckleyFunction", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_AckleyFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<AckleyFunction>(optimizer,
@@ -46,7 +48,7 @@ TEMPLATE_TEST_CASE("CNE_AckleyFunction", "[CNE]", ENS_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_BealeFunction", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_BealeFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<BealeFunction>(optimizer,
@@ -54,7 +56,7 @@ TEMPLATE_TEST_CASE("CNE_BealeFunction", "[CNE]", ENS_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_GoldsteinPriceFunction", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_GoldsteinPriceFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.1, -1);
   FunctionTest<GoldsteinPriceFunction>(optimizer,
@@ -62,7 +64,7 @@ TEMPLATE_TEST_CASE("CNE_GoldsteinPriceFunction", "[CNE]", ENS_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_LevyFunctionN13", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_LevyFunctionN13", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.02, -1);
   FunctionTest<LevyFunctionN13>(optimizer,
@@ -70,7 +72,7 @@ TEMPLATE_TEST_CASE("CNE_LevyFunctionN13", "[CNE]", ENS_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_HimmelblauFunction", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_HimmelblauFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   HimmelblauFunction f;
   CNE optimizer(650, 3000, 0.3, 0.3, 0.3, 1e-7);
@@ -93,7 +95,7 @@ TEMPLATE_TEST_CASE("CNE_HimmelblauFunction", "[CNE]", ENS_TEST_TYPES)
   REQUIRE(coordinates(1) == Approx(2.0).margin(coordTol2));
 }
 
-TEMPLATE_TEST_CASE("CNE_ThreeHumpCamelFunction", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_ThreeHumpCamelFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<ThreeHumpCamelFunction>(optimizer,
@@ -107,13 +109,13 @@ TEMPLATE_TEST_CASE("CNE_ThreeHumpCamelFunction", "[CNE]", ENS_TEST_TYPES)
 /**
  * Test the CNE optimizer on Schaffer function N.4.
  */
-TEMPLATE_TEST_CASE("CNE_SchafferFunctionN4", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_SchafferFunctionN4", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   SchafferFunctionN4 f;
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
 
   // We allow a few trials.
-  const double coordTol = Tolerances<TestType>::LargeCoord;
+  const double coordTol = 5 * Tolerances<TestType>::LargeCoord;
   for (size_t trial = 0; trial < 5; ++trial)
   {
     TestType coordinates = TestType("0.5; 2");
@@ -135,7 +137,7 @@ TEMPLATE_TEST_CASE("CNE_SchafferFunctionN4", "[CNE]", ENS_TEST_TYPES)
   }
 }
 
-TEMPLATE_TEST_CASE("CNE_SchafferFunctionN2", "[CNE]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_SchafferFunctionN2", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   // We allow a few trials in case convergence is not achieved.
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);

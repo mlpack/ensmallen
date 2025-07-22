@@ -32,20 +32,20 @@ template<typename ElemType>
 bool IsInBounds(
     const ElemType& value, const ElemType& low, const ElemType& high)
 {
-  ElemType roundoff = 0.1;
+  ElemType roundoff = ElemType(0.1);
   return !(value < (low - roundoff)) && !((high + roundoff) < value);
 }
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   SchafferFunctionN1<TestType> sch;
   const double lowerBound = -1000;
   const double upperBound = 1000;
-  const ElemType expectedLowerBound = 0.0;
-  const ElemType expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0;
+  const ElemType expectedUpperBound = 2;
 
   NSGA2Type<TestType> opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
@@ -88,7 +88,7 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
 }
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -96,8 +96,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
   SchafferFunctionN1<TestType> sch;
   const arma::Col<ElemType> lowerBound = {-1000};
   const arma::Col<ElemType> upperBound = {1000};
-  const ElemType expectedLowerBound = 0.0;
-  const ElemType expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0;
+  const ElemType expectedUpperBound = 2;
 
   NSGA2Type<TestType> opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
@@ -141,7 +141,7 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
 TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -151,8 +151,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
   const double upperBound = 4;
   const double tolerance = 1e-6;
   const double strength = 1e-4;
-  const ElemType expectedLowerBound = -1.0 / sqrt(3);
-  const ElemType expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = -1 / sqrt(ElemType(3));
+  const ElemType expectedUpperBound = 1 / sqrt(ElemType(3));
 
   NSGA2Type<TestType> opt(20, 300, 0.6, 0.3, strength, tolerance, lowerBound,
       upperBound);
@@ -191,7 +191,7 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
 TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -201,8 +201,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
   const arma::Col<ElemType> upperBound = {4, 4, 4};
   const double tolerance = 1e-6;
   const double strength = 1e-4;
-  const ElemType expectedLowerBound = -1.0 / sqrt(3);
-  const ElemType expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = -1 / sqrt(ElemType(3));
+  const ElemType expectedUpperBound = 1 / sqrt(ElemType(3));
 
   NSGA2Type<TestType> opt(20, 300, 0.6, 0.3, strength, tolerance, lowerBound,
       upperBound);
@@ -244,7 +244,7 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
  */
-TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_ALL_TEST_TYPES)
 {
   //! Parameters taken from original ZDT Paper.
   ZDT1<TestType> zdt1(100);

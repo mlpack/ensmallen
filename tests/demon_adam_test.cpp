@@ -17,10 +17,10 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("DemonAdam_LogisticRegressionFunction", "[DemonAdam]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
-  DemonAdam optimizer(0.2, 32, 0.9, 0.9, 0.999, 1e-8,
-      10000, 1e-9, true, true, true);
+  DemonAdam optimizer(0.2, 32, 0.9, 0.9, 0.999, Tolerances<TestType>::Obj,
+      10000, Tolerances<TestType>::Obj / 10, true, true, true);
   // This may require a few attempts to get right.
   LogisticRegressionFunctionTest<TestType>(optimizer,
       Tolerances<TestType>::LRTrainAcc,
@@ -29,10 +29,11 @@ TEMPLATE_TEST_CASE("DemonAdam_LogisticRegressionFunction", "[DemonAdam]",
 }
 
 TEMPLATE_TEST_CASE("DemonAdaMax_LogisticRegressionFunction", "[DemonAdam]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
-  DemonAdamType<AdaMaxUpdate> optimizer(0.5, 10, 0.9, 0.9, 0.999, 1e-8,
-      10000, 1e-9, true, true, true);
+  DemonAdamType<AdaMaxUpdate> optimizer(0.5, 10, 0.9, 0.9, 0.999,
+      Tolerances<TestType>::Obj, 10000, Tolerances<TestType>::Obj / 10, true,
+      true, true);
   // This may require a few attempts to get right.
   LogisticRegressionFunctionTest<TestType>(optimizer,
       Tolerances<TestType>::LRTrainAcc,
@@ -40,8 +41,8 @@ TEMPLATE_TEST_CASE("DemonAdaMax_LogisticRegressionFunction", "[DemonAdam]",
       6);
 }
 
-TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]", ENS_TEST_TYPES,
-    ENS_SPARSE_TEST_TYPES)
+TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   DemonAdam optimizer(0.5, 2, 0.9);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
@@ -50,7 +51,8 @@ TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]", ENS_TEST_TYPES,
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]",
+    ENS_ALL_TEST_TYPES)
 {
   DemonAdam optimizer(0.5, 1, 0.9);
   FunctionTest<MatyasFunction, TestType>(optimizer,

@@ -32,7 +32,7 @@ GeneralizedRosenbrockFunctionType<
   {
     if (i % 2 == 1)
     {
-      initialPoint(i) = -1.2;
+      initialPoint(i) = typename MatType::elem_type(-1.2);
     }
     else
     {
@@ -54,12 +54,13 @@ typename MatType::elem_type GeneralizedRosenbrockFunctionType<
     const size_t begin,
     const size_t batchSize) const
 {
-  typename MatType::elem_type objective = 0.0;
+  typename MatType::elem_type objective = 0;
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    objective += 100 * std::pow((std::pow(coordinates[p], 2)
-        - coordinates[p + 1]), 2) + std::pow(1 - coordinates[p], 2);
+    objective += 100 * std::pow((std::pow(coordinates[p], ElemType(2)) -
+        coordinates[p + 1]), ElemType(2)) +
+        std::pow(1 - coordinates[p], ElemType(2));
   }
 
   return objective;
@@ -73,8 +74,9 @@ typename MatType::elem_type GeneralizedRosenbrockFunctionType<
   typename MatType::elem_type fval = 0;
   for (size_t i = 0; i < (n - 1); i++)
   {
-    fval += 100 * std::pow(std::pow(coordinates[i], 2) -
-        coordinates[i + 1], 2) + std::pow(1 - coordinates[i], 2);
+    fval += 100 * std::pow(std::pow(coordinates[i], ElemType(2)) -
+        coordinates[i + 1], ElemType(2)) +
+        std::pow(1 - coordinates[i], ElemType(2));
   }
 
   return fval;
@@ -92,9 +94,10 @@ void GeneralizedRosenbrockFunctionType<MatType, LabelsType>::Gradient(
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient[p] = 400 * (std::pow(coordinates[p], 3) - coordinates[p] *
-        coordinates[p + 1]) + 2 * (coordinates[p] - 1);
-    gradient[p + 1] = 200 * (coordinates[p + 1] - std::pow(coordinates[p], 2));
+    gradient[p] = 400 * (std::pow(coordinates[p], ElemType(3)) -
+        coordinates[p] * coordinates[p + 1]) + 2 * (coordinates[p] - 1);
+    gradient[p + 1] =
+        200 * (coordinates[p + 1] - std::pow(coordinates[p], ElemType(2)));
   }
 }
 
@@ -107,15 +110,18 @@ void GeneralizedRosenbrockFunctionType<MatType, LabelsType>::Gradient(
   gradient.zeros(n);
   for (size_t i = 0; i < (n - 1); i++)
   {
-    gradient[i] = 400 * (std::pow(coordinates[i], 3) - coordinates[i] *
-        coordinates[i + 1]) + 2 * (coordinates[i] - 1);
+    gradient[i] = 400 * (std::pow(coordinates[i], ElemType(3)) -
+        coordinates[i] * coordinates[i + 1]) + 2 * (coordinates[i] - 1);
 
     if (i > 0)
-      gradient[i] += 200 * (coordinates[i] - std::pow(coordinates[i - 1], 2));
+    {
+      gradient[i] +=
+          200 * (coordinates[i] - std::pow(coordinates[i - 1], ElemType(2)));
+    }
   }
 
   gradient[n - 1] = 200 * (coordinates[n - 1] -
-      std::pow(coordinates[n - 2], 2));
+      std::pow(coordinates[n - 2], ElemType(2)));
 }
 
 } // namespace test

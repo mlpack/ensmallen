@@ -37,8 +37,8 @@ typename MatType::elem_type RosenbrockFunction::Evaluate(
   const ElemType x2 = coordinates(1);
 
   const ElemType objective =
-      /* f1(x) */ 100 * std::pow(x2 - std::pow(x1, 2), 2) +
-      /* f2(x) */ std::pow(1 - x1, 2);
+      /* f1(x) */ 100 * std::pow(x2 - std::pow(x1, ElemType(2)), ElemType(2)) +
+      /* f2(x) */ std::pow(1 - x1, ElemType(2));
 
   return objective;
 }
@@ -64,8 +64,8 @@ void RosenbrockFunction::Gradient(const MatType& coordinates,
   const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
-  gradient(0) = -2 * (1 - x1) + 400 * (std::pow(x1, 3) - x2 * x1);
-  gradient(1) = 200 * (x2 - std::pow(x1, 2));
+  gradient(0) = -2 * (1 - x1) + 400 * (std::pow(x1, ElemType(3)) - x2 * x1);
+  gradient(1) = 200 * (x2 - std::pow(x1, ElemType(2)));
 }
 
 template<typename MatType, typename GradType>

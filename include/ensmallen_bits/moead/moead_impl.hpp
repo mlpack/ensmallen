@@ -82,8 +82,10 @@ MOEADType(
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
     epsilon(epsilon),
-    lowerBound(lowerBound * ColType(1, GetFillType<MatType>::ones)),
-    upperBound(upperBound * ColType(1, GetFillType<MatType>::ones)),
+    lowerBound(typename ColType::elem_type(lowerBound) *
+        ColType(1, GetFillType<ColType>::ones)),
+    upperBound(typename ColType::elem_type(upperBound) *
+        ColType(1, GetFillType<ColType>::ones)),
     initPolicy(initPolicy),
     decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
@@ -196,7 +198,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (BaseMatType& individual : population)
   {
     individual = randu<BaseMatType>(
-        iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+        iterate.n_rows, iterate.n_cols) - ElemType(0.5) + iterate;
 
     // Constrain all genes to be within bounds.
     individual = min(max(individual, castedLowerBound), castedUpperBound);
@@ -251,18 +253,20 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         if (arma::randu() < crossoverProb)
         {
           candidate(geneIdx) = population[r1](geneIdx) +
-              differentialWeight * (population[r2](geneIdx) -
+              ElemType(differentialWeight) * (population[r2](geneIdx) -
               population[r3](geneIdx));
 
           // Boundary conditions.
           if (candidate(geneIdx) < castedLowerBound(geneIdx))
           {
-            candidate(geneIdx) = castedLowerBound(geneIdx) + arma::randu() *
+            candidate(geneIdx) = castedLowerBound(geneIdx) +
+                arma::randu<ElemType>() *
                 (population[r1](geneIdx) - castedLowerBound(geneIdx));
           }
           if (candidate(geneIdx) > castedUpperBound(geneIdx))
           {
-            candidate(geneIdx) = castedUpperBound(geneIdx) - arma::randu() *
+            candidate(geneIdx) = castedUpperBound(geneIdx) -
+                arma::randu<ElemType>() *
                 (castedUpperBound(geneIdx) - population[r1](geneIdx));
           }
         }
@@ -418,6 +422,8 @@ inline void MOEADType<
     const InputMatType& lowerBound,
     const InputMatType& upperBound)
 {
+    typedef typename InputMatType::elem_type ElemType;
+
     const size_t numVariables = candidate.n_rows;
     for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
     {
@@ -447,7 +453,7 @@ inline void MOEADType<
         perturbationFactor = 1.0 - std::pow(value, mutationPower);
       }
 
-      candidate(geneIdx) += perturbationFactor * geneRange;
+      candidate(geneIdx) += ElemType(perturbationFactor * geneRange);
     }
     //! Enforce bounds.
     candidate = min(max(candidate, lowerBound), upperBound);

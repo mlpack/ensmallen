@@ -39,7 +39,9 @@ class SchafferFunctionN1
   size_t numVariables;
 
  public:
- //! Initialize the SchafferFunctionN1
+  typedef typename MatType::elem_type ElemType;
+
+  // Initialize the SchafferFunctionN1 object.
   SchafferFunctionN1() : numObjectives(2), numVariables(1)
   {/* Nothing to do here. */}
 
@@ -53,8 +55,8 @@ class SchafferFunctionN1
   {
     BaseColType objectives(numObjectives);
 
-    objectives(0) = std::pow(coords[0], 2);
-    objectives(1) = std::pow(coords[0] - 2, 2);
+    objectives(0) = std::pow(coords[0], ElemType(2));
+    objectives(1) = std::pow(coords[0] - 2, ElemType(2));
 
     return objectives;
   }
@@ -67,17 +69,17 @@ class SchafferFunctionN1
 
   struct ObjectiveA
   {
-    typename MatType::elem_type Evaluate(const MatType& coords)
+    ElemType Evaluate(const MatType& coords)
     {
-        return std::pow(coords[0], 2);
+      return std::pow(coords[0], ElemType(2));
     }
   } objectiveA;
 
   struct ObjectiveB
   {
-    typename MatType::elem_type Evaluate(const MatType& coords)
+    ElemType Evaluate(const MatType& coords)
     {
-        return std::pow(coords[0] - 2, 2);
+      return std::pow(coords[0] - 2, ElemType(2));
     }
   } objectiveB;
 
@@ -87,6 +89,7 @@ class SchafferFunctionN1
     return std::make_tuple(objectiveA, objectiveB);
   }
 };
+
 } // namespace test
 } // namespace ens
 

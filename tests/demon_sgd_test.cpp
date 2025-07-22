@@ -17,7 +17,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   DemonSGD optimizer(2.0 /* huge step size needed! */, 16, 0.9, 10000000, 1e-9,
       true, true, true);

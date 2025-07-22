@@ -37,6 +37,8 @@ class VanillaUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.  The vanilla update doesn't initialize anything.
@@ -63,7 +65,7 @@ class VanillaUpdate
                 const GradType& gradient)
     {
       // Perform the vanilla SGD update.
-      iterate -= stepSize * gradient;
+      iterate -= ElemType(stepSize) * gradient;
     }
   };
 };

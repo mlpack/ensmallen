@@ -79,15 +79,15 @@ bool VariableBoundsCheck(const CubeType& paretoSet)
   return inBounds;
 }
 
-TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   SchafferFunctionN1<TestType> sch;
   const double lowerBound = -1000;
   const double upperBound = 1000;
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0;
+  const ElemType expectedUpperBound = 2;
 
   MOEADType<Uniform, Tchebycheff, TestType> opt(
       300, // Population size.
@@ -98,7 +98,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_TEST_TYPES)
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      Tolerances<TestType>::Obj, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
   );
@@ -122,7 +122,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_TEST_TYPES)
     {
       ElemType val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(
-          val, expectedLowerBound, expectedUpperBound, 0.1))
+          val, expectedLowerBound, expectedUpperBound, ElemType(0.1)))
       {
         allInRange = false;
         break;
@@ -148,8 +148,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
   SchafferFunctionN1<TestType> sch;
   const arma::Col<ElemType> lowerBound = {-1000};
   const arma::Col<ElemType> upperBound = {1000};
-  const double expectedLowerBound = 0.0;
-  const double expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0.0;
+  const ElemType expectedUpperBound = 2.0;
 
   MOEADType<Uniform, Tchebycheff, TestType> opt(
       300, // Population size.
@@ -209,8 +209,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
   FonsecaFlemingFunction<TestType> fon;
   const double lowerBound = -4;
   const double upperBound = 4;
-  const double expectedLowerBound = -1.0 / sqrt(3);
-  const double expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = ElemType(-1) / sqrt(3);
+  const ElemType expectedUpperBound = ElemType(1) / sqrt(3);
 
   MOEADType<Uniform, Tchebycheff, TestType> opt(
       300,  // Max generations.
@@ -266,8 +266,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
   FonsecaFlemingFunction<TestType> fon;
   const arma::Col<ElemType> lowerBound = {-4, -4, -4};
   const arma::Col<ElemType> upperBound = {4, 4, 4};
-  const ElemType expectedLowerBound = -1.0 / sqrt(3);
-  const ElemType expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = ElemType(-1) / sqrt(3);
+  const ElemType expectedUpperBound = ElemType(1) / sqrt(3);
 
   MOEADType<Uniform, Tchebycheff, TestType> opt(
       300,  // Max generations.

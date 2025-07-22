@@ -16,7 +16,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   AdaBelief adaBelief;
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adaBelief);

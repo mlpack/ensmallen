@@ -78,6 +78,8 @@ class FTMLUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -87,11 +89,18 @@ class FTMLUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(FTMLUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2))
     {
       v.zeros(rows, cols);
       z.zeros(rows, cols);
       d.zeros(rows, cols);
+
+      // Attempt to catch underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 100 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -109,19 +118,19 @@ class FTMLUpdate
       ++iteration;
 
       // And update the iterate.
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * (gradient % gradient);
+      v *= beta2;
+      v += (1 - beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
 
-      MatType sigma = -parent.beta1 * d;
-      d = biasCorrection1 / stepSize *
-        (sqrt(v / biasCorrection2) + parent.epsilon);
+      MatType sigma = -beta1 * d;
+      d = biasCorrection1 / ElemType(stepSize) *
+          (sqrt(v / biasCorrection2) + epsilon);
       sigma += d;
 
-      z *= parent.beta1;
-      z += (1 - parent.beta1) * gradient - sigma % iterate;
+      z *= beta1;
+      z += (1 - beta1) * gradient - sigma % iterate;
       iterate = -z / d;
     }
 
@@ -140,6 +149,11 @@ class FTMLUpdate
 
     // The number of iterations.
     size_t iteration;
+
+    // Optimization parameters converted to the type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
   };
 
  private:

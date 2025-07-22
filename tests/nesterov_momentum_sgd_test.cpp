@@ -67,6 +67,31 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   }
 }
 
+TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunctionLoose",
+    "[NesterovMomentumSGD]", ENS_ALL_TEST_TYPES)
+{
+  typedef typename TestType::elem_type ElemType;
+
+  // Create the generalized Rosenbrock function.
+  GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
+  NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
+  NesterovMomentumSGD s(0.001);
+  s.Tolerance() = 1e-9;
+
+  TestType coordinates = f.GetInitialPoint();
+  ElemType result = s.Optimize(f, coordinates);
+
+  // Allow wider tolerances for low-precision types.
+  const ElemType factor = (sizeof(ElemType) < 4) ? 5 : 1;
+  REQUIRE(result ==
+      Approx(0.0).margin(factor * Tolerances<TestType>::LargeObj));
+
+  REQUIRE(coordinates(0) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
+}
+
 #ifdef USE_COOT
 
 TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",

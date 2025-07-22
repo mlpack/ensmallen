@@ -68,7 +68,7 @@ void SGDLogisticRegressionTest()
 
   LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
-  LogisticRegressionFunction<MatType, LabelsType> lr(
+  LogisticRegressionFunction<MatType> lr(
       shuffledData, shuffledResponses, 0.5);
 
   StandardSGD sgd;

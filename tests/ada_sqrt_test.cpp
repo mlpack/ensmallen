@@ -17,11 +17,17 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
-  AdaSqrt optimizer(0.02, 32, 1e-8, 150000, 1e-9, true);
+  AdaSqrt optimizer(0.25, 32, 10 * Tolerances<TestType>::Obj, 150000, 1e-9,
+      true);
+  // We allow a few trials for lower precision types because AdaSqrt can have
+  // trouble converging in that case.
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      optimizer);
+      optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      sizeof(typename TestType::elem_type) < 4 ? 5 : 1);
 }
 
 #ifdef USE_COOT

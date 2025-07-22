@@ -18,6 +18,8 @@
 using namespace ens;
 using namespace ens::test;
 
+// NOTE: IQN cannot use arma::fp16_mat because pinv() is required.
+
 TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]", ENS_TEST_TYPES)
 {
   // Run on a couple of batch sizes.
