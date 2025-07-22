@@ -16,6 +16,9 @@
 
 namespace ens {
 
+template<typename ElemType, bool IsBandicootType>
+struct ForwardTypeHelper;
+
 /**
  * Helper struct that based on the data type `MatType` forwards to the
  * corresponding `coot` or `arma` types. For example:
@@ -28,139 +31,133 @@ namespace ens {
  * `arma` types without needing to know which library is being used at compile
  * time.
  */
-template<typename MatType, typename ElemType = typename MatType::elem_type>
-struct ForwardType
+template<typename MatType>
+struct ForwardType : public ForwardTypeHelper<typename MatType::elem_type,
+                                              IsCootType<MatType>::value> { };
+
+// Internal helper class that sets the typedefs to Armadillo types if Bandicoot
+// is not available or in use.
+template<typename ElemType, bool IsBandicootType = true>
+struct ForwardTypeHelper
 {
-    // If MatType is an Bandicoot type, then we use Bandicoot types.
-    #ifdef USE_COOT
+  // `uword` is a typedef for an unsigned integer type; it is used for matrix
+  // indices as well as all internal counters and loops.
+  typedef arma::uword uword;
 
-    // `uword` is a typedef for an unsigned integer type; it is used for matrix
-    // indices as well as all internal counters and loops.
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::uword, coot::uword>::type uword;
+  // `vec` is a typedef for column vectors (dense matrices with one column).
+  typedef arma::vec vec;
 
-    // `vec` is a typedef for column vectors (dense matrices with one column).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::vec, coot::vec>::type vec;
+  // `bvec` (base vector) is a typedef for a vector type, in comparison to
+  // `vec`, `bvec` uses the given element type `ElemType`.
+  typedef arma::Col<ElemType> bvec;
 
-    // `bvec` (base vector) is a typedef for a vector type, in comparison to
-    // `vec`, `bvec` uses the given element type `ElemType`.
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::Col<ElemType>, coot::Col<ElemType>>::type bvec;
+  // `bcol` (base col) is a typedef for a column vector type, in comparison to
+  // `col`, `bcol` uses the given element type `ElemType`.
+  typedef arma::Col<ElemType> bcol;
 
-    // `bcol` (base col) is a typedef for a column vector type, in comparison to
-    // `col`, `bcol` uses the given element type `ElemType`.
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::Col<ElemType>, coot::Col<ElemType>>::type bcol;
+  // `brow` (base row) is a typedef for a row vector type, in comparison to
+  // `row`, `brow` uses the given element type `ElemType`.
+  typedef arma::Row<ElemType> brow;
 
-    // `brow` (base row) is a typedef for a row vector type, isn comparison to
-    // `row`, brow uses the given element type ElemType.
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::Row<ElemType>, coot::Row<ElemType>>::type brow;
+  // `mat` is a typedef for dense matrices, with elements stored in
+  // column-major ordering (ie. column by column).
+  typedef arma::mat mat;
 
-    // `mat` is a typedef for dense matrices, with elements stored in
-    // column-major ordering (ie. column by column).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::mat, coot::mat>::type mat;
+  // `bmat` (base matrix) is a typedef for a matrix type, in comparison to
+  // `mat`, `bmat` uses the given element type `ElemType`.
+  typedef arma::Mat<ElemType> bmat;
 
-    // `bmat` (base matrix) is a typedef for a matrix type, in comparison to
-    // `mat`, `bmat` uses the given element type `ElemType`.
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::Mat<ElemType>, coot::Mat<ElemType>>::type bmat;
+  // `cube` is a typedef for 3D matrices (cubes), with elements stored in
+  // column-major ordering (ie. column by column, then page by page).
+  typedef arma::cube cube;
 
-    // `cube` is a typedef for 3D matrices (cubes), with elements stored in
-    // column-major ordering (ie. column by column, then page by page).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::cube, coot::cube>::type cube;
+  // `bcube` (base cube) is a typedef for a cube type, in comparison to `cube`,
+  // `bcube` uses the given element type `ElemType`.
+  typedef arma::Cube<ElemType> bcube;
 
-    // `bcube` (base cube) is a typedef for a cube type, in comparison to `cube`,
-    // `bcube` uses the given element type `ElemType`.
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::Cube<ElemType>, coot::Cube<ElemType>>::type bcube;
+  // `umat` is a typedef for unsigned integer matrices, with elements stored in
+  // column-major ordering (ie. column by column).
+  typedef arma::umat umat;
 
-    // `umat` is a typedef for unsigned integer matrices, with elements stored in
-    // column-major ordering (ie. column by column).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::umat, coot::umat>::type umat;
+  // `uvec` is a typedef for unsigned integer vectors (dense matrices with one
+  // column).
+  typedef arma::uvec uvec;
 
-    // `uvec` is a typedef for unsigned integer vectors (dense matrices with one
-    // column).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::uvec, coot::uvec>::type uvec;
-    // `ucolvec` is a typedef for unsigned integer column vectors (dense matrices
-    // with one column).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::ucolvec, coot::ucolvec>::type ucolvec;
+  // `ucolvec` is a typedef for unsigned integer column vectors (dense matrices
+  // with one column).
+  typedef arma::ucolvec ucolvec;
 
-    // `urowvec` is a typedef for unsigned integer row vectors (dense matrices
-    // with one row).
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::urowvec, coot::urowvec>::type urowvec;
+  // `urowvec` is a typedef for unsigned integer row vectors (dense matrices
+  // with one row).
+  typedef arma::urowvec urowvec;
 
-    // `distr_param` is a typedef for the distribution parameters used in
-    // random number generation.
-    typedef typename std::conditional<IsArmaType<MatType>::value,
-        arma::distr_param, coot::distr_param>::type distr_param;
-    #else
-    // If MatType is an Armadillo type, then we use Armadillo types.
-
-    // `uword` is a typedef for an unsigned integer type; it is used for matrix
-    // indices as well as all internal counters and loops.
-    typedef arma::uword uword;
-
-    // `vec` is a typedef for column vectors (dense matrices with one column).
-    typedef arma::vec vec;
-
-    // `bvec` (base vector) is a typedef for a vector type, in comparison to
-    // `vec`, `bvec` uses the given element type `ElemType`.
-    typedef arma::Col<ElemType> bvec;
-
-    // `bcol` (base col) is a typedef for a column vector type, in comparison to
-    // `col`, `bcol` uses the given element type `ElemType`.
-    typedef arma::Col<ElemType> bcol;
-
-    // `brow` (base row) is a typedef for a row vector type, in comparison to
-    // `row`, `brow` uses the given element type `ElemType`.
-    typedef arma::Row<ElemType> brow;
-
-    // `mat` is a typedef for dense matrices, with elements stored in
-    // column-major ordering (ie. column by column).
-    typedef arma::mat mat;
-
-    // `bmat` (base matrix) is a typedef for a matrix type, in comparison to
-    // `mat`, `bmat` uses the given element type `ElemType`.
-    typedef arma::Mat<ElemType> bmat;
-
-    // `cube` is a typedef for 3D matrices (cubes), with elements stored in
-    // column-major ordering (ie. column by column, then page by page).
-    typedef arma::cube cube;
-
-    // `bcube` (base cube) is a typedef for a cube type, in comparison to `cube`,
-    // `bcube` uses the given element type `ElemType`.
-    typedef arma::Cube<ElemType> bcube;
-
-    // `umat` is a typedef for unsigned integer matrices, with elements stored in
-    // column-major ordering (ie. column by column).
-    typedef arma::umat umat;
-
-    // `uvec` is a typedef for unsigned integer vectors (dense matrices with one
-    // column).
-    typedef arma::uvec uvec;
-
-    // `ucolvec` is a typedef for unsigned integer column vectors (dense matrices
-    // with one column).
-    typedef arma::ucolvec ucolvec;
-
-    // `urowvec` is a typedef for unsigned integer row vectors (dense matrices
-    // with one row).
-    typedef arma::urowvec urowvec;
-
-    // `distr_param` is a typedef for the distribution parameters used in
-    // random number generation.
-    typedef arma::distr_param distr_param;
-
-    #endif
+  // `distr_param` is a typedef for the distribution parameters used in
+  // random number generation.
+  typedef arma::distr_param distr_param;
 };
+
+// Internal helper class that sets the typedefs to Bandicoot types if Bandicoot
+// is available and in use.
+#ifdef USE_COOT
+template<typename ElemType>
+struct ForwardTypeHelper<ElemType, true>
+{
+  // `uword` is a typedef for an unsigned integer type; it is used for matrix
+  // indices as well as all internal counters and loops.
+  typedef coot::uword uword;
+
+  // `vec` is a typedef for column vectors (dense matrices with one column).
+  typedef coot::vec vec;
+
+  // `bvec` (base vector) is a typedef for a vector type, in comparison to
+  // `vec`, `bvec` uses the given element type `ElemType`.
+  typedef coot::Col<ElemType> bvec;
+
+  // `bcol` (base col) is a typedef for a column vector type, in comparison to
+  // `col`, `bcol` uses the given element type `ElemType`.
+  typedef coot::Col<ElemType> bcol;
+
+  // `brow` (base row) is a typedef for a row vector type, isn comparison to
+  // `row`, brow uses the given element type ElemType.
+  typedef coot::Row<ElemType> brow;
+
+  // `mat` is a typedef for dense matrices, with elements stored in
+  // column-major ordering (ie. column by column).
+  typedef coot::mat mat;
+
+  // `bmat` (base matrix) is a typedef for a matrix type, in comparison to
+  // `mat`, `bmat` uses the given element type `ElemType`.
+  typedef coot::Mat<ElemType> bmat;
+
+  // `cube` is a typedef for 3D matrices (cubes), with elements stored in
+  // column-major ordering (ie. column by column, then page by page).
+  typedef coot::cube cube;
+
+  // `bcube` (base cube) is a typedef for a cube type, in comparison to `cube`,
+  // `bcube` uses the given element type `ElemType`.
+  typedef coot::Cube<ElemType> bcube;
+
+  // `umat` is a typedef for unsigned integer matrices, with elements stored in
+  // column-major ordering (ie. column by column).
+  typedef coot::umat umat;
+
+  // `uvec` is a typedef for unsigned integer vectors (dense matrices with one
+  // column).
+  typedef coot::uvec uvec;
+
+  // `ucolvec` is a typedef for unsigned integer column vectors (dense matrices
+  // with one column).
+  typedef coot::ucolvec ucolvec;
+
+  // `urowvec` is a typedef for unsigned integer row vectors (dense matrices
+  // with one row).
+  typedef coot::urowvec urowvec;
+
+  // `distr_param` is a typedef for the distribution parameters used in
+  // random number generation.
+  typedef coot::distr_param distr_param;
+};
+#endif
 
 // Proxy for `arma::shuffle` or `coot::shuffle` based on the data type.
 template<typename MatType>

@@ -148,46 +148,50 @@ struct IsCootType
 
 #ifdef USE_COOT
 
-// Commenting out the first template per case, because
-// Visual Studio doesn't like this instantiaion pattern (error C2910).
-// template<>
 template<typename eT>
 struct IsCootType<coot::Col<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::Row<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::subview<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::subview_col<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::subview_row<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::Mat<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsCootType<coot::Cube<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsCootType<coot::subview_cube<eT> >
 {
   const static bool value = true;
 };
