@@ -181,67 +181,6 @@ sort_index(const MatType& input)
   return arma::sort_index(input);
 }
 
-// Proxy for `arma::randn` or `coot::randn` based on the data type.
-template<typename ElemType>
-typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
-randn(const size_t rows, const size_t cols)
-{
-  #ifdef USE_COOT
-  return coot::randn<ElemType>(rows, cols);
-  #else
-  return arma::randn<ElemType>(rows, cols);
-  #endif
-}
-
-// Armadillo proxy for `arma::randn` if `ElemType` is not a Coot type.
-template<typename ElemType>
-typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
-randn(const size_t rows, const size_t cols)
-{
-  return arma::randn<ElemType>(rows, cols);
-}
-
-// Proxy for `arma::randi` or `coot::randi` based on the data type.
-template<typename ElemType>
-typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
-randi(const size_t rows, const size_t cols, const arma::distr_param& param)
-{
-  #ifdef USE_COOT
-  return coot::randi<ElemType>(rows, cols,
-      coot::distr_param(param.a_int, param.b_int));
-  #else
-  return arma::randi<ElemType>(rows, cols, param);
-  #endif
-}
-
-// Armadillo proxy for `arma::randi` if `ElemType` is not a Coot type.
-template<typename ElemType>
-typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
-randi(const size_t rows, const size_t cols, const arma::distr_param& param)
-{
-  return arma::randi<ElemType>(rows, cols, param);
-}
-
-// Proxy for `arma::randu` or `coot::randu` based on the data type.
-template<typename ElemType>
-typename std::enable_if<IsCootType<ElemType>::value, ElemType>::type
-randu(const size_t rows, const size_t cols)
-{
-  #ifdef USE_COOT
-  return coot::randu<ElemType>(rows, cols);
-  #else
-  return arma::randu<ElemType>(rows, cols);
-  #endif
-}
-
-// Armadillo proxy for `arma::randu` if `ElemType` is not a Coot type.
-template<typename ElemType>
-typename std::enable_if<!IsCootType<ElemType>::value, ElemType>::type
-randu(const size_t rows, const size_t cols)
-{
-  return arma::randu<ElemType>(rows, cols);
-}
-
 // Proxy for `arma::linspace` or `coot::linspace` based on the data type.
 template<typename OutputType>
 inline static typename std::enable_if<
@@ -262,28 +201,6 @@ inline static typename std::enable_if<
 linspace(const double start, const double end, const size_t num = 100u)
 {
   return arma::linspace<OutputType>(start, end, num);
-}
-
-// Proxy for `arma::regspace` or `coot::regspace` based on the data type.
-template<typename OutputType>
-inline static typename std::enable_if<
-    !arma::is_arma_type<OutputType>::value, OutputType>::type
-regspace(const double start, const double end, const size_t num = 100u)
-{
-  #ifdef USE_COOT
-  return coot::regspace<OutputType>(start, end, num);
-  #else
-  return arma::regspace<OutputType>(start, end, num);
-  #endif
-}
-
-// Armadillo proxy for `arma::regspace` if `OutputType` is an Armadillo type.
-template<typename OutputType>
-inline static typename std::enable_if<
-    arma::is_arma_type<OutputType>::value, OutputType>::type
-regspace(const double start, const double end, const size_t num = 100u)
-{
-  return arma::regspace<OutputType>(start, end, num);
 }
 
 } // namespace ens
