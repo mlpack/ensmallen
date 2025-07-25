@@ -16,7 +16,7 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]", ENS_ALL_TEST_TYPES)
 {
   Yogi optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
@@ -25,7 +25,7 @@ TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]", ENS_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]", ENS_ALL_TEST_TYPES)
 {
   Yogi optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
   FunctionTest<McCormickFunction, TestType>(
@@ -34,10 +34,26 @@ TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]", ENS_TEST_TYPES)
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
+    ENS_ALL_TEST_TYPES)
 {
   Yogi optimizer;
-  LogisticRegressionFunctionTest<TestType>(optimizer);
+  // For low-precision, we need to use a very small step size and some other
+  // tuning to keep from diverging.
+  size_t trials = 1;
+  if (sizeof(typename TestType::elem_type) < 4)
+  {
+    optimizer.StepSize() = 5e-4;
+    optimizer.BatchSize() = 16;
+    optimizer.Tolerance() = -1.0; // Force maximum number of iterations.
+    optimizer.MaxIterations() = 1000000;
+    trials = 5;
+  }
+  LogisticRegressionFunctionTest<TestType>(
+      optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      trials);
 }
 
 #ifdef USE_COOT

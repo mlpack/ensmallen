@@ -17,8 +17,8 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("SVRG_LogisticRegressionFunction", "[SVRG]", ENS_TEST_TYPES,
-    ENS_SPARSE_TEST_TYPES)
+TEMPLATE_TEST_CASE("SVRG_LogisticRegressionFunction", "[SVRG]",
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)
@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("SVRG_LogisticRegressionFunction", "[SVRG]", ENS_TEST_TYPES,
 }
 
 TEMPLATE_TEST_CASE("SVRG_BB_LogisticRegressionFunction", "[SVRG_BB]",
-    ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   // Run SVRG with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 50; batchSize += 5)

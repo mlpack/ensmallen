@@ -41,8 +41,10 @@ class SARAHUpdate
               const double stepSize,
               const double /* vNorm */)
   {
-    v += (gradient - gradient0) / (double) batchSize;
-    iterate -= stepSize * v;
+    typedef typename MatType::elem_type ElemType;
+
+    v += (gradient - gradient0) / (ElemType) batchSize;
+    iterate -= ElemType(stepSize) * v;
     return false;
   }
 };

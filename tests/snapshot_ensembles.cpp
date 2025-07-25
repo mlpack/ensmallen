@@ -21,7 +21,7 @@ using namespace ens::test;
 * Test that the step size resets after a specified number of epochs.
 */
 TEMPLATE_TEST_CASE("SnapshotEnsembles_ResetTest", "[SnapshotEnsembles]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   const double stepSize = 0.5;
   TestType iterate;
@@ -60,12 +60,12 @@ TEMPLATE_TEST_CASE("SnapshotEnsembles_ResetTest", "[SnapshotEnsembles]",
 }
 
 TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction", "[SnapshotSGDR]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.005, 10000, 1e-3);
     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(sgdr);
   }
 }

@@ -19,7 +19,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("SMORMS3_LogisticRegressionFunction", "[SMORMS3]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   SMORMS3 smorms3;
   LogisticRegressionFunctionTest<TestType>(smorms3);

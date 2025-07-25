@@ -97,6 +97,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunctionLoose",
   GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
   MomentumUpdate momentumUpdate(0.2);
   MomentumSGD s(0.001);
+  s.UpdatePolicy() = std::move(momentumUpdate);
   s.Tolerance() = 1e-9;
 
   TestType coordinates = f.GetInitialPoint();

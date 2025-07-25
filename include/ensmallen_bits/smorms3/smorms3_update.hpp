@@ -37,15 +37,14 @@ class SMORMS3Update
   /**
    * Construct the SMORMS3 update policy with given epsilon parameter.
    *
-   * @param epsilon Value used to initialise the mean squared gradient
-   *        parameter.
+   * @param epsilon Value used to avoid divisions by zero.
    */
   SMORMS3Update(const double epsilon = 1e-16) : epsilon(epsilon)
   { /* Do nothing. */ }
 
-  //! Get the value used to initialise the mean squared gradient parameter.
+  // Get the value used to avoid divisions by zero.
   double Epsilon() const { return epsilon; }
-  //! Modify the value used to initialise the mean squared gradient parameter.
+  // Modify the value used to avoid divisions by zero.
   double& Epsilon() { return epsilon; }
 
   /**
@@ -57,6 +56,8 @@ class SMORMS3Update
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.
@@ -66,12 +67,17 @@ class SMORMS3Update
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(SMORMS3Update& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        epsilon(ElemType(parent.epsilon))
     {
       // Initialise the parameters mem, g and g2.
       mem.ones(rows, cols);
       g.zeros(rows, cols);
       g2.zeros(rows, cols);
+
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -88,7 +94,7 @@ class SMORMS3Update
       if (lr.is_empty() || lr(0) != stepSize)
       {
         lr.set_size(gradient.n_rows, gradient.n_cols);
-        lr.fill(stepSize);
+        lr.fill(ElemType(stepSize));
       }
 
       // Update the iterate.
@@ -100,28 +106,30 @@ class SMORMS3Update
       g2 = (1 - r) % g2;
       g2 += r % (gradient % gradient);
 
-      MatType x = min((g % g) / (g2 + parent.epsilon), lr);
-      iterate -= gradient % x / (sqrt(g2) + parent.epsilon);
+      MatType x = min((g % g) / (g2 + epsilon), lr);
+      iterate -= gradient % x / (sqrt(g2) + epsilon);
 
       mem %= (1 - x);
       mem += 1;
     }
 
    private:
-    //! Instantiated parent object.
+    // Instantiated parent object.
     SMORMS3Update& parent;
-    //! Memory parameter.
+    // Memory parameter.
     MatType mem;
-    //! Gradient estimate parameter.
+    // Gradient estimate parameter.
     GradType g;
-    //! Squared gradient estimate parameter.
+    // Squared gradient estimate parameter.
     GradType g2;
-    //! Current learning rate matrix.
+    // Current learning rate matrix.
     MatType lr;
+    // Epsilon value converted to the element type of the optimization.
+    ElemType epsilon;
   };
 
  private:
-  //! The value used to initialise the mean squared gradient parameter.
+  // The value used to avoid divisions by zero.
   double epsilon;
 };
 

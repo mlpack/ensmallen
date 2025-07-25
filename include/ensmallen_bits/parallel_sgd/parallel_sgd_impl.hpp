@@ -183,7 +183,7 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
 
             // Call out to utility function to use the right type of OpenMP
             // lock.
-            UpdateLocation(iterate, row, i, stepSize * value);
+            UpdateLocation(iterate, row, i, ElemType(stepSize) * value);
           }
         }
         terminate |= Callback::StepTaken(*this, function, iterate,

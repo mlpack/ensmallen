@@ -19,9 +19,9 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
-  SWATS optimizer(1e-3, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
+  SWATS optimizer(0.003, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
   // We allow a few trials in case of poor convergence.
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
       optimizer,
@@ -30,19 +30,19 @@ TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
       5);
 }
 
-TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]", ENS_ALL_TEST_TYPES)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  SWATS optimizer(0.1, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
       optimizer,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]", ENS_TEST_TYPES,
-    ENS_SPARSE_TEST_TYPES)
+TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  SWATS optimizer(0.2, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
       optimizer,
       30 * Tolerances<TestType>::LargeObj,

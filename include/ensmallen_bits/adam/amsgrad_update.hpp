@@ -100,7 +100,7 @@ class AMSGradUpdate
 
       // Attempt to detect underflow.
       if (epsilon == ElemType(0) && parent.epsilon != 0.0)
-        epsilon = 100 * std::numeric_limits<ElemType>::epsilon();
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**

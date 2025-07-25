@@ -85,7 +85,7 @@ class AdaGradUpdate
       squaredGradient.zeros();
       // Detect underflow for epsilon and try to address it.
       if (epsilon == ElemType(0) && parent.epsilon != 0.0)
-        epsilon = 100 * std::numeric_limits<ElemType>::epsilon();
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**

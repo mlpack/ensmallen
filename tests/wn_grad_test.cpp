@@ -19,13 +19,13 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]", ENS_ALL_TEST_TYPES)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
@@ -34,6 +34,8 @@ TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]", ENS_TEST_TYPES)
       Tolerances<TestType>::LargeCoord);
 }
 
+// The Styblinski-Tang function is too difficult to make converge for WNGrad in
+// low precision.
 TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]", ENS_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {

@@ -18,7 +18,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   // Run SARAH with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
@@ -29,7 +29,7 @@ TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
 }
 
 TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   // Run SARAH_Plus with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)

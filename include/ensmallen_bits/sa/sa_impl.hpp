@@ -79,7 +79,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   BaseMatType accept(rows, cols);
   accept.zeros();
   BaseMatType moveSize(rows, cols, GetFillType<BaseMatType>::none);
-  moveSize.fill(initMoveCoef);
+  moveSize.fill(ElemType(initMoveCoef));
 
   Callback::BeginOptimization(*this, function, iterate, callbacks...);
 
@@ -159,7 +159,7 @@ bool SA<CoolingScheduleType>::GenerateMove(
   // MoveControl() is derived for the Laplace distribution.
 
   // Sample from a Laplace distribution with scale parameter moveSize(idx).
-  const double unif = 2.0 * arma::randu() - 1.0;
+  const ElemType unif = 2 * arma::randu<ElemType>() - 1;
   const ElemType move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
       (-moveSize(idx) * std::log(1 - unif));
 
@@ -220,17 +220,16 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
                                                  MatType& accept,
                                                  MatType& moveSize)
 {
+  typedef typename MatType::elem_type ElemType;
+
   MatType target(accept.n_rows, accept.n_cols, GetFillType<MatType>::none);
-  target.fill(0.44);
+  target.fill(ElemType(0.44));
 
   moveSize = log(moveSize);
-  moveSize += gain * (accept / (double) nMoves - target);
+  moveSize += ElemType(gain) * (accept / (ElemType) nMoves - target);
   moveSize = exp(moveSize);
 
-  // To avoid the use of element-wise arma::min(), which is only available in
-  // Armadillo after v3.930, we use a for loop here instead.
-  for (size_t i = 0; i < accept.n_elem; ++i)
-    moveSize(i) = (moveSize(i) > maxMoveCoef) ? maxMoveCoef : moveSize(i);
+  moveSize.clamp(ElemType(-maxMoveCoef), ElemType(maxMoveCoef));
 
   accept.zeros();
 }

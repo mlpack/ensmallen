@@ -85,12 +85,15 @@ void SGDLogisticRegressionTest()
   REQUIRE(testAcc == Approx(100.0).epsilon(Tolerances<MatType>::LRTestAcc));
 }
 
+// We skip low precision for this test because tuning SGD for the Rosenbrock
+// function is really tricky.
 TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]", ENS_TEST_TYPES)
 {
   SGDGeneralizedRosenbrockTest<TestType>();
 }
 
-TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
+    ENS_ALL_TEST_TYPES)
 {
   SGDLogisticRegressionTest<TestType, arma::Row<size_t>>();
 }

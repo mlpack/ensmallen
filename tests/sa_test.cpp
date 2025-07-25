@@ -18,27 +18,31 @@ using namespace ens;
 using namespace ens::test;
 
 // The Generalized-Rosenbrock function is a simple function to optimize.
-TEMPLATE_TEST_CASE("SA_GeneralizedRosenbrockFunction", "[SA]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SA_GeneralizedRosenbrockFunction", "[SA]",
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   size_t dim = 10;
   GeneralizedRosenbrockFunctionType<TestType> f(dim);
 
-  double iteration = 0;
+  size_t iteration = 0;
   ElemType result = DBL_MAX;
   TestType coordinates;
   while (result > 10 * Tolerances<TestType>::Obj)
   {
     ExponentialSchedule schedule;
     // The convergence is very sensitive to the choices of maxMove and initMove.
-    SA<ExponentialSchedule> sa(schedule, 1000000, 1000., 1000, 100, 1e-10, 3,
-        1.5, 0.5, 0.3);
+    SA<ExponentialSchedule> sa(schedule, 1000000, 1000., 1000, 100,
+        Tolerances<TestType>::Obj / 1000, 3, 1.5, 0.5, 0.3);
     coordinates = f.template GetInitialPoint<TestType>();
     result = sa.Optimize(f, coordinates);
-    ++iteration;
 
-    REQUIRE(iteration < 4); // No more than three tries.
+    // No more than three tries, or five for low-precision.
+    const size_t limit = (sizeof(ElemType) < 4) ? 5 : 3;
+    REQUIRE(iteration <= limit);
+
+    ++iteration;
   }
 
   // Use type-specific tolerances.
@@ -51,7 +55,7 @@ TEMPLATE_TEST_CASE("SA_GeneralizedRosenbrockFunction", "[SA]", ENS_TEST_TYPES)
 }
 
 // The Rosenbrock function is a simple function to optimize.
-TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", ENS_ALL_TEST_TYPES)
 {
   ExponentialSchedule schedule;
   // The convergence is very sensitive to the choices of maxMove and initMove.
@@ -68,7 +72,7 @@ TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", ENS_TEST_TYPES)
  * The Rastrigrin function, a (not very) simple nonconvex function. It has very
  * many local minima, so finding the true global minimum is difficult.
  */
-TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", ENS_ALL_TEST_TYPES)
 {
   // Simulated annealing isn't guaranteed to converge (except in very specific
   // situations).  If this works 1 of 4 times, I'm fine with that.  All I want

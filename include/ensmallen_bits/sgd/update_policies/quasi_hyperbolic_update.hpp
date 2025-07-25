@@ -67,6 +67,8 @@ class QHUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -76,7 +78,9 @@ class QHUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(QHUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        momentum(ElemType(parent.momentum)),
+        v(ElemType(parent.v))
     {
       // Initialize an empty velocity matrix.
       velocity.zeros(rows, cols);
@@ -93,18 +97,22 @@ class QHUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      velocity *= parent.momentum;
-      velocity += (1 - parent.momentum) * gradient;
+      velocity *= momentum;
+      velocity += (1 - momentum) * gradient;
 
-      iterate -= stepSize * ((1 - parent.v) * gradient + parent.v * velocity);
+      iterate -= ElemType(stepSize) * ((1 - v) * gradient + v * velocity);
     }
 
    private:
-    //! Instantiated parent object.
+    // Instantiated parent object.
     QHUpdate& parent;
 
-    //! The velocity matrix.
+    // The velocity matrix.
     GradType velocity;
+
+    // Parameters converted to the element type of the optimization.
+    ElemType momentum;
+    ElemType v;
   };
 
  private:

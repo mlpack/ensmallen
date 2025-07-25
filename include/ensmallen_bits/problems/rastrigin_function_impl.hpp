@@ -43,14 +43,14 @@ RastriginFunction::Evaluate(
   // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
 
-  ElemType objective = 0.0;
+  ElemType objective = 0;
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    objective += std::pow(coordinates(p), 2) - 10.0 *
-        std::cos(2.0 * arma::datum::pi * coordinates(p));
+    objective += std::pow(coordinates(p), ElemType(2)) - 10 *
+        std::cos(2 * arma::Datum<ElemType>::pi * coordinates(p));
   }
-  objective += 10.0 * n;
+  objective += 10 * n;
 
   return objective;
 }
@@ -69,13 +69,16 @@ void RastriginFunction::Gradient(
     GradType& gradient,
     const size_t batchSize) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   gradient.zeros(n, 1);
 
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient(p) += (10.0 * n) * (2 * (coordinates(p) + 10.0 * arma::datum::pi *
-        std::sin(2.0 * arma::datum::pi * coordinates(p))));
+    gradient(p) += (10 * n) * (2 * (coordinates(p) +
+        10 * arma::Datum<ElemType>::pi *
+        std::sin(2 * arma::Datum<ElemType>::pi * coordinates(p))));
   }
 }
 

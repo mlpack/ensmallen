@@ -30,7 +30,7 @@ using namespace ens::test;
  * threads.
  */
 TEMPLATE_TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   ConstantStep decayPolicy(0.4);
 
@@ -55,7 +55,7 @@ TEMPLATE_TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]",
 }
 
 TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
-    "[ParallelSGD]", ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    "[ParallelSGD]", ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   // Loop over several variants.
   for (size_t i = 10; i < 30; i += 5)
@@ -66,7 +66,8 @@ TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
     ConstantStep decayPolicy(0.001);
 
     ParallelSGD<ConstantStep> s(
-        100000, f.NumFunctions(), 1e-12, true, decayPolicy);
+        100000, f.NumFunctions(), Tolerances<TestType>::Obj / 100, true,
+        decayPolicy);
 
     TestType coordinates = f.GetInitialPoint<TestType>();
 

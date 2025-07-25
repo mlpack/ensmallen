@@ -264,7 +264,8 @@ inline static typename std::enable_if<
     arma::is_arma_type<OutputType>::value, OutputType>::type
 linspace(const double start, const double end, const size_t num = 100u)
 {
-  return arma::linspace<OutputType>(start, end, num);
+  typedef typename OutputType::elem_type ElemType;
+  return arma::linspace<OutputType>(ElemType(start), ElemType(end), num);
 }
 
 // Proxy for `arma::regspace` or `coot::regspace` based on the data type.

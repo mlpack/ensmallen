@@ -18,7 +18,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("SPALeRASGD_LogisticRegressionFunction", "[SPALeRASGD]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   // Run SPALeRA SGD with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 50; batchSize += 5)

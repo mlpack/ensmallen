@@ -19,7 +19,7 @@ using namespace ens;
 using namespace ens::test;
 using namespace std;
 
-TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -29,16 +29,14 @@ TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_TEST_TYPES)
   PSOType<TestType> s;
 
   TestType coords = f.template GetInitialPoint<TestType>();
-  if (!s.Optimize(f, coords))
-    FAIL("LBest PSO optimization reported failure for Sphere Function.");
+  const ElemType finalValue = s.Optimize(f, coords);
 
-  ElemType finalValue = f.Evaluate(coords);
   REQUIRE(finalValue <= (ElemType) Tolerances<TestType>::Obj);
   for (size_t j = 0; j < 4; ++j)
     REQUIRE(coords(j) <= (ElemType) Tolerances<TestType>::Coord);
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -48,36 +46,37 @@ TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]", ENS_TEST_TYPES)
   double lowerBound = 50;
   double upperBound = 60;
 
+  const ElemType objTol = Tolerances<TestType>::LargeObj;
+  const ElemType coordTol = Tolerances<TestType>::LargeCoord;
+
   // We allow a few trials.
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    PSOType<TestType> s(250, lowerBound, upperBound, 5000, 600, 1e-30, 2.05,
-        2.05);
+    PSOType<TestType> s(250, lowerBound, upperBound, 5000, 600,
+        Tolerances<TestType>::Obj / 100, 2.05, 2.05);
     TestType coordinates = f.GetInitialPoint<TestType>();
 
     const ElemType result = s.Optimize(f, coordinates);
 
     if (trial != 4)
     {
-      if (result != Approx(0.0).margin(0.03))
+      if (result != Approx(ElemType(0)).margin(objTol))
         continue;
-      if (coordinates(0) != Approx(1.0).epsilon(0.03))
+      if (coordinates(0) != Approx(ElemType(1)).epsilon(coordTol))
         continue;
-      if (coordinates(1) != Approx(1.0).epsilon(0.03))
+      if (coordinates(1) != Approx(ElemType(1)).epsilon(coordTol))
         continue;
     }
 
-    REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::LargeObj));
-    REQUIRE(coordinates(0) ==
-        Approx(1.0).margin(Tolerances<TestType>::LargeCoord));
-    REQUIRE(coordinates(1) ==
-        Approx(1.0).margin(Tolerances<TestType>::LargeCoord));
+    REQUIRE(result == Approx(ElemType(0)).margin(objTol));
+    REQUIRE(coordinates(0) == Approx(ElemType(1)).margin(coordTol));
+    REQUIRE(coordinates(1) == Approx(ElemType(1)).margin(coordTol));
 
     break;
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -103,23 +102,23 @@ TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_TEST_TYPES)
     {
       if (std::isinf(result) || std::isnan(result))
         continue;
-      if (result != Approx(-2.06261).margin(objTol))
+      if (result != Approx(ElemType(-2.06261)).margin(objTol))
         continue;
-      if (abs(coordinates(0)) != Approx(1.34941).margin(coordTol))
+      if (abs(coordinates(0)) != Approx(ElemType(1.34941)).margin(coordTol))
         continue;
-      if (abs(coordinates(1)) != Approx(1.34941).margin(coordTol))
+      if (abs(coordinates(1)) != Approx(ElemType(1.34941)).margin(coordTol))
         continue;
     }
 
-    REQUIRE(result == Approx(-2.06261).margin(objTol));
-    REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(coordTol));
-    REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(coordTol));
+    REQUIRE(result == Approx(ElemType(-2.06261)).margin(objTol));
+    REQUIRE(abs(coordinates(0)) == Approx(ElemType(1.34941)).margin(coordTol));
+    REQUIRE(abs(coordinates(1)) == Approx(ElemType(1.34941)).margin(coordTol));
 
     break;
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -135,12 +134,15 @@ TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_TEST_TYPES)
   TestType coordinates = TestType("5; 5");
   const ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0).margin(Tolerances<TestType>::LargeObj));
-  REQUIRE(coordinates(0) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
-  REQUIRE(coordinates(1) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
+  const ElemType objTol = Tolerances<TestType>::LargeObj;
+  const ElemType coordTol = Tolerances<TestType>::LargeCoord;
+
+  REQUIRE(result == Approx(ElemType(0)).margin(objTol));
+  REQUIRE(coordinates(0) == Approx(ElemType(0)).margin(coordTol));
+  REQUIRE(coordinates(1) == Approx(ElemType(0)).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -157,13 +159,16 @@ TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_TEST_TYPES)
   TestType coordinates = TestType("4.5; 4.5");
   const ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(0).margin(Tolerances<TestType>::LargeObj));
-  REQUIRE(coordinates(0) == Approx(3).margin(Tolerances<TestType>::LargeCoord));
-  REQUIRE(coordinates(1) ==
-      Approx(0.5).margin(Tolerances<TestType>::LargeCoord));
+  const ElemType objTol = Tolerances<TestType>::LargeObj;
+  const ElemType coordTol = Tolerances<TestType>::LargeCoord;
+
+  REQUIRE(result == Approx(ElemType(0)).margin(objTol));
+  REQUIRE(coordinates(0) == Approx(ElemType(3)).margin(coordTol));
+  REQUIRE(coordinates(1) == Approx(ElemType(0.5)).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]",
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -172,8 +177,8 @@ TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]", ENS_TEST_TYPES)
   // Setting bounds for the initial swarm population.
   arma::Col<ElemType> lowerBound(2);
   arma::Col<ElemType> upperBound(2);
-  lowerBound.fill(1.6);
-  upperBound.fill(2);
+  lowerBound.fill(ElemType(1.6));
+  upperBound.fill(ElemType(2));
 
   // Allow a few trials in case of failure.
   for (size_t trial = 0; trial < 3; ++trial)
@@ -187,20 +192,20 @@ TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]", ENS_TEST_TYPES)
 
     if (trial != 2)
     {
-      if (coordinates(0) != Approx(0).margin(coordTol))
+      if (coordinates(0) != Approx(ElemType(0)).margin(coordTol))
         continue;
-      if (coordinates(1) != Approx(-1).margin(coordTol))
+      if (coordinates(1) != Approx(ElemType(-1)).margin(coordTol))
         continue;
     }
 
-    REQUIRE(coordinates(0) == Approx(0).margin(coordTol));
-    REQUIRE(coordinates(1) == Approx(-1).margin(coordTol));
+    REQUIRE(coordinates(0) == Approx(ElemType(0)).margin(coordTol));
+    REQUIRE(coordinates(1) == Approx(ElemType(-1)).margin(coordTol));
 
     break;
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -217,11 +222,13 @@ TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_TEST_TYPES)
   TestType coordinates = TestType("3; 3");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(1).margin(Tolerances<TestType>::LargeCoord));
-  REQUIRE(coordinates(1) == Approx(1).margin(Tolerances<TestType>::LargeCoord));
+  const ElemType coordTol = Tolerances<TestType>::LargeCoord;
+
+  REQUIRE(coordinates(0) == Approx(ElemType(1)).margin(coordTol));
+  REQUIRE(coordinates(1) == Approx(ElemType(1)).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -243,17 +250,18 @@ TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_TEST_TYPES)
     coordinates = TestType("2; 1");
     s.Optimize(f, coordinates);
 
-    if (coordinates(0) == Approx(3.0).margin(coordTol))
+    if (coordinates(0) == Approx(ElemType(3)).margin(coordTol))
       break;
-    if (coordinates(1) == Approx(2.0).margin(coordTol))
+    if (coordinates(1) == Approx(ElemType(2)).margin(coordTol))
       break;
   }
 
-  REQUIRE(coordinates(0) == Approx(3.0).margin(coordTol));
-  REQUIRE(coordinates(1) == Approx(2.0).margin(coordTol));
+  REQUIRE(coordinates(0) == Approx(ElemType(3)).margin(coordTol));
+  REQUIRE(coordinates(1) == Approx(ElemType(2)).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]",
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -270,11 +278,13 @@ TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]", ENS_TEST_TYPES)
   TestType coordinates = TestType("2; 2");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
-  REQUIRE(coordinates(1) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
+  const ElemType coordTol = Tolerances<TestType>::LargeCoord;
+
+  REQUIRE(coordinates(0) == Approx(ElemType(0)).margin(coordTol));
+  REQUIRE(coordinates(1) == Approx(ElemType(0)).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -290,8 +300,13 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_TEST_TYPES)
   TestType coordinates = TestType("10; 10");
   s.Optimize(f, coordinates);
 
-  REQUIRE(coordinates(0) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
-  REQUIRE(coordinates(1) == Approx(0).margin(Tolerances<TestType>::LargeCoord));
+  ElemType coordTol = Tolerances<TestType>::LargeCoord;
+  // Low-precision will need a larger tolerance.
+  if (sizeof(ElemType) < 4)
+    coordTol *= 5;
+
+  REQUIRE(coordinates(0) == Approx(ElemType(0)).margin(coordTol));
+  REQUIRE(coordinates(1) == Approx(ElemType(0)).margin(coordTol));
 }
 
 #ifdef USE_COOT

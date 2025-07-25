@@ -18,7 +18,7 @@ using namespace ens::test;
 /**
  * Tests the Quasi Hyperbolic Momentum SGD update policy.
  */
-TEMPLATE_TEST_CASE("QHSphereFunction", "[QHMomentumSGD]", ENS_TEST_TYPES,
+TEMPLATE_TEST_CASE("QHSGDSphereFunction", "[QHMomentumSGD]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
   QHUpdate update(0.4, 0.9);
@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("QHSphereFunction", "[QHMomentumSGD]", ENS_TEST_TYPES,
 /**
  * Tests the Quasi hyperbolic SGD with Generalized Rosenbrock Test.
  */
-TEMPLATE_TEST_CASE("QHSGDSGDGeneralizedRosenbrockTest", "[QHMomentumSGD]",
+TEMPLATE_TEST_CASE("QHSGDGeneralizedRosenbrockTest", "[QHMomentumSGD]",
     ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
@@ -56,4 +56,30 @@ TEMPLATE_TEST_CASE("QHSGDSGDGeneralizedRosenbrockTest", "[QHMomentumSGD]",
           Approx(1.0).epsilon(Tolerances<TestType>::Coord));
     }
   }
+}
+
+TEMPLATE_TEST_CASE("QHSGD_GeneralizedRosenbrockFunctionLoose",
+    "[QHMomentumSGD]", ENS_ALL_TEST_TYPES)
+{
+  typedef typename TestType::elem_type ElemType;
+
+  // Create the generalized Rosenbrock function.
+  GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
+  QHUpdate update(0.6, 0.7);
+  QHSGD s(0.002);
+  s.UpdatePolicy() = std::move(update);
+  s.Tolerance() = 1e-9;
+
+  TestType coordinates = f.GetInitialPoint();
+  ElemType result = s.Optimize(f, coordinates);
+
+  // Allow wider tolerances for low-precision types.
+  const ElemType factor = (sizeof(ElemType) < 4) ? 5 : 1;
+  REQUIRE(result ==
+      Approx(0.0).margin(factor * Tolerances<TestType>::LargeObj));
+
+  REQUIRE(coordinates(0) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
 }

@@ -17,6 +17,9 @@
 using namespace ens;
 using namespace ens::test;
 
+// We can't test CMA-ES on low-precision floating point types because it uses
+// chol() internally---which is not supported for low-precision.
+
 /**
  * Run IPOP-CMA-ES on the Rastrigin function and check whether the optimizer
  * converges to the expected solution within tolerance limits.

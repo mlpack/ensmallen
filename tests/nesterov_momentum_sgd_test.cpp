@@ -76,6 +76,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunctionLoose",
   GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
   NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
   NesterovMomentumSGD s(0.001);
+  s.UpdatePolicy() = std::move(nesterovMomentumUpdate);
   s.Tolerance() = 1e-9;
 
   TestType coordinates = f.GetInitialPoint();

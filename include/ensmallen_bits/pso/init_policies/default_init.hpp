@@ -78,16 +78,16 @@ class DefaultInit
     if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 1)
     {
       lowerBound.set_size(iterate.n_rows, iterate.n_cols);
-      lowerBound.fill(-1.0);
+      lowerBound.fill(-1);
 
       upperBound.set_size(iterate.n_rows, iterate.n_cols);
-      upperBound.fill(1.0);
+      upperBound.fill(1);
     }
     // Check if lowerBound and upperBound are vectors of a single dimension.
     else if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 0)
     {
       BoundMatType ones = BoundMatType(iterate.n_rows, iterate.n_cols);
-      ones.fill(1.0);
+      ones.fill(1);
       lowerBound = -lowerBound(0) * ones;
       upperBound = upperBound(0) * ones;
     }

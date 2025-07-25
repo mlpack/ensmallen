@@ -149,8 +149,10 @@ class PSOType
               VelocityUpdatePolicy(),
           const InitPolicy& initPolicy = InitPolicy()) :
           numParticles(numParticles),
-          lowerBound(lowerBound * MatType(1, 1, GetFillType<MatType>::ones)),
-          upperBound(upperBound * MatType(1, 1, GetFillType<MatType>::ones)),
+          lowerBound(typename MatType::elem_type(lowerBound) *
+              MatType(1, 1, GetFillType<MatType>::ones)),
+          upperBound(typename MatType::elem_type(upperBound) *
+              MatType(1, 1, GetFillType<MatType>::ones)),
           maxIterations(maxIterations),
           horizonSize(horizonSize),
           impTolerance(impTolerance),

@@ -19,7 +19,7 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", ENS_ALL_TEST_TYPES)
 {
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
   FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", ENS_TEST_TYPES)
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", ENS_ALL_TEST_TYPES)
 {
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
   FunctionTest<MatyasFunction, TestType>(
@@ -37,6 +37,8 @@ TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", ENS_TEST_TYPES)
       Tolerances<TestType>::LargeCoord);
 }
 
+// We don't test on FP16 because SPSA computes a number of values that are too
+// large to be represented.
 TEMPLATE_TEST_CASE("SPSA_LogisticRegressionFunction", "[SPSA]", ENS_TEST_TYPES)
 {
   // We allow many trials, because SPSA is definitely not guaranteed to

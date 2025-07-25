@@ -18,10 +18,16 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
-    ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   RMSProp optimizer;
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      // Low-precision may need a few trials because it sometimes diverges
+      // (gradient or update is too large).
+      (sizeof(typename TestType::elem_type) < 4) ? 5 : 1);
 }
 
 #ifdef USE_COOT

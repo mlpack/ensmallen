@@ -123,9 +123,9 @@ class AMSBoundUpdate
 
       // Check for underflows in conversions.
       if (gamma == ElemType(0) && parent.gamma != 0.0)
-        gamma = 100 * std::numeric_limits<ElemType>::epsilon();
+        gamma = 10 * std::numeric_limits<ElemType>::epsilon();
       if (epsilon == ElemType(0) && parent.epsilon != 0.0)
-        epsilon = 100 * std::numeric_limits<ElemType>::epsilon();
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
