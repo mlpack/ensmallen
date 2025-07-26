@@ -74,8 +74,8 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunctionLoose",
 
   // Create the generalized Rosenbrock function.
   GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
-  NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
-  NesterovMomentumSGD s(0.001);
+  NesterovMomentumUpdate nesterovMomentumUpdate(0.6);
+  NesterovMomentumSGD s(0.0008);
   s.UpdatePolicy() = std::move(nesterovMomentumUpdate);
   s.Tolerance() = 1e-9;
 

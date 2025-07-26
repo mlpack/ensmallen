@@ -96,7 +96,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunctionLoose",
   // Create the generalized Rosenbrock function.
   GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
   MomentumUpdate momentumUpdate(0.2);
-  MomentumSGD s(0.001);
+  MomentumSGD s(0.0015);
   s.UpdatePolicy() = std::move(momentumUpdate);
   s.Tolerance() = 1e-9;
 
