@@ -39,10 +39,12 @@ template<typename MatType>
 inline typename MatType::elem_type AugLagrangianTestFunction<MatType>::Evaluate(
     const MatType& coordinates)
 {
+  typedef typename MatType::elem_type ElemType;
+
   // f(x) = 6 x_1^2 + 4 x_1 x_2 + 3 x_2^2
-  return ((6 * std::pow(coordinates[0], 2)) +
+  return ((6 * std::pow(coordinates[0], ElemType(2))) +
           (4 * (coordinates[0] * coordinates[1])) +
-          (3 * std::pow(coordinates[1], 2)));
+          (3 * std::pow(coordinates[1], ElemType(2))));
 }
 
 template<typename MatType>
@@ -113,10 +115,12 @@ template<typename InputMatType>
 typename InputMatType::elem_type GockenbachFunctionType<MatType>::Evaluate(
     const InputMatType& coordinates)
 {
+  typedef typename InputMatType::elem_type ElemType;
+
   // f(x) = (x_1 - 1)^2 + 2 (x_2 + 2)^2 + 3(x_3 + 3)^2
-  return ((std::pow(coordinates[0] - 1, 2)) +
-          (2 * std::pow(coordinates[1] + 2, 2)) +
-          (3 * std::pow(coordinates[2] + 3, 2)));
+  return ((std::pow(coordinates[0] - 1, ElemType(2))) +
+          (2 * std::pow(coordinates[1] + 2, ElemType(2))) +
+          (3 * std::pow(coordinates[2] + 3, ElemType(2))));
 }
 
 template<typename MatType>
@@ -139,20 +143,21 @@ template<typename InputMatType>
 typename InputMatType::elem_type GockenbachFunctionType<MatType>::EvaluateConstraint(
     const size_t index, const InputMatType& coordinates)
 {
-  typename InputMatType::elem_type constraint = 0;
+  typedef typename InputMatType::elem_type ElemType;
+
+  ElemType constraint = 0;
 
   switch (index)
   {
     case 0: // g(x) = (x_3 - x_2 - x_1 - 1) = 0
-      constraint = (coordinates[2] - coordinates[1] - coordinates[0] -
-          typename InputMatType::elem_type(1));
+      constraint = (coordinates[2] - coordinates[1] - coordinates[0] - 1);
       break;
 
     case 1: // h(x) = (x_3 - x_1^2) >= 0
       // To deal with the inequality, the constraint will simply evaluate to 0
       // when h(x) >= 0.
-      constraint = std::min(typename InputMatType::elem_type(0), (coordinates[2] -
-          std::pow(coordinates[0], typename InputMatType::elem_type(2))));
+      constraint = std::min(ElemType(0), (coordinates[2] -
+          std::pow(coordinates[0], ElemType(2))));
       break;
   }
 

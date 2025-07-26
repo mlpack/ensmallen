@@ -124,7 +124,7 @@ template<>
 inline void RequireDenseFloatingPointType<arma::fmat>() { }
 #if defined(ARMA_HAVE_FP16)
 template<>
-inline void RequireDenseFloatingPointType<arma::fp16_mat>() { }
+inline void RequireDenseFloatingPointType<arma::hmat>() { }
 #endif
 
 #ifdef USE_COOT
@@ -157,7 +157,9 @@ template<>
 inline void RequireFloatingPointType<arma::sp_fmat>() { }
 #if defined(ARMA_HAVE_FP16)
 template<>
-inline void RequireFloatingPointType<arma::fp16_mat>() { }
+inline void RequireFloatingPointType<arma::hmat>() { }
+template<>
+inline void RequireFloatingPointType<arma::sp_hmat>() { }
 #endif
 
 #ifdef USE_COOT

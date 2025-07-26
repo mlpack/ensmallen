@@ -19,14 +19,11 @@ using namespace std;
 using namespace ens;
 using namespace ens::test;
 
-// NOTE: this cannot work yet with FP16 because Armadillo does not support FP16
-// sparse types.
-
 /**
  * Test the correctness of the CD implementation by using a dataset with a
  * precalculated minima.
  */
-TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -35,7 +32,7 @@ TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]", ENS_TEST_TYPES)
 
   LogisticRegressionFunction<TestType> f(predictors, responses, 0.0001);
 
-  CD<> s(0.02, 60000, 1e-5);
+  CD<> s(0.25, 60000, 1e-5);
   TestType iterate = f.InitialPoint();
 
   ElemType objective = s.Optimize(f, iterate);
@@ -47,7 +44,7 @@ TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]", ENS_TEST_TYPES)
  * Test the correctness of the CD implemenation by using the sparse test
  * function, with disjoint features which optimize to a precalculated minima.
  */
-TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", ENS_TEST_TYPES,
+TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
   // The test function for parallel SGD should work with CD, as the gradients

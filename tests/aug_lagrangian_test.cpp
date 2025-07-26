@@ -20,14 +20,12 @@
 using namespace ens;
 using namespace ens::test;
 
-// NOTE: we cannot use FP16 types until sparse support is added.
-
 /**
  * Tests the Augmented Lagrangian optimizer using the
  * AugmentedLagrangianTestFunction class.
  */
 TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction", "[AugLagrangian]",
-    ENS_TEST_TYPES)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -45,6 +43,13 @@ TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction", "[AugLagrangian]",
   double objTol = Tolerances<TestType>::Obj;
   double coordTol = Tolerances<TestType>::Coord;
 
+  // Low-precision optimization requires wider tolerances than usual.
+  if (sizeof(ElemType) < 4)
+  {
+    objTol = Tolerances<TestType>::LargeObj;
+    coordTol = Tolerances<TestType>::LargeCoord;
+  }
+
   REQUIRE(finalValue == Approx(70.0).epsilon(objTol));
   REQUIRE(coords(0) == Approx(1.0).epsilon(coordTol));
   REQUIRE(coords(1) == Approx(4.0).epsilon(coordTol));
@@ -54,7 +59,7 @@ TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction", "[AugLagrangian]",
  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
  */
 TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
-    ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -70,6 +75,13 @@ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
 
   double objTol = 100 * Tolerances<TestType>::Obj;
   double coordTol = 10 * Tolerances<TestType>::Coord;
+
+  // Low-precision optimization requires wider tolerances than usual.
+  if (sizeof(ElemType) < 4)
+  {
+    objTol = Tolerances<TestType>::LargeObj;
+    coordTol = 10 * Tolerances<TestType>::LargeCoord;
+  }
 
   // Higher tolerance for smaller values.
   REQUIRE(finalValue == Approx(29.633926).epsilon(objTol));

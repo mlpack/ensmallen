@@ -120,13 +120,14 @@ AugLagrangianType<VecType>::Optimize(
 
   // Convergence tolerance---depends on the epsilon of the type we are using for
   // optimization.
-  ElemType tolerance = 1e3 * std::numeric_limits<ElemType>::epsilon();
+  ElemType tolerance = 1000 * std::numeric_limits<ElemType>::epsilon();
 
   // Then, calculate the current penalty.
   ElemType penalty = 0;
   for (size_t i = 0; i < function.NumConstraints(); i++)
   {
-    const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates), 2);
+    const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates),
+        ElemType(2));
     terminate |= Callback::EvaluateConstraint(*this, function, coordinates, i,
         p, callbacks...);
 
@@ -177,7 +178,7 @@ AugLagrangianType<VecType>::Optimize(
     for (size_t i = 0; i < function.NumConstraints(); i++)
     {
       const ElemType p = std::pow(function.EvaluateConstraint(i, coordinates),
-          2);
+          ElemType(2));
       terminate |= Callback::EvaluateConstraint(*this, function, coordinates, i,
           p, callbacks...);
 
@@ -205,7 +206,7 @@ AugLagrangianType<VecType>::Optimize(
 
       // We also update the penalty threshold to be a factor of the current
       // penalty.
-      penaltyThreshold = penaltyThresholdFactor * penalty;
+      penaltyThreshold = ElemType(penaltyThresholdFactor) * penalty;
       Info << "Lagrange multiplier estimates updated." << std::endl;
     }
     else
@@ -218,7 +219,7 @@ AugLagrangianType<VecType>::Optimize(
         Warn << "AugLagrangian::Optimize(): sigma too large for element type; "
             << "terminating." << std::endl;
         Callback::EndOptimization(*this, function, coordinates, callbacks...);
-        return false;
+        return true;
       }
     }
 

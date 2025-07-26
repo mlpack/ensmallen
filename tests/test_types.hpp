@@ -14,7 +14,7 @@
 
 #if defined(ARMA_HAVE_FP16)
 #define ENS_TEST_TYPES arma::mat, arma::fmat
-#define ENS_ALL_TEST_TYPES arma::mat, arma::fmat, arma::fp16_mat
+#define ENS_ALL_TEST_TYPES arma::mat, arma::fmat, arma::hmat
 #else
 #define ENS_TEST_TYPES arma::mat, arma::fmat
 #define ENS_ALL_TEST_TYPES arma::mat, arma::fmat
@@ -58,7 +58,7 @@ struct Tolerances<arma::fmat>
 
 #if defined(ARMA_HAVE_FP16)
 template<>
-struct Tolerances<arma::fp16_mat>
+struct Tolerances<arma::hmat>
 {
   constexpr static const arma::fp16 Obj = arma::fp16(0.0001);
   constexpr static const arma::fp16 Coord = arma::fp16(0.01);
