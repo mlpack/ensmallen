@@ -39,12 +39,12 @@ class GridSearch
    * @param numCategories Number of categories in each categorical dimension.
    * @return Objective value of the final point.
    */
-  template<typename FunctionType, typename MatType, typename RowType>
+  template<typename FunctionType, typename MatType>
   typename MatType::elem_type Optimize(
       FunctionType& function,
       MatType& bestParameters,
       const std::vector<bool>& categoricalDimensions,
-      const RowType& numCategories);
+      const arma::Row<size_t>& numCategories);
 
  private:
   /**
@@ -54,14 +54,14 @@ class GridSearch
    * (parameters) are specified in the first i rows of the currentParameters
    * argument.
    */
-  template<typename FunctionType, typename MatType, typename RowType>
+  template<typename FunctionType, typename MatType>
   void Optimize(
       FunctionType& function,
       typename MatType::elem_type& bestObjective,
       MatType& bestParameters,
       MatType& currentParameters,
       const std::vector<bool>& categoricalDimensions,
-      const RowType& numCategories,
+      const arma::Row<size_t>& numCategories,
       size_t i);
 };
 

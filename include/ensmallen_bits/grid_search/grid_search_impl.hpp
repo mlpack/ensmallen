@@ -17,12 +17,12 @@
 
 namespace ens {
 
-template<typename FunctionType, typename MatType, typename RowType>
+template<typename FunctionType, typename MatType>
 typename MatType::elem_type GridSearch::Optimize(
     FunctionType& function,
     MatType& bestParameters,
     const std::vector<bool>& categoricalDimensions,
-    const RowType& numCategories)
+    const arma::Row<size_t>& numCategories)
 {
   for (size_t i = 0; i < categoricalDimensions.size(); ++i)
   {
@@ -54,14 +54,14 @@ typename MatType::elem_type GridSearch::Optimize(
   return bestObjective;
 }
 
-template<typename FunctionType, typename MatType, typename RowType>
+template<typename FunctionType, typename MatType>
 void GridSearch::Optimize(
     FunctionType& function,
     typename MatType::elem_type& bestObjective,
     MatType& bestParameters,
     MatType& currentParameters,
     const std::vector<bool>& categoricalDimensions,
-    const RowType& numCategories,
+    const arma::Row<size_t>& numCategories,
     size_t i)
 {
   // Convenience typedefs.
