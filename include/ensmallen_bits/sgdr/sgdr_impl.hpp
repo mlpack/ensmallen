@@ -49,9 +49,8 @@ SGDR<UpdatePolicyType>::SGDR(
 template<typename UpdatePolicyType>
 template<typename SeparableFunctionType, typename MatType, typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-                        IsCootType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 SGDR<UpdatePolicyType>::Optimize(
     SeparableFunctionType& function,
     MatType& iterate,

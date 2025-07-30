@@ -64,9 +64,9 @@ template <typename SparseFunctionType,
           typename MatType,
           typename GradType,
           typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-          IsCootType<GradType>::value,
-typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
+ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     MatType& iterateIn,
     CallbackTypes&&... callbacks)

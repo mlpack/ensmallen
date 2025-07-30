@@ -18,6 +18,20 @@ namespace ens {
 // Structs have public members by default (that's why they are chosen over
 // classes).
 
+template<typename MatType> struct IsArmaType;
+template<typename MatType> struct IsCootType;
+
+/**
+ * If value == true, then MatType is a matrix type matching the Armadillo API
+ * that is supported by ensmallen.
+ */
+template<typename MatType>
+struct IsMatrixType
+{ 
+  const static bool value = IsArmaType<MatType>::value ||
+                            IsCootType<MatType>::value;
+};
+
 /**
  * If value == true, then MatType is some sort of Armadillo vector or subview.
  * You might use this struct like this:

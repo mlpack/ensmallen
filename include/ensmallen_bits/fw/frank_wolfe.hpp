@@ -126,8 +126,8 @@ class FrankWolfe
    */
   template<typename FunctionType, typename MatType, typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value ||
-      IsCootType<GradType>::value, typename MatType::elem_type>::type
+  typename std::enable_if<IsMatrixType<GradType>::value,
+      typename MatType::elem_type>::type
   Optimize(FunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);

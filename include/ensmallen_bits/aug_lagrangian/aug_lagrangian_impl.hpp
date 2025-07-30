@@ -39,8 +39,7 @@ template<typename LagrangianFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-    IsCootType<GradType>::value, bool>::type
+typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
 AugLagrangianType<VecType>::Optimize(
     LagrangianFunctionType& function,
     MatType& coordinates,
@@ -62,8 +61,7 @@ template<typename LagrangianFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-    IsCootType<GradType>::value, bool>::type
+typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
 AugLagrangianType<VecType>::Optimize(LagrangianFunctionType& function,
                         MatType& coordinates,
                         CallbackTypes&&... callbacks)
@@ -89,8 +87,7 @@ template<typename LagrangianFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-    IsCootType<GradType>::value, bool>::type
+typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
 AugLagrangianType<VecType>::Optimize(
     AugLagrangianFunction<LagrangianFunctionType, VecType>& augfunc,
     MatType& coordinatesIn,

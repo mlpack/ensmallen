@@ -67,8 +67,7 @@ class AugLagrangianType
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value ||
-      IsCootType<GradType>::value, bool>::type
+  typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
   Optimize(LagrangianFunctionType& function,
            MatType& coordinates,
            CallbackTypes&&... callbacks);
@@ -107,8 +106,7 @@ class AugLagrangianType
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value ||
-      IsCootType<GradType>::value, bool>::type
+  typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
   Optimize(LagrangianFunctionType& function,
            MatType& coordinates,
            const VecType& initLambda,
@@ -190,8 +188,7 @@ class AugLagrangianType
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value ||
-      IsCootType<GradType>::value, bool>::type
+  typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
   Optimize(AugLagrangianFunction<LagrangianFunctionType, VecType>& augfunc,
            MatType& coordinates,
            CallbackTypes&&... callbacks);
