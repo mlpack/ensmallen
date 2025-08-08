@@ -28,7 +28,16 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     const double lambdaIn) :
     // We promise to be well-behaved... the elements won't be modified.
     predictors(predictors),
+    // On old Armadillo versions, we cannot do both a sparse-to-dense conversion
+    // and element type conversion in one shot.
+    #if ARMA_VERSION_MAJOR < 12 || \
+        (ARMA_VERSION_MAJOR == 12 && ARMA_VERSION_MINOR < 8)
+    responses(conv_to<MatType>::from(
+        conv_to<ForwardType<LabelsType,
+                typename MatType::elem_type>::bmat>::from(responsesIn))),
+    #else
     responses(conv_to<MatType>::from(responsesIn)),
+    #endif
     lambda(ElemType(lambdaIn)),
     halfLambda(ElemType(lambdaIn / 2.0))
 {
@@ -55,7 +64,16 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     const double lambdaIn) :
     initialPoint(initialPoint),
     predictors(predictors),
+    // On old Armadillo versions, we cannot do both a sparse-to-dense conversion
+    // and element type conversion in one shot.
+    #if ARMA_VERSION_MAJOR < 12 || \
+        (ARMA_VERSION_MAJOR == 12 && ARMA_VERSION_MINOR < 8)
+    responses(conv_to<MatType>::from(
+        conv_to<ForwardType<LabelsType,
+                typename MatType::elem_type>::bmat>::from(responsesIn))),
+    #else
     responses(conv_to<MatType>::from(responsesIn)),
+    #endif
     lambda(ElemType(lambdaIn)),
     halfLambda(ElemType(lambdaIn / 2.0))
 {
