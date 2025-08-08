@@ -162,28 +162,6 @@ struct ForwardType
     #endif
 };
 
-// Proxy for `arma::shuffle` or `coot::shuffle` based on the data type.
-template<typename MatType>
-typename std::enable_if<
-    IsCootType<MatType>::value, typename ForwardType<MatType>::uvec>::type
-sort_index(const MatType& input)
-{
-  #ifdef USE_COOT
-  return coot::sort_index(input);
-  #else
-  return arma::sort_index(input);
-  #endif
-}
-
-// Armadillo proxy for `arma::sort_index` if `MatType` is not a Coot type.
-template<typename MatType>
-typename std::enable_if<
-    !IsCootType<MatType>::value, typename ForwardType<MatType>::uvec>::type
-sort_index(const MatType& input)
-{
-  return arma::sort_index(input);
-}
-
 } // namespace ens
 
 #endif
