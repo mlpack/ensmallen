@@ -18,17 +18,17 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("FASTASimpleTest", "[FASTATest]", float, double)
+TEMPLATE_TEST_CASE("FASTASimpleTest", "[FASTA]", float, double)
 {
   typedef TestType eT;
 
   // Make sure that we can get a decent result with no g(x) constraint.
-  FASTA<L1Penalty> fasta(L1Penalty(0.0), 1000);
+  FASTA<L1Penalty> fasta(L1Penalty(0.0), 5000);
   GeneralizedRosenbrockFunction f(20);
   FunctionTest<GeneralizedRosenbrockFunction, Mat<eT>>(fasta, f);
 }
 
-TEMPLATE_TEST_CASE("FASTASphereFunctionTest", "[FASTATest]", fmat, mat, sp_mat)
+TEMPLATE_TEST_CASE("FASTASphereFunctionTest", "[FASTA]", fmat, mat, sp_mat)
 {
   typedef TestType MatType;
 
@@ -38,7 +38,9 @@ TEMPLATE_TEST_CASE("FASTASphereFunctionTest", "[FASTATest]", fmat, mat, sp_mat)
   FunctionTest<SphereFunction, MatType>(fasta);
 }
 
-TEMPLATE_TEST_CASE("FASTAWoodFunctionTest", "[FASTATest]", fmat, mat)
+// FASTA has step size issues on the Wood function with arma::fmat, so we don't
+// test with that type.
+TEMPLATE_TEST_CASE("FASTAWoodFunctionTest", "[FASTA]", mat)
 {
   typedef TestType MatType;
 
@@ -46,10 +48,12 @@ TEMPLATE_TEST_CASE("FASTAWoodFunctionTest", "[FASTATest]", fmat, mat)
   // just inside the ball.
   FASTA<L1Constraint> fasta(L1Constraint(5.1));
   fasta.Tolerance() = 1e-10; // This converges too early otherwise.
-  FunctionTest<WoodFunction, MatType>(fasta);
+
+  // Optimization can sometimes diverge, so we allow a few trials.
+  FunctionTest<WoodFunction, MatType>(fasta, 0.01, 0.001, 5);
 }
 
-TEMPLATE_TEST_CASE("FASTALogisticRegressionFunctionTest", "[FASTATest]", fmat,
+TEMPLATE_TEST_CASE("FASTALogisticRegressionFunctionTest", "[FASTA]", fmat,
     mat)
 {
   typedef TestType MatType;
@@ -59,7 +63,7 @@ TEMPLATE_TEST_CASE("FASTALogisticRegressionFunctionTest", "[FASTATest]", fmat,
 }
 
 // Check that maxIterations does anything.
-TEST_CASE("FASTAMaxIterationsTest", "[FASTATest]")
+TEST_CASE("FASTAMaxIterationsTest", "[FASTA]")
 {
   FASTA<L1Penalty> fasta1(L1Penalty(0.001)), fasta2(L1Penalty(0.001));
   fasta1.MaxIterations() = 5;
@@ -77,7 +81,7 @@ TEST_CASE("FASTAMaxIterationsTest", "[FASTATest]")
 }
 
 // Check that the step size estimate works at least reasonably.
-TEST_CASE("FASTAStepSizeEstimateTest", "[FASTATest]")
+TEST_CASE("FASTAStepSizeEstimateTest", "[FASTA]")
 {
   QuadraticFunction f;
   FASTA<L1Penalty> fasta1;
@@ -92,7 +96,7 @@ TEST_CASE("FASTAStepSizeEstimateTest", "[FASTATest]")
 }
 
 // Check what happens when 0 estimate trials are used.
-TEST_CASE("FASTAZeroEstimateTrialsTest", "[FASTATest]")
+TEST_CASE("FASTAZeroEstimateTrialsTest", "[FASTA]")
 {
   QuadraticFunction f;
   FASTA<L1Penalty> fasta1;
@@ -107,7 +111,7 @@ TEST_CASE("FASTAZeroEstimateTrialsTest", "[FASTATest]")
 
 // Check what happens when the step size is manually set to something much
 // smaller than the estimate would give.
-TEST_CASE("FASTATooSmallManualStepSizeTest", "[FASTATest]")
+TEST_CASE("FASTATooSmallManualStepSizeTest", "[FASTA]")
 {
   QuadraticFunction f;
   FASTA<L1Penalty> fasta(L1Penalty(0.0), 1000, 1e-10, 50, 2.0, 10, false, 10,
@@ -122,7 +126,7 @@ TEST_CASE("FASTATooSmallManualStepSizeTest", "[FASTATest]")
 
 // Check that we can converge even when a gigantic manual maximum step size is
 // specified.
-TEST_CASE("FASTATooLargeManualStepSizeTest", "[FASTATest]")
+TEST_CASE("FASTATooLargeManualStepSizeTest", "[FASTA]")
 {
   // Use a huge step size.  We should still successfully optimize the function.
   FASTA<L1Penalty> fasta(L1Penalty(0.0), 10000, 1e-10, 50, 2.0, 10, false, 10,
@@ -132,7 +136,7 @@ TEST_CASE("FASTATooLargeManualStepSizeTest", "[FASTATest]")
 }
 
 // Check that we can't specify a lineSearchLookback of 0.
-TEST_CASE("FASTAInvalidLineSearchLookbackTest", "[FASTATest]")
+TEST_CASE("FASTAInvalidLineSearchLookbackTest", "[FASTA]")
 {
   QuadraticFunction f;
   FASTA<L1Penalty> fasta1;

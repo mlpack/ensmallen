@@ -77,7 +77,7 @@ FBS<BackwardStepType>::Optimize(FunctionType& function,
   // Controls early termination of the optimization process.
   bool terminate = false;
 
-  terminate |= Callback::BeginOptimization(*this, f, iterate, callbacks...);
+  Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // During this optimization, we want to optimize h(x) = f(x) + g(x).

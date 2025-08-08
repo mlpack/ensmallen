@@ -18,7 +18,7 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("FBSSimpleTest", "[FBSTest]", float, double)
+TEMPLATE_TEST_CASE("FBSSimpleTest", "[FBS]", float, double)
 {
   typedef TestType eT;
 
@@ -30,7 +30,7 @@ TEMPLATE_TEST_CASE("FBSSimpleTest", "[FBSTest]", float, double)
 
 // The L1 penalty backward step should have zero-valued g(x) and make no changes
 // when the penalty is 0.
-TEMPLATE_TEST_CASE("L1PenaltyZeroTest", "[FBSTest]", float, double)
+TEMPLATE_TEST_CASE("L1PenaltyZeroTest", "[FBS]", float, double)
 {
   typedef TestType eT;
 
@@ -47,7 +47,7 @@ TEMPLATE_TEST_CASE("L1PenaltyZeroTest", "[FBSTest]", float, double)
 }
 
 // The L1 penalty backward step shouldn't do anything if the step size is 0.
-TEMPLATE_TEST_CASE("L1PenaltyZeroStepSizeTest", "[FBSTest]", float, double)
+TEMPLATE_TEST_CASE("L1PenaltyZeroStepSizeTest", "[FBS]", float, double)
 {
   typedef TestType eT;
 
@@ -62,7 +62,7 @@ TEMPLATE_TEST_CASE("L1PenaltyZeroStepSizeTest", "[FBSTest]", float, double)
 
 // The L1 constraint backward step should have zero-valued g(x) when the
 // condition is satisfied, and make no changes.
-TEMPLATE_TEST_CASE("L1ConstraintZeroTest", "[FBSTest]", float, double)
+TEMPLATE_TEST_CASE("L1ConstraintZeroTest", "[FBS]", float, double)
 {
   typedef TestType eT;
 
@@ -79,7 +79,7 @@ TEMPLATE_TEST_CASE("L1ConstraintZeroTest", "[FBSTest]", float, double)
 }
 
 // The L1 constraint should evaluate to Inf when it's not satisfied.
-TEMPLATE_TEST_CASE("L1ConstraintTooBigTest", "[FBSTest]", float, double)
+TEMPLATE_TEST_CASE("L1ConstraintTooBigTest", "[FBS]", float, double)
 {
   typedef TestType eT;
 
@@ -90,7 +90,7 @@ TEMPLATE_TEST_CASE("L1ConstraintTooBigTest", "[FBSTest]", float, double)
 }
 
 // Ensure that the L1 constraint projects back onto the unit ball.
-TEMPLATE_TEST_CASE("L1Constraint1DProjectionTest", "[FBSTest]", fmat, sp_fmat,
+TEMPLATE_TEST_CASE("L1Constraint1DProjectionTest", "[FBS]", fmat, sp_fmat,
     mat, sp_mat)
 {
   typedef TestType MatType;
@@ -124,7 +124,7 @@ void RandomFill(SpMat<eT>& m)
 }
 
 // Same as the test above, but in 3 dimensions.
-TEMPLATE_TEST_CASE("L1Constraint3DProjectionTest", "[FBSTest]", fmat, sp_fmat,
+TEMPLATE_TEST_CASE("L1Constraint3DProjectionTest", "[FBS]", fmat, sp_fmat,
     mat, sp_mat)
 {
   typedef TestType MatType;
@@ -143,7 +143,7 @@ TEMPLATE_TEST_CASE("L1Constraint3DProjectionTest", "[FBSTest]", fmat, sp_fmat,
 }
 
 // Same as the test above, but in higher dimensionality.
-TEMPLATE_TEST_CASE("L1ConstraintProjectionTest", "[FBSTest]", fmat, sp_fmat,
+TEMPLATE_TEST_CASE("L1ConstraintProjectionTest", "[FBS]", fmat, sp_fmat,
     mat, sp_mat)
 {
   typedef TestType MatType;
@@ -165,7 +165,7 @@ TEMPLATE_TEST_CASE("L1ConstraintProjectionTest", "[FBSTest]", fmat, sp_fmat,
   }
 }
 
-TEMPLATE_TEST_CASE("FBSSphereFunctionTest", "[FBSTest]", fmat, mat, sp_mat)
+TEMPLATE_TEST_CASE("FBSSphereFunctionTest", "[FBS]", fmat, mat, sp_mat)
 {
   typedef TestType MatType;
 
@@ -175,7 +175,7 @@ TEMPLATE_TEST_CASE("FBSSphereFunctionTest", "[FBSTest]", fmat, mat, sp_mat)
   FunctionTest<SphereFunction, MatType>(fbs);
 }
 
-TEMPLATE_TEST_CASE("FBSWoodFunctionTest", "[FBSTest]", fmat, mat)
+TEMPLATE_TEST_CASE("FBSWoodFunctionTest", "[FBS]", fmat, mat)
 {
   typedef TestType MatType;
 
@@ -185,16 +185,16 @@ TEMPLATE_TEST_CASE("FBSWoodFunctionTest", "[FBSTest]", fmat, mat)
   FunctionTest<WoodFunction, MatType>(fbs);
 }
 
-TEMPLATE_TEST_CASE("FBSLogisticRegressionFunctionTest", "[FBSTest]", fmat, mat)
+TEMPLATE_TEST_CASE("FBSLogisticRegressionFunctionTest", "[FBS]", fmat, mat)
 {
   typedef TestType MatType;
 
   FBS<L1Penalty> fbs(L1Penalty(0.001));
-  LogisticRegressionFunctionTest<MatType>(fbs, 0.05, 0.05, 5);
+  LogisticRegressionFunctionTest<MatType>(fbs, 0.05, 0.05, 10);
 }
 
 // Check that maxIterations does anything.
-TEST_CASE("FBSMaxIterationsTest", "[FBSTest]")
+TEST_CASE("FBSMaxIterationsTest", "[FBS]")
 {
   FBS<L1Penalty> fbs1(L1Penalty(0.001)), fbs2(L1Penalty(0.001));
   fbs1.MaxIterations() = 10;

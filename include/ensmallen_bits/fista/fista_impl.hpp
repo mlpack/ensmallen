@@ -123,7 +123,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
   ElemType currentStepSize = (ElemType) maxStepSize;
   ElemType lastStepSize = (ElemType) maxStepSize;
 
-  terminate |= Callback::BeginOptimization(*this, f, x, callbacks...);
+  Callback::BeginOptimization(*this, f, x, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // During this optimization, we want to optimize h(x) = f(x) + g(x).
@@ -234,7 +234,8 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
         if ((lsObj > q) || (!std::isfinite(lsObj)))
         {
           lsDone = true;
-          x = std::move(lsLastX);
+          if (lsTrial != 0)
+            x = std::move(lsLastX);
           currentFObj = lastFObj;
           currentGObj = lastGObj;
           lastObj = currentObj;

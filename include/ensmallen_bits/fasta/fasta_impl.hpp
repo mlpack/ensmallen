@@ -157,7 +157,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
   ElemType currentStepSize = (ElemType) maxStepSize;
   ElemType lastStepSize = (ElemType) maxStepSize;
 
-  terminate |= Callback::BeginOptimization(*this, f, x, callbacks...);
+  Callback::BeginOptimization(*this, f, x, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
     // During this optimization, we want to optimize h(x) = f(x) + g(x).
@@ -216,7 +216,6 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
           Warn << "FASTA::Optimize(): could not find valid step size in range "
               << "(0, " << maxStepSize << "]!  Terminating optimization."
               << std::endl;
-          x = std::move(lastX); // Revert to previous coordinates.
           terminate = true;
           break;
         }
@@ -227,7 +226,6 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
       {
         Warn << "FASTA::Optimize(): computed zero step size; terminating "
             << "optimization." << std::endl;
-        x = std::move(lastX); // Revert to previous coordinates.
         terminate = true;
         break;
       }
