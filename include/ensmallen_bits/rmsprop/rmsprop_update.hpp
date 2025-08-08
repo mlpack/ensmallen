@@ -93,6 +93,10 @@ class RMSPropUpdate
     {
       // Leaky sum of squares of parameter gradient.
       meanSquaredGradient.zeros(rows, cols);
+
+      // Attempt to catch underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
