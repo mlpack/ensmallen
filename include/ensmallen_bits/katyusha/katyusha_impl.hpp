@@ -86,7 +86,7 @@ KatyushaType<Proximal>::Optimize(
   const ElemType tau2 = ElemType(0.5);
   const ElemType alpha = 1 / (3 * tau1 * ElemType(lipschitz));
   const ElemType r = 1 + std::min(alpha * ElemType(convexity),
-                                  ElemType(1 / (4 / innerIterations)));
+                                  ElemType(innerIterations) / 4);
 
   // sum_{j=0}^{m-1} 1 + std::min(alpha * convexity, 1 / (4 * m)^j).
   ElemType normalizer = 1;
