@@ -32,9 +32,8 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     // and element type conversion in one shot.
     #if ARMA_VERSION_MAJOR < 12 || \
         (ARMA_VERSION_MAJOR == 12 && ARMA_VERSION_MINOR < 8)
-    responses(conv_to<MatType>::from(
-        conv_to<ForwardType<LabelsType,
-                typename MatType::elem_type>::bmat>::from(responsesIn))),
+    responses(conv_to<MatType>::from(conv_to<typename ForwardType<
+        LabelsType, typename MatType::elem_type>::bmat>::from( responsesIn))),
     #else
     responses(conv_to<MatType>::from(responsesIn)),
     #endif
@@ -68,9 +67,8 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     // and element type conversion in one shot.
     #if ARMA_VERSION_MAJOR < 12 || \
         (ARMA_VERSION_MAJOR == 12 && ARMA_VERSION_MINOR < 8)
-    responses(conv_to<MatType>::from(
-        conv_to<ForwardType<LabelsType,
-                typename MatType::elem_type>::bmat>::from(responsesIn))),
+    responses(conv_to<MatType>::from(conv_to<typename ForwardType<
+        LabelsType, typename MatType::elem_type>::bmat>::from( responsesIn))),
     #else
     responses(conv_to<MatType>::from(responsesIn)),
     #endif
