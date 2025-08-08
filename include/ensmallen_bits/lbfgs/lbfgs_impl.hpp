@@ -440,15 +440,7 @@ L_BFGS::Optimize(FunctionType& function,
     // least one descent step.
     // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo
     // 12.4
-    //
-    // If we are using FP16, norm() is not currently implemented, so we have to
-    // use norm2est() instead.
-    #if defined(ARMA_HAVE_FP16)
-    const ElemType gradNorm = std::is_same<ElemType, arma::fp16>::value ?
-        norm2est(gradient) : norm(gradient, 2);
-    #else
     const ElemType gradNorm = norm(gradient, 2);
-    #endif
     if (gradNorm < minGradientNorm)
     {
       Info << "L-BFGS: gradient norm too small (terminating successfully)."
