@@ -107,7 +107,7 @@ class LBestUpdate
        chi = 2.0 / std::abs(2.0 - phi - std::sqrt((phi - 4.0) * phi));
 
        // Initialize local best indices to self indices of particles.
-       localBestIndices = linspace<ColType>(0, n - 1, n);
+       localBestIndices = linspace<arma::uvec>(0, n - 1, n);
 
        // Set sizes r1 and r2.
        r1.set_size(iterate.n_rows, iterate.n_cols);
@@ -174,7 +174,7 @@ class LBestUpdate
      MatType r1, r2;
 
      //! Indices of each particle's best neighbour.
-     ColType localBestIndices;
+     arma::uvec localBestIndices;
 
      // Helper functions for calculating neighbours.
     inline size_t left(size_t index) { return (index + n - 1) % n; }
