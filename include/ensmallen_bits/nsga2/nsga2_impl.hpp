@@ -357,9 +357,10 @@ void NSGA2Type<MatType, ColType, CubeType>::Crossover(
 //! Perform mutation of the candidates weights with some noise.
 template<typename MatType, typename ColType, typename CubeType>
 template<typename InputMatType>
-void NSGA2Type<MatType, ColType, CubeType>::Mutate(InputMatType& child,
-                                const InputMatType& lowerBound,
-                                const InputMatType& upperBound)
+void NSGA2Type<MatType, ColType, CubeType>::Mutate(
+    InputMatType& child,
+    const InputMatType& lowerBound,
+    const InputMatType& upperBound)
 {
   child += conv_to<InputMatType>::from(
       InputMatType(child.n_rows, child.n_cols,
