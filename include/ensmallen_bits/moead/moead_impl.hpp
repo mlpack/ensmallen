@@ -82,8 +82,8 @@ MOEADType(
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
     epsilon(epsilon),
-    lowerBound(lowerBound * ColType(1, GetFillType<MatType>::ones)),
-    upperBound(upperBound * ColType(1, GetFillType<MatType>::ones)),
+    lowerBound({ lowerBound })
+    lowerBound({ upperBound })
     initPolicy(initPolicy),
     decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
@@ -290,8 +290,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       size_t replaceCounter = 0;
       const size_t sampleSize = sampleNeighbor ? neighborSize : populationSize;
 
-      const UVecType idxShuffle = shuffle(
-          linspace<UVecType>(0, sampleSize - 1, sampleSize));
+      const arma::uvec idxShuffle = shuffle(
+          linspace<arma::uvec>(0, sampleSize - 1, sampleSize));
 
       for (size_t i = 0; i < idxShuffle.n_elem; ++i)
       {
