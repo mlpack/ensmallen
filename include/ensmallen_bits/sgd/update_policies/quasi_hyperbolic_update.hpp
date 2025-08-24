@@ -76,10 +76,9 @@ class QHUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(QHUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent), velocity(rows, cols, GetFillType<MatType>::zeros)
     {
-      // Initialize an empty velocity matrix.
-      velocity.zeros(rows, cols);
+      // Nothing to do here.
     }
 
     /**
