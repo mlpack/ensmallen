@@ -18,9 +18,9 @@ using namespace ens;
 using namespace ens::test;
 
 /**
-* Run CMA-ES with the full selection policy on logistic regression and
-* make sure the results are acceptable.
-*/
+ * Run CMA-ES with the full selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
 TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", arma::mat)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
@@ -31,9 +31,9 @@ TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", arma::mat)
 }
 
 /**
-* Run CMA-ES with the random selection policy on logistic regression and
-* make sure the results are acceptable.
-*/
+ * Run CMA-ES with the random selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
 TEMPLATE_TEST_CASE("ApproxCMAES_LogisticRegressionFunction", "[CMAES]",
     arma::mat)
 {
@@ -44,9 +44,9 @@ TEMPLATE_TEST_CASE("ApproxCMAES_LogisticRegressionFunction", "[CMAES]",
 }
 
 /**
-* Run CMA-ES with the full selection policy on logistic regression and
-* make sure the results are acceptable.  Use arma::fmat.
-*/
+ * Run CMA-ES with the full selection policy on logistic regression and
+ * make sure the results are acceptable.  Use arma::fmat.
+ */
 TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", arma::fmat)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
@@ -56,9 +56,9 @@ TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", arma::fmat)
 }
 
 /**
-* Run CMA-ES with the random selection policy on logistic regression and
-* make sure the results are acceptable.  Use arma::fmat.
-*/
+ * Run CMA-ES with the random selection policy on logistic regression and
+ * make sure the results are acceptable.  Use arma::fmat.
+ */
 TEMPLATE_TEST_CASE("ApproxCMAES_LogisticRegressionFunction", "[CMAES]",
     arma::fmat)
 {
@@ -68,10 +68,10 @@ TEMPLATE_TEST_CASE("ApproxCMAES_LogisticRegressionFunction", "[CMAES]",
 }
 
 /**
-* Run CMA-ES with the random selection and empty transformation policies
-* on logistic regression and make sure the results are acceptable.
-* Use arma::fmat.
-*/
+ * Run CMA-ES with the random selection and empty transformation policies
+ * on logistic regression and make sure the results are acceptable.
+ * Use arma::fmat.
+ */
 TEMPLATE_TEST_CASE("ApproxCMAES_EmptyTransformationLogisticRegressionFunction",
     "[CMAESTest]", arma::fmat)
 {

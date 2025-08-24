@@ -8,12 +8,12 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
- #include <ensmallen.hpp>
- #include "catch.hpp"
- #include "test_function_tools.hpp"
+#include <ensmallen.hpp>
+#include "catch.hpp"
+#include "test_function_tools.hpp"
 
- using namespace ens;
- using namespace ens::test;
+using namespace ens;
+using namespace ens::test;
 
 TEMPLATE_TEST_CASE("AdaBound_SphereFunction", "[AdaBound]",
     arma::mat, arma::fmat, arma::sp_mat)

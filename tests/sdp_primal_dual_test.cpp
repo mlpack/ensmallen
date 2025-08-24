@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
- #if (ARMA_VERSION_MAJOR < 11)
- #define ARMA_DONT_PRINT_ERRORS
+#if (ARMA_VERSION_MAJOR < 11)
+  #define ARMA_DONT_PRINT_ERRORS
 #endif
 
 #include <ensmallen.hpp>

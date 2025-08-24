@@ -18,15 +18,15 @@ using namespace ens::test;
 using namespace std;
 
 /**
-* Checks if low <= value <= high. Used by NSGA2FonsecaFlemingTest.
-*
-* @param value The value being checked.
-* @param low The lower bound.
-* @param high The upper bound.
-* @tparam The type of elements in the population set.
-* @return true if value lies in the range [low, high].
-* @return false if value does not lie in the range [low, high].
-*/
+ * Checks if low <= value <= high. Used by NSGA2FonsecaFlemingTest.
+ *
+ * @param value The value being checked.
+ * @param low The lower bound.
+ * @param high The upper bound.
+ * @tparam The type of elements in the population set.
+ * @return true if value lies in the range [low, high].
+ * @return false if value does not lie in the range [low, high].
+ */
 template<typename ElemType>
 bool IsInBounds(
     const ElemType& value, const ElemType& low, const ElemType& high)
@@ -83,7 +83,7 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
     }
   }
 
- REQUIRE(success == true);
+  REQUIRE(success == true);
 }
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",

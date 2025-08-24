@@ -137,7 +137,7 @@ TEMPLATE_TEST_CASE("FrankWolfe_AtomNormConstraint", "[FrankWolfe]", arma::mat)
   FrankWolfe<ConstrLpBallSolver, UpdateFullCorrection>
     s(linearConstrSolver, updateRule);
 
-    TestType coordinates = zeros<TestType>(k + 3, 1);
+  TestType coordinates = zeros<TestType>(k + 3, 1);
   ElemType result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-10));

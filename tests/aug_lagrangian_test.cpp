@@ -20,9 +20,9 @@ using namespace ens;
 using namespace ens::test;
 
 /**
-* Tests the Augmented Lagrangian optimizer using the
-* AugmentedLagrangianTestFunction class.
-*/
+ * Tests the Augmented Lagrangian optimizer using the
+ * AugmentedLagrangianTestFunction class.
+ */
 TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction",
     "[AugLagrangian]", arma::mat)
 {
@@ -45,8 +45,8 @@ TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction",
 }
 
 /**
-* Tests the Augmented Lagrangian optimizer using the Gockenbach function.
-*/
+ * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
+ */
 TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
     arma::mat, arma::fmat)
 {
@@ -70,9 +70,9 @@ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
 }
 
 /**
-* Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
-* arma::sp_mat.
-*/
+ * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
+ * arma::sp_mat.
+ */
 TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
     arma::sp_mat)
 {
