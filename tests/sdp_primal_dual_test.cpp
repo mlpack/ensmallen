@@ -284,22 +284,6 @@ TEST_CASE("SdpPrimalDual_SmallMaxCutSdp", "[SdpPrimalDual]")
   SolveMaxCutPositiveSDP(sdp);
 }
 
-// This test is deprecated and can be removed in ensmallen 2.10.0.
-TEST_CASE("SdpPrimalDual_DeprecatedSmallLovaszThetaSdp", "[SdpPrimalDual]")
-{
-  UndirectedGraph g;
-  UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
-  auto sdp = ConstructLovaszThetaSDPFromGraph(g);
-
-  PrimalDualSolver solver;
-
-  arma::mat X, Z;
-  arma::mat ysparse, ydense;
-  sdp.GetInitialPoints(X, ysparse, ydense, Z);
-  solver.Optimize(sdp, X, ysparse, ydense, Z);
-  CheckKKT(sdp, X, ysparse, ydense, Z);
-}
-
 TEST_CASE("SdpPrimalDual_SmallLovaszThetaSdp", "[SdpPrimalDual]")
 {
   UndirectedGraph g;
