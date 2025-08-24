@@ -358,7 +358,7 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
     }
   }
 
- REQUIRE(success == true);
+  REQUIRE(success == true);
 }
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2Test]",
