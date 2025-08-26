@@ -1502,11 +1502,12 @@ Frank-Wolfe is a technique to minimize a continuously differentiable convex func
  * `FrankWolfe<`_`LinearConstrSolverType, UpdateRuleType`_`>(`_`linearConstrSolver, updateRule, maxIterations, tolerance`_`)`
 
 The _`LinearConstrSolverType`_ template parameter specifies the constraint
-domain D for the problem.  The `ConstrLpBallSolver` and
-`ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the former
-restricts D to the unit ball of the specified l-p norm.  Other constraint types
-may be implemented as a class with the same method signatures as either of the
-existing classes.
+domain D for the problem.  The `ConstrLpBallSolver` (itself a class template,
+`ConstrLpBallSolver<T>`, change `T` if a different matrix type is required)
+and `ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the
+former restricts D to the unit ball of the specified l-p norm.  Other constraint
+types may be implemented as a class with the same method signatures as either of
+the existing classes.
 
 The _`UpdateRuleType`_ template parameter specifies the update rule used by the
 optimizer.  The `UpdateClassic` and `UpdateLineSearch` classes are available for

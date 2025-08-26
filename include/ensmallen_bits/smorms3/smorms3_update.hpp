@@ -85,6 +85,8 @@ class SMORMS3Update
                 const double stepSize,
                 const GradType& gradient)
     {
+      using eT = typename MatType::elem_type;
+
       if (lr.is_empty() || lr(0) != stepSize)
       {
         lr.set_size(gradient.n_rows, gradient.n_cols);

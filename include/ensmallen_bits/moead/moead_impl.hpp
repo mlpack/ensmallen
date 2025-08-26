@@ -82,8 +82,8 @@ MOEADType(
     differentialWeight(differentialWeight),
     maxReplace(maxReplace),
     epsilon(epsilon),
-    lowerBound({ lowerBound })
-    lowerBound({ upperBound })
+    lowerBound({ lowerBound }),
+    lowerBound({ upperBound }),
     initPolicy(initPolicy),
     decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
