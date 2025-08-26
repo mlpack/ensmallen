@@ -60,8 +60,8 @@ NSGA2Type<MatType, ColType, CubeType>::NSGA2Type(
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
     epsilon(epsilon),
-    lowerBound(lowerBound * ColType(1, GetFillType<MatType>::ones)),
-    upperBound(upperBound * ColType(1, GetFillType<MatType>::ones))
+    lowerBound({ lowerBound }),
+    upperBound({ upperBound })
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
@@ -112,9 +112,9 @@ typename InputMatType::elem_type NSGA2Type<
   }
 
   // Check the dimensions of lowerBound and upperBound.
-  assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
+  assert(castedLowerBound.n_rows == iterate.n_rows && "The dimensions of "
       "lowerBound are not the same as the dimensions of iterate.");
-  assert(upperBound.n_rows == iterate.n_rows && "The dimensions of "
+  assert(castedUpperBound.n_rows == iterate.n_rows && "The dimensions of "
       "upperBound are not the same as the dimensions of iterate.");
 
   numObjectives = sizeof...(ArbitraryFunctionType);
@@ -489,20 +489,7 @@ void NSGA2Type<MatType, ColType, CubeType>::CrowdingDistanceAssignment(
     }
 
     // Sort front indices by ascending fValues for current objective.
-    for (size_t i = 0; i < sortedIdx.size(); ++i)
-    {
-      size_t minIdx = i;
-      for (size_t j = i + 1; j < sortedIdx.size(); ++j)
-      {
-        if (fValues(sortedIdx[j]) < fValues(sortedIdx[minIdx]))
-        {
-          minIdx = j;
-        }
-      }
-      size_t temp = sortedIdx[i];
-      sortedIdx[i] = sortedIdx[minIdx];
-      sortedIdx[minIdx] = temp;
-    }
+    sortedIdx = sort_index(fValues, "ascend");
 
     crowdingDistance[front[sortedIdx(0)]] =
         std::numeric_limits<ElemType>::max();
