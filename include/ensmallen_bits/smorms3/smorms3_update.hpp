@@ -100,7 +100,8 @@ class SMORMS3Update
       g2 = (1 - r) % g2;
       g2 += r % (gradient % gradient);
 
-      MatType x = min((g % g) / (g2 + parent.epsilon), lr);
+      MatType x = clamp((g % g) / (g2 + parent.epsilon), eT(0), eT(stepSize));
+
       iterate -= gradient % x / (sqrt(g2) + parent.epsilon);
 
       mem %= (1 - x);
