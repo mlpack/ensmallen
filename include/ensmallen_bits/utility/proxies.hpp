@@ -98,7 +98,7 @@ struct ForwardTypeHelper
 
 // Internal helper class that sets the typedefs to Bandicoot types if Bandicoot
 // is available and in use.
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 template<typename ElemType>
 struct ForwardTypeHelper<ElemType, true>
 {

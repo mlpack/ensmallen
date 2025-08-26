@@ -160,7 +160,7 @@ struct IsCootType
   const static bool value = false;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 
 template<typename eT>
 struct IsCootType<coot::Col<eT> >

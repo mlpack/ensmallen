@@ -21,7 +21,7 @@
 
 namespace ens {
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 
 /* using for bandicoot namespace*/
 using coot::abs;
@@ -69,7 +69,7 @@ using arma::clamp;
 
 // If Bandicoot is used, using arma::conv_to is already
 // part of including bandicoot.
-#ifndef USE_COOT
+#ifndef ENS_HAVE_COOT
 using arma::conv_to;
 #endif
 
@@ -143,7 +143,7 @@ struct GetProxyTypeInternal<MatType, true, false>
   static constexpr const decltype(arma::span::all)& all = arma::span::all;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 // If the matrix type is a Bandicoot type, use Bandicoot fill objects instead.
 template<
     typename MatType>
