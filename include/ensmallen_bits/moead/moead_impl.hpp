@@ -83,7 +83,7 @@ MOEADType(
     maxReplace(maxReplace),
     epsilon(epsilon),
     lowerBound({ lowerBound }),
-    lowerBound({ upperBound }),
+    upperBound({ upperBound }),
     initPolicy(initPolicy),
     decompPolicy(decompPolicy)
   { /* Nothing to do here. */ }
