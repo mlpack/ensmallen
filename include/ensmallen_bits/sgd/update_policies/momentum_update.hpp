@@ -93,7 +93,7 @@ class MomentumUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(const MomentumUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent), velocity(rows, cols, GetFillType<MatType>::zeros)
+        parent(parent), velocity(rows, cols)
     {
       // Nothing to do here.
     }
