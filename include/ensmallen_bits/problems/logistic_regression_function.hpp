@@ -22,16 +22,16 @@ namespace test {
  * This is used by various ensmallen optimizers to train a logistic regression
  * model.
  */
-template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>>
+template<typename MatType = arma::mat>
 class LogisticRegressionFunction
 {
  public:
   LogisticRegressionFunction(MatType& predictors,
-                             LabelsType& responses,
+                             arma::Row<size_t>& responses,
                              const double lambda = 0);
 
   LogisticRegressionFunction(MatType& predictors,
-                             LabelsType& responses,
+                             arma::Row<size_t>& responses,
                              MatType& initialPoint,
                              const double lambda = 0);
 
@@ -48,7 +48,7 @@ class LogisticRegressionFunction
   //! Return the matrix of predictors.
   const MatType& Predictors() const { return predictors; }
   //! Return the vector of responses.
-  const LabelsType& Responses() const { return responses; }
+  const arma::Row<size_t>& Responses() const { return responses; }
 
   /**
    * Shuffle the order of function visitation.  This may be called by the
@@ -130,15 +130,9 @@ class LogisticRegressionFunction
    *    be computed.
    * @param gradient Sparse matrix to output gradient into.
    */
-  template<typename ElemType>
   void PartialGradient(const MatType& parameters,
                        const size_t j,
-                       arma::SpMat<ElemType>& gradient) const;
-
-//   template<typename ElemType>
-  void PartialGradient(const MatType& parameters,
-                       const size_t j,
-                       MatType& gradient) const;
+                       arma::sp_mat& gradient) const;
 
   /**
    * Evaluate the objective function and gradient of the logistic regression
@@ -181,7 +175,7 @@ class LogisticRegressionFunction
    * @return Percentage of responses that are predicted correctly.
    */
   double ComputeAccuracy(const MatType& predictors,
-                         const LabelsType& responses,
+                         const arma::Row<size_t>& responses,
                          const MatType& parameters,
                          const double decisionBoundary = 0.5) const;
 
@@ -198,7 +192,7 @@ class LogisticRegressionFunction
    * @param decisionBoundary Decision boundary (default 0.5).
    */
   void Classify(const MatType& dataset,
-                LabelsType& labels,
+                arma::Row<size_t>& labels,
                 const MatType& parameters,
                 const double decisionBoundary = 0.5) const;
 
@@ -210,7 +204,7 @@ class LogisticRegressionFunction
   MatType& predictors;
   //! The vector of responses to the input data points.  This is an alias until
   //! shuffling is done.
-  LabelsType& responses;
+  arma::Row<size_t>& responses;
   //! The regularization parameter for L2-regularization.
   double lambda;
 };

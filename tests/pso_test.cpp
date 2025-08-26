@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", arma::mat)
 {
   typedef typename TestType::elem_type ElemType;
 
-  SphereFunctionType<TestType> f(4);
+  SphereFunction f(4);
   LBestPSO s;
 
   TestType coords = f. template GetInitialPoint<TestType>();

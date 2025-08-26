@@ -18,26 +18,23 @@
 namespace ens {
 namespace test {
 
-template<typename MatType, typename IndexVecType>
-RastriginFunctionType<MatType, IndexVecType>::RastriginFunctionType(
-    const size_t n) :
+inline RastriginFunction::RastriginFunction(const size_t n) :
     n(n),
-    visitationOrder(linspace<IndexVecType>(0, n - 1, n))
+    visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
 
 {
   initialPoint.set_size(n, 1);
   initialPoint.fill(-3);
 }
 
-template<typename MatType, typename IndexVecType>
-void RastriginFunctionType<MatType, IndexVecType>::Shuffle()
+inline void RastriginFunction::Shuffle()
 {
-  visitationOrder = shuffle(linspace<IndexVecType>(0, n - 1, n));
+  visitationOrder = arma::shuffle(
+      arma::linspace<arma::Row<size_t> >(0, n - 1, n));
 }
 
-template<typename MatType, typename IndexVecType>
-typename MatType::elem_type
-RastriginFunctionType<MatType, IndexVecType>::Evaluate(
+template<typename MatType>
+typename MatType::elem_type RastriginFunction::Evaluate(
     const MatType& coordinates,
     const size_t begin,
     const size_t batchSize) const
@@ -57,21 +54,18 @@ RastriginFunctionType<MatType, IndexVecType>::Evaluate(
   return objective;
 }
 
-template<typename MatType, typename IndexVecType>
-typename MatType::elem_type
-RastriginFunctionType<MatType, IndexVecType>::Evaluate(
+template<typename MatType>
+typename MatType::elem_type RastriginFunction::Evaluate(
     const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-template<typename MatType, typename IndexVecType>
-template<typename InputMatType, typename InputGradType>
-void RastriginFunctionType<MatType, IndexVecType>::Gradient(
-    const InputMatType& coordinates,
-    const size_t begin,
-    InputGradType& gradient,
-    const size_t batchSize) const
+template<typename MatType, typename GradType>
+inline void RastriginFunction::Gradient(const MatType& coordinates,
+                                        const size_t begin,
+                                        GradType& gradient,
+                                        const size_t batchSize) const
 {
   gradient.zeros(n, 1);
 
@@ -83,10 +77,9 @@ void RastriginFunctionType<MatType, IndexVecType>::Gradient(
   }
 }
 
-template<typename MatType, typename IndexVecType>
-template<typename InputMatType, typename InputGradType>
-inline void RastriginFunctionType<MatType, IndexVecType>::Gradient(
-    const InputMatType& coordinates, InputGradType& gradient)
+template<typename MatType, typename GradType>
+inline void RastriginFunction::Gradient(const MatType& coordinates,
+                                        GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

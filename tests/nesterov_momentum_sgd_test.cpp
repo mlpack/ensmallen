@@ -19,7 +19,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("NesterovMomentumSGD_SGDTestFunction",
     "[NesterovMomentumSGD]", arma::mat, arma::fmat)
 {
-  SGDTestFunctionType<arma::Row<size_t>> f;
+  SGDTestFunction f;
   NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
   NesterovMomentumSGD s(0.0003, 1, 2500000, 1e-9, true, nesterovMomentumUpdate,
       NoDecay(), true, true);
@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(i);
+    GeneralizedRosenbrockFunction f(i);
     NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
     NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate,
         NoDecay(), true, true);
@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(i);
+    GeneralizedRosenbrockFunction f(i);
     NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
     NesterovMomentumSGD s(0.00015, 1, 0, 1e-10, true, nesterovMomentumUpdate);
 
@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
     TestType coordinates;
     while (trial++ < 8 && result > 0.1)
     {
-      coordinates = f.GetInitialPoint();
+      coordinates = f.GetInitialPoint<TestType>();
       result = s.Optimize(f, coordinates);
     }
 
@@ -87,11 +87,11 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(i);
+    GeneralizedRosenbrockFunction f(i);
     NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
     NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate);
 
-    TestType coordinates = f.GetInitialPoint();
+    TestType coordinates = f.GetInitialPoint<TestType>();
     double result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -108,7 +108,7 @@ TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",
   typedef typename TestType::elem_type ElemType;
 
   // Create the generalized Rosenbrock function.
-  GeneralizedRosenbrockFunctionType<TestType, coot::Row<size_t>> f(10);
+  GeneralizedRosenbrockFunction f(10);
   NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
   NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate,
       NoDecay(), true, true);

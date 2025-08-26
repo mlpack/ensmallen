@@ -30,16 +30,14 @@ TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]",
     arma::mat, arma::fmat)
 {
   FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]",
     arma::mat, arma::fmat)
 {
   FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 #ifdef USE_COOT
@@ -56,16 +54,14 @@ TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]",
     coot::mat, coot::fmat)
 {
   FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]",
     coot::mat, coot::fmat)
 {
   FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 #endif

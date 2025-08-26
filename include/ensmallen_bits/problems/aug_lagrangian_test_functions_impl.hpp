@@ -82,25 +82,22 @@ inline void AugLagrangianTestFunction::GradientConstraint(const size_t index,
 //
 // GockenbachFunction
 //
-template<typename MatType>
-GockenbachFunctionType<MatType>::GockenbachFunctionType()
+inline GockenbachFunction::GockenbachFunction()
 {
   // Set the initial point to (0, 0, 1).
   initialPoint.zeros(3, 1);
   initialPoint[2] = 1;
 }
 
-template<typename MatType>
-GockenbachFunctionType<MatType>::GockenbachFunctionType(const MatType& initialPoint) :
+inline GockenbachFunction::GockenbachFunction(const arma::mat& initialPoint) :
     initialPoint(initialPoint)
 {
   // Nothing to do.
 }
 
 template<typename MatType>
-template<typename InputMatType>
-typename InputMatType::elem_type GockenbachFunctionType<MatType>::Evaluate(
-    const InputMatType& coordinates)
+inline typename MatType::elem_type GockenbachFunction::Evaluate(
+    const MatType& coordinates)
 {
   // f(x) = (x_1 - 1)^2 + 2 (x_2 + 2)^2 + 3(x_3 + 3)^2
   return ((std::pow(coordinates[0] - 1, 2)) +
@@ -108,10 +105,9 @@ typename InputMatType::elem_type GockenbachFunctionType<MatType>::Evaluate(
           (3 * std::pow(coordinates[2] + 3, 2)));
 }
 
-template<typename MatType>
-template<typename InputMatType, typename InputGradType>
-void GockenbachFunctionType<MatType>::Gradient(
-    const InputMatType& coordinates, InputGradType& gradient)
+template<typename MatType, typename GradType>
+inline void GockenbachFunction::Gradient(const MatType& coordinates,
+                                         GradType& gradient)
 {
   // f'_x1(x) = 2 (x_1 - 1)
   // f'_x2(x) = 4 (x_2 + 2)
@@ -124,24 +120,24 @@ void GockenbachFunctionType<MatType>::Gradient(
 }
 
 template<typename MatType>
-template<typename InputMatType>
-typename InputMatType::elem_type GockenbachFunctionType<MatType>::EvaluateConstraint(
-    const size_t index, const InputMatType& coordinates)
+inline typename MatType::elem_type GockenbachFunction::EvaluateConstraint(
+    const size_t index,
+    const MatType& coordinates)
 {
-  typename InputMatType::elem_type constraint = 0;
+  typename MatType::elem_type constraint = 0;
 
   switch (index)
   {
     case 0: // g(x) = (x_3 - x_2 - x_1 - 1) = 0
       constraint = (coordinates[2] - coordinates[1] - coordinates[0] -
-          typename InputMatType::elem_type(1));
+          typename MatType::elem_type(1));
       break;
 
     case 1: // h(x) = (x_3 - x_1^2) >= 0
       // To deal with the inequality, the constraint will simply evaluate to 0
       // when h(x) >= 0.
-      constraint = std::min(typename InputMatType::elem_type(0), (coordinates[2] -
-          std::pow(coordinates[0], typename InputMatType::elem_type(2))));
+      constraint = std::min(typename MatType::elem_type(0), (coordinates[2] -
+          std::pow(coordinates[0], typename MatType::elem_type(2))));
       break;
   }
 
@@ -149,10 +145,10 @@ typename InputMatType::elem_type GockenbachFunctionType<MatType>::EvaluateConstr
   return constraint;
 }
 
-template<typename MatType>
-template<typename InputMatType, typename InputGradType>
-void GockenbachFunctionType<MatType>::GradientConstraint(
-    const size_t index, const InputMatType& coordinates, InputGradType& gradient)
+template<typename MatType, typename GradType>
+inline void GockenbachFunction::GradientConstraint(const size_t index,
+                                                   const MatType& coordinates,
+                                                   GradType& gradient)
 {
   gradient.zeros(3, 1);
 
@@ -339,7 +335,8 @@ inline const arma::mat& LovaszThetaSDP::GetInitialPoint()
     for (size_t j = 0; j < (size_t) vertices; j++)
     {
       if (i == j)
-        initialPoint(i, j) = std::sqrt(1.0 / r) + std::sqrt(1.0 / (vertices * m));
+        initialPoint(i, j) = std::sqrt(1.0 / r) +
+            std::sqrt(1.0 / (vertices * m));
       else
         initialPoint(i, j) = std::sqrt(1.0 / (vertices * m));
     }

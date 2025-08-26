@@ -30,23 +30,14 @@ TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]",
     arma::mat, arma::fmat)
 {
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
-    arma::mat, arma::fmat)
+    arma::mat, arma::fmat, arma::sp_mat)
 {
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>,
-      TestType>(optimizer, 3.0, 0.3);
-}
-
-TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
-    arma::sp_mat)
-{
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<>, TestType>(optimizer, 0.3, 0.03);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 3.0, 0.3);
 }
 
 #ifdef USE_COOT
@@ -64,16 +55,14 @@ TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]",
     coot::mat, coot::fmat)
 {
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
     coot::mat, coot::fmat)
 {
   SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>,
-      TestType>(optimizer, 3.0, 0.3);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 3.0, 0.3);
 }
 
 #endif

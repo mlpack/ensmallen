@@ -204,8 +204,8 @@ void LogisticRegressionFunctionTest(OptimizerType& optimizer,
   {
     LogisticRegressionTestData(data, testData, shuffledData,
         responses, testResponses, shuffledResponses);
-    ens::test::LogisticRegressionFunction<MatType, LabelsType> lr(
-        shuffledData, shuffledResponses, 0.5);
+    ens::test::LogisticRegressionFunction<MatType> lr( shuffledData,
+        shuffledResponses, 0.5);
 
     MatType coordinates = lr.GetInitialPoint();
 

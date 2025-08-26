@@ -23,15 +23,13 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", arma::mat, arma::fmat)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2);
 }
 
 TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", arma::mat)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
-  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Adam_McCormickFunctionFunction", "[Adam]", arma::mat)
@@ -61,8 +59,7 @@ TEMPLATE_TEST_CASE("Adam_BoothFunction", "[Adam]", arma::mat)
 TEMPLATE_TEST_CASE("AMSGrad_SphereFunction", "[Adam]", arma::fmat)
 {
   AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 50000, 1e-11, true);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Adam_LogisticRegressionFunction", "[Adam]", arma::mat)
@@ -162,15 +159,13 @@ TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", arma::mat)
 TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", coot::mat, coot::fmat)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2);
 }
 
 TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", coot::mat)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
-  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Adam_McCormickFunction", "[Adam]", coot::mat)

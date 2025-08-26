@@ -19,8 +19,7 @@ TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]",
     arma::mat, arma::fmat)
 {
   Yogi optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]",
@@ -43,8 +42,7 @@ TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]",
     coot::mat, coot::fmat)
 {
   Yogi optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]",
@@ -58,8 +56,7 @@ TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
     coot::mat)
 {
   Yogi optimizer;
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
 }
 
 #endif

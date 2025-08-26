@@ -27,14 +27,14 @@ void SGDGeneralizedRosenbrockTest(const size_t variants = 50)
   for (size_t i = 10; i < variants; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunctionType<MatType> f(i);
+    GeneralizedRosenbrockFunction f(i);
 
     // Allow a few trials.
     for (size_t trial = 0; trial < 5; ++trial)
     {
       StandardSGD s(0.001, 1, 0, 1e-15, true);
 
-      MatType coordinates = f.GetInitialPoint();
+      MatType coordinates = f.GetInitialPoint<MatType>();
       float result = s.Optimize(f, coordinates);
 
       if (trial != 4)
@@ -56,16 +56,15 @@ void SGDGeneralizedRosenbrockTest(const size_t variants = 50)
   }
 }
 
-template<typename MatType, typename LabelsType>
+template<typename MatType>
 void SGDLogisticRegressionTest()
 {
   MatType data, testData, shuffledData;
-  LabelsType responses, testResponses, shuffledResponses;
+  arma::Row<size_t> responses, testResponses, shuffledResponses;
 
   LogisticRegressionTestData(data, testData, shuffledData,
       responses, testResponses, shuffledResponses);
-  LogisticRegressionFunction<MatType, LabelsType> lr(
-      shuffledData, shuffledResponses, 0.5);
+  LogisticRegressionFunction<MatType> lr(shuffledData, shuffledResponses, 0.5);
 
   StandardSGD sgd;
   MatType coordinates = lr.GetInitialPoint();
@@ -90,7 +89,7 @@ TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]",
 TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
     arma::mat)
 {
-  SGDLogisticRegressionTest<TestType, arma::Row<size_t>>();
+  SGDLogisticRegressionTest<TestType>();
 }
 
 #ifdef USE_COOT
@@ -104,7 +103,7 @@ TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]",
 TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
     coot::mat)
 {
-  SGDLogisticRegressionTest<TestType, coot::Row<size_t>>();
+  SGDLogisticRegressionTest<TestType>();
 }
 
 #endif

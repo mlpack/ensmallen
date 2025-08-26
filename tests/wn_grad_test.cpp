@@ -29,23 +29,14 @@ TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]",
     arma::mat, arma::fmat)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]",
-    arma::mat, arma::fmat)
+    arma::mat, arma::fmat, arma::sp_mat)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.3, 0.03);
-}
-
-TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]",
-    arma::sp_mat)
-{
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<>, TestType>(optimizer, 0.3, 0.03);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.3, 0.03);
 }
 
 #ifdef USE_COOT
@@ -62,16 +53,14 @@ TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]",
     coot::mat, coot::fmat)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]",
     coot::mat, coot::fmat)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.3, 0.03);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.3, 0.03);
 }
 
 #endif

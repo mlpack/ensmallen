@@ -24,8 +24,7 @@ TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
   optimizer.BaseOptimizer().Beta1() = 0.7;
   optimizer.BaseOptimizer().Tolerance() = 1e-15;
   // We allow a few trials.
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2, 3);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
@@ -34,8 +33,7 @@ TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
   AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-15, true);
   Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000, 1e-15, NoDecay(),
       false, true);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2, 3);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
@@ -59,8 +57,7 @@ TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
   optimizer.BaseOptimizer().Beta1() = 0.7;
   optimizer.BaseOptimizer().Tolerance() = 1e-15;
   // We allow a few trials.
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-    optimizer, 0.5, 0.2, 3);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
@@ -69,8 +66,7 @@ TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
   AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-15, true);
   Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000, 1e-15, NoDecay(),
       false, true);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2, 3);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
@@ -89,8 +85,7 @@ TEMPLATE_TEST_CASE("LookaheadAdam_SimpleSphereFunction", "[Lookahead]",
   Adam adam(0.001, 1, 0.9, 0.999, 1e-8, 5, 1e-19, false, true);
   Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-15, NoDecay(),
       false, true);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2, 3);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
 }
 
 #endif

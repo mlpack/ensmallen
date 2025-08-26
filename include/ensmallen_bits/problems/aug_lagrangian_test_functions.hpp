@@ -56,42 +56,39 @@ class AugLagrangianTestFunction
  * The minimum that satisfies the two constraints is given as
  *   x = [0.12288, -1.1078, 0.015100], with an objective value of about 29.634.
  */
-template<typename MatType = arma::mat>
-class GockenbachFunctionType
+class GockenbachFunction
 {
  public:
-  GockenbachFunctionType();
-  GockenbachFunctionType(const MatType& initialPoint);
+  GockenbachFunction();
+  GockenbachFunction(const arma::mat& initialPoint);
 
-  template<typename InputMatType>
-  typename InputMatType::elem_type Evaluate(const InputMatType& coordinates);
+  template<typename MatType>
+  typename MatType::elem_type Evaluate(const MatType& coordinates);
 
-  template<typename InputMatType, typename InputGradType>
-  void Gradient(const InputMatType& coordinates, InputGradType& gradient);
+  template<typename MatType, typename GradType>
+  void Gradient(const MatType& coordinates, GradType& gradient);
 
   size_t NumConstraints() const { return 2; }
 
-  template<typename InputMatType>
-  typename InputMatType::elem_type EvaluateConstraint(
+  template<typename MatType>
+  typename MatType::elem_type EvaluateConstraint(
       const size_t index,
-      const InputMatType& coordinates);
+      const MatType& coordinates);
 
-  template<typename InputMatType, typename InputGradType>
+  template<typename MatType, typename GradType>
   void GradientConstraint(const size_t index,
-                          const InputMatType& coordinates,
-                          InputGradType& gradient);
+                          const MatType& coordinates,
+                          GradType& gradient);
 
-  template<typename InputMatType>
-  InputMatType GetInitialPoint() const
+  template<typename MatType>
+  MatType GetInitialPoint() const
   {
-    return conv_to<InputMatType>::from(initialPoint);
+    return arma::conv_to<MatType>::from(initialPoint);
   }
 
  private:
-  MatType initialPoint;
+  arma::mat initialPoint;
 };
-
-using GockenbachFunction = GockenbachFunctionType<arma::mat>;
 
 /**
  * This function is the Lovasz-Theta semidefinite program, as implemented in the

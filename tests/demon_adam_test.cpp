@@ -35,8 +35,7 @@ TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
     arma::mat, arma::fmat)
 {
   DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]",
@@ -50,8 +49,7 @@ TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
     arma::sp_mat)
 {
   DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 #ifdef USE_COOT
@@ -78,8 +76,7 @@ TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
     coot::mat, coot::fmat)
 {
   DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]",

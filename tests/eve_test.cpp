@@ -29,26 +29,14 @@ TEMPLATE_TEST_CASE("Eve_SphereFunction", "[Eve]",
     arma::mat, arma::fmat)
 {
   Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]",
-    arma::mat, arma::fmat)
+    arma::mat, arma::fmat, arma::sp_mat)
 {
   Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
-}
-
-/**
- * Test the Eve optimizer on the Styblinski-Tang function, using arma::sp_mat as
- * the objective type.
- */
-TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]", arma::sp_mat)
-{
-  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<>, arma::sp_mat>(optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 #ifdef USE_COOT
@@ -65,16 +53,14 @@ TEMPLATE_TEST_CASE("Eve_SphereFunction", "[Eve]",
     coot::mat, coot::fmat)
 {
   Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]",
     coot::mat, coot::fmat)
 {
   Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 #endif

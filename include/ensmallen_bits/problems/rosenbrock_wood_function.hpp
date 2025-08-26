@@ -24,12 +24,11 @@ namespace test {
  * four dimensions.  In this function we are actually optimizing a 2x4 matrix of
  * coordinates, not a vector.
  */
-template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>>
-class RosenbrockWoodFunctionType
+class RosenbrockWoodFunction
 {
  public:
   //! Initialize the RosenbrockWoodFunction.
-  RosenbrockWoodFunctionType();
+  RosenbrockWoodFunction();
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -47,6 +46,7 @@ class RosenbrockWoodFunctionType
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
+  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates,
                                        const size_t begin,
                                        const size_t batchSize) const;
@@ -56,6 +56,7 @@ class RosenbrockWoodFunctionType
    *
    * @param coordinates The function coordinates.
    */
+  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
@@ -66,7 +67,7 @@ class RosenbrockWoodFunctionType
    * @param gradient The function gradient.
    * @param batchSize Number of points to process.
    */
-  template<typename GradType>
+  template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates,
                 const size_t begin,
                 GradType& gradient,
@@ -78,7 +79,7 @@ class RosenbrockWoodFunctionType
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  template<typename GradType>
+  template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient) const;
 
   // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
@@ -87,19 +88,17 @@ class RosenbrockWoodFunctionType
   // infrastructure.
 
   //! Get the starting point.
-  template<typename MatTypeIn = arma::mat>
+  template<typename MatType = arma::mat>
   const MatType GetInitialPoint() const
   {
-    return conv_to<MatType>::from(initialPoint);
+    return arma::conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.
-  template<typename MatTypeIn = arma::mat>
+  template<typename MatType = arma::mat>
   MatType GetFinalPoint() const
   {
-    MatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
-    finalPoint.fill(1);
-    return finalPoint;
+    return arma::ones<MatType>(initialPoint.n_rows, initialPoint.n_cols);
   }
 
   //! Get the final objective.
@@ -107,16 +106,14 @@ class RosenbrockWoodFunctionType
 
  private:
   //! Locally-stored initial point.
-  MatType initialPoint;
+  arma::mat initialPoint;
 
   //! Locally-stored Generalized-Rosenbrock function.
-  GeneralizedRosenbrockFunctionType<MatType, LabelsType> rf;
+  GeneralizedRosenbrockFunction rf;
 
   //! Locally-stored Wood function.
   WoodFunction wf;
 };
-
-using RosenbrockWoodFunction = RosenbrockWoodFunctionType<arma::mat>;
 
 } // namespace test
 } // namespace ens
