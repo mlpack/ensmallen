@@ -159,50 +159,6 @@ struct ForwardTypeHelper<ElemType, true>
 };
 #endif
 
-// Proxy for `arma::shuffle` or `coot::shuffle` based on the data type.
-template<typename MatType>
-typename std::enable_if<
-    IsCootType<MatType>::value, typename ForwardType<MatType>::uvec>::type
-sort_index(const MatType& input)
-{
-  #ifdef USE_COOT
-  return coot::sort_index(input);
-  #else
-  return arma::sort_index(input);
-  #endif
-}
-
-// Armadillo proxy for `arma::sort_index` if `MatType` is not a Coot type.
-template<typename MatType>
-typename std::enable_if<
-    !IsCootType<MatType>::value, typename ForwardType<MatType>::uvec>::type
-sort_index(const MatType& input)
-{
-  return arma::sort_index(input);
-}
-
-// Proxy for `arma::linspace` or `coot::linspace` based on the data type.
-template<typename OutputType>
-inline static typename std::enable_if<
-    !arma::is_arma_type<OutputType>::value, OutputType>::type
-linspace(const double start, const double end, const size_t num = 100u)
-{
-  #ifdef USE_COOT
-  return coot::linspace<OutputType>(start, end, num);
-  #else
-  return arma::linspace<OutputType>(start, end, num);
-  #endif
-}
-
-// Armadillo proxy for `arma::linspace` if `OutputType` is an Armadillo type.
-template<typename OutputType>
-inline static typename std::enable_if<
-    arma::is_arma_type<OutputType>::value, OutputType>::type
-linspace(const double start, const double end, const size_t num = 100u)
-{
-  return arma::linspace<OutputType>(start, end, num);
-}
-
 } // namespace ens
 
 #endif
