@@ -82,11 +82,7 @@ namespace test {
       ColType objectives(numObjectives);
       objectives(0) = coords[0];
 
-      ElemType sum = 0;
-      for (size_t i = 1; i < numVariables; i++)
-      {
-        sum += coords(i);
-      }
+      ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
 
       ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.0);
       ElemType objectiveRatio = objectives(0) / g;
