@@ -603,9 +603,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube bestSet, bestFront;
+double obj = opt.Optimize(objectives, coords, bestSet, bestFront);
 ```
 
 </details>
@@ -615,26 +614,26 @@ arma::cube bestFront = opt.ParetoFront();
 </summary>
 
 ```c++
-ZDT3<> ZDT_THREE(300);
+ZDT3<> zdt3(300);
 const double lowerBound = 0;
 const double upperBound = 1;
 
 AGEMOEA opt(50, 500, 0.8, 20, 1e-6, 20, lowerBound, upperBound);
-typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
-typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
+typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
 bool success = true;
-arma::mat coords = ZDT_THREE.GetInitialPoint();
-std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
-opt.Optimize(objectives, coords);
-const arma::cube bestFront = opt.ParetoFront();
+arma::mat coords = zdt3.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = zdt3.GetObjectives();
+arma::cube bestSet, bestFront;
+opt.Optimize(objectives, coords, bestSet, bestFront);
 
 NSGA2 opt2(50, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 // obj2 will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj2 = opt2.Optimize(objectives, coords);
+arma::cube paretoSet, paretoFront;
+double obj2 = opt2.Optimize(objectives, coords, paretoSet, paretoFront);
 
-arma::cube NSGAFront = opt2.ParetoFront();
 // Get the IGD score for NSGA front using AGEMOEA as reference.
-double igd = IGD::Evaluate(NSGAFront, bestFront, 1);
+double igd = IGD::Evaluate(paretoFront, bestFront, 1);
 std::cout << igd << std::endl;
 ```
 
@@ -2370,15 +2369,19 @@ optimizer.Optimize(f, coordinates);
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## MOEA/D-DE
+
 *An optimizer for arbitrary multi-objective functions.*
-MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
-objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
-subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
-algorithm uses Differential Crossover followed by Polynomial Mutation to create offsprings which are then
-decomposed to form a Single Objective Problem. A diversity preserving mechanism is also employed which encourages
-a varied set of solution.
+MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition -
+Differential Evolution) is a multi objective optimization algorithm. It works by
+decomposing the problem into a number of scalar optimization subproblems which
+are solved simultaneously per generation. MOEA/D in itself is a framework, this
+particular algorithm uses Differential Crossover followed by Polynomial Mutation
+to create offsprings which are then decomposed to form a Single Objective
+Problem. A diversity preserving mechanism is also employed which encourages a
+varied set of solutions.
 
 #### Constructors
+
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>()`
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
 
@@ -2448,9 +2451,8 @@ typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 </details>
 
@@ -2514,9 +2516,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 
 </details>
