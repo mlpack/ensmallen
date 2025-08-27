@@ -51,12 +51,7 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-template<
-  typename MatType,
-  typename ColType = typename ForwardType<MatType>::bvec,
-  typename CubeType = typename ForwardType<MatType>::bcube
->
-class NSGA2Type
+class NSGA2
 {
  public:
   /**
@@ -68,8 +63,7 @@ class NSGA2Type
    *
    * @param populationSize The number of candidates in the population.
    *     This should be atleast 4 in size and a multiple of 4.
-   * @param maxGenerations The maximum number of generations allowed
-   *     for NSGA-II.
+   * @param maxGenerations The maximum number of generations allowed for NSGA-II.
    * @param crossoverProb The probability that a crossover will occur.
    * @param mutationProb The probability that a mutation will occur.
    * @param mutationStrength The strength of the mutation.
@@ -78,15 +72,14 @@ class NSGA2Type
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA2Type(
-      const size_t populationSize = 100,
-      const size_t maxGenerations = 2000,
-      const double crossoverProb = 0.6,
-      const double mutationProb = 0.3,
-      const double mutationStrength = 1e-3,
-      const double epsilon = 1e-6,
-      const ColType& lowerBound = ColType(1, GetFillType<MatType>::zeros),
-      const ColType& upperBound = ColType(1, GetFillType<MatType>::ones));
+  NSGA2(const size_t populationSize = 100,
+        const size_t maxGenerations = 2000,
+        const double crossoverProb = 0.6,
+        const double mutationProb = 0.3,
+        const double mutationStrength = 1e-3,
+        const double epsilon = 1e-6,
+        const arma::vec& lowerBound = arma::zeros(1, 1),
+        const arma::vec& upperBound = arma::ones(1, 1));
 
   /**
    * Constructor for the NSGA2 optimizer. This constructor provides an overload
@@ -107,15 +100,14 @@ class NSGA2Type
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  NSGA2Type(
-      const size_t populationSize = 100,
-      const size_t maxGenerations = 2000,
-      const double crossoverProb = 0.6,
-      const double mutationProb = 0.3,
-      const double mutationStrength = 1e-3,
-      const double epsilon = 1e-6,
-      const double lowerBound = 0,
-      const double upperBound = 1);
+  NSGA2(const size_t populationSize = 100,
+        const size_t maxGenerations = 2000,
+        const double crossoverProb = 0.6,
+        const double mutationProb = 0.3,
+        const double mutationStrength = 1e-3,
+        const double epsilon = 1e-6,
+        const double lowerBound = 0,
+        const double upperBound = 1);
 
   /**
    * Optimize a set of objectives. The initial population is generated using the
@@ -130,13 +122,40 @@ class NSGA2Type
    * @return MatType::elem_type The minimum of the accumulated sum over the
    *     objective values in the best front.
    */
-  template<typename InputMatType,
+  template<typename MatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
- typename InputMatType::elem_type Optimize(
-     std::tuple<ArbitraryFunctionType...>& objectives,
-     InputMatType& iterate,
-     CallbackTypes&&... callbacks);
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CallbackTypes&&... callbacks);
+
+  /**
+   * Optimize a set of objectives. The initial population is generated using the
+   * starting point. The output is the best generated front.
+   *
+   * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
+   * @tparam MatType Type of matrix to optimize.
+   * @tparam CubeType Type of front.
+   * @tparam CallbackTypes Types of callback functions.
+   * @param objectives Vector of objective functions to optimize for.
+   * @param iterate Starting point.
+   * @param front The generated front.
+   * @param paretoSet The generated Pareto set.
+   * @param callbacks Callback functions.
+   * @return MatType::elem_type The minimum of the accumulated sum over the
+   *     objective values in the best front.
+   */
+  template<typename MatType,
+           typename CubeType,
+           typename... ArbitraryFunctionType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CubeType& front,
+      CubeType& paretoSet,
+      CallbackTypes&&... callbacks);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -169,22 +188,38 @@ class NSGA2Type
   double& Epsilon() { return epsilon; }
 
   //! Retrieve value of lowerBound.
-  const ColType& LowerBound() const { return lowerBound; }
+  const arma::vec& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
-  ColType& LowerBound() { return lowerBound; }
+  arma::vec& LowerBound() { return lowerBound; }
 
   //! Retrieve value of upperBound.
-  const ColType& UpperBound() const { return upperBound; }
+  const arma::vec& UpperBound() const { return upperBound; }
   //! Modify value of upperBound.
-  ColType& UpperBound() { return upperBound; }
+  arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the Pareto optimal points in variable space. This returns an
-  // empty cube until `Optimize()` has been called.
-  const CubeType& ParetoSet() const { return paretoSet; }
+  /**
+   * Retrieve the Pareto optimal points in variable space. This returns an
+   * empty cube until `Optimize()` has been called. Note that this function is
+   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
+   * instead.
+   */
+  template<typename MatType = arma::cube>
+  [[deprecated("use Optimize() instead")]] MatType ParetoSet() const
+  {
+    return conv_to<MatType>::from(paretoSet);
+  }
 
-  //! Retrieve the best front (the Pareto frontier). This returns an
-  //! empty cube until `Optimize()` has been called.
-  const CubeType& ParetoFront() const { return paretoFront; }
+  /**
+   * Retrieve the best front (the Pareto frontier). This returns an empty cube
+   * until `Optimize()` has been called. Note that this function is
+   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
+   * instead.
+   */
+  template<typename MatType = arma::cube>
+  [[deprecated("use Optimize() instead")]] MatType ParetoFront() const
+  {
+    return conv_to<MatType>::from(paretoFront);
+  }
 
   /**
    * Retrieve the best front (the Pareto frontier).  This returns an empty
@@ -192,14 +227,14 @@ class NSGA2Type
    * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
    * instead.
    */
-  [[deprecated("use ParetoFront() instead")]] const std::vector<MatType>& Front()
+  [[deprecated("use ParetoFront() instead")]] const std::vector<arma::mat>& Front()
   {
     if (rcFront.size() == 0)
     {
       // Match the old return format.
       for (size_t i = 0; i < paretoFront.n_slices; ++i)
       {
-        rcFront.push_back(MatType(paretoFront.slice(i)));
+        rcFront.push_back(arma::mat(paretoFront.slice(i)));
       }
     }
 
@@ -359,7 +394,7 @@ class NSGA2Type
   //! The number of objectives being optimised for.
   size_t numObjectives;
 
-  //! The numbeer of variables used per objectives.
+  //! The number of variables used per objectives.
   size_t numVariables;
 
   //! The number of candidates in the population.
@@ -381,26 +416,24 @@ class NSGA2Type
   double epsilon;
 
   //! Lower bound of the initial swarm.
-  ColType lowerBound;
+  arma::vec lowerBound;
 
   //! Upper bound of the initial swarm.
-  ColType upperBound;
+  arma::vec upperBound;
 
   //! The set of all the Pareto optimal points.
   //! Stored after Optimize() is called.
-  CubeType paretoSet;
+  arma::cube paretoSet;
 
   //! The set of all the Pareto optimal objective vectors.
   //! Stored after Optimize() is called.
-  CubeType paretoFront;
+  arma::cube paretoFront;
 
   //! A different representation of the Pareto front, for reverse compatibility
   //! purposes.  This can be removed when ensmallen 3.x is released!  (Along
   //! with `Front()`.)  This is only populated when `Front()` is called.
-  std::vector<MatType> rcFront;
+  std::vector<arma::mat> rcFront;
 };
-
-using NSGA2 = NSGA2Type<arma::mat>;
 
 } // namespace ens
 
