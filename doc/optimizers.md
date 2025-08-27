@@ -3425,7 +3425,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 The `Snapshots()` function returns a `std::vector<arma::mat>&` (a vector of
 snapshots of the parameters), not a `size_t` representing the maximum number of
-snapshots.
+snapshots.  If a different matrix type or gradient type was specified during the
+optimization, then `Snapshots()` should be called as
+`Snapshots<MatType, GradType>()`; if this is not done, an exception will be
+thrown.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.
