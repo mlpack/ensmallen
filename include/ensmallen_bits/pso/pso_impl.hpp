@@ -33,23 +33,22 @@ namespace ens {
  */
 
 //! Optimize the function (minimize).
-template<typename MatType,
-         typename VelocityUpdatePolicy,
+template<typename VelocityUpdatePolicy,
          typename InitPolicy>
 template<typename ArbitraryFunctionType,
          typename InputMatType,
          typename... CallbackTypes>
 typename InputMatType::elem_type PSOType<
-    MatType, VelocityUpdatePolicy, InitPolicy>::Optimize(
+    VelocityUpdatePolicy, InitPolicy>::Optimize(
     ArbitraryFunctionType& function,
     InputMatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
-  typedef typename MatType::elem_type ElemType;
-  typedef typename ForwardType<MatType>::bmat BaseMatType;
-  typedef typename ForwardType<MatType>::bcol BaseColType;
-  typedef typename ForwardType<MatType>::bcube BaseCubeType;
+  typedef typename InputMatType::elem_type ElemType;
+  typedef typename ForwardType<InputMatType>::bmat BaseMatType;
+  typedef typename ForwardType<InputMatType>::bcol BaseColType;
+  typedef typename ForwardType<InputMatType>::bcube BaseCubeType;
 
   // The update policy internally use a templated class so that
   // we can know MatType only when Optimize() is called.
@@ -86,11 +85,15 @@ typename InputMatType::elem_type PSOType<
   BaseCubeType particlePositions, particleVelocities, particleBestPositions;
   BaseColType particleFitnesses, particleBestFitnesses;
 
+  //! Useful temporaries for float-like comparisons.
+  BaseMatType castedlowerBound = conv_to<BaseMatType>::from(lowerBound);
+  BaseMatType castedupperBound = conv_to<BaseMatType>::from(upperBound);
+
   // Initialize particles using the init policy.
   initPolicy.Initialize(iterate,
       numParticles,
-      lowerBound,
-      upperBound,
+      castedlowerBound,
+      castedupperBound,
       particlePositions,
       particleVelocities,
       particleFitnesses,
