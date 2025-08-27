@@ -188,7 +188,7 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
     size_t batchSize = 1;
     // Check if the optimizer implements the BatchSize() method and use the
     // parameter for the objective calculation.
-    if (traits::HasBatchSizeSignature<BaseOptimizerType>::value)
+    if constexpr (traits::HasBatchSizeSignature<BaseOptimizerType>::value)
       batchSize = baseOptimizer.BatchSize();
 
     overallObjective = 0;

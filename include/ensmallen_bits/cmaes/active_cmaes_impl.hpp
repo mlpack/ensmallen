@@ -105,9 +105,9 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  if (stepSize == 0) 
+  if (stepSize == 0)
     sigma(0) = transformationPolicy.InitialStepSize();
-  else 
+  else
     sigma(0) = stepSize;
 
   const ElemType cs = 4.0 / (iterate.n_elem + 4);

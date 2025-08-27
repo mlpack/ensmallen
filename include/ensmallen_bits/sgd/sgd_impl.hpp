@@ -150,8 +150,14 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         gradient, callbacks...);
 
     // Use the update policy to take a step.
+    // TODO: remove old behavior in ensmallen 4.0.0.
+    #if defined(ENS_OLD_SEPARABLE_STEP_BEHAVIOR)
     instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, stepSize,
         gradient);
+    #else
+    instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate,
+        (stepSize / effectiveBatchSize), gradient);
+    #endif
 
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
