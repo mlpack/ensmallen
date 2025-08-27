@@ -77,7 +77,6 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
   size_t sweepCounter = 0;
 
   BaseMatType accept(rows, cols);
-  accept.zeros();
   BaseMatType moveSize(rows, cols, GetFillType<BaseMatType>::none);
   moveSize.fill(initMoveCoef);
 
@@ -226,11 +225,8 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
   moveSize = log(moveSize);
   moveSize += gain * (accept / (double) nMoves - target);
   moveSize = exp(moveSize);
-
-  // To avoid the use of element-wise arma::min(), which is only available in
-  // Armadillo after v3.930, we use a for loop here instead.
-  for (size_t i = 0; i < accept.n_elem; ++i)
-    moveSize(i) = (moveSize(i) > maxMoveCoef) ? maxMoveCoef : moveSize(i);
+  moveSize.clamp(-std::numeric_limits<typename MatType::elem_type>::max(),
+      maxMoveCoef);
 
   accept.zeros();
 }
