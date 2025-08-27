@@ -87,12 +87,6 @@ class SMORMS3Update
     {
       using eT = typename MatType::elem_type;
 
-      if (lr.is_empty() || lr(0) != stepSize)
-      {
-        lr.set_size(gradient.n_rows, gradient.n_cols);
-        lr.fill(stepSize);
-      }
-
       // Update the iterate.
       MatType r = 1 / (mem + 1);
 
@@ -119,8 +113,6 @@ class SMORMS3Update
     GradType g;
     //! Squared gradient estimate parameter.
     GradType g2;
-    //! Current learning rate matrix.
-    MatType lr;
   };
 
  private:
