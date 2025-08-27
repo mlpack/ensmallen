@@ -46,6 +46,30 @@ class TimerStop
   }
 
   /**
+   * Callback function called when a step is taken.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Starting point.
+   * @param epoch The index of the current epoch.
+   * @param objective Objective value of the current point.
+   */
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  bool EndEpoch(OptimizerType& /* optimizer */,
+                FunctionType& /* function */,
+                const MatType& /* coordinates */)
+  {
+    if (timer.toc() > duration)
+    {
+      Info << "Timer timeout (" << duration << "s) reached; terminating "
+          << "optimization." << std::endl;
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Callback function called at the end of a pass over the data.
    *
    * @param optimizer The optimizer used to update the function.
@@ -63,7 +87,8 @@ class TimerStop
   {
     if (timer.toc() > duration)
     {
-      Info << "Timer timeout reached; terminate optimization." << std::endl;
+      Info << "Timer timeout (" << duration << "s) reached; terminating "
+          << "optimization." << std::endl;
       return true;
     }
 

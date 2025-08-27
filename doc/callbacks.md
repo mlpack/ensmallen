@@ -1,10 +1,10 @@
-Callbacks in ensmallen are methods that are called at various states during the
-optimization process, which can be used to implement and control behaviors such
-as:
+Callbacks in ensmallen are methods that are called at various stages of the
+optimization process.  These can be used to print information about the optimization, modify behavior of the optimization, or a wide range of other possibilities.  Some examples of what callbacks can be used for include:
 
 * Changing the learning rate.
-* Printing of the current objective.
-* Sending a message when the optimization hits a specific state such us a minimal objective.
+* Printing the current objective.
+* Sending a message when the optimization hits a specific state such us a
+  minimal objective.
 
 Callbacks can be passed as an argument to the `Optimize()` function:
 
@@ -72,6 +72,27 @@ std::cout << callback.BestObjective() << std::endl;
 ```
 
 </details>
+
+Numerous implemented and ready-to-use callbacks are included with ensmallen, and
+it is also easy to write a custom callback.
+
+ * [`EarlyStopAtMinLoss`](#earlystopatminloss): stop the optimization if no
+   improvement has been made
+ * [`GradClipByNorm`](#gradclipbynorm): reduce the norm of the gradient to
+   prevent the exploding gradient problem
+ * [`GradClipByValue`](#gradclipbyvalue): clip the gradient to specified minimum
+   and maximum values
+ * [`PrintLoss`](#printloss): print the objective at each iteration to a
+   specified stream
+ * [`ProgressBar`](#progressbar): print a progress bar to the screen at each
+   iteration
+ * [`Report`](#report): print a report at the end of optimization
+ * [`StoreBestCoordinates`](#storebestcoordinates): store the coordinates that
+   give the best objective value at the end of an epoch
+ * [`TimerStop`](#timerstop): stop the optimization after a given amount of time
+
+A [guide for implementing custom callbacks](#custom-callbacks) is below, and a
+few [example custom callbacks](#custom-callback-examples) are given too.
 
 ## Built-in Callbacks
 
@@ -154,7 +175,7 @@ instability. This can happen due to:
 * A high learning rate, leading to large gradient updates.
 * Poorly scaled datasets, resulting in significant variance between data points.
 * A loss function that generates disproportionately large error values.
-    
+
 Common solutions for this problem are:
 
 #### GradClipByNorm
@@ -412,174 +433,304 @@ std::cout << "The optimized model found by AdaDelta has the "
 
 </details>
 
-## Callback States
+### TimerStop
 
-Callbacks are called at several states during the optimization process:
+Callback that stops optimization after a certain amount of time has elapsed.
 
-* At the beginning and end of the optimization process.
-* After any call to `Evaluate()` and `EvaluateConstraint()`.
-* After any call to `Gradient()` and `GradientConstraint()`.
-* At the start and end of an epoch.
+#### Constructors
 
-Each callback provides optimization-relevant information that can be accessed or
-modified.
+ * `TimerStop(`_`seconds`_`)`
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+AdaDelta optimizer(1.0, 1, 0.99, 1e-8, 1000, 1e-9, true);
+
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+// Limit optimization to 15 seconds.
+optimizer.Optimize(f, coordinates, TimerStop(15));
+```
+
+</details>
+
+## Custom Callbacks
+
+Custom callbacks can be easily implemented by creating a class and simply
+implementing functions for each individual callback that you are interested in
+handling, plus any other functionality you might need (e.g. constructors,
+accessors).
+
+Thus, when writing a custom callback, start with an empty class like this:
+
+```c++
+class CustomCallback
+{
+ public:
+  // Add individual callback handlers that you are interested in handling!
+};
+```
+
+and add any of the individual callback handler functions described below.
 
 ### BeginOptimization
 
-Called at the beginning of the optimization process.
+Called at the beginning of the optimization process.  Add this function to your
+callback class with your desired implementation:
 
- * `void BeginOptimization(`_`optimizer, function, coordinates`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  void BeginOptimization(OptimizerType& optimizer,
+                         FunctionType& function,
+                         MatType& coordinates);
+```
 
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function to be optimized (e.g. the first argument given to
+   `optimizer.Optimize()`.
+ * `coordinates`: the current coordinates for optimization; since optimization
+   is just beginning, this is the exact same matrix given to `Optimize()`.
 
 ### EndOptimization
 
-Called at the end of the optimization process.
+Called at the end of the optimization process.  Add this function to your
+callback class with your desired implementation:
 
- * `void EndOptimization(`_`optimizer, function, coordinates`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  void EndOptimization(OptimizerType& optimizer,
+                       FunctionType& function,
+                       MatType& coordinates);
+```
 
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that has been optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the final coordinates for optimization; since optimization is
+   ending, these are the same values that will be in the resulting matrix after
+   `Optimize()` finishes.
 
 ### Evaluate
 
-Called after any call to `Evaluate()`.
+Called after any call to `Evaluate()` or `EvaluateWithGradient()`.  Add this
+function to your callback class with your desired implementation:
 
- * `bool Evaluate(`_`optimizer, function, coordinates, objective`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  bool Evaluate(OptimizerType& optimizer,
+                FunctionType& function,
+                const MatType& coordinates,
+                const double objective);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that is being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates with which `function.Evaluate()` was called.
+ * `objective`: the result of `function.Evaluate(coordinates)`.
 
 If the callback returns `true`, the optimization will be terminated.
-
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
-| `double` | **`objective`** | Objective value of the current point. |
 
 ### EvaluateConstraint
 
-Called after any call to `EvaluateConstraint()`.
+Called after any call to `EvaluateConstraint()`, for
+[constrained functions](#constrained-functions).  Add this function to your
+callback class with your desired implementation:
 
- * `bool EvaluateConstraint(`_`optimizer, function, coordinates, constraint, constraintValue`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  bool EvaluateConstraint(OptimizerType& optimizer,
+                          FunctionType& function,
+                          const MatType& coordinates,
+                          const size_t constraintIndex,
+                          const double constraintValue);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that is being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates with which `function.EvaluateConstraint()` was
+   called.
+ * `constraintIndex`: the index of the constraint that was evaluated
+ * `constraintValue`: the result of
+   `function.EvaluateConstraint(coordinates, constraintIndex)`.
 
 If the callback returns `true`, the optimization will be terminated.
-
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
-| `size_t` | **`constraint`** | The index of the constraint. |
-| `double` | **`constraintValue`** | Constraint value of the current point. |
 
 ### Gradient
 
-Called after any call to `Gradient()`.
+Called after any call to `Gradient()` or `EvaluateWithGradient()`.  Add this
+function to your callback class with your desired implementation:
 
- * `bool Gradient(`_`optimizer, function, coordinates, gradient`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType>
+  bool Gradient(OptimizerType& optimizer,
+                FunctionType& function,
+                const MatType& coordinates,
+                GradType& gradient);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that is being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates with which `function.Gradient()` was called.
+ * `gradient`: the computed gradient (can be modified!).
 
 If the callback returns `true`, the optimization will be terminated.
-
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
-| `GradType` | **`gradient`** | Matrix that holds the gradient. |
 
 ### GradientConstraint
 
-Called after any call to `GradientConstraint()`.
+Called after any call to `GradientConstraint()` for
+[constrained functions](#constrained-functions).  Add this function to your
+callback class with your desired implementation:
 
- * `bool GradientConstraint(`_`optimizer, function, coordinates, constraint, gradient`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType,
+           typename GradType>
+  bool GradientConstraint(OptimizerType& optimizer,
+                          FunctionType& function,
+                          const MatType& coordinates,
+                          const size_t constraintIndex,
+                          GradType& constraintGradient);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that is being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates with which `function.GradientConstraint()` was
+   called.
+ * `constraintIndex`: the index of the constraint whose gradient was computed.
+ * `constraintGradient`: the computed result of
+   `function.GradientConstraint()`.
 
 If the callback returns `true`, the optimization will be terminated.
-
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
-| `size_t` | **`constraint`** | The index of the constraint. |
-| `GradType` | **`gradient`** | Matrix that holds the gradient. |
 
 ### BeginEpoch
 
-Called at the beginning of a pass over the data. The objective may be exact or
-an estimate depending on `exactObjective` value.
+Called at the beginning of a pass over the data, for
+[separable functions](#separable-functions). The objective may be exact or
+an estimate depending on the optimizer's `ExactObjective()` value.  Add this
+function to your callback class with your desired implementation:
 
- * `bool BeginEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  bool BeginEpoch(OptimizerType& optimizer,
+                  FunctionType& function,
+                  const MatType& coordinates,
+                  const size_t epoch,
+                  const double objective);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that is being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates at the start of the epoch.
+ * `epoch`: the epoch number.
+ * `objective`: the exact or approximate objective at the end of the previous
+   epoch.
 
 If the callback returns `true`, the optimization will be terminated.
-
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
-| `size_t` | **`epoch`** | The index of the current epoch. |
-| `double` | **`objective`** | Objective value of the current point. |
 
 ### EndEpoch
 
-Called at the end of a pass over the data. The objective may be exact or
-an estimate depending on `exactObjective` value.
+Called at the end of a pass over the data, for
+[separable functions](#separable-functions). The objective may be exact or an
+estimate depending on the optimizer's `ExactObjective()` value.  Add this
+function to your callback class with your desired implementation:
 
- * `bool EndEpoch(`_`optimizer, function, coordinates, epoch, objective`_`)`
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  bool EndEpoch(OptimizerType& optimizer,
+                FunctionType& function,
+                const MatType& coordinates,
+                const size_t epoch,
+                const double objective);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that is being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates at the end of the epoch.
+ * `epoch`: the epoch number.
+ * `objective`: the exact or approximate objective at the end of the epoch.
 
 If the callback returns `true`, the optimization will be terminated.
 
-#### Attributes
+### StepTaken
 
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
-| `size_t` | **`epoch`** | The index of the current epoch. |
-| `double` | **`objective`** | Objective value of the current point. |
+Called after the optimizer has taken any step that modifies the coordinates.
+Add this function to your callback class with your desired implementation:
+
+```c++
+  template<typename OptimizerType,
+           typename FunctionType,
+           typename MatType>
+  bool StepTaken(OptimizerType& optimizer,
+                FunctionType& function,
+                MatType& coordinates);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `function`: the function that is being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates after the step (can be modified!).
+
+If the callback returns `true`, the optimization will be terminated.  Note that
+changing the `coordinates` matrix may cause strange behavior for certain
+optimizers---your mileage may vary!
 
 ### GenerationalStepTaken
 
-Called after the evolution of a single generation. Intended specifically for
-MultiObjective Optimizers.
+Called after the evolution of a single generation, for
+[multi-objective functions](#multi-objective-functions).  Add this function to
+your callback class with your desired implementation:
 
- * `bool GenerationalStepTaken(`_`optimizer, function, coordinates, objectives, frontIndices`_`)`
+```c++
+  template<typename OptimizerType,
+           typename... FunctionTypes,
+           typename MatType,
+           typename ObjectivesVecType,
+           typename IndicesType>
+  bool GenerationalStepTaken(OptimizerType& optimizer,
+                             std::tuple<FunctionTypes...>& functions,
+                             MatType& coordinates,
+                             ObjectivesVecType& objectives,
+                             IndicesType& frontIndices);
+```
+
+ * `optimizer`: the actual object on which `Optimize()` was called.
+ * `functions`: the functions that are being optimized (e.g. the first argument
+   given to `optimizer.Optimize()`.
+ * `coordinates`: the coordinates after taking the step.
+ * `objectives`: a vector of column vectors indicating the objective for each
+   element in the population on each objective function.
+ * `frontIndices`: indices of the population that are on the Pareto front.
 
 If the callback returns `true`, the optimization will be terminated.
 
-#### Attributes
-
-| **type** | **name** | **description** |
-|----------|----------|-----------------|
-| `OptimizerType` | **`optimizer`** | The optimizer used to update the function. |
-| `FunctionType` | **`function`** | The function to be optimized. |
-| `MatType` | **`coordinates`** | The current function parameter. |
-| `ObjectivesVecType` | **`objectives`** | The set of calculated objectives so far. |
-| `IndicesType` | **`frontIndices`** | The indices of the members belonging to Pareto Front. |
-
-## Custom Callbacks
+## Custom Callback Examples
 
 ### Learning rate scheduling
 
