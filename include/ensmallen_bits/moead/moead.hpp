@@ -49,14 +49,9 @@ namespace ens {
  *   year    = {2008},
  * @endcode
  */
-template<
-    typename InitPolicyType = Uniform,
-    typename DecompPolicyType = Tchebycheff,
-    typename MatType = arma::mat,
-    typename ColType = typename ForwardType<MatType>::bcol,
-    typename CubeType = typename ForwardType<MatType>::bcube>
-class MOEADType
-{
+template<typename InitPolicyType = Uniform,
+         typename DecompPolicyType = Tchebycheff>
+class MOEAD {
  public:
   /**
    * Constructor for the MOEA/D optimizer.
@@ -81,20 +76,19 @@ class MOEADType
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-  MOEADType(
-      const size_t populationSize = 300,
-      const size_t maxGenerations = 500,
-      const double crossoverProb = 1.0,
-      const double neighborProb = 0.9,
-      const size_t neighborSize = 20,
-      const double distributionIndex = 20,
-      const double differentialWeight = 0.5,
-      const size_t maxReplace = 2,
-      const double epsilon = 1E-10,
-      const ColType& lowerBound = ColType(1, GetFillType<ColType>::zeros),
-      const ColType& upperBound = ColType(1, GetFillType<ColType>::ones),
-      const InitPolicyType initPolicy = InitPolicyType(),
-      const DecompPolicyType decompPolicy = DecompPolicyType());
+  MOEAD(const size_t populationSize = 300,
+        const size_t maxGenerations = 500,
+        const double crossoverProb = 1.0,
+        const double neighborProb = 0.9,
+        const size_t neighborSize = 20,
+        const double distributionIndex = 20,
+        const double differentialWeight = 0.5,
+        const size_t maxReplace = 2,
+        const double epsilon = 1E-10,
+        const arma::vec& lowerBound = arma::zeros(1, 1),
+        const arma::vec& upperBound = arma::ones(1, 1),
+        const InitPolicyType initPolicy = InitPolicyType(),
+        const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Constructor for the MOEA/D optimizer. This constructor is provides an
@@ -121,20 +115,19 @@ class MOEADType
    * @param upperBound The upper bound on each variable of a member
    *    of the variable space.
    */
-  MOEADType(
-      const size_t populationSize = 300,
-      const size_t maxGenerations = 500,
-      const double crossoverProb = 1.0,
-      const double neighborProb = 0.9,
-      const size_t neighborSize = 20,
-      const double distributionIndex = 20,
-      const double differentialWeight = 0.5,
-      const size_t maxReplace = 2,
-      const double epsilon = 1E-10,
-      const double lowerBound = 0,
-      const double upperBound = 1,
-      const InitPolicyType initPolicy = InitPolicyType(),
-      const DecompPolicyType decompPolicy = DecompPolicyType());
+    MOEAD(const size_t populationSize = 300,
+          const size_t maxGenerations = 500,
+          const double crossoverProb = 1.0,
+          const double neighborProb = 0.9,
+          const size_t neighborSize = 20,
+          const double distributionIndex = 20,
+          const double differentialWeight = 0.5,
+          const size_t maxReplace = 2,
+          const double epsilon = 1E-10,
+          const double lowerBound = 0,
+          const double upperBound = 1,
+          const InitPolicyType initPolicy = InitPolicyType(),
+          const DecompPolicyType decompPolicy = DecompPolicyType());
 
   /**
    * Optimize a set of objectives. The initial population is generated
@@ -147,12 +140,37 @@ class MOEADType
    * @param iterate The initial reference point for generating population.
    * @param callbacks The callback functions.
    */
-  template<typename InputMatType,
+  template<typename MatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
-  typename InputMatType::elem_type Optimize(
+  typename MatType::elem_type Optimize(
       std::tuple<ArbitraryFunctionType...>& objectives,
-      InputMatType& iterate,
+      MatType& iterate,
+      CallbackTypes&&... callbacks);
+
+  /**
+   * Optimize a set of objectives. The initial population is generated
+   * using the initial point. The output is the best generated front.
+   *
+   * @tparam MatType The type of matrix used to store coordinates.
+   * @tparam CubeType The type of cube used to store the front and Pareto set.
+   * @tparam ArbitraryFunctionType The type of objective function.
+   * @tparam CallbackTypes Types of callback function.
+   * @param objectives std::tuple of the objective functions.
+   * @param iterate The initial reference point for generating population.
+   * @param front The generated front.
+   * @param paretoSet The generated Pareto set.
+   * @param callbacks The callback functions.
+   */
+  template<typename MatType,
+           typename CubeType,
+           typename... ArbitraryFunctionType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CubeType& front,
+      CubeType& paretoSet,
       CallbackTypes&&... callbacks);
 
   //! Retrieve population size.
@@ -201,22 +219,38 @@ class MOEADType
   double& Epsilon() { return epsilon; }
 
   //! Retrieve value of lowerBound.
-  const ColType& LowerBound() const { return lowerBound; }
+  const arma::vec& LowerBound() const { return lowerBound; }
   //! Modify value of lowerBound.
-  ColType& LowerBound() { return lowerBound; }
+  arma::vec& LowerBound() { return lowerBound; }
 
   //! Retrieve value of upperBound.
-  const ColType& UpperBound() const { return upperBound; }
+  const arma::vec& UpperBound() const { return upperBound; }
   //! Modify value of upperBound.
-  ColType& UpperBound() { return upperBound; }
+  arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the Pareto optimal points in variable space.
-  //! This returns an empty cube until `Optimize()` has been called.
-  const CubeType& ParetoSet() const { return paretoSet; }
+  /**
+   * Retrieve the Pareto optimal points in variable space. This returns an
+   * empty cube until `Optimize()` has been called. Note that this function is
+   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
+   * instead.
+   */
+  template<typename MatType = arma::cube>
+  [[deprecated("use Optimize() instead")]] MatType ParetoSet() const
+  {
+    return conv_to<MatType>::from(paretoSet);
+  }
 
-  //! Retrieve the best front (the Pareto frontier).
-  //! This returns an empty cube until `Optimize()` has been called.
-  const CubeType& ParetoFront() const { return paretoFront; }
+  /**
+   * Retrieve the best front (the Pareto frontier). This returns an empty cube
+   * until `Optimize()` has been called. Note that this function is
+   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
+   * instead.
+   */
+  template<typename MatType = arma::cube>
+  [[deprecated("use Optimize() instead")]] MatType ParetoFront() const
+  {
+    return conv_to<MatType>::from(paretoFront);
+  }
 
   //! Get the weight initialization policy.
   const InitPolicyType& InitPolicy() const { return initPolicy; }
@@ -236,9 +270,8 @@ class MOEADType
    * @param neighborSize A matrix containing indices of the neighbors.
    * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
-  template<typename IndexMatType>
   std::tuple<size_t, size_t> Mating(size_t subProblemIdx,
-                                    const IndexMatType& neighborSize,
+                                    const arma::umat& neighborSize,
                                     bool sampleNeighbor);
 
   /**
@@ -252,38 +285,40 @@ class MOEADType
    * @param upperBound The upper bound on each variable in the matrix.
    * @return The mutated child.
    */
-  template<typename InputMatType>
-  void Mutate(InputMatType& child,
+  template<typename MatType>
+  void Mutate(MatType& child,
               double mutationRate,
-              const InputMatType& lowerBound,
-              const InputMatType& upperBound);
+              const MatType& lowerBound,
+              const MatType& upperBound);
 
   /**
    * Evaluate objectives for the elite population.
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple function types.
    * @tparam MatType Type of matrix to optimize.
+   * @tparam ColType Type of column vector to store objectives.
    * @param population The elite population.
    * @param objectives The set of objectives.
    * @param calculatedObjectives Vector to store calculated objectives.
    */
   template<std::size_t I = 0,
-           typename InputMatType,
+           typename MatType,
+           typename ColType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(
-      std::vector<InputMatType>&,
-      std::tuple<ArbitraryFunctionType...>&,
-      std::vector<ColType>&);
+  EvaluateObjectives(std::vector<MatType>&,
+                     std::tuple<ArbitraryFunctionType...>&,
+                     std::vector<ColType>&);
 
   template<std::size_t I = 0,
-           typename InputMatType,
+           typename MatType,
+           typename ColType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(
-      std::vector<InputMatType>& population,
-      std::tuple<ArbitraryFunctionType...>& objectives,
-      std::vector<ColType>& calculatedObjectives);
+  EvaluateObjectives(std::vector<MatType>& population,
+                     std::tuple<ArbitraryFunctionType...>& objectives,
+                     std::vector<ColType>&
+                     calculatedObjectives);
 
   //! Size of the population.
   size_t populationSize;
@@ -316,18 +351,18 @@ class MOEADType
   double epsilon;
 
   //! Lower bound on each variable in the variable space.
-  ColType lowerBound;
+  arma::vec lowerBound;
 
   //! Upper bound on each variable in the variable space.
-  ColType upperBound;
+  arma::vec upperBound;
 
   //! The set of all the Pareto optimal points.
   //! Stored after Optimize() is called.
-  CubeType paretoSet;
+  arma::cube paretoSet;
 
   //! The set of all the Pareto optimal objective vectors.
   //! Stored after Optimize() is called.
-  CubeType paretoFront;
+  arma::cube paretoFront;
 
   //! Policy to initialize the reference directions (weights) matrix.
   InitPolicyType initPolicy;
@@ -336,21 +371,9 @@ class MOEADType
   DecompPolicyType decompPolicy;
 };
 
-using MOEAD = MOEADType<
-    Uniform, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
-using DefaultMOEAD = MOEADType<
-    Uniform, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
-using BBSMOEAD = MOEADType<
-    BayesianBootstrap, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
-
-template<
-    typename MatType,
-    typename ColType = typename ForwardType<MatType>::bcol,
-    typename CubeType = typename ForwardType<MatType>::bcube>
-using DirichletMOEADType = MOEADType<
-    Dirichlet, Tchebycheff, MatType, ColType, CubeType>;
-using DirichletMOEAD = MOEADType<
-    Dirichlet, Tchebycheff, arma::mat, arma::colvec, arma::cube>;
+using DefaultMOEAD = MOEAD<Uniform, Tchebycheff>;
+using BBSMOEAD = MOEAD<BayesianBootstrap, Tchebycheff>;
+using DirichletMOEAD = MOEAD<Dirichlet, Tchebycheff>;
 } // namespace ens
 
 // Include implementation.

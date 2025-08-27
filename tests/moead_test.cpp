@@ -89,7 +89,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]",
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  MOEADType<Uniform, Tchebycheff, TestType> opt(
+  MOEAD<Uniform, Tchebycheff> opt(
       300, // Population size.
       300,  // Max generations.
       1.0,  // Crossover probability.
@@ -114,7 +114,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]",
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet= opt.ParetoSet();
+    arma::Cube<ElemType> paretoSet= opt.ParetoSet<arma::Cube<ElemType>>();
 
     bool allInRange = true;
 
@@ -146,12 +146,12 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
 
   // This test can be a little flaky, so we try it a few times.
   SchafferFunctionN1<TestType> SCH;
-  const arma::Col<ElemType> lowerBound = {-1000};
-  const arma::Col<ElemType> upperBound = {1000};
+  const arma::vec lowerBound = {-1000};
+  const arma::vec upperBound = {1000};
   const double expectedLowerBound = 0.0;
   const double expectedUpperBound = 2.0;
 
-  MOEADType<Uniform, Tchebycheff, TestType> opt(
+  MOEAD<Uniform, Tchebycheff> opt(
       300, // Population size.
       300,  // Max generations.
       1.0,  // Crossover probability.
@@ -175,7 +175,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = opt.ParetoSet();
+    arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
 
     bool allInRange = true;
 
@@ -211,7 +211,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
   const double expectedLowerBound = -1.0 / sqrt(3);
   const double expectedUpperBound = 1.0 / sqrt(3);
 
-  MOEADType<Uniform, Tchebycheff, TestType> opt(
+  MOEAD<Uniform, Tchebycheff> opt(
       300,  // Max generations.
       300,  // Max generations.
       1.0,  // Crossover probability.
@@ -231,7 +231,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet();
+  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
 
   bool allInRange = true;
 
@@ -263,12 +263,12 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
   typedef typename TestType::elem_type ElemType;
 
   FonsecaFlemingFunction<TestType> FON;
-  const arma::Col<ElemType> lowerBound = {-4, -4, -4};
-  const arma::Col<ElemType> upperBound = {4, 4, 4};
+  const arma::vec lowerBound = {-4, -4, -4};
+  const arma::vec upperBound = {4, 4, 4};
   const ElemType expectedLowerBound = -1.0 / sqrt(3);
   const ElemType expectedUpperBound = 1.0 / sqrt(3);
 
-  MOEADType<Uniform, Tchebycheff, TestType> opt(
+  MOEAD<Uniform, Tchebycheff> opt(
       300,  // Max generations.
       300,  // Max generations.
       1.0,  // Crossover probability.
@@ -289,7 +289,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
   opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet();
+  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
 
   bool allInRange = true;
 
@@ -426,7 +426,7 @@ TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
         break;
       }
     }
-    if(!allInRange)
+    if (!allInRange)
     {
       success = false;
       break;
@@ -591,7 +591,8 @@ TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", arma::mat)
 
   opt.Optimize(objectives, coords);
 
-  const arma::Cube<ElemType>& finalPopulation = opt.ParetoSet();
+  const arma::Cube<ElemType>& finalPopulation = opt.ParetoSet<
+      arma::Cube<ElemType>>();
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
 
@@ -606,7 +607,7 @@ TEMPLATE_TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEAD]", coot::mat, coot::fmat)
   const double lowerBound = 0;
   const double upperBound = 1;
 
-  DirichletMOEADType<TestType> opt(
+  DirichletMOEAD opt(
       300, // Population size.
       300,  // Max generations.
       1.0,  // Crossover probability.
@@ -629,7 +630,8 @@ TEMPLATE_TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEAD]", coot::mat, coot::fmat)
 
   opt.Optimize(objectives, coords);
 
-  const coot::Cube<ElemType>& finalPopulation = opt.ParetoSet();
+  const coot::Cube<ElemType>& finalPopulation = opt.ParetoSet<
+      coot::Cube<ElemType>>();
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
 

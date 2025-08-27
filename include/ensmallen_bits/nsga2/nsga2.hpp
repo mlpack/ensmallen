@@ -136,7 +136,7 @@ class NSGA2
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
    * @tparam MatType Type of matrix to optimize.
-   * @tparam CubeType Type of front.
+   * @tparam CubeType The type of cube used to store the front and Pareto set.
    * @tparam CallbackTypes Types of callback functions.
    * @param objectives Vector of objective functions to optimize for.
    * @param iterate Starting point.
@@ -246,7 +246,8 @@ class NSGA2
    * Evaluate objectives for the elite population.
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple function types.
-   * @tparam MatType Type of matrix to optimize.
+   * @tparam InputMatType Type of matrix to optimize.
+   * @tparam ObjectiveMatType Type of matrix to store objective values.
    * @param population The elite population.
    * @param objectives The set of objectives.
    * @param calculatedObjectives Vector to store calculated objectives.
