@@ -73,7 +73,7 @@ TEST_CASE("MOEADSchafferN1DoubleTest", "[MOEADTest]")
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
     opt.Optimize(objectives, coords);
-    arma::cube paretoSet= opt.ParetoSet();
+    arma::cube paretoSet = opt.ParetoSet();
 
     bool allInRange = true;
 
