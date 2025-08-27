@@ -320,8 +320,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
     } // End of pass over all subproblems.
 
     //  The final population itself is the best front.
-    const std::vector<UVecType> frontIndices { shuffle(
-        linspace<UVecType>(0, populationSize - 1, populationSize)) };
+    const std::vector<arma::uvec> frontIndices { arma::shuffle(
+        arma::linspace<arma::uvec>(0, populationSize - 1, populationSize)) };
 
     terminate |= Callback::GenerationalStepTaken(*this, objectives, iterate,
         populationFitness, frontIndices, callbacks...);
