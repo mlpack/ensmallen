@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
@@ -45,7 +48,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
     NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate,
         NoDecay(), true, true);
 
-    TestType coordinates = f.GetInitialPoint();
+    TestType coordinates = f.GetInitialPoint<TestType>();
     double result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -100,7 +103,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   }
 }
 
-#ifdef ENS_USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",
     "[NesterovMomentumSGD]", coot::mat)
@@ -113,7 +116,7 @@ TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",
   NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate,
       NoDecay(), true, true);
 
-  TestType coordinates = f.GetInitialPoint();
+  TestType coordinates = f.GetInitialPoint<TestType>();
   ElemType result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -127,7 +130,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   typedef typename TestType::elem_type ElemType;
 
   // Create the generalized Rosenbrock function.
-  GeneralizedRosenbrockFunctionType<TestType, coot::Row<size_t>> f(10);
+  GeneralizedRosenbrockFunction f(10);
   NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
   NesterovMomentumSGD s(0.00015, 1, 0, 1e-10, true, nesterovMomentumUpdate);
 
@@ -136,7 +139,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   TestType coordinates;
   while (trial++ < 8 && result > 0.1)
   {
-    coordinates = f.GetInitialPoint();
+    coordinates = f.GetInitialPoint<TestType>();
     result = s.Optimize(f, coordinates);
   }
 

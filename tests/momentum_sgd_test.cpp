@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
@@ -62,7 +65,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
     MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate, NoDecay(),
         true, true);
 
-    TestType coordinates = f.GetInitialPoint();
+    TestType coordinates = f.GetInitialPoint<TestType>();
     double result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -111,7 +114,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction",
   }
 }
 
-#ifdef ENS_USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
     coot::mat, coot::fmat)
@@ -160,7 +163,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
   MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate, NoDecay(),
       true, true);
 
-  TestType coordinates = f.GetInitialPoint();
+  TestType coordinates = f.GetInitialPoint<TestType>();
   double result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-4));
@@ -178,7 +181,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
   MomentumUpdate momentumUpdate(0.1);
   MomentumSGD s(0.0002, 1, 10000000, 1e-15, true, momentumUpdate);
 
-  TestType coordinates = f.GetInitialPoint();
+  TestType coordinates = f.GetInitialPoint<TestType>();
   float result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(1e-2));

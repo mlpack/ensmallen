@@ -9,7 +9,8 @@
  */
 
 #include <iostream>
-#if defined(ENS_ENS_USE_COOT)
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
   #include <bandicoot>
 #endif
 #include <ensmallen.hpp>
@@ -33,7 +34,7 @@ int main(int argc, char** argv)
   std::cout << "ensmallen version: " << ens::version::as_string() << std::endl;
   std::cout << "armadillo version: " << arma::arma_version::as_string() << std::endl;
 
-  #ifdef ENS_USE_COOT
+  #ifdef ENS_HAVE_COOT
   std::cout << "bandicoot version: " << coot::coot_version::as_string() << std::endl;
   #endif
 

@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -70,7 +73,7 @@ TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", arma::mat)
   FunctionTest<RastriginFunction, TestType>(sa, 0.01, 0.001, 4);
 }
 
-#ifdef ENS_USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", coot::mat, coot::fmat)
 {
@@ -89,8 +92,7 @@ TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", coot::mat, coot::fmat)
   // The convergence is very sensitive to the choices of maxMove and initMove.
   // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
   SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
-  FunctionTest<RastriginFunctionType<
-      TestType, coot::Row<size_t> >, TestType>(sa, 0.01, 0.001, 4);
+  FunctionTest<RastriginFunction, TestType>(sa, 0.01, 0.001, 4);
 }
 
 #endif

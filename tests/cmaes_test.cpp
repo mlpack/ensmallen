@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -80,7 +83,7 @@ TEMPLATE_TEST_CASE("ApproxCMAES_EmptyTransformationLogisticRegressionFunction",
   LogisticRegressionFunctionTest<TestType>(cmaes, 0.01, 0.02, 5);
 }
 
-#ifdef ENS_USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", coot::mat)
 {

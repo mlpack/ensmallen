@@ -7,7 +7,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -23,7 +26,7 @@ TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
       optimizer, 0.003, 0.006, 1);
 }
 
-#ifdef ENS_USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
     coot::mat, coot::fmat)

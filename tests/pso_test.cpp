@@ -10,6 +10,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
@@ -247,13 +251,11 @@ TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]", arma::mat)
 
 TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", arma::mat)
 {
-  typedef typename TestType::elem_type ElemType;
-
   SchafferFunctionN2 f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(40);
   upperBound.fill(50);
 
@@ -265,22 +267,20 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", arma::mat)
   REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
 
-#ifdef ENS_USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]",
     coot::mat, coot::fmat)
 {
-  typedef typename TestType::elem_type ElemType;
-
   SchafferFunctionN2 f;
 
   // Setting bounds for the initial swarm population.
-  coot::Col<ElemType> lowerBound(2);
-  coot::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(40);
   upperBound.fill(50);
 
-  PSOType<TestType> s(500, lowerBound, upperBound);
+  LBestPSO s(500, lowerBound, upperBound);
   TestType coordinates = TestType("10; 10");
   s.Optimize(f, coordinates);
 

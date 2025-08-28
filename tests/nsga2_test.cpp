@@ -8,7 +8,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -307,7 +310,7 @@ TEMPLATE_TEST_CASE("NSGA2_FrontTest", "[NSGA2]", arma::mat, arma::fmat)
   }
 }
 
-#ifdef ENS_USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
     coot::mat, coot::fmat)
@@ -368,9 +371,9 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2Test]",
 
   // This test can be a little flaky, so we try it a few times.
   SchafferFunctionN1<TestType> SCH;
-  coot::Col<ElemType> lowerBound(1);
+  arma::vec lowerBound(1);
   lowerBound(0) = -1000.0;
-  coot::Col<ElemType> upperBound(1);
+  arma::vec upperBound(1);
   upperBound(0) = 1000.0;
   const ElemType expectedLowerBound = 0.0;
   const ElemType expectedUpperBound = 2.0;

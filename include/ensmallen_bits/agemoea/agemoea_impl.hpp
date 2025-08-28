@@ -120,8 +120,8 @@ typename MatType::elem_type AGEMOEA::Optimize(
   std::vector<size_t> ranks;
 
   //! Useful temporaries for float-like comparisons.
-  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
-  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+  const BaseMatType castedLowerBound = conv_to<BaseMatType>::from(lowerBound);
+  const BaseMatType castedUpperBound = conv_to<BaseMatType>::from(upperBound);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
