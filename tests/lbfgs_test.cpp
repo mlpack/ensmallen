@@ -110,11 +110,7 @@ TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]",
   FunctionTest<RosenbrockWoodFunction, TestType>(lbfgs, 0.01, 0.001);
 }
 
-<<<<<<< HEAD
-#ifdef ENS_USE_COOT
-=======
 #ifdef ENS_HAVE_COOT
->>>>>>> 3e7d98a6 (Fixes so that Bandicoot actually gets detected and compiled in correctly.)
 
 TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]",
     coot::mat, coot::fmat)
