@@ -104,8 +104,8 @@ typename MatType::elem_type NSGA2::Optimize(
   numObjectives = sizeof...(ArbitraryFunctionType);
   numVariables = iterate.n_rows;
 
-  // Cache calculated objectives.
-  std::vector<arma::Col<ElemType> > calculatedObjectives(populationSize);
+  // Cache calculated objectives as a cube: (numObjectives x 1 x populationSize).
+  arma::Cube<ElemType> calculatedObjectives(numObjectives, 1, populationSize, arma::fill::zeros);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
@@ -152,9 +152,8 @@ typename MatType::elem_type NSGA2::Optimize(
     BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
 
     // Evaluate the objectives for the new population.
-    calculatedObjectives.resize(population.size());
-    std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
-        arma::Col<ElemType>(numObjectives, arma::fill::zeros));
+    calculatedObjectives.set_size(numObjectives, 1, population.size());
+    calculatedObjectives.zeros();
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
@@ -207,13 +206,12 @@ typename MatType::elem_type NSGA2::Optimize(
   }
 
   // Set the candidates from the Pareto Front as the output.
-  paretoFront.set_size(calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
-      fronts[0].size());
+  paretoFront.set_size(numObjectives, 1, fronts[0].size());
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
-    paretoFront.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(calculatedObjectives[fronts[0][solutionIdx]]);
+     paretoFront.slice(solutionIdx) =
+    arma::conv_to<arma::mat>::from(calculatedObjectives.slice(fronts[0][solutionIdx]));
   }
 
   // Clear rcFront, in case it is later requested by the user for reverse
@@ -227,10 +225,8 @@ typename MatType::elem_type NSGA2::Optimize(
 
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for (const arma::Col<ElemType>& objective: calculatedObjectives)
-    if (arma::accu(objective) < performance)
-      performance = arma::accu(objective);
-
+  for (size_t i = 0; i < calculatedObjectives.n_slices; ++i)
+    performance = std::min(performance, arma::accu(calculatedObjectives.slice(i)));
   return performance;
 }
 
@@ -242,7 +238,7 @@ typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    std::vector<arma::Col<typename MatType::elem_type> >&)
+    arma::Cube<typename MatType::elem_type>&)
 {
   // Nothing to do here.
 }
@@ -255,11 +251,11 @@ typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
+    arma::Cube<typename MatType::elem_type>& calculatedObjectives)
 {
   for (size_t i = 0; i < populationSize; i++)
   {
-    calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(population[i]);
+    calculatedObjectives(I, 0, i) = std::get<I>(objectives).Evaluate(population[i]);
     EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
                                                                calculatedObjectives);
   }
@@ -339,7 +335,7 @@ template<typename MatType>
 inline void NSGA2::FastNonDominatedSort(
     std::vector<std::vector<size_t> >& fronts,
     std::vector<size_t>& ranks,
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives)
+    arma::Cube<typename MatType::elem_type>& calculatedObjectives)
 {
   std::map<size_t, size_t> dominationCount;
   std::map<size_t, std::set<size_t> > dominated;
@@ -398,22 +394,22 @@ inline void NSGA2::FastNonDominatedSort(
 //! Check if a candidate Pareto dominates another candidate.
 template<typename MatType>
 inline bool NSGA2::Dominates(
-    std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+    arma::Cube<typename MatType::elem_type>& calculatedObjectives,
     size_t candidateP,
     size_t candidateQ)
 {
   bool allBetterOrEqual = true;
   bool atleastOneBetter = false;
-  size_t n_objectives = calculatedObjectives[0].n_elem;
+  const size_t n_objectives = calculatedObjectives.n_rows;
 
   for (size_t i = 0; i < n_objectives; i++)
   {
     // P is worse than Q for the i-th objective function.
-    if (calculatedObjectives[candidateP](i) > calculatedObjectives[candidateQ](i))
+    if (calculatedObjectives(i, 0, candidateP) > calculatedObjectives(i, 0, candidateQ))
       allBetterOrEqual = false;
 
     // P is better than Q for the i-th objective function.
-    else if (calculatedObjectives[candidateP](i) < calculatedObjectives[candidateQ](i))
+    else if (calculatedObjectives(i, 0, candidateP) < calculatedObjectives(i, 0, candidateQ))
       atleastOneBetter = true;
   }
 
@@ -424,7 +420,7 @@ inline bool NSGA2::Dominates(
 template <typename MatType>
 inline void NSGA2::CrowdingDistanceAssignment(
     const std::vector<size_t>& front,
-    std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+    arma::Cube<typename MatType::elem_type>& calculatedObjectives,
     std::vector<typename MatType::elem_type>& crowdingDistance)
 {
   // Convenience typedefs.
@@ -438,11 +434,8 @@ inline void NSGA2::CrowdingDistanceAssignment(
   {
     // Cache fValues of individuals for current objective.
     arma::Col<ElemType> fValues(fSize);
-    std::transform(front.begin(), front.end(), fValues.begin(),
-      [&](const size_t& individual)
-        {
-          return calculatedObjectives[individual](m);
-        });
+    for (size_t k = 0; k < fSize; ++k)
+      fValues(k) = calculatedObjectives(m, 0, front[k]);
 
     // Sort front indices by ascending fValues for current objective.
     std::sort(sortedIdx.begin(), sortedIdx.end(),
