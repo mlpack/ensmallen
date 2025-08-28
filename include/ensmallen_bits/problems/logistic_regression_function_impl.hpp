@@ -76,6 +76,7 @@ void LogisticRegressionFunction<MatType>::Shuffle()
       predictors.n_cols - 1, predictors.n_cols));
 
   newPredictors.set_size(predictors.n_rows, predictors.n_cols);
+  newResponses.set_size(responses.n_rows, responses.n_cols);
   for (size_t i = 0; i < predictors.n_cols; ++i)
   {
     newPredictors.col(i) = predictors.col(ordering[i]);
