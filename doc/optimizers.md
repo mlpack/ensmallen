@@ -603,9 +603,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube bestSet, bestFront;
+double obj = opt.Optimize(objectives, coords, bestSet, bestFront);
 ```
 
 </details>
@@ -615,26 +614,26 @@ arma::cube bestFront = opt.ParetoFront();
 </summary>
 
 ```c++
-ZDT3<> ZDT_THREE(300);
+ZDT3<> zdt3(300);
 const double lowerBound = 0;
 const double upperBound = 1;
 
 AGEMOEA opt(50, 500, 0.8, 20, 1e-6, 20, lowerBound, upperBound);
-typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
-typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
+typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
 bool success = true;
-arma::mat coords = ZDT_THREE.GetInitialPoint();
-std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
-opt.Optimize(objectives, coords);
-const arma::cube bestFront = opt.ParetoFront();
+arma::mat coords = zdt3.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = zdt3.GetObjectives();
+arma::cube bestSet, bestFront;
+opt.Optimize(objectives, coords, bestSet, bestFront);
 
 NSGA2 opt2(50, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 // obj2 will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj2 = opt2.Optimize(objectives, coords);
+arma::cube paretoSet, paretoFront;
+double obj2 = opt2.Optimize(objectives, coords, paretoSet, paretoFront);
 
-arma::cube NSGAFront = opt2.ParetoFront();
 // Get the IGD score for NSGA front using AGEMOEA as reference.
-double igd = IGD::Evaluate(NSGAFront, bestFront, 1);
+double igd = IGD::Evaluate(paretoFront, bestFront, 1);
 std::cout << igd << std::endl;
 ```
 
@@ -1518,11 +1517,12 @@ Frank-Wolfe is a technique to minimize a continuously differentiable convex func
  * `FrankWolfe<`_`LinearConstrSolverType, UpdateRuleType`_`>(`_`linearConstrSolver, updateRule, maxIterations, tolerance`_`)`
 
 The _`LinearConstrSolverType`_ template parameter specifies the constraint
-domain D for the problem.  The `ConstrLpBallSolver` and
-`ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the former
-restricts D to the unit ball of the specified l-p norm.  Other constraint types
-may be implemented as a class with the same method signatures as either of the
-existing classes.
+domain D for the problem.  The `ConstrLpBallSolver` (itself a class template,
+`ConstrLpBallSolver<T>`, change `T` if a different matrix type is required)
+and `ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the
+former restricts D to the unit ball of the specified l-p norm.  Other constraint
+types may be implemented as a class with the same method signatures as either of
+the existing classes.
 
 The _`UpdateRuleType`_ template parameter specifies the update rule used by the
 optimizer.  The `UpdateClassic` and `UpdateLineSearch` classes are available for
@@ -2385,15 +2385,19 @@ optimizer.Optimize(f, coordinates);
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## MOEA/D-DE
+
 *An optimizer for arbitrary multi-objective functions.*
-MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
-objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
-subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
-algorithm uses Differential Crossover followed by Polynomial Mutation to create offsprings which are then
-decomposed to form a Single Objective Problem. A diversity preserving mechanism is also employed which encourages
-a varied set of solution.
+MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition -
+Differential Evolution) is a multi objective optimization algorithm. It works by
+decomposing the problem into a number of scalar optimization subproblems which
+are solved simultaneously per generation. MOEA/D in itself is a framework, this
+particular algorithm uses Differential Crossover followed by Polynomial Mutation
+to create offsprings which are then decomposed to form a Single Objective
+Problem. A diversity preserving mechanism is also employed which encourages a
+varied set of solutions.
 
 #### Constructors
+
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>()`
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
 
@@ -2463,9 +2467,8 @@ typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 </details>
 
@@ -2529,9 +2532,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 
 </details>
@@ -3439,7 +3441,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 The `Snapshots()` function returns a `std::vector<arma::mat>&` (a vector of
 snapshots of the parameters), not a `size_t` representing the maximum number of
-snapshots.
+snapshots.  If a different matrix type or gradient type was specified during the
+optimization, then `Snapshots()` should be called as
+`Snapshots<MatType, GradType>()`; if this is not done, an exception will be
+thrown.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.

@@ -29,9 +29,7 @@ namespace test {
  *
  * @tparam arma::mat Type of matrix to optimize.
  */
-template<
-    typename MatType = arma::mat,
-    typename BaseColType = typename ForwardType<MatType>::bcol>
+template<typename MatType = arma::mat>
 class SchafferFunctionN1
 {
  private:
@@ -49,11 +47,14 @@ class SchafferFunctionN1
    * Evaluate the objectives with the given coordinate.
    *
    * @param coords The function coordinates.
-   * @return Col<typename MatType::elem_type>
+   * @return arma::Col<typename MatType::elem_type>
    */
-  BaseColType Evaluate(const MatType& coords)
+  arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
   {
-    BaseColType objectives(numObjectives);
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+
+    arma::Col<ElemType> objectives(numObjectives);
 
     objectives(0) = std::pow(coords[0], ElemType(2));
     objectives(1) = std::pow(coords[0] - 2, ElemType(2));
@@ -64,7 +65,10 @@ class SchafferFunctionN1
   //! Get the starting point.
   MatType GetInitialPoint()
   {
-    return BaseColType(numVariables, 1, GetFillType<BaseColType>::zeros);
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+
+    return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
   }
 
   struct ObjectiveA

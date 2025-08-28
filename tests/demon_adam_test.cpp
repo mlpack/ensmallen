@@ -45,7 +45,7 @@ TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
     ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
+  FunctionTest<SphereFunction, TestType>(
       optimizer,
       10 * Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
@@ -83,8 +83,7 @@ TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
     coot::mat, coot::fmat)
 {
   DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]",

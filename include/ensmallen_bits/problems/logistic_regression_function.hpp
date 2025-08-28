@@ -28,14 +28,12 @@ class LogisticRegressionFunction
  public:
   typedef typename MatType::elem_type ElemType;
 
-  template<typename LabelsType>
   LogisticRegressionFunction(MatType& predictors,
-                             LabelsType& responses,
+                             arma::Row<size_t>& responses,
                              const double lambda = 0);
 
-  template<typename LabelsType>
   LogisticRegressionFunction(MatType& predictors,
-                             LabelsType& responses,
+                             arma::Row<size_t>& responses,
                              MatType& initialPoint,
                              const double lambda = 0);
 
@@ -179,9 +177,8 @@ class LogisticRegressionFunction
    * @param decisionBoundary Decision boundary (default 0.5).
    * @return Percentage of responses that are predicted correctly.
    */
-  template<typename LabelsType>
   double ComputeAccuracy(const MatType& predictors,
-                         const LabelsType& responses,
+                         const arma::Row<size_t>& responses,
                          const MatType& parameters,
                          const double decisionBoundary = 0.5) const;
 
@@ -197,9 +194,8 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param decisionBoundary Decision boundary (default 0.5).
    */
-  template<typename LabelsType>
   void Classify(const MatType& dataset,
-                LabelsType& labels,
+                arma::Row<size_t>& labels,
                 const MatType& parameters,
                 const double decisionBoundary = 0.5) const;
 

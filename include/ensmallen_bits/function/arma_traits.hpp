@@ -127,7 +127,7 @@ template<>
 inline void RequireDenseFloatingPointType<arma::hmat>() { }
 #endif
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 template<>
 inline void RequireDenseFloatingPointType<coot::mat>() { }
 template<>
@@ -162,7 +162,7 @@ template<>
 inline void RequireFloatingPointType<arma::sp_hmat>() { }
 #endif
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 template<>
 inline void RequireFloatingPointType<coot::mat>() { }
 template<>

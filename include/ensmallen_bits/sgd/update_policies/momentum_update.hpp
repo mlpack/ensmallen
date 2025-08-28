@@ -96,9 +96,10 @@ class MomentumUpdate
      */
     Policy(const MomentumUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        velocity(rows, cols),
         momentum(ElemType(parent.momentum))
     {
-      velocity.zeros(rows, cols);
+      // Nothing to do here.
     }
 
     /**

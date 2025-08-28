@@ -99,7 +99,7 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
     endif ()
 
     # Search for CUDA.
-    if (NOT "${COOT_USE_CUDA}" STREQUAL "" AND NOT HAVE_CUDA)
+    if (NOT COOT_USE_CUDA AND NOT HAVE_CUDA)
       # FindCUDA is deprecated since version 3.10 and replaced with
       # FindCUDAToolkit wich was added in CMake 3.17.
       message(STATUS "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")

@@ -37,9 +37,7 @@ namespace test {
  * }
  * @endcode
  */
-template<
-  typename PointMatType = arma::mat, typename LabelsType = arma::Row<size_t>>
-class SphereFunctionType
+class SphereFunction
 {
  public:
   /*
@@ -47,7 +45,7 @@ class SphereFunctionType
    *
    * @param n Number of dimensions for the function.
    */
-  SphereFunctionType(const size_t n = 2);
+  SphereFunction(const size_t n = 2);
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -110,16 +108,14 @@ class SphereFunctionType
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const
   {
-    return conv_to<MatType>::from(initialPoint);
+    return arma::conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.
   template<typename MatType = arma::mat>
   MatType GetFinalPoint() const
   {
-    MatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
-    finalPoint.zeros();
-    return finalPoint;
+    return arma::zeros<MatType>(initialPoint.n_rows, initialPoint.n_cols);
   }
 
   //! Get the final objective.
@@ -130,13 +126,11 @@ class SphereFunctionType
   size_t n;
 
   //! For shuffling.
-  LabelsType visitationOrder;
+  arma::Row<size_t> visitationOrder;
 
   //! Initial starting point.
-  PointMatType initialPoint;
+  arma::mat initialPoint;
 };
-
-using SphereFunction = SphereFunctionType<arma::mat>;
 
 } // namespace test
 } // namespace ens

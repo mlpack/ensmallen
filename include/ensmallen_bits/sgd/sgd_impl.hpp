@@ -58,9 +58,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-                        IsCootType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
@@ -195,9 +194,12 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
           overallObjective, callbacks...);
 
       // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
+      if (i != actualMaxIterations)
+      {
+        lastObjective = overallObjective;
+        overallObjective = 0;
+        currentFunction = 0;
+      }
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();

@@ -20,16 +20,14 @@
 
 namespace ens {
 
-template<typename MatType, typename ColType, typename CubeType>
-NSGA2Type<MatType, ColType, CubeType>::NSGA2Type(
-    const size_t populationSize,
-    const size_t maxGenerations,
-    const double crossoverProb,
-    const double mutationProb,
-    const double mutationStrength,
-    const double epsilon,
-    const ColType& lowerBound,
-    const ColType& upperBound) :
+inline NSGA2::NSGA2(const size_t populationSize,
+                    const size_t maxGenerations,
+                    const double crossoverProb,
+                    const double mutationProb,
+                    const double mutationStrength,
+                    const double epsilon,
+                    const arma::vec& lowerBound,
+                    const arma::vec& upperBound) :
     numObjectives(0),
     numVariables(0),
     populationSize(populationSize),
@@ -42,16 +40,14 @@ NSGA2Type<MatType, ColType, CubeType>::NSGA2Type(
     upperBound(upperBound)
 { /* Nothing to do here. */ }
 
-template<typename MatType, typename ColType, typename CubeType>
-NSGA2Type<MatType, ColType, CubeType>::NSGA2Type(
-    const size_t populationSize,
-    const size_t maxGenerations,
-    const double crossoverProb,
-    const double mutationProb,
-    const double mutationStrength,
-    const double epsilon,
-    const double lowerBound,
-    const double upperBound) :
+inline NSGA2::NSGA2(const size_t populationSize,
+                    const size_t maxGenerations,
+                    const double crossoverProb,
+                    const double mutationProb,
+                    const double mutationStrength,
+                    const double epsilon,
+                    const double lowerBound,
+                    const double upperBound) :
     numObjectives(0),
     numVariables(0),
     populationSize(populationSize),
@@ -60,21 +56,33 @@ NSGA2Type<MatType, ColType, CubeType>::NSGA2Type(
     mutationProb(mutationProb),
     mutationStrength(mutationStrength),
     epsilon(epsilon),
-    lowerBound(typename ColType::elem_type(lowerBound) *
-        ColType(1, GetFillType<MatType>::ones)),
-    upperBound(typename ColType::elem_type(upperBound) *
-        ColType(1, GetFillType<MatType>::ones))
+    lowerBound(lowerBound * arma::ones(1, 1)),
+    upperBound(upperBound * arma::ones(1, 1))
 { /* Nothing to do here. */ }
 
 //! Optimize the function.
-template<typename MatType, typename ColType, typename CubeType>
-template<typename InputMatType,
+template<typename MatType,
          typename... ArbitraryFunctionType,
          typename... CallbackTypes>
-typename InputMatType::elem_type NSGA2Type<
-    MatType, ColType, CubeType>::Optimize(
+typename MatType::elem_type NSGA2::Optimize(
     std::tuple<ArbitraryFunctionType...>& objectives,
-    InputMatType& iterateIn,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
+{
+  return Optimize(objectives, iterateIn, paretoFront, paretoSet,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+//! Optimize the function.
+template<typename MatType,
+         typename CubeType,
+         typename... ArbitraryFunctionType,
+         typename... CallbackTypes>
+typename MatType::elem_type NSGA2::Optimize(
+    std::tuple<ArbitraryFunctionType...>& objectives,
+    MatType& iterateIn,
+    CubeType& paretoFrontIn,
+    CubeType& paretoSetIn,
     CallbackTypes&&... callbacks)
 {
   // Make sure for evolution to work at least four candidates are present.
@@ -87,6 +95,8 @@ typename InputMatType::elem_type NSGA2Type<
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardType<MatType>::bcol BaseColType;
+  typedef typename ForwardType<CubeType>::bmat CubeBaseMatType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
@@ -95,23 +105,13 @@ typename InputMatType::elem_type NSGA2Type<
       BaseMatType>();
   RequireDenseFloatingPointType<BaseMatType>();
 
-  BaseMatType castedLowerBound;
-  BaseMatType castedUpperBound;
+  // Check if lower bound is a vector of a single dimension.
+  if (lowerBound.n_rows == 1)
+    lowerBound = lowerBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
 
-  // Check if lower/upper bound is a vector of a single dimension.
-  if (lowerBound.n_elem == 1)
-  {
-    castedLowerBound = lowerBound(0) * BaseMatType(
-        iterate.n_rows, iterate.n_cols, GetFillType<MatType>::ones);
-
-    castedUpperBound = upperBound(0) * BaseMatType(
-        iterate.n_rows, iterate.n_cols, GetFillType<MatType>::ones);
-  }
-  else
-  {
-    castedLowerBound = conv_to<BaseMatType>::from(lowerBound);
-    castedUpperBound = conv_to<BaseMatType>::from(upperBound);
-  }
+  // Check if upper bound is a vector of a single dimension.
+  if (upperBound.n_rows == 1)
+    upperBound = upperBound(0, 0) * arma::ones(iterate.n_rows, iterate.n_cols);
 
   // Check the dimensions of lowerBound and upperBound.
   assert(lowerBound.n_rows == iterate.n_rows && "The dimensions of "
@@ -123,7 +123,7 @@ typename InputMatType::elem_type NSGA2Type<
   numVariables = iterate.n_rows;
 
   // Cache calculated objectives.
-  std::vector<ColType> calculatedObjectives(populationSize);
+  std::vector<BaseColType> calculatedObjectives(populationSize);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
@@ -137,6 +137,12 @@ typename InputMatType::elem_type NSGA2Type<
   std::vector<ElemType> crowdingDistance;
   // Initialised during non-dominated sorting.
   std::vector<size_t> ranks;
+
+  //! Useful temporaries for float-like comparisons.
+  const BaseMatType castedLowerBound = conv_to<BaseMatType>::from(
+      lowerBound);
+  const BaseMatType castedUpperBound = conv_to<BaseMatType>::from(
+      upperBound);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -169,7 +175,7 @@ typename InputMatType::elem_type NSGA2Type<
     // Evaluate the objectives for the new population.
     calculatedObjectives.resize(population.size());
     std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
-        ColType(numObjectives, GetFillType<MatType>::zeros));
+        BaseColType(numObjectives, GetFillType<MatType>::zeros));
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
@@ -179,10 +185,9 @@ typename InputMatType::elem_type NSGA2Type<
     // Perform crowding distance assignment.
     crowdingDistance.resize(population.size());
     std::fill(crowdingDistance.begin(), crowdingDistance.end(), 0.);
-
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
-      CrowdingDistanceAssignment<BaseMatType, ColType>(
+      CrowdingDistanceAssignment<BaseMatType, BaseColType>(
           fronts[fNum], calculatedObjectives, crowdingDistance);
     }
 
@@ -203,8 +208,8 @@ typename InputMatType::elem_type NSGA2Type<
                 idxQ = i;
             }
 
-            return CrowdingOperator<BaseMatType>(
-                idxP, idxQ, ranks, crowdingDistance);
+            return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks,
+                crowdingDistance);
           }
     );
 
@@ -217,26 +222,23 @@ typename InputMatType::elem_type NSGA2Type<
   }
 
   // Set the candidates from the Pareto Set as the output.
-  paretoSet.set_size(
-      population[0].n_rows, population[0].n_cols, fronts[0].size());
-
+  paretoSetIn.set_size(population[0].n_rows, population[0].n_cols,
+      fronts[0].size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
-    paretoSet.slice(solutionIdx) =
-        population[fronts[0][solutionIdx]];
+    paretoSetIn.slice(solutionIdx) = conv_to<CubeBaseMatType>::from(
+        population[fronts[0][solutionIdx]]);
   }
 
   // Set the candidates from the Pareto Front as the output.
-  paretoFront.set_size(
-      calculatedObjectives[0].n_rows, calculatedObjectives[0].n_cols,
-      fronts[0].size());
-
+  paretoFrontIn.set_size(calculatedObjectives[0].n_rows,
+      calculatedObjectives[0].n_cols, fronts[0].size());
   // The Pareto Front is stored, can be obtained via ParetoFront() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
-    paretoFront.slice(solutionIdx) =
-        calculatedObjectives[fronts[0][solutionIdx]];
+    paretoFrontIn.slice(solutionIdx) = conv_to<CubeBaseMatType>::from(
+        calculatedObjectives[fronts[0][solutionIdx]]);
   }
 
   // Clear rcFront, in case it is later requested by the user for reverse
@@ -250,7 +252,7 @@ typename InputMatType::elem_type NSGA2Type<
 
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for (const ColType& objective: calculatedObjectives)
+  for (const BaseColType& objective: calculatedObjectives)
     if (accu(objective) < performance)
       performance = accu(objective);
 
@@ -258,13 +260,12 @@ typename InputMatType::elem_type NSGA2Type<
 }
 
 //! No objectives to evaluate.
-template<typename MatType, typename ColType, typename CubeType>
 template<std::size_t I,
          typename InputMatType,
-          typename ObjectiveMatType,
+         typename ObjectiveMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-NSGA2Type<MatType, ColType, CubeType>::EvaluateObjectives(
+NSGA2::EvaluateObjectives(
     std::vector<InputMatType>&,
     std::tuple<ArbitraryFunctionType...>&,
     std::vector<ObjectiveMatType>&)
@@ -273,13 +274,12 @@ NSGA2Type<MatType, ColType, CubeType>::EvaluateObjectives(
 }
 
 //! Evaluate the objectives for the entire population.
-template<typename MatType, typename ColType, typename CubeType>
 template<std::size_t I,
          typename InputMatType,
-          typename ObjectiveMatType,
+         typename ObjectiveMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-NSGA2Type<MatType, ColType, CubeType>::EvaluateObjectives(
+NSGA2::EvaluateObjectives(
     std::vector<InputMatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
     std::vector<ObjectiveMatType>& calculatedObjectives)
@@ -289,20 +289,19 @@ NSGA2Type<MatType, ColType, CubeType>::EvaluateObjectives(
     calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(
         population[i]);
     EvaluateObjectives<
-        I + 1, MatType, ObjectiveMatType, ArbitraryFunctionType...>(
+        I + 1, InputMatType, ObjectiveMatType, ArbitraryFunctionType...>(
         population, objectives, calculatedObjectives);
   }
 }
 
 //! Reproduce and generate new candidates.
-template<typename MatType, typename ColType, typename CubeType>
 template<typename InputMatType>
-void NSGA2Type<MatType, ColType, CubeType>::BinaryTournamentSelection(
+void NSGA2::BinaryTournamentSelection(
     std::vector<InputMatType>& population,
     const InputMatType& lowerBound,
     const InputMatType& upperBound)
 {
-  std::vector<MatType> children;
+  std::vector<InputMatType> children;
 
   while (children.size() < population.size())
   {
@@ -322,7 +321,7 @@ void NSGA2Type<MatType, ColType, CubeType>::BinaryTournamentSelection(
     }
 
     // Initialize the children to the respective parents.
-    MatType childA = population[indexA], childB = population[indexB];
+    InputMatType childA = population[indexA], childB = population[indexB];
 
     Crossover(childA, childB, population[indexA], population[indexB]);
 
@@ -340,9 +339,8 @@ void NSGA2Type<MatType, ColType, CubeType>::BinaryTournamentSelection(
 }
 
 //! Perform crossover of genes for the children.
-template<typename MatType, typename ColType, typename CubeType>
 template<typename InputMatType>
-void NSGA2Type<MatType, ColType, CubeType>::Crossover(
+void NSGA2::Crossover(
     InputMatType& childA,
     InputMatType& childB,
     const InputMatType& parentA,
@@ -361,11 +359,11 @@ void NSGA2Type<MatType, ColType, CubeType>::Crossover(
 }
 
 //! Perform mutation of the candidates weights with some noise.
-template<typename MatType, typename ColType, typename CubeType>
 template<typename InputMatType>
-void NSGA2Type<MatType, ColType, CubeType>::Mutate(InputMatType& child,
-                                const InputMatType& lowerBound,
-                                const InputMatType& upperBound)
+void NSGA2::Mutate(
+    InputMatType& child,
+    const InputMatType& lowerBound,
+    const InputMatType& upperBound)
 {
   typedef typename InputMatType::elem_type ElemType;
 
@@ -380,9 +378,8 @@ void NSGA2Type<MatType, ColType, CubeType>::Mutate(InputMatType& child,
 }
 
 //! Sort population into Pareto fronts.
-template<typename MatType, typename ColType, typename CubeType>
 template<typename InputMatType, typename ObjectiveMatType>
-void NSGA2Type<MatType, ColType, CubeType>::FastNonDominatedSort(
+void NSGA2::FastNonDominatedSort(
     std::vector<std::vector<size_t> >& fronts,
     std::vector<size_t>& ranks,
     std::vector<ObjectiveMatType>& calculatedObjectives)
@@ -442,9 +439,8 @@ void NSGA2Type<MatType, ColType, CubeType>::FastNonDominatedSort(
 }
 
 //! Check if a candidate Pareto dominates another candidate.
-template<typename MatType, typename ColType, typename CubeType>
 template<typename InputMatType, typename ObjectiveMatType>
-bool NSGA2Type<MatType, ColType, CubeType>::Dominates(
+bool NSGA2::Dominates(
     std::vector<ObjectiveMatType>& calculatedObjectives,
     size_t candidateP,
     size_t candidateQ)
@@ -470,16 +466,16 @@ bool NSGA2Type<MatType, ColType, CubeType>::Dominates(
 }
 
 //! Assign crowding distance to the population.
-template <typename MatType, typename ColType, typename CubeType>
 template <typename InputMatType, typename ObjectiveMatType>
-void NSGA2Type<MatType, ColType, CubeType>::CrowdingDistanceAssignment(
+void NSGA2::CrowdingDistanceAssignment(
     const std::vector<size_t>& front,
     std::vector<ObjectiveMatType>& calculatedObjectives,
     std::vector<typename InputMatType::elem_type>& crowdingDistance)
 {
   // Convenience typedefs.
   typedef typename InputMatType::elem_type ElemType;
-  typedef typename ForwardType<MatType>::uvec UVecType;
+  typedef typename ForwardType<InputMatType>::uvec UVecType;
+  typedef typename ForwardType<ObjectiveMatType>::bcol BaseColType;
 
   size_t fSize = front.size();
   // Stores the sorted indices of the fronts.
@@ -488,7 +484,7 @@ void NSGA2Type<MatType, ColType, CubeType>::CrowdingDistanceAssignment(
   for (size_t m = 0; m < numObjectives; m++)
   {
     // Cache fValues of individuals for current objective.
-    ColType fValues(fSize);
+    BaseColType fValues(fSize);
     for (size_t i = 0; i < front.size(); ++i)
     {
       size_t individual = front[i];
@@ -496,20 +492,7 @@ void NSGA2Type<MatType, ColType, CubeType>::CrowdingDistanceAssignment(
     }
 
     // Sort front indices by ascending fValues for current objective.
-    for (size_t i = 0; i < sortedIdx.size(); ++i)
-    {
-      size_t minIdx = i;
-      for (size_t j = i + 1; j < sortedIdx.size(); ++j)
-      {
-        if (fValues(sortedIdx[j]) < fValues(sortedIdx[minIdx]))
-        {
-          minIdx = j;
-        }
-      }
-      size_t temp = sortedIdx[i];
-      sortedIdx[i] = sortedIdx[minIdx];
-      sortedIdx[minIdx] = temp;
-    }
+    sortedIdx = sort_index(fValues, "ascend");
 
     crowdingDistance[front[sortedIdx(0)]] =
         std::numeric_limits<ElemType>::max();
@@ -529,9 +512,8 @@ void NSGA2Type<MatType, ColType, CubeType>::CrowdingDistanceAssignment(
 }
 
 //! Comparator for crowding distance based sorting.
-template<typename MatType, typename ColType, typename CubeType>
 template<typename InputMatType>
-bool NSGA2Type<MatType, ColType, CubeType>::CrowdingOperator(
+bool NSGA2::CrowdingOperator(
     size_t idxP,
     size_t idxQ,
     const std::vector<size_t>& ranks,

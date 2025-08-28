@@ -19,9 +19,9 @@ using namespace ens;
 using namespace ens::test;
 
 /**
-* Run CMA-ES with the full selection policy on logistic regression and
-* make sure the results are acceptable.
-*/
+ * Run CMA-ES with the full selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
 TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]",
     ENS_TEST_TYPES)
 {
@@ -34,9 +34,9 @@ TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]",
 }
 
 /**
-* Run CMA-ES with the random selection policy on logistic regression and
-* make sure the results are acceptable.
-*/
+ * Run CMA-ES with the random selection policy on logistic regression and
+ * make sure the results are acceptable.
+ */
 TEMPLATE_TEST_CASE("ApproxCMAES_LogisticRegressionFunction", "[CMAES]",
     ENS_TEST_TYPES)
 {

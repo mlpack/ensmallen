@@ -9,6 +9,9 @@
  */
 
 #include <iostream>
+#if defined(ENS_USE_COOT)
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 
 //#define CATCH_CONFIG_MAIN  // catch.hpp will define main()
@@ -17,7 +20,7 @@
 
 int main(int argc, char** argv)
 {
-  #ifdef USE_COOT
+  #if defined(ENS_HAVE_COOT)
   coot::get_rt().init(true);
   #endif
 

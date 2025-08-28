@@ -50,12 +50,12 @@ ParallelSGD<DecayPolicyType>::ParallelSGD(
     const size_t maxIterations,
     const size_t threadShareSize,
     const double tolerance,
-    const bool shuffleflag,
+    const bool shuffle,
     const DecayPolicyType& decayPolicy) :
     maxIterations(maxIterations),
     threadShareSize(threadShareSize),
     tolerance(tolerance),
-    shuffleFlag(shuffleflag),
+    shuffle(shuffle),
     decayPolicy(decayPolicy)
 { /* Nothing to do. */ }
 
@@ -64,8 +64,7 @@ template <typename SparseFunctionType,
           typename MatType,
           typename GradType,
           typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-          IsCootType<GradType>::value,
+typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
     SparseFunctionType& function,
     MatType& iterateIn,
@@ -75,9 +74,6 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
-
-  typedef typename ForwardType<MatType>::uvec UVecType;
-  typedef typename ForwardType<MatType>::uword UWordType;
 
   // Check that we have all the functions that we need.
   traits::CheckSparseFunctionTypeAPI<SparseFunctionType, BaseMatType,
@@ -96,7 +92,7 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
 
   // The order in which the functions will be visited.
   // TODO: maybe use function.Shuffle() instead?
-  UVecType visitationOrder = linspace<UVecType>(0,
+  arma::Col<size_t> visitationOrder = arma::linspace<arma::Col<size_t>>(0,
       (function.NumFunctions() - 1), function.NumFunctions());
 
   // Iterate till the objective is within tolerance or the maximum number of
@@ -140,9 +136,10 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
     double stepSize = decayPolicy.StepSize(i);
 
     // Shuffle for uniform sampling of functions by each thread.
-    if (shuffleFlag)
+    if (shuffle)
     {
-      visitationOrder = shuffle(visitationOrder);
+      // Determine order of visitation.
+      visitationOrder = arma::shuffle(visitationOrder);
     }
 
     ENS_PRAGMA_OMP_PARALLEL
@@ -179,7 +176,7 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
               cur != curEnd; ++cur)
           {
             const ElemType value = (*cur);
-            const UWordType row = cur.row();
+            const arma::uword row = cur.row();
 
             // Call out to utility function to use the right type of OpenMP
             // lock.

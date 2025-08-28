@@ -41,12 +41,12 @@ TEMPLATE_TEST_CASE("QHSGDGeneralizedRosenbrockTest", "[QHMomentumSGD]",
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(i);
+    GeneralizedRosenbrockFunction f(i);
     QHUpdate update(0.9, 0.99);
     // Tolerance set at -1 to force maximum iterations.
     QHSGD s(0.0005, 1, 2500000, -1.0, true, update, NoDecay(), true, true);
 
-    TestType coordinates = f.GetInitialPoint();
+    TestType coordinates = f.GetInitialPoint<TestType>();
     ElemType result = s.Optimize(f, coordinates);
 
     REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Obj));
@@ -64,13 +64,13 @@ TEMPLATE_TEST_CASE("QHSGD_GeneralizedRosenbrockFunctionLoose",
   typedef typename TestType::elem_type ElemType;
 
   // Create the generalized Rosenbrock function.
-  GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
+  GeneralizedRosenbrockFunction f(2);
   QHUpdate update(0.6, 0.7);
   QHSGD s(0.002);
   s.UpdatePolicy() = std::move(update);
   s.Tolerance() = 1e-9;
 
-  TestType coordinates = f.GetInitialPoint();
+  TestType coordinates = f.GetInitialPoint<TestType>();
   ElemType result = s.Optimize(f, coordinates);
 
   // Allow wider tolerances for low-precision types.

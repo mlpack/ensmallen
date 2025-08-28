@@ -34,11 +34,16 @@
 
 #include <armadillo>
 
-#ifdef USE_COOT
-  #include <bandicoot>
+#if defined(COOT_VERSION_MAJOR) && \
+    ((COOT_VERSION_MAJOR >= 2) || \
+     (COOT_VERSION_MAJOR == 2 && COOT_VERSION_MINOR >= 1))
+  // The version of Bandicoot is new enough that we can use it.
+  #undef ENS_HAVE_COOT
+  #define ENS_HAVE_COOT
 #endif
 
-#if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
+#if ((ARMA_VERSION_MAJOR < 10) || \
+    ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
   #error "need Armadillo version 10.8 or newer"
 #endif
 

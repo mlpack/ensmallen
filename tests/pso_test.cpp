@@ -23,10 +23,8 @@ TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
-  SphereFunctionType<TestType> f(4);
-  // TODO(PR): remove MatType parameter from PSOType and hold an arma::vec for
-  // the bounds internally, but convert to a MatType at the start of Optimize()?
-  PSOType<TestType> s;
+  SphereFunction f(4);
+  LBestPSO s;
 
   TestType coords = f.template GetInitialPoint<TestType>();
   const ElemType finalValue = s.Optimize(f, coords);
@@ -52,7 +50,7 @@ TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   // We allow a few trials.
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    PSOType<TestType> s(250, lowerBound, upperBound, 5000, 600,
+    LBestPSO s(250, lowerBound, upperBound, 5000, 600,
         Tolerances<TestType>::Obj / 100, 2.05, 2.05);
     TestType coordinates = f.GetInitialPoint<TestType>();
 
@@ -83,15 +81,15 @@ TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   CrossInTrayFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(-1);
   upperBound.fill(1);
 
   // We allow many trials---sometimes this can have trouble converging.
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    PSOType<TestType> s(500, lowerBound, upperBound, 6000, 400,
+    LBestPSO s(500, lowerBound, upperBound, 6000, 400,
         Tolerances<TestType>::Obj, 2.05, 2.05);
     TestType coordinates = TestType("10; 10");
     const ElemType result = s.Optimize(f, coordinates);
@@ -125,12 +123,12 @@ TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   AckleyFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(4);
   upperBound.fill(5);
 
-  PSOType<TestType> s(64, lowerBound, upperBound);
+  LBestPSO s(64, lowerBound, upperBound);
   TestType coordinates = TestType("5; 5");
   const ElemType result = s.Optimize(f, coordinates);
 
@@ -149,12 +147,12 @@ TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   BealeFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(3);
   upperBound.fill(4);
 
-  PSOType<TestType> s(64, lowerBound, upperBound);
+  LBestPSO s(64, lowerBound, upperBound);
 
   TestType coordinates = TestType("4.5; 4.5");
   const ElemType result = s.Optimize(f, coordinates);
@@ -175,15 +173,15 @@ TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]",
   GoldsteinPriceFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(ElemType(1.6));
   upperBound.fill(ElemType(2));
 
   // Allow a few trials in case of failure.
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    PSOType<TestType> s(64, lowerBound, upperBound);
+    LBestPSO s(64, lowerBound, upperBound);
 
     TestType coordinates = TestType("1; 0");
     s.Optimize(f, coordinates);
@@ -212,12 +210,12 @@ TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_ALL_TEST_TYPES)
   LevyFunctionN13 f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(-10);
   upperBound.fill(-9);
 
-  PSOType<TestType> s(64, lowerBound, upperBound);
+  LBestPSO s(64, lowerBound, upperBound);
 
   TestType coordinates = TestType("3; 3");
   s.Optimize(f, coordinates);
@@ -235,8 +233,8 @@ TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   HimmelblauFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(0);
   upperBound.fill(1);
 
@@ -245,7 +243,7 @@ TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   const double coordTol = Tolerances<TestType>::LargeCoord;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    PSOType<TestType> s(64, lowerBound, upperBound);
+    LBestPSO s(64, lowerBound, upperBound);
 
     coordinates = TestType("2; 1");
     s.Optimize(f, coordinates);
@@ -268,12 +266,12 @@ TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]",
   ThreeHumpCamelFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(-5);
   upperBound.fill(-4);
 
-  PSOType<TestType> s(64, lowerBound, upperBound);
+  LBestPSO s(64, lowerBound, upperBound);
 
   TestType coordinates = TestType("2; 2");
   s.Optimize(f, coordinates);
@@ -291,12 +289,12 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_ALL_TEST_TYPES)
   SchafferFunctionN2 f;
 
   // Setting bounds for the initial swarm population.
-  arma::Col<ElemType> lowerBound(2);
-  arma::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(40);
   upperBound.fill(50);
 
-  PSOType<TestType> s(500, lowerBound, upperBound);
+  LBestPSO s(500, lowerBound, upperBound);
   TestType coordinates = TestType("10; 10");
   s.Optimize(f, coordinates);
 
@@ -319,12 +317,12 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]",
   SchafferFunctionN2 f;
 
   // Setting bounds for the initial swarm population.
-  coot::Col<ElemType> lowerBound(2);
-  coot::Col<ElemType> upperBound(2);
+  arma::vec lowerBound(2);
+  arma::vec upperBound(2);
   lowerBound.fill(40);
   upperBound.fill(50);
 
-  PSOType<TestType> s(500, lowerBound, upperBound);
+  LBestPSO s(500, lowerBound, upperBound);
   TestType coordinates = TestType("10; 10");
   s.Optimize(f, coordinates);
 

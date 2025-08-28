@@ -56,10 +56,7 @@ namespace test {
  *
  * @tparam MatType Type of matrix to optimize.
  */
-  template<
-      typename MatType = arma::mat,
-      typename ColType = typename ForwardType<MatType>::bcol,
-      typename CubeType = typename ForwardType<MatType>::bcube>
+  template<typename MatType = arma::mat>
   class ZDT3
   {
    private:
@@ -70,10 +67,10 @@ namespace test {
    public:
      //! Initialize the ZDT3
     ZDT3(size_t numParetoPoints = 100) :
-         numParetoPoints(numParetoPoints),
-         objectiveF1(*this),
-         objectiveF2(*this)
-    { /* Nothing to do here. */ }
+        numParetoPoints(numParetoPoints),
+        objectiveF1(*this),
+        objectiveF2(*this)
+    {/* Nothing to do here. */}
 
     /**
      * Evaluate the objectives with the given coordinate.
@@ -81,14 +78,13 @@ namespace test {
      * @param coords The function coordinates.
      * @return arma::Col<typename MatType::elem_type>
      */
-    ColType Evaluate(const MatType& coords)
+    arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
     {
       typedef typename MatType::elem_type ElemType;
 
-      ColType objectives(numObjectives);
+      arma::Col<ElemType> objectives(numObjectives);
       objectives(0) = coords[0];
-      ElemType sum = arma::accu(coords(typename GetProxyType<MatType>::span(
-          1, numVariables - 1), 0));
+      ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
       ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables) - 1.);
       ElemType objectiveRatio = objectives(0) / g;
       objectives(1) = g * (1. - std::sqrt(objectiveRatio) -
@@ -100,13 +96,16 @@ namespace test {
     //! Get the starting point.
     MatType GetInitialPoint()
     {
-      return ColType(numVariables, 1, GetFillType<MatType>::zeros);
+      // Convenience typedef.
+      typedef typename MatType::elem_type ElemType;
+
+      return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
     }
 
     struct ObjectiveF1
     {
       ObjectiveF1(ZDT3& zdtClass) : zdtClass(zdtClass)
-      { /*Nothing to do here */ }
+      {/*Nothing to do here */}
 
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
@@ -119,15 +118,14 @@ namespace test {
     struct ObjectiveF2
     {
       ObjectiveF2(ZDT3& zdtClass) : zdtClass(zdtClass)
-      { /*Nothing to do here */ }
+      {/*Nothing to do here */}
 
       typename MatType::elem_type Evaluate(const MatType& coords)
       {
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
-        ElemType sum = accu(coords(typename GetProxyType<MatType>::span(
-            1, numVariables - 1), 0));
+        ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
         ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables - 1));
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
@@ -147,14 +145,14 @@ namespace test {
     //! Get the Reference Front.
     //! Refer PR #273 Ipynb notebook to see the plot of Reference
     //! Front. The implementation has been taken from pymoo.
-    CubeType GetReferenceFront()
+    arma::cube GetReferenceFront()
     {
       size_t numRegions = 5;
       size_t regionDensity = std::floor(numParetoPoints / numRegions);
       size_t apparentParetoPoints = numRegions * regionDensity;
-      CubeType front(2, 1, apparentParetoPoints);
+      arma::cube front(2, 1, apparentParetoPoints);
 
-      MatType regions{
+      arma::mat regions{
         {0.0, 0.182228780, 0.4093136748,
          0.6183967944, 0.8233317983},
         {0.0830015349, 0.2577623634, 0.4538821041,
@@ -163,16 +161,18 @@ namespace test {
 
       for (size_t regionIdx = 0; regionIdx < numRegions; ++regionIdx)
       {
-        ColType region = regions.col(regionIdx);
+        arma::vec region = regions.col(regionIdx);
         //! Generate x and y coordinates for the region.
-        ColType x = linspace(region(0), region(1), regionDensity);
-        ColType y = 1 - sqrt(x) - x % sin(10 * arma::datum::pi * x);
+        arma::vec x = arma::linspace(
+            region(0), region(1), regionDensity);
+        arma::vec y = 1 - arma::sqrt(x) - x
+            % arma::sin(10 * arma::datum::pi * x);
 
         //! Fill the front with the generated points.
         for (size_t pointIdx = 0; pointIdx < regionDensity; ++pointIdx)
         {
           size_t sliceIdx = regionIdx * regionDensity + pointIdx;
-          front.slice(sliceIdx) = ColType{ x(pointIdx), y(pointIdx) };
+          front.slice(sliceIdx) = arma::vec{ x(pointIdx), y(pointIdx) };
         }
       }
 
@@ -183,7 +183,7 @@ namespace test {
     ObjectiveF2 objectiveF2;
   };
 
-} //namespace test
-} //namespace ens
+} // namespace test
+} // namespace ens
 
 #endif

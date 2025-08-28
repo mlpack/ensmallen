@@ -34,9 +34,8 @@ template<typename FunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-                        IsCootType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 GradientDescent::Optimize(FunctionType& function,
                           MatType& iterateIn,
                           CallbackTypes&&... callbacks)
@@ -116,7 +115,6 @@ GradientDescent::Optimize(FunctionType& function,
 template<typename FunctionType,
          typename MatType,
          typename GradType,
-         typename CategoryVecType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
@@ -124,7 +122,7 @@ GradientDescent::Optimize(
     FunctionType& function,
     MatType& iterate,
     const std::vector<bool>& categoricalDimensions,
-    const CategoryVecType& numCategories,
+    const arma::Row<size_t>& numCategories,
     CallbackTypes&&... callbacks)
 {
   if (categoricalDimensions.size() != iterate.n_rows)

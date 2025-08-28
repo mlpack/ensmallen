@@ -15,16 +15,13 @@
 // In case it hasn't been included yet.
 #include "logistic_regression_function.hpp"
 
-#include <iostream>
-
 namespace ens {
 namespace test {
 
 template<typename MatType>
-template<typename LabelsType>
 LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     MatType& predictors,
-    LabelsType& responsesIn,
+    arma::Row<size_t>& responsesIn,
     const double lambdaIn) :
     // We promise to be well-behaved... the elements won't be modified.
     predictors(predictors),
@@ -33,7 +30,8 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     #if ARMA_VERSION_MAJOR < 12 || \
         (ARMA_VERSION_MAJOR == 12 && ARMA_VERSION_MINOR < 8)
     responses(conv_to<MatType>::from(conv_to<typename ForwardType<
-        LabelsType, typename MatType::elem_type>::bmat>::from( responsesIn))),
+        arma::Row<size_t>, typename MatType::elem_type>::bmat>::from(
+        responsesIn))),
     #else
     responses(conv_to<MatType>::from(responsesIn)),
     #endif
@@ -55,10 +53,9 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
 }
 
 template<typename MatType>
-template<typename LabelsType>
 LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     MatType& predictors,
-    LabelsType& responsesIn,
+    arma::Row<size_t>& responsesIn,
     MatType& initialPoint,
     const double lambdaIn) :
     initialPoint(initialPoint),
@@ -68,7 +65,8 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     #if ARMA_VERSION_MAJOR < 12 || \
         (ARMA_VERSION_MAJOR == 12 && ARMA_VERSION_MINOR < 8)
     responses(conv_to<MatType>::from(conv_to<typename ForwardType<
-        LabelsType, typename MatType::elem_type>::bmat>::from( responsesIn))),
+        arma::Row<size_t>, typename MatType::elem_type>::bmat>::from(
+        responsesIn))),
     #else
     responses(conv_to<MatType>::from(responsesIn)),
     #endif
@@ -177,8 +175,6 @@ typename MatType::elem_type LogisticRegressionFunction<MatType>::Evaluate(
       1 - responses.cols(begin, begin + batchSize - 1) +
       sigmoid % (2 * responses.cols(begin, begin + batchSize - 1) - 1)));
 
-  //std::cout << "LRF::Evaluate(" << begin << ", " << batchSize << "): reg " << regularization << " res " << result << "\n";
-
   // Invert the result, because it's a minimization.
   return regularization - result;
 }
@@ -190,17 +186,16 @@ void LogisticRegressionFunction<MatType>::Gradient(
     const MatType& parameters,
     GradType& gradient) const
 {
-  typedef typename ForwardType<MatType>::brow BaseRowType;
-
+  typedef typename MatType::elem_type ElemType;
   // Regularization term.
   MatType regularization;
   regularization = lambda * parameters.tail_cols(parameters.n_elem - 1);
 
-  const BaseRowType sigmoids = (1 / (1 + exp(-parameters(0, 0)
+  const arma::Row<ElemType> sigmoids = (1 / (1 + arma::exp(-parameters(0, 0)
       - parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
-  gradient.set_size(size(parameters));
-  gradient[0] = -accu(responses - sigmoids);
+  gradient.set_size(arma::size(parameters));
+  gradient[0] = -arma::accu(responses - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
       predictors.t() + regularization;
 }
@@ -284,8 +279,8 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
   const BaseRowType sigmoids = 1 / (1 + exp(-(parameters(0, 0) +
       parameters.tail_cols(parameters.n_elem - 1) * predictors)));
 
-  gradient.set_size(size(parameters));
-  gradient[0] = -accu(responses - sigmoids);
+  gradient.set_size(arma::size(parameters));
+  gradient[0] = -arma::accu(responses - sigmoids);
   gradient.tail_cols(parameters.n_elem - 1) = (sigmoids - responses) *
       predictors.t() + regularization;
 
@@ -334,46 +329,34 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
       1 - responses.cols(begin, begin + batchSize - 1) +
       sigmoids % (2 * responses.cols(begin, begin + batchSize - 1) - 1)));
 
-  //std::cout << "LRF::EvaluateWithGradient(" << begin << ", " << batchSize << "): reg " << objectiveRegularization << " res " << result << "\n";
-  //std::cout << "  gradient[0]: " << gradient[0] << "\n";
-  //std::cout << "  parameters: " << parameters;
-  //std::cout << "  predictors cols:\n" << predictors.cols(begin, begin + batchSize - 1) << "\n";
-  //std::cout << "  sigmoids denom: " << -(parameters(0, 0) + parameters.tail_cols(parameters.n_elem - 1) * predictors.cols(begin, begin + batchSize - 1)) << "\n";
-  //std::cout << "  responses: " << responses.cols(begin, begin + batchSize - 1);
-  //std::cout << "  sigmoids: " << sigmoids;
-  //std::cout << "  inner left: " << (1 - responses.cols(begin, begin + batchSize - 1) + sigmoids % (2 * responses.cols(begin, begin + batchSize - 1) - 1)) << "\n";
-  //std::cout << "  log: " << log(1 - responses.cols(begin, begin + batchSize - 1) + sigmoids % (2 * responses.cols(begin, begin + batchSize - 1) - 1)) << "\n";
-
   // Invert the result, because it's a minimization.
   return objectiveRegularization - result;
 }
 
 template<typename MatType>
-template<typename LabelsType>
 void LogisticRegressionFunction<MatType>::Classify(
     const MatType& dataset,
-    LabelsType& labels,
+    arma::Row<size_t>& labels,
     const MatType& parameters,
     const double decisionBoundary) const
 {
   // Calculate sigmoid function for each point.  The (1 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  labels = conv_to<LabelsType>::from((1 /
+  labels = conv_to<arma::Row<size_t>>::from((1 /
       (1 + exp(-parameters(0) -
       parameters.tail_cols(parameters.n_elem - 1) * dataset))) +
       ElemType(1 - decisionBoundary));
 }
 
 template<typename MatType>
-template<typename LabelsType>
 double LogisticRegressionFunction<MatType>::ComputeAccuracy(
     const MatType& predictors,
-    const LabelsType& responses,
+    const arma::Row<size_t>& responses,
     const MatType& parameters,
     const double decisionBoundary) const
 {
   // Predict responses using the current model.
-  LabelsType tempResponses;
+  arma::Row<size_t> tempResponses;
   Classify(predictors, tempResponses, parameters, decisionBoundary);
 
   // Count the number of responses that were correct.

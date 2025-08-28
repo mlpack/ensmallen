@@ -20,64 +20,55 @@
 namespace ens {
 namespace test {
 
-template<typename MatType, typename LabelsType>
-RosenbrockWoodFunctionType<MatType, LabelsType>::RosenbrockWoodFunctionType() :
-    rf(4), wf()
+inline RosenbrockWoodFunction::RosenbrockWoodFunction() : rf(4), wf()
 {
   initialPoint.set_size(4, 2);
   initialPoint.col(0) = rf.GetInitialPoint();
-  initialPoint.col(1) = wf.GetInitialPoint<MatType>();
+  initialPoint.col(1) = wf.GetInitialPoint();
 }
 
-template<typename MatType, typename LabelsType>
-void RosenbrockWoodFunctionType<MatType, LabelsType>::Shuffle()
-{ /* Nothing to do here */ }
+inline void RosenbrockWoodFunction::Shuffle() { /* Nothing to do here */ }
 
-template<typename MatType, typename LabelsType>
-typename MatType::elem_type RosenbrockWoodFunctionType<
-    MatType, LabelsType>::Evaluate(
+template<typename MatType>
+typename MatType::elem_type RosenbrockWoodFunction::Evaluate(
     const MatType& coordinates,
     const size_t /* begin */,
     const size_t /* batchSize */) const
 {
-  return rf.Evaluate(MatType(coordinates.col(0))) +
-      wf.Evaluate(MatType(coordinates.col(1)));
+  return rf.Evaluate(coordinates.col(0)) + wf.Evaluate(coordinates.col(1));
 }
 
-template<typename MatType, typename LabelsType>
-typename MatType::elem_type RosenbrockWoodFunctionType<
-    MatType, LabelsType>::Evaluate(const MatType& coordinates) const
+template<typename MatType>
+typename MatType::elem_type RosenbrockWoodFunction::Evaluate(
+    const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
-template<typename MatType, typename LabelsType>
-template<typename GradType>
-void RosenbrockWoodFunctionType<MatType, LabelsType>::Gradient(
-    const MatType& coordinates,
-    const size_t /* begin */,
-    GradType& gradient,
-    const size_t /* batchSize */) const
+template<typename MatType, typename GradType>
+inline void RosenbrockWoodFunction::Gradient(const MatType& coordinates,
+                                             const size_t /* begin */,
+                                             GradType& gradient,
+                                             const size_t /* batchSize */) const
 {
   // Convenience typedef.
-  typedef typename ForwardType<MatType>::bcol BaseColType;
+  typedef typename MatType::elem_type ElemType;
 
   gradient.set_size(4, 2);
 
-  BaseColType grf(4);
-  BaseColType gwf(4);
+  arma::Col<ElemType> grf(4);
+  arma::Col<ElemType> gwf(4);
 
-  rf.Gradient(MatType(coordinates.col(0)), grf);
-  wf.Gradient(MatType(coordinates.col(1)), gwf);
+  rf.Gradient(coordinates.col(0), grf);
+  wf.Gradient(coordinates.col(1), gwf);
 
   gradient.col(0) = grf;
   gradient.col(1) = gwf;
 }
 
-template<typename MatType, typename LabelsType>
-template<typename GradType>
-inline void RosenbrockWoodFunctionType<MatType, LabelsType>::Gradient(
-    const MatType& coordinates, GradType& gradient) const
+template<typename MatType, typename GradType>
+inline void RosenbrockWoodFunction::Gradient(const MatType& coordinates,
+                                             GradType& gradient) const
 {
   Gradient(coordinates, 0, gradient, 1);
 }

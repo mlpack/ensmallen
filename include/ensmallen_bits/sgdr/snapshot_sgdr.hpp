@@ -120,8 +120,8 @@ class SnapshotSGDR
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value ||
-      IsCootType<GradType>::value, typename MatType::elem_type>::type
+  typename std::enable_if<IsMatrixType<GradType>::value,
+      typename MatType::elem_type>::type
   Optimize(SeparableFunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);
@@ -169,17 +169,37 @@ class SnapshotSGDR
   //! Modify whether or not the actual objective is calculated.
   bool& ExactObjective() { return optimizer.ExactObjective(); }
 
-  //! Get the snapshots.
-  template<typename MatType>
+  // Get the snapshots.  The template parameters must be the same as the last
+  // call to Optimize()!
+  template<typename MatType = arma::mat, typename GradType = MatType>
   std::vector<MatType> Snapshots() const
   {
-    return optimizer.DecayPolicy().Snapshots();
+    if (!optimizer.InstDecayPolicy().template Has<
+        SnapshotEnsembles::Policy<MatType, GradType>>())
+    {
+      throw std::runtime_error("SnapshotSGDR::Snapshots(): got unexpected type;"
+          " make sure to call with the same matrix type as the previous "
+          "optimization!");
+    }
+
+    return optimizer.InstDecayPolicy().template As<
+        SnapshotEnsembles::Policy<MatType, GradType>>().Snapshots();
   }
-  //! Modify the snapshots.
-  template<typename MatType>
+  // Modify the snapshots.  The template parameters must be the same as the last
+  // call to Optimize()!
+  template<typename MatType = arma::mat, typename GradType = MatType>
   std::vector<MatType>& Snapshots()
   {
-    return optimizer.DecayPolicy().Snapshots();
+    if (!optimizer.InstDecayPolicy().template Has<
+        SnapshotEnsembles::Policy<MatType, GradType>>())
+    {
+      throw std::runtime_error("SnapshotSGDR::Snapshots(): got unexpected type;"
+          " make sure to call with the same matrix type as the previous "
+          "optimization!");
+    }
+
+    return optimizer.InstDecayPolicy().template As<
+        SnapshotEnsembles::Policy<MatType, GradType>>().Snapshots();
   }
 
   //! Get whether or not to accumulate the snapshots.

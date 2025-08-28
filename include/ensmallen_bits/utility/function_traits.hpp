@@ -18,6 +18,20 @@ namespace ens {
 // Structs have public members by default (that's why they are chosen over
 // classes).
 
+template<typename MatType> struct IsArmaType;
+template<typename MatType> struct IsCootType;
+
+/**
+ * If value == true, then MatType is a matrix type matching the Armadillo API
+ * that is supported by ensmallen.
+ */
+template<typename MatType>
+struct IsMatrixType
+{ 
+  const static bool value = IsArmaType<MatType>::value ||
+                            IsCootType<MatType>::value;
+};
+
 /**
  * If value == true, then MatType is some sort of Armadillo vector or subview.
  * You might use this struct like this:
@@ -146,48 +160,52 @@ struct IsCootType
   const static bool value = false;
 };
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 
-// Commenting out the first template per case, because
-// Visual Studio doesn't like this instantiaion pattern (error C2910).
-// template<>
 template<typename eT>
 struct IsCootType<coot::Col<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::Row<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::subview<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::subview_col<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::subview_row<eT> >
 {
   const static bool value = true;
 };
 
-// template<>
 template<typename eT>
 struct IsCootType<coot::Mat<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsCootType<coot::Cube<eT> >
+{
+  const static bool value = true;
+};
+
+template<typename eT>
+struct IsCootType<coot::subview_cube<eT> >
 {
   const static bool value = true;
 };

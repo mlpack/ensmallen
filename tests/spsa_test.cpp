@@ -22,7 +22,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", ENS_ALL_TEST_TYPES)
 {
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
+  FunctionTest<SphereFunction, TestType>(
       optimizer,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
@@ -56,8 +56,7 @@ TEMPLATE_TEST_CASE("SPSA_LogisticRegressionFunction", "[SPSA]", ENS_TEST_TYPES)
 TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", coot::mat, coot::fmat)
 {
   SPSA optimizer(0.1, 0.102, 0.16, 0.3, 100000, 0);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("SPSA_MatyasFunction", "[SPSA]", coot::mat, coot::fmat)

@@ -22,7 +22,6 @@ inline RastriginFunction::RastriginFunction(
     const size_t n) :
     n(n),
     visitationOrder(linspace<arma::Col<size_t>>(0, n - 1, n))
-
 {
   initialPoint.set_size(n, 1);
   initialPoint.fill(-3);

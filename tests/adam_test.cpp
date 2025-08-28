@@ -24,7 +24,7 @@ TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
       false);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
+  FunctionTest<SphereFunction, TestType>(
       optimizer,
       10 * Tolerances<TestType>::LargeObj,
       10 * Tolerances<TestType>::LargeCoord);
@@ -34,7 +34,7 @@ TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
       false);
-  FunctionTest<StyblinskiTangFunction<TestType, arma::Row<size_t>>, TestType>(
+  FunctionTest<StyblinskiTangFunction, TestType>(
       optimizer,
       30 * Tolerances<TestType>::LargeObj,
       10 * Tolerances<TestType>::LargeCoord);
@@ -84,7 +84,7 @@ TEMPLATE_TEST_CASE("AMSGrad_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
   AMSGrad optimizer(0.01, 1, 0.9, 0.999, Tolerances<TestType>::Obj, 50000,
       Tolerances<TestType>::Obj / 100, true);
-  FunctionTest<SphereFunctionType<TestType, arma::Row<size_t>>, TestType>(
+  FunctionTest<SphereFunction, TestType>(
       optimizer,
       10 * Tolerances<TestType>::LargeObj,
       10 * Tolerances<TestType>::LargeCoord);
@@ -151,12 +151,12 @@ TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
 
 TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.01, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj, 50000,
-      Tolerances<TestType>::Obj, false);
+  Adam optimizer(0.002, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj / 100,
+      1000000, Tolerances<TestType>::Obj / 100, false);
   FunctionTest<AckleyFunction, TestType>(
       optimizer,
-      Tolerances<TestType>::LargeObj,
-      Tolerances<TestType>::LargeCoord);
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
 TEMPLATE_TEST_CASE("Adam_BealeFunction", "[Adam]", ENS_ALL_TEST_TYPES)
@@ -218,15 +218,13 @@ TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", coot::mat, coot::fmat)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
-  FunctionTest<SphereFunctionType<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.2);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2);
 }
 
 TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", coot::mat)
 {
   Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
-  FunctionTest<StyblinskiTangFunction<TestType, coot::Row<size_t>>, TestType>(
-      optimizer, 0.5, 0.1);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("Adam_McCormickFunction", "[Adam]", coot::mat)

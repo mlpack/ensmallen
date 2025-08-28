@@ -48,118 +48,112 @@ namespace test {
  *
  * @tparam MatType Type of matrix to optimize.
  */
-  template<
-      typename MatType = arma::mat,
-      typename ColType = typename ForwardType<MatType>::bcol,
-      typename CubeType = typename ForwardType<MatType>::bcube
-  >
-  class ZDT1
+template<typename MatType = arma::mat>
+class ZDT1
+{
+ private:
+  size_t numParetoPoints {100};
+  size_t numObjectives {2};
+  size_t numVariables {30};
+
+ public:
+   //! Initialize the ZDT1
+  ZDT1(size_t numParetoPoints = 100) :
+      numParetoPoints(numParetoPoints),
+      objectiveF1(*this),
+      objectiveF2(*this)
+  {/* Nothing to do here. */}
+
+  /**
+   * Evaluate the objectives with the given coordinate.
+   *
+   * @param coords The function coordinates.
+   * @return arma::Col<typename MatType::elem_type>
+   */
+  arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
   {
-   private:
-    size_t numParetoPoints {100};
-    size_t numObjectives {2};
-    size_t numVariables {30};
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
 
-   public:
-     //! Initialize the ZDT1
-    ZDT1(size_t numParetoPoints = 100) :
-        numParetoPoints(numParetoPoints),
-        objectiveF1(*this),
-        objectiveF2(*this)
-    {/* Nothing to do here. */}
+    arma::Col<ElemType> objectives(numObjectives);
+    objectives(0) = coords[0];
 
-    /**
-     * Evaluate the objectives with the given coordinate.
-     *
-     * @param coords The function coordinates.
-     * @return Col<typename MatType::elem_type>
-     */
-    ColType Evaluate(const MatType& coords)
+    ElemType sum = accu(coords.submat(1, 0, numVariables - 1, 0));
+    ElemType g = 1 + 9 * sum / (static_cast<ElemType>(numVariables) - 1.0);
+    ElemType objectiveRatio = objectives(0) / g;
+    objectives(1) = g * (1 - std::sqrt(objectiveRatio));
+
+    return objectives;
+  }
+
+  //! Get the starting point.
+  MatType GetInitialPoint()
+  {
+    // Convenience typedef.
+    typedef typename MatType::elem_type ElemType;
+
+    return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
+  }
+
+  struct ObjectiveF1
+  {
+    ObjectiveF1(ZDT1& zdtClass) : zdtClass(zdtClass)
+    {/*Nothing to do here */}
+
+    typename MatType::elem_type Evaluate(const MatType& coords)
+    {
+      return coords[0];
+    }
+
+    ZDT1& zdtClass;
+  };
+
+  struct ObjectiveF2
+  {
+    ObjectiveF2(ZDT1& zdtClass) : zdtClass(zdtClass)
+    {/*Nothing to do here */}
+
+    typename MatType::elem_type Evaluate(const MatType& coords)
     {
       // Convenience typedef.
       typedef typename MatType::elem_type ElemType;
 
-      ColType objectives(numObjectives);
-      objectives(0) = coords[0];
+      size_t numVariables = zdtClass.numVariables;
+      ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+      ElemType g = 1 + 9 * sum / (static_cast<ElemType>(numVariables - 1));
+      ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
-      ElemType sum = 0;
-      for (size_t i = 1; i < numVariables; i++)
-      {
-        sum += coords(i);
-      }
-
-      ElemType g = 1 + 9 * sum / (static_cast<ElemType>(numVariables) - 1.0);
-      ElemType objectiveRatio = objectives(0) / g;
-      objectives(1) = g * (1 - std::sqrt(objectiveRatio));
-
-      return objectives;
+      return g * (1 - std::sqrt(objectiveRatio));
     }
 
-    //! Get the starting point.
-    MatType GetInitialPoint()
-    {
-      return MatType(numVariables, 1, GetFillType<MatType>::zeros);
-    }
-
-    struct ObjectiveF1
-    {
-      ObjectiveF1(ZDT1& zdtClass) : zdtClass(zdtClass)
-      {/*Nothing to do here */}
-
-      typename MatType::elem_type Evaluate(const MatType& coords)
-      {
-        return coords[0];
-      }
-
-      ZDT1& zdtClass;
-    };
-
-    struct ObjectiveF2
-    {
-      ObjectiveF2(ZDT1& zdtClass) : zdtClass(zdtClass)
-      {/*Nothing to do here */}
-
-      typename MatType::elem_type Evaluate(const MatType& coords)
-      {
-        // Convenience typedef.
-        typedef typename MatType::elem_type ElemType;
-
-        size_t numVariables = zdtClass.numVariables;
-        ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
-        ElemType g = 1 + 9 * sum / (static_cast<ElemType>(numVariables - 1));
-        ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
-
-        return g * (1 - std::sqrt(objectiveRatio));
-      }
-
-      ZDT1& zdtClass;
-    };
-
-    //! Get objective functions.
-    std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
-    {
-      return std::make_tuple(objectiveF1, objectiveF2);
-    }
-
-    //! Get the Reference Front.
-    //! Refer PR #273 Ipynb notebook to see the plot of Reference
-    //! Front. The implementation has been taken from pymoo.
-    CubeType GetReferenceFront()
-    {
-      CubeType front(2, 1, numParetoPoints);
-      ColType x = linspace<ColType>(0, 1, numParetoPoints);
-      ColType y = 1 - sqrt(x);
-      for (size_t idx = 0; idx < numParetoPoints; ++idx)
-        front.slice(idx) = ColType{ x(idx), y(idx) };
-
-      return front;
-    }
-
-    ObjectiveF1 objectiveF1;
-    ObjectiveF2 objectiveF2;
+    ZDT1& zdtClass;
   };
 
-} //namespace test
-} //namespace ens
+  //! Get objective functions.
+  std::tuple<ObjectiveF1, ObjectiveF2> GetObjectives()
+  {
+    return std::make_tuple(objectiveF1, objectiveF2);
+  }
+
+  //! Get the Reference Front.
+  //! Refer PR #273 Ipynb notebook to see the plot of Reference
+  //! Front. The implementation has been taken from pymoo.
+  arma::cube GetReferenceFront()
+  {
+    arma::cube front(2, 1, numParetoPoints);
+    arma::vec x = arma::linspace(0, 1, numParetoPoints);
+    arma::vec y = 1 - arma::sqrt(x);
+    for (size_t idx = 0; idx < numParetoPoints; ++idx)
+      front.slice(idx) = arma::vec{ x(idx), y(idx) };
+
+    return front;
+  }
+
+  ObjectiveF1 objectiveF1;
+  ObjectiveF2 objectiveF2;
+};
+
+} // namespace test
+} // namespace ens
 
 #endif

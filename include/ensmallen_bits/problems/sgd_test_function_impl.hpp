@@ -19,22 +19,19 @@
 namespace ens {
 namespace test {
 
-template<typename LabelsType>
-SGDTestFunctionType<LabelsType>::SGDTestFunctionType() :
-    visitationOrder(linspace<LabelsType>(0, NumFunctions() - 1,
+inline SGDTestFunction::SGDTestFunction() :
+    visitationOrder(arma::linspace<arma::Col<size_t>>(0, NumFunctions() - 1,
         NumFunctions()))
 { }
 
-template<typename LabelsType>
-void SGDTestFunctionType<LabelsType>::Shuffle()
+inline void SGDTestFunction::Shuffle()
 {
-  visitationOrder = shuffle(linspace<LabelsType>(0,
+  visitationOrder = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
       (NumFunctions() - 1), NumFunctions()));
 }
 
-template<typename LabelsType>
 template<typename MatType>
-typename MatType::elem_type SGDTestFunctionType<LabelsType>::Evaluate(
+typename MatType::elem_type SGDTestFunction::Evaluate(
     const MatType& coordinates,
     const size_t begin,
     const size_t batchSize) const
@@ -65,13 +62,11 @@ typename MatType::elem_type SGDTestFunctionType<LabelsType>::Evaluate(
   return objective;
 }
 
-template<typename LabelsType>
 template<typename MatType, typename GradType>
-void SGDTestFunctionType<LabelsType>::Gradient(
-    const MatType& coordinates,
-    const size_t begin,
-    GradType& gradient,
-    const size_t batchSize) const
+void SGDTestFunction::Gradient(const MatType& coordinates,
+                               const size_t begin,
+                               GradType& gradient,
+                               const size_t batchSize) const
 {
   typedef typename MatType::elem_type ElemType;
 

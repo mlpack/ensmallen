@@ -24,7 +24,7 @@ TEMPLATE_TEST_CASE("SA_GeneralizedRosenbrockFunction", "[SA]",
   typedef typename TestType::elem_type ElemType;
 
   size_t dim = 10;
-  GeneralizedRosenbrockFunctionType<TestType> f(dim);
+  GeneralizedRosenbrockFunction f(dim);
 
   size_t iteration = 0;
   ElemType result = DBL_MAX;
@@ -105,8 +105,7 @@ TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", coot::mat, coot::fmat)
   // The convergence is very sensitive to the choices of maxMove and initMove.
   // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
   SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
-  FunctionTest<RastriginFunctionType<
-      TestType, coot::Row<size_t> >, TestType>(sa, 0.01, 0.001, 4);
+  FunctionTest<RastriginFunction, TestType>(sa, 0.01, 0.001, 4);
 }
 
 #endif

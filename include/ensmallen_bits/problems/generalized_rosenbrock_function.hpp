@@ -42,20 +42,15 @@ namespace test {
  * }
  * @endcode
  */
-template<
-    typename MatType = arma::mat,
-    typename LabelsType = typename ForwardType<MatType>::urowvec>
-class GeneralizedRosenbrockFunctionType
+class GeneralizedRosenbrockFunction
 {
  public:
-  typedef typename MatType::elem_type ElemType;
-
   /*
    * Initialize the GeneralizedRosenbrockFunction.
    *
    * @param n Number of dimensions for the function.
    */
-  GeneralizedRosenbrockFunctionType(const size_t n);
+  GeneralizedRosenbrockFunction(const size_t n);
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -73,6 +68,7 @@ class GeneralizedRosenbrockFunctionType
    * @param begin The first function.
    * @param batchSize Number of points to process.
    */
+  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates,
                                        const size_t begin,
                                        const size_t batchSize = 1) const;
@@ -82,6 +78,7 @@ class GeneralizedRosenbrockFunctionType
    *
    * @param coordinates The function coordinates.
    */
+  template<typename MatType>
   typename MatType::elem_type Evaluate(const MatType& coordinates) const;
 
   /**
@@ -92,7 +89,7 @@ class GeneralizedRosenbrockFunctionType
    * @param gradient The function gradient.
    * @param batchSize Number of points to process.
    */
-  template<typename GradType>
+  template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates,
                 const size_t begin,
                 GradType& gradient,
@@ -104,7 +101,7 @@ class GeneralizedRosenbrockFunctionType
    * @param coordinates The function coordinates.
    * @param gradient The function gradient.
    */
-  template<typename GradType>
+  template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient) const;
 
   // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
@@ -113,19 +110,17 @@ class GeneralizedRosenbrockFunctionType
   // infrastructure.
 
   //! Get the starting point.
-  template<typename InputMatType = MatType>
-  const InputMatType GetInitialPoint() const
+  template<typename MatType = arma::mat>
+  const MatType GetInitialPoint() const
   {
-    return conv_to<InputMatType>::from(initialPoint);
+    return arma::conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.
-  template<typename InputMatType = MatType>
-  const InputMatType GetFinalPoint() const
+  template<typename MatType = arma::mat>
+  const MatType GetFinalPoint() const
   {
-    InputMatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
-    finalPoint.ones();
-    return finalPoint;
+    return arma::ones<MatType>(initialPoint.n_rows, initialPoint.n_cols);
   }
 
   //! Get the final objective.
@@ -133,17 +128,14 @@ class GeneralizedRosenbrockFunctionType
 
  private:
   //! Locally-stored Initial point.
-  MatType initialPoint;
+  arma::mat initialPoint;
 
-  //! Number of dimensions for the function.
+  //! //! Number of dimensions for the function.
   size_t n;
 
   //! For shuffling.
-  LabelsType visitationOrder;
+  arma::Row<size_t> visitationOrder;
 };
-
-using GeneralizedRosenbrockFunction = GeneralizedRosenbrockFunctionType<
-    arma::mat>;
 
 } // namespace test
 } // namespace ens

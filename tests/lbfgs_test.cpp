@@ -90,11 +90,11 @@ TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
     // Dimension: powers of 2
     size_t dim = std::pow(2.0, i);
 
-    GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(dim);
+    GeneralizedRosenbrockFunction f(dim);
     L_BFGS lbfgs(20);
     lbfgs.MaxIterations() = 10000;
 
-    TestType coords = f.GetInitialPoint();
+    TestType coords = f.GetInitialPoint<TestType>();
     lbfgs.Optimize(f, coords);
 
     ElemType finalValue = f.Evaluate(coords);
@@ -113,7 +113,7 @@ TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunctionLoose", "[LBFGS]",
 {
   typedef typename TestType::elem_type ElemType;
 
-  GeneralizedRosenbrockFunctionType<TestType, arma::Row<size_t>> f(2);
+  GeneralizedRosenbrockFunction f(2);
   L_BFGS lbfgs(20);
   lbfgs.MaxIterations() = 1000;
   // For FP16, to keep the gradient different norm small enough, we must limit
@@ -121,7 +121,7 @@ TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunctionLoose", "[LBFGS]",
   if (sizeof(ElemType) < 4)
     lbfgs.MaxStep() = 0.15;
 
-  TestType coords = f.GetInitialPoint();
+  TestType coords = f.GetInitialPoint<TestType>();
   lbfgs.Optimize(f, coords);
 
   ElemType finalValue = f.Evaluate(coords);
@@ -143,8 +143,8 @@ TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]", ENS_TEST_TYPES)
   lbfgs.MaxIterations() = 10000;
   // Special tolerances: L-BFGS with floats will converge too early.
   const double tol = std::is_same<ElemType, float>::value ? 20.0 : 1e-8;
-  FunctionTest<RosenbrockWoodFunctionType<TestType, arma::Row<size_t>>,
-               TestType>(lbfgs, ElemType(tol), ElemType(tol / 10));
+  FunctionTest<RosenbrockWoodFunction, TestType>(lbfgs, ElemType(tol),
+      ElemType(tol / 10));
 }
 
 #ifdef USE_COOT
@@ -173,7 +173,7 @@ TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
     // Dimension: powers of 2
     int dim = std::pow(2.0, i);
 
-    GeneralizedRosenbrockFunctionType<TestType, coot::Row<size_t>> f(dim);
+    GeneralizedRosenbrockFunction f(dim);
     L_BFGS lbfgs(20);
     lbfgs.MaxIterations() = 10000;
 
@@ -201,8 +201,7 @@ TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]",
 {
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
-  FunctionTest<RosenbrockWoodFunctionType<
-      TestType, coot::Row<size_t>>, TestType>(lbfgs, 0.01, 0.001);
+  FunctionTest<RosenbrockWoodFunction, TestType>(lbfgs, 0.01, 0.001);
 }
 
 #endif

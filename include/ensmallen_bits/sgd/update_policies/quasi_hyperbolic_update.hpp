@@ -79,11 +79,11 @@ class QHUpdate
      */
     Policy(QHUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        velocity(rows, cols),
         momentum(ElemType(parent.momentum)),
         v(ElemType(parent.v))
     {
-      // Initialize an empty velocity matrix.
-      velocity.zeros(rows, cols);
+      // Nothing to do here.
     }
 
     /**

@@ -19,12 +19,10 @@
 namespace ens {
 namespace test {
 
-template<typename MatType, typename LabelsType>
-GeneralizedRosenbrockFunctionType<
-    MatType, LabelsType>::GeneralizedRosenbrockFunctionType(
+inline GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(
     const size_t n) :
     n(n),
-    visitationOrder(linspace<LabelsType>(0, n - 1, n))
+    visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
 
 {
   initialPoint.set_size(n, 1);
@@ -32,7 +30,7 @@ GeneralizedRosenbrockFunctionType<
   {
     if (i % 2 == 1)
     {
-      initialPoint(i) = typename MatType::elem_type(-1.2);
+      initialPoint(i) = -1.2;
     }
     else
     {
@@ -41,20 +39,21 @@ GeneralizedRosenbrockFunctionType<
   }
 }
 
-template<typename MatType, typename LabelsType>
-void GeneralizedRosenbrockFunctionType<MatType, LabelsType>::Shuffle()
+inline void GeneralizedRosenbrockFunction::Shuffle()
 {
-  visitationOrder = shuffle(linspace<LabelsType>(0, n - 2, n - 1));
+  visitationOrder = arma::shuffle(arma::linspace<arma::Row<size_t>>(0, n - 2,
+      n - 1));
 }
 
-template<typename MatType, typename LabelsType>
-typename MatType::elem_type GeneralizedRosenbrockFunctionType<
-    MatType, LabelsType>::Evaluate(
+template<typename MatType>
+typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
     const MatType& coordinates,
     const size_t begin,
     const size_t batchSize) const
 {
-  typename MatType::elem_type objective = 0;
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType objective = 0;
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
@@ -66,12 +65,13 @@ typename MatType::elem_type GeneralizedRosenbrockFunctionType<
   return objective;
 }
 
-template<typename MatType, typename LabelsType>
-typename MatType::elem_type GeneralizedRosenbrockFunctionType<
-    MatType, LabelsType>::Evaluate(
+template<typename MatType>
+typename MatType::elem_type GeneralizedRosenbrockFunction::Evaluate(
     const MatType& coordinates) const
 {
-  typename MatType::elem_type fval = 0;
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType fval = 0;
   for (size_t i = 0; i < (n - 1); i++)
   {
     fval += 100 * std::pow(std::pow(coordinates[i], ElemType(2)) -
@@ -82,14 +82,15 @@ typename MatType::elem_type GeneralizedRosenbrockFunctionType<
   return fval;
 }
 
-template<typename MatType, typename LabelsType>
-template<typename GradType>
-void GeneralizedRosenbrockFunctionType<MatType, LabelsType>::Gradient(
+template<typename MatType, typename GradType>
+inline void GeneralizedRosenbrockFunction::Gradient(
     const MatType& coordinates,
     const size_t begin,
     GradType& gradient,
     const size_t batchSize) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   gradient.zeros(n);
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
@@ -101,12 +102,13 @@ void GeneralizedRosenbrockFunctionType<MatType, LabelsType>::Gradient(
   }
 }
 
-template<typename MatType, typename LabelsType>
-template<typename GradType>
-void GeneralizedRosenbrockFunctionType<MatType, LabelsType>::Gradient(
+template<typename MatType, typename GradType>
+inline void GeneralizedRosenbrockFunction::Gradient(
     const MatType& coordinates,
     GradType& gradient) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   gradient.zeros(n);
   for (size_t i = 0; i < (n - 1); i++)
   {

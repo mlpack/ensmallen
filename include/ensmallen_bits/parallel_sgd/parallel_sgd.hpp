@@ -12,7 +12,6 @@
 #ifndef ENSMALLEN_PARALLEL_SGD_HPP
 #define ENSMALLEN_PARALLEL_SGD_HPP
 
-#include <ensmallen_bits/sgd/sgd.hpp>
 #include "decay_policies/constant_step.hpp"
 #include "decay_policies/exponential_backoff.hpp"
 
@@ -89,8 +88,8 @@ class ParallelSGD
             typename MatType,
             typename GradType,
             typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value ||
-      IsCootType<GradType>::value, typename MatType::elem_type>::type
+  typename std::enable_if<IsArmaType<GradType>::value,
+      typename MatType::elem_type>::type
   Optimize(SparseFunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks);
@@ -126,9 +125,9 @@ class ParallelSGD
   double& Tolerance() { return tolerance; }
 
   //! Get whether or not the individual functions are shuffled.
-  bool Shuffle() const { return shuffleFlag; }
+  bool Shuffle() const { return shuffle; }
   //! Modify whether or not the individual functions are shuffled.
-  bool& Shuffle() { return shuffleFlag; }
+  bool& Shuffle() { return shuffle; }
 
   //! Get the step size decay policy.
   DecayPolicyType& DecayPolicy() const { return decayPolicy; }
@@ -147,7 +146,7 @@ class ParallelSGD
 
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
-  bool shuffleFlag;
+  bool shuffle;
 
   //! The step size decay policy.
   DecayPolicyType decayPolicy;

@@ -58,9 +58,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value ||
-                        IsCootType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 SPALeRASGD<DecayPolicyType>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
@@ -214,9 +213,12 @@ SPALeRASGD<DecayPolicyType>::Optimize(
       }
 
       // Reset the counter variables.
-      lastObjective = overallObjective;
-      overallObjective = 0;
-      currentFunction = 0;
+      if (i != actualMaxIterations)
+      {
+        lastObjective = overallObjective;
+        overallObjective = 0;
+        currentFunction = 0;
+      }
 
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);
