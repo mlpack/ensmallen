@@ -12,7 +12,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_types.hpp"
@@ -90,7 +93,7 @@ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
   REQUIRE(coords(2) == Approx(0.015099932).epsilon(coordTol));
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
     coot::mat, coot::fmat)
@@ -98,7 +101,7 @@ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
   typedef typename ForwardType<TestType>::bvec BaseVecType;
   typedef typename TestType::elem_type ElemType;
 
-  GockenbachFunctionType<TestType> f;
+  GockenbachFunction f;
   AugLagrangianType<BaseVecType> aug;
 
   TestType coords = f.template GetInitialPoint<TestType>();

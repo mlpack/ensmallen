@@ -10,6 +10,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -284,8 +288,6 @@ TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]",
 
 TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_ALL_TEST_TYPES)
 {
-  typedef typename TestType::elem_type ElemType;
-
   SchafferFunctionN2 f;
 
   // Setting bounds for the initial swarm population.
@@ -307,13 +309,11 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_ALL_TEST_TYPES)
   REQUIRE(coordinates(1) == Approx(ElemType(0)).margin(coordTol));
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]",
     coot::mat, coot::fmat)
 {
-  typedef typename TestType::elem_type ElemType;
-
   SchafferFunctionN2 f;
 
   // Setting bounds for the initial swarm population.

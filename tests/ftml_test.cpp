@@ -10,7 +10,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -47,7 +50,7 @@ TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]", ENS_ALL_TEST_TYPES)
       Tolerances<TestType>::LargeCoord);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("FTML_LogisticRegressionFunction", "[FTML]",
     coot::mat, coot::fmat)

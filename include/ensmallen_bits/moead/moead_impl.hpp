@@ -160,10 +160,8 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
       "upperBound are not the same as the dimensions of iterate.");
 
   //! Useful temporaries for float-like comparisons.
-  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(
-      lowerBound);
-  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(
-      upperBound);
+  const BaseMatType castedLowerBound = conv_to<BaseMatType>::from(lowerBound);
+  const BaseMatType castedUpperBound = conv_to<BaseMatType>::from(upperBound);
 
   const size_t numObjectives = sizeof...(ArbitraryFunctionType);
   const size_t numVariables = iterate.n_rows;
@@ -369,11 +367,12 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
 }
 
 //! Randomly chooses to select from parents or neighbors.
-template <typename InitPolicyType, typename DecompPolicyType>
+template<typename InitPolicyType, typename DecompPolicyType>
+template<typename UMatType>
 inline std::tuple<size_t, size_t>
 MOEAD<InitPolicyType, DecompPolicyType>::
 Mating(size_t subProblemIdx,
-       const arma::umat& neighborIndices,
+       const UMatType& neighborIndices,
        bool sampleNeighbor)
 {
   //! Indexes of two points from the sample space.

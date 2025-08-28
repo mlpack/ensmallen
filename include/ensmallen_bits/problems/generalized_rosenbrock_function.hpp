@@ -113,14 +113,14 @@ class GeneralizedRosenbrockFunction
   template<typename MatType = arma::mat>
   const MatType GetInitialPoint() const
   {
-    return arma::conv_to<MatType>::from(initialPoint);
+    return conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.
   template<typename MatType = arma::mat>
   const MatType GetFinalPoint() const
   {
-    return arma::ones<MatType>(initialPoint.n_rows, initialPoint.n_cols);
+    return ones<MatType>(initialPoint.n_rows, initialPoint.n_cols);
   }
 
   //! Get the final objective.

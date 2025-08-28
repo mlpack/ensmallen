@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -70,7 +73,7 @@ TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
 }
 
 
-#ifdef USE_COOT
+#ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
     coot::mat, coot::fmat, coot::imat)
@@ -89,7 +92,7 @@ TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
 
   // The first category can take 5 values; the second can take 3; the third can
   // take 12.
-  coot::Row<size_t> numCategories("5 3 12");
+  arma::Row<size_t> numCategories("5 3 12");
 
   // The initial point for our optimization will be to set all categories to 0.
   TestType params("0 0 0");

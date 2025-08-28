@@ -114,9 +114,7 @@ class RastriginFunction
   template<typename MatType>
   MatType GetFinalPoint() const
   {
-    MatType finalPoint(initialPoint.n_rows, initialPoint.n_cols);
-    finalPoint.zeros();
-    return finalPoint;
+    return zeros<MatType>(initialPoint.n_rows, initialPoint.n_cols);
   }
 
   //! Get the final objective.
