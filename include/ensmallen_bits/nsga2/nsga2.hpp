@@ -206,7 +206,7 @@ class NSGA2
    * @tparam MatType Type of matrix to optimize.
    * @param population The elite population.
    * @param objectives The set of objectives.
-   * @param calculatedObjectives Vector to store calculated objectives.
+   * @param calculatedObjectives Cube to store calculated objectives (numObjectives x 1 x populationSize).
    */
   template<std::size_t I = 0,
            typename MatType,
@@ -214,7 +214,7 @@ class NSGA2
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<typename MatType::elem_type> >&);
+                     arma::Cube<typename MatType::elem_type>&);
 
   template<std::size_t I = 0,
            typename MatType,
@@ -222,7 +222,7 @@ class NSGA2
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(std::vector<MatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<typename MatType::elem_type> >&
+                     arma::Cube<typename MatType::elem_type>&
                      calculatedObjectives);
 
   /**
@@ -283,7 +283,7 @@ class NSGA2
   void FastNonDominatedSort(
       std::vector<std::vector<size_t> >& fronts,
       std::vector<size_t>& ranks,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+      arma::Cube<typename MatType::elem_type>& calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -300,7 +300,7 @@ class NSGA2
    */
   template<typename MatType>
   bool Dominates(
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+      arma::Cube<typename MatType::elem_type>& calculatedObjectives,
       size_t candidateP,
       size_t candidateQ);
 
@@ -315,7 +315,7 @@ class NSGA2
   template <typename MatType>
   void CrowdingDistanceAssignment(
       const std::vector<size_t>& front,
-      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      arma::Cube<typename MatType::elem_type>& calculatedObjectives,
       std::vector<typename MatType::elem_type>& crowdingDistance);
 
   /**
