@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
     coot::mat, coot::fmat)

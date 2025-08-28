@@ -95,7 +95,7 @@ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
   REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
     coot::mat, coot::fmat)

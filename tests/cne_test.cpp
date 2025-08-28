@@ -129,7 +129,7 @@ TEMPLATE_TEST_CASE("CNE_SchafferFunctionN2", "[CNE]", arma::mat)
   FunctionTest<SchafferFunctionN2>(optimizer, 0.5, 0.1, 7);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("CNE_LogisticRegressionFunction", "[CNE]",
     coot::mat, coot::fmat)

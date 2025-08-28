@@ -92,7 +92,7 @@ TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
   SGDLogisticRegressionTest<TestType>();
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]",
     coot::mat, coot::fmat)

@@ -24,7 +24,7 @@
        adaBelief, 0.003, 0.006, 1);
  }
 
- #ifdef USE_COOT
+ #ifdef ENS_USE_COOT
 
  TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
      coot::mat, coot::fmat)

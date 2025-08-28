@@ -31,7 +31,7 @@ TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
   FunctionTest<RosenbrockFunction, TestType>(s, 0.01, 0.001);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
    coot::mat, coot::fmat)

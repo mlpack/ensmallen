@@ -26,7 +26,7 @@ TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
       adaDelta, 0.003, 0.006, 1);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
     coot::mat, coot::fmat)

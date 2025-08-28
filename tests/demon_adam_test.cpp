@@ -52,7 +52,7 @@ TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
   FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("DemonAdam_LogisticRegressionFunction", "[DemonAdam]",
     coot::mat)

@@ -154,7 +154,7 @@ TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", arma::mat)
   FunctionTest<ThreeHumpCamelFunction, TestType>(optimizer, 0.1, 0.01);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", coot::mat, coot::fmat)
 {

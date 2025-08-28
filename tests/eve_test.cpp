@@ -39,7 +39,7 @@ TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]",
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("Eve_LogisticRegressionFunction", "[Eve]",
     coot::mat)

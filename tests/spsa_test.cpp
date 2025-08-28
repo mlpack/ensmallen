@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("SPSA_LogisticRegressionFunction", "[SPSA]", arma::mat)
       optimizer, 0.003, 0.006, 10);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("SPSA_SphereFunction", "[SPSA]", coot::mat, coot::fmat)
 {

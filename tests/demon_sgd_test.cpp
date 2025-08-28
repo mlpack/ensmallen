@@ -22,7 +22,7 @@ TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
   LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
     coot::mat, coot::fmat)

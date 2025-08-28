@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", arma::mat)
   FunctionTest<RastriginFunction, TestType>(sa, 0.01, 0.001, 4);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", coot::mat, coot::fmat)
 {

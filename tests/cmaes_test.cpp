@@ -80,7 +80,7 @@ TEMPLATE_TEST_CASE("ApproxCMAES_EmptyTransformationLogisticRegressionFunction",
   LogisticRegressionFunctionTest<TestType>(cmaes, 0.01, 0.02, 5);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", coot::mat)
 {

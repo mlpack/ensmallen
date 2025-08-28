@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
 }
 
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("GridSearch_SimpleCategoricalFunction", "[GridSearch]",
     coot::mat, coot::fmat, coot::imat)

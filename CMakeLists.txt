@@ -67,7 +67,7 @@ if(USE_BANDICOOT)
     target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
     target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
 
-    add_definitions(-DENS_USE_COOT)
+    add_definitions(-DENS_ENS_USE_COOT)
   endif()
 endif()
 

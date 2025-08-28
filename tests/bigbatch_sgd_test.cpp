@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("BBS_Armijo_LogisticRegressionFunction", "[BigBatchSGD]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("BBS_BB_LogisticRegressionFunction", "[BigBatchSGD]",
     coot::mat, coot::fmat)

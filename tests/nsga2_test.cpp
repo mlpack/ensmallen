@@ -307,7 +307,7 @@ TEMPLATE_TEST_CASE("NSGA2_FrontTest", "[NSGA2]", arma::mat, arma::fmat)
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
     coot::mat, coot::fmat)

@@ -39,7 +39,7 @@ TEMPLATE_TEST_CASE("SVRG_BB_LogisticRegressionFunction", "[SVRG_BB]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("SVRG_LogisticRegressionFunction", "[SVRG]",
     coot::mat, coot::fmat)

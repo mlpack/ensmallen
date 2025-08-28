@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction",
     "[SnapshotSGDR]", coot::mat, coot::fmat)

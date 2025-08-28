@@ -100,7 +100,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",
     "[NesterovMomentumSGD]", coot::mat)

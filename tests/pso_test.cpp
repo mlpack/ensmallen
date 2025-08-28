@@ -265,7 +265,7 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", arma::mat)
   REQUIRE(coordinates(1) == Approx(0).margin(0.01));
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]",
     coot::mat, coot::fmat)

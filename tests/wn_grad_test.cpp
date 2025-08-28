@@ -39,7 +39,7 @@ TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]",
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.3, 0.03);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
     coot::mat, coot::fmat)

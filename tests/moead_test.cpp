@@ -596,7 +596,7 @@ TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", arma::mat)
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEAD]", coot::mat, coot::fmat)
 {

@@ -23,7 +23,7 @@ TEMPLATE_TEST_CASE("DE_LogisticRegressionFunction", "[DE]", arma::mat)
       opt, 0.01, 0.02, 3);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("DE_LogisticRegressionFunction", "[DE]", coot::mat)
 {

@@ -96,7 +96,7 @@ TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
   LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
     coot::mat)

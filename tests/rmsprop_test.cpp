@@ -24,7 +24,7 @@ TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
       optimizer, 0.003, 0.006);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
     coot::mat, coot::fmat)

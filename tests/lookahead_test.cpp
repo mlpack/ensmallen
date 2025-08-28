@@ -46,7 +46,7 @@ TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
       optimizer, 0.003, 0.006);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
     coot::mat)

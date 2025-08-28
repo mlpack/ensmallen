@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 3.0, 0.3);
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
     coot::mat, coot::fmat)

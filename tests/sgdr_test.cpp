@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
   }
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
     coot::mat, coot::fmat)

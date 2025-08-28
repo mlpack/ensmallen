@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]",
   REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
 }
 
-#ifdef USE_COOT
+#ifdef ENS_USE_COOT
 
 TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]",
     coot::mat, coot::fmat)
