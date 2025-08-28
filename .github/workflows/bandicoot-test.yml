@@ -51,10 +51,4 @@ jobs:
     - name: Test ensmallen
       run: |
           cd build/
-          if [[ "${{ matrix.config.name }}" == "CUDA" ]]; then
-              COOT_DEFAULT_BACKEND=CUDA_BACKEND ./ensmallen_tests
-          elif [[ "${{ matrix.config.name }}" == "OpenCL" ]]; then
-              COOT_DEFAULT_BACKEND=CL_BACKEND ./ensmallen_tests
-          else
-              ./ensmallen_tests
-          fi
+          ./ensmallen_tests
