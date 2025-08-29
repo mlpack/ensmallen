@@ -86,6 +86,36 @@ struct Tolerances<arma::sp_mat>
   constexpr static const double LRTestAcc = 0.006;
 };
 
+#if defined(ENS_HAVE_COOT)
+template<>
+struct Tolerances<coot::mat>
+{
+  constexpr static const double Obj = 1e-8;
+  constexpr static const double Coord = 1e-4;
+
+  constexpr static const double LargeObj = 1e-3;
+  constexpr static const double LargeCoord = 1e-2;
+
+  // Tolerances for LogisticRegressionFunctionTest().
+  constexpr static const double LRTrainAcc = 0.003;
+  constexpr static const double LRTestAcc = 0.006;
+};
+
+template<>
+struct Tolerances<coot::fmat>
+{
+  constexpr static const float Obj = 1e-4;
+  constexpr static const float Coord = 1e-2;
+
+  constexpr static const float LargeObj = 2e-3;
+  constexpr static const float LargeCoord = 2e-2;
+
+  // Tolerances for LogisticRegressionFunctionTest().
+  constexpr static const double LRTrainAcc = 0.003;
+  constexpr static const double LRTestAcc = 0.006;
+};
+#endif
+
 } // namespace test
 } // namespace ens
 
