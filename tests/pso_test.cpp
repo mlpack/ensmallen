@@ -288,6 +288,8 @@ TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]",
 
 TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_ALL_TEST_TYPES)
 {
+  typedef typename TestType::elem_type ElemType;
+
   SchafferFunctionN2 f;
 
   // Setting bounds for the initial swarm population.
