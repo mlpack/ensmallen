@@ -85,8 +85,8 @@ TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   CrossInTrayFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::vec lowerBound(2);
-  arma::vec upperBound(2);
+  arma::Col<ElemType> lowerBound(2);
+  arma::Col<ElemType> upperBound(2);
   lowerBound.fill(-1);
   upperBound.fill(1);
 
@@ -127,8 +127,8 @@ TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   AckleyFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::vec lowerBound(2);
-  arma::vec upperBound(2);
+  arma::Col<ElemType> lowerBound(2);
+  arma::Col<ElemType> upperBound(2);
   lowerBound.fill(4);
   upperBound.fill(5);
 
@@ -151,8 +151,8 @@ TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   BealeFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::vec lowerBound(2);
-  arma::vec upperBound(2);
+  arma::Col<ElemType> lowerBound(2);
+  arma::Col<ElemType> upperBound(2);
   lowerBound.fill(3);
   upperBound.fill(4);
 
@@ -214,8 +214,8 @@ TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_ALL_TEST_TYPES)
   LevyFunctionN13 f;
 
   // Setting bounds for the initial swarm population.
-  arma::vec lowerBound(2);
-  arma::vec upperBound(2);
+  arma::Col<ElemType> lowerBound(2);
+  arma::Col<ElemType> upperBound(2);
   lowerBound.fill(-10);
   upperBound.fill(-9);
 
@@ -237,8 +237,8 @@ TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   HimmelblauFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::vec lowerBound(2);
-  arma::vec upperBound(2);
+  arma::Col<ElemType> lowerBound(2);
+  arma::Col<ElemType> upperBound(2);
   lowerBound.fill(0);
   upperBound.fill(1);
 
@@ -270,8 +270,8 @@ TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]",
   ThreeHumpCamelFunction f;
 
   // Setting bounds for the initial swarm population.
-  arma::vec lowerBound(2);
-  arma::vec upperBound(2);
+  arma::Col<ElemType> lowerBound(2);
+  arma::Col<ElemType> upperBound(2);
   lowerBound.fill(-5);
   upperBound.fill(-4);
 

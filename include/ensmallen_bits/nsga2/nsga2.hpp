@@ -270,8 +270,7 @@ class NSGA2
   EvaluateObjectives(
       std::vector<InputMatType>& population,
       std::tuple<ArbitraryFunctionType...>& objectives,
-      std::vector<ObjectiveMatType>&
-      calculatedObjectives);
+      std::vector<ObjectiveMatType>& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new

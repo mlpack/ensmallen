@@ -40,6 +40,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardType<MatType>::vec ColType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
@@ -48,7 +49,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   population.resize(populationSize);
 
   // Vector of fitness values corresponding to each candidate.
-  arma::Col<ElemType> fitnessValues;
+  ColType fitnessValues;
 
   // Make sure that we have the methods that we need.  Long name...
   traits::CheckArbitraryFunctionTypeAPI<

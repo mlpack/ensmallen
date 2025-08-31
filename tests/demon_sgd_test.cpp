@@ -42,4 +42,3 @@ TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
 }
 
 #endif
-

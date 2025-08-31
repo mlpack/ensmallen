@@ -307,4 +307,4 @@ TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer);
 }
 
- #endif
+#endif

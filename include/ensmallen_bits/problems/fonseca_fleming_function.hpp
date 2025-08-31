@@ -95,6 +95,7 @@ class FonsecaFlemingFunction
     return std::make_tuple(objectiveA, objectiveB);
   }
 };
+
 } // namespace test
 } // namespace ens
 

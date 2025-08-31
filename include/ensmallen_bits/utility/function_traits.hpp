@@ -27,7 +27,7 @@ template<typename MatType> struct IsCootType;
  */
 template<typename MatType>
 struct IsMatrixType
-{ 
+{
   const static bool value = IsArmaType<MatType>::value ||
                             IsCootType<MatType>::value;
 };

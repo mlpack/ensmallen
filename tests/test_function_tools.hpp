@@ -35,6 +35,8 @@ inline void LogisticRegressionTestData(MatType& data,
                                        LabelsType& responses,
                                        LabelsType& testResponses)
 {
+  typedef typename MatType::elem_type ElemType;
+
   // Generate a two-Gaussian dataset.
   data.set_size(3, 1000);
   responses.set_size(1000);
@@ -77,13 +79,13 @@ inline void CheckMatrices(const MatType& a,
 
 template<typename FunctionType, typename OptimizerType, typename PointType>
 bool TestOptimizer(FunctionType& f,
-                   OptimizerType& optimizer,
-                   PointType& point,
-                   const PointType& expectedResult,
-                   const double coordinateMargin,
-                   const double expectedObjective,
-                   const double objectiveMargin,
-                   const bool mustSucceed = true)
+                  OptimizerType& optimizer,
+                  PointType& point,
+                  const PointType& expectedResult,
+                  const double coordinateMargin,
+                  const double expectedObjective,
+                  const double objectiveMargin,
+                  const bool mustSucceed = true)
 {
   const double objective = optimizer.Optimize(f, point);
 
@@ -144,8 +146,8 @@ void MultipleTrialOptimizerTest(
 }
 
 template<typename FunctionType,
-         typename MatType = arma::mat,
-         typename OptimizerType = ens::StandardSGD>
+        typename MatType = arma::mat,
+        typename OptimizerType = ens::StandardSGD>
 void FunctionTest(OptimizerType& optimizer,
                   const typename MatType::elem_type objectiveMargin =
                       typename MatType::elem_type(0.01),
