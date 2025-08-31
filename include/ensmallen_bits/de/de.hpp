@@ -45,10 +45,10 @@ namespace ens {
  *
  * @code
  * @techreport{storn1995,
- *   title    = {Differential Evolution—a simple and efficient adaptive scheme
- *               for global optimization over continuous spaces},
- *   author   = {Storn, Rainer and Price, Kenneth},
- *   year     = 1995
+ *   title  = {Differential Evolution—a simple and efficient adaptive scheme
+ *             for global optimization over continuous spaces},
+ *   author = {Storn, Rainer and Price, Kenneth},
+ *   year   = 1995
  * }
  * @endcode
  *

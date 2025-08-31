@@ -48,7 +48,7 @@ namespace ens {
  * ensmallen website.
  *
  * @tparam SelectionPolicy The selection strategy used for the evaluation step.
- * @tparam TransformationPolicy The transformation strategy used to 
+ * @tparam TransformationPolicy The transformation strategy used to
  *       map decision variables to the desired domain during fitness evaluation
  *       and termination. Use EmptyTransformation if the domain isn't bounded.
  */
@@ -66,7 +66,7 @@ class CMAES
    * equal one pass over the dataset).
    *
    * @param lambda The population size (0 use the default size).
-   * @param transformationPolicy Instantiated transformation policy used to 
+   * @param transformationPolicy Instantiated transformation policy used to
    *     map the coordinates to the desired domain.
    * @param batchSize Batch size to use for the objective calculation.
    * @param maxIterations Maximum number of iterations allowed (0 means no
@@ -77,7 +77,7 @@ class CMAES
    * @param stepSize Starting sigma/step size (will be modified).
    */
   CMAES(const size_t lambda = 0,
-        const TransformationPolicyType& 
+        const TransformationPolicyType&
               transformationPolicy = TransformationPolicyType(),
         const size_t batchSize = 32,
         const size_t maxIterations = 1000,
@@ -86,11 +86,11 @@ class CMAES
         double stepSize = 0);
 
   /**
-   * Construct the CMA-ES optimizer with the given function and parameters 
-   * (including lower and upper bounds). The defaults here are not necessarily 
-   * good for the given problem, so it is suggested that the values used be 
-   * tailored to the task at hand.  The maximum number of iterations refers to 
-   * the maximum number of points that are processed (i.e., one iteration 
+   * Construct the CMA-ES optimizer with the given function and parameters
+   * (including lower and upper bounds). The defaults here are not necessarily
+   * good for the given problem, so it is suggested that the values used be
+   * tailored to the task at hand.  The maximum number of iterations refers to
+   * the maximum number of points that are processed (i.e., one iteration
    * equals one point; one iteration does not equal one pass over the dataset).
    *
    * @param lambda The population size(0 use the default size).
@@ -162,15 +162,13 @@ class CMAES
   const TransformationPolicyType& TransformationPolicy() const
   { return transformationPolicy; }
   //! Modify the transformation policy.
-  TransformationPolicyType& TransformationPolicy() 
+  TransformationPolicyType& TransformationPolicy()
   { return transformationPolicy; }
 
   //! Get the step size.
-  double StepSize() const
-  { return stepSize; }
+  double StepSize() const { return stepSize; }
   //! Modify the step size.
-  double& StepSize()
-  { return stepSize; }
+  double& StepSize() { return stepSize; }
 
   //! Get the total number of function evaluations.
   size_t FunctionEvaluations() const  { return functionEvaluations; }
@@ -192,7 +190,7 @@ class CMAES
   SelectionPolicyType selectionPolicy;
 
   //! The transformationPolicy used to map coordinates to the suitable domain
-  //! while evaluating fitness. This mapping is also done after optimization 
+  //! while evaluating fitness. This mapping is also done after optimization
   //! has completed.
   TransformationPolicyType transformationPolicy;
 

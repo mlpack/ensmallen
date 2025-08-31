@@ -8,7 +8,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -16,31 +19,23 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("RMSPropLogisticRegressionTest", "[rmsprop]")
+TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
+    arma::mat, arma::fmat, arma::sp_mat)
 {
   RMSProp optimizer;
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      optimizer, 0.003, 0.006);
 }
 
-/**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
- * Use arma::fmat.
- */
-TEST_CASE("RMSPropLogisticRegressionFMatTest", "[rmsprop]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
+    coot::mat, coot::fmat)
 {
   RMSProp optimizer;
-  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.003, 0.006);
 }
 
-/**
- * Run RMSProp on logistic regression and make sure the results are acceptable.
- * Use arma::sp_mat.
- */
-TEST_CASE("RMSPropLogisticRegressionSpMatTest", "[rmsprop]")
-{
-  RMSProp optimizer;
-  LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006);
-}
+#endif
+

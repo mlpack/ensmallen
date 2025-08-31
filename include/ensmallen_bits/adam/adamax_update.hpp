@@ -30,11 +30,11 @@ namespace ens {
  *
  * @code
  * @article{Kingma2014,
- *   author    = {Diederik P. Kingma and Jimmy Ba},
- *   title     = {Adam: {A} Method for Stochastic Optimization},
- *   journal   = {CoRR},
- *   year      = {2014},
- *   url       = {http://arxiv.org/abs/1412.6980}
+ *   author  = {Diederik P. Kingma and Jimmy Ba},
+ *   title   = {Adam: {A} Method for Stochastic Optimization},
+ *   journal = {CoRR},
+ *   year    = {2014},
+ *   url     = {http://arxiv.org/abs/1412.6980}
  * }
  * @endcode
  */
@@ -120,7 +120,7 @@ class AdaMaxUpdate
 
       // Update the exponentially weighted infinity norm.
       u *= parent.beta2;
-      u = arma::max(u, arma::abs(gradient));
+      u = max(u, abs(gradient));
 
       const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
 

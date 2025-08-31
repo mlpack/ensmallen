@@ -117,7 +117,7 @@ class FTMLUpdate
 
       MatType sigma = -parent.beta1 * d;
       d = biasCorrection1 / stepSize *
-        (arma::sqrt(v / biasCorrection2) + parent.epsilon);
+        (sqrt(v / biasCorrection2) + parent.epsilon);
       sigma += d;
 
       z *= parent.beta1;

@@ -92,7 +92,7 @@ inline void Smat(const MatAType& input, MatBType& output)
   MatBType iMat(input);
 
   const size_t n = static_cast<size_t>
-      (ceil((-1. + sqrt(1. + 8. * iMat.n_elem))/2.));
+      (ceil((-1. + std::sqrt(1. + 8. * iMat.n_elem))/2.));
 
   output.zeros(n, n);
 

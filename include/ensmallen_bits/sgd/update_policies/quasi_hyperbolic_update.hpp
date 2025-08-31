@@ -42,8 +42,7 @@ class QHUpdate
    */
   QHUpdate(const double v = 0.7,
            const double momentum = 0.999) :
-       momentum(momentum),
-       v(v)
+       momentum(momentum), v(v)
   {
     // Nothing to do.
   }
@@ -77,10 +76,9 @@ class QHUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(QHUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent), velocity(rows, cols)
     {
-      // Initialize an empty velocity matrix.
-      velocity.zeros(rows, cols);
+      // Nothing to do here.
     }
 
     /**

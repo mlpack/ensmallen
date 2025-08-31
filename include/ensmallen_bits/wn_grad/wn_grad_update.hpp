@@ -84,7 +84,7 @@ class WNGradUpdate
                 const GradType& gradient)
     {
       parent.b += std::pow(stepSize, 2.0) / parent.b *
-          std::pow(arma::norm(gradient), 2);
+          std::pow(norm(gradient), 2);
       iterate -= stepSize * gradient / parent.b;
     }
 

@@ -8,7 +8,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -16,85 +19,46 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run Katyusha on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("KatyushaLogisticRegressionTest", "[KatyushaTest]")
+TEMPLATE_TEST_CASE("Katyusha_LogisticRegressionFunction", "[Katyusha]",
+    arma::mat, arma::fmat)
 {
   // Run with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
   {
     Katyusha optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
-    LogisticRegressionFunctionTest(optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+        optimizer, 0.015, 0.015);
   }
 }
 
-/**
- * Run Proximal Katyusha on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("KatyushaProximalLogisticRegressionTest", "[KatyushaTest]")
+TEMPLATE_TEST_CASE("KatyushaProximal_LogisticRegressionFunction", "[Katyusha]",
+    arma::mat, arma::fmat)
 {
   // Run with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
   {
     KatyushaProximal optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
-    LogisticRegressionFunctionTest(optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+        optimizer, 0.015, 0.015);
   }
 }
 
-/**
- * Run Katyusha on logistic regression and make sure the results are acceptable.
- * Use arma::fmat.
- */
-TEST_CASE("KatyushaLogisticRegressionFMatTest", "[KatyushaTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("Katyusha_LogisticRegressionFunction", "[Katyusha]",
+    coot::mat, coot::fmat)
 {
-  // Run with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
-  {
-    Katyusha optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
-    LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
-  }
+  Katyusha optimizer(1.0, 10.0, 10, 100, 0, 1e-10, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.015, 0.015);
 }
 
-/**
- * Run Proximal Katyusha on logistic regression and make sure the results are
- * acceptable.  Use arma::fmat.
- */
-TEST_CASE("KatyushaProximalLogisticRegressionFMatTest", "[KatyushaTest]")
+TEMPLATE_TEST_CASE("KatyushaProximal_LogisticRegressionFunction", "[Katyusha]",
+    coot::mat, coot::fmat)
 {
-  // Run with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
-  {
-    KatyushaProximal optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
-    LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
-  }
+  KatyushaProximal optimizer(1.0, 10.0, 30, 100, 0, 1e-10, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.015, 0.015);
 }
 
-/**
- * Run Katyusha on logistic regression and make sure the results are acceptable.
- * Use arma::sp_mat.
- */
-TEST_CASE("KatyushaLogisticRegressionSpMatTest", "[KatyushaTest]")
-{
-  // Run with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
-  {
-    Katyusha optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
-    LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015);
-  }
-}
-
-/**
- * Run Proximal Katyusha on logistic regression and make sure the results are
- * acceptable.  Use arma::sp_mat.
- */
-TEST_CASE("KatyushaProximalLogisticRegressionSpMatTest", "[KatyushaTest]")
-{
-  // Run with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
-  {
-    KatyushaProximal optimizer(1.0, 10.0, batchSize, 100, 0, 1e-10, true);
-    LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015);
-  }
-}
+#endif

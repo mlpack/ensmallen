@@ -345,7 +345,7 @@ TEST_CASE("LogisticRegressionEvaluateWithGradientTest", "[FunctionTest]")
 
 TEST_CASE("SDPTest", "[FunctionTest]")
 {
-  typedef AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>> FunctionType;
+  typedef AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>, arma::vec> FunctionType;
 
   const bool hasEvaluate = HasEvaluate<
       Function<FunctionType, arma::mat, arma::mat>,

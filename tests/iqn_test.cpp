@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -17,29 +20,25 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run IQN on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("IQNLogisticRegressionTest", "[IQNTest]")
+TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
+    arma::mat, arma::fmat)
 {
   // Run on a couple of batch sizes.
   for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
   {
     IQN iqn(0.01, batchSize, 5000, 0.01);
-    LogisticRegressionFunctionTest(iqn, 0.013, 0.016);
+    LogisticRegressionFunctionTest<TestType>(iqn, 0.003, 0.006);
   }
 }
 
-/**
- * Run IQN on logistic regression and make sure the results are acceptable.  Use
- * arma::fmat.
- */
-TEST_CASE("IQNLogisticRegressionFMatTest", "[IQNTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
+    coot::mat, coot::fmat)
 {
-  // Run on a couple of batch sizes.
-  for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
-  {
-    IQN iqn(0.001, batchSize, 5000, 0.01);
-    LogisticRegressionFunctionTest<arma::fmat>(iqn, 0.013, 0.016);
-  }
+  IQN iqn(0.01, 10, 5000, 0.01);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      iqn, 0.003, 0.006);
 }
+
+#endif

@@ -880,9 +880,9 @@ arma::mat coordinates(6, 1, arma::fill::randu);
 NSGA2 nsga;
 double bestFrontSum = nsga.Optimize(objectives, coordinates);
 
-// Set `bestFront` to contain all of the coordinates on the best front.
-arma::cube bestFront = optimizer.ParetoFront();
-}
+// If the entire Pareto front is desired, pass it to the Optimize() function:
+arma::cube front, paretoSet;
+double bestFrontSum2 = nsga.Optimize(objectives, coordinates, front, paretoSet);
 ```
 
 </details>
@@ -967,9 +967,14 @@ double igdPlus = IGDPlus::Evaluate(front, referenceFront);
 ```
 </details>
 
-*Note*: all multi-objective function optimizers have both the function `Optimize()` to find the
-best front, and also the function `ParetoFront()` to return all sets of solutions that are on the
-front.
+*Note*: all multi-objective function optimizers have two versions of
+`Optimize()`: one that finds only the best front, and one that also allows
+passing `arma::cube`s (or similar) to return the Pareto set (e.g. the Pareto
+optimal points in variable space) as well as the entire Pareto front (e.g. all
+sets of solutions on the front):
+
+ * `Optimize(`_`functions`_`,`_`coordinates`_`)`
+ * `Optimize(`_`functions`_`,`_`coordinates`_`,`_`paretoSet`_`,`_`paretoFront`_`)`
 
 The following optimizers can be used with multi-objective functions:
 - [NSGA2](#nsga2)

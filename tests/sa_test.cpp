@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -18,21 +21,21 @@ using namespace ens;
 using namespace ens::test;
 
 // The Generalized-Rosenbrock function is a simple function to optimize.
-TEST_CASE("SAGeneralizedRosenbrockTest","[SATest]")
+TEMPLATE_TEST_CASE("SA_GeneralizedRosenbrockFunction", "[SA]", arma::mat)
 {
   size_t dim = 10;
   GeneralizedRosenbrockFunction f(dim);
 
   double iteration = 0;
   double result = DBL_MAX;
-  arma::mat coordinates;
+  TestType coordinates;
   while (result > 1e-6)
   {
     ExponentialSchedule schedule;
     // The convergence is very sensitive to the choices of maxMove and initMove.
     SA<ExponentialSchedule> sa(schedule, 1000000, 1000., 1000, 100, 1e-10, 3,
         1.5, 0.5, 0.3);
-    coordinates = f.GetInitialPoint();
+    coordinates = f.template GetInitialPoint<TestType>();
     result = sa.Optimize(f, coordinates);
     ++iteration;
 
@@ -46,28 +49,19 @@ TEST_CASE("SAGeneralizedRosenbrockTest","[SATest]")
 }
 
 // The Rosenbrock function is a simple function to optimize.
-TEST_CASE("SARosenbrockTest", "[SATest]")
+TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", arma::mat, arma::fmat)
 {
   ExponentialSchedule schedule;
   // The convergence is very sensitive to the choices of maxMove and initMove.
   SA<> sa(schedule, 1000000, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
-  FunctionTest<RosenbrockFunction>(sa, 0.01, 0.001);
-}
-
-// The Rosenbrock function is a simple function to optimize.  Use arma::fmat.
-TEST_CASE("SARosenbrockFMatTest", "[SATest]")
-{
-  ExponentialSchedule schedule;
-  // The convergence is very sensitive to the choices of maxMove and initMove.
-  SA<> sa(schedule, 1000000, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
-  FunctionTest<RosenbrockFunction, arma::fmat>(sa, 0.1, 0.01);
+  FunctionTest<RosenbrockFunction, TestType>(sa, 0.01, 0.001);
 }
 
 /**
  * The Rastrigrin function, a (not very) simple nonconvex function. It has very
  * many local minima, so finding the true global minimum is difficult.
  */
-TEST_CASE("RastrigrinFunctionTest", "[SATest]")
+TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", arma::mat)
 {
   // Simulated annealing isn't guaranteed to converge (except in very specific
   // situations).  If this works 1 of 4 times, I'm fine with that.  All I want
@@ -76,5 +70,29 @@ TEST_CASE("RastrigrinFunctionTest", "[SATest]")
   // The convergence is very sensitive to the choices of maxMove and initMove.
   // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
   SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
-  FunctionTest<RastriginFunction>(sa, 0.01, 0.001, 4);
+  FunctionTest<RastriginFunction, TestType>(sa, 0.01, 0.001, 4);
 }
+
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", coot::mat, coot::fmat)
+{
+  ExponentialSchedule schedule;
+  // The convergence is very sensitive to the choices of maxMove and initMove.
+  SA<> sa(schedule, 1000000, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
+  FunctionTest<RosenbrockFunction, TestType>(sa, 0.01, 0.001);
+}
+
+TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", coot::mat, coot::fmat)
+{
+  // Simulated annealing isn't guaranteed to converge (except in very specific
+  // situations).  If this works 1 of 4 times, I'm fine with that.  All I want
+  // to know is that this implementation will escape from local minima.
+  ExponentialSchedule schedule;
+  // The convergence is very sensitive to the choices of maxMove and initMove.
+  // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
+  SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
+  FunctionTest<RastriginFunction, TestType>(sa, 0.01, 0.001, 4);
+}
+
+#endif

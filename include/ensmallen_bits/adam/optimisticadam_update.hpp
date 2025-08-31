@@ -27,11 +27,11 @@ namespace ens {
  *
  * @code
  * @article{
- *   author  = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
- *              Haoyang Zeng},
- *   title   = {Training GANs with Optimism},
- *   year    = {2017},
- *   url     = {https://arxiv.org/abs/1711.00141}
+ *   author = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
+ *             Haoyang Zeng},
+ *   title  = {Training GANs with Optimism},
+ *   year   = {2017},
+ *   url    = {https://arxiv.org/abs/1711.00141}
  * }
  * @endcode
  */
@@ -117,12 +117,12 @@ class OptimisticAdamUpdate
       m += (1 - parent.beta1) * gradient;
 
       v *= parent.beta2;
-      v += (1 - parent.beta2) * arma::square(gradient);
+      v += (1 - parent.beta2) * square(gradient);
 
       GradType mCorrected = m / (1.0 - std::pow(parent.beta1, iteration));
       GradType vCorrected = v / (1.0 - std::pow(parent.beta2, iteration));
 
-      GradType update = mCorrected / (arma::sqrt(vCorrected) + parent.epsilon);
+      GradType update = mCorrected / (sqrt(vCorrected) + parent.epsilon);
 
       iterate -= (2 * stepSize * update - stepSize * g);
 
