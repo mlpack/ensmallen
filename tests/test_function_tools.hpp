@@ -32,64 +32,29 @@ namespace test {
 template<typename MatType, typename LabelsType>
 inline void LogisticRegressionTestData(MatType& data,
                                        MatType& testData,
-                                       MatType& shuffledData,
                                        LabelsType& responses,
-                                       LabelsType& testResponses,
-                                       LabelsType& shuffledResponses)
+                                       LabelsType& testResponses)
 {
-  typedef typename MatType::elem_type ElemType;
-
   // Generate a two-Gaussian dataset.
-  arma::Mat<ElemType> armaData = arma::Mat<ElemType>(3, 1000);
-  arma::Row<size_t> armaResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    // The first Gaussian is centered at (1, 1, 1) and has covariance I.
-    armaData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("1.0 1.0 1.0");
-    armaResponses(i) = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    // The second Gaussian is centered at (9, 9, 9) and has covariance I.
-    armaData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("9.0 9.0 9.0");
-    armaResponses(i) = 1;
-  }
+  data.set_size(3, 1000);
+  responses.set_size(1000);
 
-  // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      armaData.n_cols - 1, armaData.n_cols));
-  arma::Mat<ElemType> armaShuffledData = arma::Mat<ElemType>(3, 1000);
-  arma::Row<size_t> armaShuffledResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < armaData.n_cols; ++i)
-  {
-    armaShuffledData.col(i) = armaData.col(indices(i));
-    armaShuffledResponses(i) = armaResponses[indices(i)];
-  }
+  // The first Gaussian is centered at (1, 1, 1) and has covariance I.
+  data.cols(0, 499) = randn<MatType>(3, 500) + 1;
+  responses.subvec(0, 499).zeros();
+
+  // The second Gaussian is centered at (9, 9, 9) and has covariance I.
+  data.cols(500, 999) = randn<MatType>(3, 500) + 9;
+  responses.subvec(500, 999).ones();
 
   // Create a test set.
-  arma::Mat<ElemType> armaTestData = arma::Mat<ElemType>(3, 1000);
-  arma::Row<size_t> armaTestResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    armaTestData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("1.0 1.0 1.0");
-    armaTestResponses(i) = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    armaTestData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("9.0 9.0 9.0");
-    armaTestResponses(i) = 1;
-  }
+  testData.set_size(3, 1000);
+  testResponses.set_size(1000);
 
-  data = MatType(armaData);
-  testData = MatType(armaTestData);
-  shuffledData = MatType(armaShuffledData);
-  responses = LabelsType(armaResponses);
-  testResponses = LabelsType(armaTestResponses);
-  shuffledResponses = LabelsType(armaShuffledResponses);
+  testData.cols(0, 499) = randn<MatType>(3, 500) + 1;
+  testResponses.subvec(0, 499).zeros();
+  testData.cols(500, 999) = randn<MatType>(3, 500) + 9;
+  testResponses.subvec(500, 999).ones();
 }
 
 // Check the values of two matrices.
@@ -207,15 +172,34 @@ void LogisticRegressionFunctionTest(
 {
   // We have to generate new data for each trial, so we can't use
   // MultipleTrialOptimizerTest().
-  MatType data, testData, shuffledData;
-  LabelsType responses, testResponses, shuffledResponses;
+  MatType data, testData;
+  LabelsType responses, testResponses;
 
   for (size_t i = 0; i < trials; ++i)
   {
-    LogisticRegressionTestData(data, testData, shuffledData,
-        responses, testResponses, shuffledResponses);
-    ens::test::LogisticRegressionFunction<MatType> lr(shuffledData,
-        shuffledResponses, 0.5);
+    if constexpr (IsSparseMatrixType<MatType>::value)
+    {
+      arma::Mat<typename MatType::elem_type> tmpData, tmpTestData;
+      arma::Row<typename MatType::elem_type> tmpResponses, tmpTestResponses;
+
+      // Sparse matrices don't support the necessary functionality with randn<>.
+      LogisticRegressionTestData(tmpData, tmpTestData, tmpResponses,
+          tmpTestResponses);
+
+      data = conv_to<MatType>::from(tmpData);
+      responses = conv_to<LabelsType>::from(tmpResponses);
+      testData = conv_to<MatType>::from(tmpTestData);
+      testResponses = conv_to<LabelsType>::from(tmpTestResponses);
+    }
+    else
+    {
+      LogisticRegressionTestData(data, testData, responses, testResponses);
+    }
+
+    MatType data2 = data;
+    LabelsType responses2 = responses;
+    ens::test::LogisticRegressionFunction<MatType> lr(data2, responses2, 0.5);
+    lr.Shuffle(); // We didn't shuffle the data earlier.
 
     MatType coordinates = lr.GetInitialPoint();
 

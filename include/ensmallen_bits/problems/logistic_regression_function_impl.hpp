@@ -88,23 +88,22 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
 template<typename MatType>
 void LogisticRegressionFunction<MatType>::Shuffle()
 {
-  MatType newPredictors;
-  MatType newResponses;
-
-  arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
-      predictors.n_cols - 1, predictors.n_cols));
-
-  newPredictors.set_size(size(predictors));
-  newResponses.set_size(size(responses));
-  for (size_t i = 0; i < predictors.n_cols; ++i)
+  if constexpr (!IsSparseMatrixType<MatType>::value)
   {
-    newPredictors.col(i) = predictors.col(ordering[i]);
-    newResponses[i] = responses[ordering[i]];
-  }
+    MatType allData = shuffle(join_cols(predictors, responses), 1);
 
-  // Take ownership of the new data.
-  predictors = std::move(newPredictors);
-  responses = std::move(newResponses);
+    predictors = allData.rows(0, allData.n_rows - 2);
+    responses = allData.row(allData.n_rows - 1);
+  }
+  else
+  {
+    // For sparse data shuffle() is not available.
+    arma::uvec ordering = shuffle(linspace<arma::uvec>(0, predictors.n_cols - 1,
+        predictors.n_cols));
+
+    predictors = predictors.cols(ordering);
+    responses = responses.cols(ordering);
+  }
 }
 
 /**

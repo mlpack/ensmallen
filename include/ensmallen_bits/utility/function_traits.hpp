@@ -33,6 +33,21 @@ struct IsMatrixType
 };
 
 /**
+ * If value == true, then MatType is an Armadillo sparse matrix.
+ */
+template<typename MatType>
+struct IsSparseMatrixType
+{
+  const static bool value = false;
+};
+
+template<typename eT>
+struct IsSparseMatrixType<arma::SpMat<eT>>
+{
+  const static bool value = true;
+};
+
+/**
  * If value == true, then MatType is some sort of Armadillo vector or subview.
  * You might use this struct like this:
  *

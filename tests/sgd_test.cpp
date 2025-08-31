@@ -66,12 +66,14 @@ void SGDGeneralizedRosenbrockTest(const size_t variants = 50)
 template<typename MatType>
 void SGDLogisticRegressionTest()
 {
-  MatType data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
+  MatType data, testData;
+  arma::Row<size_t> responses, testResponses;
 
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegressionFunction<MatType> lr(shuffledData, shuffledResponses, 0.5);
+  LogisticRegressionTestData(data, testData, responses, testResponses);
+  MatType data2 = data;
+  arma::Row<size_t> responses2 = responses;
+  LogisticRegressionFunction<MatType> lr(data2, responses2, 0.5);
+  lr.Shuffle();
 
   StandardSGD sgd;
   MatType coordinates = lr.GetInitialPoint();

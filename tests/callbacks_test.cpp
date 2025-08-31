@@ -143,12 +143,12 @@ void CallbacksFullFunctionTest(OptimizerType& optimizer,
                                bool calledGradientConstraint,
                                bool calledStepTaken)
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
+  arma::mat data, testData;
+  arma::Row<size_t> responses, testResponses;
 
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
-  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
+  LogisticRegressionTestData(data, testData, responses, testResponses);
+  LogisticRegression<> lr(data, responses, 0.5);
+  lr.Shuffle();
 
   CompleteCallbackTestFunction cb;
 
@@ -206,14 +206,14 @@ void CallbacksFullMultiobjectiveFunctionTest(OptimizerType& optimizer,
 template<typename OptimizerType>
 void EarlyStopCallbacksLambdaFunctionTest(OptimizerType& optimizer)
 {
-  arma::mat data, testData, shuffledData;
-  arma::Row<size_t> responses, testResponses, shuffledResponses;
+  arma::mat data, testData;
+  arma::Row<size_t> responses, testResponses;
 
-  LogisticRegressionTestData(data, testData, shuffledData,
-      responses, testResponses, shuffledResponses);
+  LogisticRegressionTestData(data, testData, responses, testResponses);
 
-  LogisticRegression<> lr(shuffledData, shuffledResponses, 0.5);
+  LogisticRegression<> lr(data, responses, 0.5);
   arma::mat coordinates = lr.GetInitialPoint();
+  lr.Shuffle();
 
   EarlyStopAtMinLoss cb(
       [&](const arma::mat& /* coordinates */)
