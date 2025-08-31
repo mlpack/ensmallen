@@ -116,7 +116,6 @@ class LBestUpdate
       r2.set_size(iterate.n_rows, iterate.n_cols);
     }
 
-<<<<<<< HEAD
     /**
      * Update step for LBestPSO. Compares personal best of each particle with
      * that of its neighbours, and sets the best of the 3 as the lobal best.
@@ -146,37 +145,6 @@ class LBestUpdate
             particleBestFitnesses(right(i)) < particleBestFitnesses(i) ?
             right(i) : i;
       }
-=======
-     /**
-      * Update step for LBestPSO. Compares personal best of each particle with
-      * that of its neighbours, and sets the best of the 3 as the lobal best.
-      * This particle is then used for calculating the velocity for the update
-      * step.
-      *
-      * @param particlePositions The current coordinates of particles.
-      * @param particleVelocities The current velocities (will be modified).
-      * @param particleFitnesses The current fitness values or particles.
-      * @param particleBestPositions The personal best coordinates of particles.
-      * @param particleBestFitnesses The personal best fitness values of
-      *     particles.
-      */
-     template<typename CubeType, typename VecType>
-     void Update(CubeType& particlePositions,
-                 CubeType& particleVelocities,
-                 CubeType& particleBestPositions,
-                 VecType& particleBestFitnesses)
-     {
-       // Velocity update logic.
-       for (size_t i = 0; i < n; i++)
-       {
-         localBestIndices(i) =
-             particleBestFitnesses(left(i)) < particleBestFitnesses(i) ?
-             left(i) : i;
-         localBestIndices(i) =
-             particleBestFitnesses(right(i)) < particleBestFitnesses(i) ?
-             right(i) : i;
-       }
->>>>>>> origin/master
 
       for (size_t i = 0; i < n; i++)
       {
@@ -207,13 +175,8 @@ class LBestUpdate
     // Vectors of random numbers.
     MatType r1, r2;
 
-<<<<<<< HEAD
     //! Indices of each particle's best neighbour.
     arma::uvec localBestIndices;
-=======
-     //! Indices of each particle's best neighbour.
-     arma::uvec localBestIndices;
->>>>>>> origin/master
 
     // Helper functions for calculating neighbours.
     inline size_t left(size_t index) { return (index + n - 1) % n; }

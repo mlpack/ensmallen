@@ -35,8 +35,6 @@ inline void LogisticRegressionTestData(MatType& data,
                                        LabelsType& responses,
                                        LabelsType& testResponses)
 {
-  typedef typename MatType::elem_type ElemType;
-
   // Generate a two-Gaussian dataset.
   data.set_size(3, 1000);
   responses.set_size(1000);

@@ -91,8 +91,6 @@ class SMORMS3Update
                 const double stepSize,
                 const GradType& gradient)
     {
-      using eT = typename MatType::elem_type;
-
       // Update the iterate.
       MatType r = 1 / (mem + 1);
 
