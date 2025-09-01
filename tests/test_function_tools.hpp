@@ -30,10 +30,12 @@ namespace test {
 * @param shuffledResponses Matrix object to store the shuffled responses into.
 */
 template<typename MatType, typename LabelsType>
-inline void LogisticRegressionTestData(MatType& data,
-                                       MatType& testData,
-                                       LabelsType& responses,
-                                       LabelsType& testResponses)
+inline void LogisticRegressionTestData(
+    MatType& data,
+    MatType& testData,
+    LabelsType& responses,
+    LabelsType& testResponses,
+    const typename std::enable_if_t<!IsSparseMatrixType<MatType>::value>* = 0)
 {
   // Generate a two-Gaussian dataset.
   data.set_size(3, 1000);
@@ -55,6 +57,27 @@ inline void LogisticRegressionTestData(MatType& data,
   testResponses.subvec(0, 499).zeros();
   testData.cols(500, 999) = randn<MatType>(3, 500) + 9;
   testResponses.subvec(500, 999).ones();
+}
+
+template<typename MatType, typename LabelsType>
+inline void LogisticRegressionTestData(
+    MatType& data,
+    MatType& testData,
+    LabelsType& responses,
+    LabelsType& testResponses,
+    const typename std::enable_if_t<IsSparseMatrixType<MatType>::value>* = 0)
+{
+  arma::Mat<typename MatType::elem_type> tmpData, tmpTestData;
+  arma::Row<typename MatType::elem_type> tmpResponses, tmpTestResponses;
+
+  // Sparse matrices don't support the necessary functionality with randn<>.
+  LogisticRegressionTestData(tmpData, tmpTestData, tmpResponses,
+      tmpTestResponses);
+
+  data = conv_to<MatType>::from(tmpData);
+  responses = conv_to<LabelsType>::from(tmpResponses);
+  testData = conv_to<MatType>::from(tmpTestData);
+  testResponses = conv_to<LabelsType>::from(tmpTestResponses);
 }
 
 // Check the values of two matrices.
@@ -177,24 +200,7 @@ void LogisticRegressionFunctionTest(
 
   for (size_t i = 0; i < trials; ++i)
   {
-    if constexpr (IsSparseMatrixType<MatType>::value)
-    {
-      arma::Mat<typename MatType::elem_type> tmpData, tmpTestData;
-      arma::Row<typename MatType::elem_type> tmpResponses, tmpTestResponses;
-
-      // Sparse matrices don't support the necessary functionality with randn<>.
-      LogisticRegressionTestData(tmpData, tmpTestData, tmpResponses,
-          tmpTestResponses);
-
-      data = conv_to<MatType>::from(tmpData);
-      responses = conv_to<LabelsType>::from(tmpResponses);
-      testData = conv_to<MatType>::from(tmpTestData);
-      testResponses = conv_to<LabelsType>::from(tmpTestResponses);
-    }
-    else
-    {
-      LogisticRegressionTestData(data, testData, responses, testResponses);
-    }
+    LogisticRegressionTestData(data, testData, responses, testResponses);
 
     MatType data2 = data;
     LabelsType responses2 = responses;

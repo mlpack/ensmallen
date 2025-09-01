@@ -82,28 +82,35 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
   }
 }
 
+template<typename MatType>
+void ShuffleImpl(MatType& predictors, MatType& responses,
+    const typename std::enable_if_t<!IsSparseMatrixType<MatType>::value>* = 0)
+{
+  MatType allData = shuffle(join_cols(predictors, responses), 1);
+
+  predictors = allData.rows(0, allData.n_rows - 2);
+  responses = allData.row(allData.n_rows - 1);
+}
+
+template<typename MatType, typename BaseRowType>
+void ShuffleImpl(MatType& predictors, BaseRowType& responses,
+    const typename std::enable_if_t<IsSparseMatrixType<MatType>::value>* = 0)
+{
+  // For sparse data shuffle() is not available.
+  arma::uvec ordering = shuffle(linspace<arma::uvec>(0, predictors.n_cols - 1,
+      predictors.n_cols));
+
+  predictors = predictors.cols(ordering);
+  responses = responses.cols(ordering);
+}
+
 /**
  * Shuffle the datapoints.
  */
 template<typename MatType>
 void LogisticRegressionFunction<MatType>::Shuffle()
 {
-  if constexpr (!IsSparseMatrixType<MatType>::value)
-  {
-    MatType allData = shuffle(join_cols(predictors, responses), 1);
-
-    predictors = allData.rows(0, allData.n_rows - 2);
-    responses = allData.row(allData.n_rows - 1);
-  }
-  else
-  {
-    // For sparse data shuffle() is not available.
-    arma::uvec ordering = shuffle(linspace<arma::uvec>(0, predictors.n_cols - 1,
-        predictors.n_cols));
-
-    predictors = predictors.cols(ordering);
-    responses = responses.cols(ordering);
-  }
+  ShuffleImpl<MatType>(predictors, responses);
 }
 
 /**
