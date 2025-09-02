@@ -445,7 +445,8 @@ inline void AGEMOEA::Mutate(MatType& candidate,
       perturbationFactor = 1.0 - std::pow(value, mutationPower);
     }
 
-    candidate(geneIdx) += ElemType(perturbationFactor * geneRange);
+    candidate(geneIdx) +=
+        typename MatType::elem_type(perturbationFactor * geneRange);
   }
   //! Enforce bounds.
   candidate = min(max(candidate, lowerBound), upperBound);
