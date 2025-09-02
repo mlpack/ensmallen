@@ -202,12 +202,12 @@ typename MatType::elem_type AGEMOEA::Optimize(
             size_t idxP{}, idxQ{};
             for (size_t i = 0; i < population.size(); i++)
             {
-              if (arma::approx_equal(population[i], candidateP,
-                  "absdiff", ElemType(epsilon)))
+              if (approx_equal(population[i], candidateP, "absdiff",
+                  ElemType(epsilon)))
                 idxP = i;
 
-              if (arma::approx_equal(population[i], candidateQ,
-                  "absdiff", ElemType(epsilon)))
+              if (approx_equal(population[i], candidateQ, "absdiff",
+                  ElemType(epsilon)))
                 idxQ = i;
             }
 
@@ -445,10 +445,10 @@ inline void AGEMOEA::Mutate(MatType& candidate,
       perturbationFactor = 1.0 - std::pow(value, mutationPower);
     }
 
-    candidate(geneIdx) += perturbationFactor * geneRange;
+    candidate(geneIdx) += ElemType(perturbationFactor * geneRange);
   }
   //! Enforce bounds.
-  candidate = min(arma::max(candidate, lowerBound), upperBound);
+  candidate = min(max(candidate, lowerBound), upperBound);
 }
 
 template <typename MatType>
@@ -526,7 +526,7 @@ inline typename MatType::elem_type AGEMOEA::GetGeometry(
 
   for (size_t i = 0; i < extreme.size(); i++)
   {
-    d[extreme[i]] = arma::Datum<typename MatType::elem_type>::inf;
+    d[extreme[i]] = arma::Datum<ElemType>::inf;
   }
 
   size_t index = arma::index_min(d);

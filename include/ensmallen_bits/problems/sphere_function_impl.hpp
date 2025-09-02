@@ -54,7 +54,6 @@ typename MatType::elem_type SphereFunction::Evaluate(
     objective += std::pow(coordinates(p), ElemType(2));
   }
 
-  //std::cout << "SphereFunction objective " << objective << " coordinates " << coordinates.t();
   return objective;
 }
 
@@ -78,8 +77,6 @@ void SphereFunction::Gradient(const MatType& coordinates,
     const size_t p = visitationOrder[j];
     gradient(p) += 2 * coordinates[p];
   }
-
-  //std::cout << "SphereFunction coordinates " << coordinates.t() << "               gradient " << gradient.t();
 }
 
 template<typename MatType, typename GradType>
