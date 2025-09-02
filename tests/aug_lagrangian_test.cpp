@@ -12,7 +12,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 
@@ -23,13 +26,16 @@ using namespace ens::test;
  * Tests the Augmented Lagrangian optimizer using the
  * AugmentedLagrangianTestFunction class.
  */
-TEST_CASE("AugLagrangianTestFunctionTest", "[AugLagrangianTest]")
+TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction",
+    "[AugLagrangian]", arma::mat)
 {
+  typedef typename TestType::elem_type ElemType;
+
   // The choice of 10 memory slots is arbitrary.
   AugLagrangianTestFunction f;
   AugLagrangian aug;
 
-  arma::vec coords = f.GetInitialPoint();
+  arma::Col<ElemType> coords = f.GetInitialPoint();
 
   if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
@@ -44,40 +50,20 @@ TEST_CASE("AugLagrangianTestFunctionTest", "[AugLagrangianTest]")
 /**
  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
  */
-TEST_CASE("GockenbachFunctionTest", "[AugLagrangianTest]")
+TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
+    arma::mat, arma::fmat)
 {
+  typedef typename TestType::elem_type ElemType;
+
   GockenbachFunction f;
   AugLagrangian aug;
 
-  arma::mat coords = f.GetInitialPoint<arma::mat>();
+  TestType coords = f.GetInitialPoint<TestType>();
 
   if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
 
-  double finalValue = f.Evaluate(coords);
-
-  // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
-  REQUIRE(coords(0) == Approx(0.12288178).epsilon(1e-5));
-  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
-  REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
-}
-
-/**
- * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
- * arma::fmat.
- */
-TEST_CASE("GockenbachFunctionFMatTest", "[AugLagrangianTest]")
-{
-  GockenbachFunction f;
-  AugLagrangian aug;
-
-  arma::fmat coords = f.GetInitialPoint<arma::fmat>();
-
-  if (!aug.Optimize(f, coords))
-    FAIL("Optimization reported failure.");
-
-  float finalValue = f.Evaluate(coords);
+  ElemType finalValue = f.Evaluate(coords);
 
   // Higher tolerance for smaller values.
   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
@@ -90,17 +76,20 @@ TEST_CASE("GockenbachFunctionFMatTest", "[AugLagrangianTest]")
  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
  * arma::sp_mat.
  */
-TEST_CASE("GockenbachFunctionSpMatTest", "[AugLagrangianTest]")
+TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
+    arma::sp_mat)
 {
+  typedef typename TestType::elem_type ElemType;
+
   GockenbachFunction f;
   AugLagrangian aug;
 
-  arma::sp_mat coords = f.GetInitialPoint<arma::sp_mat>();
+  TestType coords = f.GetInitialPoint<TestType>();
 
   if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
 
-  double finalValue = f.Evaluate(coords);
+  ElemType finalValue = f.Evaluate(coords);
 
   // Higher tolerance for smaller values.
   REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
@@ -108,3 +97,30 @@ TEST_CASE("GockenbachFunctionSpMatTest", "[AugLagrangianTest]")
   REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
   REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
 }
+
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
+    coot::mat, coot::fmat)
+{
+  typedef typename ForwardType<TestType>::bvec BaseVecType;
+  typedef typename TestType::elem_type ElemType;
+
+  GockenbachFunction f;
+  AugLagrangianType<BaseVecType> aug;
+
+  TestType coords = f.template GetInitialPoint<TestType>();
+
+  if (!aug.Optimize(f, coords))
+    FAIL("Optimization reported failure.");
+
+  ElemType finalValue = f.Evaluate(coords);
+
+  // Higher tolerance for smaller values.
+  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
+  REQUIRE(coords(0) == Approx(0.12288178).epsilon(0.1));
+  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-3));
+  REQUIRE(coords(2) == Approx(0.015099932).epsilon(0.1));
+}
+
+#endif

@@ -63,11 +63,12 @@ class PenaltyBoundaryIntersection
   {
     typedef typename VecType::elem_type ElemType;
     //! A unit vector in the same direction as the provided weight vector.
-    const VecType referenceDirection = weight / arma::norm(weight);
+    const VecType referenceDirection = weight / norm(weight);
     //! Distance of F(x) from the idealPoint along the reference direction.
-    const ElemType d1 = arma::dot(candidateFitness - idealPoint, referenceDirection);
+    const ElemType d1 = dot(candidateFitness - idealPoint, referenceDirection);
     //! The perpendicular distance of F(x) from reference direction.
-    const ElemType d2 = arma::norm(candidateFitness - (idealPoint + d1 * referenceDirection));
+    const ElemType d2 = norm(candidateFitness - (idealPoint + d1 *
+        referenceDirection));
 
     return d1 + static_cast<ElemType>(theta) * d2;
   }

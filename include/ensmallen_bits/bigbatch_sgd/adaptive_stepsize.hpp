@@ -132,8 +132,8 @@ class AdaptiveStepsize
         delta0 = delta1 + (functionGradient - delta1) / k;
 
         // Compute sample variance.
-        vB += arma::norm(functionGradient - delta1, 2.0) *
-            arma::norm(functionGradient - delta0, 2.0);
+        vB += norm(functionGradient - delta1, 2.0) *
+            norm(functionGradient - delta0, 2.0);
 
         delta1 = delta0;
         gradient += functionGradient;
@@ -145,13 +145,13 @@ class AdaptiveStepsize
 
       // Update sample variance & norm of the gradient.
       sampleVariance = vB;
-      gradientNorm = std::pow(arma::norm(gradient / backtrackingBatchSize, 2),
+      gradientNorm = std::pow(norm(gradient / backtrackingBatchSize, 2),
           2.0);
 
       // Compute curvature.
-      double v = arma::trace(arma::trans(iterate - iteratePrev) *
+      double v = trace(trans(iterate - iteratePrev) *
           (gradient - gradPrevIterate)) /
-          std::pow(arma::norm(iterate - iteratePrev, 2), 2.0);
+          std::pow(norm(iterate - iteratePrev, 2), 2.0);
 
       // Update previous iterate.
       iteratePrev = iterate;

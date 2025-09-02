@@ -19,10 +19,12 @@
 
 namespace ens {
 
-inline AugLagrangian::AugLagrangian(const size_t maxIterations,
-                                    const double penaltyThresholdFactor,
-                                    const double sigmaUpdateFactor,
-                                    const L_BFGS& lbfgs) :
+template<typename VecType>
+inline AugLagrangianType<VecType>::AugLagrangianType(
+    const size_t maxIterations,
+    const double penaltyThresholdFactor,
+    const double sigmaUpdateFactor,
+    const L_BFGS& lbfgs) :
     maxIterations(maxIterations),
     penaltyThresholdFactor(penaltyThresholdFactor),
     sigmaUpdateFactor(sigmaUpdateFactor),
@@ -32,32 +34,35 @@ inline AugLagrangian::AugLagrangian(const size_t maxIterations,
 {
 }
 
+template<typename VecType>
 template<typename LagrangianFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value, bool>::type
-AugLagrangian::Optimize(LagrangianFunctionType& function,
-                        MatType& coordinates,
-                        const arma::vec& initLambda,
-                        const double initSigma,
-                        CallbackTypes&&... callbacks)
+typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
+AugLagrangianType<VecType>::Optimize(
+    LagrangianFunctionType& function,
+    MatType& coordinates,
+    const VecType& initLambda,
+    const double initSigma,
+    CallbackTypes&&... callbacks)
 {
   lambda = initLambda;
   sigma = initSigma;
 
-  AugLagrangianFunction<LagrangianFunctionType> augfunc(function,
-      lambda, sigma);
+  AugLagrangianFunction<LagrangianFunctionType, VecType> augfunc(
+      function, lambda, sigma);
 
   return Optimize(augfunc, coordinates, callbacks...);
 }
 
+template<typename VecType>
 template<typename LagrangianFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value, bool>::type
-AugLagrangian::Optimize(LagrangianFunctionType& function,
+typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
+AugLagrangianType<VecType>::Optimize(LagrangianFunctionType& function,
                         MatType& coordinates,
                         CallbackTypes&&... callbacks)
 {
@@ -65,24 +70,26 @@ AugLagrangian::Optimize(LagrangianFunctionType& function,
   // use defaults.
   if (!lambda.is_empty())
   {
-    AugLagrangianFunction<LagrangianFunctionType> augfunc(function, lambda,
-        sigma);
+    AugLagrangianFunction<LagrangianFunctionType, decltype(lambda)> augfunc(
+        function, lambda, sigma);
     return Optimize(augfunc, coordinates, callbacks...);
   }
   else
   {
-    AugLagrangianFunction<LagrangianFunctionType> augfunc(function);
+    AugLagrangianFunction<LagrangianFunctionType, decltype(lambda)> augfunc(
+        function);
     return Optimize(augfunc, coordinates, callbacks...);
   }
 }
 
+template<typename VecType>
 template<typename LagrangianFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value, bool>::type
-AugLagrangian::Optimize(
-    AugLagrangianFunction<LagrangianFunctionType>& augfunc,
+typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
+AugLagrangianType<VecType>::Optimize(
+    AugLagrangianFunction<LagrangianFunctionType, VecType>& augfunc,
     MatType& coordinatesIn,
     CallbackTypes&&... callbacks)
 {

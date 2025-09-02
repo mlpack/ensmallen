@@ -45,8 +45,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 SARAHType<UpdatePolicyType>::Optimize(
     SeparableFunctionType& functionIn,
     MatType& iterateIn,
@@ -153,7 +153,7 @@ SARAHType<UpdatePolicyType>::Optimize(
     // Update iterate with full gradient (v).
     iterate -= stepSize * v;
 
-    const ElemType vNorm = arma::norm(v);
+    const ElemType vNorm = norm(v);
 
     for (size_t f = 0, currentFunction = 0; f < innerIterations;
         /* incrementing done manually */)

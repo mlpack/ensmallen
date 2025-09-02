@@ -85,6 +85,8 @@ class SMORMS3Update
                 const double stepSize,
                 const GradType& gradient)
     {
+      using eT = typename MatType::elem_type;
+
       // Update the iterate.
       MatType r = 1 / (mem + 1);
 
@@ -94,25 +96,22 @@ class SMORMS3Update
       g2 = (1 - r) % g2;
       g2 += r % (gradient % gradient);
 
-      MatType x = (g % g) / (g2 + parent.epsilon);
+      MatType x = clamp((g % g) / (g2 + parent.epsilon), eT(0), eT(stepSize));
 
-      x.transform( [stepSize](typename MatType::elem_type &v)
-          { return std::min(v, (typename MatType::elem_type) stepSize); } );
-
-      iterate -= gradient % x / (arma::sqrt(g2) + parent.epsilon);
+      iterate -= gradient % x / (sqrt(g2) + parent.epsilon);
 
       mem %= (1 - x);
       mem += 1;
     }
 
    private:
-    // Instantiated parent object.
+    //! Instantiated parent object.
     SMORMS3Update& parent;
-    // Memory parameter.
+    //! Memory parameter.
     MatType mem;
-    // Gradient estimate parameter.
+    //! Gradient estimate parameter.
     GradType g;
-    // Squared gradient estimate parameter.
+    //! Squared gradient estimate parameter.
     GradType g2;
   };
 

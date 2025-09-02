@@ -101,8 +101,7 @@ class LRSDPFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const
   {
-    MatType result = arma::conv_to<MatType>::from(initialPoint);
-    return result;
+    return conv_to<MatType>::from(initialPoint);
   }
 
   //! Return the SDP object representing the problem.
@@ -143,48 +142,48 @@ class LRSDPFunction
 template<>
 template<typename MatType>
 inline typename MatType::elem_type
-AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Evaluate(
+AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>, arma::vec>::Evaluate(
     const MatType& coordinates) const;
 
 template<>
 template<typename MatType>
 inline typename MatType::elem_type
-AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Evaluate(
+AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>, arma::vec>::Evaluate(
     const MatType& coordinates) const;
 
 template<>
 template<typename MatType, typename GradType>
-inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>>::Gradient(
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_mat>>, arma::vec>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const;
 
 template<>
 template<typename MatType, typename GradType>
-inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>>::Gradient(
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>, arma::vec>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const;
 
 template<>
 template<typename MatType>
 inline typename MatType::elem_type
-AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>>::Evaluate(
+AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::vec>::Evaluate(
     const MatType& coordinates) const;
 
 template<>
 template<typename MatType>
 inline typename MatType::elem_type
-AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>>::Evaluate(
+AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>, arma::vec>::Evaluate(
     const MatType& coordinates) const;
 
 template<>
 template<typename MatType, typename GradType>
-inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>>::Gradient(
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::vec>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const;
 
 template<>
 template<typename MatType, typename GradType>
-inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>>::Gradient(
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>, arma::vec>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const;
 

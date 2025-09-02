@@ -109,7 +109,7 @@ class StyblinskiTangFunction
   template<typename MatType = arma::mat>
   MatType GetInitialPoint() const
   {
-    return arma::conv_to<MatType>::from(initialPoint);
+    return conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.

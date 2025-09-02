@@ -37,7 +37,7 @@ typename MatType::elem_type BealeFunction::Evaluate(
 
   const ElemType objective = std::pow(1.5 - x1 + x1 * x2, 2) +
       std::pow(2.25 - x1 + x1 * x2 * x2, 2) +
-      std::pow(2.625 - x1 + x1 * pow(x2, 3), 2);
+      std::pow(2.625 - x1 + x1 * std::pow(x2, 3), 2);
 
   return objective;
 }
@@ -64,7 +64,7 @@ inline void BealeFunction::Gradient(const MatType& coordinates,
 
   // Aliases for different terms in the expression of the gradient.
   const ElemType x2Sq = x2 * x2;
-  const ElemType x2Cub = pow(x2, 3);
+  const ElemType x2Cub = std::pow(x2, 3);
 
   gradient.set_size(2, 1);
   gradient(0) = ((2 * x2 - 2) * (x1 * x2 - x1 + 1.5)) +

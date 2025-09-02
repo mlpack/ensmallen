@@ -69,10 +69,9 @@ class NesterovMomentumUpdate
     Policy(const NesterovMomentumUpdate& parent,
            const size_t rows,
            const size_t cols) :
-        parent(parent),
-        velocity(arma::zeros<MatType>(rows, cols))
+        parent(parent), velocity(rows, cols)
     {
-      // Nothing to do.
+      // Nothing to do here.
     }
 
     /**
@@ -90,7 +89,6 @@ class NesterovMomentumUpdate
                 const GradType& gradient)
     {
       velocity = parent.momentum * velocity - stepSize * gradient;
-
       iterate += parent.momentum * velocity - stepSize * gradient;
     }
 

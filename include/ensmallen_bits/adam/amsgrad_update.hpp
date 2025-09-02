@@ -2,7 +2,7 @@
  * @file amsgrad_update.hpp
  * @author Haritha Nair
  *
- * Implementation of AMSGrad optimizer. AMSGrad is an exponential moving average 
+ * Implementation of AMSGrad optimizer. AMSGrad is an exponential moving average
  * optimizer that dynamically adapts over time with guaranteed convergence.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -25,9 +25,9 @@ namespace ens {
  *
  * @code
  * @article{
- *   title   = {On the convergence of Adam and beyond},
- *   url     = {https://openreview.net/pdf?id=ryQu7f-RZ}
- *   year    = {2018}
+ *   title = {On the convergence of Adam and beyond},
+ *   url   = {https://openreview.net/pdf?id=ryQu7f-RZ}
+ *   year  = {2018}
  * }
  * @endcode
  */
@@ -119,10 +119,10 @@ class AMSGradUpdate
       const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
 
       // Element wise maximum of past and present squared gradients.
-      vImproved = arma::max(vImproved, v);
+      vImproved = max(vImproved, v);
 
       iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-                  m / (arma::sqrt(vImproved) + parent.epsilon);
+                  m / (sqrt(vImproved) + parent.epsilon);
     }
 
    private:

@@ -49,7 +49,8 @@ namespace ens {
  * \f]
  *
  */
-class ConstrLpBallSolver
+template<typename VecType = arma::vec>
+class ConstrLpBallSolverType
 {
  public:
   /**
@@ -58,7 +59,7 @@ class ConstrLpBallSolver
    *
    * @param p The constraint is unit lp ball.
    */
-  ConstrLpBallSolver(const double p) : p(p)
+  ConstrLpBallSolverType(const double p) : p(p)
   { /* Do nothing. */ }
 
   /**
@@ -68,7 +69,7 @@ class ConstrLpBallSolver
    * @param p The constraint is unit lp ball.
    * @param lambda Regularization parameter.
    */
-  ConstrLpBallSolver(const double p, const arma::vec lambda) :
+  ConstrLpBallSolverType(const double p, const VecType lambda) :
       p(p), regFlag(true), lambda(lambda)
   { /* Do nothing. */ }
 
@@ -80,52 +81,51 @@ class ConstrLpBallSolver
    * @param s Output optimal solution in the constrained domain (lp ball).
    */
   template<typename MatType>
-  void Optimize(const MatType& v,
-                MatType& s)
+  void Optimize(const MatType& v, MatType& s)
   {
-    typedef typename MatType::elem_type ElemType;
+    typedef typename ForwardType<MatType>::uword UWordType;
 
     if (p == std::numeric_limits<double>::infinity())
     {
       // l-inf ball.
-      s = -arma::sign(v);
+      s = -sign(v);
       if (regFlag)
       {
         // Do element-wise division.
-        s /= arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s /= conv_to<MatType>::from(lambda);
       }
     }
     else if (p > 1.0)
     {
       // lp ball with 1<p<inf.
       if (regFlag)
-        s = v / arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s = v / conv_to<MatType>::from(lambda);
       else
         s = v;
 
       double q = 1 / (1.0 - 1.0 / p);
-      s = -arma::sign(v) % arma::pow(arma::abs(s), q - 1);
-      s = arma::normalise(s, p);
+      s = -sign(v) % pow(abs(s), q - 1);
+      s = normalise(s, p);
 
       if (regFlag)
-        s = s / arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s = s / conv_to<MatType>::from(lambda);
     }
     else if (p == 1.0)
     {
       // l1 ball, also used in OMP.
       if (regFlag)
-        s = arma::abs(v / arma::conv_to<arma::Col<ElemType>>::from(lambda));
+        s = abs(v / conv_to<MatType>::from(lambda));
       else
-        s = arma::abs(v);
+        s = abs(v);
 
       // k is the linear index of the largest element.
-      arma::uword k = s.index_max();
+      UWordType k = s.index_max();
       s.zeros();
       // Take the sign of v(k).
       s(k) = -((0.0 < v(k)) - (v(k) < 0.0));
 
       if (regFlag)
-        s = s / arma::conv_to<arma::Col<ElemType>>::from(lambda);
+        s = s / conv_to<MatType>::from(lambda);
     }
     else
     {
@@ -146,9 +146,9 @@ class ConstrLpBallSolver
   bool& RegFlag() { return regFlag; }
 
   //! Get the regularization parameter.
-  arma::vec Lambda() const { return lambda; }
+  VecType Lambda() const { return lambda; }
   //! Modify the regularization parameter.
-  arma::vec& Lambda() { return lambda; }
+  VecType& Lambda() { return lambda; }
 
  private:
   //! lp norm, 1<=p<=inf;
@@ -159,8 +159,10 @@ class ConstrLpBallSolver
   bool regFlag = false;
 
   //! Regularization parameter.
-  arma::vec lambda;
+  VecType lambda;
 };
+
+using ConstrLpBallSolver = ConstrLpBallSolverType<arma::vec>;
 
 } // namespace ens
 

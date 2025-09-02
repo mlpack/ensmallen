@@ -49,8 +49,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 Eve::Optimize(SeparableFunctionType& function,
               MatType& iterateIn,
               CallbackTypes&&... callbacks)
@@ -150,10 +150,10 @@ Eve::Optimize(SeparableFunctionType& function,
     // TODO: remove in ensmallen 4.0.0.
     #if defined(ENS_OLD_SEPARABLE_STEP_BEHAVIOR)
     iterate -= stepSize / dt * (m / biasCorrection1) /
-        (arma::sqrt(v / biasCorrection2) + epsilon);
+        (sqrt(v / biasCorrection2) + epsilon);
     #else
     iterate -= (stepSize / (dt * effectiveBatchSize)) * (m / biasCorrection1) /
-        (arma::sqrt(v / biasCorrection2) + epsilon);
+        (sqrt(v / biasCorrection2) + epsilon);
     #endif
 
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
@@ -192,13 +192,10 @@ Eve::Optimize(SeparableFunctionType& function,
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);
 
-      // Reset the counter variables if we will continue.
-      if (i != actualMaxIterations)
-      {
-        lastOverallObjective = overallObjective;
-        overallObjective = 0;
-        currentFunction = 0;
-      }
+      // Reset the counter variables.
+      lastOverallObjective = overallObjective;
+      overallObjective = 0;
+      currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
         f.Shuffle();

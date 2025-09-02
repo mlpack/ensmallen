@@ -40,10 +40,10 @@ namespace ens {
  *
  * @code
  * @article{10.1109/4235.996017,
- *   author = {Deb, K. and Pratap, A. and Agarwal, S. and Meyarivan, T.},
- *   title = {A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II},
- *   year = {2002},
- *   url = {https://doi.org/10.1109/4235.996017},
+ *   author  = {Deb, K. and Pratap, A. and Agarwal, S. and Meyarivan, T.},
+ *   title   = {A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II},
+ *   year    = {2002},
+ *   url     = {https://doi.org/10.1109/4235.996017},
  *   journal = {Trans. Evol. Comp}}
  * @endcode
  *
@@ -125,10 +125,37 @@ class NSGA2
   template<typename MatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
- typename MatType::elem_type Optimize(
-     std::tuple<ArbitraryFunctionType...>& objectives,
-     MatType& iterate,
-     CallbackTypes&&... callbacks);
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CallbackTypes&&... callbacks);
+
+  /**
+   * Optimize a set of objectives. The initial population is generated using the
+   * starting point. The output is the best generated front.
+   *
+   * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
+   * @tparam MatType Type of matrix to optimize.
+   * @tparam CubeType The type of cube used to store the front and Pareto set.
+   * @tparam CallbackTypes Types of callback functions.
+   * @param objectives Vector of objective functions to optimize for.
+   * @param iterate Starting point.
+   * @param front The generated front.
+   * @param paretoSet The generated Pareto set.
+   * @param callbacks Callback functions.
+   * @return MatType::elem_type The minimum of the accumulated sum over the
+   *     objective values in the best front.
+   */
+  template<typename MatType,
+           typename CubeType,
+           typename... ArbitraryFunctionType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CubeType& front,
+      CubeType& paretoSet,
+      CallbackTypes&&... callbacks);
 
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
@@ -170,13 +197,29 @@ class NSGA2
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
-  //! until `Optimize()` has been called.
-  const arma::cube& ParetoSet() const { return paretoSet; }
+  /**
+   * Retrieve the Pareto optimal points in variable space. This returns an
+   * empty cube until `Optimize()` has been called. Note that this function is
+   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
+   * instead.
+   */
+  template<typename MatType = arma::cube>
+  [[deprecated("use Optimize() instead")]] MatType ParetoSet() const
+  {
+    return conv_to<MatType>::from(paretoSet);
+  }
 
-  //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
-  //! `Optimize()` has been called.
-  const arma::cube& ParetoFront() const { return paretoFront; }
+  /**
+   * Retrieve the best front (the Pareto frontier). This returns an empty cube
+   * until `Optimize()` has been called. Note that this function is
+   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
+   * instead.
+   */
+  template<typename MatType = arma::cube>
+  [[deprecated("use Optimize() instead")]] MatType ParetoFront() const
+  {
+    return conv_to<MatType>::from(paretoFront);
+  }
 
   /**
    * Retrieve the best front (the Pareto frontier).  This returns an empty
@@ -203,27 +246,31 @@ class NSGA2
    * Evaluate objectives for the elite population.
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple function types.
-   * @tparam MatType Type of matrix to optimize.
+   * @tparam InputMatType Type of matrix to optimize.
+   * @tparam ObjectiveMatType Type of matrix to store objective values.
    * @param population The elite population.
    * @param objectives The set of objectives.
    * @param calculatedObjectives Vector to store calculated objectives.
    */
   template<std::size_t I = 0,
-           typename MatType,
+           typename InputMatType,
+           typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>&,
-                     std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<typename MatType::elem_type> >&);
+  EvaluateObjectives(
+      std::vector<InputMatType>&,
+      std::tuple<ArbitraryFunctionType...>&,
+      std::vector<ObjectiveMatType>&);
 
   template<std::size_t I = 0,
-           typename MatType,
+           typename InputMatType,
+           typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>& population,
-                     std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<typename MatType::elem_type> >&
-                     calculatedObjectives);
+  EvaluateObjectives(
+      std::vector<InputMatType>& population,
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      std::vector<ObjectiveMatType>& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -235,10 +282,11 @@ class NSGA2
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType>
-  void BinaryTournamentSelection(std::vector<MatType>& population,
-                                 const MatType& lowerBound,
-                                 const MatType& upperBound);
+  template<typename InputMatType>
+  void BinaryTournamentSelection(
+      std::vector<InputMatType>& population,
+      const InputMatType& lowerBound,
+      const InputMatType& upperBound);
 
   /**
    * Crossover two parents to create a pair of new children.
@@ -249,11 +297,12 @@ class NSGA2
    * @param parentA First parent from elite population.
    * @param parentB Second parent from elite population.
    */
-  template<typename MatType>
-  void Crossover(MatType& childA,
-                 MatType& childB,
-                 const MatType& parentA,
-                 const MatType& parentB);
+  template<typename InputMatType>
+  void Crossover(
+      InputMatType& childA,
+      InputMatType& childB,
+      const InputMatType& parentA,
+      const InputMatType& parentB);
 
   /**
    * Mutate the coordinates for a candidate.
@@ -264,10 +313,11 @@ class NSGA2
    * @param lowerBound Lower bound of the coordinates of the initial population.
    * @param upperBound Upper bound of the coordinates of the initial population.
    */
-  template<typename MatType>
-  void Mutate(MatType& child,
-              const MatType& lowerBound,
-              const MatType& upperBound);
+  template<typename InputMatType>
+  void Mutate(
+      InputMatType& child,
+      const InputMatType& lowerBound,
+      const InputMatType& upperBound);
 
   /**
    * Sort the candidate population using their domination count and the set of
@@ -279,11 +329,11 @@ class NSGA2
    * @param ranks The assigned ranks, used for crowding distance based sorting.
    * @param calculatedObjectives The previously calculated objectives.
    */
-  template<typename MatType>
+  template<typename InputMatType, typename ObjectiveMatType>
   void FastNonDominatedSort(
       std::vector<std::vector<size_t> >& fronts,
       std::vector<size_t>& ranks,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+      std::vector<ObjectiveMatType>& calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -298,9 +348,9 @@ class NSGA2
    * @param candidateQ The candidate being compared against.
    * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
    */
-  template<typename MatType>
+  template<typename InputMatType, typename ObjectiveMatType>
   bool Dominates(
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+      std::vector<ObjectiveMatType>& calculatedObjectives,
       size_t candidateP,
       size_t candidateQ);
 
@@ -312,11 +362,11 @@ class NSGA2
    * @param crowdingDistance The crowding distance for each individual in
    *    the population.
    */
-  template <typename MatType>
+  template <typename InputMatType, typename ObjectiveMatType>
   void CrowdingDistanceAssignment(
       const std::vector<size_t>& front,
-      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-      std::vector<typename MatType::elem_type>& crowdingDistance);
+      std::vector<ObjectiveMatType>& calculatedObjectives,
+      std::vector<typename InputMatType::elem_type>& crowdingDistance);
 
   /**
    * The operator used in the crowding distance based sorting.
@@ -334,16 +384,17 @@ class NSGA2
    *    the population.
    * @return true if the first candidate is preferred, otherwise, false.
    */
-  template<typename MatType>
-  bool CrowdingOperator(size_t idxP,
-                        size_t idxQ,
-                        const std::vector<size_t>& ranks,
-                        const std::vector<typename MatType::elem_type>& crowdingDistance);
+  template<typename InputMatType>
+  bool CrowdingOperator(
+      size_t idxP,
+      size_t idxQ,
+      const std::vector<size_t>& ranks,
+      const std::vector<typename InputMatType::elem_type>& crowdingDistance);
 
   //! The number of objectives being optimised for.
   size_t numObjectives;
 
-  //! The numbeer of variables used per objectives.
+  //! The number of variables used per objectives.
   size_t numVariables;
 
   //! The number of candidates in the population.
