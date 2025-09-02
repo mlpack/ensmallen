@@ -63,8 +63,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
       SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -113,8 +113,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
     TestType coords = SCH.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -163,8 +163,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
   TestType coords = FON.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+  arma::Cube<ElemType> paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool allInRange = true;
 
@@ -212,8 +212,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
   TestType coords = FON.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+  arma::Cube<ElemType> paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool allInRange = true;
 
@@ -275,41 +275,6 @@ TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", arma::mat)
   REQUIRE(g == Approx(1.0).margin(0.99));
 }
 
-/**
- * Ensure that the reverse-compatible Front() function works.
- *
- * This test can be removed when Front() is removed, in ensmallen 3.x.
- */
-TEMPLATE_TEST_CASE("NSGA2_FrontTest", "[NSGA2]", arma::mat, arma::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  SchafferFunctionN1<TestType> SCH;
-  const double lowerBound = -1000;
-  const double upperBound = 1000;
-
-  NSGA2 opt(
-      20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
-
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
-
-  TestType coords = SCH.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoFront = opt.ParetoFront<arma::Cube<ElemType>>();
-
-  std::vector<arma::mat> rcFront = opt.Front();
-
-  REQUIRE(paretoFront.n_slices == rcFront.size());
-  for (size_t i = 0; i < paretoFront.n_slices; ++i)
-  {
-    arma::mat paretoM = conv_to<arma::mat>::from(paretoFront.slice(i));
-    CheckMatrices(paretoM, rcFront[i]);
-  }
-}
-
 #ifdef ENS_HAVE_COOT
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
@@ -337,8 +302,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
       SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    coot::Cube<ElemType> paretoSet = opt.ParetoSet<coot::Cube<ElemType>>();
+    coot::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -389,8 +354,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2Test]",
     TestType coords = SCH.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    coot::Cube<ElemType> paretoSet = opt.ParetoSet<coot::Cube<ElemType>>();
+    coot::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 

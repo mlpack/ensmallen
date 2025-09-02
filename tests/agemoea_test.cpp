@@ -60,12 +60,13 @@ TEST_CASE("AGEMOEASchafferN1DoubleTest", "[AGEMOEATest]")
     arma::mat coords = SCH.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::cube paretoSet = opt.ParetoSet();
+    arma::cube paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       double val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.1))
@@ -109,8 +110,8 @@ TEST_CASE("AGEMOEASchafferN1TestVectorDoubleBounds", "[AGEMOEATest]")
     arma::mat coords = SCH.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::cube paretoSet = opt.ParetoSet();
+    arma::cube paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -156,8 +157,8 @@ TEST_CASE("AGEMOEAFonsecaFlemingDoubleTest", "[AGEMOEATest]")
     arma::mat coords = FON.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::cube paretoSet = opt.ParetoSet();
+    arma::cube paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -208,8 +209,8 @@ TEST_CASE("AGEMOEAFonsecaFlemingTestVectorFloatBounds", "[AGEMOEATest]")
     arma::fmat coords = FON.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::fcube paretoSet = arma::conv_to<arma::fcube>::from(opt.ParetoSet());
+    arma::fcube paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
@@ -325,9 +326,9 @@ TEST_CASE("AGEMOEADIRICHLETZDT3Test", "[AGEMOEADTest]")
     arma::mat coords = ZDT_THREE.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
 
-    opt.Optimize(objectives, coords);
+    arma::cube paretoFront, finalPopulation;
+    opt.Optimize(objectives, coords, paretoFront, finalPopulation);
 
-    const arma::cube& finalPopulation = opt.ParetoSet();
     success = AVariableBoundsCheck(finalPopulation);
     if (success){ break;}
   }

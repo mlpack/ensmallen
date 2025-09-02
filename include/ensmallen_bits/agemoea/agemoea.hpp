@@ -193,50 +193,6 @@ class AGEMOEA
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  /**
-   * Retrieve the Pareto optimal points in variable space. This returns an
-   * empty cube until `Optimize()` has been called. Note that this function is
-   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
-   * instead.
-   */
-  template<typename MatType = arma::cube>
-  [[deprecated("use Optimize() instead")]] MatType ParetoSet() const
-  {
-    return conv_to<MatType>::from(paretoSet);
-  }
-
-  /**
-   * Retrieve the best front (the Pareto frontier). This returns an empty cube
-   * until `Optimize()` has been called. Note that this function is
-   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
-   * instead.
-   */
-  template<typename MatType = arma::cube>
-  [[deprecated("use Optimize() instead")]] MatType ParetoFront() const
-  {
-    return conv_to<MatType>::from(paretoFront);
-  }
-
-  /**
-   * Retrieve the best front (the Pareto frontier).  This returns an empty
-   * vector until `Optimize()` has been called.  Note that this function is
-   * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
-   * instead.
-   */
-  [[deprecated("use ParetoFront() instead")]] const std::vector<arma::mat>& Front()
-  {
-    if (rcFront.size() == 0)
-    {
-      // Match the old return format.
-      for (size_t i = 0; i < paretoFront.n_slices; ++i)
-      {
-        rcFront.push_back(arma::mat(paretoFront.slice(i)));
-      }
-    }
-
-    return rcFront;
-  }
-
  private:
   /**
    * Evaluate objectives for the elite population.
@@ -511,19 +467,6 @@ class AGEMOEA
 
   //! Upper bound of the initial swarm.
   arma::vec upperBound;
-
-  //! The set of all the Pareto optimal points.
-  //! Stored after Optimize() is called.
-  arma::cube paretoSet;
-
-  //! The set of all the Pareto optimal objective vectors.
-  //! Stored after Optimize() is called.
-  arma::cube paretoFront;
-
-  //! A different representation of the Pareto front, for reverse compatibility
-  //! purposes.  This can be removed when ensmallen 3.x is released!  (Along
-  //! with `Front()`.)  This is only populated when `Front()` is called.
-  std::vector<arma::mat> rcFront;
 };
 
 } // namespace ens

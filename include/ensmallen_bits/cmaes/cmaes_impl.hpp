@@ -18,7 +18,6 @@
 // In case it hasn't been included yet.
 #include "cmaes.hpp"
 
-#include "not_empty_transformation.hpp"
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {
@@ -40,29 +39,6 @@ CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
     transformationPolicy(transformationPolicy),
     stepSize(stepSizeIn)
 { /* Nothing to do. */ }
-
-template<typename SelectionPolicyType, typename TransformationPolicyType>
-CMAES<SelectionPolicyType, TransformationPolicyType>::CMAES(const size_t lambda,
-                                  const double lowerBound,
-                                  const double upperBound,
-                                  const size_t batchSize,
-                                  const size_t maxIterations,
-                                  const double tolerance,
-                                  const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
-    lambda(lambda),
-    batchSize(batchSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    selectionPolicy(selectionPolicy),
-    stepSize(stepSizeIn)
-{
-  Warn << "This is a deprecated constructor and will be removed in a "
-      "future version of ensmallen" << std::endl;
-  NotEmptyTransformation<TransformationPolicyType, EmptyTransformation<>> d;
-  d.Assign(transformationPolicy, lowerBound, upperBound);
-}
-
 
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType, typename TransformationPolicyType>
