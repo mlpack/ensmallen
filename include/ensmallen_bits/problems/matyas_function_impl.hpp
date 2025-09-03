@@ -35,7 +35,7 @@ typename MatType::elem_type MatyasFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const double objective = 0.26 * (pow(x1, 2) + std::pow(x2, 2)) -
+  const double objective = 0.26 * (std::pow(x1, 2.0) + std::pow(x2, 2.0)) -
       0.48 * x1 * x2;
 
   return objective;

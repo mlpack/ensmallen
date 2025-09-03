@@ -305,8 +305,8 @@ bool AVariableBoundsCheck(const arma::cube& paretoSet)
 }
 
 /**
- * Test AGEMOEA against the third problem of ZDT Test Suite. ZDT-3 is a 30 
- * variable-2 objective problem with disconnected Pareto Fronts. 
+ * Test AGEMOEA against the third problem of ZDT Test Suite. ZDT-3 is a 30
+ * variable-2 objective problem with disconnected Pareto Fronts.
  */
 TEST_CASE("AGEMOEADIRICHLETZDT3Test", "[AGEMOEADTest]")
 {

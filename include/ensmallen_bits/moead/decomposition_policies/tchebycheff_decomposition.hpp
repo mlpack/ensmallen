@@ -57,7 +57,7 @@ class Tchebycheff
                                     const VecType& idealPoint,
                                     const VecType& candidateFitness)
   {
-    return arma::max(weight % arma::abs(candidateFitness - idealPoint));
+    return max(weight % abs(candidateFitness - idealPoint));
   }
 };
 

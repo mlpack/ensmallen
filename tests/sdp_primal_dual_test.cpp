@@ -51,11 +51,10 @@ class UndirectedGraph
                             const std::string& edgesFilename,
                             bool transposeEdges)
   {
-    
     // data::Load(edgesFilename, g.edges, true, transposeEdges);
     if (g.edges.load(edgesFilename) == false)  { FAIL("couldn't load data"); }
     if (transposeEdges)  { g.edges = g.edges.t(); }
-    
+
     if (g.edges.n_rows != 2)
       FAIL("Invalid datafile");
     g.weights.ones(g.edges.n_cols);
@@ -74,11 +73,11 @@ class UndirectedGraph
 
     if (g.edges.n_rows != 2)
       FAIL("Invalid datafile");
-    
+
     // data::Load(weightsFilename, g.weights, true, transposeWeights);
     if (g.weights.load(weightsFilename) == false)  { FAIL("couldn't load data"); }
     if (transposeWeights)  { g.weights = g.weights.t(); }
-    
+
     if (g.weights.n_elem != g.edges.n_cols)
       FAIL("Size mismatch");
     g.ComputeVertices();
@@ -166,10 +165,10 @@ static inline SDP<arma::sp_mat>
 ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 {
   arma::mat laplacian;
-  
+
   // data::Load(laplacianFilename, laplacian, true, false);
   if (laplacian.load(laplacianFilename) == false)  { FAIL("couldn't load data"); }
-  
+
   if (laplacian.n_rows != laplacian.n_cols)
     FAIL("laplacian not square");
   SDP<arma::sp_mat> sdp(laplacian.n_rows, laplacian.n_rows, 0);
@@ -268,7 +267,7 @@ static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
   CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
-TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
+TEST_CASE("SdpPrimalDual_SmallMaxCutSdp", "[SdpPrimalDual]")
 {
   auto sdp = ConstructMaxCutSDPFromLaplacian("data/r10.txt");
   SolveMaxCutFeasibleSDP(sdp);
@@ -285,23 +284,7 @@ TEST_CASE("SmallMaxCutSdp","[SdpPrimalDualTest]")
   SolveMaxCutPositiveSDP(sdp);
 }
 
-// This test is deprecated and can be removed in ensmallen 2.10.0.
-TEST_CASE("DeprecatedSmallLovaszThetaSdp", "[SdpPrimalDualTest]")
-{
-  UndirectedGraph g;
-  UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
-  auto sdp = ConstructLovaszThetaSDPFromGraph(g);
-
-  PrimalDualSolver solver;
-
-  arma::mat X, Z;
-  arma::mat ysparse, ydense;
-  sdp.GetInitialPoints(X, ysparse, ydense, Z);
-  solver.Optimize(sdp, X, ysparse, ydense, Z);
-  CheckKKT(sdp, X, ysparse, ydense, Z);
-}
-
-TEST_CASE("SmallLovaszThetaSdp", "[SdpPrimalDualTest]")
+TEST_CASE("SdpPrimalDual_SmallLovaszThetaSdp", "[SdpPrimalDual]")
 {
   UndirectedGraph g;
   UndirectedGraph::LoadFromEdges(g, "data/johnson8-4-4.csv", true);
@@ -430,7 +413,7 @@ RandomFullRowRankMatrix(size_t rows, size_t cols)
  *          [       0                  1             t ]
  *
  */
-TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
+TEST_CASE("SdpPrimalDual_LogChebychevApproxSdp", "[SdpPrimalDual]")
 {
   // Sometimes, the optimization can fail randomly, so we will run the test
   // three times and make sure it succeeds at least once.
@@ -486,7 +469,7 @@ TEST_CASE("LogChebychevApproxSdp","[SdpPrimalDualTest]")
  *          X >= 0
  *
  */
-TEST_CASE("CorrelationCoeffToySdp","[SdpPrimalDualTest]")
+TEST_CASE("SdpPrimalDual_CorrelationCoeffToySdp", "[SdpPrimalDual]")
 {
   // The semi-definite constraint looks like:
   //

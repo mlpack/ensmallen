@@ -8,7 +8,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -16,13 +19,11 @@
 using namespace ens;
 using namespace ens::test;
 
-/*
- * Test that the step size resets after a specified number of epochs.
- */
-TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
+TEMPLATE_TEST_CASE("SGDR_CyclicalResetTest", "[SGDR]",
+    arma::mat, arma::fmat)
 {
   const double stepSize = 0.5;
-  arma::mat iterate;
+  TestType iterate;
 
   // Now run cyclical decay policy with a couple of multiplicators and initial
   // restarts.
@@ -33,7 +34,7 @@ TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
       double epochStepSize = stepSize;
 
       CyclicalDecay cyclicalDecay(restart, double(mult), stepSize);
-      CyclicalDecay::Policy<arma::mat, arma::mat> p(cyclicalDecay);
+      CyclicalDecay::Policy<TestType, TestType> p(cyclicalDecay);
       cyclicalDecay.EpochBatches() = (double) 1000 / 10;
 
       // Create all restart epochs.
@@ -45,7 +46,7 @@ TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
       for (size_t i = 0; i < 1000; ++i)
       {
         p.Update(iterate, epochStepSize, iterate);
-        if (i <= restart || arma::accu(arma::find(nextRestart == i)) > 0)
+        if (i <= restart || accu(find(nextRestart == i)) > 0)
         {
           REQUIRE(epochStepSize == stepSize);
         }
@@ -54,43 +55,30 @@ TEST_CASE("SGDRCyclicalResetTest","[SGDRTest]")
   }
 }
 
-/**
- * Run SGDR on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("SGDRLogisticRegressionTest","[SGDRTest]")
+TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
+    arma::mat, arma::fmat)
 {
   // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest(sgdr, 0.003, 0.006);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+        sgdr, 0.003, 0.006);
   }
 }
 
-/**
- * Run SGDR on logistic regression and make sure the results are acceptable.
- * Use arma::fmat.
- */
-TEST_CASE("SGDRLogisticRegressionFMatTest","[SGDRTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
+    coot::mat, coot::fmat)
 {
   // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
     SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest<arma::fmat>(sgdr, 0.015, 0.03, 3);
+    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+        sgdr, 0.003, 0.006);
   }
 }
 
-/**
- * Run SGDR on logistic regression and make sure the results are acceptable.
- * Use arma::sp_mat.
- */
-TEST_CASE("SGDRLogisticRegressionSpMatTest","[SGDRTest]")
-{
-  // Run SGDR with a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
-  {
-    SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest<arma::sp_mat>(sgdr, 0.003, 0.006);
-  }
-}
+ #endif

@@ -151,7 +151,8 @@ namespace test {
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
   };
-  } //namespace test
-  } //namespace ens
+
+} // namespace test
+} // namespace ens
 
 #endif

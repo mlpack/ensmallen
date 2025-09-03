@@ -117,7 +117,7 @@ class AdamUpdate
       m += (1 - parent.beta1) * gradient;
 
       v *= parent.beta2;
-      v += (1 - parent.beta2) * (gradient % gradient);
+      v += (1 - parent.beta2) * square(gradient);
 
       const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
       const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
@@ -128,7 +128,7 @@ class AdamUpdate
        * m / (arma::sqrt(v) + (arma::sqrt(biasCorrection2) * eps).
        */
       iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-          m / (arma::sqrt(v) + parent.epsilon);
+          m / (sqrt(v) + parent.epsilon);
     }
 
    private:

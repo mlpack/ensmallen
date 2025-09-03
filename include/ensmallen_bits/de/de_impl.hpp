@@ -40,14 +40,16 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardType<MatType>::vec ColType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
   // Population matrix. Each column is a candidate.
   std::vector<BaseMatType> population;
   population.resize(populationSize);
+
   // Vector of fitness values corresponding to each candidate.
-  arma::Col<ElemType> fitnessValues;
+  ColType fitnessValues;
 
   // Make sure that we have the methods that we need.  Long name...
   traits::CheckArbitraryFunctionTypeAPI<
@@ -115,12 +117,13 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
           (population[l] - population[m]);
 
       // Perform crossover.
-      const BaseMatType cr = arma::randu<BaseMatType>(iterate.n_rows);
+      BaseMatType cr;
+      cr.randu(iterate.n_rows, 1);
       for (size_t it = 0; it < iterate.n_rows; it++)
       {
         if (cr[it] >= crossoverRate)
         {
-          mutant[it] = iterate[it];
+          mutant(it) = ElemType(iterate(it));
         }
       }
 

@@ -77,7 +77,7 @@ class GradientDescent
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value,
+  typename std::enable_if<IsMatrixType<GradType>::value,
       typename MatType::elem_type>::type
   Optimize(FunctionType& function,
            MatType& iterate,
@@ -140,9 +140,9 @@ class GradientDescent
       const arma::Row<size_t>& numCategories,
       CallbackTypes&&... callbacks)
   {
-    return Optimize<FunctionType, MatType, MatType,
-        CallbackTypes...>(function, iterate, categoricalDimensions,
-        numCategories, std::forward<CallbackTypes>(callbacks)...);
+    return Optimize<FunctionType, MatType, MatType, CallbackTypes...>(function,
+        iterate, categoricalDimensions, numCategories,
+        std::forward<CallbackTypes>(callbacks)...);
   }
 
   //! Get the step size.

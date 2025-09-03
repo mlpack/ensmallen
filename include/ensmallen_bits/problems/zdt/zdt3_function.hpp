@@ -125,7 +125,7 @@ namespace test {
         typedef typename MatType::elem_type ElemType;
 
         size_t numVariables = zdtClass.numVariables;
-        ElemType sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+        ElemType sum = accu(coords.submat(1, 0, numVariables - 1, 0));
         ElemType g = 1. + 9. * sum / (static_cast<ElemType>(numVariables - 1));
         ElemType objectiveRatio = zdtClass.objectiveF1.Evaluate(coords) / g;
 
@@ -182,7 +182,8 @@ namespace test {
     ObjectiveF1 objectiveF1;
     ObjectiveF2 objectiveF2;
   };
-  } //namespace test
-  } //namespace ens
+
+} // namespace test
+} // namespace ens
 
 #endif

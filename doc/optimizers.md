@@ -5,9 +5,9 @@
 Active CMA-ES is a variant of the stochastic search algorithm
 CMA-ES - Covariance Matrix Adaptation Evolution Strategy.
 Active CMA-ES actively reduces the uncertainty in unfavourable directions by
-exploiting the information about bad mutations in the covariance matrix 
-update step. This isn't for the purpose of accelerating progress, but 
-instead for speeding up the adaptation of the covariance matrix (which, in 
+exploiting the information about bad mutations in the covariance matrix
+update step. This isn't for the purpose of accelerating progress, but
+instead for speeding up the adaptation of the covariance matrix (which, in
 turn, will lead to faster progress).
 
 #### Constructors
@@ -22,10 +22,10 @@ The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
-The _`TransformationPolicyType`_  template parameter refers to transformation 
-strategy used to map decision variables to the desired domain during fitness 
-evaluation and optimization termination. The `EmptyTransformation` and 
-`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+The _`TransformationPolicyType`_  template parameter refers to transformation
+strategy used to map decision variables to the desired domain during fitness
+evaluation and optimization termination. The `EmptyTransformation` and
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be
 achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
@@ -55,11 +55,11 @@ the option is not relevant when the `ActiveCMAES<>` optimizer type is being used
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
-The `transformationPolicy` attribute allows an instantiated 
-`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+The `transformationPolicy` attribute allows an instantiated
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>`
 has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
 the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
-where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of
 the coordinates respectively.
 
 #### Examples:
@@ -603,9 +603,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube bestSet, bestFront;
+double obj = opt.Optimize(objectives, coords, bestSet, bestFront);
 ```
 
 </details>
@@ -615,26 +614,26 @@ arma::cube bestFront = opt.ParetoFront();
 </summary>
 
 ```c++
-ZDT3<> ZDT_THREE(300);
+ZDT3<> zdt3(300);
 const double lowerBound = 0;
 const double upperBound = 1;
 
 AGEMOEA opt(50, 500, 0.8, 20, 1e-6, 20, lowerBound, upperBound);
-typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
-typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
+typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
 bool success = true;
-arma::mat coords = ZDT_THREE.GetInitialPoint();
-std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
-opt.Optimize(objectives, coords);
-const arma::cube bestFront = opt.ParetoFront();
-  
+arma::mat coords = zdt3.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = zdt3.GetObjectives();
+arma::cube bestSet, bestFront;
+opt.Optimize(objectives, coords, bestSet, bestFront);
+
 NSGA2 opt2(50, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 // obj2 will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj2 = opt2.Optimize(objectives, coords);
- 
-arma::cube NSGAFront = opt2.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj2 = opt2.Optimize(objectives, coords, paretoSet, paretoFront);
+
 // Get the IGD score for NSGA front using AGEMOEA as reference.
-double igd = IGD::Evaluate(NSGAFront, bestFront, 1);
+double igd = IGD::Evaluate(paretoFront, bestFront, 1);
 std::cout << igd << std::endl;
 ```
 
@@ -792,6 +791,10 @@ optimizer uses [L-BFGS](#l-bfgs).
 #### Constructors
 
  * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor, sigmaUpdateFactor`_`)`
+ * `AugLagrangianType<_VecType_>(`_`maxIterations, penaltyThresholdFactor, sigmaUpdateFactor`_`)`
+
+When optimizing matrix types other than `arma::mat`, specify `VecType` as the
+corresponding vector type (e.g. `arma::vec` or `coot::fvec`).
 
 #### Attributes
 
@@ -1112,10 +1115,10 @@ The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
-The _`TransformationPolicyType`_  template parameter refers to transformation 
-strategy used to map decision variables to the desired domain during fitness 
-evaluation and optimization termination. The `EmptyTransformation` and 
-`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+The _`TransformationPolicyType`_  template parameter refers to transformation
+strategy used to map decision variables to the desired domain during fitness
+evaluation and optimization termination. The `EmptyTransformation` and
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be
 achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
@@ -1145,11 +1148,11 @@ the option is not relevant when the `CMAES<>` optimizer type is being used; the
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
-The `transformationPolicy` attribute allows an instantiated 
-`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+The `transformationPolicy` attribute allows an instantiated
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>`
 has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
 the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
-where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of
 the coordinates respectively.
 
 #### Examples:
@@ -1498,11 +1501,12 @@ Frank-Wolfe is a technique to minimize a continuously differentiable convex func
  * `FrankWolfe<`_`LinearConstrSolverType, UpdateRuleType`_`>(`_`linearConstrSolver, updateRule, maxIterations, tolerance`_`)`
 
 The _`LinearConstrSolverType`_ template parameter specifies the constraint
-domain D for the problem.  The `ConstrLpBallSolver` and
-`ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the former
-restricts D to the unit ball of the specified l-p norm.  Other constraint types
-may be implemented as a class with the same method signatures as either of the
-existing classes.
+domain D for the problem.  The `ConstrLpBallSolver` (itself a class template,
+`ConstrLpBallSolver<T>`, change `T` if a different matrix type is required)
+and `ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the
+former restricts D to the unit ball of the specified l-p norm.  Other constraint
+types may be implemented as a class with the same method signatures as either of
+the existing classes.
 
 The _`UpdateRuleType`_ template parameter specifies the update rule used by the
 optimizer.  The `UpdateClassic` and `UpdateLineSearch` classes are available for
@@ -1745,10 +1749,10 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [separable functions](#separable-functions).*
 
 IPOP CMA-ES (Increasing Population Size CMA-ES) is an extension of the
-Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a 
-restart mechanism that progressively increases the population size. This 
+Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a
+restart mechanism that progressively increases the population size. This
 approach is beneficial for optimizing multi-modal functions,
-characterized by numerous local optima. The restart mechanism is designed to 
+characterized by numerous local optima. The restart mechanism is designed to
 improve the adaptability of CMA-ES by improving the likelihood of escaping
 local optima, thus increasing the chances of discovering the global optimum.
 
@@ -2365,15 +2369,19 @@ optimizer.Optimize(f, coordinates);
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## MOEA/D-DE
+
 *An optimizer for arbitrary multi-objective functions.*
-MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
-objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
-subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
-algorithm uses Differential Crossover followed by Polynomial Mutation to create offsprings which are then
-decomposed to form a Single Objective Problem. A diversity preserving mechanism is also employed which encourages
-a varied set of solution.
+MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition -
+Differential Evolution) is a multi objective optimization algorithm. It works by
+decomposing the problem into a number of scalar optimization subproblems which
+are solved simultaneously per generation. MOEA/D in itself is a framework, this
+particular algorithm uses Differential Crossover followed by Polynomial Mutation
+to create offsprings which are then decomposed to form a Single Objective
+Problem. A diversity preserving mechanism is also employed which encourages a
+varied set of solutions.
 
 #### Constructors
+
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>()`
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
 
@@ -2443,9 +2451,8 @@ typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 </details>
 
@@ -2509,9 +2516,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 
 </details>
@@ -3419,7 +3425,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 The `Snapshots()` function returns a `std::vector<arma::mat>&` (a vector of
 snapshots of the parameters), not a `size_t` representing the maximum number of
-snapshots.
+snapshots.  If a different matrix type or gradient type was specified during the
+optimization, then `Snapshots()` should be called as
+`Snapshots<MatType, GradType>()`; if this is not done, an exception will be
+thrown.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.

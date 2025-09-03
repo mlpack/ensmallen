@@ -27,10 +27,10 @@ namespace ens {
  *
  * @code
  * @inproceedings{ma2019qh,
- *   title={Quasi-hyperbolic momentum and Adam for deep learning},
- *   author={Jerry Ma and Denis Yarats},
- *   booktitle={International Conference on Learning Representations},
- *   year={2019}
+ *   title     = {Quasi-hyperbolic momentum and Adam for deep learning},
+ *   author    = {Jerry Ma and Denis Yarats},
+ *   booktitle = {International Conference on Learning Representations},
+ *   year      = {2019}
  * }
  * @endcode
  *
@@ -100,7 +100,7 @@ class QHAdam
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value,
+  typename std::enable_if<IsMatrixType<GradType>::value,
       typename MatType::elem_type>::type
   Optimize(SeparableFunctionType& function,
            MatType& iterate,

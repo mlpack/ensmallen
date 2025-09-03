@@ -25,11 +25,11 @@ namespace ens {
  *
  * @code
  * @misc{
- *   title   = {Decaying momentum helps neural network training},
- *   author  = {John Chen and Cameron Wolfe and Zhao Li
- *              and Anastasios Kyrillidis},
- *   url     = {https://arxiv.org/abs/1910.04952}
- *   year    = {2019}
+ *   title  = {Decaying momentum helps neural network training},
+ *   author = {John Chen and Cameron Wolfe and Zhao Li
+ *             and Anastasios Kyrillidis},
+ *   url    = {https://arxiv.org/abs/1910.04952}
+ *   year   = {2019}
  * }
  *
  * DemonSGD can optimize differentiable separable functions. For more details,
