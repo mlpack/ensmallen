@@ -21,7 +21,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
     arma::mat, arma::fmat)
 {
-  AdaSqrt optimizer(0.02, 32, 1e-8, 150000, 1e-9, true);
+  AdaSqrt optimizer(0.64, 32, 1e-8, 150000, 1e-9, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
       optimizer, 0.003, 0.006, 1);
 }
@@ -31,7 +31,7 @@ TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
 TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
     coot::mat, coot::fmat)
 {
-  AdaSqrt optimizer(0.02, 32, 1e-8, 150000, 1e-9, true);
+  AdaSqrt optimizer(0.64, 32, 1e-8, 150000, 1e-9, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       optimizer, 0.003, 0.006, 1);
 }

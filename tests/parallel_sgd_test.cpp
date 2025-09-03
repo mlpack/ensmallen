@@ -30,8 +30,6 @@ using namespace ens::test;
  */
 TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]")
 {
-  ConstantStep decayPolicy(0.4);
-
   // The batch size for this test should be chosen according to the threads
   // available on the system. If the update does not touch each datapoint, the
   // test will fail.
@@ -45,6 +43,7 @@ TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]")
 
     size_t batchSize = std::ceil((float) f.NumFunctions() / i);
 
+    ConstantStep decayPolicy(0.4 * batchSize);
     ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, true, decayPolicy);
     FunctionTest<SparseTestFunction>(s, 0.01, 0.001);
   }
@@ -59,7 +58,7 @@ TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction<> f(i);
 
-    ConstantStep decayPolicy(0.001);
+    ConstantStep decayPolicy(0.001 * f.NumFunctions());
 
     ParallelSGD<ConstantStep> s(
         100000, f.NumFunctions(), 1e-12, true, decayPolicy);

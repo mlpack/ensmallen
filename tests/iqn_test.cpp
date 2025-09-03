@@ -26,7 +26,7 @@ TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
   // Run on a couple of batch sizes.
   for (size_t batchSize = 1; batchSize < 9; batchSize += 4)
   {
-    IQN iqn(0.01, batchSize, 5000, 0.01);
+    IQN iqn(0.001, batchSize, 5000, 0.01);
     LogisticRegressionFunctionTest<TestType>(iqn, 0.003, 0.006);
   }
 }
@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
 TEMPLATE_TEST_CASE("IQN_LogisticRegressionFunction", "[IQN]",
     coot::mat, coot::fmat)
 {
-  IQN iqn(0.01, 10, 5000, 0.01);
+  IQN iqn(0.001, 10, 5000, 0.01);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       iqn, 0.003, 0.006);
 }

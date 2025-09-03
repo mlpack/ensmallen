@@ -23,7 +23,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
     arma::mat, arma::fmat)
 {
-  SWATS optimizer(1e-3, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
+  SWATS optimizer(1e-2, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
   // We allow a few trials in case of poor convergence.
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
       optimizer, 0.003, 0.006, 5);
@@ -32,14 +32,14 @@ TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
 TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]",
     arma::mat, arma::fmat)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  SWATS optimizer(2e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
     arma::mat, arma::fmat, arma::sp_mat)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  SWATS optimizer(2e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 3.0, 0.3);
 }
 
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
 TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
     coot::mat, coot::fmat)
 {
-  SWATS optimizer(1e-3, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
+  SWATS optimizer(1e-2, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
   // We allow a few trials in case of poor convergence.
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       optimizer, 0.003, 0.006, 5);
@@ -57,14 +57,14 @@ TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
 TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]",
     coot::mat, coot::fmat)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  SWATS optimizer(2e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
     coot::mat, coot::fmat)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  SWATS optimizer(2e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 3.0, 0.3);
 }
 

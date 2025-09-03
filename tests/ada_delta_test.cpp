@@ -24,7 +24,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
     arma::mat, arma::fmat)
 {
-  AdaDelta adaDelta;
+  AdaDelta adaDelta(32.0);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
       adaDelta, 0.003, 0.006, 1);
 }
@@ -34,7 +34,7 @@ TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
 TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
     coot::mat, coot::fmat)
 {
-  AdaDelta adaDelta;
+  AdaDelta adaDelta(32.0);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       adaDelta, 0.003, 0.006, 1);
 }

@@ -22,7 +22,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
     arma::mat, arma::fmat)
 {
-  AdaBelief adaBelief;
+  AdaBelief adaBelief(0.032);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
       adaBelief, 0.003, 0.006, 1);
 }
@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
 TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
     coot::mat, coot::fmat)
 {
-  AdaBelief adaBelief;
+  AdaBelief adaBelief(0.032);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       adaBelief, 0.003, 0.006, 1);
 }
