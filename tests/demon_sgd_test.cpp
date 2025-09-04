@@ -21,8 +21,9 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
     arma::mat, arma::fmat)
 {
-  DemonSGD optimizer(3.2, 32, 0.9, 1000000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
+  DemonSGD optimizer(32.0 /* huge step size needed! */, 16, 0.9, 10000000, 1e-9,
+      true, true, true);
+  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 10);
 }
 
 #ifdef ENS_HAVE_COOT
@@ -30,9 +31,10 @@ TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
 TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
     coot::mat, coot::fmat)
 {
-  DemonSGD optimizer(3.2, 32, 0.9, 1000000, 1e-9, true, true, true);
+  DemonSGD optimizer(32.0 /* huge step size needed! */, 16, 0.9, 1000000, 1e-9,
+      true, true, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.003, 0.006, 6);
+      optimizer, 0.003, 0.006, 10);
 }
 
 #endif
