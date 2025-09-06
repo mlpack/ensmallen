@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("FTML_LogisticRegressionFunction", "[FTML]",
 
 TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.05, 2, 0.9, 0.999, Tolerances<TestType>::Obj / 100, 500000,
+  FTML optimizer(0.03, 2, 0.9, 0.999, Tolerances<TestType>::Obj / 100, 500000,
       Tolerances<TestType>::Obj / 100, true);
   FunctionTest<SphereFunction, TestType>(
       optimizer,
