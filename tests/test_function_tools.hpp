@@ -29,7 +29,8 @@ namespace test {
 * @param testResponses Matrix object to store the test responses into.
 * @param shuffledResponses Matrix object to store the shuffled responses into.
 */
-template<typename MatType, typename LabelsType>
+template<typename MatType,
+         typename LabelsType = typename ForwardType<MatType, size_t>::brow>
 inline void LogisticRegressionTestData(
     MatType& data,
     MatType& testData,

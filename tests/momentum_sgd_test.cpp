@@ -23,7 +23,7 @@ using namespace ens::test;
 // NOTE: we don't use low-precision for this test because it is very
 // specifically tuned to compare momentum SGD and regular SGD.
 TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
 }
 
 TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
-    ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    ENS_FULLPRECTEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -92,7 +92,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
 }
 
 TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunctionLoose",
-    "[MomentumSGD]", ENS_ALL_TEST_TYPES)
+    "[MomentumSGD]", ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -116,80 +116,3 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunctionLoose",
   REQUIRE(coordinates(1) ==
       Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
-    coot::mat, coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  SGDTestFunction f;
-  MomentumUpdate momentumUpdate(0.7);
-  MomentumSGD s(0.0003, 1, 2500000, 1e-9, true, momentumUpdate, NoDecay(), true,
-      true);
-
-  TestType coordinates = f.GetInitialPoint<TestType>();
-  double result = s.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(-1.0).epsilon(0.0015));
-  REQUIRE(ElemType(coordinates(0)) == Approx(0.0).margin(0.015));
-  REQUIRE(ElemType(coordinates(1)) == Approx(0.0).margin(1e-6));
-  REQUIRE(ElemType(coordinates(2)) == Approx(0.0).margin(1e-6));
-
-  // Compare with SGD with vanilla update.
-  SGDTestFunction f1;
-  VanillaUpdate vanillaUpdate;
-  StandardSGD s1(0.0003, 1, 2500000, 1e-9, true, vanillaUpdate, NoDecay(), true,
-      true);
-
-  TestType coordinates1 = f1.GetInitialPoint<TestType>();
-  double result1 = s1.Optimize(f1, coordinates1);
-
-  // Result doesn't converge in 2500000 iterations.
-  REQUIRE((result1 + 1.0) > 0.05);
-  REQUIRE(ElemType(coordinates1(0)) >= 0.015);
-  REQUIRE(ElemType(coordinates1(1)) == Approx(0.0).margin(1e-6));
-  REQUIRE(ElemType(coordinates1(2)) == Approx(0.0).margin(1e-6));
-
-  REQUIRE(result < result1);
-}
-
-TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
-    coot::mat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  // Create the generalized Rosenbrock function.
-  GeneralizedRosenbrockFunction f(10);
-  MomentumUpdate momentumUpdate(0.4);
-  MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate, NoDecay(),
-      true, true);
-
-  TestType coordinates = f.GetInitialPoint<TestType>();
-  double result = s.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(0.0).margin(1e-4));
-  for (size_t j = 0; j < 10; ++j)
-    REQUIRE(ElemType(coordinates(j)) == Approx(1.0).epsilon(1e-5));
-}
-
-TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
-    coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  // Create the generalized Rosenbrock function.
-  GeneralizedRosenbrockFunction f(10);
-  MomentumUpdate momentumUpdate(0.1);
-  MomentumSGD s(0.0002, 1, 10000000, 1e-15, true, momentumUpdate);
-
-  TestType coordinates = f.GetInitialPoint<TestType>();
-  float result = s.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(0.0).margin(1e-2));
-  for (size_t j = 0; j < 10; ++j)
-    REQUIRE(ElemType(coordinates(j)) == Approx(1.0).epsilon(1e-3));
-}
-
-#endif

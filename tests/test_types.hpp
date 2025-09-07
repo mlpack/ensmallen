@@ -12,15 +12,27 @@
 #ifndef ENSMALLEN_TESTS_TEST_TYPES_HPP
 #define ENSMALLEN_TESTS_TEST_TYPES_HPP
 
-#if defined(ARMA_HAVE_FP16)
-#define ENS_TEST_TYPES arma::mat, arma::fmat
-#define ENS_ALL_TEST_TYPES arma::mat, arma::fmat, arma::hmat
+#if defined(ENS_HAVE_COOT)
+#define ENS_GPU_TEST_TYPES coot::mat, coot:fmat,
 #else
-#define ENS_TEST_TYPES arma::mat, arma::fmat
-#define ENS_ALL_TEST_TYPES arma::mat, arma::fmat
+#define ENS_GPU_TEST_TYPES
+#endif
+
+#if defined(ARMA_HAVE_FP16)
+#define ENS_LOWPREC_TEST_TYPES arma::hmat,
+#else
+#define ENS_LOWPREC_TEST_TYPES
 #endif
 
 #define ENS_SPARSE_TEST_TYPES arma::sp_mat
+
+#define ENS_TEST_TYPES arma::mat, arma::fmat
+
+#define ENS_FULLPREC_CPU_TEST_TYPES ENS_TEST_TYPES
+#define ENS_FULLPREC_TEST_TYPES ENS_GPU_TEST_TYPES ENS_TEST_TYPES
+
+#define ENS_ALL_CPU_TEST_TYPES ENS_LOWPREC_TEST_TYPES ENS_TEST_TYPES
+#define ENS_ALL_TEST_TYPES ENS_GPU_TEST_TYPES ENS_ALL_CPU_TEST_TYPES
 
 namespace ens {
 namespace test {

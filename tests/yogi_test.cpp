@@ -57,30 +57,4 @@ TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
       Tolerances<TestType>::LRTrainAcc,
       Tolerances<TestType>::LRTestAcc,
       trials);
->>>>>>> origin/master
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]",
-    coot::mat, coot::fmat)
-{
-  Yogi optimizer(1.0, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
-}
-
-TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]",
-    coot::mat)
-{
-  Yogi optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
-  FunctionTest<McCormickFunction, TestType>(optimizer, 0.5, 0.1);
-}
-
-TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
-    coot::mat)
-{
-  Yogi optimizer(0.032);
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
-}
-
-#endif

@@ -22,7 +22,7 @@ using namespace ens::test;
 
 // The Generalized-Rosenbrock function is a simple function to optimize.
 TEMPLATE_TEST_CASE("SA_GeneralizedRosenbrockFunction", "[SA]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -88,27 +88,3 @@ TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", ENS_ALL_TEST_TYPES)
   FunctionTest<RastriginFunction, TestType>(sa, Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord, 4);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("SA_RosenbrockFunction", "[SA]", coot::mat, coot::fmat)
-{
-  ExponentialSchedule schedule;
-  // The convergence is very sensitive to the choices of maxMove and initMove.
-  SA<> sa(schedule, 1000000, 1000., 1000, 100, 1e-11, 3, 1.5, 0.3, 0.3);
-  FunctionTest<RosenbrockFunction, TestType>(sa, 0.01, 0.001);
-}
-
-TEMPLATE_TEST_CASE("SA_RastrigrinFunction", "[SA]", coot::mat, coot::fmat)
-{
-  // Simulated annealing isn't guaranteed to converge (except in very specific
-  // situations).  If this works 1 of 4 times, I'm fine with that.  All I want
-  // to know is that this implementation will escape from local minima.
-  ExponentialSchedule schedule;
-  // The convergence is very sensitive to the choices of maxMove and initMove.
-  // SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
-  SA<> sa(schedule, 2000000, 100, 50, 1000, 1e-12, 2, 2.0, 0.5, 0.1);
-  FunctionTest<RastriginFunction, TestType>(sa, 0.01, 0.001, 4);
-}
-
-#endif

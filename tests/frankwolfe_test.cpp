@@ -181,7 +181,7 @@ TEMPLATE_TEST_CASE("FrankWolfe_Classic", "[FrankWolfe]", arma::mat)
  * The update step performs a line search now.
  * It converges much faster.
  */
-TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]", arma::mat)
+TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -202,29 +202,3 @@ TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]", arma::mat)
   REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(coordTol));
   REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(coordTol));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]",
-    coot::mat, coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  TestFuncFW<TestType> f;
-  double p = 2;   // Constraint set is unit lp ball.
-  ConstrLpBallSolverType<coot::Row<ElemType> > linearConstrSolver(p);
-  UpdateLineSearch updateRule;
-
-  FrankWolfe<decltype(linearConstrSolver), UpdateLineSearch>
-      s(linearConstrSolver, updateRule);
-
-  TestType coordinates = coot::randu<TestType>(3);
-  ElemType result = s.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(0) - 0.1 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(1) - 0.2 == Approx(0.0).margin(1e-4));
-  REQUIRE(coordinates(2) - 0.3 == Approx(0.0).margin(1e-4));
-}
-
-#endif

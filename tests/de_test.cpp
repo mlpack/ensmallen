@@ -29,14 +29,3 @@ TEMPLATE_TEST_CASE("DE_LogisticRegressionFunction", "[DE]", ENS_ALL_TEST_TYPES)
       4 * Tolerances<TestType>::LRTestAcc,
       3);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("DE_LogisticRegressionFunction", "[DE]", coot::mat)
-{
-  DE opt(200, 1000, 0.6, 0.8, 1e-5);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      opt, 0.01, 0.02, 3);
-}
-
-#endif

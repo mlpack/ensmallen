@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
   {
     SARAH optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
+    LogisticRegressionFunctionTest<TestType>(optimizer);
   }
 }
 
@@ -38,26 +38,6 @@ TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH]",
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
   {
     SARAH_Plus optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
+    LogisticRegressionFunctionTest<TestType>(optimizer);
   }
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
-    coot::mat, coot::fmat)
-{
-  SARAH optimizer(0.01, 45, 250, 0, 1e-5, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.015, 0.015);
-}
-
-TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH]",
-    coot::mat, coot::fmat)
-{
-  SARAH_Plus optimizer(0.01, 45, 250, 0, 1e-5, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.015, 0.015);
-}
-
-#endif
