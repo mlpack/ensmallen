@@ -16,30 +16,37 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
   WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]", ENS_ALL_TEST_TYPES)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]",
-    arma::mat, arma::fmat, arma::sp_mat)
+// The Styblinski-Tang function is too difficult to make converge for WNGrad in
+// low precision.
+TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]", ENS_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
   WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.3, 0.03);
+  FunctionTest<StyblinskiTangFunction, TestType>(
+      optimizer,
+      5 * Tolerances<TestType>::LargeObj,
+      5 * Tolerances<TestType>::LargeCoord);
 }
 
 #ifdef ENS_HAVE_COOT

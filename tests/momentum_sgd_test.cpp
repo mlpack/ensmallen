@@ -15,25 +15,33 @@
 #endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
+// NOTE: we don't use low-precision for this test because it is very
+// specifically tuned to compare momentum SGD and regular SGD.
 TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
-    arma::mat, arma::fmat)
+    ENS_TEST_TYPES)
 {
+  typedef typename TestType::elem_type ElemType;
+
   SGDTestFunction f;
   MomentumUpdate momentumUpdate(0.7);
   MomentumSGD s(0.0003, 1, 2500000, 1e-9, true, momentumUpdate, NoDecay(), true,
       true);
 
   TestType coordinates = f.GetInitialPoint<TestType>();
-  double result = s.Optimize(f, coordinates);
+  ElemType result = s.Optimize(f, coordinates);
 
-  REQUIRE(result == Approx(-1.0).epsilon(0.0015));
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.015));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(1e-6));
+  REQUIRE(result == Approx(-1.0).epsilon(10 * Tolerances<TestType>::LargeObj));
+  REQUIRE(coordinates(0) ==
+      Approx(0.0).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) ==
+      Approx(0.0).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(2) ==
+      Approx(0.0).margin(Tolerances<TestType>::LargeCoord));
 
   // Compare with SGD with vanilla update.
   SGDTestFunction f1;
@@ -42,76 +50,71 @@ TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
       true);
 
   TestType coordinates1 = f1.GetInitialPoint<TestType>();
-  double result1 = s1.Optimize(f1, coordinates1);
+  ElemType result1 = s1.Optimize(f1, coordinates1);
 
   // Result doesn't converge in 2500000 iterations.
   REQUIRE((result1 + 1.0) > 0.05);
   REQUIRE(coordinates1(0) >= 0.015);
-  REQUIRE(coordinates1(1) == Approx(0.0).margin(1e-6));
-  REQUIRE(coordinates1(2) == Approx(0.0).margin(1e-6));
+  REQUIRE(coordinates1(1) ==
+      Approx(0.0).margin(Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates1(2) ==
+      Approx(0.0).margin(Tolerances<TestType>::LargeCoord));
 
   REQUIRE(result < result1);
 }
 
 TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
-    arma::mat)
+    ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
+  typedef typename TestType::elem_type ElemType;
+
   // Loop over several variants.
   for (size_t i = 10; i < 50; i += 5)
   {
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
     MomentumUpdate momentumUpdate(0.4);
-    MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate, NoDecay(),
+    // Set tolerance to -1 so that maximum iterations is always used for
+    // termination.
+    MomentumSGD s(0.0008, 1, 2500000, -1.0, true, momentumUpdate, NoDecay(),
         true, true);
 
     TestType coordinates = f.GetInitialPoint<TestType>();
-    double result = s.Optimize(f, coordinates);
+    ElemType result = s.Optimize(f, coordinates);
 
-    REQUIRE(result == Approx(0.0).margin(1e-4));
+    REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::LargeObj));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
+    {
+      REQUIRE(coordinates(j) ==
+          Approx(1.0).epsilon(Tolerances<TestType>::LargeCoord));
+    }
   }
 }
 
-TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
-    arma::fmat)
+TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunctionLoose",
+    "[MomentumSGD]", ENS_ALL_TEST_TYPES)
 {
-  // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
-  {
-    // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
-    MomentumUpdate momentumUpdate(0.1);
-    MomentumSGD s(0.0002, 1, 10000000, 1e-15, true, momentumUpdate);
+  typedef typename TestType::elem_type ElemType;
 
-    TestType coordinates = f.GetInitialPoint<TestType>();
-    float result = s.Optimize(f, coordinates);
+  // Create the generalized Rosenbrock function.
+  GeneralizedRosenbrockFunction f(2);
+  MomentumUpdate momentumUpdate(0.2);
+  MomentumSGD s(0.0015);
+  s.UpdatePolicy() = std::move(momentumUpdate);
+  s.Tolerance() = 1e-9;
 
-    REQUIRE(result == Approx(0.0).margin(1e-2));
-    for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-3));
-  }
-}
+  TestType coordinates = f.GetInitialPoint<TestType>();
+  ElemType result = s.Optimize(f, coordinates);
 
-TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction",
-    "[MomentumSGD]", arma::sp_mat)
-{
-  // Loop over several variants.
-  for (size_t i = 10; i < 50; i += 5)
-  {
-    // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction f(i);
-    MomentumUpdate momentumUpdate(0.4);
-    MomentumSGD s(0.0008, 1, 2500000, 1e-15, true, momentumUpdate);
+  // Allow wider tolerances for low-precision types.
+  const ElemType factor = (sizeof(ElemType) < 4) ? 5 : 1;
+  REQUIRE(result ==
+      Approx(0.0).margin(factor * Tolerances<TestType>::LargeObj));
 
-    TestType coordinates = f.GetInitialPoint<TestType>();
-    double result = s.Optimize(f, coordinates);
-
-    REQUIRE(result == Approx(0.0).margin(1e-4));
-    for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates(j) == Approx(1.0).epsilon(1e-5));
-  }
+  REQUIRE(coordinates(0) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
+  REQUIRE(coordinates(1) ==
+      Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
 }
 
 #ifdef ENS_HAVE_COOT

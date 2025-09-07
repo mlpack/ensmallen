@@ -96,6 +96,8 @@ class AdaBoundUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -105,10 +107,24 @@ class AdaBoundUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(AdaBoundUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent), first(true), initialStepSize(0), iteration(0)
+        parent(parent),
+        finalLr(ElemType(parent.finalLr)),
+        gamma(ElemType(parent.gamma)),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
+        first(true),
+        initialStepSize(0),
+        iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
+
+      // Check for underflows in conversions.
+      if (gamma == ElemType(0) && parent.gamma != 0.0)
+        gamma = 10 * std::numeric_limits<ElemType>::epsilon();
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -129,30 +145,30 @@ class AdaBoundUpdate
       if (first)
       {
         first = false;
-        initialStepSize = stepSize;
+        initialStepSize = ElemType(stepSize);
       }
 
       // Increment the iteration counter variable.
       ++iteration;
 
       // Decay the first and second moment running average coefficient.
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * (gradient % gradient);
+      v *= beta2;
+      v += (1 - beta2) * (gradient % gradient);
 
-      const ElemType biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
-      const ElemType biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
 
-      const ElemType fl = parent.finalLr * stepSize / initialStepSize;
-      const ElemType lower = fl * (1.0 - 1.0 / (parent.gamma * iteration + 1));
-      const ElemType upper = fl * (1.0 + 1.0 / (parent.gamma * iteration));
+      const ElemType fl = finalLr * ElemType(stepSize) / initialStepSize;
+      const ElemType lower = fl * (1 - 1 / (gamma * iteration + 1));
+      const ElemType upper = fl * (1 + 1 / (gamma * iteration));
 
       // Applies bounds on actual learning rate.
-      iterate -= clamp((stepSize *
-          std::sqrt(biasCorrection2) / biasCorrection1) / (sqrt(v) +
-          parent.epsilon), lower, upper) % m;
+      iterate -= clamp((ElemType(stepSize) *
+          std::sqrt(biasCorrection2) / biasCorrection1) / (sqrt(v) + epsilon),
+          lower, upper) % m;
     }
 
    private:
@@ -165,11 +181,18 @@ class AdaBoundUpdate
     // The exponential moving average of squared gradient values.
     GradType v;
 
+    // Parameters of the parent, casted to the element type of the problem.
+    ElemType finalLr;
+    ElemType gamma;
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
+
     // Whether this is the first call of the Update method.
     bool first;
 
     // The initial (Adam) learning rate.
-    double initialStepSize;
+    ElemType initialStepSize;
 
     // The number of iterations.
     size_t iteration;

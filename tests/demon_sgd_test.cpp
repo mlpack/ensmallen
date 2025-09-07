@@ -14,15 +14,21 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
-  DemonSGD optimizer(0.1, 32, 0.9, 1000000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
+  DemonSGD optimizer(2.0 /* huge step size needed! */, 16, 0.9, 10000000, 1e-9,
+      true, true, true);
+  // It could take several tries to get everything to converge.
+  LogisticRegressionFunctionTest<TestType>(optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      10);
 }
 
 #ifdef ENS_HAVE_COOT
@@ -36,4 +42,3 @@ TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
 }
 
 #endif
-

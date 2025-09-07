@@ -31,11 +31,13 @@ inline typename MatType::elem_type SparseTestFunction::Evaluate(
     const size_t i,
     const size_t batchSize) const
 {
-  typename MatType::elem_type result = 0.0;
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType result = 0;
   for (size_t j = i; j < i + batchSize; ++j)
   {
-    result += coordinates[j] * coordinates[j] + bi[j] * coordinates[j] +
-        intercepts[j];
+    result += coordinates[j] * coordinates[j] +
+        ElemType(bi[j]) * coordinates[j] + ElemType(intercepts[j]);
   }
 
   return result;
@@ -46,11 +48,13 @@ template<typename MatType>
 inline typename MatType::elem_type SparseTestFunction::Evaluate(
     const MatType& coordinates) const
 {
-  typename MatType::elem_type objective = 0.0;
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType objective = 0;
   for (size_t i = 0; i < NumFunctions(); ++i)
   {
-    objective += coordinates[i] * coordinates[i] + bi[i] * coordinates[i] +
-      intercepts[i];
+    objective += coordinates[i] * coordinates[i] +
+      ElemType(bi[i]) * coordinates[i] + ElemType(intercepts[i]);
   }
 
   return objective;
@@ -65,7 +69,7 @@ inline void SparseTestFunction::Gradient(const MatType& coordinates,
 {
   gradient.zeros(arma::size(coordinates));
   for (size_t j = i; j < i + batchSize; ++j)
-    gradient[j] = 2 * coordinates[j] + bi[j];
+    gradient[j] = 2 * coordinates[j] + typename MatType::elem_type(bi[j]);
 }
 
 //! Evaluate the gradient of a feature function.
@@ -75,7 +79,7 @@ inline void SparseTestFunction::PartialGradient(const MatType& coordinates,
                                                 GradType& gradient) const
 {
   gradient.zeros(arma::size(coordinates));
-  gradient[j] = 2 * coordinates[j] + bi[j];
+  gradient[j] = 2 * coordinates[j] + typename MatType::elem_type(bi[j]);
 }
 
 } // namespace test

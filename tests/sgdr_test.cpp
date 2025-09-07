@@ -15,12 +15,12 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("SGDR_CyclicalResetTest", "[SGDR]",
-    arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("SGDR_CyclicalResetTest", "[SGDR]", ENS_ALL_TEST_TYPES)
 {
   const double stepSize = 0.5;
   TestType iterate;
@@ -56,14 +56,13 @@ TEMPLATE_TEST_CASE("SGDR_CyclicalResetTest", "[SGDR]",
 }
 
 TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
   // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        sgdr, 0.003, 0.006);
+    SGDR<> sgdr(50, 2.0, batchSize, 0.005, 10000, 1e-3);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(sgdr);
   }
 }
 
@@ -81,4 +80,4 @@ TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
   }
 }
 
- #endif
+#endif

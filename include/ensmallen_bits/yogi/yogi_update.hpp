@@ -81,6 +81,8 @@ class YogiUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -90,10 +92,17 @@ class YogiUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(YogiUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2))
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
+
+      // Attempt to catch underflow.
+      if (epsilon == ElemType(0) && parent.epsilon == 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -107,25 +116,30 @@ class YogiUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
       const MatType gSquared = square(gradient);
-      v -= (1 - parent.beta2) * sign(v - gSquared) % gSquared;
+      v -= (1 - beta2) * sign(v - gSquared) % gSquared;
 
       // Now update the iterate.
-      iterate -= stepSize * m / (sqrt(v) + parent.epsilon);
+      iterate -= ElemType(stepSize) * m / (sqrt(v) + epsilon);
     }
 
    private:
-    //! Instantiated parent object.
+    // Instantiated parent object.
     YogiUpdate& parent;
 
-    //! The exponential moving average of gradient values.
+    // The exponential moving average of gradient values.
     GradType m;
 
     // The exponential moving average of squared gradient values.
     GradType v;
+
+    // Parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
   };
 
  private:

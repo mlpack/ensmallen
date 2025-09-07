@@ -14,6 +14,7 @@
 #include "catch.hpp"
 
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace std;
 using namespace arma;
@@ -28,7 +29,8 @@ using namespace ens::test;
  * sparse test function, with guaranteed disjoint updates between different
  * threads.
  */
-TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]")
+TEMPLATE_TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]",
+    ENS_ALL_TEST_TYPES)
 {
   ConstantStep decayPolicy(0.4);
 
@@ -46,12 +48,14 @@ TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]")
     size_t batchSize = std::ceil((float) f.NumFunctions() / i);
 
     ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, true, decayPolicy);
-    FunctionTest<SparseTestFunction>(s, 0.01, 0.001);
+    FunctionTest<SparseTestFunction>(s,
+        Tolerances<TestType>::LargeObj,
+        Tolerances<TestType>::LargeCoord);
   }
 }
 
 TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
-    "[ParallelSGD]", arma::mat, arma::fmat, arma::sp_mat)
+    "[ParallelSGD]", ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   // Loop over several variants.
   for (size_t i = 10; i < 30; i += 5)
@@ -62,16 +66,20 @@ TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
     ConstantStep decayPolicy(0.001);
 
     ParallelSGD<ConstantStep> s(
-        100000, f.NumFunctions(), 1e-12, true, decayPolicy);
+        100000, f.NumFunctions(), Tolerances<TestType>::Obj / 100, true,
+        decayPolicy);
 
     TestType coordinates = f.GetInitialPoint<TestType>();
 
     omp_set_num_threads(1);
     double result = s.Optimize(f, coordinates);
 
-    REQUIRE(result == Approx(0.0).margin(1e-8));
+    REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Obj));
     for (size_t j = 0; j < i; ++j)
-      REQUIRE(coordinates(j) == Approx(1.0).epsilon(0.0001));
+    {
+      REQUIRE(coordinates(j) ==
+          Approx(1.0).epsilon(Tolerances<TestType>::Coord));
+    }
   }
 }
 

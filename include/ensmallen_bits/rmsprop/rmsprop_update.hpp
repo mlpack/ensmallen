@@ -76,6 +76,8 @@ class RMSPropUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -85,10 +87,16 @@ class RMSPropUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(RMSPropUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        alpha(ElemType(parent.alpha))
     {
       // Leaky sum of squares of parameter gradient.
       meanSquaredGradient.zeros(rows, cols);
+
+      // Attempt to catch underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -102,10 +110,10 @@ class RMSPropUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      meanSquaredGradient *= parent.alpha;
-      meanSquaredGradient += (1 - parent.alpha) * (gradient % gradient);
-      iterate -= stepSize * gradient / (sqrt(meanSquaredGradient) +
-          parent.epsilon);
+      meanSquaredGradient *= alpha;
+      meanSquaredGradient += (1 - alpha) * (gradient % gradient);
+      iterate -= ElemType(stepSize) * gradient / (sqrt(meanSquaredGradient) +
+          epsilon);
     }
 
    private:
@@ -113,6 +121,9 @@ class RMSPropUpdate
     GradType meanSquaredGradient;
     // Reference to instantiated parent object.
     RMSPropUpdate& parent;
+    // Parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType alpha;
   };
 
  private:

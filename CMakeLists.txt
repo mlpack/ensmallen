@@ -14,9 +14,13 @@ option(USE_BANDICOOT "If available, build against Bandicoot for GPU support." ON
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-# Set required C++ standard to C++14.
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Set minimum required C++ standard to C++14.
+if (NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+elseif (${CMAKE_CXX_STANDARD} LESS 14)
+  message(FATAL_ERROR "ensmallen requires C++14 or newer!")
+endif ()
 
 # Extract version from sources.
 set(ENSMALLEN_VERSION_FILE_NAME "${PROJECT_SOURCE_DIR}/include/ensmallen_bits/ens_version.hpp")

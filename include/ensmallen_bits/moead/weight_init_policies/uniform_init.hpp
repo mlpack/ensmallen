@@ -141,7 +141,7 @@ class Uniform
     typedef typename ForwardType<MatType>::brow RowType;
 
     size_t counter = 0;
-    const ElemType delta = 1.0 / (ElemType)numPartitions;
+    const ElemType delta = 1 / (ElemType) numPartitions;
 
     while ((counter < numPoints) && !progressStack.empty())
     {
@@ -154,7 +154,7 @@ class Uniform
       {
         point.insert_rows(point.n_rows, RowType(1).fill(
             delta * static_cast<ElemType>(beta)));
-        weights.col(counter) = point + epsilon;
+        weights.col(counter) = point + ElemType(epsilon);
         ++counter;
       }
 
@@ -189,7 +189,7 @@ class Uniform
     //! Init the progress stack.
     progressStack.push_back({{}, numPartitions});
     MatType weights(numObjectives, numPoints);
-    weights.fill(arma::datum::nan);
+    weights.fill(arma::Datum<typename MatType::elem_type>::nan);
     DasDennisHelper<decltype(progressStack), MatType>(
         progressStack,
         weights,
