@@ -66,7 +66,7 @@ void SGDGeneralizedRosenbrockTest(const size_t variants = 50)
 template<typename MatType>
 void SGDLogisticRegressionTest()
 {
-  typename ForwardType<MatType, size_t>::brow LabelsType;
+  typedef typename ForwardType<MatType, size_t>::brow LabelsType;
 
   MatType data, testData;
   LabelsType responses, testResponses;
@@ -104,5 +104,3 @@ TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
 {
   SGDLogisticRegressionTest<TestType>();
 }
-
-#endif

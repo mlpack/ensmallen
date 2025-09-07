@@ -587,7 +587,7 @@ TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_ALL_TEST_TYPES)
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
       zdt3.GetObjectives();
 
-  typename ForwardType<TestType>::cube& finalPopulation, finalFront;
+  typename ForwardType<TestType>::cube finalPopulation, finalFront;
   opt.Optimize(objectives, coords, finalPopulation, finalFront);
 
   REQUIRE(VariableBoundsCheck(finalPopulation));

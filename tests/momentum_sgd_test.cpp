@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
 }
 
 TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
-    ENS_FULLPRECTEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    ENS_FULLPREC_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
