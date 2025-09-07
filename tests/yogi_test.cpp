@@ -57,7 +57,6 @@ TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
       Tolerances<TestType>::LRTrainAcc,
       Tolerances<TestType>::LRTestAcc,
       trials);
->>>>>>> origin/master
 }
 
 #ifdef ENS_HAVE_COOT
