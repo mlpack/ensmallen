@@ -23,26 +23,28 @@ namespace test {
  * The minimum that satisfies the constraint is x = [1, 4], with an objective
  * value of 70.
  */
+template<typename MatType = arma::mat>
 class AugLagrangianTestFunction
 {
  public:
   AugLagrangianTestFunction();
-  AugLagrangianTestFunction(const arma::mat& initial_point);
+  AugLagrangianTestFunction(const MatType& initial_point);
 
-  double Evaluate(const arma::mat& coordinates);
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+  typename MatType::elem_type Evaluate(const MatType& coordinates);
+  void Gradient(const MatType& coordinates, MatType& gradient);
 
   size_t NumConstraints() const { return 1; }
 
-  double EvaluateConstraint(const size_t index, const arma::mat& coordinates);
+  typename MatType::elem_type EvaluateConstraint(const size_t index,
+                                                 const MatType& coordinates);
   void GradientConstraint(const size_t index,
-                          const arma::mat& coordinates,
-                          arma::mat& gradient);
+                          const MatType& coordinates,
+                          MatType& gradient);
 
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
+  const MatType& GetInitialPoint() const { return initialPoint; }
 
  private:
-  arma::mat initialPoint;
+  MatType initialPoint;
 };
 
 /**

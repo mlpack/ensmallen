@@ -18,6 +18,7 @@
 #endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -26,13 +27,13 @@ using namespace ens::test;
  * Tests the Augmented Lagrangian optimizer using the
  * AugmentedLagrangianTestFunction class.
  */
-TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction",
-    "[AugLagrangian]", arma::mat)
+TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction", "[AugLagrangian]",
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   // The choice of 10 memory slots is arbitrary.
-  AugLagrangianTestFunction f;
+  AugLagrangianTestFunction<TestType> f;
   AugLagrangian aug;
 
   arma::Col<ElemType> coords = f.GetInitialPoint();
@@ -40,18 +41,28 @@ TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction",
   if (!aug.Optimize(f, coords))
     FAIL("Optimization reported failure.");
 
-  double finalValue = f.Evaluate(coords);
+  ElemType finalValue = f.Evaluate(coords);
 
-  REQUIRE(finalValue == Approx(70.0).epsilon(1e-7));
-  REQUIRE(coords(0) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(coords(1) == Approx(4.0).epsilon(1e-7));
+  double objTol = Tolerances<TestType>::Obj;
+  double coordTol = Tolerances<TestType>::Coord;
+
+  // Low-precision optimization requires wider tolerances than usual.
+  if (sizeof(ElemType) < 4)
+  {
+    objTol = Tolerances<TestType>::LargeObj;
+    coordTol = Tolerances<TestType>::LargeCoord;
+  }
+
+  REQUIRE(finalValue == Approx(70.0).epsilon(objTol));
+  REQUIRE(coords(0) == Approx(1.0).epsilon(coordTol));
+  REQUIRE(coords(1) == Approx(4.0).epsilon(coordTol));
 }
 
 /**
  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
  */
 TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -65,37 +76,21 @@ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
 
   ElemType finalValue = f.Evaluate(coords);
 
-  // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
-  REQUIRE(coords(0) == Approx(0.12288178).epsilon(0.1));
-  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-3));
-  REQUIRE(coords(2) == Approx(0.015099932).epsilon(0.1));
-}
+  double objTol = 100 * Tolerances<TestType>::Obj;
+  double coordTol = 10 * Tolerances<TestType>::Coord;
 
-/**
- * Tests the Augmented Lagrangian optimizer using the Gockenbach function.  Uses
- * arma::sp_mat.
- */
-TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
-    arma::sp_mat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  GockenbachFunction f;
-  AugLagrangian aug;
-
-  TestType coords = f.GetInitialPoint<TestType>();
-
-  if (!aug.Optimize(f, coords))
-    FAIL("Optimization reported failure.");
-
-  ElemType finalValue = f.Evaluate(coords);
+  // Low-precision optimization requires wider tolerances than usual.
+  if (sizeof(ElemType) < 4)
+  {
+    objTol = Tolerances<TestType>::LargeObj;
+    coordTol = 10 * Tolerances<TestType>::LargeCoord;
+  }
 
   // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-7));
-  REQUIRE(coords(0) == Approx(0.12288178).epsilon(1e-5));
-  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-7));
-  REQUIRE(coords(2) == Approx(0.015099932).epsilon(1e-5));
+  REQUIRE(finalValue == Approx(29.633926).epsilon(objTol));
+  REQUIRE(coords(0) == Approx(0.12288178).epsilon(coordTol));
+  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(coordTol));
+  REQUIRE(coords(2) == Approx(0.015099932).epsilon(coordTol));
 }
 
 #ifdef ENS_HAVE_COOT

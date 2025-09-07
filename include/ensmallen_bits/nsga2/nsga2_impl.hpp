@@ -152,7 +152,7 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t i = 0; i < populationSize; i++)
   {
     population.push_back(randu<BaseMatType>(iterate.n_rows,
-        iterate.n_cols) - 0.5 + iterate);
+        iterate.n_cols) - ElemType(0.5) + iterate);
 
     // Constrain all genes to be within bounds.
     population[i] = min(max(population[i], castedLowerBound), castedUpperBound);
@@ -199,10 +199,12 @@ typename MatType::elem_type NSGA2::Optimize(
             size_t idxP{}, idxQ{};
             for (size_t i = 0; i < population.size(); i++)
             {
-              if (approx_equal(population[i], candidateP, "absdiff", epsilon))
+              if (approx_equal(population[i], candidateP, "absdiff",
+                  ElemType(epsilon)))
                 idxP = i;
 
-              if (approx_equal(population[i], candidateQ, "absdiff", epsilon))
+              if (approx_equal(population[i], candidateQ, "absdiff",
+                  ElemType(epsilon)))
                 idxQ = i;
             }
 
@@ -344,9 +346,11 @@ void NSGA2::Crossover(
     const InputMatType& parentA,
     const InputMatType& parentB)
 {
+  typedef typename InputMatType::elem_type ElemType;
+
   // Indices at which crossover is to occur.
   const InputMatType idx = conv_to<InputMatType>::from(randu<InputMatType>(
-      childA.n_rows, childA.n_cols) < crossoverProb);
+      childA.n_rows, childA.n_cols) < ElemType(crossoverProb));
 
   // Use traits from parentA for indices where idx is 1 and parentB otherwise.
   childA = parentA % idx + parentB % (1 - idx);
@@ -361,10 +365,12 @@ void NSGA2::Mutate(
     const InputMatType& lowerBound,
     const InputMatType& upperBound)
 {
+  typedef typename InputMatType::elem_type ElemType;
+
   child += conv_to<InputMatType>::from(
       InputMatType(child.n_rows, child.n_cols,
-          GetFillType<InputMatType>::randu) < mutationProb) %
-      (mutationStrength * InputMatType(child.n_rows, child.n_cols,
+          GetFillType<InputMatType>::randu) < ElemType(mutationProb)) %
+      (ElemType(mutationStrength) * InputMatType(child.n_rows, child.n_cols,
           GetFillType<InputMatType>::randn));
 
   // Constrain all genes to be between bounds.
@@ -495,7 +501,7 @@ void NSGA2::CrowdingDistanceAssignment(
     ElemType minFval = fValues(sortedIdx(0));
     ElemType maxFval = fValues(sortedIdx(fSize - 1));
     ElemType scale =
-        std::abs(maxFval - minFval) == 0. ? 1. : std::abs(maxFval - minFval);
+        std::abs(maxFval - minFval) == 0 ? 1 : std::abs(maxFval - minFval);
 
     for (size_t i = 1; i < fSize - 1; i++)
     {

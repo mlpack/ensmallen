@@ -14,45 +14,51 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("DemonAdam_LogisticRegressionFunction", "[DemonAdam]",
-    arma::mat)
+    ENS_ALL_TEST_TYPES)
 {
-  DemonAdam optimizer(6.4, 32, 0.9, 0.9, 0.999, 1e-8,
-      10000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
+  DemonAdam optimizer(6.4, 32, 0.9, 0.9, 0.999, Tolerances<TestType>::Obj,
+      10000, Tolerances<TestType>::Obj / 10, true, true, true);
+  // This may require a few attempts to get right.
+  LogisticRegressionFunctionTest<TestType>(optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      6);
 }
 
 TEMPLATE_TEST_CASE("DemonAdaMax_LogisticRegressionFunction", "[DemonAdam]",
-    arma::mat)
+    ENS_ALL_TEST_TYPES)
 {
-  DemonAdamType<AdaMaxUpdate> optimizer(5.0, 10, 0.9, 0.9, 0.999, 1e-8,
-      10000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006, 6);
+  DemonAdamType<AdaMaxUpdate> optimizer(5.0, 10, 0.9, 0.9, 0.999,
+      Tolerances<TestType>::Obj, 10000, Tolerances<TestType>::Obj / 10, true,
+      true, true);
+  // This may require a few attempts to get right.
+  LogisticRegressionFunctionTest<TestType>(optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      6);
 }
 
 TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   DemonAdam optimizer(1.0, 2, 0.9);
-  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
 TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
   DemonAdam optimizer(0.5, 1, 0.9);
   FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
-}
-
-TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
-    arma::sp_mat)
-{
-  DemonAdam optimizer(1.0, 2, 0.9);
-  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 #ifdef ENS_HAVE_COOT

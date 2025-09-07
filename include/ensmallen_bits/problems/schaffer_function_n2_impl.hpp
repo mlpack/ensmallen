@@ -35,9 +35,11 @@ typename MatType::elem_type SchafferFunctionN2::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = 0.5 + (std::pow(std::sin(std::pow(x1, 2) -
-      std::pow(x2, 2)), 2) - 0.5) / std::pow(1 + 0.001 *
-      (std::pow(x1, 2) + std::pow(x2, 2)), 2);
+  const ElemType objective = ElemType(0.5) +
+      (std::pow(std::sin(std::pow(x1, ElemType(2)) -
+      std::pow(x2, ElemType(2))), ElemType(2)) - ElemType(0.5)) /
+      std::pow(1 + ElemType(0.001) * (std::pow(x1, ElemType(2)) +
+          std::pow(x2, ElemType(2))), ElemType(2));
 
   return objective;
 }
@@ -67,11 +69,12 @@ inline void SchafferFunctionN2::Gradient(const MatType& coordinates,
   const ElemType x2Sq = x2 * x2;
   const ElemType sum1 = x1Sq - x2Sq;
   const ElemType sinSum1 = sin(sum1);
-  const ElemType sum2 = 0.001 * (x1Sq + x2Sq) + 1;
+  const ElemType sum2 = ElemType(0.001) * (x1Sq + x2Sq) + 1;
   const ElemType trigExpression = 4 * sinSum1 * cos(sum1);
-  const ElemType numerator1 = - 0.004 * (pow(sinSum1, 2) - 0.5);
-  const ElemType expr1 = numerator1 / pow(sum2, 3);
-  const ElemType expr2 = trigExpression / pow(sum2, 2);
+  const ElemType numerator1 =
+      ElemType(-0.004) * (pow(sinSum1, ElemType(2)) - 0.5);
+  const ElemType expr1 = numerator1 / pow(sum2, ElemType(3));
+  const ElemType expr2 = trigExpression / pow(sum2, ElemType(2));
 
   gradient.set_size(2, 1);
   gradient(0) = x1 * (expr1 + expr2);

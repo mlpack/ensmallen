@@ -182,7 +182,7 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
             // lock.
             // TODO: if batch size support > 1 is added, `stepSize` will need to
             // be updated here.
-            UpdateLocation(iterate, row, i, stepSize * value);
+            UpdateLocation(iterate, row, i, ElemType(stepSize) * value);
           }
         }
         terminate |= Callback::StepTaken(*this, function, iterate,

@@ -35,9 +35,11 @@ typename MatType::elem_type SchafferFunctionN4::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = 0.5 + (std::pow(std::cos(std::sin(std::abs(
-      std::pow(x1, 2) - std::pow(x2, 2)))), 2) - 0.5) / std::pow(1 + 0.001 *
-      (std::pow(x1, 2) + std::pow(x2, 2)), 2);
+  const ElemType objective = ElemType(0.5) +
+      (std::pow(std::cos(std::sin(std::abs(std::pow(x1, ElemType(2)) -
+      std::pow(x2, ElemType(2))))), ElemType(2)) - ElemType(0.5)) /
+      std::pow(1 + ElemType(0.001) * (std::pow(x1, ElemType(2)) +
+      std::pow(x2, ElemType(2))), ElemType(2));
 
   return objective;
 }

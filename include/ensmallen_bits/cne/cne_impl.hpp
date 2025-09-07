@@ -245,14 +245,16 @@ inline void CNE::Crossover(std::vector<MatType>& population,
 template<typename MatType, typename IndexType>
 inline void CNE::Mutate(std::vector<MatType>& population, IndexType& index)
 {
+  typedef typename MatType::elem_type ElemType;
+
   // Mutate the whole matrix with the given rate and probability.
   // The best candidate is not altered.
   for (size_t i = 1; i < populationSize; i++)
   {
     population[index(i)] += conv_to<MatType>::from(
         randu<MatType>(population[index(i)].n_rows,
-        population[index(i)].n_cols) < mutationProb) %
-        (mutationSize * MatType(population[index(i)].n_rows,
+        population[index(i)].n_cols) < ElemType(mutationProb)) %
+        (ElemType(mutationSize) * MatType(population[index(i)].n_rows,
         population[index(i)].n_cols, GetFillType<MatType>::randn));
   }
 }

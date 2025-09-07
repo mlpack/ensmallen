@@ -193,7 +193,7 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   for (BaseMatType& individual : population)
   {
     individual = randu<BaseMatType>(
-        iterate.n_rows, iterate.n_cols) - 0.5 + iterate;
+        iterate.n_rows, iterate.n_cols) - ElemType(0.5) + iterate;
 
     // Constrain all genes to be within bounds.
     individual = min(max(individual, castedLowerBound), castedUpperBound);
@@ -248,18 +248,20 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
         if (arma::randu() < crossoverProb)
         {
           candidate(geneIdx) = population[r1](geneIdx) +
-              differentialWeight * (population[r2](geneIdx) -
+              ElemType(differentialWeight) * (population[r2](geneIdx) -
               population[r3](geneIdx));
 
           // Boundary conditions.
           if (candidate(geneIdx) < castedLowerBound(geneIdx))
           {
-            candidate(geneIdx) = castedLowerBound(geneIdx) + arma::randu() *
+            candidate(geneIdx) = castedLowerBound(geneIdx) +
+                arma::randu<ElemType>() *
                 (population[r1](geneIdx) - castedLowerBound(geneIdx));
           }
           if (candidate(geneIdx) > castedUpperBound(geneIdx))
           {
-            candidate(geneIdx) = castedUpperBound(geneIdx) - arma::randu() *
+            candidate(geneIdx) = castedUpperBound(geneIdx) -
+                arma::randu<ElemType>() *
                 (castedUpperBound(geneIdx) - population[r1](geneIdx));
           }
         }
@@ -406,39 +408,41 @@ Mutate(MatType& candidate,
        const MatType& lowerBound,
        const MatType& upperBound)
 {
-    const size_t numVariables = candidate.n_rows;
-    for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
+  typedef typename MatType::elem_type ElemType;
+
+  const size_t numVariables = candidate.n_rows;
+  for (size_t geneIdx = 0; geneIdx < numVariables; ++geneIdx)
+  {
+    // Should this gene be mutated?
+    if (arma::randu() > mutationRate)
+      continue;
+
+    const double geneRange = upperBound(geneIdx) - lowerBound(geneIdx);
+    // Normalised distance from the bounds.
+    const double lowerDelta = (candidate(geneIdx) - lowerBound(geneIdx)) /
+        geneRange;
+    const double upperDelta = (upperBound(geneIdx) - candidate(geneIdx)) /
+        geneRange;
+    const double mutationPower = 1. / (distributionIndex + 1.0);
+    const double rand = arma::randu();
+    double value, perturbationFactor;
+    if (rand < 0.5)
     {
-      // Should this gene be mutated?
-      if (arma::randu() > mutationRate)
-        continue;
-
-      const double geneRange = upperBound(geneIdx) - lowerBound(geneIdx);
-      // Normalised distance from the bounds.
-      const double lowerDelta = (candidate(geneIdx) - lowerBound(geneIdx)) /
-          geneRange;
-      const double upperDelta = (upperBound(geneIdx) - candidate(geneIdx)) /
-          geneRange;
-      const double mutationPower = 1. / (distributionIndex + 1.0);
-      const double rand = arma::randu();
-      double value, perturbationFactor;
-      if (rand < 0.5)
-      {
-        value = 2.0 * rand + (1.0 - 2.0 * rand) *
-            std::pow(upperDelta, distributionIndex + 1.0);
-        perturbationFactor = std::pow(value, mutationPower) - 1.0;
-      }
-      else
-      {
-        value = 2.0 * (1.0 - rand) + 2.0 *(rand - 0.5) *
-            std::pow(lowerDelta, distributionIndex + 1.0);
-        perturbationFactor = 1.0 - std::pow(value, mutationPower);
-      }
-
-      candidate(geneIdx) += perturbationFactor * geneRange;
+      value = 2.0 * rand + (1.0 - 2.0 * rand) *
+          std::pow(upperDelta, distributionIndex + 1.0);
+      perturbationFactor = std::pow(value, mutationPower) - 1.0;
     }
-    //! Enforce bounds.
-    candidate = min(max(candidate, lowerBound), upperBound);
+    else
+    {
+      value = 2.0 * (1.0 - rand) + 2.0 * (rand - 0.5) *
+          std::pow(lowerDelta, distributionIndex + 1.0);
+      perturbationFactor = 1.0 - std::pow(value, mutationPower);
+    }
+
+    candidate(geneIdx) += ElemType(perturbationFactor * geneRange);
+  }
+  //! Enforce bounds.
+  candidate = min(max(candidate, lowerBound), upperBound);
 }
 
 //! No objectives to evaluate.

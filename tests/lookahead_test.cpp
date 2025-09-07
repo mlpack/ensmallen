@@ -14,39 +14,53 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
-    arma::mat)
+    ENS_ALL_TEST_TYPES)
 {
   Lookahead<> optimizer(2.5, 5, 100000, 1e-5, NoDecay(), false, true);
-  optimizer.BaseOptimizer().StepSize() = 0.2;
+  optimizer.BaseOptimizer().StepSize() = 0.5;
   optimizer.BaseOptimizer().BatchSize() = 2;
   optimizer.BaseOptimizer().Beta1() = 0.7;
-  optimizer.BaseOptimizer().Tolerance() = 1e-15;
+  optimizer.BaseOptimizer().Tolerance() = Tolerances<TestType>::Obj;
   // We allow a few trials.
-  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord,
+      3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
-    arma::mat)
+    ENS_ALL_TEST_TYPES)
 {
-  AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-15, true);
-  Lookahead<AdaGrad> optimizer(adagrad, 2.5, 5, 5000000, 1e-15, NoDecay(),
-      false, true);
-  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
+  AdaGrad adagrad(0.99, 1, 1e-8, 5, Tolerances<TestType>::Obj / 100, true);
+  adagrad.ResetPolicy() = false;
+  Lookahead<AdaGrad> optimizer(adagrad, 2.5, 5, 5000000,
+      Tolerances<TestType>::Obj / 100, NoDecay(), false, true);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord,
+      3);
 }
 
 TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
-    arma::mat)
+    ENS_ALL_TEST_TYPES)
 {
-  Adam adam(0.032, 32, 0.9, 0.999, 1e-8, 5, 1e-19);
-  Lookahead<Adam> optimizer(adam, 10.0, 20, 100000, 1e-15, NoDecay(),
-      false, true);
+  Adam adam(0.032, 4, 0.9, 0.999, Tolerances<TestType>::Obj, 5,
+      Tolerances<TestType>::Obj / 10);
+  adam.ResetPolicy() = false;
+  Lookahead<Adam> optimizer(adam, 12.5, 25, 100000, Tolerances<TestType>::Obj,
+      NoDecay(), false, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      optimizer, 0.003, 0.006);
+      optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc);
 }
 
 #ifdef ENS_HAVE_COOT
@@ -67,6 +81,7 @@ TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
     coot::mat)
 {
   AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-15, true);
+  adagrad.ResetPolicy() = false;
   Lookahead<AdaGrad> optimizer(adagrad, 2.5, 5, 5000000, 1e-15, NoDecay(),
       false, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
@@ -76,6 +91,7 @@ TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
     coot::mat)
 {
   Adam adam(0.032, 32, 0.9, 0.999, 1e-8, 5, 1e-19);
+  adam.ResetPolicy() = false;
   Lookahead<Adam> optimizer(adam, 10.0, 20, 100000, 1e-15, NoDecay(),
       false, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
@@ -86,6 +102,7 @@ TEMPLATE_TEST_CASE("LookaheadAdam_SimpleSphereFunction", "[Lookahead]",
     coot::fmat)
 {
   Adam adam(0.001, 1, 0.9, 0.999, 1e-8, 5, 1e-19, false, true);
+  adam.ResetPolicy() = false;
   Lookahead<Adam> optimizer(adam, 2.5, 5, 100000, 1e-15, NoDecay(),
       false, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);

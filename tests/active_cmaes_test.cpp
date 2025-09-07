@@ -11,6 +11,7 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -19,52 +20,34 @@ using namespace ens::test;
  * Run Active CMA-ES with the full selection policy on Rosenbrock function and
  * make sure the results are acceptable.
  */
-TEST_CASE("ActiveCMAESRosenbrockFunctionTest", "[ActiveCMAESTest]")
+TEMPLATE_TEST_CASE("ActiveCMAESRosenbrockFunctionTest", "[ActiveCMAES]",
+    ENS_TEST_TYPES)
 {
-  BoundaryBoxConstraint<> b(0, 10);
-  ActiveCMAES<FullSelection, BoundaryBoxConstraint<>> 
-      activecmaes(0, b, 1, 0, 1e-8);
+  BoundaryBoxConstraint<TestType> b(0, 10);
+  ActiveCMAES<FullSelection, BoundaryBoxConstraint<TestType>>
+      activecmaes(0, b, 1, 0, Tolerances<TestType>::Obj);
   activecmaes.StepSize() = 0.01;
-  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.1, 10);
+  FunctionTest<RosenbrockFunction, TestType>(activecmaes,
+      100 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord,
+      10);
 }
 
 /**
  * Run Active CMA-ES with the random selection policy on Rosenbrock function and
  * make sure the results are acceptable.
  */
-TEST_CASE("ApproxActiveCMAESRosenbrockFunctionTest", "[ActiveCMAESTest]")
+TEMPLATE_TEST_CASE("ApproxActiveCMAESRosenbrockFunctionTest", "[ActiveCMAES]",
+    ENS_TEST_TYPES)
 {
-  BoundaryBoxConstraint<> b(0, 10);
-  ApproxActiveCMAES<BoundaryBoxConstraint<arma::mat>> 
-      activecmaes(2048, b, 1, 0, 1e-13);
+  BoundaryBoxConstraint<TestType> b(0, 10);
+  ApproxActiveCMAES<BoundaryBoxConstraint<TestType>>
+      activecmaes(2048, b, 1, 0, Tolerances<TestType>::Obj / 100);
   activecmaes.StepSize() = 0.01;
-  FunctionTest<RosenbrockFunction>(activecmaes, 0.1, 0.1, 10);
-}
-
-/**
- * Run Active CMA-ES with the full selection policy on  Rosenbrock function and
- * make sure the results are acceptable.  Use arma::fmat.
- */
-TEST_CASE("ActiveCMAESRosenbrockFunctionFMatTest", "[ActiveCMAESTest]")
-{
-  BoundaryBoxConstraint<arma::fmat> b(0, 10);
-  ActiveCMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> 
-      activecmaes(0, b, 1, 0, 1e-8);
-  activecmaes.StepSize() = 0.01;
-  FunctionTest<RosenbrockFunction, arma::fmat>(activecmaes, 0.1, 0.1, 5);
-}
-
-/**
- * Run Active CMA-ES with the random selection policy on  Rosenbrock function and
- * make sure the results are acceptable.  Use arma::fmat.
- */
-TEST_CASE("ApproxActiveCMAESRosenbrockFunctionFMatTest", "[ActiveCMAESTest]")
-{
-  BoundaryBoxConstraint<arma::fmat> b(0, 10);
-  ApproxActiveCMAES<BoundaryBoxConstraint<arma::fmat>> 
-      activecmaes(2048, b, 1, 0, 1e-5);
-  activecmaes.StepSize() = 0.01;
-  FunctionTest<RosenbrockFunction, arma::fmat>(activecmaes, 0.1, 0.1, 10);
+  FunctionTest<RosenbrockFunction, TestType>(activecmaes,
+      100 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord,
+      10);
 }
 
 /**
@@ -72,11 +55,14 @@ TEST_CASE("ApproxActiveCMAESRosenbrockFunctionFMatTest", "[ActiveCMAESTest]")
  * on  Rosenbrock function and make sure the results are acceptable.
  * Use arma::fmat.
  */
-TEST_CASE("ApproxActiveCMAESEmptyTransformationLogisticRegressionFMatTest",
-  "[ActiveCMAESTest]")
+TEMPLATE_TEST_CASE("ApproxActiveCMAESEmptyTransformationLogisticRegressionTest",
+    "[ActiveCMAES]", ENS_TEST_TYPES)
 {
-  ApproxActiveCMAES<EmptyTransformation<arma::fmat>>
-      activecmaes(0, EmptyTransformation<arma::fmat>(), 16, 0, 1e-3);
+  ApproxActiveCMAES<EmptyTransformation<TestType>>
+      activecmaes(0, EmptyTransformation<TestType>(), 16, 0,
+                  10 * Tolerances<TestType>::Obj);
+
   activecmaes.StepSize() = 0.55;
-  LogisticRegressionFunctionTest<arma::fmat>(activecmaes, 0.01, 0.02, 5);
+  LogisticRegressionFunctionTest<TestType>(activecmaes,
+      Tolerances<TestType>::LRTrainAcc, Tolerances<TestType>::LRTestAcc, 5);
 }

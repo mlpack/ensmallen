@@ -14,6 +14,10 @@
 #define ENSMALLEN_TESTS_TEST_FUNCTION_TOOLS_HPP
 
 #include "catch.hpp"
+#include "test_types.hpp"
+
+namespace ens {
+namespace test {
 
 /**
 * Create the data for the a logistic regression test.
@@ -26,66 +30,54 @@
 * @param shuffledResponses Matrix object to store the shuffled responses into.
 */
 template<typename MatType, typename LabelsType>
-inline void LogisticRegressionTestData(MatType& data,
-                                      MatType& testData,
-                                      MatType& shuffledData,
-                                      LabelsType& responses,
-                                      LabelsType& testResponses,
-                                      LabelsType& shuffledResponses)
+inline void LogisticRegressionTestData(
+    MatType& data,
+    MatType& testData,
+    LabelsType& responses,
+    LabelsType& testResponses,
+    const typename std::enable_if_t<!IsSparseMatrixType<MatType>::value>* = 0)
 {
-  typedef typename MatType::elem_type ElemType;
-
   // Generate a two-Gaussian dataset.
-  arma::Mat<ElemType> armaData = arma::Mat<ElemType>(3, 1000);
-  arma::Row<size_t> armaResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    // The first Gaussian is centered at (1, 1, 1) and has covariance I.
-    armaData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("1.0 1.0 1.0");
-    armaResponses(i) = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    // The second Gaussian is centered at (9, 9, 9) and has covariance I.
-    armaData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("9.0 9.0 9.0");
-    armaResponses(i) = 1;
-  }
+  data.set_size(3, 1000);
+  responses.set_size(1000);
 
-  // Shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0,
-      armaData.n_cols - 1, armaData.n_cols));
-  arma::Mat<ElemType> armaShuffledData = arma::Mat<ElemType>(3, 1000);
-  arma::Row<size_t> armaShuffledResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < armaData.n_cols; ++i)
-  {
-    armaShuffledData.col(i) = armaData.col(indices(i));
-    armaShuffledResponses(i) = armaResponses[indices(i)];
-  }
+  // The first Gaussian is centered at (1, 1, 1) and has covariance I.
+  data.cols(0, 499) = randn<MatType>(3, 500) + 1;
+  responses.subvec(0, 499).zeros();
+
+  // The second Gaussian is centered at (9, 9, 9) and has covariance I.
+  data.cols(500, 999) = randn<MatType>(3, 500) + 9;
+  responses.subvec(500, 999).ones();
 
   // Create a test set.
-  arma::Mat<ElemType> armaTestData = arma::Mat<ElemType>(3, 1000);
-  arma::Row<size_t> armaTestResponses = arma::Row<size_t>(1000);
-  for (size_t i = 0; i < 500; ++i)
-  {
-    armaTestData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("1.0 1.0 1.0");
-    armaTestResponses(i) = 0;
-  }
-  for (size_t i = 500; i < 1000; ++i)
-  {
-    armaTestData.col(i) = arma::randn<arma::Col<ElemType>>(3) +
-        arma::Col<ElemType>("9.0 9.0 9.0");
-    armaTestResponses(i) = 1;
-  }
+  testData.set_size(3, 1000);
+  testResponses.set_size(1000);
 
-  data = MatType(armaData);
-  testData = MatType(armaTestData);
-  shuffledData = MatType(armaShuffledData);
-  responses = LabelsType(armaResponses);
-  testResponses = LabelsType(armaTestResponses);
-  shuffledResponses = LabelsType(armaShuffledResponses);
+  testData.cols(0, 499) = randn<MatType>(3, 500) + 1;
+  testResponses.subvec(0, 499).zeros();
+  testData.cols(500, 999) = randn<MatType>(3, 500) + 9;
+  testResponses.subvec(500, 999).ones();
+}
+
+template<typename MatType, typename LabelsType>
+inline void LogisticRegressionTestData(
+    MatType& data,
+    MatType& testData,
+    LabelsType& responses,
+    LabelsType& testResponses,
+    const typename std::enable_if_t<IsSparseMatrixType<MatType>::value>* = 0)
+{
+  arma::Mat<typename MatType::elem_type> tmpData, tmpTestData;
+  arma::Row<typename MatType::elem_type> tmpResponses, tmpTestResponses;
+
+  // Sparse matrices don't support the necessary functionality with randn<>.
+  LogisticRegressionTestData(tmpData, tmpTestData, tmpResponses,
+      tmpTestResponses);
+
+  data = conv_to<MatType>::from(tmpData);
+  responses = conv_to<LabelsType>::from(tmpResponses);
+  testData = conv_to<MatType>::from(tmpTestData);
+  testResponses = conv_to<LabelsType>::from(tmpTestResponses);
 }
 
 // Check the values of two matrices.
@@ -125,7 +117,8 @@ bool TestOptimizer(FunctionType& f,
     REQUIRE(objective == Approx(expectedObjective).margin(objectiveMargin));
     for (size_t i = 0; i < point.n_elem; ++i)
     {
-      REQUIRE(eT(point[i]) == Approx(expectedResult[i]).margin(coordinateMargin));
+      REQUIRE(eT(point[i]) ==
+          Approx(expectedResult[i]).margin(coordinateMargin));
     }
   }
   else
@@ -146,14 +139,15 @@ bool TestOptimizer(FunctionType& f,
 // This runs a test multiple times, but does not do any special behavior between
 // runs.
 template<typename FunctionType, typename OptimizerType, typename PointType>
-void MultipleTrialOptimizerTest(FunctionType& f,
-                                OptimizerType& optimizer,
-                                PointType& initialPoint,
-                                const PointType& expectedResult,
-                                const double coordinateMargin,
-                                const double expectedObjective,
-                                const double objectiveMargin,
-                                const size_t trials = 1)
+void MultipleTrialOptimizerTest(
+    FunctionType& f,
+    OptimizerType& optimizer,
+    PointType& initialPoint,
+    const PointType& expectedResult,
+    const typename PointType::elem_type coordinateMargin,
+    const typename PointType::elem_type expectedObjective,
+    const typename PointType::elem_type objectiveMargin,
+    const size_t trials = 1)
 {
   for (size_t t = 0; t < trials; ++t)
   {
@@ -176,8 +170,10 @@ template<typename FunctionType,
         typename MatType = arma::mat,
         typename OptimizerType = ens::StandardSGD>
 void FunctionTest(OptimizerType& optimizer,
-                  const double objectiveMargin = 0.01,
-                  const double coordinateMargin = 0.001,
+                  const typename MatType::elem_type objectiveMargin =
+                      typename MatType::elem_type(0.01),
+                  const typename MatType::elem_type coordinateMargin =
+                      typename MatType::elem_type(0.001),
                   const size_t trials = 1)
 {
   FunctionType f;
@@ -185,27 +181,31 @@ void FunctionTest(OptimizerType& optimizer,
   MatType expectedResult = f.template GetFinalPoint<MatType>();
 
   MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedResult,
-      coordinateMargin, f.GetFinalObjective(), objectiveMargin, trials);
+      coordinateMargin, typename MatType::elem_type(f.GetFinalObjective()),
+      objectiveMargin, trials);
 }
 
 template<typename MatType = arma::mat, typename LabelsType = arma::Row<size_t>,
     typename OptimizerType>
-void LogisticRegressionFunctionTest(OptimizerType& optimizer,
-                                    const double trainAccuracyTolerance,
-                                    const double testAccuracyTolerance,
-                                    const size_t trials = 1)
+void LogisticRegressionFunctionTest(
+    OptimizerType& optimizer,
+    const double trainAccuracyTolerance = Tolerances<MatType>::LRTrainAcc,
+    const double testAccuracyTolerance = Tolerances<MatType>::LRTestAcc,
+    const size_t trials = 1)
 {
   // We have to generate new data for each trial, so we can't use
   // MultipleTrialOptimizerTest().
-  MatType data, testData, shuffledData;
-  LabelsType responses, testResponses, shuffledResponses;
+  MatType data, testData;
+  LabelsType responses, testResponses;
 
   for (size_t i = 0; i < trials; ++i)
   {
-    LogisticRegressionTestData(data, testData, shuffledData,
-        responses, testResponses, shuffledResponses);
-    ens::test::LogisticRegressionFunction<MatType> lr( shuffledData,
-        shuffledResponses, 0.5);
+    LogisticRegressionTestData(data, testData, responses, testResponses);
+
+    MatType data2 = data;
+    LabelsType responses2 = responses;
+    ens::test::LogisticRegressionFunction<MatType> lr(data2, responses2, 0.5);
+    lr.Shuffle(); // We didn't shuffle the data earlier.
 
     MatType coordinates = lr.GetInitialPoint();
 
@@ -229,5 +229,8 @@ void LogisticRegressionFunctionTest(OptimizerType& optimizer,
     break;
   }
 }
+
+} // namespace test
+} // namespace ens
 
 #endif

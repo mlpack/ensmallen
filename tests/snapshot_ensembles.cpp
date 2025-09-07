@@ -15,6 +15,7 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -23,7 +24,7 @@ using namespace ens::test;
 * Test that the step size resets after a specified number of epochs.
 */
 TEMPLATE_TEST_CASE("SnapshotEnsembles_ResetTest", "[SnapshotEnsembles]",
-    arma::mat)
+    ENS_ALL_TEST_TYPES)
 {
   const double stepSize = 0.5;
   TestType iterate;
@@ -61,15 +62,14 @@ TEMPLATE_TEST_CASE("SnapshotEnsembles_ResetTest", "[SnapshotEnsembles]",
   }
 }
 
-TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction",
-    "[SnapshotSGDR]", arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction", "[SnapshotSGDR]",
+    ENS_ALL_TEST_TYPES)
 {
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01 * batchSize, 10000, 1e-3);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-        sgdr, 0.003, 0.006);
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.005 * batchSize, 10000, 1e-3);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(sgdr);
   }
 }
 

@@ -104,7 +104,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
 
     Q[f].eye();
     g += y[f];
-    y[f] /= (double) effectiveBatchSize;
+    y[f] /= (ElemType) effectiveBatchSize;
 
     i += effectiveBatchSize;
   }
@@ -141,24 +141,27 @@ IQN::Optimize(SeparableFunctionType& functionIn,
             as_scalar(yy.t() * s) - Q[it] * s * s.t() *
             Q[it] / as_scalar(s.t() * Q[it] * s);
 
+        const ElemType negBatches = 1 / ElemType(numBatches);
+
         // Update aggregate Hessian approximation.
-        B += (1.0 / numBatches) * (stochasticHessian - Q[it]);
+        B += negBatches * (stochasticHessian - Q[it]);
 
         // Update aggregate Hessian-variable product.
-        u += reshape((1.0 / numBatches) * (stochasticHessian *
+        u += reshape(negBatches * (stochasticHessian *
             vectorise(iterate) - Q[it] * vectorise(t[it])),
             u.n_rows, u.n_cols);
 
         // Update aggregate gradient.
-        g += (1.0 / numBatches) * (gradient - y[it]);
+        g += negBatches * (gradient - y[it]);
 
         // Update the function information tables.
         Q[it] = std::move(stochasticHessian);
         y[it] = std::move(gradient);
         t[it] = iterate;
 
-        iterate = reshape(stepSize * pinv(B) * (u.t() - vectorise(g)),
-            iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
+        iterate = reshape(ElemType(stepSize) * pinv(B) * (u.t() - vectorise(g)),
+            iterate.n_rows, iterate.n_cols) +
+            (1 - ElemType(stepSize)) * iterate;
 
         terminate |= Callback::StepTaken(*this, function, iterate,
             callbacks...);

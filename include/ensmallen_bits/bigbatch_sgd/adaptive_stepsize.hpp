@@ -69,6 +69,8 @@ class AdaptiveStepsize
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     // Create the instantiated object.
     Policy(AdaptiveStepsize& parent) : parent(parent) { }
 
@@ -104,7 +106,7 @@ class AdaptiveStepsize
           backtrackingBatchSize);
 
       // Update the iterate.
-      iterate -= stepSize * gradient;
+      iterate -= ElemType(stepSize) * gradient;
 
       // Update Gradient & calculate curvature of quadratic approximation.
       GradType functionGradient(iterate.n_rows, iterate.n_cols);
@@ -205,12 +207,10 @@ class AdaptiveStepsize
                       const size_t offset,
                       const size_t backtrackingBatchSize)
     {
-      typedef typename MatType::elem_type ElemType;
-
       ElemType overallObjective = function.Evaluate(iterate,
           offset, backtrackingBatchSize);
 
-      MatType iterateUpdate = iterate - (stepSize * gradient);
+      MatType iterateUpdate = iterate - (ElemType(stepSize) * gradient);
       ElemType overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
           backtrackingBatchSize);
 
@@ -220,7 +220,7 @@ class AdaptiveStepsize
       {
         stepSize *= parent.backtrackStepSize;
 
-        iterateUpdate = iterate - (stepSize * gradient);
+        iterateUpdate = iterate - (ElemType(stepSize) * gradient);
         overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
             backtrackingBatchSize);
       }

@@ -85,6 +85,8 @@ class NadamUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the optimizer before the start of the
      * iteration update process.
@@ -96,10 +98,17 @@ class NadamUpdate
     Policy(NadamUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
         cumBeta1(1),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
         iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
+
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -117,30 +126,31 @@ class NadamUpdate
       ++iteration;
 
       // And update the iterate.
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * gradient % gradient;
+      v *= beta2;
+      v += (1 - beta2) * gradient % gradient;
 
-      double beta1T = parent.beta1 * (1 - (0.5 *
+      ElemType beta1T = beta1 * (1 - ElemType(0.5 *
           std::pow(0.96, iteration * parent.scheduleDecay)));
 
-      double beta1T1 = parent.beta1 * (1 - (0.5 *
+      ElemType beta1T1 = beta1 * (1 - ElemType(0.5 *
           std::pow(0.96, (iteration + 1) * parent.scheduleDecay)));
 
       cumBeta1 *= beta1T;
 
-      const double biasCorrection1 = 1.0 - cumBeta1;
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
-      const double biasCorrection3 = 1.0 - (cumBeta1 * beta1T1);
+      const ElemType biasCorrection1 = 1 - cumBeta1;
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
+      const ElemType biasCorrection3 = 1 - (cumBeta1 * beta1T1);
 
       /* Note :- arma::sqrt(v) + epsilon * sqrt(biasCorrection2) is approximated
        * as arma::sqrt(v) + epsilon
        */
-      iterate -= (stepSize * (((1 - beta1T) / biasCorrection1) * gradient
-          + (beta1T1 / biasCorrection3) * m) * std::sqrt(biasCorrection2))
-          / (sqrt(v) + parent.epsilon);
+      iterate -= (ElemType(stepSize) *
+          (((1 - beta1T) / biasCorrection1) * gradient +
+          (beta1T1 / biasCorrection3) * m) * std::sqrt(biasCorrection2)) /
+          (sqrt(v) + epsilon);
     }
 
    private:
@@ -154,7 +164,12 @@ class NadamUpdate
     GradType v;
 
     // The cumulative product of decay coefficients.
-    double cumBeta1;
+    ElemType cumBeta1;
+
+    // Parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
 
     // The number of iterations.
     size_t iteration;

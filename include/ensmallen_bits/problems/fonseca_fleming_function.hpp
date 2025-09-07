@@ -69,11 +69,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-      return 1.0 - std::exp(
+      return typename MatType::elem_type(1.0 - std::exp(
           -std::pow(static_cast<double>(coords[0]) - 1.0 / std::sqrt(3.0), 2.0)
           -std::pow(static_cast<double>(coords[1]) - 1.0 / std::sqrt(3.0), 2.0)
           -std::pow(static_cast<double>(coords[2]) - 1.0 / std::sqrt(3.0), 2.0)
-      );
+      ));
     }
   } objectiveA;
 
@@ -81,11 +81,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-      return 1.0 - std::exp(
+      return typename MatType::elem_type(1.0 - std::exp(
           -std::pow(static_cast<double>(coords[0]) + 1.0 / std::sqrt(3.0), 2.0)
           -std::pow(static_cast<double>(coords[1]) + 1.0 / std::sqrt(3.0), 2.0)
           -std::pow(static_cast<double>(coords[2]) + 1.0 / std::sqrt(3.0), 2.0)
-      );
+      ));
     }
   } objectiveB;
 
@@ -95,6 +95,7 @@ class FonsecaFlemingFunction
     return std::make_tuple(objectiveA, objectiveB);
   }
 };
+
 } // namespace test
 } // namespace ens
 
