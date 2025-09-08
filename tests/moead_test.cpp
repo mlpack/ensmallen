@@ -453,7 +453,7 @@ TEST_CASE("MOEADDIRICHLETMAF4Test", "[MOEAD]")
   const double expectedUpperBound = 0.5;
 
   DirichletMOEAD opt(
-      105, // Population size.
+      200, // Population size.
       1000,  // Max generations.
       1.0,  // Crossover probability.
       0.9, // Probability of sampling from neighbor.
