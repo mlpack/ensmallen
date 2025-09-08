@@ -58,5 +58,8 @@ TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]",
     ENS_ALL_TEST_TYPES)
 {
   DemonAdam optimizer(0.5, 1, 0.9);
-  FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
+  FunctionTest<MatyasFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
