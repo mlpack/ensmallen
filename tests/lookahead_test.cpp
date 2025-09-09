@@ -22,7 +22,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
     ENS_ALL_TEST_TYPES)
 {
-  Lookahead<> optimizer(0.5, 5, 100000, 1e-5, NoDecay(), false, true);
+  Lookahead<> optimizer(2.5, 5, 100000, 1e-5, NoDecay(), false, true);
   optimizer.BaseOptimizer().StepSize() = 0.5;
   optimizer.BaseOptimizer().BatchSize() = 2;
   optimizer.BaseOptimizer().Beta1() = 0.7;
@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
 {
   AdaGrad adagrad(0.99, 1, 1e-8, 5, Tolerances<TestType>::Obj / 100, true);
   adagrad.ResetPolicy() = false;
-  Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000,
+  Lookahead<AdaGrad> optimizer(adagrad, 2.5, 5, 5000000,
       Tolerances<TestType>::Obj / 100, NoDecay(), false, true);
   FunctionTest<SphereFunction, TestType>(
       optimizer,
@@ -52,10 +52,10 @@ TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
 TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
     ENS_ALL_TEST_TYPES)
 {
-  Adam adam(0.008, 4, 0.9, 0.999, Tolerances<TestType>::Obj, 5,
+  Adam adam(0.032, 4, 0.9, 0.999, Tolerances<TestType>::Obj, 5,
       Tolerances<TestType>::Obj / 10);
   adam.ResetPolicy() = false;
-  Lookahead<Adam> optimizer(adam, 0.5, 25, 100000, Tolerances<TestType>::Obj,
+  Lookahead<Adam> optimizer(adam, 12.5, 25, 100000, Tolerances<TestType>::Obj,
       NoDecay(), false, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
       optimizer,
@@ -68,8 +68,8 @@ TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
 TEMPLATE_TEST_CASE("LookaheadAdam_SphereFunction", "[Lookahead]",
     coot::mat)
 {
-  Lookahead<> optimizer(0.5, 5, 100000, 1e-5, NoDecay(), false, true);
-  optimizer.BaseOptimizer().StepSize() = 0.1;
+  Lookahead<> optimizer(2.5, 5, 100000, 1e-5, NoDecay(), false, true);
+  optimizer.BaseOptimizer().StepSize() = 0.2;
   optimizer.BaseOptimizer().BatchSize() = 2;
   optimizer.BaseOptimizer().Beta1() = 0.7;
   optimizer.BaseOptimizer().Tolerance() = 1e-15;
@@ -82,7 +82,7 @@ TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
 {
   AdaGrad adagrad(0.99, 1, 1e-8, 5, 1e-15, true);
   adagrad.ResetPolicy() = false;
-  Lookahead<AdaGrad> optimizer(adagrad, 0.5, 5, 5000000, 1e-15, NoDecay(),
+  Lookahead<AdaGrad> optimizer(adagrad, 2.5, 5, 5000000, 1e-15, NoDecay(),
       false, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
 }
@@ -90,9 +90,9 @@ TEMPLATE_TEST_CASE("LookaheadAdaGrad_SphereFunction", "[Lookahead]",
 TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
     coot::mat)
 {
-  Adam adam(0.001, 32, 0.9, 0.999, 1e-8, 5, 1e-19);
+  Adam adam(0.032, 32, 0.9, 0.999, 1e-8, 5, 1e-19);
   adam.ResetPolicy() = false;
-  Lookahead<Adam> optimizer(adam, 0.5, 20, 100000, 1e-15, NoDecay(),
+  Lookahead<Adam> optimizer(adam, 10.0, 20, 100000, 1e-15, NoDecay(),
       false, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       optimizer, 0.003, 0.006);
@@ -103,7 +103,7 @@ TEMPLATE_TEST_CASE("LookaheadAdam_SimpleSphereFunction", "[Lookahead]",
 {
   Adam adam(0.001, 1, 0.9, 0.999, 1e-8, 5, 1e-19, false, true);
   adam.ResetPolicy() = false;
-  Lookahead<Adam> optimizer(adam, 0.5, 5, 100000, 1e-15, NoDecay(),
+  Lookahead<Adam> optimizer(adam, 2.5, 5, 100000, 1e-15, NoDecay(),
       false, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2, 3);
 }

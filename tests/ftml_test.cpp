@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("FTML_LogisticRegressionFunction", "[FTML]",
 
 TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.03, 2, 0.9, 0.999, Tolerances<TestType>::Obj / 100, 500000,
+  FTML optimizer(0.06, 2, 0.9, 0.999, Tolerances<TestType>::Obj / 100, 500000,
       Tolerances<TestType>::Obj / 100, true);
   FunctionTest<SphereFunction, TestType>(
       optimizer,
@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 
 TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.4, 2, 0.9, 0.999, Tolerances<TestType>::Obj, 100000,
+  FTML optimizer(0.8, 2, 0.9, 0.999, Tolerances<TestType>::Obj, 100000,
       Tolerances<TestType>::Obj / 100, true);
   FunctionTest<StyblinskiTangFunction, TestType>(
       optimizer,
@@ -63,14 +63,14 @@ TEMPLATE_TEST_CASE("FTML_LogisticRegressionFunction", "[FTML]",
 TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]",
     coot::mat, coot::fmat)
 {
-  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
+  FTML optimizer(0.002, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
 TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]",
     coot::mat, coot::fmat)
 {
-  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
+  FTML optimizer(0.002, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 

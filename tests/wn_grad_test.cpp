@@ -30,7 +30,7 @@ TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
 
 TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]", ENS_ALL_TEST_TYPES)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
   FunctionTest<SphereFunction, TestType>(
       optimizer,
       Tolerances<TestType>::LargeObj,
@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]", ENS_ALL_TEST_TYPES)
 TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]", ENS_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction, TestType>(
       optimizer,
       5 * Tolerances<TestType>::LargeObj,
@@ -62,14 +62,14 @@ TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
 TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]",
     coot::mat, coot::fmat)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
   FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
 
 TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]",
     coot::mat, coot::fmat)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.3, 0.03);
 }
 

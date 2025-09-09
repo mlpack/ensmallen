@@ -66,6 +66,24 @@ inline Lookahead<BaseOptimizerType, DecayPolicyType>::~Lookahead()
   instDecayPolicy.Clean();
 }
 
+template<typename BaseOptimizerType>
+size_t GetBatchSize(
+    const BaseOptimizerType& baseOptimizer,
+    const typename std::enable_if_t<traits::HasBatchSizeSignature<
+        BaseOptimizerType>::value>* = 0)
+{
+  return baseOptimizer.BatchSize();
+}
+
+template<typename BaseOptimizerType>
+size_t GetBatchSize(
+    const BaseOptimizerType& baseOptimizer,
+    const typename std::enable_if_t<!traits::HasBatchSizeSignature<
+        BaseOptimizerType>::value>* = 0)
+{
+  return 1;
+}
+
 //! Optimize the function (minimize).
 template<typename BaseOptimizerType, typename DecayPolicyType>
 template<typename SeparableFunctionType,
@@ -189,11 +207,9 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
     // Find the number of functions to use.
     const size_t numFunctions = f.NumFunctions();
 
-    size_t batchSize = 1;
     // Check if the optimizer implements the BatchSize() method and use the
     // parameter for the objective calculation.
-    if (traits::HasBatchSizeSignature<BaseOptimizerType>::value)
-      batchSize = baseOptimizer.BatchSize();
+    size_t batchSize = GetBatchSize(baseOptimizer);
 
     overallObjective = 0;
     for (size_t i = 0; i < numFunctions; i += batchSize)

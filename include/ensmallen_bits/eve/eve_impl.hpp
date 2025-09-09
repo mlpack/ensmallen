@@ -149,8 +149,14 @@ Eve::Optimize(SeparableFunctionType& function,
 
     lastObjective = objective;
 
+    // TODO: remove in ensmallen 4.0.0.
+    #if defined(ENS_OLD_SEPARABLE_STEP_BEHAVIOR)
     iterate -= ElemType(stepSize) / dt * (m / biasCorrection1) /
         (sqrt(v / biasCorrection2) + ElemType(epsilon));
+    #else
+    iterate -= (ElemType(stepSize) / (dt * effectiveBatchSize)) *
+        (m / biasCorrection1) / (sqrt(v / biasCorrection2) + ElemType(epsilon));
+    #endif
 
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 

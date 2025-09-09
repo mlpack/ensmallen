@@ -110,7 +110,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
   if (stepSize == 0)
     sigma(0) = transformationPolicy.InitialStepSize();
-  else 
+  else
     sigma(0) = ElemType(stepSize);
 
   const ElemType cs = 4 / ElemType(iterate.n_elem + 4);

@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
   // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SGDR<> sgdr(50, 2.0, batchSize, 0.005, 10000, 1e-3);
+    SGDR<> sgdr(50, 2.0, batchSize, 0.005 * batchSize, 10000, 1e-3);
     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(sgdr);
   }
 }
@@ -74,7 +74,7 @@ TEMPLATE_TEST_CASE("SGDR_LogisticRegressionFunction", "[SGDR]",
   // Run SGDR with a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    SGDR<> sgdr(50, 2.0, batchSize, 0.01 * batchSize, 10000, 1e-3);
     LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
         sgdr, 0.003, 0.006);
   }

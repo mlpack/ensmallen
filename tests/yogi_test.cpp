@@ -21,7 +21,7 @@ using namespace ens::test;
 
 TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]", ENS_ALL_TEST_TYPES)
 {
-  Yogi optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+  Yogi optimizer(1.0, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
   FunctionTest<SphereFunction, TestType>(
       optimizer,
       10 * Tolerances<TestType>::LargeObj,
@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]", ENS_ALL_TEST_TYPES)
 TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
     ENS_ALL_TEST_TYPES)
 {
-  Yogi optimizer;
+  Yogi optimizer(0.032);
   // For low-precision, we need to use a very small step size and some other
   // tuning to keep from diverging.
   size_t trials = 1;
@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
 TEMPLATE_TEST_CASE("Yogi_SphereFunction", "[Yogi]",
     coot::mat, coot::fmat)
 {
-  Yogi optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
+  Yogi optimizer(1.0, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
   FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
@@ -78,7 +78,7 @@ TEMPLATE_TEST_CASE("Yogi_McCormickFunction", "[Yogi]",
 TEMPLATE_TEST_CASE("Yogi_LogisticRegressionFunction", "[Yogi]",
     coot::mat)
 {
-  Yogi optimizer;
+  Yogi optimizer(0.032);
   LogisticRegressionFunctionTest<TestType>(optimizer, 0.003, 0.006);
 }
 

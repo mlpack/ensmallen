@@ -25,7 +25,7 @@ using namespace ens::test;
 
 TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
+  Adam optimizer(1.0, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
       false);
   FunctionTest<SphereFunction, TestType>(
       optimizer,
@@ -35,7 +35,7 @@ TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 
 TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
+  Adam optimizer(1.0, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
       false);
   FunctionTest<StyblinskiTangFunction, TestType>(
       optimizer,
@@ -96,7 +96,7 @@ TEMPLATE_TEST_CASE("AMSGrad_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 TEMPLATE_TEST_CASE("Adam_LogisticRegressionFunction", "[Adam]",
     ENS_ALL_TEST_TYPES)
 {
-  Adam adam;
+  Adam adam(0.032);
   LogisticRegressionFunctionTest<TestType>(adam);
 }
 
@@ -119,7 +119,7 @@ TEMPLATE_TEST_CASE("AMSGrad_LogisticRegressionFunction", "[Adam]",
 TEMPLATE_TEST_CASE("Nadam_LogisticRegressionFunction", "[Adam]",
     ENS_ALL_TEST_TYPES)
 {
-  Nadam nadam;
+  Nadam nadam(0.032);
   LogisticRegressionFunctionTest<TestType>(nadam);
 }
 
@@ -134,27 +134,27 @@ TEMPLATE_TEST_CASE("NadaMax_LogisticRegressionFunction", "[Adam]",
 TEMPLATE_TEST_CASE("OptimisticAdam_LogisticRegressionFunction", "[Adam]",
     ENS_ALL_TEST_TYPES)
 {
-  OptimisticAdam optimisticAdam;
+  OptimisticAdam optimisticAdam(0.032);
   LogisticRegressionFunctionTest<TestType>(optimisticAdam);
 }
 
 TEMPLATE_TEST_CASE("Padam_LogisticRegressionFunction", "[Adam]",
     ENS_ALL_TEST_TYPES)
 {
-  Padam optimizer;
+  Padam optimizer(0.032);
   LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
 TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
     ENS_ALL_TEST_TYPES)
 {
-  QHAdam optimizer;
+  QHAdam optimizer(0.032);
   LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
 TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.002, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj / 100,
+  Adam optimizer(0.004, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj / 100,
       1000000, Tolerances<TestType>::Obj / 100, false);
   FunctionTest<AckleyFunction, TestType>(
       optimizer,
@@ -164,7 +164,7 @@ TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 
 TEMPLATE_TEST_CASE("Adam_BealeFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.005, 2, 0.7, 0.999, 10 * Tolerances<TestType>::Obj, 50000,
+  Adam optimizer(0.01, 2, 0.7, 0.999, 10 * Tolerances<TestType>::Obj, 50000,
       1e-8, false);
   FunctionTest<BealeFunction, TestType>(
       optimizer,
@@ -175,7 +175,7 @@ TEMPLATE_TEST_CASE("Adam_BealeFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 // FP16 cannot be used for this test because the initial gradient is too large.
 TEMPLATE_TEST_CASE("Adam_GoldsteinPriceFunction", "[Adam]", ENS_TEST_TYPES)
 {
-  Adam optimizer(0.1, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj, 50000,
+  Adam optimizer(0.2, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj, 50000,
       1e-8, false);
   FunctionTest<GoldsteinPriceFunction, TestType>(
       optimizer,
@@ -185,7 +185,7 @@ TEMPLATE_TEST_CASE("Adam_GoldsteinPriceFunction", "[Adam]", ENS_TEST_TYPES)
 
 TEMPLATE_TEST_CASE("Adam_LevyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.0025, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
+  Adam optimizer(0.005, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
       false);
   FunctionTest<LevyFunctionN13, TestType>(
       optimizer,
@@ -196,7 +196,7 @@ TEMPLATE_TEST_CASE("Adam_LevyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 TEMPLATE_TEST_CASE("Adam_HimmelblauFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
   HimmelblauFunction f;
-  Adam optimizer(0.0025, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
+  Adam optimizer(0.005, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
       false);
 
   TestType coordinates = TestType("2.9; 1.9");
@@ -208,7 +208,7 @@ TEMPLATE_TEST_CASE("Adam_HimmelblauFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 
 TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.0025, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
+  Adam optimizer(0.005, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
       false);
   FunctionTest<ThreeHumpCamelFunction, TestType>(
       optimizer,
@@ -220,13 +220,13 @@ TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 
 TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", coot::mat, coot::fmat)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
+  Adam optimizer(1.0, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
   FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2);
 }
 
 TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", coot::mat)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
+  Adam optimizer(1.0, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
   FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
 }
 
@@ -259,51 +259,51 @@ TEMPLATE_TEST_CASE("Adam_BoothFunction", "[Adam]", coot::mat)
 
 TEMPLATE_TEST_CASE("Adam_LogisticRegressionFunction", "[Adam]", coot::mat)
 {
-  Adam adam;
+  Adam adam(0.032);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(adam);
 }
 
 TEMPLATE_TEST_CASE("AdaMax_LogisticRegressionFunction", "[Adam]", coot::mat)
 {
-  AdaMax adamax(0.01, 8, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
+  AdaMax adamax(0.08, 8, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(adamax);
 }
 
 TEMPLATE_TEST_CASE("AMSGrad_LogisticRegressionFunction", "[Adam]", coot::mat)
 {
-  AMSGrad amsgrad(0.01, 8, 0.9, 0.999, 1e-8, 50000, 1e-11, true);
+  AMSGrad amsgrad(0.08, 8, 0.9, 0.999, 1e-8, 50000, 1e-11, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(amsgrad);
 }
 
 TEMPLATE_TEST_CASE("Nadam_LogisticRegressionFunction", "[Adam]", coot::mat)
 {
-  Nadam nadam;
+  Nadam nadam(0.032);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(nadam);
 }
 
 TEMPLATE_TEST_CASE("NadaMax_LogisticRegressionFunction", "[Adam]", coot::mat)
 {
-  NadaMax nadamax(0.01, 8, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
+  NadaMax nadamax(0.08, 8, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(nadamax);
 }
 
 TEMPLATE_TEST_CASE("OptimisticAdam_LogisticRegressionFunction", "[Adam]",
     coot::mat)
 {
-  OptimisticAdam optimisticAdam;
+  OptimisticAdam optimisticAdam(0.032);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimisticAdam);
 }
 
 TEMPLATE_TEST_CASE("Padam_LogisticRegressionFunction", "[Adam]", coot::mat)
 {
-  Padam optimizer;
+  Padam optimizer(0.032);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer);
 }
 
 TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
     coot::mat, coot::fmat)
 {
-  QHAdam optimizer;
+  QHAdam optimizer(0.032);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer);
 }
 

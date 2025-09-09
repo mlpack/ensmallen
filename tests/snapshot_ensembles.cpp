@@ -68,7 +68,7 @@ TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction", "[SnapshotSGDR]",
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
   {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.005, 10000, 1e-3);
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.005 * batchSize, 10000, 1e-3);
     LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(sgdr);
   }
 }
@@ -81,7 +81,7 @@ TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction",
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
   for (size_t batchSize = 25; batchSize < 30; batchSize += 5)
   {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01 * batchSize, 10000, 1e-3);
     LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
         sgdr, 0.003, 0.006);
   }

@@ -75,7 +75,7 @@ void SGDLogisticRegressionTest()
   LogisticRegressionFunction<MatType> lr(data2, responses2, 0.5);
   lr.Shuffle();
 
-  StandardSGD sgd;
+  StandardSGD sgd(0.32);
   MatType coordinates = lr.GetInitialPoint();
   sgd.Optimize(lr, coordinates);
 

@@ -1,5 +1,10 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * SGD-like optimizers now all divide the step size by the batch size so that
+   step sizes don't need to be tuned in addition to batch sizes.  If you require
+   behavior from ensmallen 2, define the `ENS_OLD_SEPARABLE_STEP_BEHAVIOR` macro
+   before including `ensmallen.hpp`
+   ([#431](https://github.com/mlpack/ensmallen/pull/431)).
 
 ### ensmallen 2.22.2: "E-Bike Excitement"
 ###### 2025-04-30

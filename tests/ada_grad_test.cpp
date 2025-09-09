@@ -23,7 +23,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("AdaGrad_LogisticRegressionFunction", "[AdaGrad]",
     ENS_ALL_TEST_TYPES)
 {
-  AdaGrad adagrad(0.99, 32, 10 * Tolerances<TestType>::Obj, 500000,
+  AdaGrad adagrad(31.5, 32, 10 * Tolerances<TestType>::Obj, 500000,
       Tolerances<TestType>::Obj, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adagrad);
 }
@@ -33,7 +33,7 @@ TEMPLATE_TEST_CASE("AdaGrad_LogisticRegressionFunction", "[AdaGrad]",
 TEMPLATE_TEST_CASE("AdaGrad_LogisticRegressionFunction", "[AdaGrad]",
     coot::mat, coot::fmat)
 {
-  AdaGrad adagrad(0.99, 32, 1e-8, 500000, 1e-9, true);
+  AdaGrad adagrad(31.5, 32, 1e-8, 500000, 1e-9, true);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(adagrad);
 }
 

@@ -23,7 +23,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
     ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
-  RMSProp optimizer;
+  RMSProp optimizer(0.32);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
       optimizer,
       Tolerances<TestType>::LRTrainAcc,
@@ -38,7 +38,7 @@ TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
 TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
     coot::mat, coot::fmat)
 {
-  RMSProp optimizer;
+  RMSProp optimizer(0.32);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       optimizer, 0.003, 0.006);
 }
