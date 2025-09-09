@@ -13,7 +13,7 @@
 #define ENSMALLEN_TESTS_TEST_TYPES_HPP
 
 #if defined(ENS_HAVE_COOT)
-#define ENS_GPU_TEST_TYPES coot::mat, coot:fmat,
+#define ENS_GPU_TEST_TYPES coot::mat, coot::fmat,
 #else
 #define ENS_GPU_TEST_TYPES
 #endif
