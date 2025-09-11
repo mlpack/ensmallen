@@ -36,8 +36,9 @@ typename MatType::elem_type ThreeHumpCamelFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = (2 * std::pow(x1, 2)) - (1.05 * std::pow(x1, 4)) +
-      (std::pow(x1, 6) / 6) + (x1 * x2) + std::pow(x2, 2);
+  const ElemType objective = (2 * std::pow(x1, ElemType(2))) -
+      (ElemType(1.05) * std::pow(x1, ElemType(4))) +
+      (std::pow(x1, ElemType(6)) / 6) + (x1 * x2) + std::pow(x2, ElemType(2));
   return objective;
 }
 
@@ -62,7 +63,8 @@ inline void ThreeHumpCamelFunction::Gradient(const MatType& coordinates,
   const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
-  gradient(0) = std::pow(x1, 5) - (4.2 * std::pow(x1, 3)) + (4 * x1) + x2;
+  gradient(0) = std::pow(x1, ElemType(5)) -
+      (ElemType(4.2) * std::pow(x1, ElemType(3))) + (4 * x1) + x2;
   gradient(1) = x1 + (2 * x2);
 }
 

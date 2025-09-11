@@ -15,6 +15,7 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -34,42 +35,42 @@ template<typename ElemType>
 bool IsInBounds(
     const ElemType& value, const ElemType& low, const ElemType& high)
 {
-  ElemType roundoff = 0.1;
+  ElemType roundoff = ElemType(0.1);
   return !(value < (low - roundoff)) && !((high + roundoff) < value);
 }
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
-  SchafferFunctionN1<TestType> SCH;
+  SchafferFunctionN1<TestType> sch;
   const double lowerBound = -1000;
   const double upperBound = 1000;
-  const ElemType expectedLowerBound = 0.0;
-  const ElemType expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0;
+  const ElemType expectedUpperBound = 2;
 
   NSGA2 opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(sch.objectiveA) ObjectiveTypeA;
+  typedef decltype(sch.objectiveB) ObjectiveTypeB;
 
   // We allow a few trials in case of poor convergence.
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    TestType coords = SCH.GetInitialPoint();
+    TestType coords = sch.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      SCH.GetObjectives();
+      sch.GetObjectives();
 
     arma::Cube<ElemType> paretoFront, paretoSet;
     opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
-    for (
-      size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       ElemType val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(val, expectedLowerBound, expectedUpperBound))
@@ -90,35 +91,36 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
 }
 
 TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
   // This test can be a little flaky, so we try it a few times.
-  SchafferFunctionN1<TestType> SCH;
+  SchafferFunctionN1<TestType> sch;
   const arma::vec lowerBound = {-1000};
   const arma::vec upperBound = {1000};
-  const ElemType expectedLowerBound = 0.0;
-  const ElemType expectedUpperBound = 2.0;
+  const ElemType expectedLowerBound = 0;
+  const ElemType expectedUpperBound = 2;
 
   NSGA2 opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(sch.objectiveA) ObjectiveTypeA;
+  typedef decltype(sch.objectiveB) ObjectiveTypeB;
 
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    TestType coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+    TestType coords = sch.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
     arma::Cube<ElemType> paretoFront, paretoSet;
     opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       ElemType val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(val, expectedLowerBound, expectedUpperBound))
@@ -142,26 +144,26 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
 TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
-    arma::mat)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
-  FonsecaFlemingFunction<TestType> FON;
+  FonsecaFlemingFunction<TestType> fon;
 
   const double lowerBound = -4;
   const double upperBound = 4;
   const double tolerance = 1e-6;
   const double strength = 1e-4;
-  const ElemType expectedLowerBound = -1.0 / sqrt(3);
-  const ElemType expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = -1 / sqrt(ElemType(3));
+  const ElemType expectedUpperBound = 1 / sqrt(ElemType(3));
 
   NSGA2 opt(20, 300, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+  typedef decltype(fon.objectiveA) ObjectiveTypeA;
+  typedef decltype(fon.objectiveB) ObjectiveTypeB;
 
-  TestType coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+  TestType coords = fon.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
   arma::Cube<ElemType> paretoFront, paretoSet;
   opt.Optimize(objectives, coords, paretoFront, paretoSet);
@@ -191,26 +193,26 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
 TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
-  FonsecaFlemingFunction<TestType> FON;
+  FonsecaFlemingFunction<TestType> fon;
 
   const arma::vec lowerBound = {-4, -4, -4};
   const arma::vec upperBound = {4, 4, 4};
   const double tolerance = 1e-6;
   const double strength = 1e-4;
-  const ElemType expectedLowerBound = -1.0 / sqrt(3);
-  const ElemType expectedUpperBound = 1.0 / sqrt(3);
+  const ElemType expectedLowerBound = -1 / sqrt(ElemType(3));
+  const ElemType expectedUpperBound = 1 / sqrt(ElemType(3));
 
   NSGA2 opt(20, 300, 0.6, 0.3, strength, tolerance, lowerBound, upperBound);
 
-  typedef decltype(FON.objectiveA) ObjectiveTypeA;
-  typedef decltype(FON.objectiveB) ObjectiveTypeB;
+  typedef decltype(fon.objectiveA) ObjectiveTypeA;
+  typedef decltype(fon.objectiveB) ObjectiveTypeB;
 
-  TestType coords = FON.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = FON.GetObjectives();
+  TestType coords = fon.GetInitialPoint();
+  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
   arma::Cube<ElemType> paretoFront, paretoSet;
   opt.Optimize(objectives, coords, paretoFront, paretoSet);
@@ -243,10 +245,10 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
  */
-TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", arma::mat)
+TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_ALL_TEST_TYPES)
 {
   //! Parameters taken from original ZDT Paper.
-  ZDT1<TestType> ZDT_ONE(100);
+  ZDT1<TestType> zdt1(100);
   const double lowerBound = 0;
   const double upperBound = 1;
   const double tolerance = 1e-6;
@@ -257,17 +259,17 @@ TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", arma::mat)
   NSGA2 opt(100, 250, crossoverRate, mutationRate, strength,
       tolerance, lowerBound, upperBound);
 
-  typedef decltype(ZDT_ONE.objectiveF1) ObjectiveTypeA;
-  typedef decltype(ZDT_ONE.objectiveF2) ObjectiveTypeB;
+  typedef decltype(zdt1.objectiveF1) ObjectiveTypeA;
+  typedef decltype(zdt1.objectiveF2) ObjectiveTypeB;
 
-  TestType coords = ZDT_ONE.GetInitialPoint();
+  TestType coords = zdt1.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      ZDT_ONE.GetObjectives();
+      zdt1.GetObjectives();
 
   opt.Optimize(objectives, coords);
 
-  //! Refer the ZDT_ONE implementation for g objective implementation.
-  //! The optimal g value is taken from the docs of ZDT_ONE.
+  // Refer to the zdt1 implementation for g objective implementation.
+  // The optimal g value is taken from the docs of zdt1.
   size_t numVariables = coords.size();
   double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
   double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
@@ -282,7 +284,7 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
 {
   typedef typename TestType::elem_type ElemType;
 
-  SchafferFunctionN1<TestType> SCH;
+  SchafferFunctionN1<TestType> sch;
   const double lowerBound = -1000;
   const double upperBound = 1000;
   const ElemType expectedLowerBound = 0.0;
@@ -291,24 +293,24 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
   NSGA2 opt(
       20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(sch.objectiveA) ObjectiveTypeA;
+  typedef decltype(sch.objectiveB) ObjectiveTypeB;
 
   // We allow a few trials in case of poor convergence.
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    TestType coords = SCH.GetInitialPoint();
+    TestType coords = sch.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      SCH.GetObjectives();
+      sch.GetObjectives();
 
     coot::Cube<ElemType> paretoFront, paretoSet;
     opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
-    for (
-      size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       ElemType val = coot::as_scalar(paretoSet.slice(solutionIdx));
 
@@ -335,7 +337,7 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2Test]",
   typedef typename TestType::elem_type ElemType;
 
   // This test can be a little flaky, so we try it a few times.
-  SchafferFunctionN1<TestType> SCH;
+  SchafferFunctionN1<TestType> sch;
   arma::vec lowerBound(1);
   lowerBound(0) = -1000.0;
   arma::vec upperBound(1);
@@ -345,21 +347,22 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2Test]",
 
   NSGA2 opt(20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 
-  typedef decltype(SCH.objectiveA) ObjectiveTypeA;
-  typedef decltype(SCH.objectiveB) ObjectiveTypeB;
+  typedef decltype(sch.objectiveA) ObjectiveTypeA;
+  typedef decltype(sch.objectiveB) ObjectiveTypeB;
 
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    TestType coords = SCH.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
+    TestType coords = sch.GetInitialPoint();
+    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
     coot::Cube<ElemType> paretoFront, paretoSet;
     opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       ElemType val = coot::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(val, expectedLowerBound, expectedUpperBound))

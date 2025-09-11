@@ -36,8 +36,8 @@ typename MatType::elem_type EasomFunction::Evaluate(
   const ElemType x2 = coordinates(1);
 
   const ElemType objective = -std::cos(x1) * std::cos(x2) *
-      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
-                      std::pow(x2 - arma::datum::pi, 2));
+      std::exp(-1 * std::pow(x1 - arma::Datum<ElemType>::pi, ElemType(2)) -
+                    std::pow(x2 - arma::Datum<ElemType>::pi, ElemType(2)));
 
   return objective;
 }
@@ -63,20 +63,20 @@ inline void EasomFunction::Gradient(const MatType& coordinates,
   const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
-  gradient(0) = 2 * (x1 - arma::datum::pi) *
-      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
-                      std::pow(x2 - arma::datum::pi, 2)) *
+  gradient(0) = 2 * (x1 - arma::Datum<ElemType>::pi) *
+      std::exp(-1 * std::pow(x1 - arma::Datum<ElemType>::pi, ElemType(2)) -
+                    std::pow(x2 - arma::Datum<ElemType>::pi, ElemType(2))) *
       std::cos(x1) * std::cos(x2) +
-      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
-                      std::pow(x2 -  arma::datum::pi, 2)) *
+      std::exp(-1 * std::pow(x1 - arma::Datum<ElemType>::pi, ElemType(2)) -
+                    std::pow(x2 - arma::Datum<ElemType>::pi, ElemType(2))) *
       std::sin(x1) * std::cos(x2);
 
-  gradient(1) = 2 * (x2 - arma::datum::pi) *
-      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
-                      std::pow(x2 - arma::datum::pi, 2)) *
+  gradient(1) = 2 * (x2 - arma::Datum<ElemType>::pi) *
+      std::exp(-1 * std::pow(x1 - arma::Datum<ElemType>::pi, ElemType(2)) -
+                    std::pow(x2 - arma::Datum<ElemType>::pi, ElemType(2))) *
       std::cos(x1) * std::cos(x2) +
-      std::exp(-1.0 * std::pow(x1 - arma::datum::pi, 2) -
-                      std::pow(x2 - arma::datum::pi, 2)) *
+      std::exp(-1 * std::pow(x1 - arma::Datum<ElemType>::pi, ElemType(2)) -
+                    std::pow(x2 - arma::Datum<ElemType>::pi, ElemType(2))) *
       std::cos(x1) * std::sin(x2);
 }
 

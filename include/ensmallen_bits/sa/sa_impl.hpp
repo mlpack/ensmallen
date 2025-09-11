@@ -78,7 +78,7 @@ typename MatType::elem_type SA<CoolingScheduleType>::Optimize(
 
   BaseMatType accept(rows, cols);
   BaseMatType moveSize(rows, cols, GetFillType<BaseMatType>::none);
-  moveSize.fill(initMoveCoef);
+  moveSize.fill(ElemType(initMoveCoef));
 
   Callback::BeginOptimization(*this, function, iterate, callbacks...);
 
@@ -158,7 +158,7 @@ bool SA<CoolingScheduleType>::GenerateMove(
   // MoveControl() is derived for the Laplace distribution.
 
   // Sample from a Laplace distribution with scale parameter moveSize(idx).
-  const double unif = 2.0 * arma::randu() - 1.0;
+  const ElemType unif = 2 * arma::randu<ElemType>() - 1;
   const ElemType move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
       (-moveSize(idx) * std::log(1 - unif));
 
@@ -219,14 +219,15 @@ inline void SA<CoolingScheduleType>::MoveControl(const size_t nMoves,
                                                  MatType& accept,
                                                  MatType& moveSize)
 {
+  typedef typename MatType::elem_type ElemType;
+
   MatType target(accept.n_rows, accept.n_cols, GetFillType<MatType>::none);
-  target.fill(0.44);
+  target.fill(ElemType(0.44));
 
   moveSize = log(moveSize);
-  moveSize += gain * (accept / (double) nMoves - target);
+  moveSize += ElemType(gain) * (accept / (ElemType) nMoves - target);
   moveSize = exp(moveSize);
-  moveSize.clamp(-std::numeric_limits<typename MatType::elem_type>::max(),
-      maxMoveCoef);
+  moveSize.clamp(ElemType(-maxMoveCoef), ElemType(maxMoveCoef));
 
   accept.zeros();
 }

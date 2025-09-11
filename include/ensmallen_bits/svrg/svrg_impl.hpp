@@ -189,7 +189,7 @@ SVRGType<UpdatePolicyType, DecayPolicyType>::Optimize(
 
       f += effectiveBatchSize;
     }
-    fullGradient /= (double) numFunctions;
+    fullGradient /= (ElemType) numFunctions;
     if (terminate)
       break;
 

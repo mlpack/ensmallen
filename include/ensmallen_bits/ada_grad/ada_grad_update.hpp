@@ -64,6 +64,8 @@ class AdaGradUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD optimizer before the start of the
      * iteration update process. In AdaGrad update policy, squared gradient
@@ -76,10 +78,14 @@ class AdaGradUpdate
      */
     Policy(AdaGradUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
-        squaredGradient(rows, cols)
+        squaredGradient(rows, cols),
+        epsilon(ElemType(parent.epsilon))
     {
       // Initialize an empty matrix for sum of squares of parameter gradient.
       squaredGradient.zeros();
+      // Detect underflow for epsilon and try to address it.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -96,8 +102,8 @@ class AdaGradUpdate
                 const GradType& gradient)
     {
       squaredGradient += (gradient % gradient);
-      iterate -= (stepSize * gradient) / (sqrt(squaredGradient) +
-          parent.epsilon);
+      iterate -= (ElemType(stepSize) * gradient) / (sqrt(squaredGradient) +
+          epsilon);
     }
 
    private:
@@ -105,6 +111,8 @@ class AdaGradUpdate
     AdaGradUpdate& parent;
     // The squared gradient matrix.
     GradType squaredGradient;
+    // The epsilon value, converted to the element type of the matrix.
+    ElemType epsilon;
   };
 
  private:

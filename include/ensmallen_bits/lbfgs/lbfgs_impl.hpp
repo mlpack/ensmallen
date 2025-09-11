@@ -72,10 +72,11 @@ inline L_BFGS::L_BFGS(const size_t numBasis,
  * @param y Differences between the gradient and the old gradient matrix.
  */
 template<typename MatType, typename CubeType>
-double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
-                                   const MatType& gradient,
-                                   const CubeType& s,
-                                   const CubeType& y)
+typename MatType::elem_type L_BFGS::ChooseScalingFactor(
+    const size_t iterationNum,
+    const MatType& gradient,
+    const CubeType& s,
+    const CubeType& y)
 {
   typedef typename CubeType::elem_type ElemType;
   typedef typename ForwardType<CubeType>::bmat BaseMatType;
@@ -83,7 +84,7 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
   constexpr const ElemType tol =
       100 * std::numeric_limits<ElemType>::epsilon();
 
-  double scalingFactor;
+  ElemType scalingFactor;
   if (iterationNum > 0)
   {
     int previousPos = (iterationNum - 1) % numBasis;
@@ -93,14 +94,26 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
 
     const ElemType tmp = dot(yMat, yMat);
     const ElemType denom = (tmp >= tol) ? tmp : ElemType(1);
+    if (std::isinf(tmp))
+    {
+      Warn << "L-BFGS: squared 2-norm of gradient difference is infinite; "
+          << "try using a higher-precision element type or setting MaxStep() "
+          << "to a smaller value." << std::endl;
+    }
 
     scalingFactor = dot(sMat, yMat) / denom;
   }
   else
   {
     const ElemType tmp = norm(gradient, "fro");
+    if (std::isinf(tmp))
+    {
+      Warn << "L-BFGS: Frobenius norm of gradient difference is infinite; "
+          << "try using a higher-precision element type or an initial point "
+          << "with a smaller gradient value." << std::endl;
+    }
 
-    scalingFactor = (tmp >= tol) ? (1.0 / tmp) : 1.0;
+    scalingFactor = (tmp >= tol) ? (1 / tmp) : 1;
   }
 
   return scalingFactor;
@@ -119,7 +132,7 @@ double L_BFGS::ChooseScalingFactor(const size_t iterationNum,
 template<typename MatType, typename CubeType>
 void L_BFGS::SearchDirection(const MatType& gradient,
                              const size_t iterationNum,
-                             const double scalingFactor,
+                             const typename MatType::elem_type scalingFactor,
                              const CubeType& s,
                              const CubeType& y,
                              MatType& searchDirection)
@@ -147,8 +160,7 @@ void L_BFGS::SearchDirection(const MatType& gradient,
 
     const ElemType tmp = dot(yMat, sMat);
 
-    rho[iterationNum - i] = (tmp != ElemType(0)) ? (1.0 / tmp) :
-        ElemType(1);
+    rho[iterationNum - i] = (tmp != ElemType(0)) ? (1 / tmp) : 1;
 
     alpha[iterationNum - i] = rho[iterationNum - i] *
         dot(sMat, searchDirection);
@@ -161,7 +173,7 @@ void L_BFGS::SearchDirection(const MatType& gradient,
   for (size_t i = limit; i < iterationNum; i++)
   {
     int translatedPosition = i % numBasis;
-    double beta = rho[iterationNum - i - 1] *
+    ElemType beta = rho[iterationNum - i - 1] *
         dot(y.slice(translatedPosition), searchDirection);
     searchDirection += (alpha[iterationNum - i - 1] - beta) *
         s.slice(translatedPosition);
@@ -225,12 +237,16 @@ bool L_BFGS::LineSearch(FunctionType& function,
                         GradType& gradient,
                         MatType& newIterateTmp,
                         const GradType& searchDirection,
-                        double& finalStepSize,
+                        ElemType& finalStepSize,
                         CallbackTypes&... callbacks)
 {
   // Default first step size of 1.0.
-  double stepSize = 1.0;
-  finalStepSize = 0.0; // Set only when we take the step.
+  ElemType stepSize = 1;
+  if (stepSize > ElemType(maxStep))
+    stepSize = ElemType(maxStep);
+  if (stepSize < ElemType(minStep))
+    stepSize = ElemType(minStep);
+  finalStepSize = 0; // Set only when we take the step.
 
   // The initial linear term approximation in the direction of the
   // search direction.
@@ -238,10 +254,10 @@ bool L_BFGS::LineSearch(FunctionType& function,
       dot(gradient, searchDirection);
 
   // If it is not a descent direction, just report failure.
-  if ( (initialSearchDirectionDotGradient > 0.0)
+  if ( (initialSearchDirectionDotGradient > 0)
     || (std::isfinite(initialSearchDirectionDotGradient) == false) )
   {
-    Warn << "L-BFGS line search direction is not a descent direction "
+    Warn << "L-BFGS: line search direction is not a descent direction "
         << "(terminating)!" << std::endl;
     return false;
   }
@@ -250,17 +266,17 @@ bool L_BFGS::LineSearch(FunctionType& function,
   ElemType initialFunctionValue = functionValue;
 
   // Unit linear approximation to the decrease in function value.
-  ElemType linearApproxFunctionValueDecrease = armijoConstant *
+  ElemType linearApproxFunctionValueDecrease = ElemType(armijoConstant) *
       initialSearchDirectionDotGradient;
 
   // The number of iteration in the search.
   size_t numIterations = 0;
 
   // Armijo step size scaling factor for increase and decrease.
-  const double inc = 2.1;
-  const double dec = 0.5;
-  double width = 0;
-  double bestStepSize = 1.0;
+  const ElemType inc = ElemType(2.1);
+  const ElemType dec = ElemType(0.5);
+  ElemType width = 0;
+  ElemType bestStepSize = 1;
   ElemType bestObjective = std::numeric_limits<ElemType>::max();
 
   while (true)
@@ -273,7 +289,7 @@ bool L_BFGS::LineSearch(FunctionType& function,
 
     if (std::isnan(functionValue))
     {
-      Warn << "L-BFGS objective value is NaN (terminating)!" << std::endl;
+      Warn << "L-BFGS: objective value is NaN (terminating)!" << std::endl;
       return false;
     }
 
@@ -408,6 +424,7 @@ L_BFGS::Optimize(FunctionType& function,
         functionValue, gradient, callbacks...);
 
   ElemType prevFunctionValue;
+  Info << "L-BFGS: initial objective " << functionValue << "." << std::endl;
 
   // The main optimization loop.
   Callback::BeginOptimization(*this, f, iterate, callbacks...);
@@ -422,9 +439,10 @@ L_BFGS::Optimize(FunctionType& function,
     // least one descent step.
     // TODO: to speed this up, investigate use of arma::norm2est() in Armadillo
     // 12.4
-    if (norm(gradient, 2) < minGradientNorm)
+    const ElemType gradNorm = norm(gradient, 2);
+    if (gradNorm < minGradientNorm)
     {
-      Info << "L-BFGS gradient norm too small (terminating successfully)."
+      Info << "L-BFGS: gradient norm too small (terminating successfully)."
           << std::endl;
       break;
     }
@@ -432,24 +450,24 @@ L_BFGS::Optimize(FunctionType& function,
     // Break if the objective is not a number.
     if (std::isnan(functionValue))
     {
-      Warn << "L-BFGS terminated with objective " << functionValue << "; "
+      Warn << "L-BFGS: terminated with objective " << functionValue << "; "
           << "are the objective and gradient functions implemented correctly?"
           << std::endl;
       break;
     }
 
     // Choose the scaling factor.
-    double scalingFactor = ChooseScalingFactor(itNum, gradient, s, y);
-    if (scalingFactor == 0.0)
+    ElemType scalingFactor = ChooseScalingFactor(itNum, gradient, s, y);
+    if (scalingFactor == 0)
     {
-      Info << "L-BFGS scaling factor computed as 0 (terminating successfully)."
+      Info << "L-BFGS: scaling factor computed as 0 (terminating successfully)."
           << std::endl;
       break;
     }
 
     if (std::isfinite(scalingFactor) == false)
       {
-      Warn << "L-BFGS scaling factor is not finite.  Stopping optimization."
+      Warn << "L-BFGS: scaling factor is not finite.  Stopping optimization."
            << std::endl;
       break;
       }
@@ -462,31 +480,34 @@ L_BFGS::Optimize(FunctionType& function,
     oldIterate = iterate;
     oldGradient = gradient;
 
-    double stepSize; // Set by LineSearch().
+    ElemType stepSize; // Set by LineSearch().
     if (!LineSearch(f, functionValue, iterate, gradient, newIterateTmp,
         searchDirection, stepSize, callbacks...))
     {
-      Warn << "Line search failed.  Stopping optimization." << std::endl;
+      Warn << "L-BFGS: line search failed.  Stopping optimization."
+          << std::endl;
       break; // The line search failed; nothing else to try.
     }
 
     // It is possible that the difference between the two coordinates is zero.
     // In this case we terminate successfully.
-    if (stepSize == 0.0)
+    if (stepSize == 0)
     {
-      Info << "L-BFGS step size of 0 (terminating successfully)."
+      Info << "L-BFGS: computed step size of 0 (terminating successfully)."
           << std::endl;
       break;
     }
 
+    Info << "L-BFGS: iteration " << itNum << ", objective " << functionValue
+        << ", step size " << stepSize << "." << std::endl;
+
     // If we can't make progress on the gradient, then we'll also accept
     // a stable function value.
-    const double denom = std::max(
-        std::max(std::abs(prevFunctionValue), std::abs(functionValue)),
-        (ElemType) 1.0);
+    const ElemType denom = std::max(ElemType(1),
+        std::max(std::abs(prevFunctionValue), std::abs(functionValue)));
     if ((prevFunctionValue - functionValue) / denom <= factr)
     {
-      Info << "L-BFGS function value stable (terminating successfully)."
+      Info << "L-BFGS: function value stable (terminating successfully)."
           << std::endl;
       break;
     }

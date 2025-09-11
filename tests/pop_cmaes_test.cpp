@@ -16,16 +16,19 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
-#include <ensmallen_bits/cmaes/pop_cmaes.hpp>
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
+
+// We can't test CMA-ES on low-precision floating point types because it uses
+// chol() internally---which is not supported for low-precision.
 
 /**
  * Run IPOP-CMA-ES on the Rastrigin function and check whether the optimizer
  * converges to the expected solution within tolerance limits.
  */
-TEMPLATE_TEST_CASE("IPOP_CMAES_RastriginFunction", "[POPCMAES]", arma::mat)
+TEMPLATE_TEST_CASE("IPOP_CMAES_RastriginFunction", "[POPCMAES]", ENS_TEST_TYPES)
 {
   RastriginFunction f(2);
   BoundaryBoxConstraint<TestType> b(-10, 10);
@@ -35,7 +38,7 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_RastriginFunction", "[POPCMAES]", arma::mat)
     b, // transformationPolicy
     32, // batchSize
     10000, // maxIterations
-    1e-8, // tolerance
+    Tolerances<TestType>::Obj, // tolerance
     FullSelection(), // selectionPolicy
     3.72, // stepSize
     2.0, // populationFactor
@@ -47,14 +50,16 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_RastriginFunction", "[POPCMAES]", arma::mat)
   TestType expectedResult = f.GetFinalPoint<TestType>();
 
   MultipleTrialOptimizerTest(f, ipopcmaes, initialPoint, expectedResult,
-      0.5, f.GetFinalObjective(), 0.5, 5);
+      Tolerances<TestType>::LargeCoord, f.GetFinalObjective(),
+      Tolerances<TestType>::LargeObj, 5);
 }
 
 /**
  * Run IPOP-CMA-ES on the Rosenbrock function and check whether the optimizer
  * converges to the expected solution within tolerance limits.
  */
-TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]", arma::mat)
+TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]",
+    ENS_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(0, 2);
 
@@ -63,7 +68,7 @@ TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]", arma::mat)
     b, // transformationPolicy
     32, // batchSize
     10000, // maxIterations
-    1e-8, // tolerance
+    Tolerances<TestType>::Obj, // tolerance
     FullSelection(), // selectionPolicy
     0.25, // stepSize
     1.5, // populationFactor
@@ -71,7 +76,10 @@ TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]", arma::mat)
     1e6 // maxFunctionEvaluations
   );
 
-  FunctionTest<RosenbrockFunction>(bipopcmaes, 0.5, 0.5);
+  FunctionTest<RosenbrockFunction, TestType>(bipopcmaes,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord,
+      3);
 }
 
 /**
@@ -79,12 +87,13 @@ TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]", arma::mat)
  * make sure the results are acceptable.
  */
 TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
-    arma::mat)
+    ENS_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   IPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
       0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTest<TestType>(cmaes,
+      Tolerances<TestType>::LRTrainAcc, Tolerances<TestType>::LRTestAcc, 5);
 }
 
 /**
@@ -92,12 +101,13 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
  * make sure the results are acceptable.
  */
 TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
-    arma::mat)
+    ENS_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
       0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTest<TestType>(cmaes,
+      Tolerances<TestType>::LRTrainAcc, Tolerances<TestType>::LRTestAcc, 5);
 }
 
 #ifdef ENS_HAVE_COOT

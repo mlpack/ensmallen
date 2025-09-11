@@ -12,6 +12,7 @@
 
 #include <ensmallen.hpp>
 #include "catch.hpp"
+#include "test_types.hpp"
 
 using namespace arma;
 using namespace ens;
@@ -20,39 +21,21 @@ using namespace ens::test;
 /**
  * Simple test of Line Search with TestFuncFW function.
  */
-TEST_CASE("FuncFWTest", "[LineSearchTest]")
+TEMPLATE_TEST_CASE("FuncFWTest", "[LineSearch]", ENS_TEST_TYPES)
 {
-  mat x1 = zeros<mat>(3, 1);
-  mat x2 = { 0.2, 0.4, 0.6 };
+  typedef typename TestType::elem_type ElemType;
+
+  TestType x1 = zeros<TestType>(3, 1);
+  TestType x2 = { 0.2, 0.4, 0.6 };
   x2 = x2.t();
 
-  TestFuncFW<> f;
+  TestFuncFW<TestType> f;
   LineSearch s;
 
-  double result = s.Optimize(f, x1, x2);
+  ElemType result = s.Optimize(f, x1, x2);
 
-  REQUIRE(result == Approx(0.0).margin(1e-10));
-  REQUIRE((x2(0) - 0.1) == Approx(0.0).margin(1e-10));
-  REQUIRE((x2(1) - 0.2) == Approx(0.0).margin(1e-10));
-  REQUIRE((x2(2) - 0.3) == Approx(0.0).margin(1e-10));
-}
-
-/**
- * Simple test of Line Search with TestFuncFW function.  Use arma::fmat.
- */
-TEST_CASE("FuncFWFMatTest", "[LineSearchTest]")
-{
-  fmat x1 = zeros<fmat>(3, 1);
-  fmat x2 = { 0.2, 0.4, 0.6 };
-  x2 = x2.t();
-
-  TestFuncFW<arma::fmat> f;
-  LineSearch s;
-
-  float result = s.Optimize(f, x1, x2);
-
-  REQUIRE(result == Approx(0.0).margin(1e-5));
-  REQUIRE((x2(0) - 0.1) == Approx(0.0).margin(1e-5));
-  REQUIRE((x2(1) - 0.2) == Approx(0.0).margin(1e-5));
-  REQUIRE((x2(2) - 0.3) == Approx(0.0).margin(1e-5));
+  REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Obj));
+  REQUIRE((x2(0) - 0.1) == Approx(0.0).margin(Tolerances<TestType>::Coord));
+  REQUIRE((x2(1) - 0.2) == Approx(0.0).margin(Tolerances<TestType>::Coord));
+  REQUIRE((x2(2) - 0.3) == Approx(0.0).margin(Tolerances<TestType>::Coord));
 }

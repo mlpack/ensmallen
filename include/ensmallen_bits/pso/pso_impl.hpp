@@ -129,7 +129,8 @@ typename InputMatType::elem_type PSOType<
   // in the PSO method.
   // The performanceHorizon will be updated with the best particle
   // in a FIFO manner.
-  for (size_t i = 0; (i < horizonSize) && !terminate; i++)
+  size_t iteration = 0;
+  for (size_t i = 0; (i < horizonSize) && !terminate; i++, iteration++)
   {
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; (j < numParticles) && !terminate; j++)
@@ -171,15 +172,25 @@ typename InputMatType::elem_type PSOType<
 
     // Append bestFitness to performanceHorizon.
     performanceHorizon.push(bestFitness);
+
+    Info << "PSO: iteration " << iteration << ": objective " << bestFitness
+        << "." << std::endl;
   }
 
   // Run the remaining iterations of PSO.
-  for (size_t i = 0; (i < maxIterations - horizonSize) && !terminate; i++)
+  for (size_t i = 0; (i < maxIterations - horizonSize) && !terminate; i++,
+       iteration++)
   {
     // Check if there is any improvement over the horizon.
     // If there is no significant improvement, terminate.
     if (performanceHorizon.front() - performanceHorizon.back() < impTolerance)
+    {
+      Info << "PSO: improvement over horizon ("
+          << (performanceHorizon.front() - performanceHorizon.back())
+          << ") below convergence tolerance (" << impTolerance
+          << "); optimization complete." << std::endl;
       break;
+    }
 
     // Calculate fitness and evaluate personal best.
     for (size_t j = 0; (j < numParticles) && !terminate; j++)
@@ -221,6 +232,9 @@ typename InputMatType::elem_type PSOType<
     performanceHorizon.pop();
     // Push most recent bestFitness to performanceHorizon.
     performanceHorizon.push(bestFitness);
+
+    Info << "PSO: iteration " << iteration << ": objective " << bestFitness
+        << "." << std::endl;
   }
 
   // Copy results back.

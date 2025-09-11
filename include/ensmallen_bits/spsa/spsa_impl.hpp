@@ -91,8 +91,8 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     lastObjective = overallObjective;
 
     // Gain sequences.
-    const ElemType akLocal = stepSize / std::pow(k + 1 + ak, alpha);
-    const ElemType ck = evaluationStepSize / std::pow(k + 1, gamma);
+    const ElemType akLocal = ElemType(stepSize / std::pow(k + 1 + ak, alpha));
+    const ElemType ck = ElemType(evaluationStepSize / std::pow(k + 1, gamma));
 
     // Choose stochastic directions.
     spVector = randi<BaseMatType>(

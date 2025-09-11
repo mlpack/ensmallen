@@ -1,5 +1,11 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * SGD-like optimizers now all divide the step size by the batch size so that
+   step sizes don't need to be tuned in addition to batch sizes.  If you require
+   behavior from ensmallen 2, define the `ENS_OLD_SEPARABLE_STEP_BEHAVIOR` macro
+   before including `ensmallen.hpp`
+   ([#431](https://github.com/mlpack/ensmallen/pull/431)).
+
  * Remove deprecated `ParetoFront()` and `ParetoSet()` from multi-objective
    optimizers ([#435](https://github.com/mlpack/ensmallen/pull/435)).  Instead,
    pass objects to the `Optimize()` function; see the documentation for each
