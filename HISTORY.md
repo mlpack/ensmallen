@@ -1,5 +1,13 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Remove deprecated `ParetoFront()` and `ParetoSet()` from multi-objective
+   optimizers ([#435](https://github.com/mlpack/ensmallen/pull/435)).  Instead,
+   pass objects to the `Optimize()` function; see the documentation for each
+   multi-objective optimizer for more details.
+
+ * Remove deprecated constructor for `ActiveCMAES` that takes `lowerBound` and
+   `upperBound` ([#435](https://github.com/mlpack/ensmallen/pull/435)).
+   Instead, pass an instantiated `BoundaryBoxConstraint` to the constructor.
 
 ### ensmallen 2.22.2: "E-Bike Excitement"
 ###### 2025-04-30
