@@ -224,7 +224,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      1e-10, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
   );
@@ -341,7 +341,7 @@ TEST_CASE("MOEADDIRICHLETMAF3Test", "[MOEAD]")
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      1e-10, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
     );
@@ -401,7 +401,7 @@ TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      1e-10, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
     );
@@ -461,7 +461,7 @@ TEST_CASE("MOEADDIRICHLETMAF4Test", "[MOEAD]")
       20, // Perturbation index.
       0.5, // Differential weight.
       2, // Max childrens to replace parents.
-      1E-10, // epsilon.
+      1e-10, // epsilon.
       lowerBound, // Lower bound.
       upperBound // Upper bound.
     );
@@ -483,14 +483,14 @@ TEST_CASE("MOEADDIRICHLETMAF4Test", "[MOEAD]")
     bool allInRange = true;
     for (size_t j = 2; j < MAF_FOUR.GetNumVariables(); j++)
     {
-    	double val = arma::as_scalar(solution(j));
-     if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.2))
+      double val = arma::as_scalar(solution(j));
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.2))
       {
         allInRange = false;
         break;
       }
     }
-    if(allInRange)
+    if (allInRange)
     {
       success = true;
       break;
