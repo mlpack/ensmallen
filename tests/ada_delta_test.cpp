@@ -30,17 +30,5 @@ TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
   // Use a large epsilon if we are using FP16, to avoid underflow in the first
   // iterations.
   AdaDelta adaDelta(32.0, 32, 0.95, sizeof(ElemType) == 2 ? 1e-4 : 1e-6);
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adaDelta);
+  LogisticRegressionFunctionTest<TestType>(adaDelta);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
-    coot::mat, coot::fmat)
-{
-  AdaDelta adaDelta(32.0);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      adaDelta, 0.003, 0.006, 1);
-}
-
-#endif

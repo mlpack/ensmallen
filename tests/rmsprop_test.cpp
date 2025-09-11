@@ -24,7 +24,7 @@ TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
     ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   RMSProp optimizer(0.32);
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+  LogisticRegressionFunctionTest<TestType>(
       optimizer,
       Tolerances<TestType>::LRTrainAcc,
       Tolerances<TestType>::LRTestAcc,
@@ -32,16 +32,3 @@ TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
       // (gradient or update is too large).
       (sizeof(typename TestType::elem_type) < 4) ? 5 : 1);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
-    coot::mat, coot::fmat)
-{
-  RMSProp optimizer(0.32);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.003, 0.006);
-}
-
-#endif
-

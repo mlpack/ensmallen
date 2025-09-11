@@ -30,7 +30,7 @@ using namespace ens::test;
  * threads.
  */
 TEMPLATE_TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   // The batch size for this test should be chosen according to the threads
   // available on the system. If the update does not touch each datapoint, the
@@ -54,7 +54,7 @@ TEMPLATE_TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]",
 }
 
 TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
-    "[ParallelSGD]", ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    "[ParallelSGD]", ENS_ALL_CPU_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   // Loop over several variants.
   for (size_t i = 10; i < 30; i += 5)

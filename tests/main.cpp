@@ -21,7 +21,7 @@
 
 int main(int argc, char** argv)
 {
-  #if defined(ENS_HAVE_COOT)
+  #ifdef ENS_HAVE_COOT
   coot::get_rt().init(true);
   #endif
 

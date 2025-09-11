@@ -75,23 +75,3 @@ TEMPLATE_TEST_CASE("AMSBound_SphereFunctionSpMatDenseGradient", "[AdaBound]",
   REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
   REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("AdaBound_SphereFunction", "[AdaBound]",
-    coot::mat, coot::fmat)
-{
-  AdaBound optimizer(0.002, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
-      1e-3, false);
-  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
-}
-
-TEMPLATE_TEST_CASE("AMSBoundSphereFunctionTest", "[AdaBound]",
-    coot::mat, coot::fmat)
-{
-  AMSBound optimizer(0.002, 2, 0.1, 1e-3, 0.9, 0.999, 1e-8, 500000,
-      1e-3, false);
-  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
-}
-
-#endif

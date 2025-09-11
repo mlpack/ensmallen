@@ -27,26 +27,10 @@ TEMPLATE_TEST_CASE("SPALeRASGD_LogisticRegressionFunction", "[SPALeRASGD]",
   for (size_t batchSize = 30; batchSize < 50; batchSize += 5)
   {
     SPALeRASGD<> optimizer(0.05 / batchSize, batchSize, 10000, 1e-4);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+    LogisticRegressionFunctionTest<TestType>(
         optimizer,
         5 * Tolerances<TestType>::LRTrainAcc,
         4 * Tolerances<TestType>::LRTestAcc,
         3);
   }
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("SPALeRASGD_LogisticRegressionFunction", "[SPALeRASGD]",
-    coot::mat, coot::fmat)
-{
-  // Run SPALeRA SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 50; batchSize += 5)
-  {
-    SPALeRASGD<> optimizer(0.05 / batchSize, batchSize, 10000, 1e-4);
-    LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-        optimizer, 0.015, 0.024, 3);
-  }
-}
-
-#endif

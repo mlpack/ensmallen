@@ -26,7 +26,7 @@ using namespace ens::test;
  * make sure the results are acceptable.
  */
 TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
@@ -62,26 +62,3 @@ TEMPLATE_TEST_CASE("ApproxCMAES_EmptyTransformationLogisticRegressionFunction",
       cmaes(0, EmptyTransformation<TestType>(), 16, 500, 1e-3);
   LogisticRegressionFunctionTest<TestType>(cmaes, 0.01, 0.02, 5);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", coot::mat)
-{
-  BoundaryBoxConstraint<TestType> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
-      0, b, 32, 500, 1e-3);
-  cmaes.StepSize() = 0.6;
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      cmaes, 0.003, 0.006, 5);
-}
-
-TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]", coot::fmat)
-{
-  BoundaryBoxConstraint<TestType> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
-      120, b, 32, 500, 1e-3);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      cmaes, 0.01, 0.02, 5);
-}
-
-#endif

@@ -30,16 +30,3 @@ TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
       Tolerances<TestType>::LRTestAcc,
       10);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
-    coot::mat, coot::fmat)
-{
-  DemonSGD optimizer(32.0 /* huge step size needed! */, 16, 0.9, 1000000, 1e-9,
-      true, true, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.003, 0.006, 10);
-}
-
-#endif
