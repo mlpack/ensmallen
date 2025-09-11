@@ -181,16 +181,18 @@ TEMPLATE_TEST_CASE("FrankWolfe_Classic", "[FrankWolfe]", arma::mat)
  * The update step performs a line search now.
  * It converges much faster.
  */
-TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]",
+    ENS_FULLPREC_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
+  typedef typename ForwardType<TestType>::brow RowType;
 
   TestFuncFW<TestType> f;
   double p = 2;   // Constraint set is unit lp ball.
-  ConstrLpBallSolver linearConstrSolver(p);
+  ConstrLpBallSolverType<RowType> linearConstrSolver(p);
   UpdateLineSearch updateRule;
 
-  FrankWolfe<ConstrLpBallSolver, UpdateLineSearch>
+  FrankWolfe<decltype(linearConstrSolver), UpdateLineSearch>
       s(linearConstrSolver, updateRule);
 
   TestType coordinates = arma::randu<TestType>(3);

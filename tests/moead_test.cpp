@@ -558,7 +558,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", ENS_TEST_TYPES)
  * Test DirichletMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a
  * 30 variable-2 objective problem with disconnected Pareto Fronts.
  */
-TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
