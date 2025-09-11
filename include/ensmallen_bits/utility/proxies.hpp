@@ -22,17 +22,17 @@ struct ForwardTypeHelper;
 /**
  * Helper struct that based on the data type `MatType` forwards to the
  * corresponding `coot` or `arma` types. For example:
- * If `MatType` is an `arma::mat`, then `ForwardType<MatType>::bmat` will be an
- * `arma::Mat<ElemType>`.
- * If `MatType` is a `coot::mat`, then `ForwardType<MatType>::bmat` will be a
- * `coot::Mat<ElemType>`.
+ * If `MatType` is an `arma::mat`, then `ForwardType<MatType, ElemType>::bmat`
+ * will be an `arma::Mat<ElemType>`.
+ * If `MatType` is a `coot::mat`, then `ForwardType<MatType, ElemType>::bmat`
+ * will be a `coot::Mat<ElemType>`.
  *
  * This allows for writing generic code that can work with both `coot` and
  * `arma` types without needing to know which library is being used at compile
  * time.
  */
-template<typename MatType>
-struct ForwardType : public ForwardTypeHelper<typename MatType::elem_type,
+template<typename MatType, typename ElemType = typename MatType::elem_type>
+struct ForwardType : public ForwardTypeHelper<ElemType,
                                               IsCootType<MatType>::value> { };
 
 // Internal helper class that sets the typedefs to Armadillo types if Bandicoot

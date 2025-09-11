@@ -28,12 +28,16 @@ typename MatType::elem_type McCormickFunction::Evaluate(
     const size_t /* begin */,
     const size_t /* batchSize */) const
 {
-  // For convenience; we assume these temporaries will be optimized out.
-  const typename MatType::elem_type x1 = coordinates(0);
-  const typename MatType::elem_type x2 = coordinates(1);
+  typedef typename MatType::elem_type ElemType;
 
-  const typename MatType::elem_type objective = std::sin(x1 + x2) +
-      std::pow(x1 - x2, 2) - 1.5 * x1 + 2.5 * x2 + 1;
+  // For convenience; we assume these temporaries will be optimized out.
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
+
+  const ElemType objective = std::sin(x1 + x2) +
+      std::pow(x1 - x2, ElemType(2)) -
+      ElemType(1.5) * x1 +
+      ElemType(2.5) * x2 + 1;
 
   return objective;
 }
@@ -51,13 +55,15 @@ inline void McCormickFunction::Gradient(const MatType& coordinates,
                                         GradType& gradient,
                                         const size_t /* batchSize */) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   // For convenience; we assume these temporaries will be optimized out.
-  const typename MatType::elem_type x1 = coordinates(0);
-  const typename MatType::elem_type x2 = coordinates(1);
+  const ElemType x1 = coordinates(0);
+  const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
-  gradient(0) = std::cos(x1 + x2) + 2 * x1 - 2 * x2 - 1.5;
-  gradient(1) = std::cos(x1 + x2) - 2 * x1 + 2 * x2 + 2.5;
+  gradient(0) = std::cos(x1 + x2) + 2 * x1 - 2 * x2 - ElemType(1.5);
+  gradient(1) = std::cos(x1 + x2) - 2 * x1 + 2 * x2 + ElemType(2.5);
 }
 
 template<typename MatType, typename GradType>

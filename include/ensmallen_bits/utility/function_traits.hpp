@@ -27,9 +27,24 @@ template<typename MatType> struct IsCootType;
  */
 template<typename MatType>
 struct IsMatrixType
-{ 
+{
   const static bool value = IsArmaType<MatType>::value ||
                             IsCootType<MatType>::value;
+};
+
+/**
+ * If value == true, then MatType is an Armadillo sparse matrix.
+ */
+template<typename MatType>
+struct IsSparseMatrixType
+{
+  const static bool value = false;
+};
+
+template<typename eT>
+struct IsSparseMatrixType<arma::SpMat<eT>>
+{
+  const static bool value = true;
 };
 
 /**

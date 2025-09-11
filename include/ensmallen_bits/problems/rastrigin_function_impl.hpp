@@ -18,10 +18,10 @@
 namespace ens {
 namespace test {
 
-inline RastriginFunction::RastriginFunction(const size_t n) :
+inline RastriginFunction::RastriginFunction(
+    const size_t n) :
     n(n),
-    visitationOrder(arma::linspace<arma::Row<size_t> >(0, n - 1, n))
-
+    visitationOrder(linspace<arma::Col<size_t>>(0, n - 1, n))
 {
   initialPoint.set_size(n, 1);
   initialPoint.fill(-3);
@@ -29,12 +29,12 @@ inline RastriginFunction::RastriginFunction(const size_t n) :
 
 inline void RastriginFunction::Shuffle()
 {
-  visitationOrder = arma::shuffle(
-      arma::linspace<arma::Row<size_t> >(0, n - 1, n));
+  visitationOrder = shuffle(linspace<arma::Col<size_t>>(0, n - 1, n));
 }
 
 template<typename MatType>
-typename MatType::elem_type RastriginFunction::Evaluate(
+typename MatType::elem_type
+RastriginFunction::Evaluate(
     const MatType& coordinates,
     const size_t begin,
     const size_t batchSize) const
@@ -42,44 +42,48 @@ typename MatType::elem_type RastriginFunction::Evaluate(
   // Convenience typedef.
   typedef typename MatType::elem_type ElemType;
 
-  ElemType objective = 0.0;
+  ElemType objective = 0;
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    objective += std::pow(coordinates(p), 2) - 10.0 *
-        std::cos(2.0 * arma::datum::pi * coordinates(p));
+    objective += std::pow(coordinates(p), ElemType(2)) - 10 *
+        std::cos(2 * arma::Datum<ElemType>::pi * coordinates(p));
   }
-  objective += 10.0 * n;
+  objective += 10 * n;
 
   return objective;
 }
 
 template<typename MatType>
-typename MatType::elem_type RastriginFunction::Evaluate(
-    const MatType& coordinates) const
+typename MatType::elem_type
+RastriginFunction::Evaluate(const MatType& coordinates) const
 {
   return Evaluate(coordinates, 0, NumFunctions());
 }
 
 template<typename MatType, typename GradType>
-inline void RastriginFunction::Gradient(const MatType& coordinates,
-                                        const size_t begin,
-                                        GradType& gradient,
-                                        const size_t batchSize) const
+void RastriginFunction::Gradient(
+    const MatType& coordinates,
+    const size_t begin,
+    GradType& gradient,
+    const size_t batchSize) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   gradient.zeros(n, 1);
 
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient(p) += (10.0 * n) * (2 * (coordinates(p) + 10.0 * arma::datum::pi *
-        std::sin(2.0 * arma::datum::pi * coordinates(p))));
+    gradient(p) += (10 * n) * (2 * (coordinates(p) +
+        10 * arma::Datum<ElemType>::pi *
+        std::sin(2 * arma::Datum<ElemType>::pi * coordinates(p))));
   }
 }
 
 template<typename MatType, typename GradType>
-inline void RastriginFunction::Gradient(const MatType& coordinates,
-                                        GradType& gradient)
+inline void RastriginFunction::Gradient(
+    const MatType& coordinates, GradType& gradient)
 {
   Gradient(coordinates, 0, gradient, NumFunctions());
 }

@@ -90,6 +90,7 @@ class DemonAdamUpdate
     // Convenient typedef.
     typedef typename UpdateRule::template Policy<MatType, GradType>
         InstUpdateRuleType;
+    typedef typename MatType::elem_type ElemType;
 
     /**
      * This constructor is called by the SGD Optimize() method before the start
@@ -103,7 +104,8 @@ class DemonAdamUpdate
            const size_t rows,
            const size_t cols) :
       parent(parent),
-      adamUpdate(new InstUpdateRuleType(parent.adamUpdateInst, rows, cols))
+      adamUpdate(new InstUpdateRuleType(parent.adamUpdateInst, rows, cols)),
+      betaInit(ElemType(parent.betaInit))
     { /* Nothing to do here */ }
 
     /**
@@ -125,12 +127,12 @@ class DemonAdamUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      double decayRate = 1;
+      ElemType decayRate = 1;
       if (parent.t > 0)
-        decayRate = 1.0 - (double) parent.t / (double) parent.T;
+        decayRate = 1 - ElemType((double) parent.t / (double) parent.T);
 
-      const double betaDecay = parent.betaInit * decayRate;
-      const double beta = betaDecay / ((1.0 - parent.betaInit) + betaDecay);
+      const ElemType betaDecay = betaInit * decayRate;
+      const ElemType beta = betaDecay / ((1 - betaInit) + betaDecay);
 
       // Perform the update.
       iterate *= beta;
@@ -143,11 +145,14 @@ class DemonAdamUpdate
     }
 
    private:
-    //! Instantiated parent object.
+    // Instantiated parent object.
     DemonAdamUpdate<UpdateRule>& parent;
 
-    //! The update policy.
+    // The update policy.
     InstUpdateRuleType* adamUpdate;
+
+    // Optimizer parameter converted to the element type of the optimization.
+    ElemType betaInit;
   };
 
  private:

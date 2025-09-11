@@ -35,11 +35,12 @@ typename MatType::elem_type LevyFunctionN13::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = std::pow(std::sin(3 * arma::datum::pi * x1), 2) +
-      (std::pow(x1 - 1, 2) * (1 + std::pow(
-          std::sin(3 * arma::datum::pi * x2), 2))) +
-      (std::pow(x2 - 1, 2) * (1 + std::pow(
-          std::sin(2 * arma::datum::pi * x2), 2)));
+  const ElemType objective =
+      std::pow(std::sin(3 * arma::Datum<ElemType>::pi * x1), ElemType(2)) +
+      (std::pow(x1 - 1, ElemType(2)) * (1 + std::pow(
+          std::sin(3 * arma::Datum<ElemType>::pi * x2), ElemType(2)))) +
+      (std::pow(x2 - 1, ElemType(2)) * (1 + std::pow(
+          std::sin(2 * arma::Datum<ElemType>::pi * x2), ElemType(2))));
 
   return objective;
 }
@@ -65,15 +66,19 @@ inline void LevyFunctionN13::Gradient(const MatType& coordinates,
   const ElemType x2 = coordinates(1);
   gradient.set_size(2, 1);
 
-  gradient(0) = (2 * x1 - 2) * (std::pow(std::sin(3 * arma::datum::pi * x2),
-      2) + 1) + 6 * arma::datum::pi * std::sin(3 * arma::datum::pi * x1) *
-      std::cos(3 * arma::datum::pi * x1);
+  gradient(0) = (2 * x1 - 2) *
+      (std::pow(std::sin(3 * arma::Datum<ElemType>::pi * x2), ElemType(2)) +
+      1) + 6 * arma::Datum<ElemType>::pi *
+      std::sin(3 * arma::Datum<ElemType>::pi * x1) *
+      std::cos(3 * arma::Datum<ElemType>::pi * x1);
 
-  gradient(1) = 6 * arma::datum::pi * std::pow(x1 - 1, 2) * std::sin(3 *
-      arma::datum::pi * x2) * std::cos(3 * arma::datum::pi * x2) +
-      4 * arma::datum::pi * std::pow(x2 - 1, 2) * std::sin(2 *
-      arma::datum::pi * x2) * std::cos(2 * arma::datum::pi * x2) +
-      (2 * x2 - 2) * (std::pow(std::sin(2 * arma::datum::pi * x2), 2) + 1);
+  gradient(1) = 6 * arma::Datum<ElemType>::pi * std::pow(x1 - 1, ElemType(2)) *
+      std::sin(3 * arma::Datum<ElemType>::pi * x2) *
+      std::cos(3 * arma::Datum<ElemType>::pi * x2) +
+      4 * arma::Datum<ElemType>::pi * std::pow(x2 - 1, ElemType(2)) *
+      std::sin(2 * arma::Datum<ElemType>::pi * x2) *
+      std::cos(2 * arma::Datum<ElemType>::pi * x2) + (2 * x2 - 2) *
+      (std::pow(std::sin(2 * arma::Datum<ElemType>::pi * x2), ElemType(2)) + 1);
 }
 
 template<typename MatType, typename GradType>

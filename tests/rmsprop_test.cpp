@@ -15,16 +15,22 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
-    arma::mat, arma::fmat, arma::sp_mat)
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
-  RMSProp optimizer;
+  RMSProp optimizer(0.32);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      optimizer, 0.003, 0.006);
+      optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      // Low-precision may need a few trials because it sometimes diverges
+      // (gradient or update is too large).
+      (sizeof(typename TestType::elem_type) < 4) ? 5 : 1);
 }
 
 #ifdef ENS_HAVE_COOT
@@ -32,7 +38,7 @@ TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
 TEMPLATE_TEST_CASE("RMSProp_LogisticRegressionFunction", "[RMSProp]",
     coot::mat, coot::fmat)
 {
-  RMSProp optimizer;
+  RMSProp optimizer(0.32);
   LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
       optimizer, 0.003, 0.006);
 }

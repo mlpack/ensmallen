@@ -64,8 +64,8 @@ AugLagrangianFunction<LagrangianFunction, VecType>::Evaluate(
   {
     ElemType constraint = function.EvaluateConstraint(i, coordinates);
 
-    objective += (-lambda[i] * constraint) +
-        sigma * std::pow(constraint, 2) / 2;
+    objective += (-ElemType(lambda[i]) * constraint) +
+        ElemType(sigma) * std::pow(constraint, ElemType(2)) / 2;
   }
 
   return objective;
@@ -78,6 +78,8 @@ void AugLagrangianFunction<LagrangianFunction, VecType>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   // The augmented Lagrangian's gradient is evaluted as
   // f'(x) + {(-lambda_i + sigma * c_i(x)) * c'_i(x)} for all constraints
   gradient.zeros();
@@ -90,7 +92,7 @@ void AugLagrangianFunction<LagrangianFunction, VecType>::Gradient(
 
     // Now calculate scaling factor and add to existing gradient.
     GradType tmpGradient;
-    tmpGradient = (-lambda[i] + sigma *
+    tmpGradient = (ElemType(-lambda[i]) + ElemType(sigma) *
         function.EvaluateConstraint(i, coordinates)) * constraintGradient;
     gradient += tmpGradient;
   }

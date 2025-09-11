@@ -94,6 +94,8 @@ class QHAdamUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -104,10 +106,19 @@ class QHAdamUpdate
      */
     Policy(QHAdamUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
+        v1(ElemType(parent.v1)),
+        v2(ElemType(parent.v2)),
         iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
+
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -125,34 +136,39 @@ class QHAdamUpdate
       ++iteration;
 
       // And update the iterate.
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * (gradient % gradient);
+      v *= beta2;
+      v += (1 - beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
 
       GradType mDash = m / biasCorrection1;
       GradType vDash = v / biasCorrection2;
 
       // QHAdam recovers Adam when v2 = v1 = 1.
-      iterate -= stepSize *
-          ((((1 - parent.v1) * gradient) + parent.v1 * mDash) /
-           (sqrt(((1 - parent.v2) * square(gradient)) +
-            parent.v2 * vDash) + parent.epsilon));
+      iterate -= ElemType(stepSize) * ((((1 - v1) * gradient) + v1 * mDash) /
+           (sqrt(((1 - v2) * square(gradient)) + v2 * vDash) + epsilon));
     }
 
    private:
-    //! Instantiated parent object.
+    // Instantiated parent object.
     QHAdamUpdate& parent;
 
-    //! The exponential moving average of gradient values.
+    // The exponential moving average of gradient values.
     GradType m;
 
     // The exponential moving average of squared gradient values.
     GradType v;
+
+    // Parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
+    ElemType v1;
+    ElemType v2;
 
     // The number of iterations.
     size_t iteration;

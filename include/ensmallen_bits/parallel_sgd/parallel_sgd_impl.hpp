@@ -132,7 +132,7 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
       return overallObjective;
     }
 
-    // Get the stepsize for this iteration
+    // Get the stepsize for this iteration.
     double stepSize = decayPolicy.StepSize(i);
 
     // Shuffle for uniform sampling of functions by each thread.
@@ -180,7 +180,9 @@ typename MatType::elem_type>::type ParallelSGD<DecayPolicyType>::Optimize(
 
             // Call out to utility function to use the right type of OpenMP
             // lock.
-            UpdateLocation(iterate, row, i, stepSize * value);
+            // TODO: if batch size support > 1 is added, `stepSize` will need to
+            // be updated here.
+            UpdateLocation(iterate, row, i, ElemType(stepSize) * value);
           }
         }
         terminate |= Callback::StepTaken(*this, function, iterate,

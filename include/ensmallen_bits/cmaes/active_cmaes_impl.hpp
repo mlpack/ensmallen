@@ -108,21 +108,23 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  if (stepSize == 0) 
+  if (stepSize == 0)
     sigma(0) = transformationPolicy.InitialStepSize();
-  else 
-    sigma(0) = stepSize;
+  else
+    sigma(0) = ElemType(stepSize);
 
-  const ElemType cs = 4.0 / (iterate.n_elem + 4);
+  const ElemType cs = 4 / ElemType(iterate.n_elem + 4);
   const ElemType ds = 1 + cs;
-  const ElemType enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
-      (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
+  const ElemType enn = std::sqrt(iterate.n_elem) * (1 -
+      1 / ElemType(4 * iterate.n_elem) +
+      1 / ElemType(21 * std::pow(iterate.n_elem, 2)));
 
   // Covariance update parameters. Cumulation for distribution.
   const ElemType cc = cs;
-  const ElemType ccov = 2.0 / std::pow((iterate.n_elem + std::sqrt(2)), 2);
-  const ElemType beta = (4.0 * mu - 2.0) / (std::pow((iterate.n_elem + 12), 2) 
-      + 4 * mu);
+  const ElemType ccov = 2 /
+      std::pow((iterate.n_elem + std::sqrt(ElemType(2))), ElemType(2));
+  const ElemType beta = (4 * mu - 2) /
+      (std::pow(ElemType(iterate.n_elem + 12), ElemType(2)) + 4 * mu);
 
   std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows,
       iterate.n_cols));

@@ -14,17 +14,16 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-
 TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
-  AdaBelief adaBelief;
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
-      adaBelief, 0.003, 0.006, 1);
+  AdaBelief adaBelief(0.032);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adaBelief);
 }
 
 #ifdef ENS_HAVE_COOT
@@ -32,9 +31,8 @@ TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
 TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
     coot::mat, coot::fmat)
 {
-  AdaBelief adaBelief;
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      adaBelief, 0.003, 0.006, 1);
+  AdaBelief adaBelief(0.032);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(adaBelief);
 }
 
 #endif
