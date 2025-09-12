@@ -86,34 +86,6 @@ class CMAES
         double stepSize = 0);
 
   /**
-   * Construct the CMA-ES optimizer with the given function and parameters
-   * (including lower and upper bounds). The defaults here are not necessarily
-   * good for the given problem, so it is suggested that the values used be
-   * tailored to the task at hand.  The maximum number of iterations refers to
-   * the maximum number of points that are processed (i.e., one iteration
-   * equals one point; one iteration does not equal one pass over the dataset).
-   *
-   * @param lambda The population size(0 use the default size).
-   * @param lowerBound Lower bound of decision variables.
-   * @param upperBound Upper bound of decision variables.
-   * @param batchSize Batch size to use for the objective calculation.
-   * @param maxIterations Maximum number of iterations allowed(0 means no
-      limit).
-   * @param tolerance Maximum absolute tolerance to terminate algorithm.
-   * @param selectionPolicy Instantiated selection policy used to calculate the
-   * objective.
-   * @param stepSize Starting sigma/step size (will be modified).
-   */
-  CMAES(const size_t lambda = 0,
-        const double lowerBound = -10,
-        const double upperBound = 10,
-        const size_t batchSize = 32,
-        const size_t maxIterations = 1000,
-        const double tolerance = 1e-5,
-        const SelectionPolicyType& selectionPolicy = SelectionPolicyType(),
-        double stepSize = 0);
-
-  /**
    * Optimize the given function using CMA-ES. The given starting point will be
    * modified to store the finishing point of the algorithm, and the final
    * objective value is returned.

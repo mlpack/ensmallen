@@ -228,30 +228,6 @@ class MOEAD {
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  /**
-   * Retrieve the Pareto optimal points in variable space. This returns an
-   * empty cube until `Optimize()` has been called. Note that this function is
-   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
-   * instead.
-   */
-  template<typename MatType = arma::cube>
-  [[deprecated("use Optimize() instead")]] MatType ParetoSet() const
-  {
-    return conv_to<MatType>::from(paretoSet);
-  }
-
-  /**
-   * Retrieve the best front (the Pareto frontier). This returns an empty cube
-   * until `Optimize()` has been called. Note that this function is
-   * deprecated and will be removed in ensmallen 3.x!  Use `Optimize()`
-   * instead.
-   */
-  template<typename MatType = arma::cube>
-  [[deprecated("use Optimize() instead")]] MatType ParetoFront() const
-  {
-    return conv_to<MatType>::from(paretoFront);
-  }
-
   //! Get the weight initialization policy.
   const InitPolicyType& InitPolicy() const { return initPolicy; }
   //! Modify the weight initialization policy.

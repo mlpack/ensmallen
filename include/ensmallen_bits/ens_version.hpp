@@ -12,16 +12,16 @@
 
 // This follows the Semantic Versioning pattern defined in https://semver.org/.
 
-#define ENS_VERSION_MAJOR 2
+#define ENS_VERSION_MAJOR 3
 // The minor version is two digits so regular numerical comparisons of versions
 // work right.  The first minor version of a release is always 10.
-#define ENS_VERSION_MINOR 22
-#define ENS_VERSION_PATCH 2
+#define ENS_VERSION_MINOR 10
+#define ENS_VERSION_PATCH 0
 // If this is a release candidate, it will be reflected in the version name
 // (i.e. the version name will be "RC1", "RC2", etc.).  Otherwise the version
 // name will typically be a seemingly arbitrary set of words that does not
 // contain the capitalized string "RC".
-#define ENS_VERSION_NAME "E-Bike Excitement"
+#define ENS_VERSION_NAME "RC1"
 // Incorporate the date the version was released.
 #define ENS_VERSION_YEAR "2025"
 #define ENS_VERSION_MONTH "04"
