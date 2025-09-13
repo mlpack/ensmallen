@@ -167,6 +167,25 @@ void MultipleTrialOptimizerTest(
 }
 
 template<typename FunctionType,
+         typename MatType = arma::mat,
+         typename OptimizerType = ens::StandardSGD>
+void FunctionTest(OptimizerType& optimizer,
+                  FunctionType& f,
+                  const typename MatType::elem_type objectiveMargin =
+                      typename MatType::elem_type(0.01),
+                  const typename MatType::elem_type coordinateMargin =
+                      typename MatType::elem_type(0.001),
+                  const size_t trials = 1)
+{
+  MatType initialPoint = f.template GetInitialPoint<MatType>();
+  MatType expectedResult = f.template GetFinalPoint<MatType>();
+
+  MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedResult,
+      coordinateMargin, typename MatType::elem_type(f.GetFinalObjective()),
+      objectiveMargin, trials);
+}
+
+template<typename FunctionType,
         typename MatType = arma::mat,
         typename OptimizerType = ens::StandardSGD>
 void FunctionTest(OptimizerType& optimizer,

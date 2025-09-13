@@ -1,51 +1,34 @@
 /**
- * @file himmelblau_function.hpp
- * @author Suryoday Basak
+ * @file quadratic_function.hpp
+ * @author Ryan Curtin
  *
- * Definition of the Himmelblau function.
+ * Definition of QuadraticFunction, f(x) = | x |.
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
  * the terms of the 3-clause BSD license.  You should have received a copy of
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_PROBLEMS_HIMMELBLAU_FUNCTION_HPP
-#define ENSMALLEN_PROBLEMS_HIMMELBLAU_FUNCTION_HPP
+#ifndef ENSMALLEN_PROBLEMS_QUADRATIC_FUNCTION_HPP
+#define ENSMALLEN_PROBLEMS_QUADRATIC_FUNCTION_HPP
 
 namespace ens {
 namespace test {
 
 /**
- * The Himmelblau function, defined by
+ * The quadratic value function in one dimension, defined by
  *
  * \f[
- * f(x_1,x_2) = (x_1^2 + y - 11)^2 + (x_1 + x_2^2 - 7)^2
+ * f(x) = x^2
  * \f]
  *
- * This should optimize to f(x) = 0, at x = [3.0,  2.0], or
- *          x = [-2.805118, 3.131312], or
- *          x = [-3.779310, -3.283186], or
- *          x = [3.584428, -1.848126].
- *
- * For more information, please refer to:
- *
- * @code
- * @book{davidmautnerhimmelblau1972,
- *   Author      = {David Mautner Himmelblau},
- *   title       = {Applied Nonlinear Programming},
- *   description = {Applied Nonlinear Programming (Book, 1972)},
- *   publisher   = {McGraw-Hill},
- *   year        = {1972},
- *   month       = {jun},
- *   isbn        = {0070289212},
- * }
- * @endcode
+ * This should optimize to f(x) = 0, at x = [0].
  */
-class HimmelblauFunction
+class QuadraticFunction
 {
  public:
-  //! Initialize the HimmelblauFunction.
-  HimmelblauFunction();
+  //! Initialize the QuadraticFunction.
+  QuadraticFunction();
 
   /**
    * Shuffle the order of function visitation. This may be called by the
@@ -55,16 +38,6 @@ class HimmelblauFunction
 
   //! Return 1 (the number of functions).
   size_t NumFunctions() const { return 1; }
-
-  //! Get the starting point.
-  template<typename MatType = arma::mat>
-  MatType GetInitialPoint() const { return MatType("5; -5"); }
-
-  //! Get the final point of the optimization.
-  template<typename MatType = arma::mat>
-  MatType GetFinalPoint() const { return MatType("3; 2"); }
-
-  double GetFinalObjective() const { return 0.0; }
 
   /**
    * Evaluate a function for a particular batch-size.
@@ -108,12 +81,28 @@ class HimmelblauFunction
    */
   template<typename MatType, typename GradType>
   void Gradient(const MatType& coordinates, GradType& gradient);
+
+  // Note: GetInitialPoint(), GetFinalPoint(), and GetFinalObjective() are not
+  // required for using ensmallen to optimize this function!  They are
+  // specifically used as a convenience just for ensmallen's testing
+  // infrastructure.
+
+  //! Get the starting point.
+  template<typename MatType = arma::mat>
+  MatType GetInitialPoint() const { return MatType("20.0"); }
+
+  //! Get the final point.
+  template<typename MatType = arma::mat>
+  MatType GetFinalPoint() const { return MatType("0.0"); }
+
+  //! Get the final objective.
+  double GetFinalObjective() const { return 0.0; }
 };
 
 } // namespace test
 } // namespace ens
 
 // Include implementation.
-#include "himmelblau_function_impl.hpp"
+#include "quadratic_function_impl.hpp"
 
-#endif // ENSMALLEN_PROBLEMS_HIMMELBLAU_FUNCTION_HPP
+#endif // ENSMALLEN_PROBLEMS_BEALE_FUNCTION_HPP

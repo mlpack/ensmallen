@@ -36,7 +36,7 @@ namespace test {
 class LevyFunctionN13
 {
  public:
-  //! Initialize the BealeFunction.
+  //! Initialize the LevyFunctionN13 object.
   LevyFunctionN13();
 
   /**
