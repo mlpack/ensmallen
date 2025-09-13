@@ -104,17 +104,17 @@ class RastriginFunction
   // infrastructure.
 
   //! Get the starting point.
-  template<typename MatType = arma::mat>
+  template<typename MatType>
   MatType GetInitialPoint() const
   {
-    return arma::conv_to<MatType>::from(initialPoint);
+    return conv_to<MatType>::from(initialPoint);
   }
 
   //! Get the final point.
-  template<typename MatType = arma::mat>
+  template<typename MatType>
   MatType GetFinalPoint() const
   {
-    return arma::zeros<MatType>(initialPoint.n_rows, initialPoint.n_cols);
+    return zeros<MatType>(initialPoint.n_rows, initialPoint.n_cols);
   }
 
   //! Get the final objective.
@@ -125,7 +125,7 @@ class RastriginFunction
   size_t n;
 
   //! For shuffling.
-  arma::Row<size_t> visitationOrder;
+  arma::Col<size_t> visitationOrder;
 
   //! Initial starting point.
   arma::mat initialPoint;

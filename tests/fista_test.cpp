@@ -18,46 +18,49 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("FISTASimpleTest", "[FISTA]", float, double)
+TEMPLATE_TEST_CASE("FISTASimpleTest", "[FISTA]", ENS_ALL_TEST_TYPES)
 {
-  typedef TestType eT;
-
   // Make sure that we can get a decent result with no g(x) constraint.
   FISTA<L1Penalty> fista(L1Penalty(0.0), 10000);
   GeneralizedRosenbrockFunction f(20);
-  FunctionTest<GeneralizedRosenbrockFunction, Mat<eT>>(fista, f, 0.02, 0.002);
+  FunctionTest<GeneralizedRosenbrockFunction, TestType>(fista, f,
+      100 * Tolerances<TestType>::Obj,
+      100 * Tolerances<TestType>::Coord);
 }
 
-TEMPLATE_TEST_CASE("FISTASphereFunctionTest", "[FISTA]", fmat, mat, sp_mat)
+TEMPLATE_TEST_CASE("FISTASphereFunctionTest", "[FISTA]", ENS_ALL_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
-  typedef TestType MatType;
-
   // The sphere function optimizes to the origin anyway, so the L1 penalty does
   // not affect the result.
   FISTA<L1Penalty> fista(L1Penalty(0.1));
-  FunctionTest<SphereFunction, MatType>(fista);
+  FunctionTest<SphereFunction, TestType>(fista,
+      Tolerances<TestType>::Obj,
+      Tolerances<TestType>::Coord);
 }
 
 // FISTA struggles with the fmat type on the Wood function, so we skip it.  Even
 // a regular matrix can be a bit tricky so we allow a few trials.
-TEMPLATE_TEST_CASE("FISTAWoodFunctionTest", "[FISTA]", mat)
+TEMPLATE_TEST_CASE("FISTAWoodFunctionTest", "[FISTA]", arma::mat)
 {
-  typedef TestType MatType;
-
   // Set the L1 constraint to be sufficiently large that the final solution is
   // just inside the ball.
   FISTA<L1Constraint> fista(L1Constraint(5.2));
   fista.Tolerance() = 1e-10;
-  FunctionTest<WoodFunction, MatType>(fista, 0.01, 0.001, 3);
+  FunctionTest<WoodFunction, TestType>(fista,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord,
+      3);
 }
 
-TEMPLATE_TEST_CASE("FISTALogisticRegressionFunctionTest", "[FISTA]", fmat,
-    mat)
+TEMPLATE_TEST_CASE("FISTALogisticRegressionFunctionTest", "[FISTA]",
+    ENS_ALL_TEST_TYPES)
 {
-  typedef TestType MatType;
-
   FISTA<L1Penalty> fista(L1Penalty(0.001));
-  LogisticRegressionFunctionTest<MatType>(fista, 0.05, 0.05, 5);
+  LogisticRegressionFunctionTest<TestType>(fista,
+      5 * Tolerances<TestType>::LargeObj,
+      5 * Tolerances<TestType>::LargeCoord,
+      5);
 }
 
 // Check that maxIterations does anything.

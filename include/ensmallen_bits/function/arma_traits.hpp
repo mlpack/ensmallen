@@ -122,6 +122,17 @@ template<>
 inline void RequireDenseFloatingPointType<arma::mat>() { }
 template<>
 inline void RequireDenseFloatingPointType<arma::fmat>() { }
+#if defined(ARMA_HAVE_FP16)
+template<>
+inline void RequireDenseFloatingPointType<arma::hmat>() { }
+#endif
+
+#ifdef ENS_HAVE_COOT
+template<>
+inline void RequireDenseFloatingPointType<coot::mat>() { }
+template<>
+inline void RequireDenseFloatingPointType<coot::fmat>() { }
+#endif
 
 template<typename MatType>
 void RequireFloatingPointType()
@@ -144,6 +155,19 @@ template<>
 inline void RequireFloatingPointType<arma::sp_mat>() { }
 template<>
 inline void RequireFloatingPointType<arma::sp_fmat>() { }
+#if defined(ARMA_HAVE_FP16)
+template<>
+inline void RequireFloatingPointType<arma::hmat>() { }
+template<>
+inline void RequireFloatingPointType<arma::sp_hmat>() { }
+#endif
+
+#ifdef ENS_HAVE_COOT
+template<>
+inline void RequireFloatingPointType<coot::mat>() { }
+template<>
+inline void RequireFloatingPointType<coot::fmat>() { }
+#endif
 
 /**
  * Require that the internal element type of the matrix type and gradient type

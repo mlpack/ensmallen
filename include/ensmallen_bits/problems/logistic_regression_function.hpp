@@ -26,29 +26,34 @@ template<typename MatType = arma::mat>
 class LogisticRegressionFunction
 {
  public:
+  typedef typename MatType::elem_type ElemType;
+  typedef typename ForwardType<MatType>::brow BaseRowType;
+
+  template<typename LabelsType>
   LogisticRegressionFunction(MatType& predictors,
-                             arma::Row<size_t>& responses,
+                             LabelsType& responses,
                              const double lambda = 0);
 
+  template<typename LabelsType>
   LogisticRegressionFunction(MatType& predictors,
-                             arma::Row<size_t>& responses,
+                             LabelsType& responses,
                              MatType& initialPoint,
                              const double lambda = 0);
 
-  //! Return the initial point for the optimization.
+  // Return the initial point for the optimization.
   const MatType& InitialPoint() const { return initialPoint; }
-  //! Modify the initial point for the optimization.
+  // Modify the initial point for the optimization.
   MatType& InitialPoint() { return initialPoint; }
 
-  //! Return the regularization parameter (lambda).
-  const double& Lambda() const { return lambda; }
-  //! Modify the regularization parameter (lambda).
-  double& Lambda() { return lambda; }
+  // Return the regularization parameter (lambda).
+  const ElemType& Lambda() const { return lambda; }
+  // Modify the regularization parameter (lambda).
+  ElemType& Lambda() { return lambda; }
 
-  //! Return the matrix of predictors.
+  // Return the matrix of predictors.
   const MatType& Predictors() const { return predictors; }
   //! Return the vector of responses.
-  const arma::Row<size_t>& Responses() const { return responses; }
+  const BaseRowType& Responses() const { return responses; }
 
   /**
    * Shuffle the order of function visitation.  This may be called by the
@@ -67,7 +72,7 @@ class LogisticRegressionFunction
    *
    * @param parameters Vector of logistic regression parameters.
    */
-  typename MatType::elem_type Evaluate(const MatType& parameters) const;
+  ElemType Evaluate(const MatType& parameters) const;
 
   /**
    * Evaluate the logistic regression log-likelihood function with the given
@@ -86,9 +91,9 @@ class LogisticRegressionFunction
    * @param batchSize Number of points to be passed at a time to use for
    *     objective function evaluation.
    */
-  typename MatType::elem_type Evaluate(const MatType& parameters,
-                                       const size_t begin,
-                                       const size_t batchSize = 1) const;
+  ElemType Evaluate(const MatType& parameters,
+                    const size_t begin,
+                    const size_t batchSize = 1) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -130,33 +135,34 @@ class LogisticRegressionFunction
    *    be computed.
    * @param gradient Sparse matrix to output gradient into.
    */
+  template<typename GradType>
   void PartialGradient(const MatType& parameters,
                        const size_t j,
-                       arma::sp_mat& gradient) const;
+                       GradType& gradient) const;
 
   /**
    * Evaluate the objective function and gradient of the logistic regression
    * log-likelihood function simultaneously with the given parameters.
    */
   template<typename GradType>
-  typename MatType::elem_type EvaluateWithGradient(
+  ElemType EvaluateWithGradient(
       const MatType& parameters,
       GradType& gradient) const;
 
   template<typename GradType>
-  typename MatType::elem_type EvaluateWithGradient(
+  ElemType EvaluateWithGradient(
       const MatType& parameters,
       const size_t begin,
       GradType& gradient,
       const size_t batchSize = 1) const;
 
-  //! Return the initial point for the optimization.
+  // Return the initial point for the optimization.
   const MatType& GetInitialPoint() const { return initialPoint; }
 
-  //! Return the number of separable functions (the number of predictor points).
+  // Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }
 
-  //! Return the number of features(add 1 for the intercept term).
+  // Return the number of features(add 1 for the intercept term).
   size_t NumFeatures() const { return predictors.n_rows + 1; }
 
   /**
@@ -174,8 +180,9 @@ class LogisticRegressionFunction
    * @param decisionBoundary Decision boundary (default 0.5).
    * @return Percentage of responses that are predicted correctly.
    */
+  template<typename LabelsType>
   double ComputeAccuracy(const MatType& predictors,
-                         const arma::Row<size_t>& responses,
+                         const LabelsType& responses,
                          const MatType& parameters,
                          const double decisionBoundary = 0.5) const;
 
@@ -191,22 +198,25 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param decisionBoundary Decision boundary (default 0.5).
    */
+  template<typename LabelsType>
   void Classify(const MatType& dataset,
-                arma::Row<size_t>& labels,
+                LabelsType& labels,
                 const MatType& parameters,
                 const double decisionBoundary = 0.5) const;
 
  private:
-  //! The initial point, from which to start the optimization.
+  // The initial point, from which to start the optimization.
   MatType initialPoint;
-  //! The matrix of data points (predictors).  This is an alias until shuffling
-  //! is done.
+  // The matrix of data points (predictors).  This is an alias until shuffling
+  // is done.
   MatType& predictors;
-  //! The vector of responses to the input data points.  This is an alias until
-  //! shuffling is done.
-  arma::Row<size_t>& responses;
-  //! The regularization parameter for L2-regularization.
-  double lambda;
+  // The vector of responses to the input data points, converted to the same
+  // type as the data.
+  BaseRowType responses;
+  // The regularization parameter for L2-regularization.
+  ElemType lambda;
+  // This is lambda/2, cached for convenience.
+  ElemType halfLambda;
 };
 
 // Convenience typedefs.

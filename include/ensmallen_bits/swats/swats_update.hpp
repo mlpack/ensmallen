@@ -96,6 +96,8 @@ class SWATSUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.
@@ -106,12 +108,21 @@ class SWATSUpdate
      */
     Policy(SWATSUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
-        iteration(0)
+        iteration(0),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
+        sgdRate(ElemType(parent.sgdRate)),
+        sgdLambda(ElemType(parent.sgdLambda))
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
 
       sgdV.zeros(rows, cols);
+
+      // Attempt to catch underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -132,35 +143,37 @@ class SWATSUpdate
       {
         // Note we reuse the exponential moving average parameter here instead
         // of introducing a new parameter (sgdV) as done in the paper.
-        v *= parent.beta1;
+        v *= beta1;
         v += gradient;
 
-        iterate -= (1 - parent.beta1) * parent.sgdRate * v;
+        iterate -= (1 - beta1) * sgdRate * v;
         return;
       }
 
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * (gradient % gradient);
+      v *= beta2;
+      v += (1 - beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
 
-      GradType delta = stepSize * m / biasCorrection1 /
-          (arma::sqrt(v / biasCorrection2) + parent.epsilon);
+      GradType delta = ElemType(stepSize) * m / biasCorrection1 /
+          (sqrt(v / biasCorrection2) + epsilon);
       iterate -= delta;
 
-      const double deltaGradient = arma::dot(delta, gradient);
-      if (deltaGradient != 0)
+      const ElemType deltaGradient = dot(delta, gradient);
+      if (deltaGradient != ElemType(0))
       {
-        const double rate = arma::dot(delta, delta) / deltaGradient;
-        parent.sgdLambda = parent.beta2 * parent.sgdLambda +
-            (1 - parent.beta2) * rate;
-        parent.sgdRate = parent.sgdLambda / biasCorrection2;
+        const ElemType rate = dot(delta, delta) / deltaGradient;
+        sgdLambda = beta2 * sgdLambda + (1 - beta2) * rate;
+        sgdRate = sgdLambda / biasCorrection2;
 
-        if (std::abs(parent.sgdRate - rate) < parent.epsilon && iteration > 1)
+        parent.sgdLambda = (double) sgdLambda;
+        parent.sgdRate = (double) sgdRate;
+
+        if (std::abs(sgdRate - rate) < epsilon && iteration > 1)
         {
           parent.phaseSGD = true;
           v.zeros();
@@ -169,39 +182,46 @@ class SWATSUpdate
     }
 
    private:
-    //! Reference to instantiated parent object.
+    // Reference to instantiated parent object.
     SWATSUpdate& parent;
 
-    //! The exponential moving average of gradient values.
+    // The exponential moving average of gradient values.
     GradType m;
 
-    //! The exponential moving average of squared gradient values (Adam).
+    // The exponential moving average of squared gradient values (Adam).
     GradType v;
 
-    //! The exponential moving average of squared gradient values (SGD).
+    // The exponential moving average of squared gradient values (SGD).
     GradType sgdV;
 
-    //! The number of iterations.
+    // The number of iterations.
     size_t iteration;
+
+    // Parameters casted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
+    ElemType sgdRate;
+    ElemType sgdLambda;
   };
 
  private:
-  //! The epsilon value used to initialise the squared gradient parameter.
+  // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
 
-  //! The smoothing parameter.
+  // The smoothing parameter.
   double beta1;
 
-  //! The second moment coefficient.
+  // The second moment coefficient.
   double beta2;
 
-  //! Wether to use the SGD or Adam update rule.
+  // Whether to use the SGD or Adam update rule.
   bool phaseSGD;
 
-  //! SGD scaling parameter.
+  // SGD scaling parameter.
   double sgdRate;
 
-  //! SGD learning rate.
+  // SGD learning rate.
   double sgdLambda;
 };
 

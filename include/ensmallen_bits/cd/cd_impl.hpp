@@ -39,8 +39,8 @@ template <typename ResolvableFunctionType,
           typename MatType,
           typename GradType,
           typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 CD<DescentPolicyType>::Optimize(
     ResolvableFunctionType& function,
     MatType& iterateIn,
@@ -84,7 +84,7 @@ CD<DescentPolicyType>::Optimize(
       break;
 
     // Update the decision variable with the partial gradient.
-    iterate.col(featureIdx) -= stepSize * gradient.col(featureIdx);
+    iterate.col(featureIdx) -= ElemType(stepSize) * gradient.col(featureIdx);
     terminate |= Callback::StepTaken(*this, function, iterate, callbacks...);
 
     // Check for convergence.

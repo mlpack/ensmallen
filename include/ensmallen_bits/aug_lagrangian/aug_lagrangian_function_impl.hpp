@@ -20,8 +20,8 @@
 namespace ens {
 
 // Initialize the AugLagrangianFunction.
-template<typename LagrangianFunction>
-AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
+template<typename LagrangianFunction, typename VecType>
+AugLagrangianFunction<LagrangianFunction, VecType>::AugLagrangianFunction(
     LagrangianFunction& function) :
     function(function),
     lambda(function.NumConstraints()),
@@ -32,10 +32,10 @@ AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
 }
 
 // Initialize the AugLagrangianFunction.
-template<typename LagrangianFunction>
-AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
+template<typename LagrangianFunction, typename VecType>
+AugLagrangianFunction<LagrangianFunction, VecType>::AugLagrangianFunction(
     LagrangianFunction& function,
-    const arma::vec& lambda,
+    const VecType& lambda,
     const double sigma) :
     function(function),
     lambda(lambda),
@@ -45,9 +45,10 @@ AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
 }
 
 // Evaluate the AugLagrangianFunction at the given coordinates.
-template<typename LagrangianFunction>
+template<typename LagrangianFunction, typename VecType>
 template<typename MatType>
-typename MatType::elem_type AugLagrangianFunction<LagrangianFunction>::Evaluate(
+typename MatType::elem_type
+AugLagrangianFunction<LagrangianFunction, VecType>::Evaluate(
     const MatType& coordinates) const
 {
   // The augmented Lagrangian is evaluated as
@@ -63,20 +64,22 @@ typename MatType::elem_type AugLagrangianFunction<LagrangianFunction>::Evaluate(
   {
     ElemType constraint = function.EvaluateConstraint(i, coordinates);
 
-    objective += (-lambda[i] * constraint) +
-        sigma * std::pow(constraint, 2) / 2;
+    objective += (-ElemType(lambda[i]) * constraint) +
+        ElemType(sigma) * std::pow(constraint, ElemType(2)) / 2;
   }
 
   return objective;
 }
 
 // Evaluate the gradient of the AugLagrangianFunction at the given coordinates.
-template<typename LagrangianFunction>
+template<typename LagrangianFunction, typename VecType>
 template<typename MatType, typename GradType>
-void AugLagrangianFunction<LagrangianFunction>::Gradient(
+void AugLagrangianFunction<LagrangianFunction, VecType>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const
 {
+  typedef typename MatType::elem_type ElemType;
+
   // The augmented Lagrangian's gradient is evaluted as
   // f'(x) + {(-lambda_i + sigma * c_i(x)) * c'_i(x)} for all constraints
   gradient.zeros();
@@ -89,16 +92,17 @@ void AugLagrangianFunction<LagrangianFunction>::Gradient(
 
     // Now calculate scaling factor and add to existing gradient.
     GradType tmpGradient;
-    tmpGradient = (-lambda[i] + sigma *
+    tmpGradient = (ElemType(-lambda[i]) + ElemType(sigma) *
         function.EvaluateConstraint(i, coordinates)) * constraintGradient;
     gradient += tmpGradient;
   }
 }
 
 // Get the initial point.
-template<typename LagrangianFunction>
+template<typename LagrangianFunction, typename VecType>
 template<typename MatType>
-const MatType& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
+const MatType&
+AugLagrangianFunction<LagrangianFunction, VecType>::GetInitialPoint()
     const
 {
   return function.template GetInitialPoint<MatType>();

@@ -12,7 +12,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -20,312 +23,288 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Test the Adam optimizer on the Sphere function.
- */
-TEST_CASE("AdamSphereFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<SphereFunction>(optimizer, 0.5, 0.2);
+  Adam optimizer(1.0, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
+      false);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the Adam optimizer on the Sphere function with arma::fmat.
- */
-TEST_CASE("AdamSphereFunctionTestFMat", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.2);
+  Adam optimizer(1.0, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-3,
+      false);
+  FunctionTest<StyblinskiTangFunction, TestType>(
+      optimizer,
+      30 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
- */
-TEST_CASE("AdamSphereFunctionTestSpMat", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_McCormickFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.2);
+  Adam optimizer(0.4, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-5,
+      false);
+  FunctionTest<McCormickFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat but a
- * dense (arma::mat) gradient.
- */
-TEST_CASE("AdamSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_MatyasFunctionFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  SphereFunction f(2);
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  Adam optimizer(0.5, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-5,
+      false);
+  FunctionTest<MatyasFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the Adam optimizer on the Wood function.
- */
-TEST_CASE("AdamStyblinskiTangFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_EasomFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 500000, 1e-3, false);
-  FunctionTest<StyblinskiTangFunction>(optimizer, 0.5, 0.1);
+  Adam optimizer(0.2, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-5,
+      false);
+  FunctionTest<EasomFunction, TestType>(
+      optimizer,
+      3 * Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the Adam optimizer on the McCormick function.
- */
-TEST_CASE("AdamMcCormickFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_BoothFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
-  FunctionTest<McCormickFunction>(optimizer, 0.5, 0.1);
+  Adam optimizer(0.75, 1, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-9,
+      true);
+  FunctionTest<BoothFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the Adam optimizer on the Matyas function.
- */
-TEST_CASE("AdamMatyasFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("AMSGrad_SphereFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
-  FunctionTest<MatyasFunction>(optimizer, 0.1, 0.01);
+  AMSGrad optimizer(0.01, 1, 0.9, 0.999, Tolerances<TestType>::Obj, 50000,
+      Tolerances<TestType>::Obj / 100, true);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the Adam optimizer on the Easom function.
- */
-TEST_CASE("AdamEasomFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.2, 1, 0.7, 0.999, 1e-8, 500000, 1e-5, false);
-  FunctionTest<EasomFunction>(optimizer, 1.5, 0.01);
+  Adam adam(0.032);
+  LogisticRegressionFunctionTest<TestType>(adam);
 }
 
-/**
- * Test the Adam optimizer on the Booth function.
- */
-TEST_CASE("AdamBoothFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("AdaMax_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(1e-1, 1, 0.7, 0.999, 1e-8, 500000, 1e-9, true);
-  FunctionTest<BoothFunction>(optimizer);
+  AdaMax adamax(1e-3, 1, 0.9, 0.999, Tolerances<TestType>::Obj, 50000,
+      Tolerances<TestType>::Obj / 10, true);
+  LogisticRegressionFunctionTest<TestType>(adamax);
 }
 
-
-/**
- * Test the AMSGrad optimizer on the Sphere function with arma::fmat.
- */
-TEST_CASE("AMSGradSphereFunctionTestFMat", "[AdamTest]")
+TEMPLATE_TEST_CASE("AMSGrad_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
-  FunctionTest<SphereFunction, arma::fmat>(optimizer, 0.5, 0.1);
+  AMSGrad amsgrad(1e-3, 1, 0.9, 0.999, Tolerances<TestType>::Obj, 50000,
+      Tolerances<TestType>::Obj / 100, true);
+  LogisticRegressionFunctionTest<TestType>(amsgrad);
 }
 
-/**
- * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat.
- */
-TEST_CASE("AMSGradSphereFunctionTestSpMat", "[AdamTest]")
+TEMPLATE_TEST_CASE("Nadam_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
-  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 0.5, 0.1);
+  Nadam nadam(0.032);
+  LogisticRegressionFunctionTest<TestType>(nadam);
 }
 
-/**
- * Test the AMSGrad optimizer on the Sphere function with arma::sp_mat but a
- * dense (arma::mat) gradient.
- */
-TEST_CASE("AMSGradSphereFunctionTestSpMatDenseGradient", "[AdamTest]")
+TEMPLATE_TEST_CASE("NadaMax_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  SphereFunction f(2);
-  AMSGrad optimizer(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
-
-  arma::sp_mat coordinates = f.GetInitialPoint<arma::sp_mat>();
-  optimizer.Optimize<decltype(f), arma::sp_mat, arma::mat>(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
+  NadaMax nadamax(1e-3, 1, 0.9, 0.999, Tolerances<TestType>::Obj, 50000,
+      Tolerances<TestType>::Obj / 10, true);
+  LogisticRegressionFunctionTest<TestType>(nadamax);
 }
 
-/**
- * Run Adam on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdamLogisticRegressionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("OptimisticAdam_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  Adam adam;
-  LogisticRegressionFunctionTest(adam, 0.003, 0.006);
+  OptimisticAdam optimisticAdam(0.032);
+  LogisticRegressionFunctionTest<TestType>(optimisticAdam);
 }
 
-/**
- * Run AdaMax on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaMaxLogisticRegressionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Padam_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  AdaMax adamax(1e-3, 1, 0.9, 0.999, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest(adamax, 0.003, 0.006);
+  Padam optimizer(0.032);
+  LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
-/**
- * Run AMSGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AMSGradLogisticRegressionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
+    ENS_ALL_TEST_TYPES)
 {
-  AMSGrad amsgrad(1e-3, 1, 0.9, 0.999, 1e-8, 500000, 1e-11, true);
-  LogisticRegressionFunctionTest(amsgrad, 0.003, 0.006);
+  QHAdam optimizer(0.032);
+  LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
-/**
- * Run Nadam on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("NadamLogisticRegressionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Nadam nadam;
-  LogisticRegressionFunctionTest(nadam, 0.003, 0.006);
+  Adam optimizer(0.004, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj / 100,
+      1000000, Tolerances<TestType>::Obj / 100, false);
+  FunctionTest<AckleyFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Run NadaMax on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("NadaMaxLogisticRegressionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_BealeFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  NadaMax nadamax(1e-3, 1, 0.9, 0.999, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest(nadamax, 0.003, 0.006);
+  Adam optimizer(0.01, 2, 0.7, 0.999, 10 * Tolerances<TestType>::Obj, 50000,
+      1e-8, false);
+  FunctionTest<BealeFunction, TestType>(
+      optimizer,
+      3 * Tolerances<TestType>::LargeObj,
+      3 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Run OptimisticAdam on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("OptimisticAdamLogisticRegressionTest", "[AdamTest]")
+// FP16 cannot be used for this test because the initial gradient is too large.
+TEMPLATE_TEST_CASE("Adam_GoldsteinPriceFunction", "[Adam]", ENS_TEST_TYPES)
 {
-  OptimisticAdam optimisticAdam;
-  LogisticRegressionFunctionTest(optimisticAdam, 0.003, 0.006);
+  Adam optimizer(0.2, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj, 50000,
+      1e-8, false);
+  FunctionTest<GoldsteinPriceFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Run Padam on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("PadamLogisticRegressionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_LevyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Padam optimizer;
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  Adam optimizer(0.005, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
+      false);
+  FunctionTest<LevyFunctionN13, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Run QHAdam on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("QHAdamLogisticRegressionTest", "[AdamTest]")
-{
-  QHAdam optimizer;
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
-}
-
-/**
- * Run QHAdam on logistic regression and make sure the results are acceptable,
- * using arma::fmat.
- */
-TEST_CASE("QHAdamLogisticRegressionFMatTest", "[AdamTest]")
-{
-  QHAdam optimizer;
-  LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.03, 0.06);
-}
-
-/**
- * Run QHAdam on logistic regression and make sure the results are acceptable,
- * using arma::sp_mat.
- */
-TEST_CASE("QHAdamLogisticRegressionSpMatTest", "[AdamTest]")
-{
-  QHAdam optimizer;
-  LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.003, 0.006);
-}
-
-/**
- * Test the Adam optimizer on the Ackley function.
- * This is to test the Ackley function and not Adam.
- * This test will be removed later.
- */
-TEST_CASE("AdamAckleyFunctionTest", "[AdamTest]")
-{
-  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
-  FunctionTest<AckleyFunction>(optimizer);
-}
-
-/**
- * Test the Adam optimizer on the Beale function.
- * This is to test the Beale function and not Adam.
- * This test will be removed later.
- */
-TEST_CASE("AdamBealeFunctionTest", "[AdamTest]")
-{
-  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-7, false);
-  FunctionTest<BealeFunction>(optimizer, 0.1, 0.01);
-}
-
-/**
- * Test the Adam optimizer on the Goldstein-Price function.
- * This is to test the Goldstein-Price function and not Adam.
- * This test will be removed later.
- */
-TEST_CASE("AdamGoldsteinPriceFunctionTest", "[AdamTest]")
-{
-  Adam optimizer(0.0001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
-  FunctionTest<GoldsteinPriceFunction>(optimizer, 0.1, 0.01);
-}
-
-/**
- * Test the Adam optimizer on the Levi function.
- * This is to test the Levi function and not Adam.
- * This test will be removed later.
- */
-TEST_CASE("AdamLevyFunctionTest", "[AdamTest]")
-{
-  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
-  FunctionTest<LevyFunctionN13>(optimizer, 0.1, 0.01);
-}
-
-/**
- * Test the Adam optimizer on the Himmelblau function.
- * This is to test the Himmelblau function and not Adam.
- * This test will be removed later.
- */
-TEST_CASE("AdamHimmelblauFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_HimmelblauFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
   HimmelblauFunction f;
-  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
+  Adam optimizer(0.005, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
+      false);
 
-  arma::mat coordinates = arma::mat("2.9; 1.9");
+  TestType coordinates = TestType("2.9; 1.9");
   optimizer.Optimize(f, coordinates);
 
   REQUIRE(coordinates(0) == Approx(3.0).margin(0.05));
   REQUIRE(coordinates(1) == Approx(2.0).margin(0.05));
 }
 
-/**
- * Test the Adam optimizer on the Three-hump camel function.
- * This is to test the Three-hump camel function and not Adam.
- * This test will be removed later.
- */
-TEST_CASE("AdamThreeHumpCamelFunctionTest", "[AdamTest]")
+TEMPLATE_TEST_CASE("Adam_ThreeHumpCamelFunction", "[Adam]", ENS_ALL_TEST_TYPES)
 {
-  Adam optimizer(0.001, 2, 0.7, 0.999, 1e-8, 500000, 1e-9, false);
-  FunctionTest<ThreeHumpCamelFunction>(optimizer, 0.1, 0.01);
+  Adam optimizer(0.005, 2, 0.7, 0.999, Tolerances<TestType>::Obj, 50000, 1e-8,
+      false);
+  FunctionTest<ThreeHumpCamelFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test that multiple runs of the Adam optimizer result in the exact same
- * result.  This specifically tests that the update policy is successfully
- * reset at the start of each optimization.
- */
-TEST_CASE("AdamResetPolicyTest", "[AdamTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("Adam_SphereFunction", "[Adam]", coot::mat, coot::fmat)
 {
-  Adam optimizer(0.5, 2, 0.7, 0.999, 1e-8, 5, 1e-3, false);
-  optimizer.ResetPolicy() = true;
-
-  SphereFunction f(2);
-
-  arma::mat coordinatesA = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinatesA);
-
-  // A second run should produce the exact same results.
-  arma::mat coordinatesB = f.GetInitialPoint();
-  optimizer.Optimize(f, coordinatesB);
-
-  CheckMatrices(coordinatesA, coordinatesB);
+  Adam optimizer(1.0, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
+  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.2);
 }
+
+TEMPLATE_TEST_CASE("Adam_StyblinskiTangFunction", "[Adam]", coot::mat)
+{
+  Adam optimizer(1.0, 2, 0.7, 0.999, 1e-8, 50000, 1e-3, false);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
+}
+
+TEMPLATE_TEST_CASE("Adam_McCormickFunction", "[Adam]", coot::mat)
+{
+  Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 50000, 1e-5, false);
+  FunctionTest<McCormickFunction, TestType>(optimizer, 0.5, 0.1);
+}
+
+TEMPLATE_TEST_CASE("Adam_MatyasFunction", "[Adam]", coot::mat)
+{
+  Adam optimizer(0.5, 1, 0.7, 0.999, 1e-8, 50000, 1e-5, false);
+  FunctionTest<MatyasFunction, TestType>(optimizer, 0.1, 0.01);
+}
+
+TEMPLATE_TEST_CASE("Adam_EasomFunction", "[Adam]", coot::mat)
+{
+  Adam optimizer(0.2, 1, 0.7, 0.999, 1e-8, 50000, 1e-5, false);
+  FunctionTest<EasomFunction, TestType>(optimizer, 1.5, 0.01);
+}
+
+TEMPLATE_TEST_CASE("Adam_BoothFunction", "[Adam]", coot::mat)
+{
+  Adam optimizer(1e-1, 1, 0.7, 0.999, 1e-8, 50000, 1e-9, true);
+  FunctionTest<BoothFunction, TestType>(
+      optimizer,
+      50 * Tolerances<TestType>::Obj,
+      10 * Tolerances<TestType>::Coord);
+}
+
+TEMPLATE_TEST_CASE("Adam_LogisticRegressionFunction", "[Adam]", coot::mat)
+{
+  Adam adam(0.032);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(adam);
+}
+
+TEMPLATE_TEST_CASE("AdaMax_LogisticRegressionFunction", "[Adam]", coot::mat)
+{
+  AdaMax adamax(0.08, 8, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(adamax);
+}
+
+TEMPLATE_TEST_CASE("AMSGrad_LogisticRegressionFunction", "[Adam]", coot::mat)
+{
+  AMSGrad amsgrad(0.08, 8, 0.9, 0.999, 1e-8, 50000, 1e-11, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(amsgrad);
+}
+
+TEMPLATE_TEST_CASE("Nadam_LogisticRegressionFunction", "[Adam]", coot::mat)
+{
+  Nadam nadam(0.032);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(nadam);
+}
+
+TEMPLATE_TEST_CASE("NadaMax_LogisticRegressionFunction", "[Adam]", coot::mat)
+{
+  NadaMax nadamax(0.08, 8, 0.9, 0.999, 1e-8, 50000, 1e-9, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(nadamax);
+}
+
+TEMPLATE_TEST_CASE("OptimisticAdam_LogisticRegressionFunction", "[Adam]",
+    coot::mat)
+{
+  OptimisticAdam optimisticAdam(0.032);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimisticAdam);
+}
+
+TEMPLATE_TEST_CASE("Padam_LogisticRegressionFunction", "[Adam]", coot::mat)
+{
+  Padam optimizer(0.032);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer);
+}
+
+TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
+    coot::mat, coot::fmat)
+{
+  QHAdam optimizer(0.032);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(optimizer);
+}
+
+#endif

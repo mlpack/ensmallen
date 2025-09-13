@@ -39,55 +39,56 @@ namespace ens {
  * }
  * @endcode
  */
-  class IGDPlus
+class IGDPlus
+{
+  public:
+  /**
+   * Default constructor does nothing, but is required to satisfy the Indicator
+   * policy.
+   */
+  IGDPlus() { /* Nothing to do here. */}
+
+  /**
+   * Find the IGD+ value of the front with respect to the given reference
+   * front.
+   *
+   * @tparam CubeType The cube data type of front.
+   * @param front The given approximation front.
+   * @param referenceFront The given reference front.
+   * @return The IGD value of the front.
+   */
+  template<typename CubeType>
+  static typename CubeType::elem_type Evaluate(const CubeType& front,
+                                               const CubeType& referenceFront)
   {
-   public:
-    /**
-     * Default constructor does nothing, but is required to satisfy the Indicator
-     * policy.
-     */
-    IGDPlus() { }
+    // Convenience typedefs.
+    typedef typename CubeType::elem_type ElemType;
 
-    /**
-     * Find the IGD+ value of the front with respect to the given reference
-     * front.
-     *
-     * @tparam CubeType The cube data type of front.
-     * @param front The given approximation front.
-     * @param referenceFront The given reference front.
-     * @return The IGD value of the front.
-     */
-    template<typename CubeType>
-    static typename CubeType::elem_type Evaluate(const CubeType& front,
-                                                 const CubeType& referenceFront)
+    ElemType igd = 0;
+    for (size_t i = 0; i < referenceFront.n_slices; i++)
     {
-      // Convenience typedefs.
-      typedef typename CubeType::elem_type ElemType;
-      ElemType igd = 0;
-      for (size_t i = 0; i < referenceFront.n_slices; i++)
+      ElemType min = std::numeric_limits<ElemType>::max();
+      for (size_t j = 0; j < front.n_slices; j++)
       {
-        ElemType min = std::numeric_limits<ElemType>::max();
-        for (size_t j = 0; j < front.n_slices; j++)
+        ElemType dist = 0;
+        for (size_t k = 0; k < front.slice(j).n_rows; k++)
         {
-          ElemType dist = 0;
-          for (size_t k = 0; k < front.slice(j).n_rows; k++)
-          {
-            ElemType z = referenceFront(k, 0, i);
-            ElemType a = front(k, 0, j);
-            // Assuming minimization of all objectives.
-            dist += std::pow(std::max<ElemType>(a - z, 0), 2);
-          }
-          dist = std::sqrt(dist);
-          if (dist < min)
-            min = dist;
+          ElemType z = referenceFront(k, 0, i);
+          ElemType a = front(k, 0, j);
+          // Assuming minimization of all objectives.
+          dist += std::pow(std::max<ElemType>(a - z, 0), 2);
         }
-        igd += min;
+        dist = std::sqrt(dist);
+        if (dist < min)
+          min = dist;
       }
-      igd /= referenceFront.n_slices;
-
-      return igd;
+      igd += min;
     }
-  };
+    igd /= referenceFront.n_slices;
+
+    return igd;
+  }
+};
 
 } // namespace ens
 

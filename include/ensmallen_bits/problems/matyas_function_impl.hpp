@@ -35,8 +35,8 @@ typename MatType::elem_type MatyasFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const double objective = 0.26 * (pow(x1, 2) + std::pow(x2, 2)) -
-      0.48 * x1 * x2;
+  const ElemType objective = ElemType(0.26) * (std::pow(x1, ElemType(2)) +
+      std::pow(x2, ElemType(2))) - ElemType(0.48) * x1 * x2;
 
   return objective;
 }
@@ -62,8 +62,8 @@ inline void MatyasFunction::Gradient(const MatType& coordinates,
   const ElemType x2 = coordinates(1);
 
   gradient.set_size(2, 1);
-  gradient(0) = 0.52 * x1 - 48 * x2;
-  gradient(1) = 0.52 * x2 - 0.48 * x1;
+  gradient(0) = ElemType(0.52) * x1 - ElemType(0.48) * x2;
+  gradient(1) = ElemType(0.52) * x2 - ElemType(0.48) * x1;
 }
 
 template<typename MatType, typename GradType>

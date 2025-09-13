@@ -85,6 +85,8 @@ class PadamUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -95,11 +97,19 @@ class PadamUpdate
      */
     Policy(PadamUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
+        partial(ElemType(parent.partial)),
         iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
       vImproved.zeros(rows, cols);
+
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -117,50 +127,57 @@ class PadamUpdate
       ++iteration;
 
       // And update the iterate.
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * (gradient % gradient);
+      v *= beta2;
+      v += (1 - beta2) * (gradient % gradient);
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
 
       // Element wise maximum of past and present squared gradients.
-      vImproved = arma::max(vImproved, v);
+      vImproved = max(vImproved, v);
 
-      iterate -= (stepSize * std::sqrt(biasCorrection2) / biasCorrection1) *
-          m / arma::pow(vImproved + parent.epsilon, parent.partial);
+      iterate -= (ElemType(stepSize) *
+          std::sqrt(biasCorrection2) / biasCorrection1) *
+          m / pow(vImproved + epsilon, partial);
     }
 
    private:
-    //! Instantiated parent object.
+    // Instantiated parent object.
     PadamUpdate& parent;
 
-    //! The exponential moving average of gradient values.
+    // The exponential moving average of gradient values.
     GradType m;
 
-    //! The exponential moving average of squared gradient values.
+    // The exponential moving average of squared gradient values.
     GradType v;
 
-    //! The optimal sqaured gradient value.
+    // The optimal squared gradient value.
     GradType vImproved;
 
-    //! The number of iterations.
+    // Parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
+    ElemType partial;
+
+    // The number of iterations.
     size_t iteration;
   };
 
  private:
-  //! The epsilon value used to initialise the squared gradient parameter.
+  // The epsilon value used to initialise the squared gradient parameter.
   double epsilon;
 
-  //! The smoothing parameter.
+  // The smoothing parameter.
   double beta1;
 
-  //! The second moment coefficient.
+  // The second moment coefficient.
   double beta2;
 
-  //! Partial adaptive parameter.
+  // Partial adaptive parameter.
   double partial;
 };
 

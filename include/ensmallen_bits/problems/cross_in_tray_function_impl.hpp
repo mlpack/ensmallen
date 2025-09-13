@@ -35,10 +35,12 @@ typename MatType::elem_type CrossInTrayFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = -0.0001 * std::pow(std::abs(std::sin(x1) *
-      std::sin(x2) * std::exp(std::abs(100 - (std::sqrt(std::pow(x1, 2) +
-      std::pow(x2, 2)) / arma::datum::pi))) + 1), 0.1);
-  return objective;
+  // Compute objective in higher precision, then cast down.
+  const double objective = -0.0001 * std::pow(std::abs(std::sin(double(x1)) *
+      std::sin(double(x2)) *
+      std::exp(std::abs(100 - (std::sqrt(std::pow(double(x1), 2) +
+      std::pow(double(x2), 2)) / arma::datum::pi))) + 1), 0.1);
+  return ElemType(objective);
 }
 
 template<typename MatType>

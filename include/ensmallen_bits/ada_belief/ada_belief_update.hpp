@@ -79,6 +79,8 @@ class AdaBeliefUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -89,10 +91,16 @@ class AdaBeliefUpdate
      */
     Policy(AdaBeliefUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
+        epsilon(ElemType(parent.epsilon)),
         iteration(0)
     {
       m.zeros(rows, cols);
       s.zeros(rows, cols);
+      // Prevent underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -109,18 +117,18 @@ class AdaBeliefUpdate
       // Increment the iteration counter variable.
       ++iteration;
 
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      s *= parent.beta2;
-      s += (1 - parent.beta2) * arma::pow(gradient - m, 2.0) + parent.epsilon;
+      s *= beta2;
+      s += (1 - beta2) * pow(gradient - m, 2) + epsilon;
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
-      const double biasCorrection2 = 1.0 - std::pow(parent.beta2, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
+      const ElemType biasCorrection2 = 1 - std::pow(beta2, ElemType(iteration));
 
       // And update the iterate.
-      iterate -= ((m / biasCorrection1) * stepSize) / (arma::sqrt(s /
-          biasCorrection2) + parent.epsilon);
+      iterate -= ((m / biasCorrection1) * ElemType(stepSize)) /
+          (sqrt(s / biasCorrection2) + epsilon);
     }
 
    private:
@@ -132,6 +140,11 @@ class AdaBeliefUpdate
 
     // The exponential moving average of squared gradient values.
     GradType s;
+
+    // Parent parameters converted to the element type of the matrix.
+    ElemType beta1;
+    ElemType beta2;
+    ElemType epsilon;
 
     // The number of iterations.
     size_t iteration;

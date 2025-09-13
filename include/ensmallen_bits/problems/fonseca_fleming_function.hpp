@@ -46,14 +46,12 @@ class FonsecaFlemingFunction
    * Evaluate the objectives with the given coordinate.
    *
    * @param coords The function coordinates.
-   * @return arma::Col<typename MatType::elem_type>
+   * @return Col<typename MatType::elem_type>
    */
-  arma::Col<typename MatType::elem_type> Evaluate(const MatType& coords)
-  {
-    // Convenience typedef.
-    typedef typename MatType::elem_type ElemType;
 
-    arma::Col<ElemType> objectives(numObjectives);
+  typename ForwardType<MatType>::bvec Evaluate(const MatType& coords)
+  {
+    typename ForwardType<MatType>::bvec objectives(numObjectives);
 
     objectives(0) = objectiveA.Evaluate(coords);
     objectives(1) = objectiveB.Evaluate(coords);
@@ -64,21 +62,18 @@ class FonsecaFlemingFunction
   //! Get the starting point.
   MatType GetInitialPoint()
   {
-    // Convenience typedef.
-    typedef typename MatType::elem_type ElemType;
-
-    return arma::Col<ElemType>(numVariables, 1, arma::fill::zeros);
+    return MatType(numVariables, 1, GetFillType<MatType>::zeros);
   }
 
   struct ObjectiveA
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-        return 1.0 - exp(
-             -pow(static_cast<double>(coords[0]) - 1.0 / sqrt(3.0), 2.0)
-             -pow(static_cast<double>(coords[1]) - 1.0 / sqrt(3.0), 2.0)
-             -pow(static_cast<double>(coords[2]) - 1.0 / sqrt(3.0), 2.0)
-        );
+      return typename MatType::elem_type(1.0 - std::exp(
+          -std::pow(static_cast<double>(coords[0]) - 1.0 / std::sqrt(3.0), 2.0)
+          -std::pow(static_cast<double>(coords[1]) - 1.0 / std::sqrt(3.0), 2.0)
+          -std::pow(static_cast<double>(coords[2]) - 1.0 / std::sqrt(3.0), 2.0)
+      ));
     }
   } objectiveA;
 
@@ -86,11 +81,11 @@ class FonsecaFlemingFunction
   {
     typename MatType::elem_type Evaluate(const MatType& coords)
     {
-        return 1.0 - exp(
-            -pow(static_cast<double>(coords[0]) + 1.0 / sqrt(3.0), 2.0)
-            -pow(static_cast<double>(coords[1]) + 1.0 / sqrt(3.0), 2.0)
-            -pow(static_cast<double>(coords[2]) + 1.0 / sqrt(3.0), 2.0)
-        );
+      return typename MatType::elem_type(1.0 - std::exp(
+          -std::pow(static_cast<double>(coords[0]) + 1.0 / std::sqrt(3.0), 2.0)
+          -std::pow(static_cast<double>(coords[1]) + 1.0 / std::sqrt(3.0), 2.0)
+          -std::pow(static_cast<double>(coords[2]) + 1.0 / std::sqrt(3.0), 2.0)
+      ));
     }
   } objectiveB;
 
@@ -100,6 +95,7 @@ class FonsecaFlemingFunction
     return std::make_tuple(objectiveA, objectiveB);
   }
 };
+
 } // namespace test
 } // namespace ens
 

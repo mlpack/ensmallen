@@ -58,8 +58,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
@@ -150,8 +150,14 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
         gradient, callbacks...);
 
     // Use the update policy to take a step.
+    // TODO: remove old behavior in ensmallen 4.0.0.
+    #if defined(ENS_OLD_SEPARABLE_STEP_BEHAVIOR)
     instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate, stepSize,
         gradient);
+    #else
+    instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate,
+        (stepSize / effectiveBatchSize), gradient);
+    #endif
 
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
 
@@ -193,7 +199,7 @@ SGD<UpdatePolicyType, DecayPolicyType>::Optimize(
       terminate |= Callback::BeginEpoch(*this, f, iterate, epoch,
           overallObjective, callbacks...);
 
-      // Reset the counter variables if we will continue.
+      // Reset the counter variables.
       if (i != actualMaxIterations)
       {
         lastObjective = overallObjective;

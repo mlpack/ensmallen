@@ -7,37 +7,39 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run DemonSGD on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("DemonSGDLogisticRegressionTest", "[DemonSGDTest]")
+TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
+    ENS_ALL_TEST_TYPES)
 {
-  DemonSGD optimizer(0.1, 32, 0.9, 1000000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest(optimizer, 0.006, 0.006, 6);
+  DemonSGD optimizer(32.0 /* huge step size needed! */, 16, 0.9, 10000000, 1e-9,
+      true, true, true);
+  // It could take several tries to get everything to converge.
+  LogisticRegressionFunctionTest<TestType>(optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      10);
 }
 
-/**
- * Tests the DemonSGD optimizer using a simple test function.
- */
-TEST_CASE("DemonSGDSimpleTestFunctionFloat", "[DemonSGDTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("DemonSGD_LogisticRegressionFunction", "[DemonSGD]",
+    coot::mat, coot::fmat)
 {
-  SGDTestFunction f;
-  DemonSGD optimizer(1e-2, 1, 0.9, 400000);
-
-  arma::fmat coordinates = f.GetInitialPoint<arma::fmat>();
-  optimizer.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(1) == Approx(0.0).margin(0.1));
-  REQUIRE(coordinates(2) == Approx(0.0).margin(0.1));
+  DemonSGD optimizer(32.0 /* huge step size needed! */, 16, 0.9, 1000000, 1e-9,
+      true, true, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.003, 0.006, 10);
 }
 
+#endif

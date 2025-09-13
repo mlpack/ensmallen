@@ -87,6 +87,8 @@ class SPALeRAStepsize
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.
@@ -106,12 +108,19 @@ class SPALeRAStepsize
         mn(0),
         relaxedObjective(0),
         phCounter(0),
-        eveCounter(0)
+        eveCounter(0),
+        alpha(ElemType(parent.alpha)),
+        epsilon(ElemType(parent.epsilon)),
+        adaptRate(ElemType(parent.adaptRate))
     {
       learningRates.ones(rows, cols);
       relaxedSums.zeros(rows, cols);
 
       parent.lambda = lambda;
+
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -127,7 +136,7 @@ class SPALeRAStepsize
      * @return Stop or continue the learning process.
      */
     bool Update(const double stepSize,
-                const typename MatType::elem_type objective,
+                const ElemType objective,
                 const size_t batchSize,
                 const size_t numFunctions,
                 MatType& iterate,
@@ -135,7 +144,7 @@ class SPALeRAStepsize
     {
       // The ratio of mini-batch size to training set size; needed for the
       // Page-Hinkley relaxed objective computations.
-      const double mbRatio = batchSize / (double) numFunctions;
+      const ElemType mbRatio = batchSize / (ElemType) numFunctions;
 
       // Page-Hinkley iteration, check if we have to reset the parameter and
       // adjust the step size.
@@ -162,7 +171,7 @@ class SPALeRAStepsize
         mn = un;
 
       // If the condition is true we reset the parameter and update parameter.
-      if ((un - mn) > parent.lambda)
+      if ((un - mn) > ElemType(parent.lambda))
       {
         // Backtracking, reset the parameter.
         iterate = previousIterate;
@@ -172,7 +181,9 @@ class SPALeRAStepsize
         // Faster.
         learningRates /= 2;
 
-        if (arma::any(arma::vectorise(learningRates) <= 1e-15))
+        constexpr const ElemType eps =
+            10 * std::numeric_limits<ElemType>::epsilon();
+        if (learningRates.min() <= eps)
         {
           // Stop because learning rate too low.
           return false;
@@ -183,26 +194,26 @@ class SPALeRAStepsize
       }
       else
       {
-        const double paramMean = (parent.alpha / (2 - parent.alpha) *
-            (1 - std::pow(1 - parent.alpha, 2 * (eveCounter + 1)))) /
+        const ElemType paramMean = (alpha / (2 - alpha) *
+            (1 - std::pow(1 - alpha, ElemType(2 * (eveCounter + 1))))) /
             iterate.n_elem;
 
-        const double paramStd = (parent.alpha / std::sqrt(iterate.n_elem)) /
-            std::sqrt(iterate.n_elem);
+        const ElemType paramStd =
+            (alpha / std::sqrt(ElemType(iterate.n_elem))) /
+            std::sqrt(ElemType(iterate.n_elem));
 
-        const typename MatType::elem_type normGradient =
-            std::sqrt(arma::accu(arma::pow(gradient, 2)));
+        const ElemType normGradient = std::sqrt(accu(square(gradient)));
 
-        relaxedSums *= (1 - parent.alpha);
-        if (normGradient > parent.epsilon)
-          relaxedSums += gradient * (parent.alpha / normGradient);
+        relaxedSums *= (1 - alpha);
+        if (normGradient > epsilon)
+          relaxedSums += gradient * (alpha / normGradient);
 
-        learningRates %= arma::exp((arma::pow(relaxedSums, 2) - paramMean) *
-            (parent.adaptRate / paramStd));
+        learningRates %= exp((square(relaxedSums) - paramMean) *
+            (adaptRate / paramStd));
 
         previousIterate = iterate;
 
-        iterate -= stepSize * (learningRates % gradient);
+        iterate -= ElemType(stepSize) * (learningRates % gradient);
 
         // Keep track of the the number of evaluations and Page-Hinkley steps.
         eveCounter++;
@@ -216,25 +227,25 @@ class SPALeRAStepsize
     //! Instantiated parent object.
     SPALeRAStepsize& parent;
 
-    //! Page-Hinkley update parameter.
-    double mu0;
+    // Page-Hinkley update parameter.
+    ElemType mu0;
 
-    //! Page-Hinkley update parameter.
-    double un;
+    // Page-Hinkley update parameter.
+    ElemType un;
 
-    //! Page-Hinkley update parameter.
-    double mn;
+    // Page-Hinkley update parameter.
+    ElemType mn;
 
-    //! Page-Hinkley update parameter.
-    typename MatType::elem_type relaxedObjective;
+    // Page-Hinkley update parameter.
+    ElemType relaxedObjective;
 
-    //! Page-Hinkley step counter.
+    // Page-Hinkley step counter.
     size_t phCounter;
 
-    //! Evaluations step counter.
+    // Evaluations step counter.
     size_t eveCounter;
 
-    //! Locally-stored parameter wise learning rates.
+    // Locally-stored parameter wise learning rates.
     MatType learningRates;
 
     //! Locally-stored parameter wise sums.
@@ -242,6 +253,11 @@ class SPALeRAStepsize
 
     //! Locally-stored previous parameter matrix (backtracking).
     MatType previousIterate;
+
+    // Parameters converted to the element type of the optimization.
+    ElemType alpha;
+    ElemType epsilon;
+    ElemType adaptRate;
   };
 
  private:

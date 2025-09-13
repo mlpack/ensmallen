@@ -8,94 +8,56 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run SARAH on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("SARAHLogisticRegressionTest","[SARAHTest]")
+TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
+    ENS_ALL_TEST_TYPES)
 {
   // Run SARAH with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
   {
     SARAH optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest(optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
   }
 }
 
-/**
- * Run SARAH_Plus on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("SARAHPlusLogisticRegressionTest","[SARAHTest]")
+TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH]",
+    ENS_ALL_TEST_TYPES)
 {
   // Run SARAH_Plus with a couple of batch sizes.
   for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
   {
     SARAH_Plus optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest(optimizer, 0.015, 0.015);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
   }
 }
 
-/**
- * Run SARAH on logistic regression and make sure the results are
- * acceptable.  Use arma::fmat.
- */
-TEST_CASE("SARAHLogisticRegressionFMatTest","[SARAHTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("SARAH_LogisticRegressionFunction", "[SARAH]",
+    coot::mat, coot::fmat)
 {
-  // Run SARAH with a couple of batch sizes.
-  for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
-  {
-    SARAH optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
-  }
+  SARAH optimizer(0.01, 45, 250, 0, 1e-5, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.015, 0.015);
 }
 
-/**
- * Run SARAH_Plus on logistic regression and make sure the results are
- * acceptable.  Use arma::fmat.
- */
-TEST_CASE("SARAHPlusLogisticRegressionFMatTest","[SARAHTest]")
+TEMPLATE_TEST_CASE("SARAH_Plus_LogisticRegressionFunction", "[SARAH]",
+    coot::mat, coot::fmat)
 {
-  // Run SARAH_Plus with a couple of batch sizes.
-  for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
-  {
-    SARAH_Plus optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.015);
-  }
+  SARAH_Plus optimizer(0.01, 45, 250, 0, 1e-5, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.015, 0.015);
 }
 
-/**
- * Run SARAH on logistic regression and make sure the results are
- * acceptable.  Use arma::sp_mat.
- */
-TEST_CASE("SARAHLogisticRegressionSpMatTest","[SARAHTest]")
-{
-  // Run SARAH with a couple of batch sizes.
-  for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
-  {
-    SARAH optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015);
-  }
-}
-
-/**
- * Run SARAH_Plus on logistic regression and make sure the results are
- * acceptable.  Use arma::sp_mat.
- */
-TEST_CASE("SARAHPlusLogisticRegressionSpMatTest","[SARAHTest]")
-{
-  // Run SARAH_Plus with a couple of batch sizes.
-  for (size_t batchSize = 35; batchSize < 45; batchSize += 5)
-  {
-    SARAH_Plus optimizer(0.01, batchSize, 250, 0, 1e-5, true);
-    LogisticRegressionFunctionTest<arma::sp_mat>(optimizer, 0.015, 0.015);
-  }
-}
+#endif

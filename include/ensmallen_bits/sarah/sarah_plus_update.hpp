@@ -52,10 +52,12 @@ class SARAHPlusUpdate
               const double stepSize,
               const double vNorm)
   {
-    v += (gradient - gradient0) / (double) batchSize;
-    iterate -= stepSize * v;
+    typedef typename MatType::elem_type ElemType;
 
-    if (arma::norm(v) <= gamma * vNorm)
+    v += (gradient - gradient0) / (ElemType) batchSize;
+    iterate -= ElemType(stepSize) * v;
+
+    if (norm(v) <= ElemType(gamma * vNorm))
       return true;
 
     return false;

@@ -10,6 +10,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -18,107 +22,89 @@ using namespace ens;
 using namespace ens::test;
 using namespace std;
 
-/**
- * Train and test a logistic regression function using CNE optimizer.
- */
-TEST_CASE("CNELogisticRegressionTest", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_LogisticRegressionFunction", "[CNE]",
+    ENS_ALL_TEST_TYPES)
 {
   CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  LogisticRegressionFunctionTest(opt, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(opt);
 }
 
-/**
- * Train and test a logistic regression function using CNE optimizer.  Use
- * arma::fmat.
- */
-TEST_CASE("CNELogisticRegressionFMatTest", "[CNETest]")
-{
-  CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  LogisticRegressionFunctionTest<arma::fmat>(opt, 0.003, 0.006);
-}
-
-/**
- * Test the CNE optimizer on Cross-in-Tray Function.
- */
-TEST_CASE("CNECrossInTrayFunctionTest", "[CNETest]")
+// The CrossInTray function doesn't optimize well with FP16.
+TEMPLATE_TEST_CASE("CNE_CrossInTrayFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CrossInTrayFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
 
-  arma::mat coordinates = arma::mat("0.8; 1.8");
+  TestType coordinates = TestType("0.8; 1.8");
   optimizer.Optimize(f, coordinates);
 
-  REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(0.1));
-  REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(0.1));
+  REQUIRE(abs(coordinates(0)) == Approx(1.34941).margin(
+      10 * Tolerances<TestType>::LargeCoord));
+  REQUIRE(abs(coordinates(1)) == Approx(1.34941).margin(
+      10 * Tolerances<TestType>::LargeCoord));
 }
 
-/**
- * Test the CNE optimizer on the Ackley Function.
- */
-TEST_CASE("CNEAckleyFunctionTest", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_AckleyFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
-  FunctionTest<AckleyFunction>(optimizer, 0.5, 0.1);
+  FunctionTest<AckleyFunction>(optimizer,
+      50 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the CNE optimizer on the Beale Function.
- */
-TEST_CASE("CNEBealeFunctionTest", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_BealeFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
-  FunctionTest<BealeFunction>(optimizer, 0.5, 0.1);
+  FunctionTest<BealeFunction>(optimizer,
+      50 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the CNE optimizer on the Goldstein-Price Function.
- */
-TEST_CASE("CNEGoldsteinPriceFunctionTest", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_GoldsteinPriceFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.1, -1);
-  FunctionTest<GoldsteinPriceFunction>(optimizer, 0.5, 0.1);
+  FunctionTest<GoldsteinPriceFunction>(optimizer,
+      50 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the CNE optimizer on the Levi Function.
- */
-TEST_CASE("CNELevyFunctionN13Test", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_LevyFunctionN13", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.02, -1);
-  FunctionTest<LevyFunctionN13>(optimizer, 0.5, 0.1);
+  FunctionTest<LevyFunctionN13>(optimizer,
+      50 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the CNE optimizer on the Himmelblau Function.
- */
-TEST_CASE("CNEHimmelblauFunctionTest", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_HimmelblauFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   HimmelblauFunction f;
   CNE optimizer(650, 3000, 0.3, 0.3, 0.3, 1e-7);
 
   // Allow multiple trials.
-  arma::mat coordinates;
+  TestType coordinates;
+  const double coordTol1 = Tolerances<TestType>::LargeCoord * 12;
+  const double coordTol2 = Tolerances<TestType>::LargeCoord * 8;
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    coordinates = arma::mat("2; 1");
+    coordinates = TestType("2; 1");
     optimizer.Optimize(f, coordinates);
 
-    if (coordinates(0) == Approx(3.0).margin(0.6) &&
-        coordinates(1) == Approx(2.0).margin(0.2))
+    if (coordinates(0) == Approx(3.0).margin(coordTol1) &&
+        coordinates(1) == Approx(2.0).margin(coordTol2))
       break;
   }
 
-  REQUIRE(coordinates(0) == Approx(3.0).margin(0.6));
-  REQUIRE(coordinates(1) == Approx(2.0).margin(0.2));
+  REQUIRE(coordinates(0) == Approx(3.0).margin(coordTol1));
+  REQUIRE(coordinates(1) == Approx(2.0).margin(coordTol2));
 }
 
-/**
- * Test the CNE optimizer on the Three-hump Camel Function.
- */
-TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_ThreeHumpCamelFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
-  FunctionTest<ThreeHumpCamelFunction>(optimizer, 0.5, 0.1);
+  FunctionTest<ThreeHumpCamelFunction>(optimizer,
+      50 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
 // TODO: The CNE optimizer with the given parameter occasionally fails to find a
@@ -127,39 +113,50 @@ TEST_CASE("CNEThreeHumpCamelFunctionTest", "[CNETest]")
 /**
  * Test the CNE optimizer on Schaffer function N.4.
  */
-TEST_CASE("CNESchafferFunctionN4Test", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_SchafferFunctionN4", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   SchafferFunctionN4 f;
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
 
   // We allow a few trials.
+  const double coordTol = 5 * Tolerances<TestType>::LargeCoord;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    arma::mat coordinates = arma::mat("0.5; 2");
+    TestType coordinates = TestType("0.5; 2");
     optimizer.Optimize(f, coordinates);
 
     if (trial != 4)
     {
-      if (coordinates(0) != Approx(0).margin(0.1))
+      if (coordinates(0) != Approx(0).margin(coordTol))
         continue;
-      if (abs(coordinates(1)) != Approx(1.25313).margin(0.1))
+      if (abs(coordinates(1)) != Approx(1.25313).margin(coordTol))
         continue;
     }
 
-    REQUIRE(coordinates(0) == Approx(0).margin(0.1));
-    REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(0.1));
+    REQUIRE(coordinates(0) == Approx(0).margin(coordTol));
+    REQUIRE(abs(coordinates(1)) == Approx(1.25313).margin(coordTol));
 
     // The test was successfull or reached the maximum number of trials.
     break;
   }
 }
 
-/**
- * Test the CNE optimizer on Schaffer Function N.2.
- */
-TEST_CASE("CNESchafferFunctionN2Test", "[CNETest]")
+TEMPLATE_TEST_CASE("CNE_SchafferFunctionN2", "[CNE]", ENS_ALL_TEST_TYPES)
 {
   // We allow a few trials in case convergence is not achieved.
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
-  FunctionTest<SchafferFunctionN2>(optimizer, 0.5, 0.1, 7);
+  FunctionTest<SchafferFunctionN2>(optimizer,
+      50 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord, 7);
 }
+
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("CNE_LogisticRegressionFunction", "[CNE]",
+    coot::mat, coot::fmat)
+{
+  CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(opt);
+}
+
+#endif

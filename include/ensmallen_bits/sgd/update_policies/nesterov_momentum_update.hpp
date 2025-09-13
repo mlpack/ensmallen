@@ -58,6 +58,8 @@ class NesterovMomentumUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.
@@ -70,9 +72,10 @@ class NesterovMomentumUpdate
            const size_t rows,
            const size_t cols) :
         parent(parent),
-        velocity(arma::zeros<MatType>(rows, cols))
+        velocity(rows, cols),
+        momentum(ElemType(parent.momentum))
     {
-      // Nothing to do.
+      // Nothing to do here.
     }
 
     /**
@@ -89,9 +92,8 @@ class NesterovMomentumUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      velocity = parent.momentum * velocity - stepSize * gradient;
-
-      iterate += parent.momentum * velocity - stepSize * gradient;
+      velocity = momentum * velocity - ElemType(stepSize) * gradient;
+      iterate += momentum * velocity - ElemType(stepSize) * gradient;
     }
 
    private:
@@ -99,6 +101,8 @@ class NesterovMomentumUpdate
     const NesterovMomentumUpdate& parent;
     // The velocity matrix.
     MatType velocity;
+    // The momentum, converted to the element type of the optimization.
+    ElemType momentum;
   };
 
  private:

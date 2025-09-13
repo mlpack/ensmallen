@@ -62,8 +62,8 @@ class SVRGUpdate
                 const double stepSize)
     {
       // Perform the vanilla SVRG update.
-      iterate -= stepSize * (fullGradient + (gradient - gradient0) /
-          (double) batchSize);
+      iterate -= typename MatType::elem_type(stepSize) *
+          (fullGradient + (gradient - gradient0) / batchSize);
     }
   };
 };

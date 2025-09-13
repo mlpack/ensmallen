@@ -66,14 +66,32 @@ inline Lookahead<BaseOptimizerType, DecayPolicyType>::~Lookahead()
   instDecayPolicy.Clean();
 }
 
+template<typename BaseOptimizerType>
+size_t GetBatchSize(
+    const BaseOptimizerType& baseOptimizer,
+    const typename std::enable_if_t<traits::HasBatchSizeSignature<
+        BaseOptimizerType>::value>* = 0)
+{
+  return baseOptimizer.BatchSize();
+}
+
+template<typename BaseOptimizerType>
+size_t GetBatchSize(
+    const BaseOptimizerType& baseOptimizer,
+    const typename std::enable_if_t<!traits::HasBatchSizeSignature<
+        BaseOptimizerType>::value>* = 0)
+{
+  return 1;
+}
+
 //! Optimize the function (minimize).
 template<typename BaseOptimizerType, typename DecayPolicyType>
 template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
@@ -111,8 +129,9 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
   if (traits::HasResetPolicySignature<BaseOptimizerType>::value &&
       baseOptimizer.ResetPolicy())
   {
-    Warn << "Parameters are reset before every Optimize call; set "
-        << "ResetPolicy() to false.";
+    Warn << "Lookahead: base optimizer parameters are reset before every "
+        << "Optimize() call; set ResetPolicy() of the base optimizer to false "
+        << "to fix this problem." << std::endl;
     baseOptimizer.ResetPolicy() = resetPolicy;
   }
 
@@ -169,8 +188,11 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
       return overallObjective;
     }
 
-    iterate += stepSize * (iterateModel - iterate);
+    iterate += ElemType(stepSize) * (iterateModel - iterate);
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
+
+    Info << "Lookahead: iteration " << i << ", objective " << overallObjective
+        << "." << std::endl;
 
     // Save the current objective.
     lastOverallObjective = overallObjective;
@@ -185,11 +207,9 @@ Lookahead<BaseOptimizerType, DecayPolicyType>::Optimize(
     // Find the number of functions to use.
     const size_t numFunctions = f.NumFunctions();
 
-    size_t batchSize = 1;
     // Check if the optimizer implements the BatchSize() method and use the
     // parameter for the objective calculation.
-    if (traits::HasBatchSizeSignature<BaseOptimizerType>::value)
-      batchSize = baseOptimizer.BatchSize();
+    size_t batchSize = GetBatchSize(baseOptimizer);
 
     overallObjective = 0;
     for (size_t i = 0; i < numFunctions; i += batchSize)

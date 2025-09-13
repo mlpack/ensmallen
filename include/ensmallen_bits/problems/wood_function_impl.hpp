@@ -39,12 +39,12 @@ typename MatType::elem_type WoodFunction::Evaluate(
   const ElemType x4 = coordinates(3);
 
   const ElemType objective =
-      /* f1(x) */ 100 * std::pow(x2 - std::pow(x1, 2), 2) +
-      /* f2(x) */ std::pow(1 - x1, 2) +
-      /* f3(x) */ 90 * std::pow(x4 - std::pow(x3, 2), 2) +
-      /* f4(x) */ std::pow(1 - x3, 2) +
-      /* f5(x) */ 10 * std::pow(x2 + x4 - 2, 2) +
-      /* f6(x) */ (1.0 / 10.0) * std::pow(x2 - x4, 2);
+      /* f1(x) */ 100 * std::pow(x2 - std::pow(x1, ElemType(2)), ElemType(2)) +
+      /* f2(x) */ std::pow(1 - x1, ElemType(2)) +
+      /* f3(x) */ 90 * std::pow(x4 - std::pow(x3, ElemType(2)), ElemType(2)) +
+      /* f4(x) */ std::pow(1 - x3, ElemType(2)) +
+      /* f5(x) */ 10 * std::pow(x2 + x4 - 2, ElemType(2)) +
+      /* f6(x) */ ElemType(1.0 / 10.0) * std::pow(x2 - x4, ElemType(2));
 
   return objective;
 }
@@ -72,12 +72,12 @@ inline void WoodFunction::Gradient(const MatType& coordinates,
   const ElemType x4 = coordinates(3);
 
   gradient.set_size(4, 1);
-  gradient(0) = 400 * (std::pow(x1, 3) - x2 * x1) - 2 * (1 - x1);
-  gradient(1) = 200 * (x2 - std::pow(x1, 2)) + 20 * (x2 + x4 - 2) +
-      (1.0 / 5.0) * (x2 - x4);
-  gradient(2) = 360 * (std::pow(x3, 3) - x4 * x3) - 2 * (1 - x3);
-  gradient(3) = 180 * (x4 - std::pow(x3, 2)) + 20 * (x2 + x4 - 2) -
-      (1.0 / 5.0) * (x2 - x4);
+  gradient(0) = 400 * (std::pow(x1, ElemType(3)) - x2 * x1) - 2 * (1 - x1);
+  gradient(1) = 200 * (x2 - std::pow(x1, ElemType(2))) + 20 * (x2 + x4 - 2) +
+      ElemType(1.0 / 5.0) * (x2 - x4);
+  gradient(2) = 360 * (std::pow(x3, ElemType(3)) - x4 * x3) - 2 * (1 - x3);
+  gradient(3) = 180 * (x4 - std::pow(x3, ElemType(2))) + 20 * (x2 + x4 - 2) -
+      ElemType(1.0 / 5.0) * (x2 - x4);
 }
 
 template<typename MatType, typename GradType>

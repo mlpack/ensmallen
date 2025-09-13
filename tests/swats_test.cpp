@@ -9,56 +9,72 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run SWATS on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("SWATSLogisticRegressionTestFunction", "[SWATSTest]")
+TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
+    ENS_ALL_TEST_TYPES)
 {
-  SWATS optimizer(1e-3, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
+  SWATS optimizer(0.03, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
   // We allow a few trials in case of poor convergence.
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+      optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      5);
 }
 
-/**
- * Test the SWATS optimizer on the Sphere function.
- */
-TEST_CASE("SWATSSphereFunctionTest", "[SWATSTest]")
+TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]", ENS_ALL_TEST_TYPES)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<SphereFunction>(optimizer, 1.0, 0.1);
+  SWATS optimizer(0.2, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the SWATS optimizer on the Styblinski-Tang function.
- */
-TEST_CASE("SWATSStyblinskiTangFunctionTest", "[SWATSTest]")
+TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction>(optimizer, 0.3, 0.03);
+  SWATS optimizer(0.4, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  FunctionTest<StyblinskiTangFunction, TestType>(
+      optimizer,
+      30 * Tolerances<TestType>::LargeObj,
+      30 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the SWATS optimizer on the Styblinski-Tang function.  Use arma::fmat.
- */
-TEST_CASE("SWATSStyblinskiTangFunctionFMatTest", "[SWATSTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("SWATS_LogisticRegressionFunction", "[SWATS]",
+    coot::mat, coot::fmat)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 3.0, 0.3);
+  SWATS optimizer(1e-2, 10, 0.9, 0.999, 1e-6, 600000, 1e-9, true);
+  // We allow a few trials in case of poor convergence.
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.003, 0.006, 5);
 }
 
-/**
- * Test the SWATS optimizer on the Styblinski-Tang function.  Use arma::sp_mat.
- */
-TEST_CASE("SWATSStyblinskiTangFunctionSpMatTest", "[SWATSTest]")
+TEMPLATE_TEST_CASE("SWATS_SphereFunction", "[SWATS]",
+    coot::mat, coot::fmat)
 {
-  SWATS optimizer(1e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::sp_mat>(optimizer, 0.3, 0.03);
+  SWATS optimizer(2e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
+
+TEMPLATE_TEST_CASE("SWATS_StyblinskiTangFunction", "[SWATS]",
+    coot::mat, coot::fmat)
+{
+  SWATS optimizer(2e-3, 2, 0.9, 0.999, 1e-6, 500000, 1e-9, true);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 3.0, 0.3);
+}
+
+#endif

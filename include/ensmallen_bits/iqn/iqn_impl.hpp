@@ -36,8 +36,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 IQN::Optimize(SeparableFunctionType& functionIn,
               MatType& iterateIn,
               CallbackTypes&&... callbacks)
@@ -46,6 +46,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
   typedef typename MatTypeTraits<GradType>::BaseMatType BaseGradType;
+  typedef typename ForwardType<MatType>::bmat ProxyMatType;
 
   typedef Function<SeparableFunctionType, BaseMatType, BaseGradType>
       FullFunctionType;
@@ -81,8 +82,8 @@ IQN::Optimize(SeparableFunctionType& functionIn,
       iterate.n_cols));
   std::vector<BaseMatType> Q(numBatches, BaseMatType(iterate.n_elem,
       iterate.n_elem));
-  BaseMatType initialIterate = arma::randn<arma::Mat<ElemType>>(iterate.n_rows,
-      iterate.n_cols);
+  BaseMatType initialIterate = ProxyMatType(iterate.n_rows, iterate.n_cols,
+      GetFillType<MatType>::randn);
   BaseGradType B(iterate.n_elem, iterate.n_elem);
   B.eye();
 
@@ -103,7 +104,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
 
     Q[f].eye();
     g += y[f];
-    y[f] /= (double) effectiveBatchSize;
+    y[f] /= (ElemType) effectiveBatchSize;
 
     i += effectiveBatchSize;
   }
@@ -124,7 +125,7 @@ IQN::Optimize(SeparableFunctionType& functionIn,
       const size_t effectiveBatchSize = std::min(batchSize, numFunctions -
           it * batchSize);
 
-      if (arma::norm(iterate - t[it]) > 0)
+      if (norm(iterate - t[it]) > 0)
       {
         function.Gradient(iterate, it * batchSize, gradient,
             effectiveBatchSize);
@@ -133,31 +134,34 @@ IQN::Optimize(SeparableFunctionType& functionIn,
         terminate |= Callback::Gradient(*this, function, iterate, gradient,
             callbacks...);
 
-        const BaseMatType s = arma::vectorise(iterate - t[it]);
-        const BaseGradType yy = arma::vectorise(gradient - y[it]);
+        const BaseMatType s = vectorise(iterate - t[it]);
+        const BaseGradType yy = vectorise(gradient - y[it]);
 
         const BaseGradType stochasticHessian = Q[it] + yy * yy.t() /
-            arma::as_scalar(yy.t() * s) - Q[it] * s * s.t() *
-            Q[it] / arma::as_scalar(s.t() * Q[it] * s);
+            as_scalar(yy.t() * s) - Q[it] * s * s.t() *
+            Q[it] / as_scalar(s.t() * Q[it] * s);
+
+        const ElemType negBatches = 1 / ElemType(numBatches);
 
         // Update aggregate Hessian approximation.
-        B += (1.0 / numBatches) * (stochasticHessian - Q[it]);
+        B += negBatches * (stochasticHessian - Q[it]);
 
         // Update aggregate Hessian-variable product.
-        u += arma::reshape((1.0 / numBatches) * (stochasticHessian *
-            arma::vectorise(iterate) - Q[it] * arma::vectorise(t[it])),
-            u.n_rows, u.n_cols);;
+        u += reshape(negBatches * (stochasticHessian *
+            vectorise(iterate) - Q[it] * vectorise(t[it])),
+            u.n_rows, u.n_cols);
 
         // Update aggregate gradient.
-        g += (1.0 / numBatches) * (gradient - y[it]);
+        g += negBatches * (gradient - y[it]);
 
         // Update the function information tables.
         Q[it] = std::move(stochasticHessian);
         y[it] = std::move(gradient);
         t[it] = iterate;
 
-        iterate = arma::reshape(stepSize * B.i() * (u.t() - arma::vectorise(g)),
-            iterate.n_rows, iterate.n_cols) + (1 - stepSize) * iterate;
+        iterate = reshape(ElemType(stepSize) * pinv(B) * (u.t() - vectorise(g)),
+            iterate.n_rows, iterate.n_cols) +
+            (1 - ElemType(stepSize)) * iterate;
 
         terminate |= Callback::StepTaken(*this, function, iterate,
             callbacks...);

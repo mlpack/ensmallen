@@ -10,29 +10,37 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run AdaDelta on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaDeltaLogisticRegressionTest", "[AdaDeltaTest]")
+TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
+    ENS_ALL_TEST_TYPES)
 {
-  AdaDelta adaDelta;
-  LogisticRegressionFunctionTest(adaDelta, 0.003, 0.006, 1);
+  typedef typename TestType::elem_type ElemType;
+
+  // Use a large epsilon if we are using FP16, to avoid underflow in the first
+  // iterations.
+  AdaDelta adaDelta(32.0, 32, 0.95, sizeof(ElemType) == 2 ? 1e-4 : 1e-6);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adaDelta);
 }
 
-/**
- * Run AdaDelta on logistic regression and make sure the results are acceptable
- * with arma::fmat as the type.
- */
-TEST_CASE("AdaDeltaLogisticRegressionTestFMat", "[AdaDeltaTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("AdaDelta_LogisticRegressionFunction", "[AdaDelta]",
+    coot::mat, coot::fmat)
 {
-  AdaDelta adaDelta;
-  LogisticRegressionFunctionTest(adaDelta, 0.003, 0.006, 1);
+  AdaDelta adaDelta(32.0);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      adaDelta, 0.003, 0.006, 1);
 }
+
+#endif

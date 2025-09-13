@@ -6,7 +6,7 @@
  * Implementation of the IPOP Covariance Matrix Adaptation Evolution Strategy
  * as proposed by A. Auger and N. Hansen in "A Restart CMA Evolution
  * Strategy With Increasing Population Size" and BIPOP Covariance Matrix
- * Adaptation Evolution Strategy as proposed by N. Hansen in "Benchmarking 
+ * Adaptation Evolution Strategy as proposed by N. Hansen in "Benchmarking
  * a BI-population CMA-ES on the BBOB-2009 function testbed".
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -48,7 +48,7 @@ template<typename SelectionPolicyType,
          typename TransformationPolicyType,
          bool UseBIPOPFlag>
 template<typename SeparableFunctionType, typename MatType, typename... CallbackTypes>
-typename MatType::elem_type POP_CMAES<SelectionPolicyType, 
+typename MatType::elem_type POP_CMAES<SelectionPolicyType,
     TransformationPolicyType, UseBIPOPFlag>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
@@ -65,9 +65,9 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
 
   // First single run with default population size
   MatType iterate = iterateIn;
-  ElemType overallObjective = CMAES<SelectionPolicyType, 
-      TransformationPolicyType>::Optimize(function, iterate, sbc, 
-                                          callbacks...);
+  ElemType overallObjective = CMAES<SelectionPolicyType,
+      TransformationPolicyType>::Optimize(function, iterate, sbc,
+          callbacks...);
 
   overallSBC = sbc;
   ElemType objective;
@@ -85,7 +85,7 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
 
   while (restart < maxRestarts)
   {
-    if (!UseBIPOPFlag || largePopulationBudget <= smallPopulationBudget || 
+    if (!UseBIPOPFlag || largePopulationBudget <= smallPopulationBudget ||
         restart == 0 || restart == maxRestarts - 1)
     {
       // Large population regime (IPOP or BIPOP)
@@ -95,12 +95,12 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
 
       Info << "POP-CMA-ES: restart " << restart << ", large population size" <<
           " (lambda): " << this->PopulationSize() << "." << std::endl;
-      
+
       iterate = iterateIn;
 
       // Optimize using the CMAES object.
-      objective = CMAES<SelectionPolicyType, 
-          TransformationPolicyType>::Optimize(function, iterate, sbc, 
+      objective = CMAES<SelectionPolicyType,
+          TransformationPolicyType>::Optimize(function, iterate, sbc,
           callbacks...);
 
       evaluations = this->FunctionEvaluations();
@@ -110,10 +110,10 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
     {
       // Small population regime (BIPOP only)
       double u = arma::randu<double>();
-      size_t smallLambda = static_cast<size_t>(defaultLambda * std::pow(0.5 * 
+      size_t smallLambda = static_cast<size_t>(defaultLambda * std::pow(0.5 *
           currentLargeLambda / defaultLambda, u * u));
       double stepSizeSmall = 2 * std::pow(10, -2 * arma::randu<double>());
-      
+
       this->PopulationSize() = smallLambda;
       this->StepSize() = stepSizeSmall;
 
@@ -121,10 +121,10 @@ typename MatType::elem_type POP_CMAES<SelectionPolicyType,
           " size (lambda): " << this->PopulationSize() << "." << std::endl;
 
       iterate = iterateIn;
-      
+
       // Optimize using the CMAES object.
-      objective = CMAES<SelectionPolicyType, 
-          TransformationPolicyType>::Optimize(function, iterate, sbc, 
+      objective = CMAES<SelectionPolicyType,
+          TransformationPolicyType>::Optimize(function, iterate, sbc,
                                               callbacks...);
 
       evaluations = this->FunctionEvaluations();

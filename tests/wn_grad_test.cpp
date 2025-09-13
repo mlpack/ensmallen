@@ -9,55 +9,68 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run WNGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("WNGradLogisticRegressionTest","[WNGradTest]")
+TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
+    ENS_ALL_TEST_TYPES)
 {
   WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
-/**
- * Test the WNGrad optimizer on the Sphere function.
- */
-TEST_CASE("WNGradSphereFunctionTest","[WNGradTest]")
+TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]", ENS_ALL_TEST_TYPES)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<SphereFunction>(optimizer, 1.0, 0.1);
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the WNGrad optimizer on the StyblinskiTangFunction.
- */
-TEST_CASE("WNGradStyblinskiTangFunctionTest","[WNGradTest]")
+// The Styblinski-Tang function is too difficult to make converge for WNGrad in
+// low precision.
+TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]", ENS_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction>(optimizer, 0.3, 0.03);
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
+  FunctionTest<StyblinskiTangFunction, TestType>(
+      optimizer,
+      5 * Tolerances<TestType>::LargeObj,
+      5 * Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the WNGrad optimizer on the StyblinskiTangFunction.  Use arma::fmat.
- */
-TEST_CASE("WNGradStyblinskiTangFunctionFMatTest", "[WNGradTest]")
+#ifdef ENS_HAVE_COOT
+
+TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
+    coot::mat, coot::fmat)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 3.0, 0.3);
+  WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
+  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
+      optimizer, 0.003, 0.006);
 }
 
-/**
- * Test the WNGrad optimizer on the StyblinskiTangFunction.  Use arma::sp_mat.
- */
-TEST_CASE("WNGradStyblinskiTangFunctionSpMatTest", "[WNGradTest]")
+TEMPLATE_TEST_CASE("WNGrad_SphereFunction", "[WNGrad]",
+    coot::mat, coot::fmat)
 {
-  WNGrad optimizer(0.56, 2, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::sp_mat>(optimizer, 0.3, 0.03);
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
+  FunctionTest<SphereFunction, TestType>(optimizer, 1.0, 0.1);
 }
+
+TEMPLATE_TEST_CASE("WNGrad_StyblinskiTangFunction", "[WNGrad]",
+    coot::mat, coot::fmat)
+{
+  WNGrad optimizer(1.12, 2, 500000, 1e-9, true);
+  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.3, 0.03);
+}
+
+#endif

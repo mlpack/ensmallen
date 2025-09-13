@@ -1,6 +1,6 @@
 /**
  * @file yogi.hpp
- * @author Marcus Edel 
+ * @author Marcus Edel
  *
  * Class wrapper for the Yogi update Policy. Yogi is based on Adam with more
  * fine grained effective learning rate control.
@@ -42,7 +42,7 @@ namespace ens {
  * see the documentation on function types included with this distribution or
  * on the ensmallen website.
  */
-class Yogi 
+class Yogi
 {
  public:
   /**
@@ -100,15 +100,15 @@ class Yogi
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value,
+  typename std::enable_if<IsMatrixType<GradType>::value,
       typename MatType::elem_type>::type
   Optimize(SeparableFunctionType& function,
            MatType& iterate,
            CallbackTypes&&... callbacks)
   {
-    return optimizer.Optimize<SeparableFunctionType, MatType, GradType,
-        CallbackTypes...>(function, iterate,
-        std::forward<CallbackTypes>(callbacks)...);
+    return optimizer.template Optimize<
+        SeparableFunctionType, MatType, GradType, CallbackTypes...>(
+        function, iterate, std::forward<CallbackTypes>(callbacks)...);
   }
 
   //! Forward the MatType as GradType.
@@ -176,7 +176,7 @@ class Yogi
   //! are reset before Optimize call.
   bool& ResetPolicy() { return optimizer.ResetPolicy(); }
 
-  private:
+ private:
   //! The Stochastic Gradient Descent object with Yogi policy.
   SGD<YogiUpdate> optimizer;
 };

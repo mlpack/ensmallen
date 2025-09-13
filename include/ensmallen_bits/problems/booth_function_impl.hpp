@@ -35,8 +35,8 @@ typename MatType::elem_type BoothFunction::Evaluate(
   const ElemType x1 = coordinates(0);
   const ElemType x2 = coordinates(1);
 
-  const ElemType objective = std::pow(x1 + 2 * x2 - 7, 2) +
-      std::pow(2 * x1 + x2 - 5, 2);
+  const ElemType objective = std::pow(x1 + 2 * x2 - 7, ElemType(2)) +
+      std::pow(2 * x1 + x2 - 5, ElemType(2));
 
   return objective;
 }
