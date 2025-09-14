@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE("FrankWolfe_LineSearch", "[FrankWolfe]",
   FrankWolfe<decltype(linearConstrSolver), UpdateLineSearch>
       s(linearConstrSolver, updateRule);
 
-  TestType coordinates = arma::randu<TestType>(3);
+  TestType coordinates = randu<TestType>(3);
   ElemType result = s.Optimize(f, coordinates);
 
   REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Obj));
