@@ -35,9 +35,28 @@ typename MatType::elem_type LRSDP<SDPType>::Optimize(
   function.RRTAny().template Set<MatType>(
       new MatType(coordinates * coordinates.t()));
 
-  augLag.Sigma() = 10;
   augLag.MaxIterations() = maxIterations;
-  augLag.Optimize(function, coordinates, callbacks...);
+  typename ForwardType<MatType>::bvec lambda(function.NumConstraints());
+  double sigma = 10;
+  augLag.Optimize(function, coordinates, lambda, sigma, callbacks...);
+
+  return function.Evaluate(coordinates);
+}
+
+template<typename SDPType>
+template<typename MatType, typename VecType, typename... CallbackTypes>
+typename MatType::elem_type LRSDP<SDPType>::Optimize(
+    MatType& coordinates,
+    VecType& lambda,
+    double& sigma,
+    CallbackTypes&&... callbacks)
+{
+  function.RRTAny().Clean();
+  function.RRTAny().template Set<MatType>(
+      new MatType(coordinates * coordinates.t()));
+
+  augLag.MaxIterations() = maxIterations;
+  augLag.Optimize(function, coordinates, lambda, sigma, callbacks...);
 
   return function.Evaluate(coordinates);
 }

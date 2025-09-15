@@ -22,21 +22,9 @@ namespace ens {
 // Initialize the AugLagrangianFunction.
 template<typename LagrangianFunction, typename VecType>
 AugLagrangianFunction<LagrangianFunction, VecType>::AugLagrangianFunction(
-    LagrangianFunction& function) :
-    function(function),
-    lambda(function.NumConstraints()),
-    sigma(10)
-{
-  // Initialize lambda vector to all zeroes.
-  lambda.zeros();
-}
-
-// Initialize the AugLagrangianFunction.
-template<typename LagrangianFunction, typename VecType>
-AugLagrangianFunction<LagrangianFunction, VecType>::AugLagrangianFunction(
     LagrangianFunction& function,
-    const VecType& lambda,
-    const double sigma) :
+    VecType& lambda,
+    double& sigma) :
     function(function),
     lambda(lambda),
     sigma(sigma)

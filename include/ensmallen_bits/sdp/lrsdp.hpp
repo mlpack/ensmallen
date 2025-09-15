@@ -75,6 +75,22 @@ class LRSDP
   typename MatType::elem_type Optimize(MatType& coordinates,
                                        CallbackTypes&&... callbacks);
 
+  /**
+   * Optimize the LRSDP and return the final objective value, using the given
+   * starting Lagrange multipliers and penalty parameter for the augmented
+   * Lagrangian inner optimizer.  The given coordinates will be modified to
+   * contain the final solution, and the given lambda/sigma will be modified to
+   * contain the final values.
+   *
+   * @param coordinates Starting coordinates for the optimization.
+   * @param callbacks Callback functions.
+   */
+  template<typename MatType, typename VecType, typename... CallbackTypes>
+  typename MatType::elem_type Optimize(MatType& coordinates,
+                                       VecType& lambda,
+                                       double& sigma,
+                                       CallbackTypes&&... callbacks);
+
   //! Return the SDP that will be solved.
   const SDPType& SDP() const { return function.SDP(); }
   //! Modify the SDP that will be solved.
