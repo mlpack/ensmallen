@@ -6,6 +6,19 @@
    before including `ensmallen.hpp`
    ([#431](https://github.com/mlpack/ensmallen/pull/431)).
 
+ * The `Lambda()` and `Sigma()` functions of the `AugLagrangian` optimizer,
+   which could be used to retrieve the Lagrange multipliers and penalty
+   parameter after optimization, are now deprecated
+   ([#439](https://github.com/mlpack/ensmallen/pull/439)).  Instead, pass a
+   vector and a double to the `Optimize()` function directly:
+
+    ```c++
+    augLag.Optimize(function, coordinates, lambda, sigma)
+    ```
+
+   and these will be filled with the final Lagrange multiplier estimates and
+   penalty parameters.
+
 ### ensmallen 2.22.2: "E-Bike Excitement"
 ###### 2025-04-30
  * Fix include statement in `tests/de_test.cpp`
