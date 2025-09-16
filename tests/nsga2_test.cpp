@@ -64,8 +64,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1ElemTypeBounds", "[NSGA2]",
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
       sch.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -114,8 +114,8 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
     TestType coords = sch.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -165,8 +165,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
   TestType coords = fon.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+  arma::Cube<ElemType> paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool allInRange = true;
 
@@ -214,8 +214,8 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
   TestType coords = fon.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+  arma::Cube<ElemType> paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool allInRange = true;
 
@@ -275,39 +275,4 @@ TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_ALL_CPU_TEST_TYPES)
   double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
 
   REQUIRE(g == Approx(1.0).margin(0.99));
-}
-
-/**
- * Ensure that the reverse-compatible Front() function works.
- *
- * This test can be removed when Front() is removed, in ensmallen 3.x.
- */
-TEMPLATE_TEST_CASE("NSGA2_FrontTest", "[NSGA2]", ENS_TEST_TYPES)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  SchafferFunctionN1<TestType> sch;
-  const double lowerBound = -1000;
-  const double upperBound = 1000;
-
-  NSGA2 opt(
-      20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
-
-  typedef decltype(sch.objectiveA) ObjectiveTypeA;
-  typedef decltype(sch.objectiveB) ObjectiveTypeB;
-
-  TestType coords = sch.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
-
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoFront = opt.ParetoFront<arma::Cube<ElemType>>();
-
-  std::vector<arma::mat> rcFront = opt.Front();
-
-  REQUIRE(paretoFront.n_slices == rcFront.size());
-  for (size_t i = 0; i < paretoFront.n_slices; ++i)
-  {
-    arma::mat paretoM = conv_to<arma::mat>::from(paretoFront.slice(i));
-    CheckMatrices(paretoM, rcFront[i]);
-  }
 }

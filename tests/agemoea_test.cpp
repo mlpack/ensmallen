@@ -64,9 +64,8 @@ TEMPLATE_TEST_CASE("AGEMOEASchafferN1Test", "[AGEMOEA]", ENS_TEST_TYPES)
     TestType coords = sch.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = arma::conv_to<arma::Cube<ElemType>>::from(
-        opt.ParetoSet());
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -118,9 +117,8 @@ TEMPLATE_TEST_CASE("AGEMOEASchafferN1TestVectorBounds", "[AGEMOEA]",
     TestType coords = sch.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = arma::conv_to<arma::Cube<ElemType>>::from(
-        opt.ParetoSet());
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -169,9 +167,8 @@ TEMPLATE_TEST_CASE("AGEMOEAFonsecaFlemingTest", "[AGEMOEA]", ENS_TEST_TYPES)
     TestType coords = fon.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = arma::conv_to<arma::Cube<ElemType>>::from(
-        opt.ParetoSet());
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -226,9 +223,8 @@ TEMPLATE_TEST_CASE("AGEMOEAFonsecaFlemingTestVectorBounds", "[AGEMOEA]",
     TestType coords = fon.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = arma::conv_to<arma::Cube<ElemType>>::from(
-        opt.ParetoSet());
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
     for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
@@ -359,10 +355,9 @@ TEMPLATE_TEST_CASE("AGEMOEADIRICHLETZDT3Test", "[AGEMOEAD]", ENS_TEST_TYPES)
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
         zdt3.GetObjectives();
 
-    opt.Optimize(objectives, coords);
+    arma::Cube<ElemType> paretoFront, finalPopulation;
+    opt.Optimize(objectives, coords, paretoFront, finalPopulation);
 
-    const arma::Cube<ElemType> finalPopulation =
-        arma::conv_to<arma::Cube<ElemType>>::from(opt.ParetoSet());
     success = AVariableBoundsCheck(finalPopulation);
     if (success)
       break;

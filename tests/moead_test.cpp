@@ -116,8 +116,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]",
     TestType coords = sch.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet= opt.ParetoSet<arma::Cube<ElemType>>();
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -177,8 +177,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
     TestType coords = sch.GetInitialPoint();
     std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
 
-    opt.Optimize(objectives, coords);
-    arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+    arma::Cube<ElemType> paretoFront, paretoSet;
+    opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
     bool allInRange = true;
 
@@ -234,8 +234,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
   TestType coords = fon.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+  arma::Cube<ElemType> paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool allInRange = true;
 
@@ -291,8 +291,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
   TestType coords = fon.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = fon.GetObjectives();
 
-  opt.Optimize(objectives, coords);
-  arma::Cube<ElemType> paretoSet = opt.ParetoSet<arma::Cube<ElemType>>();
+  arma::Cube<ElemType> paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool allInRange = true;
 
@@ -351,10 +351,10 @@ TEST_CASE("MOEADDIRICHLETMAF3Test", "[MOEAD]")
   arma::mat coords = MAF_THREE.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB, ObjectiveTypeC> objectives =
       MAF_THREE.GetObjectives();
-  opt.Optimize(objectives, coords);
+  arma::cube paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool success = true;
-  arma::cube paretoSet = opt.ParetoSet();
   for (size_t i = 0; i < paretoSet.n_slices; i++)
   {
     arma::mat solution = paretoSet.slice(i);
@@ -410,10 +410,10 @@ TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
   arma::mat coords = MAF_ONE.GetInitialPoint();
   std::tuple<ObjectiveTypeA, ObjectiveTypeB, ObjectiveTypeC> objectives =
       MAF_ONE.GetObjectives();
-  opt.Optimize(objectives, coords);
+  arma::cube paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
 
   bool success = true;
-  arma::cube paretoSet = opt.ParetoSet();
   for (size_t i = 0; i < paretoSet.n_slices; i++)
   {
     arma::mat solution = paretoSet.slice(i);
@@ -471,8 +471,8 @@ TEST_CASE("MOEADDIRICHLETMAF4Test", "[MOEAD]")
 
   bool success = false;
   arma::mat coords = maf4.GetInitialPoint();
-  opt.Optimize(objectives, coords);
-  arma::cube paretoSet = opt.ParetoSet();
+  arma::cube paretoFront, paretoSet;
+  opt.Optimize(objectives, coords, paretoFront, paretoSet);
   for (size_t i = 0; i < paretoSet.n_slices; i++)
   {
     arma::mat solution = paretoSet.slice(i);
