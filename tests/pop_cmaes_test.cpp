@@ -40,9 +40,9 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_RastriginFunction", "[POPCMAES]", ENS_TEST_TYPES)
     10000, // maxIterations
     Tolerances<TestType>::Obj, // tolerance
     FullSelection(), // selectionPolicy
-    3.72, // stepSize
+    1.0, // stepSize
     2.0, // populationFactor
-    7, // maxRestarts
+    3, // maxRestarts
     1e6 // maxFunctionEvaluations
   );
 

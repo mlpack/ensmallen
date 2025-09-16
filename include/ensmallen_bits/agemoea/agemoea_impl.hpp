@@ -68,6 +68,8 @@ typename MatType::elem_type AGEMOEA::Optimize(
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
+  typedef typename ForwardType<MatType>::bcube CubeType;
+  CubeType paretoFront, paretoSet;
   return Optimize(objectives, iterateIn, paretoFront, paretoSet,
       std::forward<CallbackTypes>(callbacks)...);
 }
@@ -237,16 +239,11 @@ typename MatType::elem_type AGEMOEA::Optimize(
   // Set the candidates from the Pareto Front as the output.
   paretoFrontIn.set_size(calculatedObjectives[0].n_rows,
       calculatedObjectives[0].n_cols, population.size());
-  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
   for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoFrontIn.slice(solutionIdx) =
       conv_to<CubeBaseMatType>::from(calculatedObjectives[solutionIdx]);
   }
-
-  // Clear rcFront, in case it is later requested by the user for reverse
-  // compatibility reasons.
-  rcFront.clear();
 
   // Assign iterate to first element of the Pareto Set.
   iterate = population[fronts[0][0]];
