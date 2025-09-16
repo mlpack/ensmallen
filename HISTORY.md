@@ -6,6 +6,42 @@
    before including `ensmallen.hpp`
    ([#431](https://github.com/mlpack/ensmallen/pull/431)).
 
+ * Remove deprecated `ParetoFront()` and `ParetoSet()` from multi-objective
+   optimizers ([#435](https://github.com/mlpack/ensmallen/pull/435)).  Instead,
+   pass objects to the `Optimize()` function; see the documentation for each
+   multi-objective optimizer for more details.  A typical transition will change
+   code like:
+
+    ```c++
+    optimizer.Optimize(objectives, coordinates);
+    arma::cube paretoFront = optimizer.ParetoFront();
+    arma::cube paretoSet = optimizer.ParetoSet();
+    ```
+
+   to instead gather the Pareto front and set in the call:
+
+    ```c++
+    arma::cube paretoFront, paretoSet;
+    optimizer.Optimize(objectives, coordinates, paretoFront, paretoSet);
+    ```
+
+ * Remove deprecated constructor for Active CMA-ES that takes `lowerBound` and
+   `upperBound` ([#435](https://github.com/mlpack/ensmallen/pull/435)).
+   Instead, pass an instantiated `BoundaryBoxConstraint` to the constructor.  A
+   typical transition will change code like:
+
+    ```c++
+    ActiveCMAES<FullSelection, BoundaryBoxConstraint> opt(lambda,
+        lowerBound, upperBound, ...);
+    ```
+
+   into
+
+    ```c++
+    ActiveCMAES<FullSelection, BoundaryBoxConstraint> opt(lambda,
+        BoundaryBoxConstraint(lowerBound, upperBound), ...);
+    ```
+
  * The `Lambda()` and `Sigma()` functions of the `AugLagrangian` optimizer,
    which could be used to retrieve the Lagrange multipliers and penalty
    parameter after optimization, are now deprecated

@@ -88,9 +88,12 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
          MatType& iterateIn,
          CallbackTypes&&... callbacks)
 {
+  typedef typename ForwardType<MatType>::bcube CubeType;
+  CubeType paretoFront, paretoSet;
   return Optimize(objectives, iterateIn, paretoFront, paretoSet,
       std::forward<CallbackTypes>(callbacks)...);
 }
+
 //! Optimize the function.
 template <typename InitPolicyType, typename DecompPolicyType>
 template<typename MatType,
@@ -331,7 +334,6 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   paretoSetIn.set_size(
       population[0].n_rows, population[0].n_cols, population.size());
 
-  // The Pareto Front is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < population.size(); ++solutionIdx)
   {
     paretoSetIn.slice(solutionIdx) =
@@ -339,10 +341,9 @@ Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
   }
 
   // Set the candidates from the Pareto Front as the output.
-  paretoFrontIn.set_size(populationFitness[0].n_rows, populationFitness[0].n_cols,
-      populationFitness.size());
+  paretoFrontIn.set_size(populationFitness[0].n_rows,
+      populationFitness[0].n_cols, populationFitness.size());
 
-  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
   for (size_t solutionIdx = 0;
       solutionIdx < populationFitness.size(); ++solutionIdx)
   {
