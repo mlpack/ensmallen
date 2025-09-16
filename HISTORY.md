@@ -42,6 +42,11 @@
         BoundaryBoxConstraint(lowerBound, upperBound), ...);
     ```
 
+ * Add proximal gradient optimizers for L1-constrained and other related
+   problems: `FBS`, `FISTA`, and `FASTA`
+   ([#427](https://github.com/mlpack/ensmallen/pull/427)).  See the
+   documentation for more details.
+
 ### ensmallen 2.22.2: "E-Bike Excitement"
 ###### 2025-04-30
  * Fix include statement in `tests/de_test.cpp`
