@@ -109,10 +109,10 @@ void LRSDPFunction<SDPType>::GradientConstraint(
          "for arbitrary optimizers!");
 }
 
-//! Utility function for updating R*R^T matrix.
-//! Note: Caching R*R^T provide significant computation optimization
-//! by reducing redundant R*R^T calculations in case of functions are not used
-//! updating coordinates matrix, hence leaving R*R^T unchanged.
+// Utility function for updating R*R^T matrix.
+// Note: Caching R*R^T provide significant computation optimization
+// by reducing redundant R*R^T calculations in case of functions are not used
+// updating coordinates matrix, hence leaving R*R^T unchanged.
 template<typename SDPType, typename MatType>
 void UpdateRRT(LRSDPFunction<SDPType>& function,
                MatType&& newrrt)
@@ -120,15 +120,15 @@ void UpdateRRT(LRSDPFunction<SDPType>& function,
   function.template RRT<MatType>() = std::move(newrrt);
 }
 
-//! Utility function for calculating part of the objective when AugLagrangian is
-//! used with an LRSDPFunction.
+// Utility function for calculating part of the objective when AugLagrangian is
+// used with an LRSDPFunction.
 template <typename MatrixType, typename VecType, typename MatType>
 static inline void
 UpdateObjective(typename MatType::elem_type& objective,
                 const MatType& rrt,
                 const std::vector<MatrixType>& ais,
                 const VecType& bis,
-                const arma::vec& lambda,
+                const VecType& lambda,
                 const size_t lambdaOffset,
                 const double sigma)
 {
@@ -144,15 +144,15 @@ UpdateObjective(typename MatType::elem_type& objective,
   }
 }
 
-//! Utility function for calculating part of the gradient when AugLagrangian is
-//! used with an LRSDPFunction.
+// Utility function for calculating part of the gradient when AugLagrangian is
+// used with an LRSDPFunction.
 template <typename MatrixType, typename VecType, typename MatType>
 static inline void
 UpdateGradient(MatType& s,
                const MatType& rrt,
                const std::vector<MatrixType>& ais,
                const VecType& bis,
-               const arma::vec& lambda,
+               const VecType& lambda,
                const size_t lambdaOffset,
                const double sigma)
 {
@@ -167,11 +167,11 @@ UpdateGradient(MatType& s,
   }
 }
 
-template<typename SDPType, typename MatType>
+template<typename SDPType, typename MatType, typename VecType>
 static inline double
 EvaluateImpl(LRSDPFunction<SDPType>& function,
              const MatType& coordinates,
-             const arma::vec& lambda,
+             const VecType& lambda,
              const double sigma)
 {
   // We can calculate the entire objective in a smart way.
@@ -220,11 +220,14 @@ EvaluateImpl(LRSDPFunction<SDPType>& function,
   return objective;
 }
 
-template<typename SDPType, typename MatType, typename GradType>
+template<typename SDPType,
+         typename MatType,
+         typename VecType,
+         typename GradType>
 static inline void
 GradientImpl(const LRSDPFunction<SDPType>& function,
              const MatType& coordinates,
-             const arma::vec& lambda,
+             const VecType& lambda,
              const double sigma,
              GradType& gradient)
 {
@@ -290,7 +293,7 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::mat>>, arma::vec>::Gra
 template<>
 template<typename MatType>
 inline typename MatType::elem_type
-AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::vec>::Evaluate(
+AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::fvec>::Evaluate(
     const MatType& coordinates) const
 {
   return EvaluateImpl(function, coordinates, lambda, sigma);
@@ -299,7 +302,7 @@ AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::vec>::Evaluate(
 template<>
 template<typename MatType>
 inline typename MatType::elem_type
-AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>, arma::vec>::Evaluate(
+AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>, arma::fvec>::Evaluate(
     const MatType& coordinates) const
 {
   return EvaluateImpl(function, coordinates, lambda, sigma);
@@ -307,7 +310,7 @@ AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>, arma::vec>::Evaluate(
 
 template<>
 template<typename MatType, typename GradType>
-inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::vec>::Gradient(
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::fvec>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const
 {
@@ -316,7 +319,7 @@ inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::sp_fmat>>, arma::vec>:
 
 template<>
 template<typename MatType, typename GradType>
-inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>, arma::vec>::Gradient(
+inline void AugLagrangianFunction<LRSDPFunction<SDP<arma::fmat>>, arma::fvec>::Gradient(
     const MatType& coordinates,
     GradType& gradient) const
 {

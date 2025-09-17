@@ -208,7 +208,7 @@ AugLagrangianType<VecType>::Optimize(
         terminate |= Callback::EvaluateConstraint(*this, function, coordinates,
             i, p, callbacks...);
 
-        augfunc.Lambda()[i] -= augfunc.Sigma() * p;
+        augfunc.Lambda()[i] -= ElemType(augfunc.Sigma()) * p;
       }
 
       // We also update the penalty threshold to be a factor of the current
