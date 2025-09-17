@@ -28,7 +28,7 @@ typename MatType::elem_type L1Penalty::Evaluate(const MatType& coordinates)
     const
 {
   // Compute the L1 penalty.
-  return norm(vectorise(coordinates), 1) * lambda;
+  return norm(vectorise(coordinates), 1) * typename MatType::elem_type(lambda);
 }
 
 template<typename MatType>
@@ -38,9 +38,9 @@ void L1Penalty::ProximalStep(MatType& coordinates,
   // Apply the backwards step coordinate-wise.  If `MatType` is sparse, this
   // only applies to nonzero elements, which is just fine.
   typedef typename MatType::elem_type eT;
-  coordinates.transform([this, stepSize](eT val) { return (val > 0.0) ?
-      (std::max(0.0, val - lambda * stepSize)) :
-      (std::min(0.0, val + lambda * stepSize)); });
+  coordinates.transform([this, stepSize](eT val) { return (val > eT(0)) ?
+      (std::max(eT(0), val - eT(lambda * stepSize))) :
+      (std::min(eT(0), val + eT(lambda * stepSize))); });
 }
 
 } // namespace ens

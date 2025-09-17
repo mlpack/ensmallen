@@ -157,8 +157,8 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
     bool lsDone = false;
     size_t lsTrial = 0;
     bool increasing = false; // Will be set during the first iteration.
-    ElemType lastFObj = 0.0;
-    ElemType lastGObj = 0.0;
+    ElemType lastFObj = ElemType(0);
+    ElemType lastGObj = ElemType(0);
     BaseMatType lsLastX; // Only used in increasing mode.
     BaseMatType xDiff;
 
@@ -189,7 +189,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
       }
 
       // If the step size has converged to zero, we are done.
-      if (currentStepSize == 0.0)
+      if (currentStepSize == ElemType(0))
       {
         Warn << "FISTA::Optimize(): computed zero step size; terminating "
             << "optimization." << std::endl;
@@ -211,7 +211,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
       // Compute Q_L(x, y) (the quadratic approximation), Eq. (2.5).
       xDiff = x - y;
       const ElemType q = yObj + dot(xDiff, g) +
-          (1.0 / (2.0 * currentStepSize)) * dot(xDiff, xDiff) + gObj;
+          (1 / (2 * currentStepSize)) * dot(xDiff, xDiff) + gObj;
 
       // If we're on the first iteration, we don't know if we should be
       // searching for a step size by increasing or decreasing the step size.
@@ -256,7 +256,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
         {
           // The condition is still satisfied; increase the step size.
           lastStepSize = currentStepSize;
-          currentStepSize *= stepSizeAdjustment;
+          currentStepSize *= ElemType(stepSizeAdjustment);
           lsLastX = std::move(x);
           lastFObj = fObj;
           lastGObj = gObj;
@@ -278,7 +278,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
         else
         {
           // The condition is not yet satisfied; decrease the step size.
-          currentStepSize /= stepSizeAdjustment;
+          currentStepSize /= ElemType(stepSizeAdjustment);
           ++lsTrial;
         }
       }
@@ -323,7 +323,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
 
     // Compute updated prediction parameter t.
     lastT = t;
-    t = (1.0 + std::sqrt(1 + 4 * std::pow(t, 2.0))) / 2.0;
+    t = (1 + std::sqrt(1 + 4 * std::pow(t, ElemType(2)))) / 2;
 
     // Sometimes t can get to be too large; this restart scheme is taken
     // originally from O'Donoghue and Candes, "Adaptive restart for accelerated
@@ -338,7 +338,7 @@ FISTA<BackwardStepType>::Optimize(FunctionType& function,
     }
 
     // Update prediction y.
-    y = x + ((lastT - 1.0) / t) * (x - lastX);
+    y = x + ((lastT - 1) / t) * (x - lastX);
 
     terminate |= Callback::StepTaken(*this, f, y, callbacks...);
   }
@@ -375,14 +375,14 @@ void FISTA<BackwardStepType>::RandomFill(
     const size_t cols,
     const eT maxVal)
 {
-  eT density = 0.1;
+  eT density = eT(0.1);
   // Try and keep the matrix from having too many elements.
   if (rows * cols > 100000)
-    density = 0.01;
+    density = eT(0.01);
   else if (rows * cols > 1000000)
-    density = 0.001;
+    density = eT(0.001);
   else if (rows * cols > 10000000)
-    density = 0.0001;
+    density = eT(0.0001);
 
   x.sprandu(rows, cols, density);
 
@@ -413,8 +413,8 @@ void FISTA<BackwardStepType>::EstimateLipschitzStepSize(
         "greater than 0!");
   }
 
-  const ElemType xMax = std::max(1.0, 2.0 * x.max());
-  ElemType sum = 0.0;
+  const ElemType xMax = std::max(ElemType(1), 2 * x.max());
+  ElemType sum = ElemType(0);
   MatType x1, x2, gx1, gx2;
 
   for (size_t t = 0; t < estimateTrials; ++t)
@@ -434,7 +434,7 @@ void FISTA<BackwardStepType>::EstimateLipschitzStepSize(
   if (sum == 0)
     maxStepSize = std::numeric_limits<ElemType>::max();
   else
-    maxStepSize = (10.0 / sum);
+    maxStepSize = (10 / sum);
 
   Info << "FISTA::Optimize(): estimated a maximum step size of "
       << maxStepSize << "." << std::endl;

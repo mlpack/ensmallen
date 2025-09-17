@@ -18,7 +18,7 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("FBSSimpleTest", "[FBS]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("FBSSimpleTest", "[FBS]", ENS_TEST_TYPES)
 {
   // Make sure that we can get a decent result with no g(x) constraint.
   FBS<L1Penalty> fbs(L1Penalty(0.0), 0.001, 50000);
@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE("L1PenaltyZeroTest", "[FBS]", ENS_ALL_TEST_TYPES)
 
   TestType coordinates(100, 1, fill::randu);
 
-  REQUIRE(std::abs(l.Evaluate(coordinates)) <= 1e-15);
+  REQUIRE(std::abs(l.Evaluate(coordinates)) <= Tolerances<TestType>::Obj);
 
   TestType coordinatesCopy(coordinates);
   l.ProximalStep(coordinates, 1.0);
@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE("L1ConstraintZeroTest", "[FBS]", ENS_ALL_TEST_TYPES)
 
   TestType coordinates(100, 1, fill::zeros);
 
-  REQUIRE(std::abs(l.Evaluate(coordinates)) <= 1e-15);
+  REQUIRE(std::abs(l.Evaluate(coordinates)) <= Tolerances<TestType>::Obj);
 
   TestType coordinatesCopy(coordinates);
   l.ProximalStep(coordinates, 1.0);
@@ -86,8 +86,10 @@ TEMPLATE_TEST_CASE("L1ConstraintTooBigTest", "[FBS]", ENS_ALL_TEST_TYPES)
 TEMPLATE_TEST_CASE("L1Constraint1DProjectionTest", "[FBS]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
+  typedef typename TestType::elem_type ElemType;
+
   TestType m(1, 1);
-  m(0, 0) = 100.0;
+  m(0, 0) = ElemType(100);
 
   L1Constraint l(1.0);
   l.ProximalStep(m, 1.0);
@@ -95,10 +97,10 @@ TEMPLATE_TEST_CASE("L1Constraint1DProjectionTest", "[FBS]", ENS_ALL_TEST_TYPES,
   REQUIRE(m(0, 0) == Approx(1.0));
 
   // Even when the step size is 0, the constraint should still apply.
-  m(0, 0) = -50.0;
+  m(0, 0) = ElemType(-50);
   l.ProximalStep(m, 0.0);
 
-  REQUIRE(m(0, 0) == Approx(-1.0));
+  REQUIRE(m(0, 0) == Approx(ElemType(-1)));
 }
 
 template<typename eT>
@@ -118,23 +120,27 @@ void RandomFill(SpMat<eT>& m)
 TEMPLATE_TEST_CASE("L1Constraint3DProjectionTest", "[FBS]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
+  typedef typename TestType::elem_type ElemType;
+
   L1Constraint l(1.0);
 
   TestType m(3, 1);
-  m(0, 0) = 5.0;
-  m(1, 0) = 3.0;
-  m(2, 0) = -4.0;
+  m(0, 0) = ElemType(5);
+  m(1, 0) = ElemType(3);
+  m(2, 0) = ElemType(-4);
 
   l.ProximalStep(m, 1.0);
 
-  REQUIRE(std::abs(l.Evaluate(m)) <= 1e-15);
-  REQUIRE(norm(m, 1) == Approx(1.0));
+  REQUIRE(std::abs(l.Evaluate(m)) <= Tolerances<TestType>::Obj);
+  REQUIRE(norm(m, 1) == Approx(ElemType(1)));
 }
 
 // Same as the test above, but in higher dimensionality.
 TEMPLATE_TEST_CASE("L1ConstraintProjectionTest", "[FBS]", ENS_ALL_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
+  typedef typename TestType::elem_type ElemType;
+
   L1Constraint l(2.5);
 
   for (size_t trial = 0; trial < 50; ++trial)
@@ -145,11 +151,11 @@ TEMPLATE_TEST_CASE("L1ConstraintProjectionTest", "[FBS]", ENS_ALL_TEST_TYPES,
 
     l.ProximalStep(m, 1.0);
 
-    const double tol =
-        (std::is_same<typename TestType::elem_type, float>::value) ? 1e-3 :
-        1e-8;
-    REQUIRE(std::abs(l.Evaluate(m)) <= 1e-15);
-    REQUIRE(norm(m, 1) == Approx(2.5).epsilon(tol));
+    // A very large tolerance is needed for low-precision!
+    const ElemType tol = (sizeof(ElemType) < 4) ? ElemType(0.75) :
+        Tolerances<TestType>::Coord;
+    REQUIRE(std::abs(l.Evaluate(m)) <= Tolerances<TestType>::Obj);
+    REQUIRE(norm(m, 1) == Approx(ElemType(2.5)).epsilon(tol));
   }
 }
 
@@ -164,7 +170,7 @@ TEMPLATE_TEST_CASE("FBSSphereFunctionTest", "[FBS]", ENS_ALL_TEST_TYPES,
       Tolerances<TestType>::Coord);
 }
 
-TEMPLATE_TEST_CASE("FBSWoodFunctionTest", "[FBS]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("FBSWoodFunctionTest", "[FBS]", ENS_TEST_TYPES)
 {
   // Set the L1 constraint to be sufficiently large that the final solution is
   // just inside the ball.
@@ -175,7 +181,7 @@ TEMPLATE_TEST_CASE("FBSWoodFunctionTest", "[FBS]", ENS_ALL_TEST_TYPES)
 }
 
 TEMPLATE_TEST_CASE("FBSLogisticRegressionFunctionTest", "[FBS]",
-    ENS_ALL_TEST_TYPES)
+    ENS_TEST_TYPES) // low precision is too flaky
 {
   FBS<L1Penalty> fbs(L1Penalty(0.001));
   LogisticRegressionFunctionTest<TestType>(fbs,

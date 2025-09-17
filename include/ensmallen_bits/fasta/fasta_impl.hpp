@@ -129,7 +129,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
 
   // This will be the denominator of the normalized residual termination
   // condition.
-  ElemType firstResidual = 0.0;
+  ElemType firstResidual = ElemType(0);
 
   // This will be used in the non-monotone line search, to track the last
   // several function values.
@@ -142,7 +142,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
   BaseMatType lastX; // Used for residual and alpha reset checks.
   BaseMatType xHat; // Used for residual checks.
   BaseMatType lpaX = x; // Used for alpha reset check.
-  ElemType alpha = 1; // Initialize alpha^1 = 1.
+  ElemType alpha = ElemType(1); // Initialize alpha^1 = 1.
   ElemType lastAlpha = alpha;
 
   // Controls early termination of the optimization process.
@@ -184,7 +184,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
     bool lsDone = false;
     size_t lsTrial = 0;
     bool increasing = false; // Will be set during the first iteration.
-    ElemType lastFObj = 0.0;
+    ElemType lastFObj = ElemType(0);
     BaseMatType lsLastX; // Only used in increasing mode.
     BaseMatType lsLastXHat; // Only used in increasing mode.
     BaseMatType xDiff;
@@ -222,7 +222,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
       }
 
       // If the step size has converged to zero, we are done.
-      if (currentStepSize == 0.0)
+      if (currentStepSize == ElemType(0))
       {
         Warn << "FASTA::Optimize(): computed zero step size; terminating "
             << "optimization." << std::endl;
@@ -252,9 +252,9 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
       // It is only when we are decreasing the step size that we allow
       // relaxation.
       const ElemType relaxedCond = maxFObj + dot(xDiff, g) +
-          (1.0 / (2.0 * currentStepSize)) * dot(xDiff, xDiff);
+          (1 / (2 * currentStepSize)) * dot(xDiff, xDiff);
       const ElemType strictCond = strictMaxFObj + dot(xDiff, g) +
-          (1.0 / (2.0 * currentStepSize)) * dot(xDiff, xDiff);
+          (1 / (2 * currentStepSize)) * dot(xDiff, xDiff);
 
       // If we're on the first iteration, we don't know if we should be
       // searching for a step size by increasing or decreasing the step size.
@@ -293,7 +293,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
         {
           // The condition is still satisfied; increase the step size.
           lastStepSize = currentStepSize;
-          currentStepSize *= stepSizeAdjustment;
+          currentStepSize *= ElemType(stepSizeAdjustment);
           lsLastX = std::move(x);
           lsLastXHat = std::move(xHat);
           lastFObj = fObj;
@@ -312,7 +312,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
         else
         {
           // The condition is not yet satisfied; decrease the step size.
-          currentStepSize /= stepSizeAdjustment;
+          currentStepSize /= ElemType(stepSizeAdjustment);
           ++lsTrial;
         }
       }
@@ -369,7 +369,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
     const ElemType eps = 20 * std::numeric_limits<ElemType>::epsilon();
     const ElemType normalizedResidual = residual / (firstResidual + eps);
 
-    if ((i < 10) && (normalizedResidual < 1e-5))
+    if ((i < 10) && (normalizedResidual < ElemType(1e-5)))
     {
       // Heuristic: sometimes the optimization starts in such an awful place
       // that we are able to make huge amounts of progress in the first few
@@ -387,8 +387,8 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
 
     // Next, check the relative residual for convergence.  This is Eq. (42) in
     // the paper.
-    const ElemType gNorm = arma::norm(g, 2);
-    const ElemType proxStepNorm = arma::norm((xHat - x) / currentStepSize, 2);
+    const ElemType gNorm = norm(g, 2);
+    const ElemType proxStepNorm = norm((xHat - x) / currentStepSize, 2);
 
     const ElemType relativeResidual = residual /
         (std::max(gNorm, proxStepNorm) + 20 * eps);
@@ -403,10 +403,10 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
 
     // Compute updated prediction parameter alpha.
     lastAlpha = alpha;
-    alpha = (1.0 + std::sqrt(1 + 4 * std::pow(alpha, 2.0))) / 2.0;
+    alpha = (1 + std::sqrt(1 + 4 * std::pow(alpha, ElemType(2)))) / 2;
 
     // Take a predictive step.
-    BaseMatType y = x + ((lastAlpha - 1.0) / alpha) * (x - lpaX);
+    BaseMatType y = x + ((lastAlpha - 1) / alpha) * (x - lpaX);
 
     // Sometimes alpha can get to be too large; this restart scheme is taken
     // originally from O'Donoghue and Candes, "Adaptive restart for accelerated
@@ -434,8 +434,8 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
     {
       Info << "FASTA::Optimize(): alpha too large (" << alpha << "); reset to "
           << "1." << std::endl;
-      alpha = 1;
-      lastAlpha = 1;
+      alpha = ElemType(1);
+      lastAlpha = ElemType(1);
     }
 
     lpaX = std::move(x);
@@ -476,14 +476,14 @@ void FASTA<BackwardStepType>::RandomFill(
     const size_t cols,
     const eT maxVal)
 {
-  eT density = 0.1;
+  eT density = eT(0.1);
   // Try and keep the matrix from having too many elements.
   if (rows * cols > 100000)
-    density = 0.01;
+    density = eT(0.01);
   else if (rows * cols > 1000000)
-    density = 0.001;
+    density = eT(0.001);
   else if (rows * cols > 10000000)
-    density = 0.0001;
+    density = eT(0.0001);
 
   x.sprandu(rows, cols, density);
 
@@ -514,8 +514,8 @@ void FASTA<BackwardStepType>::EstimateLipschitzStepSize(
         "greater than 0!");
   }
 
-  const ElemType xMax = std::max(1.0, 2.0 * x.max());
-  ElemType sum = 0.0;
+  const ElemType xMax = std::max(ElemType(1), 2 * x.max());
+  ElemType sum = ElemType(0);
   MatType x1, x2, gx1, gx2;
 
   for (size_t t = 0; t < estimateTrials; ++t)
@@ -535,7 +535,7 @@ void FASTA<BackwardStepType>::EstimateLipschitzStepSize(
   if (sum == 0)
     maxStepSize = std::numeric_limits<ElemType>::max();
   else
-    maxStepSize = (10.0 / sum);
+    maxStepSize = (10 / sum);
 
   Info << "FASTA::Optimize(): estimated a maximum step size of "
       << maxStepSize << "." << std::endl;

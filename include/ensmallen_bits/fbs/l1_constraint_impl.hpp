@@ -31,7 +31,7 @@ typename MatType::elem_type L1Constraint::Evaluate(const MatType& coordinates)
   // Allow some amount of tolerance for floating-point errors.
   const eT l1Norm = norm(vectorise(coordinates), 1);
   if (l1Norm <= lambda)
-    return 0.0;
+    return eT(0);
   else if (std::numeric_limits<eT>::has_infinity)
     return std::numeric_limits<eT>::infinity();
   else
@@ -80,8 +80,8 @@ void L1Constraint::ProximalStep(MatType& coordinates,
   arma::Col<eT> work = ExtractNonzeros(coordinates);
   size_t firstUpperElement = 0;
   size_t lastUpperElement = work.n_elem;
-  eT rho = 0.0; // This is the quantity we aim to find to perform the projection.
-  eT s = 0.0;
+  eT rho = eT(0); // This is the quantity we aim to find to perform the projection.
+  eT s = eT(0);
 
   while (lastUpperElement > firstUpperElement)
   {
@@ -111,10 +111,10 @@ void L1Constraint::ProximalStep(MatType& coordinates,
     }
 
     // Now, work[0] through work[left - 1] are in the greater set G.
-    const eT sDelta = arma::accu(work.subvec(firstUpperElement, left - 1));
+    const eT sDelta = accu(work.subvec(firstUpperElement, left - 1));
     const size_t rhoDelta = (left - firstUpperElement);
 
-    if ((s + sDelta) - ((double) (rho + rhoDelta)) * v < lambda)
+    if ((s + sDelta) - ((eT) (rho + rhoDelta)) * v < eT(lambda))
     {
       s += sDelta;
       rho += rhoDelta;
@@ -133,27 +133,28 @@ void L1Constraint::ProximalStep(MatType& coordinates,
     }
   }
 
-  const eT theta = (s - lambda) / rho;
+  const eT theta = (s - eT(lambda)) / rho;
   coordinates.transform(
       [theta](eT val)
       {
         if (val > 0)
-          return std::max(val - theta, (eT) 0.0);
+          return std::max(val - theta, eT(0));
         else
-          return std::min(val + theta, (eT) 0.0);
+          return std::min(val + theta, eT(0));
       });
 
   // Sanity check: ensure we actually ended up inside the L1 ball.  This might
   // not happen due to floating-point inaccuracies.  If so, try again.
   const eT newNorm = norm(coordinates, 1);
-  if (newNorm > lambda && lambda > (eT) 0.0)
+  if (newNorm > eT(lambda) && eT(lambda) > eT(0))
   {
     // Shrink the L1 ball by the amount of the error.
-    eT newLambda = (lambda - 2 * (newNorm - lambda));
-    if (newLambda == lambda)
+    eT newLambda = (eT(lambda) - 2 * (newNorm - eT(lambda)));
+    if (newLambda == eT(lambda))
     {
       // Make sure we at least remove a few ULPs.
-      newLambda = lambda - 5 * (lambda - std::nexttoward(lambda, 0.0));
+      newLambda = eT(lambda) -
+          5 * (eT(lambda) - eT(std::nexttoward(lambda, 0.0)));
     }
 
     L1Constraint newConstraint(newLambda);

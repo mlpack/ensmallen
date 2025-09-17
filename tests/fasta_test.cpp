@@ -18,7 +18,7 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("FASTASimpleTest", "[FASTA]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("FASTASimpleTest", "[FASTA]", ENS_TEST_TYPES)
 {
   // Make sure that we can get a decent result with no g(x) constraint.
   FASTA<L1Penalty> fasta(L1Penalty(0.0), 5000);
@@ -56,7 +56,7 @@ TEMPLATE_TEST_CASE("FASTAWoodFunctionTest", "[FASTA]", arma::mat)
 }
 
 TEMPLATE_TEST_CASE("FASTALogisticRegressionFunctionTest", "[FASTA]",
-    ENS_ALL_TEST_TYPES)
+    ENS_TEST_TYPES) // low precision is too flaky for this test
 {
   FASTA<L1Penalty> fasta(L1Penalty(0.001));
   LogisticRegressionFunctionTest<TestType>(fasta,

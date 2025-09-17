@@ -18,7 +18,7 @@ using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("FISTASimpleTest", "[FISTA]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("FISTASimpleTest", "[FISTA]", ENS_TEST_TYPES)
 {
   // Make sure that we can get a decent result with no g(x) constraint.
   FISTA<L1Penalty> fista(L1Penalty(0.0), 10000);

@@ -119,7 +119,7 @@ FBS<BackwardStepType>::Optimize(FunctionType& function,
     }
 
     // Perform forward update.
-    iterate -= stepSize * gradient;
+    iterate -= ElemType(stepSize) * gradient;
     // Now perform backward step (proximal update).
     backwardStep.ProximalStep(iterate, stepSize);
 
