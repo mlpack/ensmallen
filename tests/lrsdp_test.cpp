@@ -57,7 +57,8 @@ void CreateLovaszThetaInitialPoint(const MatType& edges,
  */
 template<typename MatType>
 void SetupLovaszTheta(const MatType& edges,
-                      LRSDP<SDP<MatType>>& lovasz)
+                      LRSDP<SDP<MatType>>& lovasz,
+                      typename ForwardType<MatType>::bvec& lambda)
 {
   // Get the number of vertices in the problem.
   const size_t vertices = max(max(edges)) + 1;
@@ -82,9 +83,9 @@ void SetupLovaszTheta(const MatType& edges,
   }
 
   // Set the Lagrange multipliers right.
-  lovasz.AugLag().Lambda().ones(edges.n_cols + 1);
-  lovasz.AugLag().Lambda() *= -1;
-  lovasz.AugLag().Lambda()[0] = -((typename MatType::elem_type) vertices);
+  lambda.ones(edges.n_cols + 1);
+  lambda *= -1;
+  lambda[0] = -((typename MatType::elem_type) vertices);
 }
 
 /**
@@ -113,9 +114,12 @@ TEMPLATE_TEST_CASE("Johnson844LovaszThetaSDP", "[LRSDP]", ENS_TEST_TYPES)
 
   LRSDP<SDP<TestType>> lovasz(edges.n_cols + 1, 0, coordinates);
 
-  SetupLovaszTheta(edges, lovasz);
+  typedef typename ForwardType<TestType>::bvec VecType;
+  VecType lambda;
+  SetupLovaszTheta(edges, lovasz, lambda);
 
-  ElemType finalValue = lovasz.Optimize(coordinates);
+  double sigma = 10;
+  ElemType finalValue = lovasz.Optimize(coordinates, lambda, sigma);
 
   // Final value taken from Monteiro + Burer 2004.
   REQUIRE(finalValue == Approx(-14.0).epsilon(Tolerances<TestType>::Obj));

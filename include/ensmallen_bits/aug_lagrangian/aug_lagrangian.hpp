@@ -30,7 +30,7 @@ namespace ens {
  * documentation on function types included with this distribution or on the
  * ensmallen website.
  */
-template<typename VecType = arma::vec>
+template<typename VecType = arma::vec> // TODO: remove for ensmallen 4.x
 class AugLagrangianType
 {
  public:
@@ -50,7 +50,7 @@ class AugLagrangianType
                     const L_BFGS& lbfgs = L_BFGS());
 
   /**
-   * Optimize the function.  The value '1' is used for the initial value of each
+   * Optimize the function.  The value '0' is used for the initial value of each
    * Lagrange multiplier.  To set the Lagrange multipliers yourself, use the
    * other overload of Optimize().
    *
@@ -67,7 +67,8 @@ class AugLagrangianType
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
+  typename std::enable_if<IsMatrixType<GradType>::value &&
+                          IsAllNonMatrix<CallbackTypes...>::value, bool>::type
   Optimize(LagrangianFunctionType& function,
            MatType& coordinates,
            CallbackTypes&&... callbacks);
@@ -76,9 +77,10 @@ class AugLagrangianType
   template<typename LagrangianFunctionType,
            typename MatType,
            typename... CallbackTypes>
-  bool Optimize(LagrangianFunctionType& function,
-                MatType& coordinates,
-                CallbackTypes&&... callbacks)
+  typename std::enable_if<IsAllNonMatrix<CallbackTypes...>::value, bool>::type
+  Optimize(LagrangianFunctionType& function,
+           MatType& coordinates,
+           CallbackTypes&&... callbacks)
   {
     return Optimize<LagrangianFunctionType, MatType, MatType,
         CallbackTypes...>(function, coordinates,
@@ -97,26 +99,50 @@ class AugLagrangianType
    * @tparam CallbackTypes Types of callback functions.
    * @param function The function to optimize.
    * @param coordinates Output matrix to store the optimized coordinates in.
-   * @param initLambda Vector of initial Lagrange multipliers.  Should have
-   *     length equal to the number of constraints.
-   * @param initSigma Initial penalty parameter.
+   * @param lambda Vector containing initial Lagrange multipliers.  Should have
+   *     length equal to the number of constraints.  This will be overwritten
+   *     with the Lagrange multipliers that are found during optimization.
+   * @param sigma Initial penalty parameter.  This will be overwritten with the
+   *     final penalty value used during optimization.
    * @param callbacks Callback functions.
    */
   template<typename LagrangianFunctionType,
            typename MatType,
+           typename InVecType,
+           typename GradType,
+           typename... CallbackTypes>
+  [[deprecated("use Optimize() with non-const lambda/sigma instead")]]
+  typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
+  Optimize(LagrangianFunctionType& function,
+           MatType& coordinates,
+           const InVecType& initLambda,
+           const double initSigma,
+           CallbackTypes&&... callbacks)
+  {
+    deprecatedLambda = initLambda;
+    deprecatedSigma = initSigma;
+    const bool result = Optimize(function, coordinates, this->deprecatedLambda,
+        this->deprecatedSigma,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
+
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename InVecType,
            typename GradType,
            typename... CallbackTypes>
   typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
   Optimize(LagrangianFunctionType& function,
            MatType& coordinates,
-           const VecType& initLambda,
-           const double initSigma,
+           InVecType& lambda,
+           double& sigma,
            CallbackTypes&&... callbacks);
 
   //! Forward the MatType as GradType.
   template<typename LagrangianFunctionType,
            typename MatType,
            typename... CallbackTypes>
+  [[deprecated("use Optimize() with non-const lambda/sigma instead")]]
   bool Optimize(LagrangianFunctionType& function,
                 MatType& coordinates,
                 const VecType& initLambda,
@@ -128,20 +154,39 @@ class AugLagrangianType
         std::forward<CallbackTypes>(callbacks)...);
   }
 
+  template<typename LagrangianFunctionType,
+           typename MatType,
+           typename InVecType,
+           typename... CallbackTypes>
+  bool Optimize(LagrangianFunctionType& function,
+                MatType& coordinates,
+                InVecType& lambda,
+                double& sigma,
+                CallbackTypes&&... callbacks)
+  {
+    return Optimize<LagrangianFunctionType, MatType, InVecType, MatType,
+        CallbackTypes...>(function, coordinates, lambda, sigma,
+        std::forward<CallbackTypes>(callbacks)...);
+  }
+
   //! Get the L-BFGS object used for the actual optimization.
   const L_BFGS& LBFGS() const { return lbfgs; }
   //! Modify the L-BFGS object used for the actual optimization.
   L_BFGS& LBFGS() { return lbfgs; }
 
   //! Get the Lagrange multipliers.
-  const VecType& Lambda() const { return lambda; }
+  [[deprecated("use Optimize() with lambda/sigma parameters instead")]]
+  const VecType& Lambda() const { return deprecatedLambda; }
   //! Modify the Lagrange multipliers (i.e. set them before optimization).
-  VecType& Lambda() { return lambda; }
+  [[deprecated("use Optimize() with lambda/sigma parameters instead")]]
+  VecType& Lambda() { return deprecatedLambda; }
 
   //! Get the penalty parameter.
-  double Sigma() const { return sigma; }
+  [[deprecated("use Optimize() with lambda/sigma parameters instead")]]
+  double Sigma() const { return deprecatedSigma; }
   //! Modify the penalty parameter.
-  double& Sigma() { return sigma; }
+  [[deprecated("use Optimize() with lambda/sigma parameters instead")]]
+  double& Sigma() { return deprecatedSigma; }
 
   //! Get the maximum iterations
   size_t MaxIterations() const { return maxIterations; }
@@ -174,11 +219,11 @@ class AugLagrangianType
   //! Controls early termination of the optimization process.
   bool terminate;
 
+  // NOTE: these will be removed in ensmallen 4.x!
   //! Lagrange multipliers.
-  VecType lambda;
-
+  VecType deprecatedLambda;
   //! Penalty parameter.
-  double sigma;
+  double deprecatedSigma;
 
   /**
    * Internal optimization function: given an initialized AugLagrangianFunction,
@@ -186,23 +231,25 @@ class AugLagrangianType
    */
   template<typename LagrangianFunctionType,
            typename MatType,
+           typename InVecType,
            typename GradType,
            typename... CallbackTypes>
   typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
-  Optimize(AugLagrangianFunction<LagrangianFunctionType, VecType>& augfunc,
+  Optimize(AugLagrangianFunction<LagrangianFunctionType, InVecType>& augfunc,
            MatType& coordinates,
            CallbackTypes&&... callbacks);
 
   //! Forward the MatType as GradType.
   template<typename LagrangianFunctionType,
            typename MatType,
+           typename InVecType,
            typename... CallbackTypes>
   bool Optimize(
-      AugLagrangianFunction<LagrangianFunctionType, VecType>& function,
+      AugLagrangianFunction<LagrangianFunctionType, InVecType>& function,
       MatType& coordinates,
       CallbackTypes&&... callbacks)
   {
-    return Optimize<LagrangianFunctionType, MatType, MatType,
+    return Optimize<LagrangianFunctionType, MatType, InVecType, MatType,
         CallbackTypes...>(function, coordinates,
         std::forward<CallbackTypes>(callbacks)...);
   }

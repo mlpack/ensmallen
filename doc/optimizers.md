@@ -808,44 +808,20 @@ corresponding vector type (e.g. `arma::vec` or `coot::fvec`).
 The attributes of the optimizer may also be modified via the member methods
 `MaxIterations()`, `PenaltyThresholdFactor()`, `SigmaUpdateFactor()` and `LBFGS()`.
 
-<details open>
-<summary>Click to collapse/expand example code.
-</summary>
+The `AugLagrangian` optimizer also allows manually specifying the initial
+Lagrange multipliers (`lambda`) and penalty parameter (`sigma`) directly in the
+call to `Optimize()`.  For this, the following version of `Optimize()` should be
+used:
 
-```c++
-/**
- * Optimize the function.  The value '1' is used for the initial value of each
- * Lagrange multiplier.  To set the Lagrange multipliers yourself, use the
- * other overload of Optimize().
- *
- * @tparam LagrangianFunctionType Function which can be optimized by this
- *     class.
- * @param function The function to optimize.
- * @param coordinates Output matrix to store the optimized coordinates in.
- */
-template<typename LagrangianFunctionType>
-bool Optimize(LagrangianFunctionType& function,
-              arma::mat& coordinates);
+ * `opt.Optimize(`_`function, coordinates, lambda, sigma, callbacks...`_`)`
 
-/**
- * Optimize the function, giving initial estimates for the Lagrange
- * multipliers.  The vector of Lagrange multipliers will be modified to
- * contain the Lagrange multipliers of the final solution (if one is found).
- *
- * @tparam LagrangianFunctionType Function which can be optimized by this
- *      class.
- * @param function The function to optimize.
- * @param coordinates Output matrix to store the optimized coordinates in.
- * @param initLambda Vector of initial Lagrange multipliers.  Should have
- *     length equal to the number of constraints.
- * @param initSigma Initial penalty parameter.
- */
-template<typename LagrangianFunctionType>
-bool Optimize(LagrangianFunctionType& function,
-              arma::mat& coordinates,
-              const arma::vec& initLambda,
-              const double initSigma);
-```
+In that call, `lambda` should be a column vector of the same type as
+`coordinates`, and `sigma` is a `double`.  `lambda` and `sigma` will be
+overwritten with the final values of the Lagrange multipliers and penalty
+parameters.
+
+If `lambda` and `sigma` are not specified, then 0 is used as the initial value
+for all Lagrange multipliers and 10 is used as the initial penalty parameter.
 
 </details>
 
@@ -2111,6 +2087,20 @@ The attributes of the LRSDP optimizer may only be accessed via member methods.
 |----------|----------|-----------------|-------------|
 | `size_t` | **`MaxIterations()`** | Maximum number of iterations before termination. | `1000` |
 | `AugLagrangian` | **`AugLag()`** | The internally-held Augmented Lagrangian optimizer. | **n/a** |
+
+Because `LRSDP` uses the [`AugLagrangian`](#auglagrangian) optimizer internally,
+an additional overload of `Optimize()` is supplied to allow specifying the
+initial Lagrange multiplier estimates and penalty parameter:
+
+ * `lrsdp.Optimize(`_`coordinates, lambda, sigma, callbacks...`_`)`
+
+In that call, `lambda` should be a column vector of the same type as
+`coordinates`, and `sigma` is a `double`.  `lambda` and `sigma` will be
+overwritten with the final values of the Lagrange multipliers and penalty
+parameters.
+
+If `lambda` and `sigma` are not specified, then 0 is used as the initial value
+for all Lagrange multipliers and 10 is used as the initial penalty parameter.
 
 #### See also:
 
