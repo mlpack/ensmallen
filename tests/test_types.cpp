@@ -14,43 +14,43 @@
 using namespace ens;
 using namespace ens::test;
 
-const double Tolerances<arma::mat>::Obj;
-const double Tolerances<arma::mat>::Coord;
-const double Tolerances<arma::mat>::LargeObj;
-const double Tolerances<arma::mat>::LargeCoord;
-const double Tolerances<arma::mat>::LRTrainAcc;
-const double Tolerances<arma::mat>::LRTestAcc;
+const double Tolerances<arma::mat>::Obj = 1e-8;
+const double Tolerances<arma::mat>::Coord = 1e-4;
+const double Tolerances<arma::mat>::LargeObj = 1e-3;
+const double Tolerances<arma::mat>::LargeCoord = 1e-2;
+const double Tolerances<arma::mat>::LRTrainAcc = 0.003;
+const double Tolerances<arma::mat>::LRTestAcc = 0.006;
 
-const float  Tolerances<arma::fmat>::Obj;
-const float  Tolerances<arma::fmat>::Coord;
-const float  Tolerances<arma::fmat>::LargeObj;
-const float  Tolerances<arma::fmat>::LargeCoord;
-const double Tolerances<arma::fmat>::LRTrainAcc;
-const double Tolerances<arma::fmat>::LRTestAcc;
+const float  Tolerances<arma::fmat>::Obj = 1e-4;
+const float  Tolerances<arma::fmat>::Coord = 1e-2;
+const float  Tolerances<arma::fmat>::LargeObj = 2e-3;
+const float  Tolerances<arma::fmat>::LargeCoord = 2e-2;
+const double Tolerances<arma::fmat>::LRTrainAcc = 0.003;
+const double Tolerances<arma::fmat>::LRTestAcc = 0.006;
 
 #if defined(ARMA_HAVE_FP16)
-const arma::fp16 Tolerances<arma::mat>::Obj;
-const arma::fp16 Tolerances<arma::mat>::Coord;
-const arma::fp16 Tolerances<arma::mat>::LargeObj;
-const arma::fp16 Tolerances<arma::mat>::LargeCoord;
-const double     Tolerances<arma::mat>::LRTrainAcc;
-const double     Tolerances<arma::mat>::LRTestAcc;
+const arma::fp16 Tolerances<arma::mat>::Obj = arma::fp16(0.0001);
+const arma::fp16 Tolerances<arma::mat>::Coord = arma::fp16(0.01);
+const arma::fp16 Tolerances<arma::mat>::LargeObj = arma::fp16(0.03);
+const arma::fp16 Tolerances<arma::mat>::LargeCoord = arma::fp16(0.1);
+const double     Tolerances<arma::mat>::LRTrainAcc = 0.03;
+const double     Tolerances<arma::mat>::LRTestAcc = 0.06;
 #endif
 
-const double Tolerances<arma::sp_mat>::Obj;
-const double Tolerances<arma::sp_mat>::Coord;
-const double Tolerances<arma::sp_mat>::LargeObj;
-const double Tolerances<arma::sp_mat>::LargeCoord;
-const double Tolerances<arma::sp_mat>::LRTrainAcc;
-const double Tolerances<arma::sp_mat>::LRTestAcc;
+const double Tolerances<arma::sp_mat>::Obj = 1e-8;
+const double Tolerances<arma::sp_mat>::Coord = 1e-4;
+const double Tolerances<arma::sp_mat>::LargeObj = 1e-3;
+const double Tolerances<arma::sp_mat>::LargeCoord = 1e-2;
+const double Tolerances<arma::sp_mat>::LRTrainAcc = 0.003;
+const double Tolerances<arma::sp_mat>::LRTestAcc = 0.006;
 
 #if defined(ENS_HAVE_COOT)
-const double Tolerances<coot::mat>::Obj;
-const double Tolerances<coot::mat>::Coord;
-const double Tolerances<coot::mat>::LargeObj;
-const double Tolerances<coot::mat>::LargeCoord;
-const double Tolerances<coot::mat>::LRTrainAcc;
-const double Tolerances<coot::mat>::LRTestAcc;
+const double Tolerances<coot::mat>::Obj = 1e-8;
+const double Tolerances<coot::mat>::Coord = 1e-4;
+const double Tolerances<coot::mat>::LargeObj = 1e-3;
+const double Tolerances<coot::mat>::LargeCoord = 1e-2;
+const double Tolerances<coot::mat>::LRTrainAcc = 0.003;
+const double Tolerances<coot::mat>::LRTestAcc = 0.006;
 
 const float  Tolerances<coot::fmat>::Obj = 1e-4;
 const float  Tolerances<coot::fmat>::Coord = 1e-2;
