@@ -55,6 +55,7 @@ set(ENSMALLEN_TESTS_SOURCES
     spsa_test.cpp
     svrg_test.cpp
     swats_test.cpp
+    test_types.cpp
     wn_grad_test.cpp
     yogi_test.cpp
 )
