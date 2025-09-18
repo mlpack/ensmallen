@@ -115,11 +115,13 @@ void RandomFill(arma::Mat<eT>& m)
   m.randu();
 }
 
+#ifdef ENS_HAVE_COOT
 template<typename eT>
 void RandomFill(coot::Mat<eT>& m)
 {
   m.randu();
 }
+#endif
 
 template<typename eT>
 void RandomFill(arma::SpMat<eT>& m)
