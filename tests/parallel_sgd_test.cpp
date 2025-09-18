@@ -60,7 +60,7 @@ TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
   for (size_t i = 10; i < 30; i += 5)
   {
     // Create the generalized Rosenbrock function.
-    GeneralizedRosenbrockFunction<> f(i);
+    GeneralizedRosenbrockFunction f(i);
 
     ConstantStep decayPolicy(0.001 * f.NumFunctions());
 

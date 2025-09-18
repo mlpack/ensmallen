@@ -84,7 +84,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
 
     if (fitnessValues[i] < lastBestFitness)
     {
-      lastBestFitness = fitnessValues[i];
+      lastBestFitness = ElemType(fitnessValues[i]);
       bestElement = population[i];
     }
   }
@@ -161,7 +161,7 @@ typename MatType::elem_type DE::Optimize(FunctionType& function,
     }
 
     // Update helper variables.
-    lastBestFitness = fitnessValues.min();
+    lastBestFitness = ElemType(fitnessValues.min());
     for (size_t it = 0; it < populationSize; it++)
     {
       if (fitnessValues[it] == lastBestFitness)

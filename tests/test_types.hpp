@@ -28,91 +28,95 @@ namespace test {
 template<typename MatType>
 struct Tolerances { };
 
+// With C++17 we have inline static member initialization.  But ensmallen uses
+// C++14, so we are stuck declaring the variables here, and defining them in
+// test_types.cpp.
+
 template<>
 struct Tolerances<arma::mat>
 {
-  constexpr static const double Obj = 1e-8;
-  constexpr static const double Coord = 1e-4;
+  static const double Obj;
+  static const double Coord;
 
-  constexpr static const double LargeObj = 1e-3;
-  constexpr static const double LargeCoord = 1e-2;
+  static const double LargeObj;
+  static const double LargeCoord;
 
   // Tolerances for LogisticRegressionFunctionTest().
-  constexpr static const double LRTrainAcc = 0.003;
-  constexpr static const double LRTestAcc = 0.006;
+  static const double LRTrainAcc;
+  static const double LRTestAcc;
 };
 
 template<>
 struct Tolerances<arma::fmat>
 {
-  constexpr static const float Obj = 1e-4;
-  constexpr static const float Coord = 1e-2;
+  static const float Obj;
+  static const float Coord;
 
-  constexpr static const float LargeObj = 2e-3;
-  constexpr static const float LargeCoord = 2e-2;
+  static const float LargeObj;
+  static const float LargeCoord;
 
   // Tolerances for LogisticRegressionFunctionTest().
-  constexpr static const double LRTrainAcc = 0.003;
-  constexpr static const double LRTestAcc = 0.006;
+  static const double LRTrainAcc;
+  static const double LRTestAcc;
 };
 
 #if defined(ARMA_HAVE_FP16)
 template<>
 struct Tolerances<arma::hmat>
 {
-  constexpr static const arma::fp16 Obj = arma::fp16(0.0001);
-  constexpr static const arma::fp16 Coord = arma::fp16(0.01);
+  static const arma::fp16 Obj;
+  static const arma::fp16 Coord;
 
-  constexpr static const arma::fp16 LargeObj = arma::fp16(0.03);
-  constexpr static const arma::fp16 LargeCoord = arma::fp16(0.1);
+  static const arma::fp16 LargeObj;
+  static const arma::fp16 LargeCoord;
 
   // Tolerances for LogisticRegressionFunctionTest().
-  constexpr static const double LRTrainAcc = 0.03;
-  constexpr static const double LRTestAcc = 0.06;
+  static const double LRTrainAcc;
+  static const double LRTestAcc;
 };
 #endif
 
 template<>
 struct Tolerances<arma::sp_mat>
 {
-  constexpr static const double Obj = 1e-8;
-  constexpr static const double Coord = 1e-4;
+  static const double Obj;
+  static const double Coord;
 
-  constexpr static const double LargeObj = 1e-3;
-  constexpr static const double LargeCoord = 1e-2;
+  static const double LargeObj;
+  static const double LargeCoord;
 
   // Tolerances for LogisticRegressionFunctionTest().
-  constexpr static const double LRTrainAcc = 0.003;
-  constexpr static const double LRTestAcc = 0.006;
+  static const double LRTrainAcc;
+  static const double LRTestAcc;
 };
 
 #if defined(ENS_HAVE_COOT)
 template<>
 struct Tolerances<coot::mat>
 {
-  constexpr static const double Obj = 1e-8;
-  constexpr static const double Coord = 1e-4;
+  static const double Obj;
+  static const double Coord;
 
-  constexpr static const double LargeObj = 1e-3;
-  constexpr static const double LargeCoord = 1e-2;
+  static const double LargeObj;
+  static const double LargeCoord;
 
   // Tolerances for LogisticRegressionFunctionTest().
-  constexpr static const double LRTrainAcc = 0.003;
-  constexpr static const double LRTestAcc = 0.006;
+  static const double LRTrainAcc;
+  static const double LRTestAcc;
 };
 
 template<>
 struct Tolerances<coot::fmat>
 {
-  constexpr static const float Obj = 1e-4;
-  constexpr static const float Coord = 1e-2;
+  static const float Obj;
+  static const float Coord;
 
-  constexpr static const float LargeObj = 2e-3;
-  constexpr static const float LargeCoord = 2e-2;
+  static const float LargeObj;
+  static const float LargeCoord;
 
   // Tolerances for LogisticRegressionFunctionTest().
-  constexpr static const double LRTrainAcc = 0.003;
-  constexpr static const double LRTestAcc = 0.006;
+  static const double LRTrainAcc;
+  static const double LRTestAcc;
 };
 #endif
 
