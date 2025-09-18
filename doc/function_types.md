@@ -130,6 +130,9 @@ Each of the implemented methods is allowed to have additional cv-modifiers
 The following optimizers can be used with differentiable functions:
 
  * [L-BFGS](#l-bfgs) (`ens::L_BFGS`)
+ * [Forward-backward splitting (FBS)](#forward-backward-splitting-fbs) (`ens::FBS`)
+ * [Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)](#fast-iterative-shrinkage-thresholding-algorithm-fista) (`ens::FISTA`)
+ * [Fast Adaptive Shrinkage/Thresholding Algorithm (FASTA)](#fast-adaptive-shrinkage-thresholding-algorithm-fasta) (`ens::FASTA`)
  * [FrankWolfe](#frank-wolfe) (`ens::FrankWolfe`)
  * [GradientDescent](#gradient-descent) (`ens::GradientDescent`)
  - Any optimizer for [arbitrary functions](#arbitrary-functions)
@@ -210,6 +213,12 @@ class LinearRegressionEWGFunction
     g = -2 * data * v;
     return arma::accu(v % v); // equivalent to \| v \|^2
   }
+
+ private:
+  // The data.
+  const arma::mat& data;
+  // The responses to each data point.
+  const arma::rowvec& responses;
 };
 
 int main()
@@ -249,7 +258,7 @@ int main()
   const double time1 = clock.toc();
 
   std::cout << "LinearRegressionFunction with Evaluate() and Gradient() took "
-    << time1 << " seconds to converge to the model: " << std::endl;
+      << time1 << " seconds to converge to the model: " << std::endl;
   std::cout << lrf1Params.t();
 
   // Create the second objective function, which uses EvaluateWithGradient().
@@ -268,6 +277,150 @@ int main()
 
   // When this runs, the output parameters will be exactly on the same, but the
   // LinearRegressionEWGFunction will run more quickly!
+}
+```
+
+</details>
+
+### Proximal operators and non-differentiable functions
+
+Some optimization problems involve non-differentiable components, and can be
+expressed as the optimization below:
+
+$$ \operatorname{argmin}_x h(x) = \operatorname{argmin}_x f(x) + g(x). $$
+
+Here, `f(x)` is a regular differentiable function (as in the previous
+subsection), and `g(x)` is a non-differentiable arbitrary function.  These
+classes of functions can still be optimized using *proximal gradient
+optimizers*.  The following proximal gradient optimizers are implemented in
+ensmallen (these can also optimize differentiable functions only, taking `g(x) =
+0`):
+
+ * [Forward-backward splitting (FBS)](#forward-backward-splitting-fbs) (`ens::FBS`)
+ * [Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)](#fast-iteartive-shrinkage-thresholding-algorithm-fista) (`ens::FISTA`)
+ * [Fast Adaptive Shrinkage/Thresholding Algorithm (FASTA)](#fast-adaptive-shrinkage-thresholding-algorithm-fasta) (`ens::FASTA`)
+
+ensmallen implements a few `g(x)` options that can be used with proximal
+gradient optimizers:
+
+ * `L1Penalty(`_`lambda`_`)`: $g(x) = \lambda \| x \|_1$
+ * `L1Constraint(`_`lambda`_`)`: $g(x)$ is the constraint $\| x \|_1 \le \lambda$
+
+For example, by pairing `L1Penalty` with the `LinearRegressionFunction` from the
+previous section, we can implement L1-penalized (sparse) linear regression:
+
+<details>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+#include <ensmallen.hpp>
+
+// Define a differentiable objective function by implementing only
+// EvaluateWithGradient().
+class LinearRegressionEWGFunction
+{
+ public:
+  // Construct the object with the given data matrix and responses.
+  LinearRegressionEWGFunction(const arma::mat& dataIn,
+                              const arma::rowvec& responsesIn) :
+      data(dataIn), responses(responsesIn) { }
+
+  // Simultaneously compute both the objective function and gradient for model
+  // parameters x.  Note that this is faster than implementing Evaluate() and
+  // Gradient() individually because it caches the computation of
+  // (responses - x.t() * data)!
+  double EvaluateWithGradient(const arma::mat& x, arma::mat& g)
+  {
+    const arma::rowvec v = (responses - x.t() * data);
+    g = -2 * data * v;
+    return arma::accu(v % v); // equivalent to \| v \|^2
+  }
+
+ private:
+  // The data.
+  const arma::mat& data;
+  // The responses to each data point.
+  const arma::rowvec& responses;
+};
+
+int main()
+{
+  // First, generate some random data, with 1000 points and 500 dimensions.
+  // This data has no pattern and as such will make a model that's not very
+  // useful---but the purpose here is just demonstration. :)
+  //
+  // For a more "real world" situation, load a dataset from file using X.load()
+  // and y.load() (but make sure the matrix is column-major, so that each
+  // observation/data point corresponds to a *column*, *not* a row.
+  arma::mat data(500, 1000, arma::fill::randn);
+  arma::rowvec responses(1000, arma::fill::randn);
+
+  // Create a starting point for our optimization as the vector of all zeros.
+  // The model has 500 parameters, so the shape is 500x1.
+  arma::mat startingPoint(500, 1, arma::fill::zeros);
+
+  // Construct the objective function f(x), and the penalty function g(x) with a
+  // lambda value of 0.1.
+  LinearRegressionEWGFunction lrf(data, responses);
+  ens::L1Penalty g(0.1);
+
+  // Create the FBS optimizer with default parameters, and optimize the function
+  // f(x) + g(x) (i.e. L1-penalized linear regression).
+  // The ens::FBS class can be replaced with any ensmallen proximal gradient
+  // optimizer.
+  ens::FBS fbs(g);
+  arma::mat lrfParams(startingPoint);
+  fbs.Optimize(lrf, lrfParams);
+
+  // Count the number of nonzeros in the final model.
+  // To get fewer nonzeros, the penalty value (0.1) could be increased.
+  std::cout << "Number of nonzeros in optimized parameter vector: "
+      << arma::accu(lrfParams != 0) << "." << std::endl;
+}
+```
+
+</details>
+
+It is possible to implement a custom proximal operator (`g(x)`).  To do so, a
+class with two methods (`Evaluate()` and `BackwardStep()`) must be defined:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+// Compute the value of g(x).
+double Evaluate(const arma::mat& x);
+
+// Perform a backward step (proximal step) on `x`, given that the forward step
+// size was `stepSize`.
+void BackwardStep(arma::mat& x, const double stepSize);
+```
+
+</details>
+
+A simple implementation is below for the `L1Penalty` class:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+double L1Penalty::Evaluate(const arma::mat& coordinates) const
+{
+  // Compute the L1 penalty.
+  return norm(vectorise(coordinates), 1) * lambda;
+}
+
+void L1Penalty::ProximalStep(arma::mat& coordinates,
+                             const double stepSize) const
+{
+  // Apply the backwards step coordinate-wise.
+  // (See Goldstein, Studer, and Baraniuk 2009, eq. (12).)
+  coordinates.transform([this, stepSize](double val) { return (val > 0.0) ?
+      (std::max(0.0, val - lambda * stepSize)) :
+      (std::min(0.0, val + lambda * stepSize)); });
 }
 ```
 

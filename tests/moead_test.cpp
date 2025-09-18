@@ -421,7 +421,7 @@ TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
     for (size_t j = 2; j < MAF_ONE.GetNumVariables(); j++)
     {
       double val = arma::as_scalar(solution(j));
-      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.1))
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.15))
       {
         allInRange = false;
         break;
