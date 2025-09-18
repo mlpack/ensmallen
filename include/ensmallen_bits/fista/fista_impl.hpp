@@ -74,7 +74,7 @@ FISTA<BackwardStepType>::FISTA(BackwardStepType backwardStep,
 template<typename BackwardStepType>
 template<typename FunctionType, typename MatType, typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsMatrixType<GradType>::value,
     typename MatType::elem_type>::type
 FISTA<BackwardStepType>::Optimize(FunctionType& function,
                                   MatType& iterateIn,

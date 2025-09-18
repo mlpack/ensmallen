@@ -38,9 +38,24 @@ void L1Penalty::ProximalStep(MatType& coordinates,
   // Apply the backwards step coordinate-wise.  If `MatType` is sparse, this
   // only applies to nonzero elements, which is just fine.
   typedef typename MatType::elem_type eT;
-  coordinates.transform([this, stepSize](eT val) { return (val > eT(0)) ?
-      (std::max(eT(0), val - eT(lambda * stepSize))) :
-      (std::min(eT(0), val + eT(lambda * stepSize))); });
+
+  // This is equivalent to the following .transform() implementation (which is
+  // easier to read but will not work with Bandicoot):
+  //
+  //arma::Mat<typename MatType::elem_type> c2 = conv_to<arma::Mat<typename MatType::elem_type>>::from(coordinates);
+  //c2.transform([this, stepSize](eT val) { return (val > eT(0)) ?
+  //    (std::max(eT(0), val - eT(lambda * stepSize))) :
+  //    (std::min(eT(0), val + eT(lambda * stepSize))); });
+  // coordinates.transform([this, stepSize](eT val) { return (val > eT(0)) ?
+  //     (std::max(eT(0), val - eT(lambda * stepSize))) :
+  //     (std::min(eT(0), val + eT(lambda * stepSize))); });
+  //
+  coordinates = sign(coordinates) % clamp(
+      abs(coordinates) - eT(lambda * stepSize), eT(0),
+      std::numeric_limits<eT>::max());
+
+  //coordinates.print("coordinates");
+  //c2.print("c2");
 }
 
 } // namespace ens

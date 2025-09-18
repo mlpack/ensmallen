@@ -33,12 +33,12 @@ const double Tolerances<arma::fmat>::LRTrainAcc = 0.003;
 const double Tolerances<arma::fmat>::LRTestAcc = 0.006;
 
 #if defined(ARMA_HAVE_FP16)
-const arma::fp16 Tolerances<arma::mat>::Obj = arma::fp16(0.0001);
-const arma::fp16 Tolerances<arma::mat>::Coord = arma::fp16(0.01);
-const arma::fp16 Tolerances<arma::mat>::LargeObj = arma::fp16(0.03);
-const arma::fp16 Tolerances<arma::mat>::LargeCoord = arma::fp16(0.1);
-const double     Tolerances<arma::mat>::LRTrainAcc = 0.03;
-const double     Tolerances<arma::mat>::LRTestAcc = 0.06;
+const arma::fp16 Tolerances<arma::hmat>::Obj = arma::fp16(0.0001);
+const arma::fp16 Tolerances<arma::hmat>::Coord = arma::fp16(0.01);
+const arma::fp16 Tolerances<arma::hmat>::LargeObj = arma::fp16(0.03);
+const arma::fp16 Tolerances<arma::hmat>::LargeCoord = arma::fp16(0.1);
+const double     Tolerances<arma::hmat>::LRTrainAcc = 0.03;
+const double     Tolerances<arma::hmat>::LRTestAcc = 0.06;
 #endif
 
 const double Tolerances<arma::sp_mat>::Obj = 1e-8;

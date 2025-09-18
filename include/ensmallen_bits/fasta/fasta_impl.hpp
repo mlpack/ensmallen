@@ -90,7 +90,7 @@ FASTA<BackwardStepType>::FASTA(BackwardStepType backwardStep,
 template<typename BackwardStepType>
 template<typename FunctionType, typename MatType, typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
+typename std::enable_if<IsMatrixType<GradType>::value,
     typename MatType::elem_type>::type
 FASTA<BackwardStepType>::Optimize(FunctionType& function,
                                   MatType& iterateIn,
@@ -358,7 +358,7 @@ FASTA<BackwardStepType>::Optimize(FunctionType& function,
     // proximal step.
 
     // Compute residual.  This is Eq. (40) in the paper.
-    const ElemType residual = arma::norm(g + (xHat - x) / currentStepSize, 2);
+    const ElemType residual = norm(g + (xHat - x) / currentStepSize, 2);
 
     // If this is the first iteration, store the residual as the first residual.
     if (i == 1)
