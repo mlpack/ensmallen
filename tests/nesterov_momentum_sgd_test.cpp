@@ -21,7 +21,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("NesterovMomentumSGD_SGDTestFunction",
-    "[NesterovMomentumSGD]", ENS_FULLPREC_TEST_TYPES)
+    "[NesterovMomentumSGD]", ENS_FULLPREC_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -43,7 +43,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_SGDTestFunction",
 }
 
 TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
-    "[NesterovMomentumSGD]", ENS_FULLPREC_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    "[NesterovMomentumSGD]", ENS_FULLPREC_CPU_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -71,7 +71,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
 }
 
 TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunctionLoose",
-    "[NesterovMomentumSGD]", ENS_ALL_CPU_TEST_TYPES)
+    "[NesterovMomentumSGD]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 

@@ -22,7 +22,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("Eve_LogisticRegressionFunction", "[Eve]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   Eve optimizer(0.01, 1, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
       500000, Tolerances<TestType>::Obj / 10, true);

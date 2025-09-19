@@ -23,7 +23,7 @@ using namespace ens::test;
 // NOTE: we don't use low-precision for this test because it is very
 // specifically tuned to compare momentum SGD and regular SGD.
 TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
-    ENS_FULLPREC_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_SGDTestFunction", "[MomentumSGD]",
 }
 
 TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
-    ENS_FULLPREC_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -92,7 +92,7 @@ TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunction", "[MomentumSGD]",
 }
 
 TEMPLATE_TEST_CASE("MomentumSGD_GeneralizedRosenbrockFunctionLoose",
-    "[MomentumSGD]", ENS_ALL_CPU_TEST_TYPES)
+    "[MomentumSGD]", ENS_ALL_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 

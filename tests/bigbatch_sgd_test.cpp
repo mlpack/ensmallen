@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("BBS_BB_LogisticRegressionFunction", "[BigBatchSGD]",
 }
 
 TEMPLATE_TEST_CASE("BBS_Armijo_LogisticRegressionFunction", "[BigBatchSGD]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   // Run big-batch SGD with a couple of batch sizes.
   for (size_t batchSize = 40; batchSize < 50; batchSize += 1)

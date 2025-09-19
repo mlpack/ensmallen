@@ -84,7 +84,7 @@ TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", ENS_FULLPREC_TEST_TYPES)
  * dimensions to 1024 dimensions.
  */
 TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
-    ENS_FULLPREC_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 

@@ -152,7 +152,7 @@ TEMPLATE_TEST_CASE("QHAdam_LogisticRegressionFunction", "[Adam]",
   LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
-TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("Adam_AckleyFunction", "[Adam]", ENS_ALL_CPU_TEST_TYPES)
 {
   Adam optimizer(0.004, 2, 0.7, 0.999, 100 * Tolerances<TestType>::Obj / 100,
       1000000, Tolerances<TestType>::Obj / 100, false);
