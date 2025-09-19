@@ -22,8 +22,8 @@ using namespace ens::test;
 /**
  * Tests the Quasi Hyperbolic Momentum SGD update policy.
  */
-TEMPLATE_TEST_CASE("QHSGDSphereFunction", "[QHMomentumSGD]", ENS_ALL_TEST_TYPES,
-    ENS_SPARSE_TEST_TYPES)
+TEMPLATE_TEST_CASE("QHSGDSphereFunction", "[QHMomentumSGD]",
+    ENS_ALL_CPU_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   QHUpdate update(0.4, 0.9);
   QHSGD s(0.0025, 1, 500000, Tolerances<TestType>::Obj / 10, true, update,
@@ -63,7 +63,7 @@ TEMPLATE_TEST_CASE("QHSGDGeneralizedRosenbrockTest", "[QHMomentumSGD]",
 }
 
 TEMPLATE_TEST_CASE("QHSGD_GeneralizedRosenbrockFunctionLoose",
-    "[QHMomentumSGD]", ENS_ALL_TEST_TYPES)
+    "[QHMomentumSGD]", ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 

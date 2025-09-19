@@ -51,4 +51,4 @@ jobs:
     - name: Test ensmallen
       run: |
           cd build/
-          ./ensmallen_tests
+          ./ensmallen_tests -d yes

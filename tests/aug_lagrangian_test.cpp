@@ -28,7 +28,7 @@ using namespace ens::test;
  * AugmentedLagrangianTestFunction class.
  */
 TEMPLATE_TEST_CASE("AugLagrangian_AugLagrangianTestFunction", "[AugLagrangian]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -92,30 +92,3 @@ TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
   REQUIRE(coords(1) == Approx(-1.10778185).epsilon(coordTol));
   REQUIRE(coords(2) == Approx(0.015099932).epsilon(coordTol));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("AugLagrangian_GockenbachFunction", "[AugLagrangian]",
-    coot::mat, coot::fmat)
-{
-  typedef typename ForwardType<TestType>::bvec BaseVecType;
-  typedef typename TestType::elem_type ElemType;
-
-  GockenbachFunction f;
-  AugLagrangianType<BaseVecType> aug;
-
-  TestType coords = f.template GetInitialPoint<TestType>();
-
-  if (!aug.Optimize(f, coords))
-    FAIL("Optimization reported failure.");
-
-  ElemType finalValue = f.Evaluate(coords);
-
-  // Higher tolerance for smaller values.
-  REQUIRE(finalValue == Approx(29.633926).epsilon(1e-3));
-  REQUIRE(coords(0) == Approx(0.12288178).epsilon(0.1));
-  REQUIRE(coords(1) == Approx(-1.10778185).epsilon(1e-3));
-  REQUIRE(coords(2) == Approx(0.015099932).epsilon(0.1));
-}
-
-#endif

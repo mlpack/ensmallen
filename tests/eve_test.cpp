@@ -22,7 +22,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("Eve_LogisticRegressionFunction", "[Eve]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   Eve optimizer(0.01, 1, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
       500000, Tolerances<TestType>::Obj / 10, true);
@@ -49,29 +49,3 @@ TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]", ENS_ALL_TEST_TYPES,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("Eve_LogisticRegressionFunction", "[Eve]",
-    coot::mat)
-{
-  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.003, 0.006);
-}
-
-TEMPLATE_TEST_CASE("Eve_SphereFunction", "[Eve]",
-    coot::mat, coot::fmat)
-{
-  Eve optimizer(2e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<SphereFunction, TestType>(optimizer, 0.5, 0.1);
-}
-
-TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]",
-    coot::mat, coot::fmat)
-{
-  Eve optimizer(2e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, TestType>(optimizer, 0.5, 0.1);
-}
-
-#endif

@@ -27,15 +27,3 @@ TEMPLATE_TEST_CASE("SMORMS3_LogisticRegressionFunction", "[SMORMS3]",
   SMORMS3 smorms3(0.032);
   LogisticRegressionFunctionTest<TestType>(smorms3);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("SMORMS3_LogisticRegressionFunction", "[SMORMS3]",
-    coot::mat, coot::fmat)
-{
-  SMORMS3 smorms3(0.032);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      smorms3, 0.003, 0.006);
-}
-
-#endif

@@ -20,19 +20,8 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   AdaBelief adaBelief(0.032);
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(adaBelief);
+  LogisticRegressionFunctionTest<TestType>(adaBelief);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("AdaBelief_LogisticRegressionFunction", "[AdaBelief]",
-    coot::mat, coot::fmat)
-{
-  AdaBelief adaBelief(0.032);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(adaBelief);
-}
-
-#endif

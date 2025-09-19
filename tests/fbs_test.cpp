@@ -9,12 +9,14 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
 
-using namespace arma;
 using namespace ens;
 using namespace ens::test;
 
@@ -34,7 +36,8 @@ TEMPLATE_TEST_CASE("L1PenaltyZeroTest", "[FBS]", ENS_ALL_TEST_TYPES)
 {
   L1Penalty l(0.0);
 
-  TestType coordinates(100, 1, fill::randu);
+  TestType coordinates(100, 1);
+  coordinates.randu();
 
   REQUIRE(std::abs(l.Evaluate(coordinates)) <= Tolerances<TestType>::Obj);
 
@@ -49,7 +52,8 @@ TEMPLATE_TEST_CASE("L1PenaltyZeroStepSizeTest", "[FBS]", ENS_ALL_TEST_TYPES)
 {
   L1Penalty l(1.0);
 
-  TestType coordinates(100, 1, fill::randu);
+  TestType coordinates(100, 1);
+  coordinates.randu();
   TestType coordinatesCopy(coordinates);
 
   l.ProximalStep(coordinatesCopy, 0.0);
@@ -62,7 +66,8 @@ TEMPLATE_TEST_CASE("L1ConstraintZeroTest", "[FBS]", ENS_ALL_TEST_TYPES)
 {
   L1Constraint l(1.0);
 
-  TestType coordinates(100, 1, fill::zeros);
+  TestType coordinates(100, 1);
+  coordinates.zeros();
 
   REQUIRE(std::abs(l.Evaluate(coordinates)) <= Tolerances<TestType>::Obj);
 
@@ -76,7 +81,8 @@ TEMPLATE_TEST_CASE("L1ConstraintZeroTest", "[FBS]", ENS_ALL_TEST_TYPES)
 TEMPLATE_TEST_CASE("L1ConstraintTooBigTest", "[FBS]", ENS_ALL_TEST_TYPES)
 {
   L1Constraint l(0.01);
-  TestType coordinates(100, 1, fill::ones);
+  TestType coordinates(100, 1);
+  coordinates.ones();
 
   REQUIRE(l.Evaluate(coordinates) ==
       std::numeric_limits<typename TestType::elem_type>::infinity());
@@ -104,13 +110,21 @@ TEMPLATE_TEST_CASE("L1Constraint1DProjectionTest", "[FBS]", ENS_ALL_TEST_TYPES,
 }
 
 template<typename eT>
-void RandomFill(Mat<eT>& m)
+void RandomFill(arma::Mat<eT>& m)
 {
   m.randu();
 }
 
+#ifdef ENS_HAVE_COOT
 template<typename eT>
-void RandomFill(SpMat<eT>& m)
+void RandomFill(coot::Mat<eT>& m)
+{
+  m.randu();
+}
+#endif
+
+template<typename eT>
+void RandomFill(arma::SpMat<eT>& m)
 {
   m.sprandu(m.n_rows, m.n_cols, 0.1);
   m *= 10;
@@ -198,8 +212,8 @@ TEST_CASE("FBSMaxIterationsTest", "[FBS]")
   fbs2.MaxIterations() = 50000;
 
   BoothFunction f;
-  mat coordinates1 = f.GetInitialPoint<mat>();
-  mat coordinates2 = coordinates1;
+  arma::mat coordinates1 = f.GetInitialPoint<arma::mat>();
+  arma::mat coordinates2 = coordinates1;
 
   fbs1.Optimize(f, coordinates1);
   fbs2.Optimize(f, coordinates2);

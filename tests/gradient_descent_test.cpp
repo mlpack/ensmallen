@@ -38,21 +38,3 @@ TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
       10 * Tolerances<TestType>::LargeObj,
       10 * Tolerances<TestType>::LargeCoord);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
-   coot::mat, coot::fmat)
-{
-  GradientDescent s(0.01, 5000000, 1e-9);
-  FunctionTest<GDTestFunction, TestType>(s, 0.1, 0.01);
-}
-
-TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
-    coot::mat, coot::fmat)
-{
-  GradientDescent s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction, TestType>(s, 0.01, 0.001);
-}
-
-#endif
