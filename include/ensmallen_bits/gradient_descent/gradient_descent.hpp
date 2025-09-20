@@ -12,6 +12,8 @@
 #ifndef ENSMALLEN_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 #define ENSMALLEN_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 
+#include "update_policies/delta_bar_delta_update.hpp"
+
 namespace ens {
 
 /**
@@ -224,6 +226,8 @@ class GradientDescentType
 };
 
 using GradientDescent = GradientDescentType<VanillaUpdate, NoDecay>;
+
+using DeltaBarDelta = GradientDescentType<DeltaBarDeltaUpdate, NoDecay>;
 
 } // namespace ens
 
