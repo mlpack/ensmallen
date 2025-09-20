@@ -39,8 +39,17 @@ namespace ens {
  * GradientDescent can optimize differentiable functions.  For more details, see
  * the documentation on function types included with this distribution or on the
  * ensmallen website.
+ *
+ * @tparam UpdatePolicyType Update policy used by Gradient Descent during the
+ *     iterative update process. By default vanilla update policy (see
+ *     ens::VanillaUpdate) is used.
+ * @tparam DecayPolicyType Decay policy used during the iterative update
+ *     process to adjust the step size. By default the step size isn't going to
+ *     be adjusted (i.e. NoDecay is used).
  */
-class GradientDescent
+template<typename UpdatePolicyType = VanillaUpdate,
+         typename DecayPolicyType = NoDecay>
+class GradientDescentType
 {
  public:
   /**
@@ -54,10 +63,24 @@ class GradientDescent
    * @param maxIterations Maximum number of iterations allowed (0 means no
    *     limit).
    * @param tolerance Maximum absolute tolerance to terminate algorithm.
+   * @param updatePolicy Instantiated update policy used to adjust the given
+   *                     parameters.
+   * @param decayPolicy Instantiated decay policy used to adjust the step size.
+   * @param resetPolicy Flag that determines whether update policy parameters
+   *                    are reset before every Optimize call.
    */
-  GradientDescent(const double stepSize = 0.01,
-                  const size_t maxIterations = 100000,
-                  const double tolerance = 1e-5);
+  GradientDescentType(
+      const double stepSize = 0.01,
+      const size_t maxIterations = 100000,
+      const double tolerance = 1e-5,
+      const UpdatePolicyType& updatePolicy = UpdatePolicyType(),
+      const DecayPolicyType& decayPolicy = DecayPolicyType(),
+      const bool resetPolicy = true);
+
+  /**
+   * Clean any memory associated with the GradientDescent object.
+   */
+  ~GradientDescentType();
 
   /**
    * Optimize the given function using gradient descent.  The given starting
@@ -160,6 +183,16 @@ class GradientDescent
   //! Modify the tolerance for termination.
   double& Tolerance() { return tolerance; }
 
+  //! Get the update policy.
+  const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
+  //! Modify the update policy.
+  UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
+
+  //! Get the step size decay policy.
+  const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
+  //! Modify the step size decay policy.
+  DecayPolicyType& DecayPolicy() { return decayPolicy; }
+
  private:
   //! The step size for each example.
   double stepSize;
@@ -169,7 +202,28 @@ class GradientDescent
 
   //! The tolerance for termination.
   double tolerance;
+
+  //! The update policy used to update the parameters in each iteration.
+  UpdatePolicyType updatePolicy;
+
+  //! The decay policy used to update the step size.
+  DecayPolicyType decayPolicy;
+
+  //! Flag indicating whether update policy
+  //! should be reset before running optimization.
+  bool resetPolicy;
+
+  //! Flag indicating whether the update policy
+  //! parameters have been initialized.
+  bool isInitialized;
+
+  //! The initialized update policy.
+  Any instUpdatePolicy;
+  //! The initialized decay policy.
+  Any instDecayPolicy;
 };
+
+using GradientDescent = GradientDescentType<VanillaUpdate, NoDecay>;
 
 } // namespace ens
 
