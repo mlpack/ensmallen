@@ -1285,6 +1285,64 @@ optimizer.Optimize(f, coordinates);
  * [Differential Evolution in Wikipedia](https://en.wikipedia.org/wiki/Differential_Evolution)
  * [Arbitrary functions](#arbitrary-functions)
 
+## DeltaBarDelta
+
+*An optimizer for [differentiable functions](#differentiable-functions).*
+
+Gradient Descent is a technique to minimize a function. This is a Gradient
+Descent variant that adapts learning rates for each parameter for better
+convergence rates. DeltaBarDelta adjusts a weight’s learning rate by increasing
+it by a fixed amount when the current slope aligns with the exponential average 
+of past slopes, and decreasing it by a proportion when it opposes them.
+
+#### Constructors
+
+ * `DeltaBarDelta()`
+ * `DeltaBarDelta(`_`stepSize`_`)`
+ * `DeltaBarDelta(`_`stepSize, maxIterations, tolerance`_`)`
+ * `DeltaBarDelta(`_`stepSize, maxIterations, tolerance, updatePolicy, decayPolicy, resetPolicy`_`)`
+
+Note that `DeltaBarDelta` is based on the templated type
+`GradientDescentType<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
+`DeltaBarDeltaUpdate` and _`DecayPolicyType`_` = NoDecay`.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `size_t` | **`tolerance`**  | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
+| `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
+| `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
+
+Attributes of the optimizer may also be changed via the member methods
+`StepSize()`, `MaxIterations()`, `Tolerance()`, `UpdatePolicy()`,
+`DecayPolicy()`, and `ResetPolicy()`.
+
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+DeltaBarDelta optimizer(0.001, 0, 1e-15, DeltaBarDeltaUpdate(0.2, 0.8, 0.5, 0.01));
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Increased rates of convergence through learning rate adaptation](https://www.academia.edu/download/32005051/Jacobs.NN88.pdf)
+ * [Differentiable functions](#differentiable-functions)
+
 ## DemonAdam
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
@@ -1923,6 +1981,11 @@ negative of the gradient of the function at the current point.
  * `GradientDescent()`
  * `GradientDescent(`_`stepSize`_`)`
  * `GradientDescent(`_`stepSize, maxIterations, tolerance`_`)`
+ * `GradientDescent(`_`stepSize, maxIterations, tolerance, updatePolicy, decayPolicy, resetPolicy`_`)`
+
+Note that `GradientDescent` is based on the templated type
+`GradientDescentType<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
+VanillaUpdate` and _`DecayPolicyType`_` = NoDecay`.
 
 #### Attributes
 
@@ -1931,9 +1994,14 @@ negative of the gradient of the function at the current point.
 | `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `size_t` | **`tolerance`**  | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
+| `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
+| `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
 
 Attributes of the optimizer may also be changed via the member methods
-`StepSize()`, `MaxIterations()`, and `Tolerance()`.
+`StepSize()`, `MaxIterations()`, `Tolerance()`, `UpdatePolicy()`,
+`DecayPolicy()`, and `ResetPolicy()`.
+
 
 #### Examples:
 

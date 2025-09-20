@@ -20,25 +20,39 @@
 namespace ens {
 
 //! Constructor.
-inline GradientDescent::GradientDescent(
+template <typename UpdatePolicyType, typename DecayPolicyType>
+GradientDescentType<UpdatePolicyType, DecayPolicyType>::GradientDescentType(
     const double stepSize,
     const size_t maxIterations,
-    const double tolerance) :
-    stepSize(stepSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance)
+    const double tolerance,
+    const UpdatePolicyType& updatePolicy,
+    const DecayPolicyType& decayPolicy,
+    const bool resetPolicy)
+    : stepSize(stepSize), maxIterations(maxIterations), tolerance(tolerance),
+      updatePolicy(updatePolicy), decayPolicy(decayPolicy),
+      resetPolicy(resetPolicy)
 { /* Nothing to do. */ }
 
+template <typename UpdatePolicyType, typename DecayPolicyType>
+GradientDescentType<UpdatePolicyType, DecayPolicyType>::~GradientDescentType()
+{
+  // Clean decay and update policies, if they were initialized.
+  instDecayPolicy.Clean();
+  instUpdatePolicy.Clean();
+}
+
 //! Optimize the function (minimize).
+template <typename UpdatePolicyType, typename DecayPolicyType>
 template<typename FunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsMatrixType<GradType>::value,
     typename MatType::elem_type>::type
-GradientDescent::Optimize(FunctionType& function,
-                          MatType& iterateIn,
-                          CallbackTypes&&... callbacks)
+GradientDescentType<UpdatePolicyType, DecayPolicyType>::Optimize(
+    FunctionType& function,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -48,6 +62,13 @@ GradientDescent::Optimize(FunctionType& function,
   // Use the Function<> wrapper type to provide additional functionality.
   typedef Function<FunctionType, BaseMatType, BaseGradType> FullFunctionType;
   FullFunctionType& f(static_cast<FullFunctionType&>(function));
+
+  // The update policy and decay policy internally use a templated class so
+  // that we can know MatType and GradType only when Optimize() is called.
+  typedef typename UpdatePolicyType::template Policy<BaseMatType, BaseGradType>
+      InstUpdatePolicyType;
+  typedef typename DecayPolicyType::template Policy<BaseMatType, BaseGradType>
+      InstDecayPolicyType;
 
   // Make sure we have the methods that we need.
   traits::CheckFunctionTypeAPI<FullFunctionType, BaseMatType, BaseGradType>();
@@ -65,6 +86,24 @@ GradientDescent::Optimize(FunctionType& function,
   // Controls early termination of the optimization process.
   bool terminate = false;
 
+  // Initialize the decay policy if needed.
+  if (!isInitialized || !instDecayPolicy.Has<InstDecayPolicyType>())
+  {
+    instDecayPolicy.Clean();
+    instDecayPolicy.Set<InstDecayPolicyType>(
+        new InstDecayPolicyType(decayPolicy));
+  }
+
+  // Initialize the update policy.
+  if (resetPolicy || !isInitialized ||
+      !instUpdatePolicy.Has<InstUpdatePolicyType>())
+  {
+    instUpdatePolicy.Clean();
+    instUpdatePolicy.Set<InstUpdatePolicyType>(new InstUpdatePolicyType(
+        updatePolicy, iterate.n_rows, iterate.n_cols));
+    isInitialized = true;
+  }
+
   // Now iterate!
   Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
@@ -73,6 +112,18 @@ GradientDescent::Optimize(FunctionType& function,
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
         overallObjective, gradient, callbacks...);
+
+    // Use the update policy to take a step.
+    instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate,
+                                                       stepSize,
+                                                       gradient);
+
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
+
+    // Now update the learning rate if requested by the user.
+    instDecayPolicy.As<InstDecayPolicyType>().Update(iterate,
+                                                     stepSize,
+                                                     gradient);
 
     // Output current objective function.
     Info << "Gradient Descent: iteration " << i << ", objective "
@@ -99,10 +150,6 @@ GradientDescent::Optimize(FunctionType& function,
 
     // Reset the counter variables.
     lastObjective = overallObjective;
-
-    // And update the iterate.
-    iterate -= ElemType(stepSize) * gradient;
-    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
   Info << "Gradient Descent: maximum iterations (" << maxIterations
@@ -112,13 +159,14 @@ GradientDescent::Optimize(FunctionType& function,
   return overallObjective;
 }
 
+template <typename UpdatePolicyType, typename DecayPolicyType>
 template<typename FunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsArmaType<GradType>::value,
 typename MatType::elem_type>::type
-GradientDescent::Optimize(
+GradientDescentType<UpdatePolicyType, DecayPolicyType>::Optimize(
     FunctionType& function,
     MatType& iterate,
     const std::vector<bool>& categoricalDimensions,
@@ -159,4 +207,4 @@ GradientDescent::Optimize(
 
 } // namespace ens
 
-#endif
+#endif // ENSMALLEN_GRADIENT_DESCENT_GRADIENT_DESCENT_IMPL_HPP
