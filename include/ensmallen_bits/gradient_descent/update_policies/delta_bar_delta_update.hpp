@@ -123,12 +123,9 @@ class DeltaBarDeltaUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      arma::umat increase = (velocity % gradient) < 0.0;
-      arma::umat decrease = (velocity % gradient) > 0.0;
-      gains.elem(arma::find(increase)) += parent.Kappa();
-      gains.elem(arma::find(decrease)) *= parent.Phi();
-      gains.elem(arma::find(gains < parent.MinimumGain()))
-          .fill(parent.MinimumGain());
+      gains.elem(arma::find((velocity % gradient) < 0.0)) += parent.Kappa();
+      gains.elem(arma::find((velocity % gradient) > 0.0)) *= parent.Phi();
+      gains.clamp(parent.MinimumGain(), arma::datum::inf);
 
       velocity = parent.momentum * velocity - (stepSize * gains) % gradient;
       iterate += velocity;
