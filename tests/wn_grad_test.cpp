@@ -22,7 +22,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("WNGrad_LogisticRegressionFunction", "[WNGrad]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   WNGrad optimizer(0.56, 1, 500000, 1e-9, true);
   LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);

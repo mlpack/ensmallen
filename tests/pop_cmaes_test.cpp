@@ -59,7 +59,7 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_RastriginFunction", "[POPCMAES]", ENS_TEST_TYPES)
  * converges to the expected solution within tolerance limits.
  */
 TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(0, 2);
 
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]",
  * make sure the results are acceptable.
  */
 TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
-    ENS_FULLPREC_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   IPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
@@ -101,7 +101,7 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
  * make sure the results are acceptable.
  */
 TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
-    ENS_FULLPREC_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(

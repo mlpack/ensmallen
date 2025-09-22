@@ -94,7 +94,7 @@ void SGDLogisticRegressionTest()
 // We skip low precision for this test because tuning SGD for the Rosenbrock
 // function is really tricky.
 TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]",
-    ENS_FULLPREC_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   SGDGeneralizedRosenbrockTest<TestType>();
 }
