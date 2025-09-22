@@ -24,8 +24,8 @@ using namespace ens::test;
 // different of gradients between iterations, and this can be much too large to
 // be represented by FP16.  So, we have only one FP16 test case.
 
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]", ENS_TEST_TYPES,
-    ENS_SPARSE_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]",
+    ENS_FULLPREC_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   L_BFGS lbfgs;
   lbfgs.MaxIterations() = 10000;
@@ -67,7 +67,7 @@ TEMPLATE_TEST_CASE("LBFGS_ColvilleFunction", "[LBFGS]", ENS_TEST_TYPES)
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", ENS_FULLPREC_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -84,7 +84,7 @@ TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", ENS_TEST_TYPES)
  * dimensions to 1024 dimensions.
  */
 TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -138,7 +138,8 @@ TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunctionLoose", "[LBFGS]",
         Approx(1.0).margin(50 * Tolerances<TestType>::LargeCoord));
 }
 
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]",
+    ENS_FULLPREC_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -149,62 +150,3 @@ TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]", ENS_TEST_TYPES)
   FunctionTest<RosenbrockWoodFunction, TestType>(lbfgs, ElemType(tol),
       ElemType(tol / 10));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockFunction", "[LBFGS]",
-    coot::mat, coot::fmat)
-{
-  L_BFGS lbfgs;
-  lbfgs.MaxIterations() = 10000;
-
-  FunctionTest<RosenbrockFunction, TestType>(lbfgs, 0.01, 0.001);
-}
-
- /**
-  * Tests the L-BFGS optimizer using the generalized Rosenbrock function.  This
-  * is actually multiple tests, increasing the dimension by powers of 2, from 4
-  * dimensions to 1024 dimensions.
-  */
-TEMPLATE_TEST_CASE("LBFGS_GeneralizedRosenbrockFunction", "[LBFGS]",
-    coot::mat, coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  for (int i = 2; i < 10; i++)
-  {
-    // Dimension: powers of 2
-    int dim = std::pow(2.0, i);
-
-    GeneralizedRosenbrockFunction f(dim);
-    L_BFGS lbfgs(20);
-    lbfgs.MaxIterations() = 10000;
-
-    TestType coords = f. template GetInitialPoint<TestType>();
-    lbfgs.Optimize(f, coords);
-
-    double finalValue = f.Evaluate(coords);
-
-    // Test the output to make sure it is correct.
-    REQUIRE(finalValue == Approx(0.0).margin(1e-5));
-    for (int j = 0; j < dim; j++)
-      REQUIRE(ElemType(coords(j)) == Approx(1.0).epsilon(1e-3));
-  }
-}
-
-TEMPLATE_TEST_CASE("LBFGS_WoodFunction", "[LBFGS]", coot::mat)
-{
-  L_BFGS lbfgs;
-  lbfgs.MaxIterations() = 10000;
-  FunctionTest<WoodFunction, TestType>(lbfgs, 0.01, 0.001);
-}
-
-TEMPLATE_TEST_CASE("LBFGS_RosenbrockWoodFunction", "[LBFGS]",
-    coot::mat)
-{
-  L_BFGS lbfgs;
-  lbfgs.MaxIterations() = 10000;
-  FunctionTest<RosenbrockWoodFunction, TestType>(lbfgs, 0.01, 0.001);
-}
-
-#endif

@@ -134,14 +134,19 @@ void L1Constraint::ProximalStep(MatType& coordinates,
   }
 
   const eT theta = (s - eT(lambda)) / rho;
-  coordinates.transform(
-      [theta](eT val)
-      {
-        if (val > 0)
-          return std::max(val - theta, eT(0));
-        else
-          return std::min(val + theta, eT(0));
-      });
+  // This is a single-line implementation of the .transform() below; we use the
+  // single-line implementation so it works with Bandicoot.
+  //
+  // coordinates.transform(
+  //     [theta](eT val)
+  //     {
+  //       if (val > 0)
+  //         return std::max(val - theta, eT(0));
+  //       else
+  //         return std::min(val + theta, eT(0));
+  //     });
+  coordinates = sign(coordinates) % clamp(
+      abs(coordinates) - theta, eT(0), std::numeric_limits<eT>::max());
 
   // Sanity check: ensure we actually ended up inside the L1 ball.  This might
   // not happen due to floating-point inaccuracies.  If so, try again.
@@ -168,7 +173,8 @@ template<typename MatType>
 inline arma::Col<typename MatType::elem_type> L1Constraint::ExtractNonzeros(
     const MatType& coordinates) const
 {
-  return arma::Col<typename MatType::elem_type>(vectorise(abs(coordinates)));
+  typedef typename MatType::elem_type ElemType;
+  return conv_to<arma::Col<ElemType>>::from(vectorise(abs(coordinates)));
 }
 
 template<typename eT>

@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE("Katyusha_LogisticRegressionFunction", "[Katyusha]",
   {
     Katyusha optimizer(1.0, 10.0, batchSize, 200, 0,
         Tolerances<TestType>::Obj, true);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+    LogisticRegressionFunctionTest<TestType>(
         optimizer,
         Tolerances<TestType>::LRTrainAcc,
         Tolerances<TestType>::LRTestAcc);
@@ -35,36 +35,16 @@ TEMPLATE_TEST_CASE("Katyusha_LogisticRegressionFunction", "[Katyusha]",
 }
 
 TEMPLATE_TEST_CASE("KatyushaProximal_LogisticRegressionFunction", "[Katyusha]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_TEST_TYPES)
 {
   // Run with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 45; batchSize += 5)
   {
     KatyushaProximal optimizer(1.0, 10.0, batchSize, 200, 0,
         Tolerances<TestType>::Obj, true);
-    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+    LogisticRegressionFunctionTest<TestType>(
         optimizer,
         Tolerances<TestType>::LRTrainAcc,
         Tolerances<TestType>::LRTestAcc);
   }
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("Katyusha_LogisticRegressionFunction", "[Katyusha]",
-    coot::mat, coot::fmat)
-{
-  Katyusha optimizer(1.0, 10.0, 10, 100, 0, 1e-10, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.015, 0.015);
-}
-
-TEMPLATE_TEST_CASE("KatyushaProximal_LogisticRegressionFunction", "[Katyusha]",
-    coot::mat, coot::fmat)
-{
-  KatyushaProximal optimizer(1.0, 10.0, 30, 100, 0, 1e-10, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.015, 0.015);
-}
-
-#endif

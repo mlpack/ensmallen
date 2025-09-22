@@ -144,7 +144,7 @@ TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2]",
  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
 TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -193,7 +193,7 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionElemTypeBounds", "[NSGA2]",
  * Optimize for the Fonseca Fleming function using NSGA-II optimizer.
  */
 TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -245,7 +245,7 @@ TEMPLATE_TEST_CASE("NSGA2_FonsecaFlemingFunctionVectorBounds", "[NSGA2]",
  * NOTE: For the sake of runtime, only ZDT-1 is tested against the
  * algorithm. Others have been tested separately.
  */
-TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_ALL_CPU_TEST_TYPES)
 {
   //! Parameters taken from original ZDT Paper.
   ZDT1<TestType> zdt1(100);
@@ -276,110 +276,3 @@ TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_ALL_TEST_TYPES)
 
   REQUIRE(g == Approx(1.0).margin(0.99));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1", "[NSGA2]",
-    coot::mat, coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  SchafferFunctionN1<TestType> sch;
-  const double lowerBound = -1000;
-  const double upperBound = 1000;
-  const ElemType expectedLowerBound = 0.0;
-  const ElemType expectedUpperBound = 2.0;
-
-  NSGA2 opt(
-      20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
-
-  typedef decltype(sch.objectiveA) ObjectiveTypeA;
-  typedef decltype(sch.objectiveB) ObjectiveTypeB;
-
-  // We allow a few trials in case of poor convergence.
-  bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
-  {
-    TestType coords = sch.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      sch.GetObjectives();
-
-    coot::Cube<ElemType> paretoFront, paretoSet;
-    opt.Optimize(objectives, coords, paretoFront, paretoSet);
-
-    bool allInRange = true;
-
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
-         ++solutionIdx)
-    {
-      ElemType val = coot::as_scalar(paretoSet.slice(solutionIdx));
-
-      if (!IsInBounds<ElemType>(val, expectedLowerBound, expectedUpperBound))
-      {
-        allInRange = false;
-        break;
-      }
-    }
-
-    if (allInRange)
-    {
-      success = true;
-      break;
-    }
-  }
-
-  REQUIRE(success == true);
-}
-
-TEMPLATE_TEST_CASE("NSGA2_SchafferFunctionN1VectorBounds", "[NSGA2Test]",
-    coot::mat, coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  // This test can be a little flaky, so we try it a few times.
-  SchafferFunctionN1<TestType> sch;
-  arma::vec lowerBound(1);
-  lowerBound(0) = -1000.0;
-  arma::vec upperBound(1);
-  upperBound(0) = 1000.0;
-  const ElemType expectedLowerBound = 0.0;
-  const ElemType expectedUpperBound = 2.0;
-
-  NSGA2 opt(20, 300, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
-
-  typedef decltype(sch.objectiveA) ObjectiveTypeA;
-  typedef decltype(sch.objectiveB) ObjectiveTypeB;
-
-  bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
-  {
-    TestType coords = sch.GetInitialPoint();
-    std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = sch.GetObjectives();
-
-    coot::Cube<ElemType> paretoFront, paretoSet;
-    opt.Optimize(objectives, coords, paretoFront, paretoSet);
-
-    bool allInRange = true;
-
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
-         ++solutionIdx)
-    {
-      ElemType val = coot::as_scalar(paretoSet.slice(solutionIdx));
-      if (!IsInBounds<ElemType>(val, expectedLowerBound, expectedUpperBound))
-      {
-        allInRange = false;
-        break;
-      }
-    }
-
-    if (allInRange)
-    {
-      success = true;
-      break;
-    }
-  }
-
-  REQUIRE(success == true);
-}
-
-#endif

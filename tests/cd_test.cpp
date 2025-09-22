@@ -23,7 +23,8 @@ using namespace ens::test;
  * Test the correctness of the CD implementation by using a dataset with a
  * precalculated minima.
  */
-TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -44,7 +45,7 @@ TEMPLATE_TEST_CASE("CD_LogisticRegressionFunction", "[CD]", ENS_ALL_TEST_TYPES)
  * Test the correctness of the CD implemenation by using the sparse test
  * function, with disjoint features which optimize to a precalculated minima.
  */
-TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", ENS_ALL_TEST_TYPES,
+TEMPLATE_TEST_CASE("CD_SparseTestFunction", "[CD]", ENS_ALL_CPU_TEST_TYPES,
     ENS_SPARSE_TEST_TYPES)
 {
   // The test function for parallel SGD should work with CD, as the gradients

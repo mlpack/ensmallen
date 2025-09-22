@@ -26,11 +26,11 @@ TEMPLATE_TEST_CASE("CNE_LogisticRegressionFunction", "[CNE]",
     ENS_ALL_TEST_TYPES)
 {
   CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(opt);
+  LogisticRegressionFunctionTest<TestType>(opt);
 }
 
 // The CrossInTray function doesn't optimize well with FP16.
-TEMPLATE_TEST_CASE("CNE_CrossInTrayFunction", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_CrossInTrayFunction", "[CNE]", ENS_ALL_CPU_TEST_TYPES)
 {
   CrossInTrayFunction f;
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
@@ -44,7 +44,7 @@ TEMPLATE_TEST_CASE("CNE_CrossInTrayFunction", "[CNE]", ENS_ALL_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord));
 }
 
-TEMPLATE_TEST_CASE("CNE_AckleyFunction", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_AckleyFunction", "[CNE]", ENS_ALL_CPU_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<AckleyFunction>(optimizer,
@@ -52,7 +52,7 @@ TEMPLATE_TEST_CASE("CNE_AckleyFunction", "[CNE]", ENS_ALL_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_BealeFunction", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_BealeFunction", "[CNE]", ENS_ALL_CPU_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.3, -1);
   FunctionTest<BealeFunction>(optimizer,
@@ -60,7 +60,8 @@ TEMPLATE_TEST_CASE("CNE_BealeFunction", "[CNE]", ENS_ALL_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_GoldsteinPriceFunction", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_GoldsteinPriceFunction", "[CNE]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.1, -1);
   FunctionTest<GoldsteinPriceFunction>(optimizer,
@@ -68,7 +69,7 @@ TEMPLATE_TEST_CASE("CNE_GoldsteinPriceFunction", "[CNE]", ENS_ALL_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_LevyFunctionN13", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_LevyFunctionN13", "[CNE]", ENS_ALL_CPU_TEST_TYPES)
 {
   CNE optimizer(450, 1500, 0.3, 0.3, 0.02, -1);
   FunctionTest<LevyFunctionN13>(optimizer,
@@ -76,7 +77,7 @@ TEMPLATE_TEST_CASE("CNE_LevyFunctionN13", "[CNE]", ENS_ALL_TEST_TYPES)
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("CNE_HimmelblauFunction", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_HimmelblauFunction", "[CNE]", ENS_ALL_CPU_TEST_TYPES)
 {
   HimmelblauFunction f;
   CNE optimizer(650, 3000, 0.3, 0.3, 0.3, 1e-7);
@@ -113,7 +114,7 @@ TEMPLATE_TEST_CASE("CNE_ThreeHumpCamelFunction", "[CNE]", ENS_ALL_TEST_TYPES)
 /**
  * Test the CNE optimizer on Schaffer function N.4.
  */
-TEMPLATE_TEST_CASE("CNE_SchafferFunctionN4", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_SchafferFunctionN4", "[CNE]", ENS_ALL_CPU_TEST_TYPES)
 {
   SchafferFunctionN4 f;
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
@@ -141,7 +142,7 @@ TEMPLATE_TEST_CASE("CNE_SchafferFunctionN4", "[CNE]", ENS_ALL_TEST_TYPES)
   }
 }
 
-TEMPLATE_TEST_CASE("CNE_SchafferFunctionN2", "[CNE]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("CNE_SchafferFunctionN2", "[CNE]", ENS_ALL_CPU_TEST_TYPES)
 {
   // We allow a few trials in case convergence is not achieved.
   CNE optimizer(500, 1600, 0.3, 0.3, 0.3, -1);
@@ -149,14 +150,3 @@ TEMPLATE_TEST_CASE("CNE_SchafferFunctionN2", "[CNE]", ENS_ALL_TEST_TYPES)
       50 * Tolerances<TestType>::LargeObj,
       10 * Tolerances<TestType>::LargeCoord, 7);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("CNE_LogisticRegressionFunction", "[CNE]",
-    coot::mat, coot::fmat)
-{
-  CNE opt(300, 150, 0.2, 0.2, 0.2, -1);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(opt);
-}
-
-#endif

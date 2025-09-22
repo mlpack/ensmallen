@@ -66,12 +66,14 @@ void SGDGeneralizedRosenbrockTest(const size_t variants = 50)
 template<typename MatType>
 void SGDLogisticRegressionTest()
 {
+  typedef typename ForwardType<MatType, size_t>::brow LabelsType;
+
   MatType data, testData;
-  arma::Row<size_t> responses, testResponses;
+  LabelsType responses, testResponses;
 
   LogisticRegressionTestData(data, testData, responses, testResponses);
   MatType data2 = data;
-  arma::Row<size_t> responses2 = responses;
+  LabelsType responses2 = responses;
   LogisticRegressionFunction<MatType> lr(data2, responses2, 0.5);
   lr.Shuffle();
 
@@ -91,7 +93,8 @@ void SGDLogisticRegressionTest()
 
 // We skip low precision for this test because tuning SGD for the Rosenbrock
 // function is really tricky.
-TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]", ENS_TEST_TYPES)
+TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]",
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   SGDGeneralizedRosenbrockTest<TestType>();
 }
@@ -101,19 +104,3 @@ TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
 {
   SGDLogisticRegressionTest<TestType>();
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("SGD_GeneralizedRosenbrockFunction", "[SGD]",
-    coot::mat, coot::fmat)
-{
-  SGDGeneralizedRosenbrockTest<TestType>(15);
-}
-
-TEMPLATE_TEST_CASE("SGD_LogisticRegressionFunction", "[SGD]",
-    coot::mat)
-{
-  SGDLogisticRegressionTest<TestType>();
-}
-
-#endif
