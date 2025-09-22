@@ -41,6 +41,10 @@
     ActiveCMAES<FullSelection, BoundaryBoxConstraint> opt(lambda,
         BoundaryBoxConstraint(lowerBound, upperBound), ...);
     ```
+ * Add proximal gradient optimizers for L1-constrained and other related
+   problems: `FBS`, `FISTA`, and `FASTA`
+   ([#427](https://github.com/mlpack/ensmallen/pull/427)).  See the
+   documentation for more details.
 
  * The `Lambda()` and `Sigma()` functions of the `AugLagrangian` optimizer,
    which could be used to retrieve the Lagrange multipliers and penalty

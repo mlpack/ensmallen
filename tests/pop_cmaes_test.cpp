@@ -59,7 +59,7 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_RastriginFunction", "[POPCMAES]", ENS_TEST_TYPES)
  * converges to the expected solution within tolerance limits.
  */
 TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(0, 2);
 
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE("BIPOP_CMAES_RosenbrockFunction", "[POPCMAES]",
  * make sure the results are acceptable.
  */
 TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   IPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
@@ -101,7 +101,7 @@ TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
  * make sure the results are acceptable.
  */
 TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
-    ENS_TEST_TYPES)
+    ENS_FULLPREC_CPU_TEST_TYPES)
 {
   BoundaryBoxConstraint<TestType> b(-10, 10);
   BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
@@ -109,27 +109,3 @@ TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
   LogisticRegressionFunctionTest<TestType>(cmaes,
       Tolerances<TestType>::LRTrainAcc, Tolerances<TestType>::LRTestAcc, 5);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("IPOP_CMAES_LogisticRegressionFunction", "[POPCMAES]",
-    coot::mat)
-{
-  BoundaryBoxConstraint<TestType> b(-10, 10);
-  IPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
-      0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      cmaes, 0.003, 0.006, 5);
-}
-
-TEMPLATE_TEST_CASE("BIPOP_CMAESLogisticRegressionFunction", "[POPCMAES]",
-    coot::mat)
-{
-  BoundaryBoxConstraint<TestType> b(-10, 10);
-  BIPOP_CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
-      0, b, 32, 1000, 1e-3, FullSelection(), 0.6, 2.0, 7, 1e7);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      cmaes, 0.003, 0.006, 5);
-}
-
-#endif

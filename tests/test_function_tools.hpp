@@ -29,7 +29,8 @@ namespace test {
 * @param testResponses Matrix object to store the test responses into.
 * @param shuffledResponses Matrix object to store the shuffled responses into.
 */
-template<typename MatType, typename LabelsType>
+template<typename MatType,
+         typename LabelsType = typename ForwardType<MatType, size_t>::brow>
 inline void LogisticRegressionTestData(
     MatType& data,
     MatType& testData,
@@ -164,6 +165,25 @@ void MultipleTrialOptimizerTest(
       return;
     }
   }
+}
+
+template<typename FunctionType,
+         typename MatType = arma::mat,
+         typename OptimizerType = ens::StandardSGD>
+void FunctionTest(OptimizerType& optimizer,
+                  FunctionType& f,
+                  const typename MatType::elem_type objectiveMargin =
+                      typename MatType::elem_type(0.01),
+                  const typename MatType::elem_type coordinateMargin =
+                      typename MatType::elem_type(0.001),
+                  const size_t trials = 1)
+{
+  MatType initialPoint = f.template GetInitialPoint<MatType>();
+  MatType expectedResult = f.template GetFinalPoint<MatType>();
+
+  MultipleTrialOptimizerTest(f, optimizer, initialPoint, expectedResult,
+      coordinateMargin, typename MatType::elem_type(f.GetFinalObjective()),
+      objectiveMargin, trials);
 }
 
 template<typename FunctionType,

@@ -95,7 +95,7 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
     if (gap < tolerance)
     {
       Info << "FrankWolfe::Optimize(): minimized within tolerance "
-          << tolerance << "; " << "terminating optimization." << std::endl;
+          << tolerance << "; terminating optimization." << std::endl;
 
       Callback::EndOptimization(*this, f, iterate, callbacks...);
       return currentObjective;
@@ -109,8 +109,11 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
-  Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
-      << ") reached; " << "terminating optimization." << std::endl;
+  if (!terminate)
+  {
+    Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
+        << ") reached; terminating optimization." << std::endl;
+  }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);
   return currentObjective;

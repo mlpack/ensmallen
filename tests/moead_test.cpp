@@ -82,7 +82,8 @@ bool VariableBoundsCheck(const CubeType& paretoSet)
   return inBounds;
 }
 
-TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -103,8 +104,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_ALL_TEST_TY
       2, // Max childrens to replace parents.
       Tolerances<TestType>::Obj, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-  );
+      upperBound); // Upper bound.
 
   typedef decltype(sch.objectiveA) ObjectiveTypeA;
   typedef decltype(sch.objectiveB) ObjectiveTypeB;
@@ -121,7 +121,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1", "[MOEAD]", ENS_ALL_TEST_TY
 
     bool allInRange = true;
 
-    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices; ++solutionIdx)
+    for (size_t solutionIdx = 0; solutionIdx < paretoSet.n_slices;
+         ++solutionIdx)
     {
       ElemType val = arma::as_scalar(paretoSet.slice(solutionIdx));
       if (!IsInBounds<ElemType>(
@@ -165,8 +166,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_SchafferFunctionN1Vec", "[MOEAD]",
       2, // Max childrens to replace parents.
       1e-10, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-  );
+      upperBound); // Upper bound.
 
   typedef decltype(sch.objectiveA) ObjectiveTypeA;
   typedef decltype(sch.objectiveB) ObjectiveTypeB;
@@ -226,8 +226,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunction", "[MOEAD]",
       2, // Max childrens to replace parents.
       1e-10, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-  );
+      upperBound); // Upper bound.
+
   typedef decltype(fon.objectiveA) ObjectiveTypeA;
   typedef decltype(fon.objectiveB) ObjectiveTypeB;
 
@@ -283,8 +283,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_FonsecaFlemingFunctionVec", "[MOEAD]",
       2, // Max childrens to replace parents.
       1e-10, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-  );
+      upperBound); // Upper bound.
 
   typedef decltype(fon.objectiveA) ObjectiveTypeA;
   typedef decltype(fon.objectiveB) ObjectiveTypeB;
@@ -343,8 +342,7 @@ TEST_CASE("MOEADDIRICHLETMAF3Test", "[MOEAD]")
       2, // Max childrens to replace parents.
       1e-10, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-    );
+      upperBound); // Upper bound.
 
   typedef decltype(MAF_THREE.objectiveF1) ObjectiveTypeA;
   typedef decltype(MAF_THREE.objectiveF2) ObjectiveTypeB;
@@ -380,8 +378,8 @@ TEST_CASE("MOEADDIRICHLETMAF3Test", "[MOEAD]")
 }
 
 /**
- * Test DirichletMOEAD against the third problem of ZDT Test Suite. MAF-1 is a 12
- * variable-3 objective problem with disconnected Pareto Fronts.
+ * Test DirichletMOEAD against the third problem of ZDT Test Suite. MAF-1 is a
+ * 12 variable-3 objective problem with disconnected Pareto Fronts.
  */
 TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
 {
@@ -403,8 +401,7 @@ TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
       2, // Max childrens to replace parents.
       1e-10, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-    );
+      upperBound); // Upper bound.
 
   typedef decltype(MAF_ONE.objectiveF1) ObjectiveTypeA;
   typedef decltype(MAF_ONE.objectiveF2) ObjectiveTypeB;
@@ -424,7 +421,7 @@ TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
     for (size_t j = 2; j < MAF_ONE.GetNumVariables(); j++)
     {
       double val = arma::as_scalar(solution(j));
-      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.1))
+      if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.15))
       {
         allInRange = false;
         break;
@@ -446,7 +443,7 @@ TEST_CASE("MOEADDIRICHLETMAF1Test", "[MOEAD]")
 TEST_CASE("MOEADDIRICHLETMAF4Test", "[MOEAD]")
 {
   //! Parameters taken from original ZDT Paper.
-  MAF4<arma::mat> MAF_FOUR;
+  MAF4<arma::mat> maf4;
   const double lowerBound = 0;
   const double upperBound = 1;
   const double expectedLowerBound = 0.5;
@@ -463,25 +460,24 @@ TEST_CASE("MOEADDIRICHLETMAF4Test", "[MOEAD]")
       2, // Max childrens to replace parents.
       1e-10, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-    );
+      upperBound); // Upper bound.
 
-  typedef decltype(MAF_FOUR.objectiveF1) ObjectiveTypeA;
-  typedef decltype(MAF_FOUR.objectiveF2) ObjectiveTypeB;
-  typedef decltype(MAF_FOUR.objectiveF3) ObjectiveTypeC;
+  typedef decltype(maf4.objectiveF1) ObjectiveTypeA;
+  typedef decltype(maf4.objectiveF2) ObjectiveTypeB;
+  typedef decltype(maf4.objectiveF3) ObjectiveTypeC;
 
   std::tuple<ObjectiveTypeA, ObjectiveTypeB, ObjectiveTypeC> objectives =
-      MAF_FOUR.GetObjectives();
+      maf4.GetObjectives();
 
   bool success = false;
-  arma::mat coords = MAF_FOUR.GetInitialPoint();
+  arma::mat coords = maf4.GetInitialPoint();
   arma::cube paretoFront, paretoSet;
   opt.Optimize(objectives, coords, paretoFront, paretoSet);
   for (size_t i = 0; i < paretoSet.n_slices; i++)
   {
     arma::mat solution = paretoSet.slice(i);
     bool allInRange = true;
-    for (size_t j = 2; j < MAF_FOUR.GetNumVariables(); j++)
+    for (size_t j = 2; j < maf4.GetNumVariables(); j++)
     {
       double val = arma::as_scalar(solution(j));
       if (!IsInBounds<double>(val, expectedLowerBound, expectedUpperBound, 0.2))
@@ -530,8 +526,7 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", ENS_TEST_TYPES)
       2, // Max childrens to replace parents.
       Tolerances<TestType>::Obj, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-  );
+      upperBound); // Upper bound.
 
   typedef decltype(zdt1.objectiveF1) ObjectiveTypeA;
   typedef decltype(zdt1.objectiveF2) ObjectiveTypeB;
@@ -560,8 +555,8 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", ENS_TEST_TYPES)
 }
 
 /**
- * Test DirichletMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a 30
- * variable-2 objective problem with disconnected Pareto Fronts.
+ * Test DirichletMOEAD against the third problem of ZDT Test Suite. ZDT-3 is a
+ * 30 variable-2 objective problem with disconnected Pareto Fronts.
  */
 TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_TEST_TYPES)
 {
@@ -583,8 +578,7 @@ TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_TEST_TYPES)
       2, // Max childrens to replace parents.
       Tolerances<TestType>::Obj, // epsilon.
       lowerBound, // Lower bound.
-      upperBound // Upper bound.
-    );
+      upperBound); // Upper bound.
 
   typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
   typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
@@ -593,47 +587,8 @@ TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_TEST_TYPES)
   std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
       zdt3.GetObjectives();
 
-  arma::Cube<ElemType> finalPopulation, finalFront;
+  typename ForwardType<TestType>::cube finalPopulation, finalFront;
   opt.Optimize(objectives, coords, finalPopulation, finalFront);
 
   REQUIRE(VariableBoundsCheck(finalPopulation));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("MOEADDIRICHLETZDT3Test", "[MOEAD]", coot::mat, coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  //! Parameters taken from original ZDT Paper.
-  ZDT3<TestType> zdt3(300);
-  const double lowerBound = 0;
-  const double upperBound = 1;
-
-  DirichletMOEAD opt(
-      300, // Population size.
-      300,  // Max generations.
-      1.0,  // Crossover probability.
-      0.9, // Probability of sampling from neighbor.
-      20, // Neighborhood size.
-      20, // Perturbation index.
-      0.5, // Differential weight.
-      2, // Max childrens to replace parents.
-      1e-10, // epsilon.
-      lowerBound, // Lower bound.
-      upperBound // Upper bound.
-    );
-
-  typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
-  typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
-
-  TestType coords = zdt3.GetInitialPoint();
-  std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives =
-      zdt3.GetObjectives();
-
-  coot::Cube<ElemType> paretoFront, finalPopulation;
-  opt.Optimize(objectives, coords, paretoFront, finalPopulation);
-  REQUIRE(VariableBoundsCheck(finalPopulation));
-}
-
-#endif

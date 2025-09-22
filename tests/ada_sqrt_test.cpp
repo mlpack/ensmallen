@@ -26,21 +26,9 @@ TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
       true);
   // We allow a few trials for lower precision types because AdaSqrt can have
   // trouble converging in that case.
-  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(
+  LogisticRegressionFunctionTest<TestType>(
       optimizer,
       Tolerances<TestType>::LRTrainAcc,
       Tolerances<TestType>::LRTestAcc,
       sizeof(typename TestType::elem_type) < 4 ? 5 : 1);
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("AdaSqrt_LogisticRegressionFunction", "[AdaSqrt]",
-    coot::mat, coot::fmat)
-{
-  AdaSqrt optimizer(8.0, 32, 1e-8, 150000, 1e-9, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer);
-}
-
-#endif

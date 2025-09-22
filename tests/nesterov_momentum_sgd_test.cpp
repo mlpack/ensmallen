@@ -21,7 +21,7 @@ using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("NesterovMomentumSGD_SGDTestFunction",
-    "[NesterovMomentumSGD]", ENS_TEST_TYPES)
+    "[NesterovMomentumSGD]", ENS_FULLPREC_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -43,7 +43,7 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_SGDTestFunction",
 }
 
 TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
-    "[NesterovMomentumSGD]", ENS_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+    "[NesterovMomentumSGD]", ENS_FULLPREC_CPU_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -95,50 +95,3 @@ TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunctionLoose",
   REQUIRE(coordinates(1) ==
       Approx(1.0).epsilon(factor * Tolerances<TestType>::LargeCoord));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("NesterovMomentum_GeneralizedRosenbrockFunction",
-    "[NesterovMomentumSGD]", coot::mat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  // Create the generalized Rosenbrock function.
-  GeneralizedRosenbrockFunction f(10);
-  NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
-  NesterovMomentumSGD s(0.0001, 1, 0, 1e-15, true, nesterovMomentumUpdate,
-      NoDecay(), true, true);
-
-  TestType coordinates = f.GetInitialPoint<TestType>();
-  ElemType result = s.Optimize(f, coordinates);
-
-  REQUIRE(result == Approx(0.0).margin(1e-4));
-  for (size_t j = 0; j < 10; ++j)
-    REQUIRE(ElemType(coordinates(j)) == Approx(1.0).epsilon(0.003));
-}
-
-TEMPLATE_TEST_CASE("NesterovMomentumSGD_GeneralizedRosenbrockFunction",
-    "[NesterovMomentumSGD]", coot::fmat)
-{
-  typedef typename TestType::elem_type ElemType;
-
-  // Create the generalized Rosenbrock function.
-  GeneralizedRosenbrockFunction f(10);
-  NesterovMomentumUpdate nesterovMomentumUpdate(0.9);
-  NesterovMomentumSGD s(0.00015, 1, 0, 1e-10, true, nesterovMomentumUpdate);
-
-  size_t trial = 0;
-  ElemType result = std::numeric_limits<ElemType>::max();
-  TestType coordinates;
-  while (trial++ < 8 && result > 0.1)
-  {
-    coordinates = f.GetInitialPoint<TestType>();
-    result = s.Optimize(f, coordinates);
-  }
-
-  REQUIRE(result == Approx(0.0).margin(0.02));
-  for (size_t j = 0; j < 10; ++j)
-    REQUIRE(ElemType(coordinates(j)) == Approx(1.0).margin(0.05));
-}
-
-#endif

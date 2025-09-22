@@ -48,24 +48,3 @@ TEMPLATE_TEST_CASE("SVRG_BB_LogisticRegressionFunction", "[SVRG_BB]",
         5 * Tolerances<TestType>::LRTestAcc);
   }
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("SVRG_LogisticRegressionFunction", "[SVRG]",
-    coot::mat, coot::fmat)
-{
-  SVRG optimizer(0.005, 50, 300, 0, 1e-5, true);
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.015, 0.015);
-}
-
-TEMPLATE_TEST_CASE("SVRG_BB_LogisticRegressionFunction", "[SVRG_BB]",
-    coot::mat, coot::fmat)
-{
-  SVRG_BB optimizer(0.005, 50, 300, 0, 1e-5, true, SVRGUpdate(),
-      BarzilaiBorweinDecay(0.1));
-  LogisticRegressionFunctionTest<TestType, coot::Row<size_t>>(
-      optimizer, 0.015, 0.015);
-}
-
-#endif

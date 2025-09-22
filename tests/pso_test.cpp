@@ -23,7 +23,7 @@ using namespace ens;
 using namespace ens::test;
 using namespace std;
 
-TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -38,7 +38,8 @@ TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_ALL_TEST_TYPES)
     REQUIRE(coords(j) <= (ElemType) Tolerances<TestType>::Coord);
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -78,7 +79,8 @@ TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -120,7 +122,7 @@ TEMPLATE_TEST_CASE("LBestPSO_CrossInTrayFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -144,7 +146,7 @@ TEMPLATE_TEST_CASE("LBestPSO_AckleyFunction", "[PSO]", ENS_ALL_TEST_TYPES)
   REQUIRE(coordinates(1) == Approx(ElemType(0)).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -170,7 +172,7 @@ TEMPLATE_TEST_CASE("LBestPSO_BealeFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 }
 
 TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -207,7 +209,7 @@ TEMPLATE_TEST_CASE("LBestPSO_GoldsteinPriceFunction", "[PSO]",
   }
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -230,7 +232,8 @@ TEMPLATE_TEST_CASE("LBestPSO_LevyFunctionN13", "[PSO]", ENS_ALL_TEST_TYPES)
   REQUIRE(coordinates(1) == Approx(ElemType(1)).margin(coordTol));
 }
 
-TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -263,7 +266,7 @@ TEMPLATE_TEST_CASE("LBestPSO_HimmelblauFunction", "[PSO]", ENS_ALL_TEST_TYPES)
 }
 
 TEMPLATE_TEST_CASE("LBestPSO_ThreeHumpCamelFunction", "[PSO]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
   typedef typename TestType::elem_type ElemType;
 
@@ -310,26 +313,3 @@ TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]", ENS_ALL_TEST_TYPES)
   REQUIRE(coordinates(0) == Approx(ElemType(0)).margin(coordTol));
   REQUIRE(coordinates(1) == Approx(ElemType(0)).margin(coordTol));
 }
-
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("LBestPSO_SchafferFunctionN2", "[PSO]",
-    coot::mat, coot::fmat)
-{
-  SchafferFunctionN2 f;
-
-  // Setting bounds for the initial swarm population.
-  arma::vec lowerBound(2);
-  arma::vec upperBound(2);
-  lowerBound.fill(40);
-  upperBound.fill(50);
-
-  LBestPSO s(500, lowerBound, upperBound);
-  TestType coordinates = TestType("10; 10");
-  s.Optimize(f, coordinates);
-
-  REQUIRE(coordinates(0) == Approx(0).margin(0.01));
-  REQUIRE(coordinates(1) == Approx(0).margin(0.01));
-}
-
-#endif
