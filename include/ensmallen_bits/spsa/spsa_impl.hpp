@@ -45,7 +45,8 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
-  typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardType<MatType>::bmat BaseMatType;
+  typedef typename ForwardType<MatType>::distr_param DistrParam;
 
   // Make sure that we have the methods that we need.
   traits::CheckArbitraryFunctionTypeAPI<ArbitraryFunctionType,
@@ -53,7 +54,7 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
   RequireFloatingPointType<MatType>();
 
   BaseMatType gradient(iterate.n_rows, iterate.n_cols);
-  arma::Mat<ElemType> spVector(iterate.n_rows, iterate.n_cols);
+  BaseMatType spVector(iterate.n_rows, iterate.n_cols);
 
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
@@ -90,21 +91,20 @@ typename MatType::elem_type SPSA::Optimize(ArbitraryFunctionType& function,
     lastObjective = overallObjective;
 
     // Gain sequences.
-    const double akLocal = stepSize / std::pow(k + 1 + ak, alpha);
-    const double ck = evaluationStepSize / std::pow(k + 1, gamma);
+    const ElemType akLocal = ElemType(stepSize / std::pow(k + 1 + ak, alpha));
+    const ElemType ck = ElemType(evaluationStepSize / std::pow(k + 1, gamma));
 
     // Choose stochastic directions.
-    spVector = arma::conv_to<arma::Mat<ElemType>>::from(
-        arma::randi(iterate.n_rows, iterate.n_cols,
-        arma::distr_param(0, 1))) * 2 - 1;
+    spVector = randi<BaseMatType>(
+        iterate.n_rows, iterate.n_cols, DistrParam(0, 1)) * 2 - 1;
 
     iterate += ck * spVector;
-    const double fPlus = function.Evaluate(iterate);
+    const ElemType fPlus = function.Evaluate(iterate);
     terminate |= Callback::Evaluate(*this, function, iterate, fPlus,
         callbacks...);
 
     iterate -= 2 * ck * spVector;
-    const double fMinus = function.Evaluate(iterate);
+    const ElemType fMinus = function.Evaluate(iterate);
     terminate |= Callback::Evaluate(*this, function, iterate, fMinus,
         callbacks...);
 

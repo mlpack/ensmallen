@@ -78,7 +78,7 @@ class UpdateFullCorrection
     atoms.ProjectedGradientEnhancement(function, tau, stepSize);
     arma::mat tmp;
     atoms.RecoverVector(tmp);
-    newCoords = arma::conv_to<MatType>::from(tmp);
+    newCoords = conv_to<MatType>::from(tmp);
   }
 
  private:

@@ -9,57 +9,43 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run Eve on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("EveLogisticRegressionTest","[EveTest]")
+TEMPLATE_TEST_CASE("Eve_LogisticRegressionFunction", "[Eve]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
-  Eve optimizer(1e-3, 1, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  Eve optimizer(0.01, 1, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
+      500000, Tolerances<TestType>::Obj / 10, true);
+  LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(optimizer);
 }
 
-/**
- * Test the Eve optimizer on the Sphere function.
- */
-TEST_CASE("EveSphereFunctionTest","[EveTest]")
+TEMPLATE_TEST_CASE("Eve_SphereFunction", "[Eve]", ENS_ALL_TEST_TYPES)
 {
-  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<SphereFunction>(optimizer, 0.5, 0.1);
+  Eve optimizer(0.02, 2, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
+      500000, Tolerances<TestType>::Obj / 10, true);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the Eve optimizer on the Styblinski-Tang function.
- */
-TEST_CASE("EveStyblinskiTangFunctionTest","[EveTest]")
+TEMPLATE_TEST_CASE("Eve_StyblinskiTangFunction", "[Eve]", ENS_ALL_TEST_TYPES,
+    ENS_SPARSE_TEST_TYPES)
 {
-  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction>(optimizer, 0.5, 0.1);
-}
-
-/**
- * Test the Eve optimizer on the Styblinski-Tang function using arma::fmat as
- * the objective type.
- */
-TEST_CASE("EveStyblinskiTangFunctionFMatTest","[EveTest]")
-{
-  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 0.5, 0.1);
-}
-
-/**
- * Test the Eve optimizer on the Styblinski-Tang function, using arma::sp_mat as
- * the objective type.
- */
-TEST_CASE("EveStyblinskiTangFunctionSpMatTest","[EveTest]")
-{
-  Eve optimizer(1e-3, 2, 0.9, 0.999, 0.999, 1e-8, 10000, 500000, 1e-9, true);
-  FunctionTest<StyblinskiTangFunction, arma::sp_mat>(optimizer, 0.5, 0.1);
+  Eve optimizer(0.16, 2, 0.9, 0.999, 0.999, Tolerances<TestType>::Obj, 10000,
+      500000, Tolerances<TestType>::Obj / 10, true);
+  FunctionTest<StyblinskiTangFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }

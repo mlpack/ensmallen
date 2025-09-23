@@ -45,11 +45,13 @@ typename MatType::elem_type SphereFunction::Evaluate(
     const size_t begin,
     const size_t batchSize) const
 {
-  typename MatType::elem_type objective = 0.0;
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType objective = 0;
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    objective += std::pow(coordinates(p), 2);
+    objective += std::pow(coordinates(p), ElemType(2));
   }
 
   return objective;
@@ -73,7 +75,7 @@ void SphereFunction::Gradient(const MatType& coordinates,
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient(p) += 2.0 * coordinates[p];
+    gradient(p) += 2 * coordinates[p];
   }
 }
 

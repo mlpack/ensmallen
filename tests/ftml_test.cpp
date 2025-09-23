@@ -1,6 +1,7 @@
 /**
  * @file ftml_test.cpp
  * @author Ryan Curtin
+ * @author Marcus Edel
  *
  * Test file for the FTML optimizer.
  *
@@ -9,49 +10,44 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run FTML on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("FTMLLogisticRegressionTest", "[FTMLTest]")
+TEMPLATE_TEST_CASE("FTML_LogisticRegressionFunction", "[FTML]",
+    ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.001, 1, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006);
+  FTML optimizer(0.005, 1, 0.9, 0.999, Tolerances<TestType>::Obj, 100000,
+      Tolerances<TestType>::Obj * 10, true);
+  LogisticRegressionFunctionTest<TestType>(optimizer);
 }
 
-/**
- * Test the FTML optimizer on the Sphere function.
- */
-TEST_CASE("FTMLSphereFunctionTest", "[FTMLTest]")
+TEMPLATE_TEST_CASE("FTML_SphereFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 500000, 1e-9, true);
-  FunctionTest<SphereFunction>(optimizer, 0.5, 0.1);
+  FTML optimizer(0.06, 2, 0.9, 0.999, Tolerances<TestType>::Obj / 100, 500000,
+      Tolerances<TestType>::Obj / 100, true);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-/**
- * Test the FTML optimizer on the Styblinski-Tang function.
- */
-TEST_CASE("FTMLStyblinskiTangFunctionTest", "[FTMLTest]")
+TEMPLATE_TEST_CASE("FTML_StyblinskiTangFunction", "[FTML]", ENS_ALL_TEST_TYPES)
 {
-  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  FunctionTest<StyblinskiTangFunction>(optimizer, 0.5, 0.1);
-}
-
-/**
- * Test the FTML optimizer on the Styblinski-Tang function using arma::fmat as
- * the objective type.
- */
-TEST_CASE("FTMLStyblinskiTangFunctionFMatTest", "[FTMLTest]")
-{
-  FTML optimizer(0.001, 2, 0.9, 0.999, 1e-8, 100000, 1e-5, true);
-  FunctionTest<StyblinskiTangFunction, arma::fmat>(optimizer, 0.5, 0.1);
+  FTML optimizer(0.8, 2, 0.9, 0.999, Tolerances<TestType>::Obj, 100000,
+      Tolerances<TestType>::Obj / 100, true);
+  FunctionTest<StyblinskiTangFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
 // A test with sp_mat is not done, because FTML uses some parts internally that

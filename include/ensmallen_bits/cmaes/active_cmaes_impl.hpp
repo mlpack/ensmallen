@@ -18,7 +18,6 @@
 // In case it hasn't been included yet.
 #include "active_cmaes.hpp"
 
-#include "not_empty_transformation.hpp"
 #include <ensmallen_bits/function.hpp>
 
 namespace ens {
@@ -42,29 +41,6 @@ ActiveCMAES<SelectionPolicyType, TransformationPolicyType>::ActiveCMAES(
     stepSize(stepSizeIn)
 { /* Nothing to do. */ }
 
-template<typename SelectionPolicyType, typename TransformationPolicyType>
-ActiveCMAES<SelectionPolicyType, TransformationPolicyType>::ActiveCMAES(
-                                  const size_t lambda,
-                                  const double lowerBound,
-                                  const double upperBound,
-                                  const size_t batchSize,
-                                  const size_t maxIterations,
-                                  const double tolerance,
-                                  const SelectionPolicyType& selectionPolicy,
-                                  double stepSizeIn) :
-    lambda(lambda),
-    batchSize(batchSize),
-    maxIterations(maxIterations),
-    tolerance(tolerance),
-    selectionPolicy(selectionPolicy),
-    stepSize(stepSizeIn)
-{
-  Warn << "This is a deprecated constructor and will be removed in a "
-    "future version of ensmallen" << std::endl;
-  NotEmptyTransformation<TransformationPolicyType, EmptyTransformation<>> d;
-  d.Assign(transformationPolicy, lowerBound, upperBound);
-}
-
 //! Optimize the function (minimize).
 template<typename SelectionPolicyType, typename TransformationPolicyType>
 template<typename SeparableFunctionType,
@@ -79,6 +55,9 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+
+  typedef typename ForwardType<MatType>::bcol BaseColType;
+  typedef typename ForwardType<MatType>::uvec UVecType;
 
   // Make sure that we have the methods that we need.  Long name...
   traits::CheckArbitrarySeparableFunctionTypeAPI<
@@ -105,21 +84,23 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
 
   // Step size control parameters.
   BaseMatType sigma(2, 1); // sigma is vector-shaped.
-  if (stepSize == 0) 
+  if (stepSize == 0)
     sigma(0) = transformationPolicy.InitialStepSize();
-  else 
-    sigma(0) = stepSize;
+  else
+    sigma(0) = ElemType(stepSize);
 
-  const ElemType cs = 4.0 / (iterate.n_elem + 4);
+  const ElemType cs = 4 / ElemType(iterate.n_elem + 4);
   const ElemType ds = 1 + cs;
-  const ElemType enn = std::sqrt(iterate.n_elem) * (1.0 - 1.0 /
-      (4.0 * iterate.n_elem) + 1.0 / (21 * std::pow(iterate.n_elem, 2)));
+  const ElemType enn = std::sqrt(iterate.n_elem) * (1 -
+      1 / ElemType(4 * iterate.n_elem) +
+      1 / ElemType(21 * std::pow(iterate.n_elem, 2)));
 
   // Covariance update parameters. Cumulation for distribution.
   const ElemType cc = cs;
-  const ElemType ccov = 2.0 / std::pow((iterate.n_elem + std::sqrt(2)), 2);
-  const ElemType beta = (4.0 * mu - 2.0) / (std::pow((iterate.n_elem + 12), 2) 
-      + 4 * mu);
+  const ElemType ccov = 2 /
+      std::pow((iterate.n_elem + std::sqrt(ElemType(2))), ElemType(2));
+  const ElemType beta = (4 * mu - 2) /
+      (std::pow(ElemType(iterate.n_elem + 12), ElemType(2)) + 4 * mu);
 
   std::vector<BaseMatType> mPosition(2, BaseMatType(iterate.n_rows,
       iterate.n_cols));
@@ -163,13 +144,13 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   C[0].eye();
 
   // Covariance matrix parameters.
-  arma::Col<ElemType> eigval;
+  BaseColType eigval;
   BaseMatType eigvec;
   BaseMatType eigvalZero(iterate.n_elem, 1); // eigvalZero is vector-shaped.
   eigvalZero.zeros();
 
   // The current visitation order (sorted by population objectives).
-  arma::uvec idx = arma::linspace<arma::uvec>(0, lambda - 1, lambda);
+  UVecType idx = linspace<UVecType>(0, lambda - 1, lambda);
 
   // Now iterate!
   Callback::BeginOptimization(*this, function, transformedIterate,
@@ -191,21 +172,22 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
     BaseMatType covLower;
-    while (!arma::chol(covLower, C[idx0], "lower"))
+    // while (!arma::chol(covLower, C[idx0], "lower"))
+    while (!chol(covLower, C[idx0]))
       C[idx0].diag() += std::numeric_limits<ElemType>::epsilon();
 
-    arma::eig_sym(eigval, eigvec, C[idx0]);
+    eig_sym(eigval, eigvec, C[idx0]);
 
     for (size_t j = 0; j < lambda; ++j)
     {
       if (iterate.n_rows > iterate.n_cols)
       {
         pStep[idx(j)] = covLower *
-          arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
+          randn<BaseMatType>(iterate.n_rows, iterate.n_cols);
       }
       else
       {
-        pStep[idx(j)] = arma::randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
+        pStep[idx(j)] = randn<BaseMatType>(iterate.n_rows, iterate.n_cols)
           * covLower.t();
       }
 
@@ -218,7 +200,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
     }
 
     // Sort population.
-    idx = arma::sort_index(pObjective);
+    idx = sort_index(pObjective);
 
     step = w * pStep[idx(0)];
     for (size_t j = 1; j < mu; ++j)
@@ -256,7 +238,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
           eigvec * diagmat(1 / eigval) * eigvec.t();
     }
 
-    const ElemType psNorm = arma::norm(ps[idx1]);
+    const ElemType psNorm = norm(ps[idx1]);
     sigma(idx1) = sigma(idx0) * std::exp(cs / ds * (psNorm / enn - 1));
 
     if (std::isnan(sigma(idx1)) || sigma(idx1) > 1e14)
@@ -308,8 +290,8 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
       }
     }
 
-    arma::eig_sym(eigval, eigvec, C[idx1]);
-    const arma::uvec negativeEigval = arma::find(eigval < 0, 1);
+    eig_sym(eigval, eigvec, C[idx1]);
+    const UVecType negativeEigval = find(eigval < 0, 1);
     if (!negativeEigval.is_empty())
     {
       if (negativeEigval(0) == 0)
@@ -319,7 +301,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
       else
       {
         C[idx1] = eigvec.cols(0, negativeEigval(0) - 1) *
-            arma::diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
+            diagmat(eigval.subvec(0, negativeEigval(0) - 1)) *
             eigvec.cols(0, negativeEigval(0) - 1).t();
       }
     }

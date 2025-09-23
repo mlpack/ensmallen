@@ -92,7 +92,7 @@ Alpha(const MatType& a, const MatType& dA, double tau, double& alpha)
  *
  * where A, H are symmetric matrices.
  *
- * TODO(stephentu): Note this method current uses arma's builtin arma::syl
+ * TODO(stephentu): Note this method current uses arma's builtin arma::sylvester
  * method, which is overkill for this situation. See Lemma 7.2 of [AHO98] for
  * how to solve this Lyapunov equation using an eigenvalue decomposition of A.
  *
@@ -101,7 +101,7 @@ template<typename MatType, typename AType, typename BType>
 static inline void
 SolveLyapunov(MatType& x, const AType& a, const BType& h)
 {
-  arma::syl(x, a, a, -h);
+  arma::sylvester(x, a, a, -h);
 }
 
 /**
@@ -163,7 +163,7 @@ SolveKKTSystem(const SparseConstraintType& aSparse,
   }
 
   MatType subTerm(aSparse.n_cols, 1, arma::fill::zeros);
-  
+
   if (aSparse.n_rows)
   {
     dySparse = dy(arma::span(0, aSparse.n_rows - 1), 0);
@@ -483,8 +483,8 @@ typename MatType::elem_type PrimalDualSolver::Optimize(
     const double sparsePrimalInfeas = arma::norm(sdp.SparseB() - aSparse * sx,
         2);
     const double densePrimalInfeas = arma::norm(sdp.DenseB() - aDense * sx, 2);
-    const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
-        densePrimalInfeas * densePrimalInfeas);
+    const double primalInfeas = std::sqrt(sparsePrimalInfeas *
+        sparsePrimalInfeas + densePrimalInfeas * densePrimalInfeas);
 
     primalObj = arma::dot(sdp.C(), coordinates);
 

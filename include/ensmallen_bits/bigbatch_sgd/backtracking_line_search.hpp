@@ -60,6 +60,8 @@ class BacktrackingLineSearch
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     // Instantiate the policy with the given parent.
     Policy(BacktrackingLineSearch& parent) : parent(parent) { }
 
@@ -94,12 +96,10 @@ class BacktrackingLineSearch
       if (reset)
         stepSize *= 2;
 
-      typedef typename MatType::elem_type ElemType;
-
       ElemType overallObjective = function.Evaluate(iterate, offset,
           backtrackingBatchSize);
 
-      MatType iterateUpdate = iterate - (stepSize * gradient);
+      MatType iterateUpdate = iterate - (ElemType(stepSize) * gradient);
       ElemType overallObjectiveUpdate = function.Evaluate(iterateUpdate, offset,
           backtrackingBatchSize);
 
@@ -109,7 +109,7 @@ class BacktrackingLineSearch
       {
         stepSize /= 2;
 
-        iterateUpdate = iterate - (stepSize * gradient);
+        iterateUpdate = iterate - (ElemType(stepSize) * gradient);
         overallObjectiveUpdate = function.Evaluate(iterateUpdate,
           offset, backtrackingBatchSize);
       }

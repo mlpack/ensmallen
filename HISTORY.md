@@ -1,5 +1,51 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * SGD-like optimizers now all divide the step size by the batch size so that
+   step sizes don't need to be tuned in addition to batch sizes.  If you require
+   behavior from ensmallen 2, define the `ENS_OLD_SEPARABLE_STEP_BEHAVIOR` macro
+   before including `ensmallen.hpp`
+   ([#431](https://github.com/mlpack/ensmallen/pull/431)).
+
+ * Remove deprecated `ParetoFront()` and `ParetoSet()` from multi-objective
+   optimizers ([#435](https://github.com/mlpack/ensmallen/pull/435)).  Instead,
+   pass objects to the `Optimize()` function; see the documentation for each
+   multi-objective optimizer for more details.  A typical transition will change
+   code like:
+
+    ```c++
+    optimizer.Optimize(objectives, coordinates);
+    arma::cube paretoFront = optimizer.ParetoFront();
+    arma::cube paretoSet = optimizer.ParetoSet();
+    ```
+
+   to instead gather the Pareto front and set in the call:
+
+    ```c++
+    arma::cube paretoFront, paretoSet;
+    optimizer.Optimize(objectives, coordinates, paretoFront, paretoSet);
+    ```
+
+ * Remove deprecated constructor for Active CMA-ES that takes `lowerBound` and
+   `upperBound` ([#435](https://github.com/mlpack/ensmallen/pull/435)).
+   Instead, pass an instantiated `BoundaryBoxConstraint` to the constructor.  A
+   typical transition will change code like:
+
+    ```c++
+    ActiveCMAES<FullSelection, BoundaryBoxConstraint> opt(lambda,
+        lowerBound, upperBound, ...);
+    ```
+
+   into
+
+    ```c++
+    ActiveCMAES<FullSelection, BoundaryBoxConstraint> opt(lambda,
+        BoundaryBoxConstraint(lowerBound, upperBound), ...);
+    ```
+
+ * Add proximal gradient optimizers for L1-constrained and other related
+   problems: `FBS`, `FISTA`, and `FASTA`
+   ([#427](https://github.com/mlpack/ensmallen/pull/427)).  See the
+   documentation for more details.
 
 ### ensmallen 2.22.2: "E-Bike Excitement"
 ###### 2025-04-30

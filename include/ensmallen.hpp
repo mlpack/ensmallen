@@ -34,7 +34,16 @@
 
 #include <armadillo>
 
-#if ((ARMA_VERSION_MAJOR < 10) || ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
+#if defined(COOT_VERSION_MAJOR) && \
+    ((COOT_VERSION_MAJOR >= 2) || \
+     (COOT_VERSION_MAJOR == 2 && COOT_VERSION_MINOR >= 1))
+  // The version of Bandicoot is new enough that we can use it.
+  #undef ENS_HAVE_COOT
+  #define ENS_HAVE_COOT
+#endif
+
+#if ((ARMA_VERSION_MAJOR < 10) || \
+    ((ARMA_VERSION_MAJOR == 10) && (ARMA_VERSION_MINOR < 8)))
   #error "need Armadillo version 10.8 or newer"
 #endif
 
@@ -69,7 +78,9 @@
 #include "ensmallen_bits/log.hpp" // TODO: should move to another place
 
 #include "ensmallen_bits/utility/any.hpp"
-#include "ensmallen_bits/utility/arma_traits.hpp"
+#include "ensmallen_bits/utility/proxies.hpp"
+#include "ensmallen_bits/utility/function_traits.hpp"
+#include "ensmallen_bits/utility/using.hpp"
 #include "ensmallen_bits/utility/indicators/epsilon.hpp"
 #include "ensmallen_bits/utility/indicators/igd.hpp"
 #include "ensmallen_bits/utility/indicators/igd_plus.hpp"
@@ -109,8 +120,10 @@
 #include "ensmallen_bits/cne/cne.hpp"
 #include "ensmallen_bits/de/de.hpp"
 #include "ensmallen_bits/eve/eve.hpp"
+#include "ensmallen_bits/fasta/fasta.hpp"
+#include "ensmallen_bits/fbs/fbs.hpp"
+#include "ensmallen_bits/fista/fista.hpp"
 #include "ensmallen_bits/ftml/ftml.hpp"
-
 #include "ensmallen_bits/fw/frank_wolfe.hpp"
 #include "ensmallen_bits/gradient_descent/gradient_descent.hpp"
 #include "ensmallen_bits/grid_search/grid_search.hpp"

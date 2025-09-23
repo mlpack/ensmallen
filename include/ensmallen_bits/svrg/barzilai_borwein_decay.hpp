@@ -70,11 +70,20 @@ class BarzilaiBorweinDecay
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
      */
-    Policy(BarzilaiBorweinDecay& parent) : parent(parent) { /* Do nothing. */ }
+    Policy(BarzilaiBorweinDecay& parent) :
+        parent(parent),
+        epsilon(ElemType(parent.epsilon))
+    {
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
+    }
 
     /**
      * Barzilai-Borwein update step for SVRG.
@@ -96,9 +105,9 @@ class BarzilaiBorweinDecay
       if (!fullGradient0.is_empty())
       {
         // Step size selection based on Barzilai-Borwein (BB).
-        stepSize = std::pow(arma::norm(iterate - iterate0), 2.0) /
-            (arma::dot(iterate - iterate0, fullGradient - fullGradient0) +
-             parent.epsilon) / (double) numBatches;
+        stepSize = std::pow(norm(iterate - iterate0), ElemType(2)) /
+            (dot(iterate - iterate0, fullGradient - fullGradient0) +
+             epsilon) / (ElemType) numBatches;
 
         stepSize = std::min(stepSize, parent.maxStepSize);
       }
@@ -107,11 +116,14 @@ class BarzilaiBorweinDecay
     }
 
    private:
-    //! Reference to instantiated parent object.
+    // Reference to instantiated parent object.
     BarzilaiBorweinDecay& parent;
 
-    //! Locally-stored full gradient.
+    // Locally-stored full gradient.
     GradType fullGradient0;
+
+    // Copy of epsilon parameter casted to the optimization element type.
+    ElemType epsilon;
   };
 
   //! The value used for numerical stability.

@@ -80,7 +80,7 @@ class L_BFGS
            typename MatType,
            typename GradType,
            typename... CallbackTypes>
-  typename std::enable_if<IsArmaType<GradType>::value,
+  typename std::enable_if<IsMatrixType<GradType>::value,
       typename MatType::elem_type>::type
   Optimize(FunctionType& function,
            MatType& iterate,
@@ -177,10 +177,11 @@ class L_BFGS
    * @param y Differences between the gradient and the old gradient matrix.
    */
   template<typename MatType, typename CubeType>
-  double ChooseScalingFactor(const size_t iterationNum,
-                             const MatType& gradient,
-                             const CubeType& s,
-                             const CubeType& y);
+  typename MatType::elem_type ChooseScalingFactor(
+      const size_t iterationNum,
+      const MatType& gradient,
+      const CubeType& s,
+      const CubeType& y);
 
   /**
    * Perform a back-tracking line search along the search direction to
@@ -208,7 +209,7 @@ class L_BFGS
                   GradType& gradient,
                   MatType& newIterateTmp,
                   const GradType& searchDirection,
-                  double& finalStepSize,
+                  ElemType& finalStepSize,
                   CallbackTypes&... callbacks);
 
   /**
@@ -224,7 +225,7 @@ class L_BFGS
   template<typename MatType, typename CubeType>
   void SearchDirection(const MatType& gradient,
                        const size_t iterationNum,
-                       const double scalingFactor,
+                       const typename MatType::elem_type scalingFactor,
                        const CubeType& s,
                        const CubeType& y,
                        MatType& searchDirection);

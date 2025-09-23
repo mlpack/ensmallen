@@ -12,6 +12,7 @@
  */
 #ifndef ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
 #define ENSMALLEN_PSO_INIT_POLICIES_DEFAULT_INIT_HPP
+
 #include <assert.h>
 
 namespace ens {
@@ -65,26 +66,30 @@ class DefaultInit
   {
     // Convenience typedef.
     typedef typename MatType::elem_type ElemType;
-    typedef typename CubeType::elem_type CubeElemType;
+
+    typedef typename ForwardType<MatType>::umat UMatType;
+    typedef typename ForwardType<MatType>::bmat BaseMatType;
 
     // Randomly initialize the particle positions.
     particlePositions.randu(iterate.n_rows, iterate.n_cols, numParticles);
 
     // Check if lowerBound is equal to upperBound. If equal, reinitialize.
-    arma::umat lbEquality = (lowerBound == upperBound);
+    UMatType lbEquality = (lowerBound == upperBound);
     if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 1)
     {
       lowerBound.set_size(iterate.n_rows, iterate.n_cols);
-      lowerBound.fill(-1.0);
+      lowerBound.fill(-1);
 
       upperBound.set_size(iterate.n_rows, iterate.n_cols);
-      upperBound.fill(1.0);
+      upperBound.fill(1);
     }
     // Check if lowerBound and upperBound are vectors of a single dimension.
     else if (lbEquality.n_rows == 1 && lbEquality(0, 0) == 0)
     {
-      lowerBound = -lowerBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
-      upperBound = upperBound(0) * arma::ones(iterate.n_rows, iterate.n_cols);
+      BoundMatType ones = BoundMatType(iterate.n_rows, iterate.n_cols);
+      ones.fill(1);
+      lowerBound = -lowerBound(0) * ones;
+      upperBound = upperBound(0) * ones;
     }
 
     // Check the dimensions of lowerBound and upperBound.
@@ -97,8 +102,8 @@ class DefaultInit
     for (size_t i = 0; i < numParticles; i++)
     {
       particlePositions.slice(i) = particlePositions.slice(i) %
-          arma::conv_to<arma::Mat<CubeElemType> >::from(upperBound - lowerBound)
-          + arma::conv_to<arma::Mat<CubeElemType> >::from(lowerBound);
+          conv_to<BaseMatType>::from(upperBound - lowerBound) +
+          conv_to<BaseMatType>::from(lowerBound);
     }
 
     // Randomly initialize particle velocities.
@@ -114,7 +119,6 @@ class DefaultInit
     particleBestFitnesses.set_size(numParticles);
     particleBestFitnesses.fill(std::numeric_limits<ElemType>::max());
   }
-
 };
 
 } // ens

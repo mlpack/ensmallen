@@ -126,6 +126,33 @@ class AGEMOEA
       MatType& iterate,
       CallbackTypes&&... callbacks);
 
+  /**
+   * Optimize a set of objectives. The initial population is generated using the
+   * starting point. The output is the best generated front.
+   *
+   * @tparam ArbitraryFunctionType std::tuple of multiple objectives.
+   * @tparam MatType Type of matrix to optimize.
+   * @tparam CubeType The type of cube used to store the front and Pareto set.
+   * @tparam CallbackTypes Types of callback functions.
+   * @param objectives Vector of objective functions to optimize for.
+   * @param iterate Starting point.
+   * @param front The generated front.
+   * @param paretoSet The generated Pareto set.
+   * @param callbacks Callback functions.
+   * @return MatType::elem_type The minimum of the accumulated sum over the
+   *     objective values in the best front.
+   */
+  template<typename MatType,
+           typename CubeType,
+           typename... ArbitraryFunctionType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CubeType& front,
+      CubeType& paretoSet,
+      CallbackTypes&&... callbacks);
+
   //! Get the population size.
   size_t PopulationSize() const { return populationSize; }
   //! Modify the population size.
@@ -166,34 +193,6 @@ class AGEMOEA
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
-  //! until `Optimize()` has been called.
-  const arma::cube& ParetoSet() const { return paretoSet; }
-
-  //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
-  //! `Optimize()` has been called.
-  const arma::cube& ParetoFront() const { return paretoFront; }
-
-  /**
-   * Retrieve the best front (the Pareto frontier).  This returns an empty
-   * vector until `Optimize()` has been called.  Note that this function is
-   * deprecated and will be removed in ensmallen 3.x!  Use `ParetoFront()`
-   * instead.
-   */
-  const std::vector<arma::mat>& Front()
-  {
-    if (rcFront.size() == 0)
-    {
-      // Match the old return format.
-      for (size_t i = 0; i < paretoFront.n_slices; ++i)
-      {
-        rcFront.push_back(arma::mat(paretoFront.slice(i)));
-      }
-    }
-
-    return rcFront;
-  }
-
  private:
   /**
    * Evaluate objectives for the elite population.
@@ -205,21 +204,22 @@ class AGEMOEA
    * @param calculatedObjectives Vector to store calculated objectives.
    */
   template<std::size_t I = 0,
-           typename MatType,
+           typename InputMatType,
+           typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>&,
+  EvaluateObjectives(std::vector<InputMatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<typename MatType::elem_type> >&);
+                     std::vector<ObjectiveMatType>&);
 
   template<std::size_t I = 0,
-           typename MatType,
+           typename InputMatType,
+           typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(std::vector<MatType>& population,
+  EvaluateObjectives(std::vector<InputMatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<typename MatType::elem_type> >&
-                     calculatedObjectives);
+                     std::vector<ObjectiveMatType>& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -283,7 +283,8 @@ class AGEMOEA
   void FastNonDominatedSort(
       std::vector<std::vector<size_t> >& fronts,
       std::vector<size_t>& ranks,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives);
+      std::vector<arma::Col<typename MatType::elem_type> >&
+          calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -304,17 +305,18 @@ class AGEMOEA
       size_t candidateP,
       size_t candidateQ);
 
- /**
-  * Assigns Survival Score metric for sorting.
-  *
-  * @param front The previously generated Pareto fronts.
-  * @param idealPoint The ideal point of teh first front.
-  * @param calculatedObjectives The previously calculated objectives.
-  * @param survivalScore The Survival Score vector to be updated for each individual in the population.
-  * @param normalize The normlization vector of the fronts.
-  * @param dimension The dimension of the first front.
-  * @param fNum teh current front index.
-  */
+  /**
+   * Assigns Survival Score metric for sorting.
+   *
+   * @param front The previously generated Pareto fronts.
+   * @param idealPoint The ideal point of teh first front.
+   * @param calculatedObjectives The previously calculated objectives.
+   * @param survivalScore The Survival Score vector to be updated for each
+   *     individual in the population.
+   * @param normalize The normlization vector of the fronts.
+   * @param dimension The dimension of the first front.
+   * @param fNum teh current front index.
+   */
   template <typename MatType>
   void SurvivalScoreAssignment(
       const std::vector<size_t>& front,
@@ -322,7 +324,7 @@ class AGEMOEA
       std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
       std::vector<typename MatType::elem_type>& survivalScore,
       arma::Col<typename MatType::elem_type>& normalize,
-      double& dimension,
+      typename MatType::elem_type& dimension,
       size_t fNum);
 
   /**
@@ -338,7 +340,7 @@ class AGEMOEA
    *     being sorted.
    * @param ranks The previously calculated ranks.
    * @param survivalScore The Survival score for each individual in
-   *	the population.
+   *     the population.
    * @return true if the first candidate is preferred, otherwise, false.
    */
   template<typename MatType>
@@ -347,37 +349,39 @@ class AGEMOEA
       size_t idxQ,
       const std::vector<size_t>& ranks,
       const std::vector<typename MatType::elem_type>& survivalScore);
-  
- /**
-  * Normalizes the front given the extreme points in the current front.
-  *
-  * @tparam The type of population datapoints.
-  * @param calculatedObjectives The current population evaluated objectives.
-  * @param normalization The normalizing vector.
-  * @param front The previously generated Pareto front.
-  * @param extreme The indexes of the extreme points in the front.
-  */
- template <typename MatType>
- void NormalizeFront(
-     std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
-     arma::Col<typename MatType::elem_type>& normalization,
-     const std::vector<size_t>& front,
-     const arma::Row<size_t>& extreme);
- 
- /**
-  * Get the geometry information p of Lp norm (p > 0).
-  *
-  * @param calculatedObjectives The current population evaluated objectives.
-  * @param front The previously generated Pareto fronts.
-  * @param extreme The indexes of the extreme points in the front.
-  * @return The variable p in the Lp norm that best fits the geometry of the current front.
-  */
- template <typename MatType>
- double GetGeometry(
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+
+  /**
+   * Normalizes the front given the extreme points in the current front.
+   *
+   * @tparam The type of population datapoints.
+   * @param calculatedObjectives The current population evaluated objectives.
+   * @param normalization The normalizing vector.
+   * @param front The previously generated Pareto front.
+   * @param extreme The indexes of the extreme points in the front.
+   */
+  template <typename MatType>
+  void NormalizeFront(
+      std::vector<arma::Col<typename MatType::elem_type>>& calculatedObjectives,
+      arma::Col<typename MatType::elem_type>& normalization,
       const std::vector<size_t>& front,
       const arma::Row<size_t>& extreme);
-  
+
+  /**
+   * Get the geometry information p of Lp norm (p > 0).
+   *
+   * @param calculatedObjectives The current population evaluated objectives.
+   * @param front The previously generated Pareto fronts.
+   * @param extreme The indexes of the extreme points in the front.
+   * @return The variable p in the Lp norm that best fits the geometry of the
+   *     current front.
+   */
+  template <typename MatType>
+  typename MatType::elem_type GetGeometry(
+      std::vector<arma::Col<typename MatType::elem_type> >&
+          calculatedObjectives,
+      const std::vector<size_t>& front,
+      const arma::Row<size_t>& extreme);
+
   /**
    * Finds the pairwise Lp distance between all the points in the front.
    *
@@ -389,13 +393,14 @@ class AGEMOEA
   template <typename MatType>
   void PairwiseDistance(
       MatType& final,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+      std::vector<arma::Col<typename MatType::elem_type> >&
+          calculatedObjectives,
       const std::vector<size_t>& front,
-      double dimension);
+      const typename MatType::elem_type dimension);
 
   /**
    * Finding the indexes of the extreme points in the front.
-   *  
+   *
    * @param indexes vector containing the slected indexes.
    * @param calculatedObjectives The current population objectives.
    * @param front The front of the current generation.
@@ -405,32 +410,37 @@ class AGEMOEA
       arma::Row<size_t>& indexes,
       std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
       const std::vector<size_t>& front);
-  
+
   /**
    * Finding the distance of each point in the front from the line formed
    * by pointA and pointB.
-   * 
-   * @param distance The vector containing the distances of the points in the fron from the line.
-   * @param calculatedObjectives Reference to the current population evaluated Objectives.
+   *
+   * @param distance The vector containing the distances of the points in the
+   *    from from the line.
+   * @param calculatedObjectives Reference to the current population evaluated
+   *    objectives.
    * @param front The front of the current generation(indices of population).
    * @param pointA The first point on the line.
    * @param pointB The second point on the line.
-  */
+   */
   template <typename MatType>
   void PointToLineDistance(
       arma::Row<typename MatType::elem_type>& distances,
-      std::vector<arma::Col<typename MatType::elem_type> >& calculatedObjectives,
+      std::vector<arma::Col<typename MatType::elem_type> >&
+          calculatedObjectives,
       const std::vector<size_t>& front,
       const arma::Col<typename MatType::elem_type>& pointA,
       const arma::Col<typename MatType::elem_type>& pointB);
-  
+
   /**
-   * Find the Diversity score corresponding the solution S using the selected set.
-   * 
+   * Find the Diversity score corresponding the solution S using the selected
+   * set.
+   *
    * @param selected The current selected set.
    * @param pairwiseDistance The current pairwise distance for the whole front.
    * @param S The relative index of S being considered within the front.
-   * @return The diversity score for S which the sum of the two smallest elements.
+   * @return The diversity score for S which the sum of the two smallest
+   *     elements.
   */
  template <typename MatType>
  typename MatType::elem_type DiversityScore(std::set<size_t>& selected,
@@ -467,19 +477,6 @@ class AGEMOEA
 
   //! Upper bound of the initial swarm.
   arma::vec upperBound;
-
-  //! The set of all the Pareto optimal points.
-  //! Stored after Optimize() is called.
-  arma::cube paretoSet;
-
-  //! The set of all the Pareto optimal objective vectors.
-  //! Stored after Optimize() is called.
-  arma::cube paretoFront;
-
-  //! A different representation of the Pareto front, for reverse compatibility
-  //! purposes.  This can be removed when ensmallen 3.x is released!  (Along
-  //! with `Front()`.)  This is only populated when `Front()` is called.
-  std::vector<arma::mat> rcFront;
 };
 
 } // namespace ens

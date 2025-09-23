@@ -5,9 +5,9 @@
 Active CMA-ES is a variant of the stochastic search algorithm
 CMA-ES - Covariance Matrix Adaptation Evolution Strategy.
 Active CMA-ES actively reduces the uncertainty in unfavourable directions by
-exploiting the information about bad mutations in the covariance matrix 
-update step. This isn't for the purpose of accelerating progress, but 
-instead for speeding up the adaptation of the covariance matrix (which, in 
+exploiting the information about bad mutations in the covariance matrix
+update step. This isn't for the purpose of accelerating progress, but
+instead for speeding up the adaptation of the covariance matrix (which, in
 turn, will lead to faster progress).
 
 #### Constructors
@@ -22,10 +22,10 @@ The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
-The _`TransformationPolicyType`_  template parameter refers to transformation 
-strategy used to map decision variables to the desired domain during fitness 
-evaluation and optimization termination. The `EmptyTransformation` and 
-`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+The _`TransformationPolicyType`_  template parameter refers to transformation
+strategy used to map decision variables to the desired domain during fitness
+evaluation and optimization termination. The `EmptyTransformation` and
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be
 achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
@@ -55,11 +55,11 @@ the option is not relevant when the `ActiveCMAES<>` optimizer type is being used
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
-The `transformationPolicy` attribute allows an instantiated 
-`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+The `transformationPolicy` attribute allows an instantiated
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>`
 has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
 the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
-where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of
 the coordinates respectively.
 
 #### Examples:
@@ -293,7 +293,7 @@ optimizer.Optimize(f, coordinates);
  * [AdaGrad](#adagrad)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
-## Adagrad
+## AdaGrad
 
 *An optimizer for [differentiable separable functions](#differentiable-separable-functions).*
 
@@ -603,9 +603,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube bestSet, bestFront;
+double obj = opt.Optimize(objectives, coords, bestSet, bestFront);
 ```
 
 </details>
@@ -615,26 +614,26 @@ arma::cube bestFront = opt.ParetoFront();
 </summary>
 
 ```c++
-ZDT3<> ZDT_THREE(300);
+ZDT3<> zdt3(300);
 const double lowerBound = 0;
 const double upperBound = 1;
 
 AGEMOEA opt(50, 500, 0.8, 20, 1e-6, 20, lowerBound, upperBound);
-typedef decltype(ZDT_THREE.objectiveF1) ObjectiveTypeA;
-typedef decltype(ZDT_THREE.objectiveF2) ObjectiveTypeB;
+typedef decltype(zdt3.objectiveF1) ObjectiveTypeA;
+typedef decltype(zdt3.objectiveF2) ObjectiveTypeB;
 bool success = true;
-arma::mat coords = ZDT_THREE.GetInitialPoint();
-std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = ZDT_THREE.GetObjectives();
-opt.Optimize(objectives, coords);
-const arma::cube bestFront = opt.ParetoFront();
-  
+arma::mat coords = zdt3.GetInitialPoint();
+std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = zdt3.GetObjectives();
+arma::cube bestSet, bestFront;
+opt.Optimize(objectives, coords, bestSet, bestFront);
+
 NSGA2 opt2(50, 5000, 0.5, 0.5, 1e-3, 1e-6, lowerBound, upperBound);
 // obj2 will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj2 = opt2.Optimize(objectives, coords);
- 
-arma::cube NSGAFront = opt2.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj2 = opt2.Optimize(objectives, coords, paretoSet, paretoFront);
+
 // Get the IGD score for NSGA front using AGEMOEA as reference.
-double igd = IGD::Evaluate(NSGAFront, bestFront, 1);
+double igd = IGD::Evaluate(paretoFront, bestFront, 1);
 std::cout << igd << std::endl;
 ```
 
@@ -792,6 +791,10 @@ optimizer uses [L-BFGS](#l-bfgs).
 #### Constructors
 
  * `AugLagrangian(`_`maxIterations, penaltyThresholdFactor, sigmaUpdateFactor`_`)`
+ * `AugLagrangianType<_VecType_>(`_`maxIterations, penaltyThresholdFactor, sigmaUpdateFactor`_`)`
+
+When optimizing matrix types other than `arma::mat`, specify `VecType` as the
+corresponding vector type (e.g. `arma::vec` or `coot::fvec`).
 
 #### Attributes
 
@@ -1112,10 +1115,10 @@ The _`SelectionPolicyType`_ template parameter refers to the strategy used to
 compute the (approximate) objective function.  The `FullSelection` and
 `RandomSelection` classes are available for use; custom behavior can be achieved
 by implementing a class with the same method signatures.
-The _`TransformationPolicyType`_  template parameter refers to transformation 
-strategy used to map decision variables to the desired domain during fitness 
-evaluation and optimization termination. The `EmptyTransformation` and 
-`BoundaryBoxConstraint` classes are available for use; custom behavior can be 
+The _`TransformationPolicyType`_  template parameter refers to transformation
+strategy used to map decision variables to the desired domain during fitness
+evaluation and optimization termination. The `EmptyTransformation` and
+`BoundaryBoxConstraint` classes are available for use; custom behavior can be
 achieved by implementing a class with the same method signatures.
 
 For convenience the following types can be used:
@@ -1145,11 +1148,11 @@ the option is not relevant when the `CMAES<>` optimizer type is being used; the
 `RandomSelection` policy has the constructor `RandomSelection(`_`fraction`_`)`
 where _`fraction`_ specifies the percentage of separable functions to use to
 estimate the objective function.
-The `transformationPolicy` attribute allows an instantiated 
-`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>` 
+The `transformationPolicy` attribute allows an instantiated
+`TransformationPolicyType` to be given. The `EmptyTransformation<`_`MatType`_`>`
 has no need to be instantiated. `BoundaryBoxConstraint<`_`MatType`_`>` policy has
 the constructor `BoundaryBoxConstraint(`_`lowerBound, upperBound`_`)`
-where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of 
+where  _`lowerBound`_ and _`lowerBound`_ are the lower bound and upper bound of
 the coordinates respectively.
 
 #### Examples:
@@ -1294,7 +1297,7 @@ total contribution of a gradient to all future updates.
  * `DemonAdam()`
  * `DemonAdam(`_`stepSize, batchSize`_`)`
  * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle`_`)`
- * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `DemonAdam(`_`stepSize, batchSize, momentum, beta1, beta2, eps, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 Note that the `DemonAdam` class is based on
 the `DemonAdamType<`_`UpdateRule`_`>` class with _`UpdateRule`_` = AdamUpdate`.
@@ -1326,11 +1329,19 @@ For convenience the following typedefs have been defined:
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Momentum()`, `MomentumIterations()`, `Beta1()`,
 `Beta2()`, `Eps()`, `MaxIterations()`, `Tolerance()`, `Shuffle()`, and
 `ResetPolicy()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -1383,7 +1394,7 @@ optimizer:
  * `DemonSGD()`
  * `DemonSGD(`_`stepSize, batchSize`_`)`
  * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle`_`)`
- * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle, resetPolicy`_`)`
+ * `DemonSGD(`_`stepSize, batchSize, momentum, maxIterations, tolerance, shuffle, resetPolicy, exactObjective`_`)`
 
 #### Attributes
 
@@ -1396,10 +1407,18 @@ optimizer:
 | `double` | **`tolerance`** | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
 | `bool` | **`shuffle`** | If true, the function order is shuffled; otherwise, each function is visited in linear order. | `true` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call; otherwise, their values are retained. | `true` |
+| `bool` | **`exactObjective`** | Calculate the exact objective at the end of optimization.  (This could be computationally expensive!) | `false` |
 
 The attributes of the optimizer may also be modified via the member methods
 `StepSize()`, `BatchSize()`, `Momentum()`, `MomentumIterations()`,
 `MaxIterations()`, `Tolerance()`, `Shuffle()`, and `ResetPolicy()`.
+
+***Note:*** if `exactObjective` is `false`, then `Optimize(f, coordinates)` will
+return an estimate of the objective function.  This estimate is the sum of the
+objectives obtained on the last pass of the separable functions.  The estimate
+will not include contributions from any separable functions not visited in the
+last pass (e.g., if `maxIterations` is not an integer multiple of
+`f.NumFunctions()`).
 
 #### Examples
 
@@ -1486,6 +1505,298 @@ optimizer.Optimize(f, coordinates);
  * [Adaptive Subgradient Methods for Online Learning and Stochastic Optimization](https://arxiv.org/pdf/1611.01505.pdf)
  * [Differentiable separable functions](#differentiable-separable-functions)
 
+## Fast Adaptive Shrinkage/Thresholding Algorithm (FASTA)
+
+*An optimizer for [differentiable functions](#differentiable-functions) that may
+also include non-differentiable L1 penalties or similar.*
+
+The Fast Adaptive Shrinkage/Thresholding Algorithm (FASTA) is a proximal
+gradient optimization technique to optimize composite functions of the form
+
+```
+h(x) = f(x) + g(x).
+```
+
+Here, `f(x)` is a differentiable function, and `g(x)` is an arbitrary
+non-differentiable function that has a corresponding *proximal operator*.
+In this situation, other ensmallen optimizers for differentiable functions
+cannot be used, since `g(x)` is not differentiable.  To work around this, FISTA
+takes a *forward step* that is a standard gradient descent step on `f(x)`, and
+then a *backward step* that is the proximal operator defined by `g(x)`.
+
+For `FASTA`, the function `f(x)` is defined in the standard ensmallen way (it is
+passed to `Optimize()`), and the function `g(x)` is defined by a template
+parameter.
+
+FASTA differs from [FBS](#forward-backward-splitting-fbs) in that it uses a
+predictive step (similar to momentum) and a line search to choose
+step sizes.  Like
+[FISTA](#fast-iterative-shrinkage-thresholding-algorithm-fista), the maximum
+allowable step size is automatically estimated, unless it is specifically
+provided.
+
+FASTA differs from FISTA in its line search strategy: FASTA uses a non-monotone
+line search, which can allow the objective function to increase between
+iterations.  FASTA also has enhanced convergence criteria as compared to FISTA;
+FASTA uses the residual instead of an absolute tolerance on the objective.
+
+#### Constructors
+
+ * `FASTA()`
+ * `FASTA(`_`maxIterations, tolerance, maxLineSearchSteps, stepSizeAdjustment, lineSearchLookback, estimateStepSize, estimateTrials, maxStepSize`_`)`
+ * `FASTA(`_`backwardStep`_`)`
+ * `FASTA(`_`backwardStep, maxIterations, tolerance, maxLineSearchSteps, stepSizeAdjustment, lineSearchLookback, estimateStepSize, estimateTrials, maxStepSize`_`)`
+
+The _`backwardStep`_ parameter specifies the function `g(x)` to optimize.  A few
+options are readily available:
+
+ * `L1Penalty(`_`lambda`_`)`
+   - This is for the L1 penalty function `g(x) = lambda * || x ||_1`.
+ * `L1Constraint(`_`lambda`_`)`
+   - This is for the hard constraint `|| x ||_1 <= lambda`.
+
+The `FASTA` class takes the penalty type (`L1Penalty` or `L1Constraint`) as its
+first template parameter.  This does not need to be explicitly specified if the
+default is used (`L1Penalty`) or if a constructor form specifying `backwardStep`
+is used.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `10000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance on objective to terminate algorithm. | `1e-10` |
+| `size_t` | **`maxLineSearchSteps`** | Maximum number of line search step attempts to take a step (0 means no limit). | `50` |
+| `double` | **`stepSizeAdjustment`** | Multiplicative amount to shrink or increase step size at each step of the line search. | `2.0` |
+| `size_t` | **`lineSearchLookback`** | Number of previous iterations' objective values to use for relaxed non-monotone line search conditions. | `10` |
+| `bool` | **`estimateStepSize`** | If `true`, `maxStepSize` is computed by estimating the Lipschitz constant of `f(x)`. | `true` |
+| `size_t` | **`estimateTrials`** | Number of random trials to perform to estimate the Lipschitz constant of `f(x)`. | `10` |
+| `double` | **`maxStepSize`** | Maximum allowable step size for any line search.  Ignored (an estimate is used instead) if `estimateStepSize` is `true`. |
+| `double` | **`lambda`** | L1 penalty parameter or constraint parameter, for `L1Penalty` or `L1Constraint` backward step classes. | `0` |
+
+The attributes of the optimizer may also be modified via the member methods
+`MaxIterations()`, `Tolerance()`, `StepSizeAdjustment()`,
+`LineSearchLookback()`, `EstimateStepSize()`, `EstimateTrials()`, and
+`MaxStepSize()`.  The backward step object can be accessed and modified with the
+`BackwardStep()` member method.
+
+If `L1Penalty` or `L1Constraint` is used as the backward step type, the value of
+lambda can be accessed with `BackwardStep().Lambda()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+// f(x) is the Rosenbrock function.
+RosenbrockFunction f;
+// g(x) is the L1 penalty (with lambda = 0.1).
+L1Penalty g(0.1);
+
+arma::mat coordinates = f.GetInitialPoint();
+// FASTA will optimize h(x) = f(x) + g(x),
+// which here is the L1-penalized Rosenbrock function.
+FASTA optimizer(g, 1000, 1e-6);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Forward-Backward Splitting (FBS)](#forward-backward-splitting-fbs)
+ * [Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)](#fast-iterative-shrinkage-thresholding-algorithm-fista)
+ * [A Field Guide To Forward-Backward Splitting With A FASTA Implementation](https://arxiv.org/pdf/1411.3406.pdf)
+ * [Proximal Operators on Wikipedia](https://en.wikipedia.org/wiki/Proximal_operator)
+
+## Forward-Backward Splitting (FBS)
+
+*An optimizer for [differentiable functions](#differentiable-functions) that may
+also include non-differentiable L1 penalties or similar.*
+
+Forward-backward splitting (FBS) is a proximal gradient optimization technique
+to optimize composite functions of the form
+
+```
+h(x) = f(x) + g(x).
+```
+
+Here, `f(x)` is a differentiable function, and `g(x)` is an arbitrary
+non-differentiable function that has a corresponding *proximal operator*.
+In this situation, other ensmallen optimizers for differentiable functions
+cannot be used, since `g(x)` is not differentiable.  To work around this, FBS
+takes a *forward step* that is a standard gradient descent step on `f(x)`, and
+then a *backward step* that is the proximal operator defined by `g(x)`.
+
+For `FBS`, the function `f(x)` is defined in the standard ensmallen way (it is
+passed to `Optimize()`), and the function `g(x)` is defined by a template
+parameter.
+
+#### Constructors
+
+ * `FBS()`
+ * `FBS(`_`stepSize, maxIterations, tolerance`_`)`
+ * `FBS(`_`backwardStep`_`)`
+ * `FBS(`_`backwardStep, stepSize, maxIterations, tolerance`_`)`
+
+The _`backwardStep`_ parameter specifies the function `g(x)` to optimize.  A few
+options are readily available:
+
+ * `L1Penalty(`_`lambda`_`)`
+   - This is for the L1 penalty function `g(x) = lambda * || x ||_1`.
+ * `L1Constraint(`_`lambda`_`)`
+   - This is for the hard constraint `|| x ||_1 <= lambda`.
+
+The `FBS` class takes the penalty type (`L1Penalty` or `L1Constraint`) as its
+first template parameter.  This does not need to be explicitly specified if the
+default is used (`L1Penalty`) or if a constructor form specifying `backwardStep`
+is used.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Step size for each iteration. | `0.001` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `10000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance objective to terminate algorithm. | `1e-10` |
+| `double` | **`lambda`** | L1 penalty parameter or constraint parameter, for `L1Penalty` or `L1Constraint` backward step classes. | `0` |
+
+The attributes of the optimizer may also be modified via the member methods
+`StepSize()`, `MaxIterations()`, and `Tolerance()`.  The backward step object
+can be accessed and modified with the `BackwardStep()` member method.
+
+If `L1Penalty` or `L1Constraint` is used as the backward step type, the value of
+lambda can be accessed with `BackwardStep().Lambda()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+// f(x) is the Rosenbrock function.
+RosenbrockFunction f;
+// g(x) is the L1 penalty (with lambda = 0.1).
+L1Penalty g(0.1);
+
+arma::mat coordinates = f.GetInitialPoint();
+// FBS will optimize h(x) = f(x) + g(x),
+// which here is the L1-penalized Rosenbrock function.
+FBS optimizer(g, 0.001, 1000, 1e-5);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)](#fast-iterative-shrinkage-thresholding-algorithm-fista)
+ * [Fast Adaptive Shrinkage/Thresholding Algorithm (FASTA)](#fast-adaptive-shrinkage-thresholding-algorithm-fasta) (`ens::FASTA`)
+ * [A Field Guide To Forward-Backward Splitting With A FASTA Implementation](https://arxiv.org/pdf/1411.3406.pdf)
+ * [Proximal Operators on Wikipedia](https://en.wikipedia.org/wiki/Proximal_operator)
+
+## Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)
+
+*An optimizer for [differentiable functions](#differentiable-functions) that may
+also include non-differentiable L1 penalties or similar.*
+
+The Fast Iterative Shrinkage-Thresholding Algorithm (FISTA) is a proximal
+gradient optimization technique to optimize composite functions of the form
+
+```
+h(x) = f(x) + g(x).
+```
+
+Here, `f(x)` is a differentiable function, and `g(x)` is an arbitrary
+non-differentiable function that has a corresponding *proximal operator*.
+In this situation, other ensmallen optimizers for differentiable functions
+cannot be used, since `g(x)` is not differentiable.  To work around this, FISTA
+takes a *forward step* that is a standard gradient descent step on `f(x)`, and
+then a *backward step* that is the proximal operator defined by `g(x)`.
+
+For `FISTA`, the function `f(x)` is defined in the standard ensmallen way (it is
+passed to `Optimize()`), and the function `g(x)` is defined by a template
+parameter.
+
+FISTA differs from [FBS](#forward-backward-splitting-fbs) in that it uses a
+predictive step (similar to momentum) and a line search to choose step size.
+The maximum allowable step size is automatically estimated, unless it is
+specifically provided.
+
+#### Constructors
+
+ * `FISTA()`
+ * `FISTA(`_`maxIterations, tolerance, maxLineSearchSteps, stepSizeAdjustment, estimateStepSize, estimateTrials, maxStepSize`_`)`
+ * `FISTA(`_`backwardStep`_`)`
+ * `FISTA(`_`backwardStep, maxIterations, tolerance, maxLineSearchSteps, stepSizeAdjustment, estimateStepSize, estimateTrials, maxStepSize`_`)`
+
+The _`backwardStep`_ parameter specifies the function `g(x)` to optimize.  A few
+options are readily available:
+
+ * `L1Penalty(`_`lambda`_`)`
+   - This is for the L1 penalty function `g(x) = lambda * || x ||_1`.
+ * `L1Constraint(`_`lambda`_`)`
+   - This is for the hard constraint `|| x ||_1 <= lambda`.
+
+The `FISTA` class takes the penalty type (`L1Penalty` or `L1Constraint`) as its
+first template parameter.  This does not need to be explicitly specified if the
+default is used (`L1Penalty`) or if a constructor form specifying `backwardStep`
+is used.
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `10000` |
+| `double` | **`tolerance`** | Maximum absolute tolerance on objective to terminate algorithm. | `1e-10` |
+| `size_t` | **`maxLineSearchSteps`** | Maximum number of line search step attempts to take a step (0 means no limit). | `50` |
+| `double` | **`stepSizeAdjustment`** | Multiplicative amount to shrink or increase step size at each step of the line search. | `2.0` |
+| `bool` | **`estimateStepSize`** | If `true`, `maxStepSize` is computed by estimating the Lipschitz constant of `f(x)`. | `true` |
+| `size_t` | **`estimateTrials`** | Number of random trials to perform to estimate the Lipschitz constant of `f(x)`. | `10` |
+| `double` | **`maxStepSize`** | Maximum allowable step size for any line search.  Ignored (an estimate is used instead) if `estimateStepSize` is `true`. |
+| `double` | **`lambda`** | L1 penalty parameter or constraint parameter, for `L1Penalty` or `L1Constraint` backward step classes. | `0` |
+
+The attributes of the optimizer may also be modified via the member methods
+`MaxIterations()`, `Tolerance()`, `StepSizeAdjustment()`, `EstimateStepSize()`,
+`EstimateTrials()`, and `MaxStepSize()`.  The backward step object can be
+accessed and modified with the `BackwardStep()` member method.
+
+If `L1Penalty` or `L1Constraint` is used as the backward step type, the value of
+lambda can be accessed with `BackwardStep().Lambda()`.
+
+#### Examples
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+// f(x) is the Rosenbrock function.
+RosenbrockFunction f;
+// g(x) is the L1 penalty (with lambda = 0.1).
+L1Penalty g(0.1);
+
+arma::mat coordinates = f.GetInitialPoint();
+// FISTA will optimize h(x) = f(x) + g(x),
+// which here is the L1-penalized Rosenbrock function.
+// The maximum step size will be automatically estimated.
+FISTA optimizer(g, 1000, 1e-8);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+
+ * [Forward-Backward Splitting (FBS)](#forward-backward-splitting-fbs)
+ * [Fast Adaptive Shrinkage/Thresholding Algorithm (FASTA)](#fast-adaptive-shrinkage-thresholding-algorithm-fasta) (`ens::FASTA`)
+ * [A Fast Iterative Shrinkage-Thresholding Algorithm for Linear Inverse Problems](https://www.ceremade.dauphine.fr/~carlier/FISTA)
+ * [A Field Guide To Forward-Backward Splitting With A FASTA Implementation](https://arxiv.org/pdf/1411.3406.pdf)
+ * [Proximal Operators on Wikipedia](https://en.wikipedia.org/wiki/Proximal_operator)
+
 ## Frank-Wolfe
 
 *An optimizer for [differentiable functions](#differentiable-functions) that may also be constrained.*
@@ -1498,11 +1809,12 @@ Frank-Wolfe is a technique to minimize a continuously differentiable convex func
  * `FrankWolfe<`_`LinearConstrSolverType, UpdateRuleType`_`>(`_`linearConstrSolver, updateRule, maxIterations, tolerance`_`)`
 
 The _`LinearConstrSolverType`_ template parameter specifies the constraint
-domain D for the problem.  The `ConstrLpBallSolver` and
-`ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the former
-restricts D to the unit ball of the specified l-p norm.  Other constraint types
-may be implemented as a class with the same method signatures as either of the
-existing classes.
+domain D for the problem.  The `ConstrLpBallSolver` (itself a class template,
+`ConstrLpBallSolver<T>`, change `T` if a different matrix type is required)
+and `ConstrStructGroupSolver<GroupLpBall>` classes are available for use; the
+former restricts D to the unit ball of the specified l-p norm.  Other constraint
+types may be implemented as a class with the same method signatures as either of
+the existing classes.
 
 The _`UpdateRuleType`_ template parameter specifies the update rule used by the
 optimizer.  The `UpdateClassic` and `UpdateLineSearch` classes are available for
@@ -1527,10 +1839,6 @@ For convenience the following typedefs have been defined:
 
 Attributes of the optimizer may also be changed via the member methods
 `LinearConstrSolver()`, `UpdateRule()`, `MaxIterations()`, and `Tolerance()`.
-
-#### Examples:
-
-TODO
 
 #### See also:
 
@@ -1745,10 +2053,10 @@ optimizer.Optimize(f, coordinates);
 *An optimizer for [separable functions](#separable-functions).*
 
 IPOP CMA-ES (Increasing Population Size CMA-ES) is an extension of the
-Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a 
-restart mechanism that progressively increases the population size. This 
+Covariance Matrix Adaptation Evolution Strategy (CMA-ES). It introduces a
+restart mechanism that progressively increases the population size. This
 approach is beneficial for optimizing multi-modal functions,
-characterized by numerous local optima. The restart mechanism is designed to 
+characterized by numerous local optima. The restart mechanism is designed to
 improve the adaptability of CMA-ES by improving the likelihood of escaping
 local optima, thus increasing the chances of discovering the global optimum.
 
@@ -2365,15 +2673,19 @@ optimizer.Optimize(f, coordinates);
  * [Differentiable separable functions](#differentiable-separable-functions)
 
 ## MOEA/D-DE
+
 *An optimizer for arbitrary multi-objective functions.*
-MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition - Differential Evolution) is a multi
-objective optimization algorithm. It works by decomposing the problem into a number of scalar optimization
-subproblems which are solved simultaneously per generation. MOEA/D in itself is a framework, this particular
-algorithm uses Differential Crossover followed by Polynomial Mutation to create offsprings which are then
-decomposed to form a Single Objective Problem. A diversity preserving mechanism is also employed which encourages
-a varied set of solution.
+MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decomposition -
+Differential Evolution) is a multi objective optimization algorithm. It works by
+decomposing the problem into a number of scalar optimization subproblems which
+are solved simultaneously per generation. MOEA/D in itself is a framework, this
+particular algorithm uses Differential Crossover followed by Polynomial Mutation
+to create offsprings which are then decomposed to form a Single Objective
+Problem. A diversity preserving mechanism is also employed which encourages a
+varied set of solutions.
 
 #### Constructors
+
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>()`
 * `MOEAD<`_`InitPolicyType, DecompPolicyType`_`>(`_`populationSize, maxGenerations, crossoverProb,  neighborProb, neighborSize, distributionIndex, differentialWeight, maxReplace, epsilon, lowerBound, upperBound`_`)`
 
@@ -2443,9 +2755,8 @@ typedef decltype(SCH.objectiveB) ObjectiveTypeB;
 arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 </details>
 
@@ -2509,9 +2820,8 @@ arma::mat coords = SCH.GetInitialPoint();
 std::tuple<ObjectiveTypeA, ObjectiveTypeB> objectives = SCH.GetObjectives();
 
 // obj will contain the minimum sum of objectiveA and objectiveB found on the best front.
-double obj = opt.Optimize(objectives, coords);
-// Now obtain the best front.
-arma::cube bestFront = opt.ParetoFront();
+arma::cube paretoSet, paretoFront;
+double obj = opt.Optimize(objectives, coords, paretoSet, paretoFront);
 ```
 
 </details>
@@ -3419,7 +3729,10 @@ Attributes of the optimizer can also be modified via the member methods
 
 The `Snapshots()` function returns a `std::vector<arma::mat>&` (a vector of
 snapshots of the parameters), not a `size_t` representing the maximum number of
-snapshots.
+snapshots.  If a different matrix type or gradient type was specified during the
+optimization, then `Snapshots()` should be called as
+`Snapshots<MatType, GradType>()`; if this is not done, an exception will be
+thrown.
 
 Note that the default value for `updatePolicy` is the default constructor for
 the `UpdatePolicyType`.

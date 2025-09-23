@@ -31,7 +31,7 @@ namespace ens {
  *
  * @tparam LagrangianFunction Lagrangian function to be used.
  */
-template<typename LagrangianFunction>
+template<typename LagrangianFunction, typename VecType>
 class AugLagrangianFunction
 {
  public:
@@ -53,7 +53,7 @@ class AugLagrangianFunction
    * @param sigma Initial penalty parameter.
    */
   AugLagrangianFunction(LagrangianFunction& function,
-                        const arma::vec& lambda,
+                        const VecType& lambda,
                         const double sigma);
   /**
    * Evaluate the objective function of the Augmented Lagrangian function, which
@@ -81,13 +81,13 @@ class AugLagrangianFunction
    *
    * @return Initial point.
    */
-  template<typename MatType = arma::mat>
+  template<typename MatType>
   const MatType& GetInitialPoint() const;
 
   //! Get the Lagrange multipliers.
-  const arma::vec& Lambda() const { return lambda; }
+  const VecType& Lambda() const { return lambda; }
   //! Modify the Lagrange multipliers.
-  arma::vec& Lambda() { return lambda; }
+  VecType& Lambda() { return lambda; }
 
   //! Get sigma (the penalty parameter).
   double Sigma() const { return sigma; }
@@ -104,7 +104,7 @@ class AugLagrangianFunction
   LagrangianFunction& function;
 
   //! The Lagrange multipliers.
-  arma::vec lambda;
+  VecType lambda;
   //! The penalty parameter.
   double sigma;
 };

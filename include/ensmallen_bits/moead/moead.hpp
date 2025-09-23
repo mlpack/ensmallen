@@ -28,24 +28,25 @@
 namespace ens {
 
 /**
- * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon - 
- * Differential Variant) is a multiobjective optimization algorithm. This class 
- * implements the said optimizer. 
+ * MOEA/D-DE (Multi Objective Evolutionary Algorithm based on Decompositon -
+ * Differential Variant) is a multiobjective optimization algorithm. This class
+ * implements the said optimizer.
  *
- * The algorithm works by generating a candidate population from a fixed starting point. 
- * Reference directions are generated to guide the optimization process towards the Pareto Front. 
- * Further, a decomposition function is defined to decompose the problem to a scalar optimization 
- * objective. Utilizing genetic operators, offsprings are generated with better decomposition values 
- * to replace the neighboring parent solutions. 
+ * The algorithm works by generating a candidate population from a fixed starting point.
+ * Reference directions are generated to guide the optimization process towards the Pareto Front.
+ * Further, a decomposition function is defined to decompose the problem to a scalar optimization
+ * objective. Utilizing genetic operators, offsprings are generated with better decomposition values
+ * to replace the neighboring parent solutions.
  *
  * For more information, see the following:
  * @code
  * @article{li2008multiobjective,
- *   title={Multiobjective optimization problems with complicated Pareto sets, MOEA/D and NSGA-II},
- *   author={Li, Hui and Zhang, Qingfu},
- *   journal={IEEE transactions on evolutionary computation},
- *   pages={284--302},
- *   year={2008},
+ *   title   = {Multiobjective optimization problems with complicated Pareto
+ *              sets, MOEA/D and NSGA-II},
+ *   author  = {Li, Hui and Zhang, Qingfu},
+ *   journal = {IEEE transactions on evolutionary computation},
+ *   pages   = {284--302},
+ *   year    = {2008},
  * @endcode
  */
 template<typename InitPolicyType = Uniform,
@@ -142,9 +143,35 @@ class MOEAD {
   template<typename MatType,
            typename... ArbitraryFunctionType,
            typename... CallbackTypes>
-  typename MatType::elem_type Optimize(std::tuple<ArbitraryFunctionType...>& objectives,
-                                       MatType& iterate,
-                                       CallbackTypes&&... callbacks);
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CallbackTypes&&... callbacks);
+
+  /**
+   * Optimize a set of objectives. The initial population is generated
+   * using the initial point. The output is the best generated front.
+   *
+   * @tparam MatType The type of matrix used to store coordinates.
+   * @tparam CubeType The type of cube used to store the front and Pareto set.
+   * @tparam ArbitraryFunctionType The type of objective function.
+   * @tparam CallbackTypes Types of callback function.
+   * @param objectives std::tuple of the objective functions.
+   * @param iterate The initial reference point for generating population.
+   * @param front The generated front.
+   * @param paretoSet The generated Pareto set.
+   * @param callbacks The callback functions.
+   */
+  template<typename MatType,
+           typename CubeType,
+           typename... ArbitraryFunctionType,
+           typename... CallbackTypes>
+  typename MatType::elem_type Optimize(
+      std::tuple<ArbitraryFunctionType...>& objectives,
+      MatType& iterate,
+      CubeType& front,
+      CubeType& paretoSet,
+      CallbackTypes&&... callbacks);
 
   //! Retrieve population size.
   size_t PopulationSize() const { return populationSize; }
@@ -201,14 +228,6 @@ class MOEAD {
   //! Modify value of upperBound.
   arma::vec& UpperBound() { return upperBound; }
 
-  //! Retrieve the Pareto optimal points in variable space. This returns an empty cube
-  //! until `Optimize()` has been called.
-  const arma::cube& ParetoSet() const { return paretoSet; }
-
-  //! Retrieve the best front (the Pareto frontier). This returns an empty cube until
-  //! `Optimize()` has been called.
-  const arma::cube& ParetoFront() const { return paretoFront; }
-
   //! Get the weight initialization policy.
   const InitPolicyType& InitPolicy() const { return initPolicy; }
   //! Modify the weight initialization policy.
@@ -227,8 +246,9 @@ class MOEAD {
    * @param neighborSize A matrix containing indices of the neighbors.
    * @return std::tuple<size_t, size_t> The chosen pair of indices.
    */
+  template<typename UMatType>
   std::tuple<size_t, size_t> Mating(size_t subProblemIdx,
-                                    const arma::umat& neighborSize,
+                                    const UMatType& neighborSize,
                                     bool sampleNeighbor);
 
   /**
@@ -253,27 +273,28 @@ class MOEAD {
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple function types.
    * @tparam MatType Type of matrix to optimize.
+   * @tparam ColType Type of column vector to store objectives.
    * @param population The elite population.
    * @param objectives The set of objectives.
    * @param calculatedObjectives Vector to store calculated objectives.
    */
   template<std::size_t I = 0,
            typename MatType,
+           typename ColType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(
-                     std::vector<MatType>&,
+  EvaluateObjectives(std::vector<MatType>&,
                      std::tuple<ArbitraryFunctionType...>&,
-                     std::vector<arma::Col<typename MatType::elem_type> >&);
+                     std::vector<ColType>&);
 
   template<std::size_t I = 0,
            typename MatType,
+           typename ColType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(
-                     std::vector<MatType>& population,
+  EvaluateObjectives(std::vector<MatType>& population,
                      std::tuple<ArbitraryFunctionType...>& objectives,
-                     std::vector<arma::Col<typename MatType::elem_type> >&
+                     std::vector<ColType>&
                      calculatedObjectives);
 
   //! Size of the population.

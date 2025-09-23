@@ -20,29 +20,37 @@ namespace test {
 //
 // AugLagrangianTestFunction
 //
-inline AugLagrangianTestFunction::AugLagrangianTestFunction()
+template<typename MatType>
+inline AugLagrangianTestFunction<MatType>::AugLagrangianTestFunction()
 {
   // Set the initial point to be (0, 0).
   initialPoint.zeros(2, 1);
 }
 
-inline AugLagrangianTestFunction::AugLagrangianTestFunction(
-      const arma::mat& initialPoint) :
+template<typename MatType>
+inline AugLagrangianTestFunction<MatType>::AugLagrangianTestFunction(
+      const MatType& initialPoint) :
     initialPoint(initialPoint)
 {
   // Nothing to do.
 }
 
-inline double AugLagrangianTestFunction::Evaluate(const arma::mat& coordinates)
+template<typename MatType>
+inline typename MatType::elem_type AugLagrangianTestFunction<MatType>::Evaluate(
+    const MatType& coordinates)
 {
+  typedef typename MatType::elem_type ElemType;
+
   // f(x) = 6 x_1^2 + 4 x_1 x_2 + 3 x_2^2
-  return ((6 * std::pow(coordinates[0], 2)) +
+  return ((6 * std::pow(coordinates[0], ElemType(2))) +
           (4 * (coordinates[0] * coordinates[1])) +
-          (3 * std::pow(coordinates[1], 2)));
+          (3 * std::pow(coordinates[1], ElemType(2))));
 }
 
-inline void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
-                                                arma::mat& gradient)
+template<typename MatType>
+inline void AugLagrangianTestFunction<MatType>::Gradient(
+    const MatType& coordinates,
+    MatType& gradient)
 {
   // f'_x1(x) = 12 x_1 + 4 x_2
   // f'_x2(x) = 4 x_1 + 6 x_2
@@ -52,8 +60,11 @@ inline void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
   gradient[1] = 4 * coordinates[0] + 6 * coordinates[1];
 }
 
-inline double AugLagrangianTestFunction::EvaluateConstraint(const size_t index,
-    const arma::mat& coordinates)
+template<typename MatType>
+inline typename MatType::elem_type
+AugLagrangianTestFunction<MatType>::EvaluateConstraint(
+    const size_t index,
+    const MatType& coordinates)
 {
   // We return 0 if the index is wrong (not 0).
   if (index != 0)
@@ -63,9 +74,11 @@ inline double AugLagrangianTestFunction::EvaluateConstraint(const size_t index,
   return (coordinates[0] + coordinates[1] - 5);
 }
 
-inline void AugLagrangianTestFunction::GradientConstraint(const size_t index,
-    const arma::mat& /* coordinates */,
-    arma::mat& gradient)
+template<typename MatType>
+inline void AugLagrangianTestFunction<MatType>::GradientConstraint(
+    const size_t index,
+    const MatType& /* coordinates */,
+    MatType& gradient)
 {
   // If the user passed an invalid index (not 0), we will return a zero
   // gradient.
@@ -99,10 +112,12 @@ template<typename MatType>
 inline typename MatType::elem_type GockenbachFunction::Evaluate(
     const MatType& coordinates)
 {
+  typedef typename MatType::elem_type ElemType;
+
   // f(x) = (x_1 - 1)^2 + 2 (x_2 + 2)^2 + 3(x_3 + 3)^2
-  return ((std::pow(coordinates[0] - 1, 2)) +
-          (2 * std::pow(coordinates[1] + 2, 2)) +
-          (3 * std::pow(coordinates[2] + 3, 2)));
+  return ((std::pow(coordinates[0] - 1, ElemType(2))) +
+          (2 * std::pow(coordinates[1] + 2, ElemType(2))) +
+          (3 * std::pow(coordinates[2] + 3, ElemType(2))));
 }
 
 template<typename MatType, typename GradType>
@@ -124,20 +139,21 @@ inline typename MatType::elem_type GockenbachFunction::EvaluateConstraint(
     const size_t index,
     const MatType& coordinates)
 {
-  typename MatType::elem_type constraint = 0;
+  typedef typename MatType::elem_type ElemType;
+
+  ElemType constraint = 0;
 
   switch (index)
   {
     case 0: // g(x) = (x_3 - x_2 - x_1 - 1) = 0
-      constraint = (coordinates[2] - coordinates[1] - coordinates[0] -
-          typename MatType::elem_type(1));
+      constraint = (coordinates[2] - coordinates[1] - coordinates[0] - 1);
       break;
 
     case 1: // h(x) = (x_3 - x_1^2) >= 0
       // To deal with the inequality, the constraint will simply evaluate to 0
       // when h(x) >= 0.
-      constraint = std::min(typename MatType::elem_type(0), (coordinates[2] -
-          std::pow(coordinates[0], typename MatType::elem_type(2))));
+      constraint = std::min(ElemType(0), (coordinates[2] -
+          std::pow(coordinates[0], ElemType(2))));
       break;
   }
 
@@ -322,7 +338,7 @@ inline const arma::mat& LovaszThetaSDP::GetInitialPoint()
   // and because m is always positive,
   //   r = 0.5 + sqrt(0.25 + 2m)
   float m = NumConstraints();
-  float r = 0.5 + sqrt(0.25 + 2 * m);
+  float r = 0.5 + std::sqrt(0.25 + 2 * m);
   if (ceil(r) > vertices)
     r = vertices; // An upper bound on the dimension.
 
@@ -335,9 +351,10 @@ inline const arma::mat& LovaszThetaSDP::GetInitialPoint()
     for (size_t j = 0; j < (size_t) vertices; j++)
     {
       if (i == j)
-        initialPoint(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices * m));
+        initialPoint(i, j) = std::sqrt(1.0 / r) +
+            std::sqrt(1.0 / (vertices * m));
       else
-        initialPoint(i, j) = sqrt(1.0 / (vertices * m));
+        initialPoint(i, j) = std::sqrt(1.0 / (vertices * m));
     }
   }
 

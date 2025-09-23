@@ -9,28 +9,32 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-TEST_CASE("SimpleGDTestFunction", "[GradientDescentTest]")
+TEMPLATE_TEST_CASE("GradientDescent_GDTestFunction", "[GradientDescent]",
+    ENS_ALL_TEST_TYPES)
 {
   GradientDescent s(0.01, 5000000, 1e-9);
-  FunctionTest<GDTestFunction>(s, 0.1, 0.01);
+  FunctionTest<GDTestFunction, TestType>(s,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
-TEST_CASE("GDRosenbrockTest", "[GradientDescentTest]")
+TEMPLATE_TEST_CASE("GradientDescent_RosenbrockFunction", "[GradientDescent]",
+    ENS_ALL_TEST_TYPES)
 {
-  GradientDescent s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction>(s, 0.01, 0.001);
-}
-
-TEST_CASE("GDRosenbrockFMatTest", "[GradientDescentTest]")
-{
-  GradientDescent s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction, arma::fmat>(s, 0.1, 0.01);
+  GradientDescent s(0.002, 0, Tolerances<TestType>::Obj / 1000);
+  FunctionTest<RosenbrockFunction, TestType>(s,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }

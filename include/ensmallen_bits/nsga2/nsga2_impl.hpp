@@ -69,6 +69,24 @@ typename MatType::elem_type NSGA2::Optimize(
     MatType& iterateIn,
     CallbackTypes&&... callbacks)
 {
+  typedef typename ForwardType<MatType>::bcube CubeType;
+  CubeType paretoFront, paretoSet;
+  return Optimize(objectives, iterateIn, paretoFront, paretoSet,
+      std::forward<CallbackTypes>(callbacks)...);
+}
+
+//! Optimize the function.
+template<typename MatType,
+         typename CubeType,
+         typename... ArbitraryFunctionType,
+         typename... CallbackTypes>
+typename MatType::elem_type NSGA2::Optimize(
+    std::tuple<ArbitraryFunctionType...>& objectives,
+    MatType& iterateIn,
+    CubeType& paretoFrontIn,
+    CubeType& paretoSetIn,
+    CallbackTypes&&... callbacks)
+{
   // Make sure for evolution to work at least four candidates are present.
   if (populationSize < 4 && populationSize % 4 != 0)
   {
@@ -79,6 +97,7 @@ typename MatType::elem_type NSGA2::Optimize(
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
+  typedef typename ForwardType<CubeType>::bmat CubeBaseMatType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
 
@@ -105,7 +124,8 @@ typename MatType::elem_type NSGA2::Optimize(
   numVariables = iterate.n_rows;
 
   // Cache calculated objectives as a matrix: (numObjectives x populationSize).
-  arma::Mat<ElemType> calculatedObjectives(numObjectives, populationSize, arma::fill::zeros);
+  arma::Mat<ElemType> calculatedObjectives(numObjectives, populationSize,
+      arma::fill::zeros);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
@@ -121,8 +141,10 @@ typename MatType::elem_type NSGA2::Optimize(
   std::vector<size_t> ranks;
 
   //! Useful temporaries for float-like comparisons.
-  const BaseMatType castedLowerBound = arma::conv_to<BaseMatType>::from(lowerBound);
-  const BaseMatType castedUpperBound = arma::conv_to<BaseMatType>::from(upperBound);
+  const BaseMatType castedLowerBound = conv_to<BaseMatType>::from(
+      lowerBound);
+  const BaseMatType castedUpperBound = conv_to<BaseMatType>::from(
+      upperBound);
 
   // Controls early termination of the optimization process.
   bool terminate = false;
@@ -131,11 +153,11 @@ typename MatType::elem_type NSGA2::Optimize(
   // starting point.
   for (size_t i = 0; i < populationSize; i++)
   {
-    population.push_back(arma::randu<BaseMatType>(iterate.n_rows,
-        iterate.n_cols) - 0.5 + iterate);
+    population.push_back(randu<BaseMatType>(iterate.n_rows,
+        iterate.n_cols) - ElemType(0.5) + iterate);
 
     // Constrain all genes to be within bounds.
-    population[i] = arma::min(arma::max(population[i], castedLowerBound), castedUpperBound);
+    population[i] = min(max(population[i], castedLowerBound), castedUpperBound);
   }
 
   Info << "NSGA2 initialized successfully. Optimization started." << std::endl;
@@ -143,7 +165,8 @@ typename MatType::elem_type NSGA2::Optimize(
   // Iterate until maximum number of generations is obtained.
   Callback::BeginOptimization(*this, objectives, iterate, callbacks...);
 
-  for (size_t generation = 1; generation <= maxGenerations && !terminate; generation++)
+  for (size_t generation = 1; generation <= maxGenerations && !terminate;
+      generation++)
   {
     Info << "NSGA2: iteration " << generation << "." << std::endl;
 
@@ -157,15 +180,15 @@ typename MatType::elem_type NSGA2::Optimize(
 
     // Perform fast non dominated sort on P_t ∪ G_t.
     ranks.resize(population.size());
-    FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
+    FastNonDominatedSort(fronts, ranks, calculatedObjectives);
 
     // Perform crowding distance assignment.
     crowdingDistance.resize(population.size());
     std::fill(crowdingDistance.begin(), crowdingDistance.end(), 0.);
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
-      CrowdingDistanceAssignment<BaseMatType>(
-          fronts[fNum], calculatedObjectives, crowdingDistance);
+      CrowdingDistanceAssignment(fronts[fNum], calculatedObjectives,
+          crowdingDistance);
     }
 
     // Sort based on crowding distance.
@@ -176,14 +199,17 @@ typename MatType::elem_type NSGA2::Optimize(
             size_t idxP{}, idxQ{};
             for (size_t i = 0; i < population.size(); i++)
             {
-              if (arma::approx_equal(population[i], candidateP, "absdiff", epsilon))
+              if (approx_equal(population[i], candidateP, "absdiff",
+                  ElemType(epsilon)))
                 idxP = i;
 
-              if (arma::approx_equal(population[i], candidateQ, "absdiff", epsilon))
+              if (approx_equal(population[i], candidateQ, "absdiff",
+                  ElemType(epsilon)))
                 idxQ = i;
             }
 
-            return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks, crowdingDistance);
+            return CrowdingOperator<BaseMatType>(idxP, idxQ, ranks,
+                crowdingDistance);
           }
     );
 
@@ -196,26 +222,22 @@ typename MatType::elem_type NSGA2::Optimize(
   }
 
   // Set the candidates from the Pareto Set as the output.
-  paretoSet.set_size(population[0].n_rows, population[0].n_cols, fronts[0].size());
+  paretoSetIn.set_size(population[0].n_rows, population[0].n_cols,
+      fronts[0].size());
   // The Pareto Set is stored, can be obtained via ParetoSet() getter.
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
-    paretoSet.slice(solutionIdx) =
-      arma::conv_to<arma::mat>::from(population[fronts[0][solutionIdx]]);
+    paretoSetIn.slice(solutionIdx) = conv_to<CubeBaseMatType>::from(
+        population[fronts[0][solutionIdx]]);
   }
 
   // Set the candidates from the Pareto Front as the output.
-  paretoFront.set_size(numObjectives, 1, fronts[0].size());
-  // The Pareto Front is stored, can be obtained via ParetoFront() getter.
+  paretoFrontIn.set_size(calculatedObjectives.n_rows, 1, fronts[0].size());
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
-    paretoFront.slice(solutionIdx) =
-        arma::conv_to<arma::mat>::from(calculatedObjectives.col(fronts[0][solutionIdx]));
+    paretoFrontIn.slice(solutionIdx) = conv_to<CubeBaseMatType>::from(
+        calculatedObjectives.col(fronts[0][solutionIdx]));
   }
-
-  // Clear rcFront, in case it is later requested by the user for reverse
-  // compatibility reasons.
-  rcFront.clear();
 
   // Assign iterate to first element of the Pareto Set.
   iterate = population[fronts[0][0]];
@@ -226,18 +248,20 @@ typename MatType::elem_type NSGA2::Optimize(
 
   for (size_t i = 0; i < calculatedObjectives.n_cols; ++i)
     performance = std::min(performance, arma::accu(calculatedObjectives.col(i)));
+
   return performance;
 }
 
 //! No objectives to evaluate.
 template<std::size_t I,
          typename MatType,
+         typename ObjectiveMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
     std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    arma::Mat<typename MatType::elem_type>&)
+    ObjectiveMatType&)
 {
   // Nothing to do here.
 }
@@ -245,34 +269,39 @@ NSGA2::EvaluateObjectives(
 //! Evaluate the objectives for the entire population.
 template<std::size_t I,
          typename MatType,
+         typename ObjectiveMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
     std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    arma::Mat<typename MatType::elem_type>& calculatedObjectives)
+    ObjectiveMatType& calculatedObjectives)
 {
   for (size_t i = 0; i < populationSize; i++)
   {
-    calculatedObjectives(I, i) = std::get<I>(objectives).Evaluate(population[i]);
-    EvaluateObjectives<I+1, MatType, ArbitraryFunctionType...>(population, objectives,
-                                                               calculatedObjectives);
+    calculatedObjectives(I, i) =
+        std::get<I>(objectives).Evaluate(population[i]);
+    EvaluateObjectives<I + 1, MatType, ObjectiveMatType,
+        ArbitraryFunctionType...>(population, objectives, calculatedObjectives);
   }
 }
 
 //! Reproduce and generate new candidates.
-template<typename MatType>
-inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
-                                             const MatType& lowerBound,
-                                             const MatType& upperBound)
+template<typename InputMatType>
+void NSGA2::BinaryTournamentSelection(
+    std::vector<InputMatType>& population,
+    const InputMatType& lowerBound,
+    const InputMatType& upperBound)
 {
-  std::vector<MatType> children;
+  std::vector<InputMatType> children;
 
   while (children.size() < population.size())
   {
     // Choose two random parents for reproduction from the elite population.
-    size_t indexA = arma::randi<size_t>(arma::distr_param(0, populationSize - 1));
-    size_t indexB = arma::randi<size_t>(arma::distr_param(0, populationSize - 1));
+    size_t indexA = arma::randi<size_t>(
+        arma::distr_param(0, populationSize - 1));
+    size_t indexB = arma::randi<size_t>(
+        arma::distr_param(0, populationSize - 1));
 
     // Make sure that the parents differ.
     if (indexA == indexB)
@@ -284,7 +313,7 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
     }
 
     // Initialize the children to the respective parents.
-    MatType childA = population[indexA], childB = population[indexB];
+    InputMatType childA = population[indexA], childB = population[indexB];
 
     Crossover(childA, childB, population[indexA], population[indexB]);
 
@@ -297,18 +326,23 @@ inline void NSGA2::BinaryTournamentSelection(std::vector<MatType>& population,
   }
 
   // Add the candidates to the elite population.
-  population.insert(std::end(population), std::begin(children), std::end(children));
+  population.insert(
+      std::end(population), std::begin(children), std::end(children));
 }
 
 //! Perform crossover of genes for the children.
-template<typename MatType>
-inline void NSGA2::Crossover(MatType& childA,
-                             MatType& childB,
-                             const MatType& parentA,
-                             const MatType& parentB)
+template<typename InputMatType>
+void NSGA2::Crossover(
+    InputMatType& childA,
+    InputMatType& childB,
+    const InputMatType& parentA,
+    const InputMatType& parentB)
 {
+  typedef typename InputMatType::elem_type ElemType;
+
   // Indices at which crossover is to occur.
-  const arma::umat idx = arma::randu<MatType>(childA.n_rows, childA.n_cols) < crossoverProb;
+  const InputMatType idx = conv_to<InputMatType>::from(randu<InputMatType>(
+      childA.n_rows, childA.n_cols) < ElemType(crossoverProb));
 
   // Use traits from parentA for indices where idx is 1 and parentB otherwise.
   childA = parentA % idx + parentB % (1 - idx);
@@ -317,24 +351,30 @@ inline void NSGA2::Crossover(MatType& childA,
 }
 
 //! Perform mutation of the candidates weights with some noise.
-template<typename MatType>
-inline void NSGA2::Mutate(MatType& child,
-                          const MatType& lowerBound,
-                          const MatType& upperBound)
+template<typename InputMatType>
+void NSGA2::Mutate(
+    InputMatType& child,
+    const InputMatType& lowerBound,
+    const InputMatType& upperBound)
 {
-  child += (arma::randu<MatType>(child.n_rows, child.n_cols) < mutationProb) %
-      (mutationStrength * arma::randn<MatType>(child.n_rows, child.n_cols));
+  typedef typename InputMatType::elem_type ElemType;
+
+  child += conv_to<InputMatType>::from(
+      InputMatType(child.n_rows, child.n_cols,
+          GetFillType<InputMatType>::randu) < ElemType(mutationProb)) %
+      (ElemType(mutationStrength) * InputMatType(child.n_rows, child.n_cols,
+          GetFillType<InputMatType>::randn));
 
   // Constrain all genes to be between bounds.
-  child = arma::min(arma::max(child, lowerBound), upperBound);
+  child = min(max(child, lowerBound), upperBound);
 }
 
 //! Sort population into Pareto fronts.
 template<typename MatType>
-inline void NSGA2::FastNonDominatedSort(
+void NSGA2::FastNonDominatedSort(
     std::vector<std::vector<size_t> >& fronts,
     std::vector<size_t>& ranks,
-    arma::Mat<typename MatType::elem_type>& calculatedObjectives)
+    MatType& calculatedObjectives)
 {
   std::map<size_t, size_t> dominationCount;
   std::map<size_t, std::set<size_t> > dominated;
@@ -393,7 +433,7 @@ inline void NSGA2::FastNonDominatedSort(
 //! Check if a candidate Pareto dominates another candidate.
 template<typename MatType>
 inline bool NSGA2::Dominates(
-    arma::Mat<typename MatType::elem_type>& calculatedObjectives,
+    MatType& calculatedObjectives,
     size_t candidateP,
     size_t candidateQ)
 {
@@ -404,11 +444,13 @@ inline bool NSGA2::Dominates(
   for (size_t i = 0; i < n_objectives; i++)
   {
     // P is worse than Q for the i-th objective function.
-    if (calculatedObjectives(i, candidateP) > calculatedObjectives(i, candidateQ))
+    if (calculatedObjectives(i, candidateP) >
+        calculatedObjectives(i, candidateQ))
       allBetterOrEqual = false;
 
     // P is better than Q for the i-th objective function.
-    else if (calculatedObjectives(i, candidateP) < calculatedObjectives(i, candidateQ))
+    else if (calculatedObjectives(i, candidateP) <
+             calculatedObjectives(i, candidateQ))
       atleastOneBetter = true;
   }
 
@@ -417,31 +459,29 @@ inline bool NSGA2::Dominates(
 
 //! Assign crowding distance to the population.
 template <typename MatType>
-inline void NSGA2::CrowdingDistanceAssignment(
+void NSGA2::CrowdingDistanceAssignment(
     const std::vector<size_t>& front,
-    arma::Mat<typename MatType::elem_type>& calculatedObjectives,
+    MatType& calculatedObjectives,
     std::vector<typename MatType::elem_type>& crowdingDistance)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
+  typedef typename ForwardType<MatType>::uvec UVecType;
+  typedef typename ForwardType<MatType>::bcol BaseColType;
 
   size_t fSize = front.size();
   // Stores the sorted indices of the fronts.
-  arma::uvec sortedIdx  = arma::regspace<arma::uvec>(0, 1, fSize - 1);
+  UVecType sortedIdx = regspace<UVecType>(0, 1, fSize - 1);
 
   for (size_t m = 0; m < numObjectives; m++)
   {
     // Cache fValues of individuals for current objective.
-    arma::Col<ElemType> fValues(fSize);
+    BaseColType fValues(fSize);
     for (size_t k = 0; k < fSize; ++k)
-      fValues(k) = calculatedObjectives(m, front[k]);
+      fValues(k) = calculatedObjectives(m, size_t(front[k]));
 
     // Sort front indices by ascending fValues for current objective.
-    std::sort(sortedIdx.begin(), sortedIdx.end(),
-      [&](const size_t& frontIdxA, const size_t& frontIdxB)
-        {
-          return (fValues(frontIdxA) < fValues(frontIdxB));
-        });
+    sortedIdx = sort_index(fValues, "ascend");
 
     crowdingDistance[front[sortedIdx(0)]] =
         std::numeric_limits<ElemType>::max();
@@ -450,7 +490,7 @@ inline void NSGA2::CrowdingDistanceAssignment(
     ElemType minFval = fValues(sortedIdx(0));
     ElemType maxFval = fValues(sortedIdx(fSize - 1));
     ElemType scale =
-        std::abs(maxFval - minFval) == 0. ? 1. : std::abs(maxFval - minFval);
+        std::abs(maxFval - minFval) == 0 ? 1 : std::abs(maxFval - minFval);
 
     for (size_t i = 1; i < fSize - 1; i++)
     {
@@ -461,16 +501,22 @@ inline void NSGA2::CrowdingDistanceAssignment(
 }
 
 //! Comparator for crowding distance based sorting.
-template<typename MatType>
-inline bool NSGA2::CrowdingOperator(size_t idxP,
-                                    size_t idxQ,
-                                    const std::vector<size_t>& ranks,
-                                    const std::vector<typename MatType::elem_type>& crowdingDistance)
+template<typename InputMatType>
+bool NSGA2::CrowdingOperator(
+    size_t idxP,
+    size_t idxQ,
+    const std::vector<size_t>& ranks,
+    const std::vector<typename InputMatType::elem_type>& crowdingDistance)
 {
   if (ranks[idxP] < ranks[idxQ])
+  {
     return true;
-  else if (ranks[idxP] == ranks[idxQ] && crowdingDistance[idxP] > crowdingDistance[idxQ])
+  }
+  else if (ranks[idxP] == ranks[idxQ] &&
+           crowdingDistance[idxP] > crowdingDistance[idxQ])
+  {
     return true;
+  }
 
   return false;
 }

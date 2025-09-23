@@ -59,7 +59,8 @@ class Uniform
     //! The requested number of points is not matching any partition number.
     if (numPoints != validNumPoints)
     {
-      size_t nextValidNumPoints = FindNumUniformPoints(numObjectives, numPartitions + 1);
+      size_t nextValidNumPoints = FindNumUniformPoints(
+          numObjectives, numPartitions + 1);
       std::ostringstream oss;
       oss << "DasDennis::Generate(): " << "The requested numPoints " << numPoints
           << " cannot be generated uniformly.\n " << "Either choose numPoints as "
@@ -128,8 +129,7 @@ class Uniform
   /**
    * A helper function for DasDennis
    */
-  template<typename AuxInfoStackType,
-           typename MatType>
+  template<typename AuxInfoStackType, typename MatType>
   void DasDennisHelper(AuxInfoStackType& progressStack,
                        MatType& weights,
                        const size_t numObjectives,
@@ -138,10 +138,10 @@ class Uniform
                        const double epsilon)
   {
     typedef typename MatType::elem_type ElemType;
-    typedef typename arma::Row<ElemType> RowType;
+    typedef typename ForwardType<MatType>::brow RowType;
 
     size_t counter = 0;
-    const ElemType delta = 1.0 / (ElemType)numPartitions;
+    const ElemType delta = 1 / (ElemType) numPartitions;
 
     while ((counter < numPoints) && !progressStack.empty())
     {
@@ -154,7 +154,7 @@ class Uniform
       {
         point.insert_rows(point.n_rows, RowType(1).fill(
             delta * static_cast<ElemType>(beta)));
-        weights.col(counter) = point + epsilon;
+        weights.col(counter) = point + ElemType(epsilon);
         ++counter;
       }
 
@@ -189,7 +189,7 @@ class Uniform
     //! Init the progress stack.
     progressStack.push_back({{}, numPartitions});
     MatType weights(numObjectives, numPoints);
-    weights.fill(arma::datum::nan);
+    weights.fill(arma::Datum<typename MatType::elem_type>::nan);
     DasDennisHelper<decltype(progressStack), MatType>(
         progressStack,
         weights,

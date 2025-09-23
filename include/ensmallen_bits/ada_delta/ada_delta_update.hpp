@@ -71,6 +71,8 @@ class AdaDeltaUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD optimizer method before the start
      * of the iteration update process. In AdaDelta update policy, the mean
@@ -82,10 +84,16 @@ class AdaDeltaUpdate
      * @param cols Number of columns in the gradient matrix.
      */
     Policy(AdaDeltaUpdate& parent, const size_t rows, const size_t cols) :
-        parent(parent)
+        parent(parent),
+        rho(ElemType(parent.rho)),
+        epsilon(ElemType(parent.epsilon))
     {
       meanSquaredGradient.zeros(rows, cols);
       meanSquaredGradientDx.zeros(rows, cols);
+
+      // Check for underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -102,17 +110,17 @@ class AdaDeltaUpdate
                 const GradType& gradient)
     {
       // Accumulate gradient.
-      meanSquaredGradient *= parent.rho;
-      meanSquaredGradient += (1 - parent.rho) * (gradient % gradient);
-      GradType dx = arma::sqrt((meanSquaredGradientDx + parent.epsilon) /
-          (meanSquaredGradient + parent.epsilon)) % gradient;
+      meanSquaredGradient *= rho;
+      meanSquaredGradient += (1 - rho) * (gradient % gradient);
+      GradType dx = sqrt((meanSquaredGradientDx + epsilon) /
+          (meanSquaredGradient + epsilon)) % gradient;
 
       // Accumulate updates.
-      meanSquaredGradientDx *= parent.rho;
-      meanSquaredGradientDx += (1 - parent.rho) * (dx % dx);
+      meanSquaredGradientDx *= rho;
+      meanSquaredGradientDx += (1 - rho) * (dx % dx);
 
       // Apply update.
-      iterate -= (stepSize * dx);
+      iterate -= (ElemType(stepSize) * dx);
     }
 
    private:
@@ -124,6 +132,10 @@ class AdaDeltaUpdate
 
     // The delta mean squared gradient matrix.
     GradType meanSquaredGradientDx;
+
+    // Parameters of the update, converted to the matrix element type.
+    ElemType rho;
+    ElemType epsilon;
   };
 
  private:

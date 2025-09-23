@@ -59,6 +59,8 @@ class AdaSqrtUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD optimizer before the start of the
      * iteration update process. In AdaSqrt update policy, squared gradient
@@ -72,10 +74,14 @@ class AdaSqrtUpdate
     Policy(AdaSqrtUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
         squaredGradient(rows, cols),
+        epsilon(ElemType(parent.epsilon)),
         iteration(0)
     {
       // Initialize an empty matrix for sum of squares of parameter gradient.
       squaredGradient.zeros();
+      // Check for underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -93,10 +99,10 @@ class AdaSqrtUpdate
     {
       ++iteration;
 
-      squaredGradient += arma::square(gradient);
+      squaredGradient += square(gradient);
 
-      iterate -= stepSize * std::sqrt(iteration) * gradient /
-          (squaredGradient + parent.epsilon);
+      iterate -= ElemType(stepSize) * std::sqrt(ElemType(iteration)) *
+          gradient / (squaredGradient + epsilon);
     }
 
    private:
@@ -104,6 +110,8 @@ class AdaSqrtUpdate
     AdaSqrtUpdate& parent;
     // The squared gradient matrix.
     GradType squaredGradient;
+    // Epsilon converted to the element type of the optimization.
+    ElemType epsilon;
     // The number of iterations.
     size_t iteration;
   };

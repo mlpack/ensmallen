@@ -45,8 +45,8 @@ template<typename SeparableFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 KatyushaType<Proximal>::Optimize(
     SeparableFunctionType& function,
     MatType& iterateIn,
@@ -80,20 +80,20 @@ KatyushaType<Proximal>::Optimize(
   if (numFunctions % batchSize != 0)
     ++numBatches; // Capture last few.
 
-  const double tau1 = std::min(0.5,
-      std::sqrt(batchSize * convexity / (3.0 * lipschitz)));
-  const double tau2 = 0.5;
-  const double alpha = 1.0 / (3.0 * tau1 * lipschitz);
-  const double r = 1.0 + std::min(alpha * convexity, 1.0 /
-      (4.0 / innerIterations));
+  const ElemType tau1 = ElemType(std::min(0.5,
+      std::sqrt(batchSize * convexity / (3 * lipschitz))));
+  const ElemType tau2 = ElemType(0.5);
+  const ElemType alpha = 1 / (3 * tau1 * ElemType(lipschitz));
+  const ElemType r = 1 + std::min(alpha * ElemType(convexity),
+                                  ElemType(innerIterations) / 4);
 
   // sum_{j=0}^{m-1} 1 + std::min(alpha * convexity, 1 / (4 * m)^j).
-  double normalizer = 1;
+  ElemType normalizer = 1;
   for (size_t i = 0; i < numBatches; i++)
   {
-    normalizer = r * (normalizer + 1.0);
+    normalizer = r * (normalizer + 1);
   }
-  normalizer = 1.0 / normalizer;
+  normalizer = 1 / normalizer;
 
   // To keep track of where we are and how things are going.
   ElemType overallObjective = 0;
@@ -168,10 +168,10 @@ KatyushaType<Proximal>::Optimize(
 
       f += effectiveBatchSize;
     }
-    fullGradient /= (double) numFunctions;
+    fullGradient /= (ElemType) numFunctions;
 
     // To keep track of where we are and how things are going.
-    double cw = 1;
+    ElemType cw = 1;
     w.zeros();
 
     for (size_t f = 0, currentFunction = 0; (f < innerIterations) && !terminate;
@@ -208,7 +208,7 @@ KatyushaType<Proximal>::Optimize(
       // By the minimality definition of z_{k + 1}, we have that:
       // z_{k+1} − z_k + \alpha * \sigma_{k+1} + \alpha g = 0.
       BaseMatType zNew = z - alpha * (fullGradient + (gradient - gradient0) /
-          (double) batchSize);
+          (ElemType) batchSize);
 
       // Proximal update, choose between Option I and Option II. Shift relative
       // to the Lipschitz constant or take a constant step using the given step
@@ -221,7 +221,7 @@ KatyushaType<Proximal>::Optimize(
         // yk = x0 − 1 / (3L) * \delta3 - ((1 - tau) / (3L)) + tau * alpha)
         // * \delta2 - ((1-tau)^2 / (3L) + (1 - (1 - tau)^2) * alpha) * \delta1,
         // k = 3.
-        y = iterate + 1.0 / (3.0 * lipschitz) * w;
+        y = iterate + 1 / (3 * ElemType(lipschitz)) * w;
       }
       else
       {

@@ -9,10 +9,14 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
@@ -21,46 +25,29 @@ using namespace ens::test;
  * Run CMA-ES with the full selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-TEST_CASE("CMAESLogisticRegressionTest", "[CMAESTest]")
+TEMPLATE_TEST_CASE("CMAES_LogisticRegressionFunction", "[CMAES]",
+    ENS_FULLPREC_TEST_TYPES)
 {
-  BoundaryBoxConstraint<> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<>> cmaes(0, b, 32, 500, 1e-3);
+  BoundaryBoxConstraint<TestType> b(-10, 10);
+  CMAES<FullSelection, BoundaryBoxConstraint<TestType>> cmaes(
+      0, b, 32, 500, 1e-3);
   cmaes.StepSize() = 0.6;
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
+  LogisticRegressionFunctionTest<TestType>(cmaes,
+      Tolerances<TestType>::LRTrainAcc, Tolerances<TestType>::LRTestAcc, 5);
 }
 
 /**
  * Run CMA-ES with the random selection policy on logistic regression and
  * make sure the results are acceptable.
  */
-TEST_CASE("ApproxCMAESLogisticRegressionTest", "[CMAESTest]")
+TEMPLATE_TEST_CASE("ApproxCMAES_LogisticRegressionFunction", "[CMAES]",
+    ENS_TEST_TYPES)
 {
-  BoundaryBoxConstraint<> b(-10, 10);
-  ApproxCMAES<BoundaryBoxConstraint<arma::mat>> cmaes(256, b, 16, 500, 1e-3);
+  BoundaryBoxConstraint<TestType> b(-10, 10);
+  ApproxCMAES<BoundaryBoxConstraint<TestType>> cmaes(256, b, 16, 500, 1e-3);
   cmaes.StepSize() = 0.6;
-  LogisticRegressionFunctionTest(cmaes, 0.003, 0.006, 5);
-}
-
-/**
- * Run CMA-ES with the full selection policy on logistic regression and
- * make sure the results are acceptable.  Use arma::fmat.
- */
-TEST_CASE("CMAESLogisticRegressionFMatTest", "[CMAESTest]")
-{
-  BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  CMAES<FullSelection, BoundaryBoxConstraint<arma::fmat>> cmaes(120, b, 32, 500, 1e-3);
-  LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
-}
-
-/**
- * Run CMA-ES with the random selection policy on logistic regression and
- * make sure the results are acceptable.  Use arma::fmat.
- */
-TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
-{
-  BoundaryBoxConstraint<arma::fmat> b(-10, 10);
-  ApproxCMAES<BoundaryBoxConstraint<arma::fmat>> cmaes(0, b, 16, 500, 1e-3);
-  LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
+  LogisticRegressionFunctionTest<TestType>(cmaes,
+      Tolerances<TestType>::LRTrainAcc, Tolerances<TestType>::LRTestAcc, 5);
 }
 
 /**
@@ -68,10 +55,10 @@ TEST_CASE("ApproxCMAESLogisticRegressionFMatTest", "[CMAESTest]")
  * on logistic regression and make sure the results are acceptable.
  * Use arma::fmat.
  */
-TEST_CASE("ApproxCMAESEmptyTransformationLogisticRegressionFMatTest",
-  "[CMAESTest]")
+TEMPLATE_TEST_CASE("ApproxCMAES_EmptyTransformationLogisticRegressionFunction",
+    "[CMAES]", ENS_TEST_TYPES)
 {
-  ApproxCMAES<EmptyTransformation<arma::fmat>>
-    cmaes(0, EmptyTransformation<arma::fmat>(), 16, 500, 1e-3);
-  LogisticRegressionFunctionTest<arma::fmat>(cmaes, 0.01, 0.02, 5);
+  ApproxCMAES<EmptyTransformation<TestType>>
+      cmaes(0, EmptyTransformation<TestType>(), 16, 500, 1e-3);
+  LogisticRegressionFunctionTest<TestType>(cmaes, 0.01, 0.02, 5);
 }

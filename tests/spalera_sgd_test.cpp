@@ -8,38 +8,29 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run SPALeRA SGD on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("LogisticRegressionTest","[SPALeRASGDTest]")
+TEMPLATE_TEST_CASE("SPALeRASGD_LogisticRegressionFunction", "[SPALeRASGD]",
+    ENS_ALL_TEST_TYPES)
 {
   // Run SPALeRA SGD with a couple of batch sizes.
   for (size_t batchSize = 30; batchSize < 50; batchSize += 5)
   {
     SPALeRASGD<> optimizer(0.05 / batchSize, batchSize, 10000, 1e-4);
-    LogisticRegressionFunctionTest(optimizer, 0.015, 0.024, 3);
-  }
-}
-
-/**
- * Run SPALeRA SGD on logistic regression and make sure the results are
- * acceptable.  Use arma::fmat.
- */
-TEST_CASE("LogisticRegressionFMatTest","[SPALeRASGDTest]")
-{
-  // Run SPALeRA SGD with a couple of batch sizes.
-  for (size_t batchSize = 30; batchSize < 50; batchSize += 5)
-  {
-    SPALeRASGD<> optimizer(0.05 / batchSize, batchSize, 10000, 1e-4);
-    LogisticRegressionFunctionTest<arma::fmat>(optimizer, 0.015, 0.024, 3);
+    LogisticRegressionFunctionTest<TestType>(
+        optimizer,
+        5 * Tolerances<TestType>::LRTrainAcc,
+        4 * Tolerances<TestType>::LRTestAcc,
+        3);
   }
 }

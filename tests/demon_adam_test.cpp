@@ -7,69 +7,59 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run DemonAdam on logistic regression and make sure the results are
- * acceptable.
- */
-TEST_CASE("DemonAdamLogisticRegressionTest", "[DemonAdamTest]")
+TEMPLATE_TEST_CASE("DemonAdam_LogisticRegressionFunction", "[DemonAdam]",
+    ENS_ALL_TEST_TYPES)
 {
-  DemonAdam optimizer(0.2, 32, 0.9, 0.9, 0.999, 1e-8,
-      10000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 6);
+  DemonAdam optimizer(6.4, 32, 0.9, 0.9, 0.999, Tolerances<TestType>::Obj,
+      10000, Tolerances<TestType>::Obj / 10, true, true, true);
+  // This may require a few attempts to get right.
+  LogisticRegressionFunctionTest<TestType>(optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      6);
 }
 
-/**
- * Test the Adam optimizer on the Sphere function.
- */
-TEST_CASE("DemonAdamSphereFunctionTest", "[DemonAdamTest]")
+TEMPLATE_TEST_CASE("DemonAdaMax_LogisticRegressionFunction", "[DemonAdam]",
+    ENS_ALL_TEST_TYPES)
 {
-  SphereFunction f(2);
-  DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunction, arma::mat>(optimizer, 1.0, 0.1);
+  DemonAdamType<AdaMaxUpdate> optimizer(5.0, 10, 0.9, 0.9, 0.999,
+      Tolerances<TestType>::Obj, 10000, Tolerances<TestType>::Obj / 10, true,
+      true, true);
+  // This may require a few attempts to get right.
+  LogisticRegressionFunctionTest<TestType>(optimizer,
+      Tolerances<TestType>::LRTrainAcc,
+      Tolerances<TestType>::LRTestAcc,
+      6);
 }
 
-/**
- * Test the DemonAdam optimizer on the Matyas function.
- */
-TEST_CASE("DemonAdamMatyasFunctionTest", "[DemonAdamTest]")
+TEMPLATE_TEST_CASE("DemonAdam_SphereFunction", "[DemonAdam]",
+    ENS_ALL_TEST_TYPES, ENS_SPARSE_TEST_TYPES)
+{
+  DemonAdam optimizer(1.0, 2, 0.9);
+  FunctionTest<SphereFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
+}
+
+TEMPLATE_TEST_CASE("DemonAdam_MatyasFunction", "[DemonAdam]",
+    ENS_ALL_TEST_TYPES)
 {
   DemonAdam optimizer(0.5, 1, 0.9);
-  FunctionTest<MatyasFunction, arma::mat>(optimizer, 0.1, 0.01);
-}
-
-/**
- * Test the Adam optimizer on the Sphere function.
- */
-TEST_CASE("DemonAdamSphereFunctionTestFloat", "[DemonAdamTest]")
-{
-  DemonAdam optimizer(0.5, 2, 0.9);
-  FunctionTest<SphereFunction, arma::sp_mat>(optimizer, 1.0, 0.1);
-}
-
-/**
- * Test the DemonAdam optimizer on the Matyas function.
- */
-TEST_CASE("DemonAdamMatyasFunctionTestFloat", "[DemonAdamTest]")
-{
-  DemonAdam optimizer(0.5, 1, 0.9);
-  FunctionTest<MatyasFunction, arma::fmat>(optimizer, 0.1, 0.01);
-}
-
-/**
- * Run DemonAdam (AdaMax update) on logistic regression and make sure the
- * results are acceptable.
- */
-TEST_CASE("DemonAdaMaxLogisticRegressionTest", "[DemonAdamTest]")
-{
-  DemonAdamType<AdaMaxUpdate> optimizer(0.5, 10, 0.9, 0.9, 0.999, 1e-8,
-      10000, 1e-9, true, true, true);
-  LogisticRegressionFunctionTest(optimizer, 0.003, 0.006, 3);
+  FunctionTest<MatyasFunction, TestType>(
+      optimizer,
+      10 * Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }

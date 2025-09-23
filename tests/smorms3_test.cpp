@@ -9,29 +9,21 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run SMORMS3 on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("SMORMS3LogisticRegressionTest","[SMORMS3Test]")
+TEMPLATE_TEST_CASE("SMORMS3_LogisticRegressionFunction", "[SMORMS3]",
+    ENS_ALL_TEST_TYPES)
 {
-  SMORMS3 smorms3;
-  LogisticRegressionFunctionTest(smorms3, 0.003, 0.006);
-}
-
-/**
- * Run SMORMS3 on logistic regression and make sure the results are acceptable.
- * Use arma::fmat.
- */
-TEST_CASE("SMORMS3LogisticRegressionFMatTest","[SMORMS3Test]")
-{
-  SMORMS3 smorms3;
-  LogisticRegressionFunctionTest<arma::fmat>(smorms3, 0.003, 0.006);
+  SMORMS3 smorms3(0.032);
+  LogisticRegressionFunctionTest<TestType>(smorms3);
 }

@@ -78,6 +78,8 @@ class DemonSGDUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -89,7 +91,8 @@ class DemonSGDUpdate
     Policy(DemonSGDUpdate& parent,
            const size_t /* rows */,
            const size_t /* cols */) :
-      parent(parent)
+      parent(parent),
+      betaInit(ElemType(parent.betaInit))
     { /* Nothing to do here */ }
 
     /**
@@ -103,34 +106,37 @@ class DemonSGDUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      double decayRate = 1;
+      ElemType decayRate = 1;
       if (parent.t > 0)
-        decayRate = 1.0 - (double) parent.t / (double) parent.T;
+        decayRate = 1 - ElemType((double) parent.t / (double) parent.T);
 
-      const double betaDecay = parent.betaInit * decayRate;
-      const double beta = betaDecay / ((1.0 - parent.betaInit) + betaDecay);
+      const ElemType betaDecay = betaInit * decayRate;
+      const ElemType beta = betaDecay / ((1 - betaInit) + betaDecay);
 
       // Perform the update.
       iterate *= beta;
-      iterate -= stepSize * gradient;
+      iterate -= ElemType(stepSize) * gradient;
 
       // Increment the iteration counter variable.
       ++parent.t;
     }
 
    private:
-    //! Instantiated parent object.
+    // Instantiated parent object.
     DemonSGDUpdate& parent;
+
+    // Optimizer parameter converted to the element type of the optimization.
+    ElemType betaInit;
   };
 
  private:
-  //! The number of momentum iterations.
+  // The number of momentum iterations.
   size_t T;
 
-  //! Initial momentum coefficient.
+  // Initial momentum coefficient.
   double betaInit;
 
-  //! The number of iterations.
+  // The number of iterations.
   size_t t;
 };
 

@@ -10,12 +10,17 @@ project(ensmallen
 
 # Configurable options for CMake.
 option(USE_OPENMP "If available, use OpenMP for parallelization." ON)
+option(USE_BANDICOOT "If available, build against Bandicoot for GPU support." ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-# Set required C++ standard to C++14.
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Set minimum required C++ standard to C++14.
+if (NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+elseif (${CMAKE_CXX_STANDARD} LESS 14)
+  message(FATAL_ERROR "ensmallen requires C++14 or newer!")
+endif ()
 
 # Extract version from sources.
 set(ENSMALLEN_VERSION_FILE_NAME "${PROJECT_SOURCE_DIR}/include/ensmallen_bits/ens_version.hpp")
@@ -57,6 +62,17 @@ if(USE_OPENMP)
         PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
   endif()
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
+endif()
+
+if(USE_BANDICOOT)
+  # Find Bandicoot and link it.
+  find_package(Bandicoot 2.1.0)
+  if(BANDICOOT_FOUND)
+    target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
+    target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
+
+    add_definitions(-DENS_USE_COOT)
+  endif()
 endif()
 
 # Find Armadillo and link it.

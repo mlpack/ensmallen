@@ -56,6 +56,8 @@ class WNGradUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.
@@ -67,7 +69,8 @@ class WNGradUpdate
     Policy(WNGradUpdate& parent,
            const size_t /* rows */,
            const size_t /* cols */) :
-        parent(parent)
+        parent(parent),
+        b(ElemType(parent.b))
     {
       /* Nothing to do. */
     }
@@ -83,18 +86,21 @@ class WNGradUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      parent.b += std::pow(stepSize, 2.0) / parent.b *
-          std::pow(arma::norm(gradient), 2);
-      iterate -= stepSize * gradient / parent.b;
+      b += std::pow(ElemType(stepSize), ElemType(2)) / b *
+          std::pow(norm(gradient), ElemType(2));
+      parent.b = (double) b;
+      iterate -= ElemType(stepSize) * gradient / b;
     }
 
    private:
-    //! Reference to the instantiated parent object.
+    // Reference to the instantiated parent object.
     WNGradUpdate& parent;
+    // Learning rate adjustment using the element type of the optimization.
+    ElemType b;
   };
 
  private:
-  //! Learning rate adjustment.
+  // Learning rate adjustment.
   double b;
 };
 

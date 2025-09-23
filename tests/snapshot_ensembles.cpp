@@ -8,21 +8,26 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 /*
- * Test that the step size resets after a specified number of epochs.
- */
-TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
+* Test that the step size resets after a specified number of epochs.
+*/
+TEMPLATE_TEST_CASE("SnapshotEnsembles_ResetTest", "[SnapshotEnsembles]",
+    ENS_ALL_CPU_TEST_TYPES)
 {
   const double stepSize = 0.5;
-  arma::mat iterate;
+  TestType iterate;
 
   // Now run cyclical decay policy with a couple of multiplicators and initial
   // restarts.
@@ -34,7 +39,7 @@ TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
 
       SnapshotEnsembles snapshotEnsembles(restart,
           double(mult), stepSize, 1000, 2);
-      SnapshotEnsembles::Policy<arma::mat, arma::mat> p(snapshotEnsembles);
+      SnapshotEnsembles::Policy<TestType, TestType> p(snapshotEnsembles);
 
       snapshotEnsembles.EpochBatches() = 10 / (double)1000;
       // Create all restart epochs.
@@ -57,45 +62,13 @@ TEST_CASE("SnapshotEnsemblesResetTest","[SnapshotEnsemblesTest]")
   }
 }
 
-/**
- * Run SGDR with snapshot ensembles on logistic regression and make sure the
- * results are acceptable.
- */
-TEST_CASE("SnapshotEnsemblesLogisticRegressionTest","[SnapshotEnsemblesTest]")
+TEMPLATE_TEST_CASE("SnapshotSGDR_LogisticRegressionFunction", "[SnapshotSGDR]",
+    ENS_ALL_TEST_TYPES)
 {
   // Run SGDR with snapshot ensembles on a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
+  for (size_t batchSize = 10; batchSize < 50; batchSize += 10)
   {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest(sgdr, 0.003, 0.006);
-  }
-}
-
-/**
- * Run SGDR with snapshot ensembles on logistic regression and make sure the
- * results are acceptable.  Use arma::fmat.
- */
-TEST_CASE("SnapshotEnsemblesLogisticRegressionFMatTest","[SnapshotEnsemblesTest]")
-{
-  // Run SGDR with snapshot ensembles on a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
-  {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest<arma::fmat>(sgdr, 0.03, 0.06, 3);
-  }
-}
-
-/**
- * Run SGDR with snapshot ensembles on logistic regression and make sure the
- * results are acceptable.  Use arma::sp_mat.
- */
-TEST_CASE("SnapshotEnsemblesLogisticRegressionSpMatTest",
-          "[SnapshotEnsemblesTest]")
-{
-  // Run SGDR with snapshot ensembles on a couple of batch sizes.
-  for (size_t batchSize = 5; batchSize < 50; batchSize += 5)
-  {
-    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.01, 10000, 1e-3);
-    LogisticRegressionFunctionTest<arma::sp_mat>(sgdr, 0.003, 0.006);
+    SnapshotSGDR<> sgdr(50, 2.0, batchSize, 0.005 * batchSize, 10000, 1e-3);
+    LogisticRegressionFunctionTest<TestType, arma::Row<size_t>>(sgdr);
   }
 }

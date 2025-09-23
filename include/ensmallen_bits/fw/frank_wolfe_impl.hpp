@@ -41,12 +41,12 @@ template<
     typename UpdateRuleType>
 template<typename FunctionType, typename MatType, typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsArmaType<GradType>::value,
-typename MatType::elem_type>::type
+typename std::enable_if<IsMatrixType<GradType>::value,
+    typename MatType::elem_type>::type
 FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
-  FunctionType& function,
-  MatType& iterateIn,
-  CallbackTypes&&... callbacks)
+    FunctionType& function,
+    MatType& iterateIn,
+    CallbackTypes&&... callbacks)
 {
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
@@ -95,7 +95,7 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
     if (gap < tolerance)
     {
       Info << "FrankWolfe::Optimize(): minimized within tolerance "
-          << tolerance << "; " << "terminating optimization." << std::endl;
+          << tolerance << "; terminating optimization." << std::endl;
 
       Callback::EndOptimization(*this, f, iterate, callbacks...);
       return currentObjective;
@@ -109,8 +109,11 @@ FrankWolfe<LinearConstrSolverType, UpdateRuleType>::Optimize(
     terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
-  Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
-      << ") reached; " << "terminating optimization." << std::endl;
+  if (!terminate)
+  {
+    Info << "FrankWolfe::Optimize(): maximum iterations (" << maxIterations
+        << ") reached; terminating optimization." << std::endl;
+  }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);
   return currentObjective;

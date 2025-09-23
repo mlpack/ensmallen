@@ -106,7 +106,7 @@ typename MatType::elem_type LineSearch::Derivative(FunctionType& function,
 {
   GradType gradient(x0.n_rows, x0.n_cols);
   function.Gradient(x0 + gamma * deltaX, gradient);
-  return arma::dot(gradient, deltaX);
+  return dot(gradient, deltaX);
 }
 
 } // namespace ens

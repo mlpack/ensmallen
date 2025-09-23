@@ -30,11 +30,11 @@ namespace ens {
  *
  * @code
  * @article{Kingma2014,
- *   author    = {Diederik P. Kingma and Jimmy Ba},
- *   title     = {Adam: {A} Method for Stochastic Optimization},
- *   journal   = {CoRR},
- *   year      = {2014},
- *   url       = {http://arxiv.org/abs/1412.6980}
+ *   author  = {Diederik P. Kingma and Jimmy Ba},
+ *   title   = {Adam: {A} Method for Stochastic Optimization},
+ *   journal = {CoRR},
+ *   year    = {2014},
+ *   url     = {http://arxiv.org/abs/1412.6980}
  * }
  * @endcode
  */
@@ -84,6 +84,8 @@ class AdaMaxUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -94,10 +96,16 @@ class AdaMaxUpdate
      */
     Policy(AdaMaxUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
         iteration(0)
     {
       m.zeros(rows, cols);
       u.zeros(rows, cols);
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -115,17 +123,17 @@ class AdaMaxUpdate
       ++iteration;
 
       // And update the iterate.
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
       // Update the exponentially weighted infinity norm.
-      u *= parent.beta2;
-      u = arma::max(u, arma::abs(gradient));
+      u *= beta2;
+      u = max(u, abs(gradient));
 
-      const double biasCorrection1 = 1.0 - std::pow(parent.beta1, iteration);
+      const ElemType biasCorrection1 = 1 - std::pow(beta1, ElemType(iteration));
 
       if (biasCorrection1 != 0)
-        iterate -= (stepSize / biasCorrection1 * m / (u + parent.epsilon));
+        iterate -= (ElemType(stepSize) / biasCorrection1 * m / (u + epsilon));
     }
 
    private:
@@ -135,6 +143,10 @@ class AdaMaxUpdate
     GradType m;
     // The exponentially weighted infinity norm.
     GradType u;
+    // Tuning parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
     // The number of iterations.
     size_t iteration;
   };

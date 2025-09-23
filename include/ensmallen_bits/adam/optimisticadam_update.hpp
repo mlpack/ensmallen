@@ -27,11 +27,11 @@ namespace ens {
  *
  * @code
  * @article{
- *   author  = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
- *              Haoyang Zeng},
- *   title   = {Training GANs with Optimism},
- *   year    = {2017},
- *   url     = {https://arxiv.org/abs/1711.00141}
+ *   author = {Constantinos Daskalakis, Andrew Ilyas, Vasilis Syrgkanis,
+ *             Haoyang Zeng},
+ *   title  = {Training GANs with Optimism},
+ *   year   = {2017},
+ *   url    = {https://arxiv.org/abs/1711.00141}
  * }
  * @endcode
  */
@@ -81,6 +81,8 @@ class OptimisticAdamUpdate
   class Policy
   {
    public:
+    typedef typename MatType::elem_type ElemType;
+
     /**
      * This constructor is called by the SGD Optimize() method before the start
      * of the iteration update process.
@@ -91,11 +93,18 @@ class OptimisticAdamUpdate
      */
     Policy(OptimisticAdamUpdate& parent, const size_t rows, const size_t cols) :
         parent(parent),
+        epsilon(ElemType(parent.epsilon)),
+        beta1(ElemType(parent.beta1)),
+        beta2(ElemType(parent.beta2)),
         iteration(0)
     {
       m.zeros(rows, cols);
       v.zeros(rows, cols);
       g.zeros(rows, cols);
+
+      // Attempt to detect underflow.
+      if (epsilon == ElemType(0) && parent.epsilon != 0.0)
+        epsilon = 10 * std::numeric_limits<ElemType>::epsilon();
     }
 
     /**
@@ -113,18 +122,18 @@ class OptimisticAdamUpdate
       ++iteration;
 
       // And update the iterate.
-      m *= parent.beta1;
-      m += (1 - parent.beta1) * gradient;
+      m *= beta1;
+      m += (1 - beta1) * gradient;
 
-      v *= parent.beta2;
-      v += (1 - parent.beta2) * arma::square(gradient);
+      v *= beta2;
+      v += (1 - beta2) * square(gradient);
 
-      GradType mCorrected = m / (1.0 - std::pow(parent.beta1, iteration));
-      GradType vCorrected = v / (1.0 - std::pow(parent.beta2, iteration));
+      GradType mCorrected = m / (1 - std::pow(beta1, ElemType(iteration)));
+      GradType vCorrected = v / (1 - std::pow(beta2, ElemType(iteration)));
 
-      GradType update = mCorrected / (arma::sqrt(vCorrected) + parent.epsilon);
+      GradType update = mCorrected / (sqrt(vCorrected) + epsilon);
 
-      iterate -= (2 * stepSize * update - stepSize * g);
+      iterate -= (2 * ElemType(stepSize) * update - ElemType(stepSize) * g);
 
       g = std::move(update);
     }
@@ -141,6 +150,11 @@ class OptimisticAdamUpdate
 
     // The previous update.
     GradType g;
+
+    // Parameters converted to the element type of the optimization.
+    ElemType epsilon;
+    ElemType beta1;
+    ElemType beta2;
 
     // The number of iterations.
     size_t iteration;

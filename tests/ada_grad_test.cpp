@@ -9,7 +9,10 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#if defined(ENS_USE_COOT)
+  #include <armadillo>
+  #include <bandicoot>
+#endif
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
@@ -17,20 +20,10 @@
 using namespace ens;
 using namespace ens::test;
 
-/**
- * Run AdaGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaGradLogisticRegressionTest", "[AdaGradTest]")
+TEMPLATE_TEST_CASE("AdaGrad_LogisticRegressionFunction", "[AdaGrad]",
+    ENS_ALL_TEST_TYPES)
 {
-  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest(adagrad, 0.003, 0.006);
-}
-
-/**
- * Run AdaGrad on logistic regression and make sure the results are acceptable.
- */
-TEST_CASE("AdaGradLogisticRegressionTestFMat", "[AdaGradTest]")
-{
-  AdaGrad adagrad(0.99, 32, 1e-8, 5000000, 1e-9, true);
-  LogisticRegressionFunctionTest<arma::fmat>(adagrad, 0.003, 0.006);
+  AdaGrad adagrad(31.5, 32, 10 * Tolerances<TestType>::Obj, 500000,
+      Tolerances<TestType>::Obj, true);
+  LogisticRegressionFunctionTest<TestType>(adagrad);
 }
