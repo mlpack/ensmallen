@@ -8,9 +8,10 @@ you have an improvement you would like to see, we would love to include it!
 
 The ensmallen maintainer community overlaps heavily with the
 [mlpack](https://github.com/mlpack/mlpack) community, so development discussions
-can happen either here on Github, on the [mlpack mailing
-list](http://lists.mlpack.org/mailman/listinfo/mlpack), or in the #mlpack
-IRC channel on irc.freenode.net.
+can happen either here on Github or in the `#mlpack:matrix.org` channel on
+[Matrix](https://www.matrix.org/).  See
+[here](https://www.mlpack.org/doc/developer/community.html) for more
+information.
 
 Once a pull request is submitted, it must be reviewed and approved before a
 merge, to ensure that:
