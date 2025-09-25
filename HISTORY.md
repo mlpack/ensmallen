@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 3.10.0: "Unexpected Rain"
+###### 2025-09-25
  * SGD-like optimizers now all divide the step size by the batch size so that
    step sizes don't need to be tuned in addition to batch sizes.  If you require
    behavior from ensmallen 2, define the `ENS_OLD_SEPARABLE_STEP_BEHAVIOR` macro

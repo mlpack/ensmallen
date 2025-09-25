@@ -21,11 +21,11 @@
 // (i.e. the version name will be "RC1", "RC2", etc.).  Otherwise the version
 // name will typically be a seemingly arbitrary set of words that does not
 // contain the capitalized string "RC".
-#define ENS_VERSION_NAME "RC1"
+#define ENS_VERSION_NAME "Unexpected Rain"
 // Incorporate the date the version was released.
 #define ENS_VERSION_YEAR "2025"
-#define ENS_VERSION_MONTH "04"
-#define ENS_VERSION_DAY "30"
+#define ENS_VERSION_MONTH "09"
+#define ENS_VERSION_DAY "25"
 
 namespace ens {
 
