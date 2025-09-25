@@ -203,30 +203,28 @@ class NSGA2
    *
    * @tparam ArbitraryFunctionType std::tuple of multiple function types.
    * @tparam InputMatType Type of matrix to optimize.
-   * @tparam ObjectiveMatType Type of matrix to store objective values.
    * @param population The elite population.
    * @param objectives The set of objectives.
-   * @param calculatedObjectives Vector to store calculated objectives.
+   * @param calculatedObjectives Matrix to store calculated objectives (numObjectives x 1 x populationSize).
    */
   template<std::size_t I = 0,
-           typename InputMatType,
+           typename MatType,
            typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
-  EvaluateObjectives(
-      std::vector<InputMatType>&,
-      std::tuple<ArbitraryFunctionType...>&,
-      std::vector<ObjectiveMatType>&);
+  EvaluateObjectives(std::vector<MatType>&,
+                     std::tuple<ArbitraryFunctionType...>&,
+                     ObjectiveMatType&);
 
   template<std::size_t I = 0,
-           typename InputMatType,
+           typename MatType,
            typename ObjectiveMatType,
            typename ...ArbitraryFunctionType>
   typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
   EvaluateObjectives(
-      std::vector<InputMatType>& population,
+      std::vector<MatType>& population,
       std::tuple<ArbitraryFunctionType...>& objectives,
-      std::vector<ObjectiveMatType>& calculatedObjectives);
+      ObjectiveMatType& calculatedObjectives);
 
   /**
    * Reproduce candidates from the elite population to generate a new
@@ -285,11 +283,11 @@ class NSGA2
    * @param ranks The assigned ranks, used for crowding distance based sorting.
    * @param calculatedObjectives The previously calculated objectives.
    */
-  template<typename InputMatType, typename ObjectiveMatType>
+  template<typename MatType>
   void FastNonDominatedSort(
       std::vector<std::vector<size_t> >& fronts,
       std::vector<size_t>& ranks,
-      std::vector<ObjectiveMatType>& calculatedObjectives);
+      MatType& calculatedObjectives);
 
   /**
    * Operator to check if one candidate Pareto-dominates the other.
@@ -304,9 +302,9 @@ class NSGA2
    * @param candidateQ The candidate being compared against.
    * @return true if candidateP Pareto dominates candidateQ, otherwise, false.
    */
-  template<typename InputMatType, typename ObjectiveMatType>
+  template<typename MatType>
   bool Dominates(
-      std::vector<ObjectiveMatType>& calculatedObjectives,
+      MatType& calculatedObjectives,
       size_t candidateP,
       size_t candidateQ);
 
@@ -318,11 +316,11 @@ class NSGA2
    * @param crowdingDistance The crowding distance for each individual in
    *    the population.
    */
-  template <typename InputMatType, typename ObjectiveMatType>
+  template <typename MatType>
   void CrowdingDistanceAssignment(
       const std::vector<size_t>& front,
-      std::vector<ObjectiveMatType>& calculatedObjectives,
-      std::vector<typename InputMatType::elem_type>& crowdingDistance);
+      MatType& calculatedObjectives,
+      std::vector<typename MatType::elem_type>& crowdingDistance);
 
   /**
    * The operator used in the crowding distance based sorting.

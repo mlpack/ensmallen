@@ -97,7 +97,6 @@ typename MatType::elem_type NSGA2::Optimize(
   // Convenience typedefs.
   typedef typename MatType::elem_type ElemType;
   typedef typename MatTypeTraits<MatType>::BaseMatType BaseMatType;
-  typedef typename ForwardType<MatType>::bcol BaseColType;
   typedef typename ForwardType<CubeType>::bmat CubeBaseMatType;
 
   BaseMatType& iterate = (BaseMatType&) iterateIn;
@@ -124,8 +123,9 @@ typename MatType::elem_type NSGA2::Optimize(
   numObjectives = sizeof...(ArbitraryFunctionType);
   numVariables = iterate.n_rows;
 
-  // Cache calculated objectives.
-  std::vector<BaseColType> calculatedObjectives(populationSize);
+  // Cache calculated objectives as a matrix: (numObjectives x populationSize).
+  arma::Mat<ElemType> calculatedObjectives(numObjectives, populationSize,
+      arma::fill::zeros);
 
   // Population size reserved to 2 * populationSize + 1 to accommodate
   // for the size of intermediate candidate population.
@@ -175,22 +175,20 @@ typename MatType::elem_type NSGA2::Optimize(
     BinaryTournamentSelection(population, castedLowerBound, castedUpperBound);
 
     // Evaluate the objectives for the new population.
-    calculatedObjectives.resize(population.size());
-    std::fill(calculatedObjectives.begin(), calculatedObjectives.end(),
-        BaseColType(numObjectives, GetFillType<MatType>::zeros));
+    calculatedObjectives.zeros(numObjectives, population.size());
     EvaluateObjectives(population, objectives, calculatedObjectives);
 
     // Perform fast non dominated sort on P_t ∪ G_t.
     ranks.resize(population.size());
-    FastNonDominatedSort<BaseMatType>(fronts, ranks, calculatedObjectives);
+    FastNonDominatedSort(fronts, ranks, calculatedObjectives);
 
     // Perform crowding distance assignment.
     crowdingDistance.resize(population.size());
     std::fill(crowdingDistance.begin(), crowdingDistance.end(), 0.);
     for (size_t fNum = 0; fNum < fronts.size(); fNum++)
     {
-      CrowdingDistanceAssignment<BaseMatType, BaseColType>(
-          fronts[fNum], calculatedObjectives, crowdingDistance);
+      CrowdingDistanceAssignment(fronts[fNum], calculatedObjectives,
+          crowdingDistance);
     }
 
     // Sort based on crowding distance.
@@ -234,12 +232,11 @@ typename MatType::elem_type NSGA2::Optimize(
   }
 
   // Set the candidates from the Pareto Front as the output.
-  paretoFrontIn.set_size(calculatedObjectives[0].n_rows,
-      calculatedObjectives[0].n_cols, fronts[0].size());
+  paretoFrontIn.set_size(calculatedObjectives.n_rows, 1, fronts[0].size());
   for (size_t solutionIdx = 0; solutionIdx < fronts[0].size(); ++solutionIdx)
   {
     paretoFrontIn.slice(solutionIdx) = conv_to<CubeBaseMatType>::from(
-        calculatedObjectives[fronts[0][solutionIdx]]);
+        calculatedObjectives.col(fronts[0][solutionIdx]));
   }
 
   // Assign iterate to first element of the Pareto Set.
@@ -249,45 +246,43 @@ typename MatType::elem_type NSGA2::Optimize(
 
   ElemType performance = std::numeric_limits<ElemType>::max();
 
-  for (const BaseColType& objective: calculatedObjectives)
-    if (accu(objective) < performance)
-      performance = accu(objective);
+  for (size_t i = 0; i < calculatedObjectives.n_cols; ++i)
+    performance = std::min(performance, arma::accu(calculatedObjectives.col(i)));
 
   return performance;
 }
 
 //! No objectives to evaluate.
 template<std::size_t I,
-         typename InputMatType,
+         typename MatType,
          typename ObjectiveMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I == sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
-    std::vector<InputMatType>&,
+    std::vector<MatType>&,
     std::tuple<ArbitraryFunctionType...>&,
-    std::vector<ObjectiveMatType>&)
+    ObjectiveMatType&)
 {
   // Nothing to do here.
 }
 
 //! Evaluate the objectives for the entire population.
 template<std::size_t I,
-         typename InputMatType,
+         typename MatType,
          typename ObjectiveMatType,
          typename ...ArbitraryFunctionType>
 typename std::enable_if<I < sizeof...(ArbitraryFunctionType), void>::type
 NSGA2::EvaluateObjectives(
-    std::vector<InputMatType>& population,
+    std::vector<MatType>& population,
     std::tuple<ArbitraryFunctionType...>& objectives,
-    std::vector<ObjectiveMatType>& calculatedObjectives)
+    ObjectiveMatType& calculatedObjectives)
 {
   for (size_t i = 0; i < populationSize; i++)
   {
-    calculatedObjectives[i](I) = std::get<I>(objectives).Evaluate(
-        population[i]);
-    EvaluateObjectives<
-        I + 1, InputMatType, ObjectiveMatType, ArbitraryFunctionType...>(
-        population, objectives, calculatedObjectives);
+    calculatedObjectives(I, i) =
+        std::get<I>(objectives).Evaluate(population[i]);
+    EvaluateObjectives<I + 1, MatType, ObjectiveMatType,
+        ArbitraryFunctionType...>(population, objectives, calculatedObjectives);
   }
 }
 
@@ -375,11 +370,11 @@ void NSGA2::Mutate(
 }
 
 //! Sort population into Pareto fronts.
-template<typename InputMatType, typename ObjectiveMatType>
+template<typename MatType>
 void NSGA2::FastNonDominatedSort(
     std::vector<std::vector<size_t> >& fronts,
     std::vector<size_t>& ranks,
-    std::vector<ObjectiveMatType>& calculatedObjectives)
+    MatType& calculatedObjectives)
 {
   std::map<size_t, size_t> dominationCount;
   std::map<size_t, std::set<size_t> > dominated;
@@ -395,9 +390,9 @@ void NSGA2::FastNonDominatedSort(
 
     for (size_t q = 0; q < populationSize; q++)
     {
-      if (Dominates<InputMatType>(calculatedObjectives, p, q))
+      if (Dominates<MatType>(calculatedObjectives, p, q))
         dominated[p].insert(q);
-      else if (Dominates<InputMatType>(calculatedObjectives, q, p))
+      else if (Dominates<MatType>(calculatedObjectives, q, p))
         dominationCount[p] += 1;
     }
 
@@ -436,26 +431,26 @@ void NSGA2::FastNonDominatedSort(
 }
 
 //! Check if a candidate Pareto dominates another candidate.
-template<typename InputMatType, typename ObjectiveMatType>
-bool NSGA2::Dominates(
-    std::vector<ObjectiveMatType>& calculatedObjectives,
+template<typename MatType>
+inline bool NSGA2::Dominates(
+    MatType& calculatedObjectives,
     size_t candidateP,
     size_t candidateQ)
 {
   bool allBetterOrEqual = true;
   bool atleastOneBetter = false;
-  size_t n_objectives = calculatedObjectives[0].n_elem;
+  const size_t n_objectives = calculatedObjectives.n_rows;
 
   for (size_t i = 0; i < n_objectives; i++)
   {
     // P is worse than Q for the i-th objective function.
-    if (calculatedObjectives[candidateP](i) >
-        calculatedObjectives[candidateQ](i))
+    if (calculatedObjectives(i, candidateP) >
+        calculatedObjectives(i, candidateQ))
       allBetterOrEqual = false;
 
     // P is better than Q for the i-th objective function.
-    else if (calculatedObjectives[candidateP](i) <
-             calculatedObjectives[candidateQ](i))
+    else if (calculatedObjectives(i, candidateP) <
+             calculatedObjectives(i, candidateQ))
       atleastOneBetter = true;
   }
 
@@ -463,16 +458,16 @@ bool NSGA2::Dominates(
 }
 
 //! Assign crowding distance to the population.
-template <typename InputMatType, typename ObjectiveMatType>
+template <typename MatType>
 void NSGA2::CrowdingDistanceAssignment(
     const std::vector<size_t>& front,
-    std::vector<ObjectiveMatType>& calculatedObjectives,
-    std::vector<typename InputMatType::elem_type>& crowdingDistance)
+    MatType& calculatedObjectives,
+    std::vector<typename MatType::elem_type>& crowdingDistance)
 {
   // Convenience typedefs.
-  typedef typename InputMatType::elem_type ElemType;
-  typedef typename ForwardType<InputMatType>::uvec UVecType;
-  typedef typename ForwardType<ObjectiveMatType>::bcol BaseColType;
+  typedef typename MatType::elem_type ElemType;
+  typedef typename ForwardType<MatType>::uvec UVecType;
+  typedef typename ForwardType<MatType>::bcol BaseColType;
 
   size_t fSize = front.size();
   // Stores the sorted indices of the fronts.
@@ -482,11 +477,8 @@ void NSGA2::CrowdingDistanceAssignment(
   {
     // Cache fValues of individuals for current objective.
     BaseColType fValues(fSize);
-    for (size_t i = 0; i < front.size(); ++i)
-    {
-      size_t individual = front[i];
-      fValues[i] = calculatedObjectives[individual](m);
-    }
+    for (size_t k = 0; k < fSize; ++k)
+      fValues(k) = calculatedObjectives(m, size_t(front[k]));
 
     // Sort front indices by ascending fValues for current objective.
     sortedIdx = sort_index(fValues, "ascend");
