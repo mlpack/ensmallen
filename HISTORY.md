@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 3.10.0: "Unexpected Rain"
 ###### 2025-09-25
  * SGD-like optimizers now all divide the step size by the batch size so that
