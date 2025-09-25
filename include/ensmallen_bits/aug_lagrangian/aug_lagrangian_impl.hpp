@@ -30,27 +30,25 @@ inline AugLagrangianType<VecType>::AugLagrangianType(
     sigmaUpdateFactor(sigmaUpdateFactor),
     lbfgs(lbfgs),
     terminate(false),
-    sigma(0.0)
+    deprecatedSigma(0.0)
 {
 }
 
 template<typename VecType>
 template<typename LagrangianFunctionType,
          typename MatType,
+         typename InVecType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
 AugLagrangianType<VecType>::Optimize(
     LagrangianFunctionType& function,
     MatType& coordinates,
-    const VecType& initLambda,
-    const double initSigma,
+    InVecType& lambda,
+    double& sigma,
     CallbackTypes&&... callbacks)
 {
-  lambda = initLambda;
-  sigma = initSigma;
-
-  AugLagrangianFunction<LagrangianFunctionType, VecType> augfunc(
+  AugLagrangianFunction<LagrangianFunctionType, InVecType> augfunc(
       function, lambda, sigma);
 
   return Optimize(augfunc, coordinates, callbacks...);
@@ -61,23 +59,37 @@ template<typename LagrangianFunctionType,
          typename MatType,
          typename GradType,
          typename... CallbackTypes>
-typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
+typename std::enable_if<IsMatrixType<GradType>::value &&
+                        IsAllNonMatrix<CallbackTypes...>::value, bool>::type
 AugLagrangianType<VecType>::Optimize(LagrangianFunctionType& function,
-                        MatType& coordinates,
-                        CallbackTypes&&... callbacks)
+                                     MatType& coordinates,
+                                     CallbackTypes&&... callbacks)
 {
+  typedef typename ForwardType<MatType>::bvec InVecType;
+
   // If the user did not specify the right size for sigma and lambda, we will
   // use defaults.
-  if (!lambda.is_empty())
+  // TODO: remove this when ensmallen 4.x is released!
+  if (!deprecatedLambda.is_empty())
   {
-    AugLagrangianFunction<LagrangianFunctionType, decltype(lambda)> augfunc(
-        function, lambda, sigma);
-    return Optimize(augfunc, coordinates, callbacks...);
+    InVecType lambda(conv_to<InVecType>::from(deprecatedLambda));
+
+    AugLagrangianFunction<LagrangianFunctionType, InVecType> augfunc(function,
+        lambda, deprecatedSigma);
+    const bool result = Optimize(augfunc, coordinates, callbacks...);
+    deprecatedLambda = conv_to<VecType>::from(lambda);
+
+    return result;
   }
   else
   {
-    AugLagrangianFunction<LagrangianFunctionType, decltype(lambda)> augfunc(
-        function);
+    // Use default values.
+    InVecType lambda(function.NumConstraints());
+    lambda.zeros();
+    double sigma = 10;
+
+    AugLagrangianFunction<LagrangianFunctionType, InVecType> augfunc(
+        function, lambda, sigma);
     return Optimize(augfunc, coordinates, callbacks...);
   }
 }
@@ -85,11 +97,12 @@ AugLagrangianType<VecType>::Optimize(LagrangianFunctionType& function,
 template<typename VecType>
 template<typename LagrangianFunctionType,
          typename MatType,
+         typename InVecType,
          typename GradType,
          typename... CallbackTypes>
 typename std::enable_if<IsMatrixType<GradType>::value, bool>::type
 AugLagrangianType<VecType>::Optimize(
-    AugLagrangianFunction<LagrangianFunctionType, VecType>& augfunc,
+    AugLagrangianFunction<LagrangianFunctionType, InVecType>& augfunc,
     MatType& coordinatesIn,
     CallbackTypes&&... callbacks)
 {
@@ -157,9 +170,6 @@ AugLagrangianType<VecType>::Optimize(
     if (std::abs(lastObjective - objective) < tolerance &&
         augfunc.Sigma() > 500000)
     {
-      lambda = std::move(augfunc.Lambda());
-      sigma = augfunc.Sigma();
-
       Callback::EndOptimization(*this, function, coordinates, callbacks...);
       return true;
     }
@@ -198,7 +208,7 @@ AugLagrangianType<VecType>::Optimize(
         terminate |= Callback::EvaluateConstraint(*this, function, coordinates,
             i, p, callbacks...);
 
-        augfunc.Lambda()[i] -= augfunc.Sigma() * p;
+        augfunc.Lambda()[i] -= ElemType(augfunc.Sigma()) * p;
       }
 
       // We also update the penalty threshold to be a factor of the current

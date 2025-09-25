@@ -22,12 +22,12 @@ Documentation and downloads: https://ensmallen.org
 
 ### Installation
 
-ensmallen can be installed in several ways: either manually or via cmake, 
+ensmallen can be installed in several ways: either manually or via cmake,
 with or without root access.
 
-The cmake based installation will check the requirements 
-and optionally build the tests. If cmake 3.3 (or a later version) 
-is not already available on your system, it can be obtained 
+The cmake based installation will check the requirements
+and optionally build the tests. If cmake 3.3 (or a later version)
+is not already available on your system, it can be obtained
 from [cmake.org](https://cmake.org).
 
 Example cmake based installation with root access:
@@ -39,7 +39,7 @@ cmake ..
 sudo make install
 ```
 
-Example cmake based installation without root access, 
+Example cmake based installation without root access,
 installing into `/home/blah/` (adapt as required):
 
 ```
@@ -49,7 +49,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/home/blah/
 make install
 ```
 
-The above will create a directory named `/home/blah/include/` 
+The above will create a directory named `/home/blah/include/`
 and place all ensmallen headers there.
 
 To optionally build and run the tests
@@ -61,10 +61,10 @@ make ensmallen_tests
 ./ensmallen_tests --durations yes
 ```
 
-Manual installation involves simply copying the `include/ensmallen.hpp` header 
-***and*** the associated `include/ensmallen_bits` directory to a location 
+Manual installation involves simply copying the `include/ensmallen.hpp` header
+***and*** the associated `include/ensmallen_bits` directory to a location
 such as `/usr/include/` which is searched by your C++ compiler.
-If you can't use `sudo` or don't have write access to `/usr/include/`, 
+If you can't use `sudo` or don't have write access to `/usr/include/`,
 use a directory within your own home directory (eg. `/home/blah/include/`).
 
 
@@ -73,11 +73,11 @@ use a directory within your own home directory (eg. `/home/blah/include/`).
 If you have installed ensmallen in a standard location such as `/usr/include/`:
 
     g++ prog.cpp -o prog -O2 -larmadillo
-    
-If you have installed ensmallen in a non-standard location, 
-such as `/home/blah/include/`, you will need to make sure 
-that your C++ compiler searches `/home/blah/include/` 
-by explicitly specifying the directory as an argument/option. 
+
+If you have installed ensmallen in a non-standard location,
+such as `/home/blah/include/`, you will need to make sure
+that your C++ compiler searches `/home/blah/include/`
+by explicitly specifying the directory as an argument/option.
 For example, using the `-I` switch in gcc and clang:
 
     g++ prog.cpp -o prog -O2 -I /home/blah/include/ -larmadillo
@@ -85,7 +85,7 @@ For example, using the `-I` switch in gcc and clang:
 
 ### Example Optimization
 
-See [`example.cpp`](example.cpp) for example usage of the L-BFGS optimizer 
+See [`example.cpp`](example.cpp) for example usage of the L-BFGS optimizer
 in a linear regression setting.
 
 
@@ -103,8 +103,8 @@ Please cite the following paper if you use ensmallen in your research and/or
 software. Citations are useful for the continued development and maintenance of
 the library.
 
-* Ryan R. Curtin, Marcus Edel, Rahul Ganesh Prabhu, Suryoday Basak, Zhihao Lou, Conrad Sanderson.  
-  [The ensmallen library for flexible numerical optimization](https://jmlr.org/papers/volume22/20-416/20-416.pdf).  
+* Ryan R. Curtin, Marcus Edel, Rahul Ganesh Prabhu, Suryoday Basak, Zhihao Lou, Conrad Sanderson.
+  [The ensmallen library for flexible numerical optimization](https://jmlr.org/papers/volume22/20-416/20-416.pdf).
   Journal of Machine Learning Research, Vol. 22, No. 166, 2021.
 
 ```

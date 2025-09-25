@@ -36,15 +36,6 @@ class AugLagrangianFunction
 {
  public:
   /**
-   * Initialize the AugLagrangianFunction, but don't set the Lagrange
-   * multipliers or penalty parameters yet.  Make sure you set the Lagrange
-   * multipliers before you use this...
-   *
-   * @param function Lagrangian function.
-   */
-  AugLagrangianFunction(LagrangianFunction& function);
-
-  /**
    * Initialize the AugLagrangianFunction with the given LagrangianFunction,
    * Lagrange multipliers, and initial penalty parameter.
    *
@@ -53,8 +44,8 @@ class AugLagrangianFunction
    * @param sigma Initial penalty parameter.
    */
   AugLagrangianFunction(LagrangianFunction& function,
-                        const VecType& lambda,
-                        const double sigma);
+                        VecType& lambda,
+                        double& sigma);
   /**
    * Evaluate the objective function of the Augmented Lagrangian function, which
    * is the standard Lagrangian function evaluation plus a penalty term, which
@@ -84,14 +75,9 @@ class AugLagrangianFunction
   template<typename MatType>
   const MatType& GetInitialPoint() const;
 
-  //! Get the Lagrange multipliers.
-  const VecType& Lambda() const { return lambda; }
-  //! Modify the Lagrange multipliers.
+  // Get the Lagrange multipliers.
   VecType& Lambda() { return lambda; }
-
-  //! Get sigma (the penalty parameter).
-  double Sigma() const { return sigma; }
-  //! Modify sigma (the penalty parameter).
+  // Get the penalty parameter.
   double& Sigma() { return sigma; }
 
   //! Get the Lagrangian function.
@@ -104,9 +90,9 @@ class AugLagrangianFunction
   LagrangianFunction& function;
 
   //! The Lagrange multipliers.
-  VecType lambda;
+  VecType& lambda;
   //! The penalty parameter.
-  double sigma;
+  double& sigma;
 };
 
 } // namespace ens
