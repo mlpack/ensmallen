@@ -121,7 +121,7 @@ class AugLagrangianType
   {
     deprecatedLambda = initLambda;
     deprecatedSigma = initSigma;
-    const bool result = Optimize(function, coordinates, this->deprecatedLambda,
+    return Optimize(function, coordinates, this->deprecatedLambda,
         this->deprecatedSigma,
         std::forward<CallbackTypes>(callbacks)...);
   }
