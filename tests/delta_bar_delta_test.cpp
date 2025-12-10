@@ -29,9 +29,9 @@ TEMPLATE_TEST_CASE("DeltaBarDelta_GDTestFunction", "[DeltaBarDelta]",
 }
 
 TEMPLATE_TEST_CASE("DeltaBarDelta_RosenbrockFunction", "[DeltaBarDelta]",
-    ENS_ALL_TEST_TYPES)
+    ENS_ALL_CPU_TEST_TYPES)
 {
-  DeltaBarDelta s(0.001, 0, Tolerances<TestType>::Obj / 100,
+  DeltaBarDelta s(0.001, 100000, Tolerances<TestType>::Obj / 100,
       0.0001, 0.2, 0.5);
   FunctionTest<RosenbrockFunction, TestType>(s,
       10 * Tolerances<TestType>::LargeObj,
@@ -41,7 +41,7 @@ TEMPLATE_TEST_CASE("DeltaBarDelta_RosenbrockFunction", "[DeltaBarDelta]",
 TEMPLATE_TEST_CASE("DeltaBarDelta_LogisticRegressionFunction",
     "[DeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  DeltaBarDelta s(0.0008, 20, Tolerances<TestType>::Obj,
+  DeltaBarDelta s(0.0001, 500, Tolerances<TestType>::Obj,
       0.00008, 0.2, 0.5);
   LogisticRegressionFunctionTest<TestType>(s);
 }

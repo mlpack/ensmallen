@@ -133,11 +133,12 @@ class MomentumDeltaBarDeltaUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      gains += (sign(gradient) != sign(velocity)) * kappa -
-          (sign(gradient) == sign(velocity)) * (1 - phi) % gains;
-      gains.clamp(minGain, arma::Datum<typename MatType::elem_type>::inf);
+      gains += conv_to<MatType>::from(
+          (sign(gradient) != sign(velocity)) * kappa -
+          (sign(gradient) == sign(velocity)) * (1 - phi) % gains);
+      gains.clamp(minGain, arma::Datum<ElemType>::inf);
 
-      velocity = momentum * velocity - (stepSize * gains) % gradient;
+      velocity = momentum * velocity - (ElemType(stepSize) * gains) % gradient;
       iterate += velocity;
     }
 

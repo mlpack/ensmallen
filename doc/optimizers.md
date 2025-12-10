@@ -2470,11 +2470,11 @@ for all Lagrange multipliers and 10 is used as the initial penalty parameter.
 
 *An optimizer for [differentiable functions](#differentiable-functions).*
 
-A DeltaBarDelta variant that incorporates the following modifications:
- - In the original DeltaBarDelta, the momentum term (delta_bar) is used
+A [DeltaBarDelta](#deltabardelta) variant that incorporates the following modifications:
+ - In the original DeltaBarDelta, the momentum term (`delta_bar`) is used
    solely for sign comparison with the current gradient and does not
    participate in the parameter update. In this modified variant, the
-   momentum term (velocity) is directly used to update the parameters.
+   momentum term (`velocity`) is directly used to update the parameters.
  - Instead of adjusting the step size directly, each parameter maintains
    a gain value initialized to 1.0. Updates apply additive increases or
    multiplicative decreases to this gain. The effective step size for a
@@ -2503,7 +2503,7 @@ Note: This variant originates from optimization of the t-SNE cost function.
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every `Optimize()` call. | `true` |
 
 Attributes of the optimizer may also be modified via the member methods
-`StepSize()`, `MaxIterations()`, `Tolerance()`, `Kappa()`, `Phi()`, `Momentum()`, `MinGain`, and `ResetPolicy()`.
+`StepSize()`, `MaxIterations()`, `Tolerance()`, `Kappa()`, `Phi()`, `Momentum()`, `MinGain()`, and `ResetPolicy()`.
 
 #### Examples:
 

@@ -134,7 +134,7 @@ class DeltaBarDeltaUpdate
     {
       deltaBar.zeros(rows, cols);
       epsilon.set_size(rows, cols);
-      epsilon.fill(parent.InitialStepSize());
+      epsilon.fill(ElemType(parent.InitialStepSize()));
     }
 
     /**
@@ -145,15 +145,14 @@ class DeltaBarDeltaUpdate
      * @param delta The gradient matrix.
      */
     void Update(MatType& iterate,
-                const double stepSize,
+                const double /* stepSize */,
                 const GradType& delta)
     {
       const MatType signMatrix = sign(delta % deltaBar);
 
-      epsilon += (signMatrix == +1) * kappa -
-          (signMatrix == -1) * phi % epsilon;
-      epsilon.clamp(minStepSize,
-          arma::Datum<typename MatType::elem_type>::inf);
+      epsilon += conv_to<MatType>((signMatrix == +1) * kappa -
+          (signMatrix == -1) * phi % epsilon);
+      epsilon.clamp(minStepSize, arma::Datum<ElemType>::inf);
 
       deltaBar = theta * deltaBar + (1 - theta) * delta;
       iterate -= epsilon % delta;
