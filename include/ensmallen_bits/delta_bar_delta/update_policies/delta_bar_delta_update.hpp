@@ -150,7 +150,7 @@ class DeltaBarDeltaUpdate
     {
       const MatType signMatrix = sign(delta % deltaBar);
 
-      epsilon += conv_to<MatType>((signMatrix == +1) * kappa -
+      epsilon += conv_to<MatType>::from((signMatrix == +1) * kappa -
           (signMatrix == -1) * phi % epsilon);
       epsilon.clamp(minStepSize, arma::Datum<ElemType>::inf);
 
