@@ -1,5 +1,5 @@
-### ensmallen ?.??.?: "???"
-###### ????-??-??
+### ensmallen 3.11.0: "Sunny Day"
+###### 2025-12-15
  * Refactor `GradientDescent` into
    `GradientDescentType<UpdatePolicyType, DecayPolicyType>` and
    add the `DeltaBarDelta` and `MomentumDeltaBarDelta` optimizers
