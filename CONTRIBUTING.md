@@ -6,6 +6,10 @@ a pull request with an improvement, bugfix, or feature addition, and an
 ensmallen maintainer will review it and help through the merge process.  So if
 you have an improvement you would like to see, we would love to include it!
 
+ensmallen does not accept any source code which has been created
+(directly or indirectly) with the aid of Large Language Models (LLMs).
+This is due to unclear code provenance and questionable quality of LLM generated code.
+
 The ensmallen maintainer community overlaps heavily with the
 [mlpack](https://github.com/mlpack/mlpack) community, so development discussions
 can happen either here on Github or in the `#mlpack:matrix.org` channel on
