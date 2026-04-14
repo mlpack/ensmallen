@@ -560,8 +560,6 @@ TEMPLATE_TEST_CASE("DefaultMOEAD_ZDT1Function", "[MOEAD]", ENS_TEST_TYPES)
  */
 TEMPLATE_TEST_CASE("DirichletMOEAD_ZDT3Function", "[MOEAD]", ENS_TEST_TYPES)
 {
-  typedef typename TestType::elem_type ElemType;
-
   //! Parameters taken from original ZDT Paper.
   ZDT3<TestType> zdt3(300);
   const double lowerBound = 0;
