@@ -52,6 +52,7 @@ endif()
 
 # Find OpenMP and link it.
 if(USE_OPENMP)
+  find_package(OpenMP)
   if(NOT TARGET OpenMP::OpenMP_CXX)
     find_package(Threads REQUIRED)
     add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
@@ -61,6 +62,8 @@ if(USE_OPENMP)
     set_property(TARGET OpenMP::OpenMP_CXX
         PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
   endif()
+
+  add_definitions(-DENS_USE_OPENMP)
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
