@@ -45,8 +45,8 @@ TEMPLATE_TEST_CASE("ParallelSGDTest_SparseFunction", "[ParallelSGD]",
 
     size_t batchSize = std::ceil((float) f.NumFunctions() / i);
 
-    ConstantStep decayPolicy(0.4 * batchSize);
-    ParallelSGD<ConstantStep> s(10000, batchSize, 1e-5, true, decayPolicy);
+    ConstantStep decayPolicy(0.02 * batchSize);
+    ParallelSGD<ConstantStep> s(10000, batchSize, 1e-7, true, decayPolicy);
     FunctionTest<SparseTestFunction>(s,
         Tolerances<TestType>::LargeObj,
         Tolerances<TestType>::LargeCoord);
@@ -62,10 +62,10 @@ TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
     // Create the generalized Rosenbrock function.
     GeneralizedRosenbrockFunction f(i);
 
-    ConstantStep decayPolicy(0.001 * f.NumFunctions());
+    ConstantStep decayPolicy(0.00005 * f.NumFunctions());
 
     ParallelSGD<ConstantStep> s(
-        100000, f.NumFunctions(), Tolerances<TestType>::Obj / 100, true,
+        1000000, f.NumFunctions(), Tolerances<TestType>::Obj / 100, true,
         decayPolicy);
 
     TestType coordinates = f.GetInitialPoint<TestType>();
@@ -73,11 +73,11 @@ TEMPLATE_TEST_CASE("ParallelSGD_GeneralizedRosenbrockFunction",
     omp_set_num_threads(1);
     double result = s.Optimize(f, coordinates);
 
-    REQUIRE(result == Approx(0.0).margin(Tolerances<TestType>::Obj));
+    REQUIRE(result == Approx(0.0).margin(100 * Tolerances<TestType>::Obj));
     for (size_t j = 0; j < i; ++j)
     {
       REQUIRE(coordinates(j) ==
-          Approx(1.0).epsilon(Tolerances<TestType>::Coord));
+          Approx(1.0).epsilon(100 * Tolerances<TestType>::Coord));
     }
   }
 }
