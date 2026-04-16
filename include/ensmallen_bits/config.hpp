@@ -44,12 +44,16 @@
 
 
 #if defined(ENS_USE_OPENMP)
-  #define ENS_PRAGMA_OMP_PARALLEL _Pragma("omp parallel")
-  #define ENS_PRAGMA_OMP_ATOMIC   _Pragma("omp atomic")
-  #define ENS_PRAGMA_OMP_CRITICAL _Pragma("omp critical")
-  #define ENS_PRAGMA_OMP_CRITICAL_NAMED _Pragma("omp critical(section)")
+  #define ENS_PRAGMA_OMP_PARALLEL                      _Pragma("omp parallel")
+  #define ENS_PRAGMA_OMP_PARALLEL_FOR_IF_NUM_THREADS   _Pragma("omp parallel for if(enableParallel) num_threads(numThreads)")
+  #define ENS_PRAGMA_OMP_ATOMIC                        _Pragma("omp atomic")
+  #define ENS_PRAGMA_OMP_CRITICAL                      _Pragma("omp critical")
+  #define ENS_PRAGMA_OMP_CRITICAL_NAMED                _Pragma("omp critical(section)")
+  #include <omp.h>
 #else
   #define ENS_PRAGMA_OMP_PARALLEL
+  #define ENS_PRAGMA_OMP_FOR
+  #define ENS_PRAGMA_OMP_PARALLEL_FOR_IF_NUM_THREADS
   #define ENS_PRAGMA_OMP_ATOMIC
   #define ENS_PRAGMA_OMP_CRITICAL
   #define ENS_PRAGMA_OMP_CRITICAL_NAMED
