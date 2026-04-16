@@ -97,7 +97,8 @@ class PSOType
           const double explorationFactor = 2.05,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
               VelocityUpdatePolicy(),
-          const InitPolicy& initPolicy = InitPolicy()) :
+          const InitPolicy& initPolicy = InitPolicy(),
+          const size_t numThreads = 1) :
           numParticles(numParticles),
           lowerBound(lowerBound),
           upperBound(upperBound),
@@ -107,7 +108,8 @@ class PSOType
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy)
+          initPolicy(initPolicy),
+          numThreads(numThreads)
   { /* Nothing to do. */ }
 
   /**
@@ -143,7 +145,8 @@ class PSOType
           const double explorationFactor = 2.05,
           const VelocityUpdatePolicy& velocityUpdatePolicy =
               VelocityUpdatePolicy(),
-          const InitPolicy& initPolicy = InitPolicy()) :
+          const InitPolicy& initPolicy = InitPolicy(),
+          const size_t numThreads = 1) :
           numParticles(numParticles),
           lowerBound({ lowerBound }),
           upperBound({ upperBound }),
@@ -153,7 +156,8 @@ class PSOType
           exploitationFactor(exploitationFactor),
           explorationFactor(explorationFactor),
           velocityUpdatePolicy(velocityUpdatePolicy),
-          initPolicy(initPolicy)
+          initPolicy(initPolicy),
+          numThreads(numThreads)
   { /* Nothing to do. */ }
 
   /**
@@ -232,6 +236,11 @@ class PSOType
   //! with Has() before using!
   Any& InstUpdatePolicy() { return instUpdatePolicy; }
 
+  //! Get the number of threads to use for parallelization.
+  size_t NumThreads() const { return numThreads; }
+  //! Modify the number of threads to use for parallelization.
+  size_t& NumThreads() { return numThreads; }
+
  private:
   //! Number of particles in the swarm.
   size_t numParticles;
@@ -265,6 +274,9 @@ class PSOType
 
   //! The initialized update policy.
   Any instUpdatePolicy;
+
+  //! The number of threads to use for parallelization.
+  size_t numThreads;
 };
 
 using LBestPSO = PSOType<LBestUpdate, DefaultInit>;

@@ -103,16 +103,27 @@ typename InputMatType::elem_type PSOType<
   // Initialize the update policy.
   instUpdatePolicy.As<InstUpdatePolicyType>().Initialize(exploitationFactor,
       explorationFactor, numParticles, iterate);
-
   Callback::BeginOptimization(*this, function, iterate, callbacks...);
 
+  const bool enableParallel = (numThreads != 1);
+
   // Calculate initial fitness of population.
-  for (size_t i = 0; (i < numParticles) && !terminate; i++)
+  ENS_PRAGMA_OMP_PARALLEL_FOR_IF_NUM_THREADS
+  for (size_t i = 0; i < numParticles; i++)
   {
+    if (terminate)
+    {
+        continue;
+    }
+
     // Calculate fitness value.
     particleFitnesses(i) = function.Evaluate(particlePositions.slice(i));
-    terminate |= Callback::Evaluate(*this, function,
+
+    ENS_PRAGMA_OMP_CRITICAL
+    {
+      terminate |= Callback::Evaluate(*this, function,
         particlePositions.slice(i), particleFitnesses(i), callbacks...);
+    }
     particleBestFitnesses(i) = particleFitnesses(i);
   }
 
@@ -133,13 +144,23 @@ typename InputMatType::elem_type PSOType<
   for (size_t i = 0; (i < horizonSize) && !terminate; i++, iteration++)
   {
     // Calculate fitness and evaluate personal best.
-    for (size_t j = 0; (j < numParticles) && !terminate; j++)
+    ENS_PRAGMA_OMP_PARALLEL_FOR_IF_NUM_THREADS
+    for (size_t j = 0; j < numParticles; j++)
     {
-      particleFitnesses(j) = function.Evaluate(particlePositions.slice(j));
-      terminate |= Callback::Evaluate(*this, function,
-          particlePositions.slice(j), particleFitnesses(j), callbacks...);
       if (terminate)
-        break;
+      {
+          continue;
+      }
+
+      particleFitnesses(j) = function.Evaluate(particlePositions.slice(j));
+
+      ENS_PRAGMA_OMP_CRITICAL
+      {
+        terminate |= Callback::Evaluate(*this, function,
+          particlePositions.slice(j), particleFitnesses(j), callbacks...);
+      }
+      if (terminate)
+        continue;
 
       // Compare and copy fitness and position to particle best.
       if (particleFitnesses(j) < particleBestFitnesses(j))
@@ -193,11 +214,21 @@ typename InputMatType::elem_type PSOType<
     }
 
     // Calculate fitness and evaluate personal best.
-    for (size_t j = 0; (j < numParticles) && !terminate; j++)
+    ENS_PRAGMA_OMP_PARALLEL_FOR_IF_NUM_THREADS
+    for (size_t j = 0; j < numParticles; j++)
     {
+      if (terminate)
+      {
+        continue;
+      }
+
       particleFitnesses(j) = function.Evaluate(particlePositions.slice(j));
-      terminate |= Callback::Evaluate(*this, function,
-          particlePositions.slice(j), particleFitnesses(j), callbacks...);
+
+       ENS_PRAGMA_OMP_CRITICAL
+      {
+        terminate |= Callback::Evaluate(*this, function,
+            particlePositions.slice(j), particleFitnesses(j), callbacks...);
+      }
 
       // Compare and copy fitness and position to particle best.
       if (particleFitnesses(j) < particleBestFitnesses(j))

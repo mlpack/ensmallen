@@ -30,6 +30,15 @@ TEMPLATE_TEST_CASE("LBestPSO_SphereFunction", "[PSO]", ENS_ALL_CPU_TEST_TYPES)
   SphereFunction f(4);
   LBestPSO s;
 
+  SECTION("Single-threaded")
+  {
+    s.NumThreads() = 1;
+  }
+  SECTION("Multi-threaded")
+  {
+    s.NumThreads() = 0; // Use all available threads.
+  }
+
   TestType coords = f.template GetInitialPoint<TestType>();
   const ElemType finalValue = s.Optimize(f, coords);
 
@@ -57,6 +66,16 @@ TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]",
   {
     LBestPSO s(250, lowerBound, upperBound, 5000, 600,
         Tolerances<TestType>::Obj / 100, 2.05, 2.05);
+
+    SECTION("Single-threaded")
+    {
+        s.NumThreads() = 1;
+    }
+    SECTION("Multi-threaded")
+    {
+        s.NumThreads() = 0; // Use all available threads.
+    }
+
     TestType coordinates = f.GetInitialPoint<TestType>();
 
     const ElemType result = s.Optimize(f, coordinates);
