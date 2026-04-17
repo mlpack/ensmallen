@@ -63,7 +63,7 @@ if(USE_OPENMP)
         PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
   endif()
 
-  add_definitions(-DENS_USE_OPENMP)
+  target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
   target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
