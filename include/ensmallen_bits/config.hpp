@@ -48,6 +48,7 @@
   #define ENS_PRAGMA_OMP_ATOMIC   _Pragma("omp atomic")
   #define ENS_PRAGMA_OMP_CRITICAL _Pragma("omp critical")
   #define ENS_PRAGMA_OMP_CRITICAL_NAMED _Pragma("omp critical(section)")
+  #include <omp.h>
 #else
   #define ENS_PRAGMA_OMP_PARALLEL
   #define ENS_PRAGMA_OMP_ATOMIC
