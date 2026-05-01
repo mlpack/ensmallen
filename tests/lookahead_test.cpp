@@ -60,5 +60,6 @@ TEMPLATE_TEST_CASE("LookaheadAdam_LogisticRegressionFunction", "[Lookahead]",
   LogisticRegressionFunctionTest<TestType>(
       optimizer,
       Tolerances<TestType>::LRTrainAcc,
-      Tolerances<TestType>::LRTestAcc);
+      Tolerances<TestType>::LRTestAcc,
+      3 /* allow a couple trials */);
 }

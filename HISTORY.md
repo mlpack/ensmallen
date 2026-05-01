@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Loosen tolerance for Lookahead tests to prevent spurious failures
+   ([#456](https://github.com/mlpack/ensmallen/pull/456)).
 
 ### ensmallen 3.11.0: "Sunny Day"
 ###### 2025-12-15
