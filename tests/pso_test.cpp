@@ -69,11 +69,11 @@ TEMPLATE_TEST_CASE("LBestPSO_RosenbrockFunction", "[PSO]",
 
     SECTION("Single-threaded")
     {
-        s.NumThreads() = 1;
+      s.NumThreads() = 1;
     }
     SECTION("Multi-threaded")
     {
-        s.NumThreads() = 0; // Use all available threads.
+      s.NumThreads() = 0; // Use all available threads.
     }
 
     TestType coordinates = f.GetInitialPoint<TestType>();
