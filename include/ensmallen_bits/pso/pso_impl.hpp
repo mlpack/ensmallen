@@ -218,7 +218,7 @@ typename InputMatType::elem_type PSOType<
 
       particleFitnesses(j) = function.Evaluate(particlePositions.slice(j));
 
-       ENS_PRAGMA_OMP_CRITICAL
+      ENS_PRAGMA_OMP_CRITICAL
       {
         terminate |= Callback::Evaluate(*this, function,
             particlePositions.slice(j), particleFitnesses(j), callbacks...);
