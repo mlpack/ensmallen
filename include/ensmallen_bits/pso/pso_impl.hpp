@@ -214,9 +214,7 @@ typename InputMatType::elem_type PSOType<
     for (size_t j = 0; j < numParticles; j++)
     {
       if (terminate)
-      {
         continue;
-      }
 
       particleFitnesses(j) = function.Evaluate(particlePositions.slice(j));
 
