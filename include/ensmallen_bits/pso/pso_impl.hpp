@@ -112,9 +112,7 @@ typename InputMatType::elem_type PSOType<
   for (size_t i = 0; i < numParticles; i++)
   {
     if (terminate)
-    {
-        continue;
-    }
+      continue;
 
     // Calculate fitness value.
     particleFitnesses(i) = function.Evaluate(particlePositions.slice(i));
