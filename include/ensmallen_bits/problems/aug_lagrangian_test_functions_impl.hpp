@@ -54,8 +54,6 @@ inline void AugLagrangianTestFunction<MatType>::Gradient(
 {
   // f'_x1(x) = 12 x_1 + 4 x_2
   // f'_x2(x) = 4 x_1 + 6 x_2
-  gradient.set_size(2, 1);
-
   gradient[0] = 12 * coordinates[0] + 4 * coordinates[1];
   gradient[1] = 4 * coordinates[0] + 6 * coordinates[1];
 }
@@ -127,8 +125,6 @@ inline void GockenbachFunction::Gradient(const MatType& coordinates,
   // f'_x1(x) = 2 (x_1 - 1)
   // f'_x2(x) = 4 (x_2 + 2)
   // f'_x3(x) = 6 (x_3 + 3)
-  gradient.set_size(3, 1);
-
   gradient[0] = 2 * (coordinates[0] - 1);
   gradient[1] = 4 * (coordinates[1] + 2);
   gradient[2] = 6 * (coordinates[2] + 3);
@@ -166,8 +162,6 @@ inline void GockenbachFunction::GradientConstraint(const size_t index,
                                                    const MatType& coordinates,
                                                    GradType& gradient)
 {
-  gradient.zeros(3, 1);
-
   switch (index)
   {
     case 0:
@@ -184,6 +178,7 @@ inline void GockenbachFunction::GradientConstraint(const size_t index,
       // h'_x2(x) = 0
       // h'_x3(x) = 1
       gradient[0] = -2 * coordinates[0];
+      gradient[1] = 0;
       gradient[2] = 1;
       break;
   }
