@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 3.11.1: "Sunny Day"
 ###### 2026-07-25
  * Loosen tolerance for Lookahead tests to prevent spurious failures
