@@ -73,7 +73,8 @@ void AugLagrangianFunction<LagrangianFunction, VecType>::Gradient(
   gradient.zeros();
   function.Gradient(coordinates, gradient);
 
-  GradType constraintGradient; // Temporary for constraint gradients.
+  // Temporary for constraint gradients.
+  GradType constraintGradient(gradient.n_rows, gradient.n_cols);
   for (size_t i = 0; i < function.NumConstraints(); i++)
   {
     function.GradientConstraint(i, coordinates, constraintGradient);
