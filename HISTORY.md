@@ -3,6 +3,9 @@
  * Loosen tolerance for Lookahead tests to prevent spurious failures
    ([#456](https://github.com/mlpack/ensmallen/pull/456)).
 
+ * Fix uninitialized gradient constraint matrix for `AugLagrangian`
+   ([#458](https://github.com/mlpack/ensmallen/pull/458)).
+
 ### ensmallen 3.11.0: "Sunny Day"
 ###### 2025-12-15
  * Refactor `GradientDescent` into
