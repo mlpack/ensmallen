@@ -1,0 +1,255 @@
+# ci.yml: defines all the CI jobs run for each commit and pull request.
+
+name: Continuous Integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+  release:
+    types: [published, created, edited]
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ###
+  ### Linux and macOS test matrix for all binding types.
+  ###
+  ci_matrix:
+    strategy:
+      fail-fast: false # Run all configurations even if one fails.
+      matrix:
+        config: [
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'Debug',
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug',
+            cores: 4
+          },
+          {
+            runner: ubuntu-latest,
+            os: 'Linux',
+            name: 'Release',
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Release',
+            cores: 4
+          },
+          {
+            runner: macOS-latest,
+            os: 'macOS',
+            name: 'Debug',
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug',
+            # Up to 3 cores are supported but the amount of ram provided
+            # leads to severe swapping and massive slowdowns, using 1 is
+            # the best compromise between cores and ram given our C++ load
+            cores: 1
+          },
+          {
+            runner: macOS-latest,
+            os: 'macOS',
+            name: 'Release',
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Release',
+            # Up to 3 cores are supported but the amount of ram provided
+            # leads to severe swapping and massive slowdowns, using 2 is
+            # the best compromise between cores and ram given our C++ load
+            cores: 2
+          }
+        ]
+
+    name: '${{ matrix.config.os }} (${{ matrix.config.name }})'
+    if: ${{ github.repository == 'mlpack/ensmallen' }}
+    runs-on: ${{ matrix.config.runner }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # Set up ccache.
+      - name: Get ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ matrix.config.os }}-${{ matrix.config.name }}
+          append-timestamp: false
+          variant: ccache
+          max-size: 2G # Github has a 10GB repo cache limit, so we use 2GB/job.
+
+      - name: Configure ccache
+        shell: bash
+        run: |
+          ccache --set-config "sloppiness=include_file_ctime"
+          ccache --set-config "hash_dir=false"
+          ccache --zero-stats
+
+      # Install base build dependencies via apt.
+      - name: Install apt build dependencies (Linux)
+        if: matrix.config.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --allow-unauthenticated libopenblas-dev
+
+      # Install build dependencies.
+      - name: Install build dependencies (Linux)
+        if: matrix.config.os == 'Linux'
+        run: |
+          # Install the oldest Armadillo version that we support.
+          curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ
+          cd armadillo*
+          # Armadillo 10.8.2 requests CMake 2.8.12+ compatibility, but that has
+          # been dropped from newer CMake versions.  However, with Armadillo's
+          # CMake configuration, it works just fine to specify
+          # CMAKE_POLICY_VERSION_MINIMUM to ignore the missing reverse
+          # compatibility.
+          cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .
+          make
+          sudo make install
+          cd ..
+
+      - name: Install build dependencies (macOS)
+        if: matrix.config.os == 'macOS'
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          brew install libomp openblas armadillo ccache
+
+      # Because ensmallen's precompiled headers basically include everything
+      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
+      # the ccache entry---so it is better to leave it turned off, so that
+      # ccache entries will be at a more granular level and are more likely to
+      # be reused across runs.
+      - name: Configure ensmallen with CMake
+        run: |
+          mkdir build && cd build
+          cmake ${{ matrix.config.cmakeVars }} -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
+
+      - name: Build ensmallen tests
+        run: cd build && make -j${{ matrix.config.cores }}
+
+      # Run the tests manually so that we can get JUnit output.
+      - name: Run ensmallen_tests
+        run: |
+          cd build
+          # The use of only one thread is to prevent thrashing on older versions
+          # of OpenBLAS (0.3.26 and older) where OpenMP and pthreads aren't
+          # playing together well.
+          OMP_NUM_THREADS=1 ./ensmallen_tests -r junit -o ensmallen_tests.junit.xml
+
+      - name: Parse test output
+        uses: rcurtin/test-summary-action@dist
+        if: success() || failure()
+        with:
+          paths: "build/*.junit.xml"
+          show: "fail, skip"
+          fail_job: true
+          print_output: true
+
+  ###
+  ### Windows CI testing.
+  ###
+
+  ci_windows:
+    name: 'Windows build: VS2022'
+    if: ${{ github.repository == 'mlpack/ensmallen' }}
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # Set up ccache.
+      - name: Get ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ runner.os }}
+          append-timestamp: false
+          variant: ccache
+          max-size: 2G
+
+      # Set up Visual Studio.
+      - name: Set up Visual Studio
+        uses: microsoft/setup-msbuild@v2
+
+      # Set up paths for MS build tools.
+      - name: Set up devcmd
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # Install build dependencies.
+      - name: Install build dependencies (Windows)
+        shell: powershell
+        run: |
+          nuget install OpenBLAS -o deps
+
+      # Install the oldest supported version of Armadillo and install cereal.
+      - name: Install some dependencies manually
+        shell: bash
+        run: |
+          cd deps/
+          curl -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz -o armadillo-10.8.2.tar.xz
+          tar -xf armadillo-10.8.2.tar.xz
+          cd armadillo-10.8.2/
+          cmake -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DCMAKE_C_COMPILER=cl \
+            -DCMAKE_CXX_COMPILER=cl \
+            -DBLAS_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DLAPACK_LIBRARY:FILEPATH=${{ github.workspace }}/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+            -DBUILD_SHARED_LIBS=OFF .
+          # Disable the wrapper because transitive linking doesn't work on
+          # Windows anyway.
+          cp tmp/include/armadillo_bits/config.hpp tmp/include/armadillo_bits/config.hpp.tmp
+          cat tmp/include/armadillo_bits/config.hpp.tmp | sed 's|#define ARMA_USE_WRAPPER|// #define ARMA_USE_WRAPPER|' \
+              > tmp/include/armadillo_bits/config.hpp
+
+      # Because ensmallen's precompiled headers basically include everything
+      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
+      # the ccache entry---so it is better to leave it turned off, so that
+      # ccache entries will be at a more granular level and are more likely to
+      # be reused across runs.
+      - name: Configure ensmallen with CMake
+        shell: bash
+        run: |
+          mkdir build && cd build
+          cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_C_COMPILER=cl \
+              -DCMAKE_CXX_COMPILER=cl \
+              -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
+              -DBLAS_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+              -DLAPACK_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+              -DCMAKE_VERBOSE_MAKEFILE=ON \
+              ../
+
+      - name: Build mlpack
+        run: cd build && cmake --build . --config Release
+
+      # Run the tests manually so that we can get JUnit output.
+      - name: Run ensmallen_tests
+        shell: bash
+        run: |
+          # The .dlls are stored in the bin/ directory, and those are the ones
+          # we need to run with.
+          cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/
+          ./ensmallen_tests.exe -r junit > ensmallen_tests.junit.xml || true
+          # Remove version numbers and other non-xml from the output.
+          cat ensmallen_tests.junit.xml | sed '/<?xml/,$!d' > ensmallen_tests.junit.xml.tmp
+          rm ensmallen_tests.junit.xml
+          mv ensmallen_tests.junit.xml.tmp ensmallen_tests.junit.xml
+
+      - name: Parse test output
+        uses: rcurtin/test-summary-action@dist
+        if: success() || failure()
+        with:
+          paths: "build/*.junit.xml"
+          show: "fail, skip"
+          fail_job: true
+          print_output: true
+
