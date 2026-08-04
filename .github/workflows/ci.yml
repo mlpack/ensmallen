@@ -213,8 +213,8 @@ jobs:
               -DCMAKE_C_COMPILER=cl \
               -DCMAKE_CXX_COMPILER=cl \
               -DARMADILLO_INCLUDE_DIR=../deps/armadillo-10.8.2/tmp/include/ \
-              -DBLAS_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
-              -DLAPACK_LIBRARIES='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+              -DBLAS_LIBRARY='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
+              -DLAPACK_LIBRARY='${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/lib/x64/libopenblas.dll.a \
               -DCMAKE_VERBOSE_MAKEFILE=ON \
               ../
 
