@@ -68,9 +68,12 @@ if(USE_OPENMP)
 endif()
 
 if(USE_BANDICOOT)
+  message(STATUS "USE_BANDICOOT is true")
   # Find Bandicoot and link it.
   find_package(Bandicoot 2.1.0)
+  message(STATUS "BANDICOOT_FOUND: ${BANDICOOT_FOUND}")
   if(BANDICOOT_FOUND)
+    message(STATUS "Found, so link against it")
     target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
     target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
 

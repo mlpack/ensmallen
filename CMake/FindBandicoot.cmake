@@ -142,10 +142,10 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
         find_package(CUDAToolkit REQUIRED)
 
         if (CUDAToolkit_FOUND)
-	  message(STATUS "CUDA includes: ${CUDAToolkit_INCLUDE_DIRS}")
-	  message(STATUS "CUDA libraries: ${CUDAToolkit_LIBRARY_DIR}")
+          message(STATUS "CUDA includes: ${CUDAToolkit_INCLUDE_DIRS}")
+          message(STATUS "CUDA libraries: ${CUDAToolkit_LIBRARY_DIR}")
 
-	  set(CUDA_LIBRARIES CUDA::cudart CUDA::cuda_driver)
+          set(CUDA_LIBRARIES CUDA::cudart CUDA::cuda_driver)
           set(CUDA_CUBLAS_LIBRARIES CUDA::cublas)
           set(CUDA_curand_LIBRARY CUDA::curand)
           set(CUDA_cusolver_LIBRARY CUDA::cusolver)
@@ -155,10 +155,10 @@ if(EXISTS "${BANDICOOT_INCLUDE_DIR}/bandicoot_bits/config.hpp")
               "${CUDAToolkit_INCLUDE_DIRS}")
           set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}"
               CUDA_LIBRARIES
-	      CUDA_CUBLAS_LIBRARIES
-	      CUDA_curand_LIBRARY
-	      CUDA_cusolver_LIBRARY
-	      CUDA_nvrtc_LIBRARY)
+              CUDA_CUBLAS_LIBRARIES
+              CUDA_curand_LIBRARY
+              CUDA_cusolver_LIBRARY
+              CUDA_nvrtc_LIBRARY)
           set(HAVE_CUDA true)
         endif()
       endif ()
