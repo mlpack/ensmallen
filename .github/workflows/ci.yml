@@ -130,7 +130,7 @@ jobs:
           cmake ${{ matrix.config.cmakeVars }} -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
 
       - name: Build ensmallen tests
-        run: cd build && make -j${{ matrix.config.cores }}
+        run: cd build && make -j${{ matrix.config.cores }} ensmallen_tests
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run ensmallen_tests
@@ -229,7 +229,7 @@ jobs:
               ../
 
       - name: Build mlpack
-        run: cd build && cmake --build . --config Release
+        run: cd build && cmake --build . --config Release --target ensmallen_tests
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run ensmallen_tests
