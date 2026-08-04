@@ -119,15 +119,10 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           brew install libomp openblas armadillo ccache
 
-      # Because ensmallen's precompiled headers basically include everything
-      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
-      # the ccache entry---so it is better to leave it turned off, so that
-      # ccache entries will be at a more granular level and are more likely to
-      # be reused across runs.
       - name: Configure ensmallen with CMake
         run: |
           mkdir build && cd build
-          cmake ${{ matrix.config.cmakeVars }} -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON ../
+          cmake ${{ matrix.config.cmakeVars }} ../
 
       - name: Build ensmallen tests
         run: cd build && make -j${{ matrix.config.cores }} ensmallen_tests
@@ -209,16 +204,11 @@ jobs:
           cat tmp/include/armadillo_bits/config.hpp.tmp | sed 's|#define ARMA_USE_WRAPPER|// #define ARMA_USE_WRAPPER|' \
               > tmp/include/armadillo_bits/config.hpp
 
-      # Because ensmallen's precompiled headers basically include everything
-      # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
-      # the ccache entry---so it is better to leave it turned off, so that
-      # ccache entries will be at a more granular level and are more likely to
-      # be reused across runs.
       - name: Configure ensmallen with CMake
         shell: bash
         run: |
           mkdir build && cd build
-          cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
+          cmake -G "Ninja" \
               -DCMAKE_BUILD_TYPE=Release \
               -DCMAKE_C_COMPILER=cl \
               -DCMAKE_CXX_COMPILER=cl \
