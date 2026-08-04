@@ -64,11 +64,11 @@ if(USE_OPENMP)
         # Only works if the same flag is passed to the linker; use CMake 3.9+ otherwise (Intel, AppleClang).
         set_property(TARGET OpenMP::OpenMP_CXX
             PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
-
-        target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
-        target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
       endif ()
-    else ()
+    endif ()
+
+    if (TARGET OpenMP::OpenMP_CXX)
+      message(STATUS "OpenMP::OpenMP_CXX is a target")
       target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
       target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
     endif ()
