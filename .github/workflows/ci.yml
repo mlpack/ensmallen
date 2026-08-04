@@ -125,7 +125,7 @@ jobs:
           cmake ${{ matrix.config.cmakeVars }} ../
 
       - name: Build ensmallen tests
-        run: cd build && VERBOSE=1 make -j${{ matrix.config.cores }} ensmallen_tests
+        run: cd build && make -j${{ matrix.config.cores }} ensmallen_tests
 
       # Run the tests manually so that we can get JUnit output.
       - name: Run ensmallen_tests

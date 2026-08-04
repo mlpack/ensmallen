@@ -57,7 +57,6 @@ if(USE_OPENMP)
     if(NOT TARGET OpenMP::OpenMP_CXX)
       find_package(Threads REQUIRED)
       if (Threads_FOUND)
-        message(STATUS "Threads is found")
         add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
         set_property(TARGET OpenMP::OpenMP_CXX
             PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
@@ -68,7 +67,6 @@ if(USE_OPENMP)
     endif ()
 
     if (TARGET OpenMP::OpenMP_CXX)
-      message(STATUS "OpenMP::OpenMP_CXX is a target")
       target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
       target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
     endif ()
@@ -76,12 +74,9 @@ if(USE_OPENMP)
 endif()
 
 if(USE_BANDICOOT)
-  message(STATUS "USE_BANDICOOT is true")
   # Find Bandicoot and link it.
   find_package(Bandicoot 2.1.0)
-  message(STATUS "BANDICOOT_FOUND: ${BANDICOOT_FOUND}")
   if(BANDICOOT_FOUND)
-    message(STATUS "Found, so link against it")
     target_link_libraries(ensmallen INTERFACE Bandicoot::Bandicoot)
     target_include_directories(ensmallen INTERFACE ${BANDICOOT_INCLUDE_DIR})
 
