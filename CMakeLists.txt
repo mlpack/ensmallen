@@ -66,8 +66,10 @@ if(USE_OPENMP)
       endif ()
     endif()
 
-    target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
-    target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
+    if (TARGET OpenMP::OpenMP_CXX)
+      target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
+      target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
+    endif ()
   endif ()
 endif()
 
