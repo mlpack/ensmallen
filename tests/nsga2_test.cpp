@@ -272,9 +272,9 @@ TEMPLATE_TEST_CASE("NSGA2_ZDTONEFunction", "[NSGA2]", ENS_ALL_CPU_TEST_TYPES)
   // The optimal g value is taken from the docs of zdt1.
   std::cout << "coordinates: " << coords;
   std::cout << "filtered coordinates: " << coords(arma::span(1, numVariables - 1));
-  std::cout << "sum: " << sum << "; numVariables " << numVariables << "\n";
   size_t numVariables = coords.size();
   double sum = arma::accu(coords(arma::span(1, numVariables - 1), 0));
+  std::cout << "sum: " << sum << "; numVariables " << numVariables << "\n";
   double g = 1. + 9. * sum / (static_cast<double>(numVariables - 1));
 
   REQUIRE(g == Approx(1.0).margin(0.99));
