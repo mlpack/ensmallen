@@ -131,6 +131,8 @@ jobs:
       - name: Run ensmallen_tests
         run: |
           cd build
+          OMP_NUM_THREADS=1 ./ensmallen_tests "NSGA2_ZDTONEFunction - arma::mat"
+          echo "now fmat";
           OMP_NUM_THREADS=1 ./ensmallen_tests "NSGA2_ZDTONEFunction - arma::fmat"
           # The use of only one thread is to prevent thrashing on older versions
           # of OpenBLAS (0.3.26 and older) where OpenMP and pthreads aren't
