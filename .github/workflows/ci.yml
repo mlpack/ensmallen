@@ -131,15 +131,11 @@ jobs:
       - name: Run ensmallen_tests
         run: |
           cd build
+          OMP_NUM_THREADS=1 ./ensmallen_tests "NSGA2_ZDTONEFunction - arma::fmat"
           # The use of only one thread is to prevent thrashing on older versions
           # of OpenBLAS (0.3.26 and older) where OpenMP and pthreads aren't
           # playing together well.
           OMP_NUM_THREADS=1 ./ensmallen_tests -r junit -o ensmallen_tests.junit.xml
-
-      - name: Run specific test
-        run: |
-          cd build
-          OMP_NUM_THREADS=1 ./ensmallen_tests "NSGA2_ZDTONEFunction - arma::fmat"
 
       - name: Parse test output
         uses: rcurtin/test-summary-action@dist
