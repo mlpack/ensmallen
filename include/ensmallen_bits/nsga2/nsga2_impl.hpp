@@ -168,7 +168,14 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t generation = 1; generation <= maxGenerations && !terminate;
       generation++)
   {
-    Info << "NSGA2: iteration " << generation << "." << std::endl;
+    Info << "NSGA2: iteration " << generation << "; objectives [";
+    if (numObjectives > 0)
+    {
+      Info << calculatedObjectives[0];
+      for (size_t i = 0; i < calculatedObjectives.size(); ++i)
+        Info << ", " << calculatedObjectives[i] << ", ";
+    }
+    Info << "]." << std::endl;
 
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
