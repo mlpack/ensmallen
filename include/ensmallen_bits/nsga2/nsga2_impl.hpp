@@ -354,7 +354,7 @@ void NSGA2::Crossover(
   // Use traits from parentA for indices where idx is 1 and parentB otherwise.
   childA = parentA % idx + parentB % (1 - idx);
   // Use traits from parentB for indices where idx is 1 and parentA otherwise.
-  childB = parentA % (1 - idx) + parentA % idx;
+  childB = parentA % (1 - idx) + parentB % idx;
 }
 
 //! Perform mutation of the candidates weights with some noise.
