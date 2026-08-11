@@ -43,6 +43,12 @@ target_include_directories(ensmallen INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
+# Use ccache if we find it.
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
 # Set warning flags for target.
 if(MSVC)
   target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:/Wall>)
