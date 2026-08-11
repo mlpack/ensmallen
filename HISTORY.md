@@ -1,5 +1,7 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix incorrect child generation computation for NSGA-II
+   ([#461](https://github.com/mlpack/ensmallen/pull/461)).
 
 ### ensmallen 3.11.1: "Sunny Day"
 ###### 2026-07-25
