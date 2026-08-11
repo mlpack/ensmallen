@@ -89,17 +89,12 @@ jobs:
           ccache --set-config "hash_dir=false"
           ccache --zero-stats
 
-      # Install base build dependencies via apt.
-      - name: Install apt build dependencies (Linux)
+      # Install build dependencies via apt.
+      - name: Install build dependencies (Linux)
         if: matrix.config.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install --yes --allow-unauthenticated libopenblas-dev
-
-      # Install build dependencies.
-      - name: Install build dependencies (Linux)
-        if: matrix.config.os == 'Linux'
-        run: |
           # Install the oldest Armadillo version that we support.
           curl -k -L https://sourceforge.net/projects/arma/files/armadillo-10.8.2.tar.xz | tar -xvJ
           cd armadillo*
