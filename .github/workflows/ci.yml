@@ -49,20 +49,14 @@ jobs:
             os: 'macOS',
             name: 'Debug',
             cmakeVars: '-DCMAKE_BUILD_TYPE=Debug',
-            # Up to 3 cores are supported but the amount of ram provided
-            # leads to severe swapping and massive slowdowns, using 1 is
-            # the best compromise between cores and ram given our C++ load
-            cores: 1
+            cores: 3
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'Release',
-            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug',
-            # Up to 3 cores are supported but the amount of ram provided
-            # leads to severe swapping and massive slowdowns, using 2 is
-            # the best compromise between cores and ram given our C++ load
-            cores: 2
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Release',
+            cores: 3
           }
         ]
 
