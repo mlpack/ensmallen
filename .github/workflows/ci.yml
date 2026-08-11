@@ -75,7 +75,7 @@ jobs:
 
       # Set up ccache.
       - name: Get ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
           append-timestamp: false
@@ -159,7 +159,7 @@ jobs:
 
       # Set up ccache.
       - name: Get ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ runner.os }}
           append-timestamp: false
