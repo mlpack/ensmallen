@@ -5,13 +5,9 @@ name: Continuous Integration
 on:
   workflow_dispatch:
   push:
-    branches:
-      - master
-      - main
+    branches: [master, main]
   pull_request:
-    branches:
-      - master
-      - main
+    branches: [master, main]
   release:
     types: [published, created, edited]
 permissions:
