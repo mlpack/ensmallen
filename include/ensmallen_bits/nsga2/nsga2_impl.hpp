@@ -168,7 +168,14 @@ typename MatType::elem_type NSGA2::Optimize(
   for (size_t generation = 1; generation <= maxGenerations && !terminate;
       generation++)
   {
-    Info << "NSGA2: iteration " << generation << "." << std::endl;
+    Info << "NSGA2: iteration " << generation << "; objectives [";
+    if (numObjectives > 0)
+    {
+      Info << calculatedObjectives[0];
+      for (size_t i = 0; i < calculatedObjectives.size(); ++i)
+        Info << ", " << calculatedObjectives[i] << ", ";
+    }
+    Info << "]." << std::endl;
 
     // Create new population of candidate from the present elite population.
     // Have P_t, generate G_t using P_t.
@@ -347,7 +354,7 @@ void NSGA2::Crossover(
   // Use traits from parentA for indices where idx is 1 and parentB otherwise.
   childA = parentA % idx + parentB % (1 - idx);
   // Use traits from parentB for indices where idx is 1 and parentA otherwise.
-  childB = parentA % (1 - idx) + parentA % idx;
+  childB = parentA % (1 - idx) + parentB % idx;
 }
 
 //! Perform mutation of the candidates weights with some noise.

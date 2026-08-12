@@ -43,6 +43,12 @@ target_include_directories(ensmallen INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
+# Use ccache if we find it.
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
 # Set warning flags for target.
 if(MSVC)
   target_compile_options(ensmallen INTERFACE $<BUILD_INTERFACE:/Wall>)
@@ -53,18 +59,24 @@ endif()
 # Find OpenMP and link it.
 if(USE_OPENMP)
   find_package(OpenMP)
-  if(NOT TARGET OpenMP::OpenMP_CXX)
-    find_package(Threads REQUIRED)
-    add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
-    set_property(TARGET OpenMP::OpenMP_CXX
-        PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
-    # Only works if the same flag is passed to the linker; use CMake 3.9+ otherwise (Intel, AppleClang).
-    set_property(TARGET OpenMP::OpenMP_CXX
-        PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
-  endif()
+  if (OpenMP_FOUND)
+    if(NOT TARGET OpenMP::OpenMP_CXX)
+      find_package(Threads REQUIRED)
+      if (Threads_FOUND)
+        add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
+        set_property(TARGET OpenMP::OpenMP_CXX
+            PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
+        # Only works if the same flag is passed to the linker; use CMake 3.9+ otherwise (Intel, AppleClang).
+        set_property(TARGET OpenMP::OpenMP_CXX
+            PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
+      endif ()
+    endif ()
 
-  target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
-  target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
+    if (TARGET OpenMP::OpenMP_CXX)
+      target_compile_definitions(ensmallen INTERFACE -DENS_USE_OPENMP)
+      target_link_libraries(ensmallen INTERFACE OpenMP::OpenMP_CXX)
+    endif ()
+  endif ()
 endif()
 
 if(USE_BANDICOOT)
