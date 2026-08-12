@@ -735,6 +735,8 @@ TEST_CASE("ProgressBarCallbackNoMaxIterationsEpochTest", "[CallbacksTest]")
   s.Optimize(f, coordinates, ProgressBar(10, stream));
   REQUIRE(stream.str().find("Epoch 1") != std::string::npos);
   REQUIRE(stream.str().find("Epoch 1/") == std::string::npos);
+  REQUIRE(stream.str().find("Optimization stopped before completing the "
+      "current epoch.") == std::string::npos);
 }
 
 /**
@@ -752,6 +754,26 @@ TEST_CASE("ProgressBarCallbackEpochTest", "[CallbacksTest]")
   std::stringstream stream;
   s.Optimize(f, coordinates, ProgressBar(10, stream));
   REQUIRE(stream.str().find("Epoch 1/1") != std::string::npos);
+}
+
+/**
+ * Make sure the ProgressBar callback shows that optimization stopped before
+ * the end of an epoch.
+ */
+TEST_CASE("ProgressBarCallbackIncompleteEpochTest", "[CallbacksTest]")
+{
+  SGDTestFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+
+  StandardSGD s(0.0003, 1, 4, -1, true);
+
+  std::stringstream stream;
+  s.Optimize(f, coordinates, ProgressBar(10, stream));
+
+  REQUIRE(stream.str().find("Epoch 1/2") != std::string::npos);
+  REQUIRE(stream.str().find("Epoch 2/2") != std::string::npos);
+  REQUIRE(stream.str().find("Optimization stopped before completing the "
+      "current epoch.") != std::string::npos);
 }
 
 /**
