@@ -65,7 +65,7 @@ set(ENSMALLEN_TESTS_SOURCES
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 add_executable(ensmallen_tests EXCLUDE_FROM_ALL ${ENSMALLEN_TESTS_SOURCES})
 target_link_libraries(ensmallen_tests PRIVATE ensmallen)
-if (USE_OPENMP)
+if (USE_OPENMP AND TARGET OpenMP::OpenMP_CXX)
   target_link_libraries(ensmallen_tests PRIVATE OpenMP::OpenMP_CXX)
 endif ()
 
