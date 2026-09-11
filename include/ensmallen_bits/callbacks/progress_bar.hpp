@@ -40,7 +40,9 @@ class ProgressBar
       step(1),
       steps(0),
       newEpoch(false),
-      epoch(1)
+      epoch(1),
+      epochStarted(false),
+      epochCompleted(false)
 
   { /* Nothing to do here. */ }
 
@@ -113,6 +115,8 @@ class ProgressBar
 
     epoch = epochIn;
     newEpoch = true;
+    epochStarted = true;
+    epochCompleted = false;
 
     return false;
   }
@@ -204,6 +208,8 @@ class ProgressBar
                 const size_t /* epoch */,
                 const double objective)
   {
+    epochCompleted = true;
+
     const size_t progress = ((double) (step - 1) / epochSize) * 100;
     output << step - 1 << "/" << epochSize << " [";
     for (size_t i = 0; i < 100; i += width)
@@ -227,6 +233,25 @@ class ProgressBar
         << "s/epoch; " << stepTime << "ms/step; loss: " << objective  <<  "\n";
     output.flush();
     return false;
+  }
+
+  /**
+   * Callback function called at the end of the optimization process.
+   *
+   * @param optimizer The optimizer used to update the function.
+   * @param function Function to optimize.
+   * @param coordinates Final point.
+   */
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EndOptimization(OptimizerType& /* optimizer */,
+                       FunctionType& /* function */,
+                       MatType& /* coordinates */)
+  {
+    if (epochStarted && !epochCompleted && step > 1)
+    {
+      output << "\nOptimization stopped before completing the current epoch."
+          << std::endl;
+    }
   }
 
  private:
@@ -256,6 +281,12 @@ class ProgressBar
 
   //! Locally-stored epoch.
   size_t epoch;
+
+  //! Tracks whether there is an epoch whose progress is being displayed.
+  bool epochStarted;
+
+  //! Lets EndOptimization() distinguish a complete epoch from a partial one.
+  bool epochCompleted;
 
   //! Locally-stored step timer object.
   arma::wall_clock stepTimer;

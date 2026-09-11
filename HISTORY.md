@@ -6,6 +6,9 @@
  * Better handling of OpenMP/pthreads linking for non-Linux systems
    ([#461](https://github.com/mlpack/ensmallen/pull/461)).
 
+ * Better output from ProgressBar when optimization completes in the middle of
+   an epoch ([#459](https://github.com/mlpack/ensmallen/pull/459)).
+
 ### ensmallen 3.11.1: "Sunny Day"
 ###### 2026-07-25
  * Loosen tolerance for Lookahead tests to prevent spurious failures
