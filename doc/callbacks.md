@@ -276,6 +276,13 @@ optimizer.Optimize(f, coordinates, PrintLoss());
 
 Callback that prints a progress bar to stdout or a specified output stream.
 
+**Note**: `ProgressBar` requires a separable (mini-batch) optimizer that
+provides `BatchSize()` and `MaxIterations()` (such as `SGD`, `Adam`, or
+`AdaDelta`), and a function that provides `NumFunctions()`.  It cannot be used
+with full-batch optimizers such as `L_BFGS`; compilation will fail with a
+`static_assert` error.  For those optimizers, the [`Report`](#report) callback
+can be used to monitor optimization progress instead.
+
 #### Constructors
 
  * `ProgressBar()`
