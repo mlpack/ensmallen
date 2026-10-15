@@ -162,7 +162,14 @@ void L1Constraint::ProximalStep(MatType& coordinates,
           5 * (eT(lambda) - eT(std::nexttoward(lambda, 0.0)));
     }
 
-    L1Constraint newConstraint(newLambda);
+    // Guarantee that the radius strictly decreases by a few ULPs of eT.
+    // Otherwise excess floating-point precision (e.g. x87 on i386) can make
+    // newNorm compare greater than lambda while newLambda rounds back to
+    // lambda when stored, causing unbounded recursion and a stack overflow.
+    const double eps = std::max((double) std::numeric_limits<eT>::epsilon(),
+        (double) std::numeric_limits<double>::epsilon());
+    L1Constraint newConstraint(std::min((double) newLambda,
+        lambda * (1.0 - 4 * eps)));
     newConstraint.ProximalStep(coordinates, 0.0 /* ignored */);
   }
 }
