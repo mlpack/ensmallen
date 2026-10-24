@@ -131,6 +131,44 @@ jobs:
           print_output: true
 
   ###
+  ### 32-bit x86 (i386) testing.  The x87 FPU computes with excess precision,
+  ### which can expose floating-point assumptions that hold elsewhere.
+  ###
+
+  ci_i386:
+    name: 'Linux (i386)'
+    if: ${{ github.repository == 'mlpack/ensmallen' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # JavaScript actions can't run inside a 32-bit container, so only the
+      # build and test run there.
+      - name: Build and run ensmallen_tests in an i386 container
+        run: |
+          docker run --rm --platform linux/386 -v "$PWD":/src -w /src \
+              i386/debian:trixie bash -c '
+            set -e
+            apt-get update
+            apt-get install --yes --no-install-recommends \
+                g++ cmake make libarmadillo-dev
+            mkdir build && cd build
+            cmake -DCMAKE_BUILD_TYPE=Release ../
+            make -j4 ensmallen_tests
+            OMP_NUM_THREADS=1 ./ensmallen_tests -r junit \
+                -o ensmallen_tests.junit.xml'
+
+      - name: Parse test output
+        uses: rcurtin/test-summary-action@dist
+        if: success() || failure()
+        with:
+          paths: "build/*.junit.xml"
+          show: "fail, skip"
+          fail_job: true
+          print_output: true
+
+  ###
   ### Windows CI testing.
   ###
 

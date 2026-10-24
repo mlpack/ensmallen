@@ -153,14 +153,16 @@ void L1Constraint::ProximalStep(MatType& coordinates,
   const eT newNorm = norm(coordinates, 1);
   if (newNorm > eT(lambda) && eT(lambda) > eT(0))
   {
-    // Shrink the L1 ball by the amount of the error.
-    eT newLambda = (eT(lambda) - 2 * (newNorm - eT(lambda)));
-    if (newLambda == eT(lambda))
-    {
-      // Make sure we at least remove a few ULPs.
-      newLambda = eT(lambda) -
-          5 * (eT(lambda) - eT(std::nexttoward(lambda, 0.0)));
-    }
+    // Shrink the L1 ball by twice the error, but always by at least a few
+    // ULPs of eT.  We can't test whether we made progress: with excess
+    // precision (x87 on i386) a comparison can see a difference that
+    // vanishes on storage.  Since rounding is monotonic, subtracting at
+    // least a few ULPs guarantees the stored radius is strictly smaller.
+    const eT minShrink = 4 * eT(std::max(
+        (double) std::numeric_limits<eT>::epsilon(),
+        (double) std::numeric_limits<double>::epsilon())) * eT(lambda);
+    const eT newLambda = eT(lambda) -
+        std::max(eT(2 * (newNorm - eT(lambda))), minShrink);
 
     L1Constraint newConstraint(newLambda);
     newConstraint.ProximalStep(coordinates, 0.0 /* ignored */);
