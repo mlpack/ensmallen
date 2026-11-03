@@ -27,9 +27,8 @@ class ProgressBar
    * Set up the progress bar callback class with the given width and output
    * stream.
    *
-   * @param widthIn Width of the bar (between 1 and 100, inclusive).
+   * @param widthIn Width of the bar (clamped to [1, 100]).
    * @param ostream Ostream which receives output from this object.
-   * @throws std::invalid_argument if widthIn is outside [1, 100].
    */
   ProgressBar(const size_t widthIn = 70,
               std::ostream& output = arma::get_cout_stream()) :
@@ -46,11 +45,13 @@ class ProgressBar
       epochCompleted(false)
 
   {
-    if (widthIn == 0 || widthIn > 100)
-      throw std::invalid_argument("ProgressBar::ProgressBar(): width must be "
-          "between 1 and 100.");
+    size_t clampedWidth = widthIn;
+    if (clampedWidth == 0)
+      clampedWidth = 1;
+    else if (clampedWidth > 100)
+      clampedWidth = 100;
 
-    width = 100.0 / widthIn;
+    width = 100.0 / clampedWidth;
   }
 
   /**

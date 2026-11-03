@@ -663,7 +663,7 @@ TEST_CASE("ProgressBarCallbackTest", "[CallbacksTest]")
 }
 
 /**
- * Reject progress bar widths that cannot advance the rendering loop.
+ * Clamp progress bar widths so that the rendering loop can advance.
  */
 TEST_CASE("ProgressBarCallbackWidthTest", "[CallbacksTest]")
 {
@@ -671,11 +671,53 @@ TEST_CASE("ProgressBarCallbackWidthTest", "[CallbacksTest]")
   REQUIRE_NOTHROW(ProgressBar(1, stream));
   REQUIRE_NOTHROW(ProgressBar(70, stream));
   REQUIRE_NOTHROW(ProgressBar(100, stream));
-  REQUIRE_THROWS_AS(ProgressBar(0, stream), std::invalid_argument);
-  REQUIRE_THROWS_AS(ProgressBar(101, stream), std::invalid_argument);
-  REQUIRE_THROWS_AS(ProgressBar(120, stream), std::invalid_argument);
-  REQUIRE_THROWS_AS(ProgressBar(std::numeric_limits<size_t>::max(), stream),
-      std::invalid_argument);
+  REQUIRE_NOTHROW(ProgressBar(0, stream));
+  REQUIRE_NOTHROW(ProgressBar(101, stream));
+  REQUIRE_NOTHROW(ProgressBar(120, stream));
+  REQUIRE_NOTHROW(ProgressBar(std::numeric_limits<size_t>::max(), stream));
+}
+
+/**
+ * Ensure out-of-range widths cannot stall either progress bar rendering loop.
+ */
+TEST_CASE("ProgressBarCallbackClampedOutputTest", "[CallbacksTest]")
+{
+  class BoundedBuffer : public std::streambuf
+  {
+   public:
+    BoundedBuffer() { setp(data, data + sizeof(data)); }
+    std::string str() const { return std::string(pbase(), pptr()); }
+
+   private:
+    char data[2048];
+  };
+
+  SGDTestFunction f;
+  arma::mat coordinates = f.GetInitialPoint();
+  StandardSGD s(0.0003, 1, 10, -1, false);
+
+  for (const size_t width : {size_t(0), size_t(101),
+                             std::numeric_limits<size_t>::max()})
+  {
+    BoundedBuffer buffer;
+    std::ostream stream(&buffer);
+    stream.exceptions(std::ios::badbit | std::ios::failbit);
+    ProgressBar progress(width, stream);
+
+    progress.BeginOptimization(s, f, coordinates);
+    progress.BeginEpoch(s, f, coordinates, 1, 0.0);
+    REQUIRE_NOTHROW(progress.StepTaken(s, f, coordinates));
+    REQUIRE_NOTHROW(progress.EndEpoch(s, f, coordinates, 1, 0.0));
+
+    const std::string output = buffer.str();
+    const size_t firstBar = output.find('[');
+    const size_t firstEnd = output.find(']', firstBar);
+    const size_t secondBar = output.find('[', firstEnd);
+    const size_t secondEnd = output.find(']', secondBar);
+    const size_t expected = width == 0 ? 1 : 100;
+    REQUIRE(firstEnd - firstBar - 1 == expected);
+    REQUIRE(secondEnd - secondBar - 1 == expected);
+  }
 }
 
 /**
