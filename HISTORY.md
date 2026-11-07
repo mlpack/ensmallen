@@ -9,6 +9,9 @@
  * Better output from ProgressBar when optimization completes in the middle of
    an epoch ([#459](https://github.com/mlpack/ensmallen/pull/459)).
 
+ * Fix width setting for ProgressBar callback
+   ([#466](https://github.com/mlpack/ensmallen/pull/466)).
+
 ### ensmallen 3.11.1: "Sunny Day"
 ###### 2026-07-25
  * Loosen tolerance for Lookahead tests to prevent spurious failures
