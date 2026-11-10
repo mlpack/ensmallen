@@ -75,9 +75,9 @@ void RastriginFunction::Gradient(
   for (size_t j = begin; j < begin + batchSize; ++j)
   {
     const size_t p = visitationOrder[j];
-    gradient(p) += (10 * n) * (2 * (coordinates(p) +
+    gradient(p) += 2 * (coordinates(p) +
         10 * arma::Datum<ElemType>::pi *
-        std::sin(2 * arma::Datum<ElemType>::pi * coordinates(p))));
+        std::sin(2 * arma::Datum<ElemType>::pi * coordinates(p)));
   }
 }
 
