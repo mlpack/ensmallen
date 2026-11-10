@@ -65,17 +65,17 @@ inline void EggholderFunction::Gradient(const MatType& coordinates,
   gradient.set_size(2, 1);
   gradient(0) = -1.0 * std::sin(std::sqrt(std::abs(x1 - x2 - 47))) -
       (x1 * (x1 - x2 - 47) * std::cos(std::sqrt(std::abs(x1 - x2 - 47)))) /
-      std::pow(2 * std::abs(x1 - x2 - 47), 1.5) -
-      ((x1 + 47) * (x1 / 2 + x2 + 47) *
+      (2 * std::pow(std::abs(x1 - x2 - 47), 1.5)) -
+      ((x2 + 47) * (x1 / 2 + x2 + 47) *
       std::cos(std::sqrt(std::abs(x1 / 2 + x2  + 47)))) /
       (4 * std::pow(std::abs(x1 / 2 + x2  + 47), 1.5));
 
-  gradient(1) = -1.0 * std::sin(std::sqrt(std::abs(x1 / 2 + x2 + 47))) -
+  gradient(1) = -1.0 * std::sin(std::sqrt(std::abs(x1 / 2 + x2 + 47))) +
       (x1 * (x1 - x2 - 47) * std::cos(std::sqrt(std::abs(x1 - x2 - 47)))) /
-      std::pow(2 * std::abs(x1 - x2 - 47), 1.5) -
-      ((x1 + 47) * (x1 / 2 + x2 + 47) *
+      (2 * std::pow(std::abs(x1 - x2 - 47), 1.5)) -
+      ((x2 + 47) * (x1 / 2 + x2 + 47) *
       std::cos(std::sqrt(std::abs(x1 / 2 + x2  + 47)))) /
-      (4 * std::pow(std::abs(x1 / 2 + x2  + 47), 1.5));
+      (2 * std::pow(std::abs(x1 / 2 + x2  + 47), 1.5));
 }
 
 template<typename MatType, typename GradType>
