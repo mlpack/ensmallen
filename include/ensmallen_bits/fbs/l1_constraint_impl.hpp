@@ -40,7 +40,8 @@ typename MatType::elem_type L1Constraint::Evaluate(const MatType& coordinates)
 
 template<typename MatType>
 void L1Constraint::ProximalStep(MatType& coordinates,
-                                const double /* stepSize */)
+                                const double /* stepSize */,
+                                const bool checkNorm)
     const
 {
   // First determine whether projection is necessary.
@@ -149,21 +150,32 @@ void L1Constraint::ProximalStep(MatType& coordinates,
       abs(coordinates) - theta, eT(0), std::numeric_limits<eT>::max());
 
   // Sanity check: ensure we actually ended up inside the L1 ball.  This might
-  // not happen due to floating-point inaccuracies.  If so, try again.
-  const eT newNorm = norm(coordinates, 1);
-  if (newNorm > eT(lambda) && eT(lambda) > eT(0))
+  // not happen due to floating-point inaccuracies.  If so, try again
+  // iteratively for a while until the norm is within the constraint.
+  if (checkNorm)
   {
-    // Shrink the L1 ball by the amount of the error.
-    eT newLambda = (eT(lambda) - 2 * (newNorm - eT(lambda)));
-    if (newLambda == eT(lambda))
+    eT newNorm = norm(coordinates, 1);
+    size_t iteration = 0;
+    while (newNorm > eT(lambda) && eT(lambda) > eT(0) && iteration < 100)
     {
-      // Make sure we at least remove a few ULPs.
-      newLambda = eT(lambda) -
-          5 * (eT(lambda) - eT(std::nexttoward(lambda, 0.0)));
+      // Shrink the L1 ball by the amount of the error.
+      eT minDiff = 5 * iteration *
+          (eT(lambda) - std::nexttoward(eT(lambda), 0.0));
+      eT normDiff = 2 * (newNorm - eT(lambda));
+      eT newLambda = eT(lambda) - std::max(normDiff, minDiff);
+
+      L1Constraint newConstraint(newLambda);
+      newConstraint.ProximalStep(coordinates, 0.0 /* ignored */, false);
+      newNorm = norm(coordinates, 1);
+      ++iteration;
     }
 
-    L1Constraint newConstraint(newLambda);
-    newConstraint.ProximalStep(coordinates, 0.0 /* ignored */);
+    if (iteration == 100)
+    {
+      Warn << "L1Constraint::ProximalStep(): failed to project exactly into "
+          << "L1 ball.  Optimization will proceed without the constraint being "
+          << "exactly satisfied." << std::endl;
+    }
   }
 }
 
