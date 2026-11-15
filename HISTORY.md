@@ -13,6 +13,9 @@
    extended-precision floating point
    ([#465](https://github.com/mlpack/ensmallen/pull/465)).
 
+ * Fix width setting for ProgressBar callback
+   ([#466](https://github.com/mlpack/ensmallen/pull/466)).
+
 ### ensmallen 3.11.1: "Sunny Day"
 ###### 2026-07-25
  * Loosen tolerance for Lookahead tests to prevent spurious failures
