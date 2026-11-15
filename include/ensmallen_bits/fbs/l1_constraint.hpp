@@ -49,9 +49,15 @@ class L1Constraint
    *
    * This may apply the proximal step multiple times to account for numerical
    * stability issues during projection.
+   *
+   * If `checkNorm` is `false`, then this function will *not* check if
+   * `norm(coordinates) < lambda`.  In general it should be left to its default
+   * of `true`.
    */
   template<typename MatType>
-  void ProximalStep(MatType& coordinates, const double stepSize) const;
+  void ProximalStep(MatType& coordinates,
+                    const double stepSize,
+                    const bool checkNorm = true) const;
 
   //! Get the L1 constraint to use when applying the proximal step.
   double Lambda() const { return lambda; }

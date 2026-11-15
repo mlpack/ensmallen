@@ -9,6 +9,10 @@
  * Better output from ProgressBar when optimization completes in the middle of
    an epoch ([#459](https://github.com/mlpack/ensmallen/pull/459)).
 
+ * Fix convergence of `L1Constraint` proximal steps on systems with
+   extended-precision floating point
+   ([#465](https://github.com/mlpack/ensmallen/pull/465)).
+
  * Fix width setting for ProgressBar callback
    ([#466](https://github.com/mlpack/ensmallen/pull/466)).
 
