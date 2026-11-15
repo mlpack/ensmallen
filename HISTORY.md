@@ -1,3 +1,6 @@
+### ensmallen ?.??.?: "???"
+###### ????-??-??
+
 ### ensmallen 3.11.2: "Sunny Day"
 ###### 2026-11-15
  * Fix incorrect child generation computation for NSGA-II
