@@ -721,3 +721,33 @@ TEST_CASE("ResolvableFunctionTypeCheckTest", "[FunctionTest]")
   static_assert(!CheckPartialGradient<D, arma::mat, arma::sp_mat>::value,
       "CheckPartialGradient static check failed.");
 }
+
+/**
+ * Compare Gradient() of some test functions with central differences of
+ * Evaluate().
+ */
+template<typename FunctionType>
+void CheckGradientNumerically(FunctionType& f, const arma::mat& coordinates)
+{
+  arma::mat gradient;
+  f.Gradient(coordinates, gradient);
+  for (size_t i = 0; i < coordinates.n_elem; ++i)
+  {
+    arma::mat xp(coordinates), xm(coordinates);
+    xp(i) += 1e-6;
+    xm(i) -= 1e-6;
+    const double numeric = (f.Evaluate(xp) - f.Evaluate(xm)) / 2e-6;
+    REQUIRE(gradient(i) == Approx(numeric).epsilon(1e-5).margin(1e-6));
+  }
+}
+
+TEST_CASE("TestFunctionGradientsFiniteDifferenceTest", "[FunctionTest]")
+{
+  RastriginFunction rastrigin(3);
+  CheckGradientNumerically(rastrigin, arma::mat("1.3; -0.7; 2.1"));
+
+  EggholderFunction eggholder;
+  CheckGradientNumerically(eggholder, arma::mat("375.8; -94.2"));
+  CheckGradientNumerically(eggholder, arma::mat("-200.0; 300.0"));
+  CheckGradientNumerically(eggholder, arma::mat("-400.0; -300.0"));
+}

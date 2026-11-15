@@ -19,7 +19,7 @@ namespace test {
  * The Rastrigin function, defined by
  *
  * \f[
- * f(x) = 10 * d * \sum_{i=1}^{d} x_i^2 - 10 * \cos(2 * \pi * x_i)
+ * f(x) = 10 * d + \sum_{i=1}^{d} (x_i^2 - 10 * \cos(2 * \pi * x_i))
  * \f]
  *
  * This should optimize to f(x) = 0
