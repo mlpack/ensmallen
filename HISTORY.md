@@ -19,6 +19,9 @@
  * Fix width setting for ProgressBar callback
    ([#467](https://github.com/mlpack/ensmallen/pull/467)).
 
+ * Fix `RastriginFunction` and `EggholderFunction` gradients so they match
+   `Evaluate()` ([#468](https://github.com/mlpack/ensmallen/pull/468)).
+
 ### ensmallen 3.11.1: "Sunny Day"
 ###### 2026-07-25
  * Loosen tolerance for Lookahead tests to prevent spurious failures
