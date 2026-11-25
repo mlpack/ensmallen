@@ -31,6 +31,7 @@ set(ENSMALLEN_TESTS_SOURCES
     indicators_test.cpp
     katyusha_test.cpp
     lbfgs_test.cpp
+    lbfgsb_test.cpp
     line_search_test.cpp
     lookahead_test.cpp
     lrsdp_test.cpp

@@ -133,6 +133,7 @@
 #include "ensmallen_bits/iqn/iqn.hpp"
 #include "ensmallen_bits/katyusha/katyusha.hpp"
 #include "ensmallen_bits/lbfgs/lbfgs.hpp"
+#include "ensmallen_bits/lbfgsb/lbfgsb.hpp"
 #include "ensmallen_bits/lookahead/lookahead.hpp"
 #include "ensmallen_bits/agemoea/agemoea.hpp"
 #include "ensmallen_bits/moead/moead.hpp"
